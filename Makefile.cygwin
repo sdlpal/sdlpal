@@ -1,0 +1,28 @@
+TARGET = sdlpal.exe
+
+HOST = i686-pc-cygwin-
+
+SOURCES = . ./adplug
+CFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.c))
+CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp))
+RCFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.rc))
+OFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o) $(RCFILES:.rc=.o)
+
+CFLAGS = -g -Wall -O2 `sdl-config --cflags` -DCYGWIN -DPAL_CLASSIC
+CXXFLAGS = $(CFLAGS)
+LDFLAGS = `sdl-config --libs`
+
+$(TARGET): $(OFILES)
+	$(HOST)g++ $(OFILES) -o $@ $(LDFLAGS)
+
+%.o: %.c
+	$(HOST)gcc $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
+	$(HOST)g++ $(CXXFLAGS) -c $< -o $@
+
+%.o: %.rc
+	windres.exe -i $< --input-format=rc -o $@ -O coff
+
+clean:
+	rm -f $(TARGET) $(OFILES)

@@ -1,0 +1,26 @@
+TARGET = sdlpal
+
+OBJS = adplug/binfile.o adplug/emuopl.o adplug/fprovide.o adplug/rix.o \
+	adplug/binio.o adplug/fmopl.o adplug/player.o \
+	battle.o getopt.o main.o play.o script.o uigame.o ending.o \
+	global.o map.o res.o sound.o util.o fight.o input_PSP.o palcommon.o \
+	rixplay.o text.o video.o font.o itemmenu.o palette.o rngplay.o \
+	uibattle.o yj1.o game.o magicmenu.o scene.o ui.o
+
+PSPSDK = $(shell psp-config --pspsdk-path)
+
+INCDIR = 
+CFLAGS = -O3 -G0 -Wall -g `$(PSPSDK)/../bin/sdl-config --cflags` -DPSP=1
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti `$(PSPSDK)/../bin/sdl-config --cflags`
+ASFLAGS = $(CFLAGS)
+
+LIBDIR =
+LIBS = `$(PSPSDK)/../bin/sdl-config --libs` -lstdc++
+
+EXTRA_TARGETS = EBOOT.PBP
+PSP_EBOOT_TITLE = sdlpal
+
+BUILD_PRX = 1
+PSP_FW_VERSION = 371
+
+include $(PSPSDK)/lib/build.mak

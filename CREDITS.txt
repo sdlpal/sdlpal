@@ -1,0 +1,16 @@
+SPECIAL THANKS
+--------------
+
+Many of the ideas of this program are based on documents from PAL
+Research Project (http://code.google.com/p/palresearch).
+
+Portions of the code are based on the work done by Baldur and louyihua.
+
+getopt.c file is based on source code in OpenBSD.
+
+This program made extensive use of the following libraries:
+
+SDL (http://www.libsdl.org/)
+Adplug (http://adplug.sourceforge.net/)
+SDL_mixer (http://www.libsdl.org/projects/SDL_mixer/)
+libmad (http://www.underbit.com/products/mad/)
