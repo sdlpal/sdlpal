@@ -1,4 +1,6 @@
 language: c
 script: make
-
 compiler: clang
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq libsdl1.2-dev
