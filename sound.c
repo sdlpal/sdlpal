@@ -403,6 +403,7 @@ SOUND_ReloadVOC(
 	void
 )
 {
+   fclose(gSndPlayer.mkf);
    gSndPlayer.mkf = fopen(va("%s%s", PAL_PREFIX, "voc.mkf"), "rb");
    g_fUseWav = FALSE;
 }

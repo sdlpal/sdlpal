@@ -45,16 +45,24 @@ int PSPExitCallback(int arg1, int arg2, void *common)
 //
 //Reopen MKF files when resume from suspend
 //
-int PSPSuspendCallback(int arg1, int arg2, void *common)
+int PSPSuspendCallback(int arg1, int pwrflags, void *common)
 {
   if (pwrflags & PSP_POWER_CB_RESUME_COMPLETE)
   {
+    UTIL_CloseFile(gpGlobals->f.fpFBP);
+    UTIL_CloseFile(gpGlobals->f.fpMGO);
+    UTIL_CloseFile(gpGlobals->f.fpBALL);
+    UTIL_CloseFile(gpGlobals->f.fpDATA);
+    UTIL_CloseFile(gpGlobals->f.fpF);
+    UTIL_CloseFile(gpGlobals->f.fpFIRE);
+    UTIL_CloseFile(gpGlobals->f.fpRGM);
+    UTIL_CloseFile(gpGlobals->f.fpSSS);
     gpGlobals->f.fpFBP = UTIL_OpenRequiredFile("fbp.mkf");
     gpGlobals->f.fpDATA = UTIL_OpenRequiredFile("data.mkf");
     gpGlobals->f.fpFIRE = UTIL_OpenRequiredFile("fire.mkf");
     gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
     gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
-    SOUND_Reload_VOC();
+    SOUND_ReloadVOC();
   }
   int cbid;
   cbid = sceKernelCreateCallback("suspend Callback", PSPSuspendCallback, NULL);

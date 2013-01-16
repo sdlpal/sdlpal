@@ -5,7 +5,11 @@ OBJS = adplug/binfile.o adplug/emuopl.o adplug/fprovide.o adplug/rix.o \
 	battle.o getopt.o main.o play.o script.o uigame.o ending.o \
 	global.o map.o res.o sound.o util.o fight.o input_PSP.o palcommon.o \
 	rixplay.o text.o video.o font.o itemmenu.o palette.o rngplay.o \
-	uibattle.o yj1.o game.o magicmenu.o scene.o ui.o
+	uibattle.o yj1.o game.o magicmenu.o scene.o ui.o \
+	libmad/bit.o libmad/decoder.o libmad/fixed.o libmad/frame.o \
+	libmad/huffman.o libmad/layer12.o libmad/layer3.o libmad/music_mad.o \
+	libmad/stream.o libmad/synth.o libmad/timer.o
+
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 
