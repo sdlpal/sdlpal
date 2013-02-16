@@ -25,7 +25,7 @@
 #include "common.h"
 
 #ifndef PAL_SAMPLE_RATE
-#define PAL_SAMPLE_RATE     49716
+#define PAL_SAMPLE_RATE     44100 /*49716*/
 #endif
 
 #ifndef PAL_CHANNELS
