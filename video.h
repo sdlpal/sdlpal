@@ -104,6 +104,17 @@ VIDEO_FadeScreen(
    WORD           wSpeed
 );
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+//
+// For compatibility with SDL2.
+//
+VOID
+SDL_WM_SetCaption(
+   LPCSTR         lpszCaption,
+   LPVOID         lpReserved
+);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

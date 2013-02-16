@@ -867,3 +867,34 @@ VIDEO_FadeScreen(
    //
    VIDEO_UpdateScreen(NULL);
 }
+
+#if SDL_VERSION_ATLEAST(2,0,0)
+
+/*++
+  Purpose:
+
+    Set the caption of the window. For compatibility with SDL2 only.
+
+  Parameters:
+
+    [IN]  lpszCaption - the new caption of the window.
+
+    [IN]  lpReserved - not used, for compatibility only.
+
+  Return value:
+
+    None.
+
+--*/
+VOID
+SDL_WM_SetCaption(
+   LPCSTR         lpszCaption,
+   LPVOID         lpReserved
+)
+{
+   //
+   // TODO
+   //
+}
+
+#endif
