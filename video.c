@@ -1,3 +1,4 @@
+/* -*- mode: c; tab-width: 4; c-basic-offset: 3; c-file-style: "linux" -*- */
 //
 // Copyright (c) 2009, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // All rights reserved.
@@ -27,7 +28,12 @@ SDL_Surface              *gpScreen           = NULL;
 SDL_Surface              *gpScreenBak        = NULL;
 
 // The real screen surface
+#if SDL_VERSION_ATLEAST(2,0,0)
+static SDL_Window        *gpWindow           = NULL;
+static SDL_Renderer      *gpRenderer         = NULL;
+#else
 static SDL_Surface       *gpScreenReal       = NULL;
+#endif
 
 #if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO)
    static BOOL bScaleScreen = FALSE;
@@ -75,6 +81,82 @@ VIDEO_Init(
 {
    g_wInitialWidth = wScreenWidth;
    g_wInitialHeight = wScreenHeight;
+
+#if SDL_VERSION_ATLEAST(2,0,0)
+   // TODO
+/*
+   //
+   // Create the screen surface.
+   //
+#if defined (NDS)
+   gpScreenReal = SDL_SetVideoMode(293, 196, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
+#elif defined (__SYMBIAN32__)
+#ifdef __S60_5X__
+   gpScreenReal = SDL_SetVideoMode(640, 360, 8,
+      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+#else
+   gpScreenReal = SDL_SetVideoMode(320, 240, 8,
+      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+#endif
+#elif defined (GEKKO)
+   gpScreenReal = SDL_SetVideoMode(640, 480, 8,
+      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+#elif defined (PSP)
+   gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
+#else
+   gpScreenReal = SDL_SetVideoMode(wScreenWidth, wScreenHeight, 8,
+      SDL_HWSURFACE | SDL_RESIZABLE | (fFullScreen ? SDL_FULLSCREEN : 0));
+#endif
+
+   if (gpScreenReal == NULL)
+   {
+      //
+      // Fall back to 640x480 software mode.
+      //
+      gpScreenReal = SDL_SetVideoMode(640, 480, 8,
+         SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+   }
+
+   //
+   // Still fail?
+   //
+   if (gpScreenReal == NULL)
+   {
+      return -1;
+   }
+
+   //
+   // Create the screen buffer and the backup screen buffer.
+   //
+   gpScreen = SDL_CreateRGBSurface(gpScreenReal->flags & ~SDL_HWSURFACE, 320, 200, 8,
+      gpScreenReal->format->Rmask, gpScreenReal->format->Gmask,
+      gpScreenReal->format->Bmask, gpScreenReal->format->Amask);
+
+   gpScreenBak = SDL_CreateRGBSurface(gpScreenReal->flags & ~SDL_HWSURFACE, 320, 200, 8,
+      gpScreenReal->format->Rmask, gpScreenReal->format->Gmask,
+      gpScreenReal->format->Bmask, gpScreenReal->format->Amask);
+
+   //
+   // Failed?
+   //
+   if (gpScreen == NULL || gpScreenBak == NULL)
+   {
+      if (gpScreen != NULL)
+      {
+         SDL_FreeSurface(gpScreen);
+      }
+
+      if (gpScreenBak != NULL)
+      {
+         SDL_FreeSurface(gpScreenBak);
+      }
+
+      SDL_FreeSurface(gpScreenReal);
+      return -2;
+   }
+*/
+
+#else
 
    //
    // Create the screen surface.
@@ -146,6 +228,8 @@ VIDEO_Init(
       return -2;
    }
 
+#endif
+
    if (fFullScreen)
    {
       SDL_ShowCursor(FALSE);
@@ -185,11 +269,15 @@ VIDEO_Shutdown(
    }
    gpScreenBak = NULL;
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+   // TODO
+#else
    if (gpScreenReal != NULL)
    {
       SDL_FreeSurface(gpScreenReal);
    }
    gpScreenReal = NULL;
+#endif
 }
 
 VOID
