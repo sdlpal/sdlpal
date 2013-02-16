@@ -87,7 +87,8 @@ VIDEO_Init(
    // Before we can render anything, we need a window and a renderer.
    //
    gpWindow = SDL_CreateWindow("SDL_RenderCopy Example",
-      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
+      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 400,
+      SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
    if (gpWindow == NULL)
    {
