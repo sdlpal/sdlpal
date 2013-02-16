@@ -655,7 +655,7 @@ PAL_EventFilter(
 static int SDLCALL
 PAL_EventFilter(
    void                  *userdata,
-   const SDL_Event       *lpEvent
+   SDL_Event             *lpEvent
 )
 #endif
 /*++
@@ -676,12 +676,24 @@ PAL_EventFilter(
 {
    switch (lpEvent->type)
    {
+#if SDL_VERSION_ATLEAST(2,0,0)
+   case SDL_WINDOWEVENT:
+      if (lpEvent->window.event == SDL_WINDOWEVENT_RESIZED)
+      {
+         //
+         // resized the window
+         //
+         VIDEO_Resize(lpEvent->window.data1, lpEvent->window.data2);
+      }
+      break;
+#else
    case SDL_VIDEORESIZE:
       //
       // resized the window
       //
       VIDEO_Resize(lpEvent->resize.w, lpEvent->resize.h);
       break;
+#endif
 
    case SDL_QUIT:
       //
@@ -786,12 +798,20 @@ PAL_ShutdownInput(
 --*/
 {
 #ifdef PAL_HAS_JOYSTICKS
+#if SDL_VERSION_ATLEAST(2,0,0)
+   if (g_pJoy != NULL)
+   {
+      SDL_JoystickClose(g_pJoy);
+      g_pJoy = NULL;
+   }
+#else
    if (SDL_JoystickOpened(0))
    {
       assert(g_pJoy != NULL);
       SDL_JoystickClose(g_pJoy);
       g_pJoy = NULL;
    }
+#endif
 #endif
 }
 

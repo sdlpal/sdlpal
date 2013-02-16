@@ -48,6 +48,7 @@ extern "C"
 #endif
 
 #if SDL_VERSION_ATLEAST(2,0,0)
+
 #define SDLK_KP1     SDLK_KP_1
 #define SDLK_KP2     SDLK_KP_2
 #define SDLK_KP3     SDLK_KP_3
@@ -58,6 +59,9 @@ extern "C"
 #define SDLK_KP8     SDLK_KP_8
 #define SDLK_KP9     SDLK_KP_9
 #define SDLK_KP0     SDLK_KP_0
+
+#define SDL_HWSURFACE     0
+
 #endif
 
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
@@ -102,8 +106,8 @@ extern "C"
 
 #define PAL_HAS_JOYSTICKS     1
 #ifndef _WIN32_WCE
-#define PAL_ALLOW_KEYREPEAT   1
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+#define PAL_ALLOW_KEYREPEAT   1
 #define PAL_HAS_CD            1
 #endif
 #if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO)
