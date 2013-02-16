@@ -83,44 +83,20 @@ VIDEO_Init(
    g_wInitialHeight = wScreenHeight;
 
 #if SDL_VERSION_ATLEAST(2,0,0)
-   // TODO
-/*
    //
-   // Create the screen surface.
+   // Before we can render anything, we need a window and a renderer.
    //
-#if defined (NDS)
-   gpScreenReal = SDL_SetVideoMode(293, 196, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
-#elif defined (__SYMBIAN32__)
-#ifdef __S60_5X__
-   gpScreenReal = SDL_SetVideoMode(640, 360, 8,
-      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#else
-   gpScreenReal = SDL_SetVideoMode(320, 240, 8,
-      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#endif
-#elif defined (GEKKO)
-   gpScreenReal = SDL_SetVideoMode(640, 480, 8,
-      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#elif defined (PSP)
-   gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
-#else
-   gpScreenReal = SDL_SetVideoMode(wScreenWidth, wScreenHeight, 8,
-      SDL_HWSURFACE | SDL_RESIZABLE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#endif
+   gpWindow = SDL_CreateWindow("SDL_RenderCopy Example",
+      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
 
-   if (gpScreenReal == NULL)
+   if (gpWindow == NULL)
    {
-      //
-      // Fall back to 640x480 software mode.
-      //
-      gpScreenReal = SDL_SetVideoMode(640, 480, 8,
-         SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+      return -1;
    }
 
-   //
-   // Still fail?
-   //
-   if (gpScreenReal == NULL)
+   gpRenderer = SDL_CreateRenderer(gpWindow, -1, SDL_RENDERER_ACCELERATED);
+
+   if (gpRenderer == NULL)
    {
       return -1;
    }
@@ -144,17 +120,23 @@ VIDEO_Init(
       if (gpScreen != NULL)
       {
          SDL_FreeSurface(gpScreen);
+         gpScreen = NULL;
       }
 
       if (gpScreenBak != NULL)
       {
          SDL_FreeSurface(gpScreenBak);
+         gpScreenBak = NULL;
       }
 
-      SDL_FreeSurface(gpScreenReal);
+      SDL_DestroyRenderer(gpRenderer);
+      gpRenderer = NULL;
+
+      SDL_DestroyWindow(gpWindow);
+      gpWindow = NULL;
+
       return -2;
    }
-*/
 
 #else
 
@@ -217,14 +199,18 @@ VIDEO_Init(
       if (gpScreen != NULL)
       {
          SDL_FreeSurface(gpScreen);
+		 gpScreen = NULL;
       }
 
       if (gpScreenBak != NULL)
       {
          SDL_FreeSurface(gpScreenBak);
+		 gpScreenBak = NULL;
       }
 
       SDL_FreeSurface(gpScreenReal);
+	  gpScreenReal = NULL;
+
       return -2;
    }
 
@@ -270,13 +256,27 @@ VIDEO_Shutdown(
    gpScreenBak = NULL;
 
 #if SDL_VERSION_ATLEAST(2,0,0)
-   // TODO
+
+   if (gpRenderer)
+   {
+      SDL_DestroyRenderer(gpRenderer);
+   }
+   gpRenderer = NULL;
+
+   if (gpWindow)
+   {
+      SDL_DestroyWindow(gpWindow);
+   }
+   gpWindow = NULL;
+
 #else
+
    if (gpScreenReal != NULL)
    {
       SDL_FreeSurface(gpScreenReal);
    }
    gpScreenReal = NULL;
+
 #endif
 }
 
@@ -980,9 +980,10 @@ SDL_WM_SetCaption(
    LPVOID         lpReserved
 )
 {
-   //
-   // TODO
-   //
+   if (gpWindow != NULL)
+   {
+      SDL_SetWindowTitle(gpWindow, lpszCaption);
+   }
 }
 
 #endif
