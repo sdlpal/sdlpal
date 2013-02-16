@@ -61,6 +61,7 @@ extern "C"
 #define SDLK_KP0     SDLK_KP_0
 
 #define SDL_HWSURFACE     0
+#define SDL_SetPalette(a,b,c,d,e) SDL_SetSurfacePalette(a,c)
 
 #endif
 
