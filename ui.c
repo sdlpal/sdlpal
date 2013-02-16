@@ -1,3 +1,4 @@
+/* -*- mode: c; tab-width: 4; c-basic-offset: 3; c-file-style: "linux" -*- */
 //
 // Copyright (c) 2009, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // All rights reserved.
