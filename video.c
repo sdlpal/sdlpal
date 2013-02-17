@@ -105,13 +105,8 @@ VIDEO_Init(
    //
    // Create the screen buffer and the backup screen buffer.
    //
-   gpScreen = SDL_CreateRGBSurface(gpScreenReal->flags & ~SDL_HWSURFACE, 320, 200, 8,
-      gpScreenReal->format->Rmask, gpScreenReal->format->Gmask,
-      gpScreenReal->format->Bmask, gpScreenReal->format->Amask);
-
-   gpScreenBak = SDL_CreateRGBSurface(gpScreenReal->flags & ~SDL_HWSURFACE, 320, 200, 8,
-      gpScreenReal->format->Rmask, gpScreenReal->format->Gmask,
-      gpScreenReal->format->Bmask, gpScreenReal->format->Amask);
+   gpScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+   gpScreenBak = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
 
    //
    // Failed?
@@ -300,6 +295,9 @@ VIDEO_UpdateScreen(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+   // TODO
+#else
    SDL_Rect        srcrect, dstrect;
    short           offset = 240 - 200;
    short           screenRealHeight = gpScreenReal->h;
@@ -400,6 +398,7 @@ VIDEO_UpdateScreen(
 
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
    }
+#endif
 }
 
 VOID
@@ -421,6 +420,23 @@ VIDEO_SetPalette(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+   int            i;
+   SDL_Palette   *palette = SDL_AllocPalette(256);
+
+   if (palette == NULL)
+   {
+      return;
+   }
+
+   for (i = 0; i < 256; i++)
+   {
+      palette->colors[i] = rgPalette[i];
+   }
+
+   SDL_SetSurfacePalette(gpScreen, palette);
+#else
+   SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
 #if (defined (__SYMBIAN32__))
    {
@@ -431,6 +447,7 @@ VIDEO_SetPalette(
 	      time = SDL_GetTicks();
       }
    }
+#endif
 #endif
 }
 
@@ -456,6 +473,9 @@ VIDEO_Resize(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+   // TODO
+#else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
    int                      i;
@@ -494,6 +514,7 @@ VIDEO_Resize(
 
    SDL_SetPalette(gpScreenReal, SDL_PHYSPAL | SDL_LOGPAL, palette, 0, i);
    VIDEO_UpdateScreen(NULL);
+#endif
 }
 
 SDL_Color *
@@ -515,7 +536,11 @@ VIDEO_GetPalette(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+   return gpScreen->format->palette->colors;
+#else
    return gpScreenReal->format->palette->colors;
+#endif
 }
 
 VOID
@@ -563,6 +588,9 @@ VIDEO_ToggleFullscreen(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+   // TODO
+#else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
    int                      i;
@@ -625,6 +653,7 @@ VIDEO_ToggleFullscreen(
    // Update the screen
    //
    VIDEO_UpdateScreen(NULL);
+#endif
 }
 
 VOID
@@ -670,7 +699,11 @@ VIDEO_SaveScreenshot(
    //
    // Save the screenshot.
    //
+#if SDL_VERSION_ATLEAST(2,0,0)
+   SDL_SaveBMP(gpScreen, va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP));
+#else
    SDL_SaveBMP(gpScreenReal, va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP));
+#endif
 }
 
 VOID
