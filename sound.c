@@ -207,6 +207,10 @@ SOUND_FillAudio(
 {
    int        i;
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+   memset(stream, 0, len);
+#endif
+
    //
    // Play music
    //

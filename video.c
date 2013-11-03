@@ -86,7 +86,7 @@ VIDEO_Init(
    //
    // Before we can render anything, we need a window and a renderer.
    //
-   gpWindow = SDL_CreateWindow("SDL_RenderCopy Example",
+   gpWindow = SDL_CreateWindow("Pal",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 400,
       SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
@@ -297,6 +297,10 @@ VIDEO_UpdateScreen(
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
    // TODO
+   SDL_Texture *pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreen);
+   SDL_RenderClear(gpRenderer);
+   SDL_RenderCopy(gpRenderer, pTexture, NULL/*srcrect*/, NULL/*dstrect*/);
+   SDL_RenderPresent(gpRenderer);
 #else
    SDL_Rect        srcrect, dstrect;
    short           offset = 240 - 200;
@@ -796,6 +800,9 @@ VIDEO_SwitchScreen(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+   // TODO
+#else
    int               i, j;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
    SDL_Rect          dstrect;
@@ -833,6 +840,7 @@ VIDEO_SwitchScreen(
 
       UTIL_Delay(wSpeed);
    }
+#endif
 }
 
 VOID
@@ -855,6 +863,9 @@ VIDEO_FadeScreen(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+   // TODO
+#else
    int               i, j, k;
    DWORD             time;
    BYTE              a, b;
@@ -988,6 +999,7 @@ VIDEO_FadeScreen(
    // Draw the result buffer to the screen as the final step
    //
    VIDEO_UpdateScreen(NULL);
+#endif
 }
 
 #if SDL_VERSION_ATLEAST(2,0,0)

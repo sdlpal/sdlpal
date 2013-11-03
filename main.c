@@ -478,6 +478,18 @@ main(
    int           c;
    BOOL          fFullScreen = FALSE;
 
+#ifdef __APPLE__
+   char *p = strstr(argv[0], "/Pal.app/");
+
+   if (p != NULL)
+   {
+      char buf[4096];
+      strcpy(buf, argv[0]);
+      buf[p - argv[0]] = '\0';
+      chdir(buf);
+   }
+#endif
+
    UTIL_OpenLog();
 
 #ifdef _WIN32
