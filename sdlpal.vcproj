@@ -4,7 +4,7 @@
 	Version="8.00"
 	Name="sdlpal"
 	ProjectGUID="{837BDF47-9375-4C30-866B-07E262E94A01}"
-	TargetFrameworkVersion="0"
+	RootNamespace="sdlpal"
 	>
 	<Platforms>
 		<Platform
@@ -75,15 +75,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib sdl.lib sdlmain.lib"
-				OutputFile=".\Release/sdlpal_sdl2.exe"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib sdl2.lib sdl2main.lib"
+				OutputFile=".\Release/sdlpal.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="d:\sdl\lib"
 				ProgramDatabaseFile=".\Release/sdlpal_sdl2.pdb"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -105,6 +103,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -171,16 +172,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib sdl.lib sdlmain.lib"
-				OutputFile=".\Debug/sdlpal_sdl2.exe"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib sdl2.lib sdl2main.lib"
+				OutputFile=".\Debug/sdlpal.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="d:\sdl\lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/sdlpal_sdl2.pdb"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -202,6 +201,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
