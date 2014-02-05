@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="gb2312"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="8.00"
 	Name="sdlpal"
 	ProjectGUID="{837BDF47-9375-4C30-866B-07E262E94A01}"
 	TargetFrameworkVersion="0"
