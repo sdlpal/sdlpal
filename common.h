@@ -102,6 +102,13 @@ extern "C"
 #define PAL_PREFIX            "ms0:/"
 #define PAL_SAVE_PREFIX       "ms0:/PSP/SAVEDATA/SDLPAL/"
 
+#elif defined (__IOS__)
+
+#define PAL_HAS_JOYSTICKS     0
+#define PAL_PREFIX            "../Library"
+#define PAL_SAVE_PREFIX       "../Library"
+#define PAL_HAS_MOUSE         1
+
 #else
 
 #define PAL_HAS_JOYSTICKS     1

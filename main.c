@@ -478,7 +478,7 @@ main(
    int           c;
    BOOL          fFullScreen = FALSE;
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(__IOS__)
    char *p = strstr(argv[0], "/Pal.app/");
 
    if (p != NULL)
