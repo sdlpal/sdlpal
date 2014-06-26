@@ -301,6 +301,7 @@ VIDEO_UpdateScreen(
    SDL_RenderClear(gpRenderer);
    SDL_RenderCopy(gpRenderer, pTexture, NULL/*srcrect*/, NULL/*dstrect*/);
    SDL_RenderPresent(gpRenderer);
+   SDL_DestroyTexture(pTexture);
 #else
    SDL_Rect        srcrect, dstrect;
    short           offset = 240 - 200;
