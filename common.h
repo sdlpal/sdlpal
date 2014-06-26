@@ -105,9 +105,9 @@ extern "C"
 #elif defined (__IOS__)
 
 #define PAL_HAS_JOYSTICKS     0
-#define PAL_PREFIX            "../Library"
-#define PAL_SAVE_PREFIX       "../Library"
-#define PAL_HAS_MOUSE         1
+#define PAL_PREFIX            "../Library/"
+#define PAL_SAVE_PREFIX       "../Library/"
+#define PAL_HAS_TOUCH         1
 
 #else
 
