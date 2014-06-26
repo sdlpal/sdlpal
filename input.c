@@ -667,15 +667,103 @@ PAL_TouchEventFilter(
 --*/
 {
 #ifdef PAL_HAS_TOUCH
+   static float startX = 0.0;
+   static float startY = 0.0;
+   static float dx = 0.0;
+   static float dy = 0.0;
+
+   static SDL_TouchID finger = 0;
+   static int moved = 0;
+
    switch (lpEvent->type)
    {
    case SDL_FINGERDOWN:
+	  // only care about the first finger
+	  finger = lpEvent->tfinger.fingerId;
+	  startX = lpEvent->tfinger.x;
+	  startY = lpEvent->tfinger.y;
+	  dx = 0.0;
+	  dy = 0.0;
+	  moved = 0;
 	  break;
 
    case SDL_FINGERUP:
+	  if (lpEvent->tfinger.fingerId == finger && !moved)
+	  {
+		 if (startX > 0.7 && startY < 0.2)
+		 {
+			// click on right corner: menu
+			g_InputState.dwKeyPress = kKeyMenu;
+		 }
+		 else
+		 {
+			// click on rest of the area: enter
+			g_InputState.dwKeyPress = kKeySearch;
+		 }
+	  }
 	  break;
 
    case SDL_FINGERMOTION:
+	  if (lpEvent->tfinger.fingerId == finger)
+	  {
+		 dx = lpEvent->tfinger.dx;
+		 dy = lpEvent->tfinger.dy;
+
+         if (fabs(dx) > 0.1 && fabs(dy) > 0.1)
+         {
+            moved = 1;
+
+			if (dx > 0.1)
+			{
+			   if (dy > 0.1)
+			   {
+				  g_InputState.dir = kDirNorth;
+				  g_InputState.prevdir = kDirUnknown;
+			   }
+			   else if (dy < -0.1)
+			   {
+				  g_InputState.dir = kDirEast;
+				  g_InputState.prevdir = kDirUnknown;
+			   }
+			}
+			else if (dx < -0.1)
+			{
+			   if (dy > 0.1)
+			   {
+				  g_InputState.dir = kDirWest;
+				  g_InputState.prevdir = kDirUnknown;
+			   }
+			   else if (dy < -0.1)
+			   {
+				  g_InputState.dir = kDirSouth;
+				  g_InputState.prevdir = kDirUnknown;
+			   }
+			}
+
+			if (fabs(dx) > fabs(dy))
+			{
+			   if (dx > 0.3)
+			   {
+				  g_InputState.dwKeyPress |= kKeyRight;
+			   }
+			   else if (dx < -0.3)
+			   {
+				  g_InputState.dwKeyPress |= kKeyLeft;
+			   }
+			}
+			else if (fabs(dy) > fabs(dx))
+			{
+			   if (dy > 0.3)
+			   {
+				  g_InputState.dwKeyPress |= kKeyUp;
+			   }
+			   else if (dy < -0.3)
+			   {
+				  g_InputState.dwKeyPress |= kKeyDown;
+			   }
+			}
+		 }
+	  }
 	  break;
    }
 #endif
