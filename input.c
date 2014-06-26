@@ -647,6 +647,40 @@ PAL_JoystickEventFilter(
 #endif
 }
 
+static VOID
+PAL_TouchEventFilter(
+   const SDL_Event *lpEvent
+)
+/*++
+  Purpose:
+
+    Handle touch events.
+
+  Parameters:
+
+    [IN]  lpEvent - pointer to the event.
+
+  Return value:
+
+    None.
+
+--*/
+{
+#ifdef PAL_HAS_TOUCH
+   switch (lpEvent->type)
+   {
+   case SDL_FINGERDOWN:
+	  break;
+
+   case SDL_FINGERUP:
+	  break;
+
+   case SDL_FINGERMOTION:
+	  break;
+   }
+#endif
+}
+
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
 static int SDLCALL
 PAL_EventFilter(
@@ -707,6 +741,9 @@ PAL_EventFilter(
    PAL_KeyboardEventFilter(lpEvent);
    PAL_MouseEventFilter(lpEvent);
    PAL_JoystickEventFilter(lpEvent);
+#if SDL_VERSION_ATLEAST(2,0,0)
+   PAL_TouchEventFilter(lpEvent);
+#endif
 
    //
    // All events are handled here; don't put anything to the internal queue

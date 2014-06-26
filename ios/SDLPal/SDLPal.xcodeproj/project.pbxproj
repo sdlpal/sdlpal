@@ -7,6 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7111724A195BF53800A7DE3B /* abc.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117236195BF53800A7DE3B /* abc.mkf */; };
+		7111724B195BF53800A7DE3B /* ball.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117237195BF53800A7DE3B /* ball.mkf */; };
+		7111724C195BF53800A7DE3B /* data.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117238195BF53800A7DE3B /* data.mkf */; };
+		7111724D195BF53800A7DE3B /* f.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117239195BF53800A7DE3B /* f.mkf */; };
+		7111724E195BF53800A7DE3B /* fbp.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 7111723A195BF53800A7DE3B /* fbp.mkf */; };
+		7111724F195BF53800A7DE3B /* fire.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 7111723B195BF53800A7DE3B /* fire.mkf */; };
+		71117250195BF53800A7DE3B /* gop.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 7111723C195BF53800A7DE3B /* gop.mkf */; };
+		71117251195BF53800A7DE3B /* m.msg in Resources */ = {isa = PBXBuildFile; fileRef = 7111723D195BF53800A7DE3B /* m.msg */; };
+		71117252195BF53800A7DE3B /* map.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 7111723E195BF53800A7DE3B /* map.mkf */; };
+		71117253195BF53800A7DE3B /* mgo.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 7111723F195BF53800A7DE3B /* mgo.mkf */; };
+		71117254195BF53800A7DE3B /* midi.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117240195BF53800A7DE3B /* midi.mkf */; };
+		71117255195BF53800A7DE3B /* mus.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117241195BF53800A7DE3B /* mus.mkf */; };
+		71117256195BF53800A7DE3B /* pat.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117242195BF53800A7DE3B /* pat.mkf */; };
+		71117257195BF53800A7DE3B /* rgm.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117243195BF53800A7DE3B /* rgm.mkf */; };
+		71117258195BF53800A7DE3B /* rng.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117244195BF53800A7DE3B /* rng.mkf */; };
+		71117259195BF53800A7DE3B /* sss.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117245195BF53800A7DE3B /* sss.mkf */; };
+		7111725A195BF53800A7DE3B /* voc.mkf in Resources */ = {isa = PBXBuildFile; fileRef = 71117246195BF53800A7DE3B /* voc.mkf */; };
+		7111725B195BF53800A7DE3B /* wor16.asc in Resources */ = {isa = PBXBuildFile; fileRef = 71117247195BF53800A7DE3B /* wor16.asc */; };
+		7111725C195BF53800A7DE3B /* wor16.fon in Resources */ = {isa = PBXBuildFile; fileRef = 71117248195BF53800A7DE3B /* wor16.fon */; };
+		7111725D195BF53800A7DE3B /* word.dat in Resources */ = {isa = PBXBuildFile; fileRef = 71117249195BF53800A7DE3B /* word.dat */; };
 		71655061195BB372006E1227 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71655060195BB372006E1227 /* UIKit.framework */; };
 		71655063195BB372006E1227 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71655062195BB372006E1227 /* Foundation.framework */; };
 		71655065195BB372006E1227 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71655064195BB372006E1227 /* CoreGraphics.framework */; };
@@ -164,6 +184,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		71117236195BF53800A7DE3B /* abc.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = abc.mkf; sourceTree = "<group>"; };
+		71117237195BF53800A7DE3B /* ball.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ball.mkf; sourceTree = "<group>"; };
+		71117238195BF53800A7DE3B /* data.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = data.mkf; sourceTree = "<group>"; };
+		71117239195BF53800A7DE3B /* f.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = f.mkf; sourceTree = "<group>"; };
+		7111723A195BF53800A7DE3B /* fbp.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = fbp.mkf; sourceTree = "<group>"; };
+		7111723B195BF53800A7DE3B /* fire.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = fire.mkf; sourceTree = "<group>"; };
+		7111723C195BF53800A7DE3B /* gop.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = gop.mkf; sourceTree = "<group>"; };
+		7111723D195BF53800A7DE3B /* m.msg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = m.msg; sourceTree = "<group>"; };
+		7111723E195BF53800A7DE3B /* map.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = map.mkf; sourceTree = "<group>"; };
+		7111723F195BF53800A7DE3B /* mgo.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = mgo.mkf; sourceTree = "<group>"; };
+		71117240195BF53800A7DE3B /* midi.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = midi.mkf; sourceTree = "<group>"; };
+		71117241195BF53800A7DE3B /* mus.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = mus.mkf; sourceTree = "<group>"; };
+		71117242195BF53800A7DE3B /* pat.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pat.mkf; sourceTree = "<group>"; };
+		71117243195BF53800A7DE3B /* rgm.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = rgm.mkf; sourceTree = "<group>"; };
+		71117244195BF53800A7DE3B /* rng.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = rng.mkf; sourceTree = "<group>"; };
+		71117245195BF53800A7DE3B /* sss.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = sss.mkf; sourceTree = "<group>"; };
+		71117246195BF53800A7DE3B /* voc.mkf */ = {isa = PBXFileReference; lastKnownFileType = file; path = voc.mkf; sourceTree = "<group>"; };
+		71117247195BF53800A7DE3B /* wor16.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = wor16.asc; sourceTree = "<group>"; };
+		71117248195BF53800A7DE3B /* wor16.fon */ = {isa = PBXFileReference; lastKnownFileType = file; path = wor16.fon; sourceTree = "<group>"; };
+		71117249195BF53800A7DE3B /* word.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = word.dat; sourceTree = "<group>"; };
 		7165505D195BB372006E1227 /* SDLPal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDLPal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		71655060195BB372006E1227 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		71655062195BB372006E1227 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -523,6 +563,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		71117235195BF53800A7DE3B /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				71117236195BF53800A7DE3B /* abc.mkf */,
+				71117237195BF53800A7DE3B /* ball.mkf */,
+				71117238195BF53800A7DE3B /* data.mkf */,
+				71117239195BF53800A7DE3B /* f.mkf */,
+				7111723A195BF53800A7DE3B /* fbp.mkf */,
+				7111723B195BF53800A7DE3B /* fire.mkf */,
+				7111723C195BF53800A7DE3B /* gop.mkf */,
+				7111723D195BF53800A7DE3B /* m.msg */,
+				7111723E195BF53800A7DE3B /* map.mkf */,
+				7111723F195BF53800A7DE3B /* mgo.mkf */,
+				71117240195BF53800A7DE3B /* midi.mkf */,
+				71117241195BF53800A7DE3B /* mus.mkf */,
+				71117242195BF53800A7DE3B /* pat.mkf */,
+				71117243195BF53800A7DE3B /* rgm.mkf */,
+				71117244195BF53800A7DE3B /* rng.mkf */,
+				71117245195BF53800A7DE3B /* sss.mkf */,
+				71117246195BF53800A7DE3B /* voc.mkf */,
+				71117247195BF53800A7DE3B /* wor16.asc */,
+				71117248195BF53800A7DE3B /* wor16.fon */,
+				71117249195BF53800A7DE3B /* word.dat */,
+			);
+			name = Data;
+			path = ../../Data;
+			sourceTree = "<group>";
+		};
 		71655054195BB372006E1227 = {
 			isa = PBXGroup;
 			children = (
@@ -558,6 +626,7 @@
 		71655066195BB372006E1227 /* SDLPal */ = {
 			isa = PBXGroup;
 			children = (
+				71117235195BF53800A7DE3B /* Data */,
 				716551E4195BB6DA006E1227 /* adplug */,
 				716551FE195BB6DA006E1227 /* ascii.h */,
 				716551FF195BB6DA006E1227 /* battle.c */,
@@ -1126,6 +1195,26 @@
 				71655075195BB372006E1227 /* Default@2x.png in Resources */,
 				71655077195BB372006E1227 /* Default-568h@2x.png in Resources */,
 				7165507F195BB3D8006E1227 /* Icon.png in Resources */,
+				7111724A195BF53800A7DE3B /* abc.mkf in Resources */,
+				7111724B195BF53800A7DE3B /* ball.mkf in Resources */,
+				7111724C195BF53800A7DE3B /* data.mkf in Resources */,
+				7111724D195BF53800A7DE3B /* f.mkf in Resources */,
+				7111724E195BF53800A7DE3B /* fbp.mkf in Resources */,
+				7111724F195BF53800A7DE3B /* fire.mkf in Resources */,
+				71117250195BF53800A7DE3B /* gop.mkf in Resources */,
+				71117251195BF53800A7DE3B /* m.msg in Resources */,
+				71117252195BF53800A7DE3B /* map.mkf in Resources */,
+				71117253195BF53800A7DE3B /* mgo.mkf in Resources */,
+				71117254195BF53800A7DE3B /* midi.mkf in Resources */,
+				71117255195BF53800A7DE3B /* mus.mkf in Resources */,
+				71117256195BF53800A7DE3B /* pat.mkf in Resources */,
+				71117257195BF53800A7DE3B /* rgm.mkf in Resources */,
+				71117258195BF53800A7DE3B /* rng.mkf in Resources */,
+				71117259195BF53800A7DE3B /* sss.mkf in Resources */,
+				7111725A195BF53800A7DE3B /* voc.mkf in Resources */,
+				7111725B195BF53800A7DE3B /* wor16.asc in Resources */,
+				7111725C195BF53800A7DE3B /* wor16.fon in Resources */,
+				7111725D195BF53800A7DE3B /* word.dat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
