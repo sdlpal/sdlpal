@@ -600,7 +600,9 @@ PAL_LoadBattleBackground(
    {
       TerminateOnError("PAL_LoadBattleBackground(): failed to create surface!");
    }
-
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+   SDL_SetSurfacePalette(g_Battle.lpBackground, gpScreen->format->palette);
+#endif
    //
    // Load the picture
    //
@@ -1348,6 +1350,10 @@ PAL_StartBattle(
    {
       TerminateOnError("PAL_StartBattle(): creating surface for scene buffer failed!");
    }
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+   SDL_SetSurfacePalette(g_Battle.lpSceneBuf, gpScreen->format->palette);
+#endif
 
    PAL_UpdateEquipments();
 
