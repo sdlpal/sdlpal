@@ -1342,8 +1342,11 @@ PAL_GetPlayerDexterity(
 
    w = gpGlobals->g.PlayerRoles.rgwDexterity[wPlayerRole];
 
-//   for (i = 0; i <= MAX_PLAYER_EQUIPMENTS; i++)
+#ifdef PAL_CLASSIC
+   for (i = 0; i <= MAX_PLAYER_EQUIPMENTS; i++)
+#else
    for (i = 0; i <= MAX_PLAYER_EQUIPMENTS - 1; i++)
+#endif
    {
       w += gpGlobals->rgEquipmentEffect[i].rgwDexterity[wPlayerRole];
    }
