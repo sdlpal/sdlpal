@@ -440,6 +440,7 @@ VIDEO_SetPalette(
    }
 
    SDL_SetSurfacePalette(gpScreen, palette);
+   SDL_SetSurfacePalette(gpScreenBak, palette);
 #else
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
