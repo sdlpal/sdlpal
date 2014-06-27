@@ -255,6 +255,11 @@ PAL_SplashScreen(
       gpScreen->format->Rmask, gpScreen->format->Gmask, gpScreen->format->Bmask,
       gpScreen->format->Amask);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+   SDL_SetSurfacePalette(lpBitmapDown, gpScreen->format->palette);
+   SDL_SetSurfacePalette(lpBitmapUp, gpScreen->format->palette);
+#endif
+
    //
    // Read the bitmaps
    //
