@@ -182,7 +182,9 @@ PAL_CreateBox(
          return NULL;
       }
 
+#if SDL_VERSION_ATLEAST(2,0,0)
       SDL_SetSurfacePalette(save, gpScreen->format->palette);
+#endif
       SDL_BlitSurface(gpScreen, &rect, save, NULL);
 
       lpBox->lpSavedArea = save;
@@ -294,7 +296,9 @@ PAL_CreateSingleLineBox(
          return NULL;
       }
 
+#if SDL_VERSION_ATLEAST(2,0,0)
       SDL_SetSurfacePalette(save, gpScreen->format->palette);
+#endif
       SDL_BlitSurface(gpScreen, &rect, save, NULL);
 
       lpBox->pos = pos;

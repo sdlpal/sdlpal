@@ -924,9 +924,7 @@ PAL_EventFilter(
    PAL_KeyboardEventFilter(lpEvent);
    PAL_MouseEventFilter(lpEvent);
    PAL_JoystickEventFilter(lpEvent);
-#if SDL_VERSION_ATLEAST(2,0,0)
    PAL_TouchEventFilter(lpEvent);
-#endif
 
    //
    // All events are handled here; don't put anything to the internal queue

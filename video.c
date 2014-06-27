@@ -86,9 +86,15 @@ VIDEO_Init(
    //
    // Before we can render anything, we need a window and a renderer.
    //
+#if defined (__IOS__) || defined (__ANDROID__)
+   gpWindow = SDL_CreateWindow("Pal",
+      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320, 200,
+      SDL_WINDOW_SHOWN);
+#else
    gpWindow = SDL_CreateWindow("Pal",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 400,
       SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+#endif
 
    if (gpWindow == NULL)
    {
