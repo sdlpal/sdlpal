@@ -906,7 +906,19 @@ PAL_EventFilter(
          VIDEO_Resize(lpEvent->window.data1, lpEvent->window.data2);
       }
       break;
+
+#ifdef __IOS__
+   case SDL_APP_WILLENTERBACKGROUND:
+      g_bRenderPaused = TRUE;
+      break;
+
+   case SDL_APP_WILLENTERFOREGROUND:
+      g_bRenderPaused = FALSE;
+      break;
+#endif
+
 #else
+           
    case SDL_VIDEORESIZE:
       //
       // resized the window

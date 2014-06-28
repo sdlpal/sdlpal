@@ -35,6 +35,8 @@ static SDL_Renderer      *gpRenderer         = NULL;
 static SDL_Surface       *gpScreenReal       = NULL;
 #endif
 
+volatile BOOL g_bRenderPaused = FALSE;
+
 #if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO)
    static BOOL bScaleScreen = FALSE;
 #else
@@ -308,11 +310,14 @@ VIDEO_UpdateScreen(
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
    // TODO
-   SDL_Texture *pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreen);
-   SDL_RenderClear(gpRenderer);
-   SDL_RenderCopy(gpRenderer, pTexture, NULL/*srcrect*/, NULL/*dstrect*/);
-   SDL_RenderPresent(gpRenderer);
-   SDL_DestroyTexture(pTexture);
+   if (!g_bRenderPaused)
+   {
+      SDL_Texture *pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreen);
+      SDL_RenderClear(gpRenderer);
+      SDL_RenderCopy(gpRenderer, pTexture, NULL/*srcrect*/, NULL/*dstrect*/);
+      SDL_RenderPresent(gpRenderer);
+      SDL_DestroyTexture(pTexture);
+   }
 #else
    SDL_Rect        srcrect, dstrect;
    short           offset = 240 - 200;

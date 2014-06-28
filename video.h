@@ -31,6 +31,7 @@ extern "C"
 
 extern SDL_Surface *gpScreen;
 extern SDL_Surface *gpScreenBak;
+extern volatile BOOL g_bRenderPaused;
 
 INT
 #ifdef GEKKO // Rikku2000: Crash on compile, allready define on WIISDK
