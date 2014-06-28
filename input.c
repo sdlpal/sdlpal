@@ -809,23 +809,19 @@ PAL_TouchEventFilter(
    case SDL_FINGERDOWN:
 	  if (finger1 == 0)
 	  {
-		 int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-		 if (area != TOUCH_NONE)
-		 {
-			finger1 = lpEvent->tfinger.fingerId;
-			prev_touch1 = area;
-			PAL_SetTouchAction(area);
-		 }
+         int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
+
+         finger1 = lpEvent->tfinger.fingerId;
+         prev_touch1 = area;
+         PAL_SetTouchAction(area);
 	  }
 	  else if (finger2 == 0)
 	  {
-		 int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-		 if (area != TOUCH_NONE)
-		 {
-			finger2 = lpEvent->tfinger.fingerId;
-			prev_touch2 = area;
-			PAL_SetTouchAction(area);
-		 }
+         int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
+
+         finger2 = lpEvent->tfinger.fingerId;
+         prev_touch2 = area;
+         PAL_SetTouchAction(area);
 	  }
 	  break;
 
@@ -848,16 +844,22 @@ PAL_TouchEventFilter(
       if (lpEvent->tfinger.fingerId == finger1)
       {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-         PAL_UnsetTouchAction(prev_touch1);
-         prev_touch1 = area;
-         PAL_SetTouchAction(area);
+         if (prev_touch1 != area)
+         {
+            PAL_UnsetTouchAction(prev_touch1);
+            prev_touch1 = area;
+            PAL_SetTouchAction(area);
+         }
       }
       else if (lpEvent->tfinger.fingerId == finger2)
       {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-         PAL_UnsetTouchAction(prev_touch2);
-         prev_touch2 = area;
-         PAL_SetTouchAction(area);
+         if (prev_touch2 != area)
+         {
+            PAL_UnsetTouchAction(prev_touch2);
+            prev_touch2 = area;
+            PAL_SetTouchAction(area);
+         }
       }
       break;
    }
