@@ -578,6 +578,9 @@ main(
 #if defined(GPH) || defined(DINGOO)
       wScreenWidth = 320;
       wScreenHeight = 240;
+#elif defined (__IOS__) || defined (__ANDROID__)
+      wScreenWidth = 320;
+      wScreenHeight = 200;
 #else
       wScreenWidth = 640;
       wScreenHeight = fFullScreen ? 480 : 400;

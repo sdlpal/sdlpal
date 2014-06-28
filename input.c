@@ -912,7 +912,7 @@ PAL_EventFilter(
       g_bRenderPaused = TRUE;
       break;
 
-   case SDL_APP_WILLENTERFOREGROUND:
+   case SDL_APP_DIDENTERFOREGROUND:
       g_bRenderPaused = FALSE;
       break;
 #endif

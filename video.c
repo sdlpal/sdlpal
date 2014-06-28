@@ -31,16 +31,20 @@ SDL_Surface              *gpScreenBak        = NULL;
 #if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_Window        *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
+static int g_iWindowHeight = 0;
+static int g_iWindowWidth = 0;
 #else
 static SDL_Surface       *gpScreenReal       = NULL;
 #endif
 
 volatile BOOL g_bRenderPaused = FALSE;
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 #if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO)
    static BOOL bScaleScreen = FALSE;
 #else
    static BOOL bScaleScreen = TRUE;
+#endif
 #endif
 
 // Initial screen size
@@ -89,12 +93,16 @@ VIDEO_Init(
    // Before we can render anything, we need a window and a renderer.
    //
 #if defined (__IOS__) || defined (__ANDROID__)
+   g_iWindowWidth = wScreenWidth;
+   g_iWindowHeight = wScreenHeight;
    gpWindow = SDL_CreateWindow("Pal",
-      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320, 200,
+      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, wScreenWidth, wScreenHeight,
       SDL_WINDOW_SHOWN);
 #else
+   g_iWindowWidth = wScreenWidth;
+   g_iWindowHeight = wScreenHeight;
    gpWindow = SDL_CreateWindow("Pal",
-      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 400,
+      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, wScreenWidth, wScreenHeight,
       SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 #endif
 
@@ -821,7 +829,33 @@ VIDEO_SwitchScreen(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   // TODO
+    int               i, j;
+    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
+    SDL_Rect          dstrect;
+    SDL_Texture      *pTexture;
+
+    wSpeed++;
+    wSpeed *= 10;
+
+    for (i = 0; i < 6; i++)
+    {
+        for (j = rgIndex[i]; j < gpScreen->pitch * gpScreen->h; j += 6)
+        {
+            ((LPBYTE)(gpScreenBak->pixels))[j] = ((LPBYTE)(gpScreen->pixels))[j];
+        }
+
+        //
+        // Draw the backup buffer to the screen
+        //
+        pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
+        SDL_RenderClear(gpRenderer);
+        SDL_RenderCopy(gpRenderer, pTexture, NULL, NULL);
+        SDL_RenderPresent(gpRenderer);
+        SDL_DestroyTexture(pTexture);
+
+        UTIL_Delay(wSpeed);
+    }
+
 #else
    int               i, j;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
