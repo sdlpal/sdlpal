@@ -108,6 +108,11 @@ VIDEO_Init(
       return -1;
    }
 
+#if defined (__IOS__)
+   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+   SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 1);
+#endif
+
    //
    // Create the screen buffer and the backup screen buffer.
    //
@@ -447,6 +452,8 @@ VIDEO_SetPalette(
 
    SDL_SetSurfacePalette(gpScreen, palette);
    SDL_SetSurfacePalette(gpScreenBak, palette);
+    
+   VIDEO_UpdateScreen(NULL);
 #else
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
