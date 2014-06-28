@@ -31,8 +31,6 @@ SDL_Surface              *gpScreenBak        = NULL;
 #if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_Window        *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
-static int g_iWindowHeight = 0;
-static int g_iWindowWidth = 0;
 #else
 static SDL_Surface       *gpScreenReal       = NULL;
 #endif
@@ -93,14 +91,10 @@ VIDEO_Init(
    // Before we can render anything, we need a window and a renderer.
    //
 #if defined (__IOS__) || defined (__ANDROID__)
-   g_iWindowWidth = wScreenWidth;
-   g_iWindowHeight = wScreenHeight;
    gpWindow = SDL_CreateWindow("Pal",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, wScreenWidth, wScreenHeight,
       SDL_WINDOW_SHOWN);
 #else
-   g_iWindowWidth = wScreenWidth;
-   g_iWindowHeight = wScreenHeight;
    gpWindow = SDL_CreateWindow("Pal",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, wScreenWidth, wScreenHeight,
       SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
@@ -120,7 +114,7 @@ VIDEO_Init(
 
 #if defined (__IOS__)
    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
-   SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 1);
+ //  SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 1);
 #endif
 
    //
@@ -317,12 +311,57 @@ VIDEO_UpdateScreen(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   // TODO
    if (!g_bRenderPaused)
    {
       SDL_Texture *pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreen);
-      SDL_RenderClear(gpRenderer);
-      SDL_RenderCopy(gpRenderer, pTexture, NULL/*srcrect*/, NULL/*dstrect*/);
+
+      if (lpRect != NULL)
+      {
+         SDL_Rect viewport, dstrect;
+
+         SDL_RenderGetViewport(gpRenderer, &viewport);
+         dstrect.x = (SHORT)((INT)(lpRect->x) * viewport.w / gpScreen->w);
+         dstrect.y = (SHORT)((INT)(lpRect->y) * viewport.h / gpScreen->h);
+         dstrect.w = (WORD)((DWORD)(lpRect->w) * viewport.w / gpScreen->w);
+         dstrect.h = (WORD)((DWORD)(lpRect->h) * viewport.h / gpScreen->h);
+
+         SDL_RenderCopy(gpRenderer, pTexture, lpRect, &dstrect);
+      }
+      else if (g_wShakeTime != 0)
+      {
+          //
+          // Shake the screen
+          //
+          SDL_Rect srcrect, dstrect, viewport;
+
+          SDL_RenderGetViewport(gpRenderer, &viewport);
+          srcrect.x = 0;
+          srcrect.y = 0;
+          srcrect.w = 320;
+          srcrect.h = 200 - g_wShakeLevel;
+          
+          dstrect.x = 0;
+          dstrect.y = 0;
+          dstrect.w = 320 * viewport.w / viewport.w;
+          dstrect.h = (200 - g_wShakeLevel) * viewport.h / gpScreen->h;
+          
+          if (g_wShakeTime & 1)
+          {
+              srcrect.y = g_wShakeLevel;
+          }
+          else
+          {
+              dstrect.y = g_wShakeLevel * viewport.h / gpScreen->h;
+          }
+
+          SDL_RenderClear(gpRenderer);
+          SDL_RenderCopy(gpRenderer, pTexture, &srcrect, &dstrect);
+          g_wShakeTime--;
+      }
+      else
+      {
+         SDL_RenderCopy(gpRenderer, pTexture, NULL, NULL);
+      }
       SDL_RenderPresent(gpRenderer);
       SDL_DestroyTexture(pTexture);
    }
@@ -831,8 +870,12 @@ VIDEO_SwitchScreen(
 #if SDL_VERSION_ATLEAST(2,0,0)
     int               i, j;
     const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
-    SDL_Rect          dstrect;
     SDL_Texture      *pTexture;
+    
+    if (g_bRenderPaused)
+    {
+        return;
+    }
 
     wSpeed++;
     wSpeed *= 10;
@@ -918,7 +961,113 @@ VIDEO_FadeScreen(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   // TODO
+    int               i, j, k;
+    DWORD             time;
+    BYTE              a, b;
+    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
+    SDL_Rect          viewport;
+    SDL_Texture      *pTexture;
+    
+    if (g_bRenderPaused)
+    {
+        return;
+    }
+    
+    SDL_RenderGetViewport(gpRenderer, &viewport);
+
+    time = SDL_GetTicks();
+    
+    wSpeed++;
+    wSpeed *= 10;
+    
+    for (i = 0; i < 12; i++)
+    {
+        for (j = 0; j < 6; j++)
+        {
+            PAL_ProcessEvent();
+            while (SDL_GetTicks() <= time)
+            {
+                PAL_ProcessEvent();
+                SDL_Delay(5);
+            }
+            time = SDL_GetTicks() + wSpeed;
+            
+            //
+            // Blend the pixels in the 2 buffers, and put the result into the
+            // backup buffer
+            //
+            for (k = rgIndex[j]; k < gpScreen->pitch * gpScreen->h; k += 6)
+            {
+                a = ((LPBYTE)(gpScreen->pixels))[k];
+                b = ((LPBYTE)(gpScreenBak->pixels))[k];
+                
+                if (i > 0)
+                {
+                    if ((a & 0x0F) > (b & 0x0F))
+                    {
+                        b++;
+                    }
+                    else if ((a & 0x0F) < (b & 0x0F))
+                    {
+                        b--;
+                    }
+                }
+                
+                ((LPBYTE)(gpScreenBak->pixels))[k] = ((a & 0xF0) | (b & 0x0F));
+            }
+            
+            //
+            // Draw the backup buffer to the screen
+            //
+            if (g_wShakeTime != 0)
+            {
+                //
+                // Shake the screen
+                //
+                SDL_Rect srcrect, dstrect;
+                
+                srcrect.x = 0;
+                srcrect.y = 0;
+                srcrect.w = 320;
+                srcrect.h = 200 - g_wShakeLevel;
+                
+                dstrect.x = 0;
+                dstrect.y = 0;
+                dstrect.w = 320 * viewport.w / gpScreen->w;
+                dstrect.h = (200 - g_wShakeLevel) * viewport.h / gpScreen->h;
+
+                if (g_wShakeTime & 1)
+                {
+                    srcrect.y = g_wShakeLevel;
+                }
+                else
+                {
+                    dstrect.y = g_wShakeLevel * viewport.h / gpScreen->h;
+                }
+                
+                pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
+                SDL_RenderClear(gpRenderer);
+                SDL_RenderCopy(gpRenderer, pTexture, &srcrect, &dstrect);
+                SDL_RenderPresent(gpRenderer);
+                SDL_DestroyTexture(pTexture);
+
+                g_wShakeTime--;
+            }
+            else
+            {
+                pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
+                SDL_RenderCopy(gpRenderer, pTexture,  NULL, NULL);
+                SDL_RenderPresent(gpRenderer);
+                SDL_DestroyTexture(pTexture);
+            }
+        }
+    }
+
+    //
+    // Draw the result buffer to the screen as the final step
+    //
+    VIDEO_UpdateScreen(NULL);
+
 #else
    int               i, j, k;
    DWORD             time;
