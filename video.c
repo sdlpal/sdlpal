@@ -31,6 +31,7 @@ SDL_Surface              *gpScreenBak        = NULL;
 #if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_Window        *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
+static SDL_Texture       *gpTouchOverlay     = NULL;
 #else
 static SDL_Surface       *gpScreenReal       = NULL;
 #endif
@@ -83,6 +84,10 @@ VIDEO_Init(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+   SDL_Surface *overlay;
+#endif
+
    g_wInitialWidth = wScreenWidth;
    g_wInitialHeight = wScreenHeight;
 
@@ -114,7 +119,7 @@ VIDEO_Init(
 
 #if defined (__IOS__)
    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
- //  SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 1);
+   SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 1);
 #endif
 
    //
@@ -147,6 +152,15 @@ VIDEO_Init(
       gpWindow = NULL;
 
       return -2;
+   }
+
+   overlay = SDL_LoadBMP(PAL_PREFIX "overlay.bmp");
+   if (overlay != NULL)
+   {
+      SDL_SetColorKey(overlay, SDL_RLEACCEL, SDL_MapRGB(overlay->format, 255, 0, 255));
+      gpTouchOverlay = SDL_CreateTextureFromSurface(gpRenderer, overlay);
+      SDL_SetTextureAlphaMod(gpTouchOverlay, 120);
+      SDL_FreeSurface(overlay);
    }
 
 #else
@@ -361,6 +375,10 @@ VIDEO_UpdateScreen(
       else
       {
          SDL_RenderCopy(gpRenderer, pTexture, NULL, NULL);
+      }
+      if (gpTouchOverlay)
+      {
+         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
       }
       SDL_RenderPresent(gpRenderer);
       SDL_DestroyTexture(pTexture);
@@ -893,6 +911,10 @@ VIDEO_SwitchScreen(
         pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
         SDL_RenderClear(gpRenderer);
         SDL_RenderCopy(gpRenderer, pTexture, NULL, NULL);
+        if (gpTouchOverlay)
+        {
+            SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+        }
         SDL_RenderPresent(gpRenderer);
         SDL_DestroyTexture(pTexture);
 
@@ -1048,6 +1070,10 @@ VIDEO_FadeScreen(
                 pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
                 SDL_RenderClear(gpRenderer);
                 SDL_RenderCopy(gpRenderer, pTexture, &srcrect, &dstrect);
+                if (gpTouchOverlay)
+                {
+                    SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+                }
                 SDL_RenderPresent(gpRenderer);
                 SDL_DestroyTexture(pTexture);
 
@@ -1057,6 +1083,10 @@ VIDEO_FadeScreen(
             {
                 pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
                 SDL_RenderCopy(gpRenderer, pTexture,  NULL, NULL);
+                if (gpTouchOverlay)
+                {
+                    SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+                }
                 SDL_RenderPresent(gpRenderer);
                 SDL_DestroyTexture(pTexture);
             }

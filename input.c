@@ -672,17 +672,17 @@ PAL_GetTouchArea(
       //
 	  return TOUCH_NONE;
    }
-   else if (X < 0.4)
+   else if (X < 1.0 / 3)
    {
-      if (Y - 0.5 < (0.2 - fabs(X - 0.2)) * (0.25 / 0.2))
+      if (Y - 0.5 < (1.0 / 6 - fabs(X - 1.0 / 3 / 2)) * (0.5 / (1.0 / 3)))
       {
          return TOUCH_UP;
       }
-	  else if (Y - 0.75 > fabs(X - 0.2) * (0.25 / 0.2))
+	  else if (Y - 0.75 > fabs(X - 1.0 / 3 / 2) * (0.5 / (1.0 / 3)))
 	  {
 		 return TOUCH_DOWN;
 	  }
-	  else if (X < 0.2 && fabs(Y - 0.75) < 0.25 - X * (0.25 / 0.2))
+	  else if (X < 1.0 / 3 / 2 && fabs(Y - 0.75) < 0.25 - X * (0.5 / (1.0 / 3)))
 	  {
 		 return TOUCH_LEFT;
 	  }
@@ -691,9 +691,9 @@ PAL_GetTouchArea(
 		 return TOUCH_RIGHT;
 	  }
    }
-   else if (X > 0.6)
+   else if (X > 1.0 - 1.0 / 3)
    {
-	  if (X < 0.8)
+	  if (X < 1.0 - (1.0 / 3 / 2))
 	  {
 		 if (Y < 0.75)
 		 {
@@ -748,6 +748,14 @@ PAL_SetTouchAction(
 	  break;
 
    case TOUCH_BUTTON1:
+      if (gpGlobals->fInBattle)
+      {
+         g_InputState.dwKeyPress |= kKeyRepeat;
+      }
+      else
+      {
+         g_InputState.dwKeyPress |= kKeyThrowItem;
+      }
 	  break;
 
    case TOUCH_BUTTON2:
@@ -755,6 +763,7 @@ PAL_SetTouchAction(
 	  break;
 
    case TOUCH_BUTTON3:
+      g_InputState.dwKeyPress |= kKeyUseItem;
 	  break;
 
    case TOUCH_BUTTON4:
