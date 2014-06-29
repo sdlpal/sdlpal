@@ -342,7 +342,7 @@ VIDEO_UpdateScreen(
           
           dstrect.x = 0;
           dstrect.y = 0;
-          dstrect.w = 320 * viewport.w / viewport.w;
+          dstrect.w = 320 * viewport.w / gpScreen->w;
           dstrect.h = (200 - g_wShakeLevel) * viewport.h / gpScreen->h;
           
           if (g_wShakeTime & 1)
