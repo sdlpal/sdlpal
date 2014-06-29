@@ -282,6 +282,12 @@ VIDEO_Shutdown(
 
 #if SDL_VERSION_ATLEAST(2,0,0)
 
+   if (gpTouchOverlay)
+   {
+      SDL_DestroyTexture(gpTouchOverlay);
+   }
+   gpTouchOverlay = NULL;
+
    if (gpRenderer)
    {
       SDL_DestroyRenderer(gpRenderer);
@@ -340,6 +346,11 @@ VIDEO_UpdateScreen(
          dstrect.h = (WORD)((DWORD)(lpRect->h) * viewport.h / gpScreen->h);
 
          SDL_RenderCopy(gpRenderer, pTexture, lpRect, &dstrect);
+
+         if (gpTouchOverlay)
+         {
+            SDL_RenderCopy(gpRenderer, gpTouchOverlay, lpRect, &dstrect);
+         }
       }
       else if (g_wShakeTime != 0)
       {
@@ -370,15 +381,20 @@ VIDEO_UpdateScreen(
 
           SDL_RenderClear(gpRenderer);
           SDL_RenderCopy(gpRenderer, pTexture, &srcrect, &dstrect);
+          if (gpTouchOverlay)
+          {
+             SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+          }
+
           g_wShakeTime--;
       }
       else
       {
          SDL_RenderCopy(gpRenderer, pTexture, NULL, NULL);
-      }
-      if (gpTouchOverlay)
-      {
-         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+         if (gpTouchOverlay)
+         {
+            SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+         }
       }
       SDL_RenderPresent(gpRenderer);
       SDL_DestroyTexture(pTexture);
