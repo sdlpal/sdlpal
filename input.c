@@ -923,6 +923,7 @@ PAL_EventFilter(
 
    case SDL_APP_DIDENTERFOREGROUND:
       g_bRenderPaused = FALSE;
+	  VIDEO_UpdateScreen(NULL);
       break;
 #endif
 
