@@ -31,6 +31,7 @@ SDL_Surface              *gpScreenBak        = NULL;
 #if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_Window        *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
+static SDL_Texture       *gpScreenReal       = NULL;
 static SDL_Texture       *gpTouchOverlay     = NULL;
 #else
 static SDL_Surface       *gpScreenReal       = NULL;
@@ -344,7 +345,6 @@ VIDEO_UpdateScreen(
          dstrect.y = (SHORT)((INT)(lpRect->y) * viewport.h / gpScreen->h);
          dstrect.w = (WORD)((DWORD)(lpRect->w) * viewport.w / gpScreen->w);
          dstrect.h = (WORD)((DWORD)(lpRect->h) * viewport.h / gpScreen->h);
-
          SDL_RenderCopy(gpRenderer, pTexture, lpRect, &dstrect);
 
          if (gpTouchOverlay)

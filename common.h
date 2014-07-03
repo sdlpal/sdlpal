@@ -105,14 +105,14 @@ extern "C"
 #elif defined (__IOS__)
 
 #define PAL_PREFIX            "./"
-#define PAL_SAVE_PREFIX       "../Library/"
+#define PAL_SAVE_PREFIX       "../Documents/"
 #define PAL_HAS_TOUCH         1
 
 #elif defined (__ANDROID__)
 
 #define PAL_HAS_JOYSTICKS     0
-#define PAL_PREFIX            "/mnt/sdcard/sdlpal"
-#define PAL_SAVE_PREFIX       "/mnt/sdcard/sdlpal"
+#define PAL_PREFIX            "/mnt/sdcard/sdlpal/"
+#define PAL_SAVE_PREFIX       "/mnt/sdcard/sdlpal/"
 #define PAL_HAS_TOUCH         1
 
 #else
