@@ -202,6 +202,10 @@ PAL_ScrollFBP(
       return;
    }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+   SDL_SetSurfacePalette(p, gpScreen->format->palette);
+#endif
+
    VIDEO_BackupScreen();
    PAL_FBPBlitToSurface(buf, p);
 
