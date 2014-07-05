@@ -104,7 +104,7 @@ extern "C"
 
 #elif defined (__IOS__)
 
-#define PAL_PREFIX            "./"
+#define PAL_PREFIX            "../Documents/"
 #define PAL_SAVE_PREFIX       "../Documents/"
 #define PAL_HAS_TOUCH         1
 

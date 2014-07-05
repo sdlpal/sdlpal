@@ -28,6 +28,10 @@
 #include "midi.h"
 #endif
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#include "SDL_messagebox.h"
+#endif
+
 void
 trim(
    char *str
@@ -294,8 +298,13 @@ TerminateOnError(
    vsnprintf(string, sizeof(string), fmt, argptr);
    va_end(argptr);
 
-
    fprintf(stderr, "\nFATAL ERROR: %s\n", string);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+
+   SDL_ShowSimpleMessageBox(0, "FATAL ERROR", string, NULL);
+
+#else
 
 #ifdef _WIN32
    MessageBoxA(0, string, "FATAL ERROR", MB_ICONERROR);
@@ -308,6 +317,8 @@ TerminateOnError(
 #if defined(__SYMBIAN32__)
    UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)TerminateOnError,"TerminateOnError",__FILE__, string);
    SDL_Delay(3000);
+#endif
+
 #endif
 
 #ifdef _DEBUG

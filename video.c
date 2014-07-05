@@ -27,24 +27,22 @@ SDL_Surface              *gpScreen           = NULL;
 // Backup screen buffer
 SDL_Surface              *gpScreenBak        = NULL;
 
-// The real screen surface
 #if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_Window        *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
-static SDL_Texture       *gpScreenReal       = NULL;
+static SDL_Texture       *gpTexture          = NULL;
 static SDL_Texture       *gpTouchOverlay     = NULL;
-#else
-static SDL_Surface       *gpScreenReal       = NULL;
 #endif
+
+// The real screen surface
+static SDL_Surface       *gpScreenReal       = NULL;
 
 volatile BOOL g_bRenderPaused = FALSE;
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
 #if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO)
    static BOOL bScaleScreen = FALSE;
 #else
    static BOOL bScaleScreen = TRUE;
-#endif
 #endif
 
 // Initial screen size
@@ -54,6 +52,10 @@ static WORD               g_wInitialHeight   = 400;
 // Shake times and level
 static WORD               g_wShakeTime       = 0;
 static WORD               g_wShakeLevel      = 0;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#define SDL_SoftStretch SDL_UpperBlit
+#endif
 
 INT
 #ifdef GEKKO // Rikku2000: Crash on compile, allready define on WIISDK
@@ -128,11 +130,19 @@ VIDEO_Init(
    //
    gpScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
    gpScreenBak = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+   gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,
+                                       0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+
+   //
+   // Create texture for screen.
+   //
+   gpTexture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888,
+							  SDL_TEXTUREACCESS_STREAMING, 320, 200);
 
    //
    // Failed?
    //
-   if (gpScreen == NULL || gpScreenBak == NULL)
+   if (gpScreen == NULL || gpScreenBak == NULL || gpScreenReal == NULL || gpTexture == NULL)
    {
       if (gpScreen != NULL)
       {
@@ -146,6 +156,18 @@ VIDEO_Init(
          gpScreenBak = NULL;
       }
 
+      if (gpScreenReal != NULL)
+      {
+         SDL_FreeSurface(gpScreenReal);
+         gpScreenReal = NULL;
+      }
+
+	  if (gpTexture != NULL)
+	  {
+		 SDL_DestroyTexture(gpTexture);
+		 gpTexture = NULL;
+	  }
+
       SDL_DestroyRenderer(gpRenderer);
       gpRenderer = NULL;
 
@@ -155,6 +177,9 @@ VIDEO_Init(
       return -2;
    }
 
+   //
+   // Create texture for overlay.
+   //
    overlay = SDL_LoadBMP(PAL_PREFIX "overlay.bmp");
    if (overlay != NULL)
    {
@@ -289,6 +314,12 @@ VIDEO_Shutdown(
    }
    gpTouchOverlay = NULL;
 
+   if (gpTexture)
+   {
+	  SDL_DestroyTexture(gpTexture);
+   }
+   gpTexture = NULL;
+
    if (gpRenderer)
    {
       SDL_DestroyRenderer(gpRenderer);
@@ -301,15 +332,13 @@ VIDEO_Shutdown(
    }
    gpWindow = NULL;
 
-#else
+#endif
 
    if (gpScreenReal != NULL)
    {
       SDL_FreeSurface(gpScreenReal);
    }
    gpScreenReal = NULL;
-
-#endif
 }
 
 VOID
@@ -332,74 +361,12 @@ VIDEO_UpdateScreen(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   if (!g_bRenderPaused)
+   if (g_bRenderPaused)
    {
-      SDL_Texture *pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreen);
-
-      if (lpRect != NULL)
-      {
-         SDL_Rect viewport, dstrect;
-
-         SDL_RenderGetViewport(gpRenderer, &viewport);
-         dstrect.x = (SHORT)((INT)(lpRect->x) * viewport.w / gpScreen->w);
-         dstrect.y = (SHORT)((INT)(lpRect->y) * viewport.h / gpScreen->h);
-         dstrect.w = (WORD)((DWORD)(lpRect->w) * viewport.w / gpScreen->w);
-         dstrect.h = (WORD)((DWORD)(lpRect->h) * viewport.h / gpScreen->h);
-         SDL_RenderCopy(gpRenderer, pTexture, lpRect, &dstrect);
-
-         if (gpTouchOverlay)
-         {
-            SDL_RenderCopy(gpRenderer, gpTouchOverlay, lpRect, &dstrect);
-         }
-      }
-      else if (g_wShakeTime != 0)
-      {
-          //
-          // Shake the screen
-          //
-          SDL_Rect srcrect, dstrect, viewport;
-
-          SDL_RenderGetViewport(gpRenderer, &viewport);
-          srcrect.x = 0;
-          srcrect.y = 0;
-          srcrect.w = 320;
-          srcrect.h = 200 - g_wShakeLevel;
-          
-          dstrect.x = 0;
-          dstrect.y = 0;
-          dstrect.w = 320 * viewport.w / gpScreen->w;
-          dstrect.h = (200 - g_wShakeLevel) * viewport.h / gpScreen->h;
-          
-          if (g_wShakeTime & 1)
-          {
-              srcrect.y = g_wShakeLevel;
-          }
-          else
-          {
-              dstrect.y = g_wShakeLevel * viewport.h / gpScreen->h;
-          }
-
-          SDL_RenderClear(gpRenderer);
-          SDL_RenderCopy(gpRenderer, pTexture, &srcrect, &dstrect);
-          if (gpTouchOverlay)
-          {
-             SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-          }
-
-          g_wShakeTime--;
-      }
-      else
-      {
-         SDL_RenderCopy(gpRenderer, pTexture, NULL, NULL);
-         if (gpTouchOverlay)
-         {
-            SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-         }
-      }
-      SDL_RenderPresent(gpRenderer);
-      SDL_DestroyTexture(pTexture);
+	  return;
    }
-#else
+#endif
+
    SDL_Rect        srcrect, dstrect;
    short           offset = 240 - 200;
    short           screenRealHeight = gpScreenReal->h;
@@ -434,7 +401,17 @@ VIDEO_UpdateScreen(
          SDL_UnlockSurface(gpScreenReal);
       }
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+      SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
+      SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+      if (gpTouchOverlay)
+      {
+         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+      }
+      SDL_RenderPresent(gpRenderer);
+#else
       SDL_UpdateRect(gpScreenReal, dstrect.x, dstrect.y, dstrect.w, dstrect.h);
+#endif
    }
    else if (g_wShakeTime != 0)
    {
@@ -480,8 +457,17 @@ VIDEO_UpdateScreen(
          SDL_UnlockSurface(gpScreenReal);
       }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+      SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
+      SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+      if (gpTouchOverlay)
+      {
+         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+      }
+      SDL_RenderPresent(gpRenderer);
+#else
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
-
+#endif
       g_wShakeTime--;
    }
    else
@@ -498,9 +484,18 @@ VIDEO_UpdateScreen(
          SDL_UnlockSurface(gpScreenReal);
       }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+      SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
+      SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+      if (gpTouchOverlay)
+      {
+         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+      }
+      SDL_RenderPresent(gpRenderer);
+#else
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
-   }
 #endif
+   }
 }
 
 VOID
@@ -538,7 +533,16 @@ VIDEO_SetPalette(
 
    SDL_SetSurfacePalette(gpScreen, palette);
    SDL_SetSurfacePalette(gpScreenBak, palette);
-    
+
+   //
+   // HACKHACK: need to invalidate gpScreen->map otherwise the palette
+   // would not be effective during blit
+   //
+   SDL_SetSurfaceColorMod(gpScreen, 0, 0, 0);
+   SDL_SetSurfaceColorMod(gpScreen, 0xFF, 0xFF, 0xFF);
+   SDL_SetSurfaceColorMod(gpScreenBak, 0, 0, 0);
+   SDL_SetSurfaceColorMod(gpScreenBak, 0xFF, 0xFF, 0xFF);
+
    VIDEO_UpdateScreen(NULL);
 #else
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
@@ -901,43 +905,6 @@ VIDEO_SwitchScreen(
 
 --*/
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
-    int               i, j;
-    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
-    SDL_Texture      *pTexture;
-    
-    if (g_bRenderPaused)
-    {
-        return;
-    }
-
-    wSpeed++;
-    wSpeed *= 10;
-
-    for (i = 0; i < 6; i++)
-    {
-        for (j = rgIndex[i]; j < gpScreen->pitch * gpScreen->h; j += 6)
-        {
-            ((LPBYTE)(gpScreenBak->pixels))[j] = ((LPBYTE)(gpScreen->pixels))[j];
-        }
-
-        //
-        // Draw the backup buffer to the screen
-        //
-        pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
-        SDL_RenderClear(gpRenderer);
-        SDL_RenderCopy(gpRenderer, pTexture, NULL, NULL);
-        if (gpTouchOverlay)
-        {
-            SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-        }
-        SDL_RenderPresent(gpRenderer);
-        SDL_DestroyTexture(pTexture);
-
-        UTIL_Delay(wSpeed);
-    }
-
-#else
    int               i, j;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
    SDL_Rect          dstrect;
@@ -971,11 +938,19 @@ VIDEO_SwitchScreen(
       dstrect.h = screenRealHeight;
 
       SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+      SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
+      SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+      if (gpTouchOverlay)
+      {
+         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+      }
+      SDL_RenderPresent(gpRenderer);
+#else
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
-
+#endif
       UTIL_Delay(wSpeed);
    }
-#endif
 }
 
 VOID
@@ -998,123 +973,6 @@ VIDEO_FadeScreen(
 
 --*/
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
-    int               i, j, k;
-    DWORD             time;
-    BYTE              a, b;
-    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
-    SDL_Rect          viewport;
-    SDL_Texture      *pTexture;
-    
-    if (g_bRenderPaused)
-    {
-        return;
-    }
-    
-    SDL_RenderGetViewport(gpRenderer, &viewport);
-
-    time = SDL_GetTicks();
-    
-    wSpeed++;
-    wSpeed *= 10;
-    
-    for (i = 0; i < 12; i++)
-    {
-        for (j = 0; j < 6; j++)
-        {
-            PAL_ProcessEvent();
-            while (SDL_GetTicks() <= time)
-            {
-                PAL_ProcessEvent();
-                SDL_Delay(5);
-            }
-            time = SDL_GetTicks() + wSpeed;
-            
-            //
-            // Blend the pixels in the 2 buffers, and put the result into the
-            // backup buffer
-            //
-            for (k = rgIndex[j]; k < gpScreen->pitch * gpScreen->h; k += 6)
-            {
-                a = ((LPBYTE)(gpScreen->pixels))[k];
-                b = ((LPBYTE)(gpScreenBak->pixels))[k];
-                
-                if (i > 0)
-                {
-                    if ((a & 0x0F) > (b & 0x0F))
-                    {
-                        b++;
-                    }
-                    else if ((a & 0x0F) < (b & 0x0F))
-                    {
-                        b--;
-                    }
-                }
-                
-                ((LPBYTE)(gpScreenBak->pixels))[k] = ((a & 0xF0) | (b & 0x0F));
-            }
-            
-            //
-            // Draw the backup buffer to the screen
-            //
-            if (g_wShakeTime != 0)
-            {
-                //
-                // Shake the screen
-                //
-                SDL_Rect srcrect, dstrect;
-                
-                srcrect.x = 0;
-                srcrect.y = 0;
-                srcrect.w = 320;
-                srcrect.h = 200 - g_wShakeLevel;
-                
-                dstrect.x = 0;
-                dstrect.y = 0;
-                dstrect.w = 320 * viewport.w / gpScreen->w;
-                dstrect.h = (200 - g_wShakeLevel) * viewport.h / gpScreen->h;
-
-                if (g_wShakeTime & 1)
-                {
-                    srcrect.y = g_wShakeLevel;
-                }
-                else
-                {
-                    dstrect.y = g_wShakeLevel * viewport.h / gpScreen->h;
-                }
-                
-                pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
-                SDL_RenderClear(gpRenderer);
-                SDL_RenderCopy(gpRenderer, pTexture, &srcrect, &dstrect);
-                if (gpTouchOverlay)
-                {
-                    SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-                }
-                SDL_RenderPresent(gpRenderer);
-                SDL_DestroyTexture(pTexture);
-
-                g_wShakeTime--;
-            }
-            else
-            {
-                pTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
-                SDL_RenderCopy(gpRenderer, pTexture,  NULL, NULL);
-                if (gpTouchOverlay)
-                {
-                    SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-                }
-                SDL_RenderPresent(gpRenderer);
-                SDL_DestroyTexture(pTexture);
-            }
-        }
-    }
-
-    //
-    // Draw the result buffer to the screen as the final step
-    //
-    VIDEO_UpdateScreen(NULL);
-
-#else
    int               i, j, k;
    DWORD             time;
    BYTE              a, b;
@@ -1223,7 +1081,17 @@ VIDEO_FadeScreen(
             dstrect.h = g_wShakeLevel * screenRealHeight / gpScreen->h;
 
             SDL_FillRect(gpScreenReal, &dstrect, 0);
-            SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
+			SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+			if (gpTouchOverlay)
+			{
+			   SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+			}
+			SDL_RenderPresent(gpRenderer);
+#else
+			SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+#endif
             g_wShakeTime--;
          }
          else
@@ -1234,7 +1102,17 @@ VIDEO_FadeScreen(
             dstrect.h = screenRealHeight;
 
             SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
-            SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
+			SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+			if (gpTouchOverlay)
+			{
+			   SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+			}
+			SDL_RenderPresent(gpRenderer);
+#else
+			SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+#endif
          }
       }
    }
@@ -1248,7 +1126,6 @@ VIDEO_FadeScreen(
    // Draw the result buffer to the screen as the final step
    //
    VIDEO_UpdateScreen(NULL);
-#endif
 }
 
 #if SDL_VERSION_ATLEAST(2,0,0)

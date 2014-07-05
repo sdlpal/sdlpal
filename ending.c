@@ -92,7 +92,9 @@ PAL_ShowFBP(
       p = SDL_CreateRGBSurface(gpScreen->flags & ~SDL_HWSURFACE, 320, 200, 8,
          gpScreen->format->Rmask, gpScreen->format->Gmask,
          gpScreen->format->Bmask, gpScreen->format->Amask);
-
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+      SDL_SetSurfacePalette(p, gpScreen->format->palette);
+#endif
       PAL_FBPBlitToSurface(buf, p);
       VIDEO_BackupScreen();
 
@@ -324,6 +326,11 @@ PAL_EndingAnimation(
    pLower = SDL_CreateRGBSurface(gpScreen->flags & ~SDL_HWSURFACE, 320, 200, 8,
       gpScreen->format->Rmask, gpScreen->format->Gmask,
       gpScreen->format->Bmask, gpScreen->format->Amask);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+   SDL_SetSurfacePalette(pUpper, gpScreen->format->palette);
+   SDL_SetSurfacePalette(pUpper, gpScreen->format->palette);
+#endif
 
    PAL_MKFDecompressChunk(buf, 64000, 61, gpGlobals->f.fpFBP);
    PAL_FBPBlitToSurface(buf, pUpper);
