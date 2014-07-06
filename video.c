@@ -98,7 +98,7 @@ VIDEO_Init(
    //
    // Before we can render anything, we need a window and a renderer.
    //
-#if defined (__IOS__) || defined (__ANDROID__)
+#if defined (__IOS__) || defined (__ANDROID__) || defined (__WINPHONE__)
    gpWindow = SDL_CreateWindow("Pal",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, wScreenWidth, wScreenHeight,
       SDL_WINDOW_SHOWN);
@@ -360,17 +360,17 @@ VIDEO_UpdateScreen(
 
 --*/
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
-   if (g_bRenderPaused)
-   {
-	  return;
-   }
-#endif
-
    SDL_Rect        srcrect, dstrect;
    short           offset = 240 - 200;
    short           screenRealHeight = gpScreenReal->h;
    short           screenRealY = 0;
+
+#if SDL_VERSION_ATLEAST(2,0,0)
+   if (g_bRenderPaused)
+   {
+	   return;
+   }
+#endif
 
    //
    // Lock surface if needed

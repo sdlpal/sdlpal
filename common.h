@@ -114,6 +114,12 @@ extern "C"
 #define PAL_SAVE_PREFIX       "/mnt/sdcard/sdlpal/"
 #define PAL_HAS_TOUCH         1
 
+#elif defined (__WINPHONE__)
+
+#define PAL_PREFIX            "./"
+#define PAL_SAVE_PREFIX       "./"
+#define PAL_HAS_TOUCH         1
+
 #else
 
 #define PAL_HAS_JOYSTICKS     1
@@ -163,7 +169,9 @@ extern "C"
 typedef const BYTE *LPCBYTE;
 #endif
 
+#ifndef __WINPHONE__
 #define PAL_HAS_NATIVEMIDI  1
+#endif
 
 #else
 

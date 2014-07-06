@@ -72,6 +72,8 @@ PAL_Init(
    //
 #if defined(DINGOO)
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) == -1)
+#elif defined (__WINPHONE__)
+   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == -1)
 #else
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
 #endif

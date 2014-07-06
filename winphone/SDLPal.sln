@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDLPal", "SDLPal.vcxproj", "{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDL2-WinPhone80", "SDL2\VisualC-WinRT\WinPhone80_VS2012\SDL-WinPhone80.vcxproj", "{33048AF1-031A-4CE6-B61E-FAD2DB832E9E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|Win32 = Debug|Win32
+		Release|ARM = Release|ARM
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Debug|ARM.ActiveCfg = Debug|ARM
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Debug|ARM.Build.0 = Debug|ARM
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Debug|ARM.Deploy.0 = Debug|ARM
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Debug|Win32.Build.0 = Debug|Win32
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Debug|Win32.Deploy.0 = Debug|Win32
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Release|ARM.ActiveCfg = Release|ARM
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Release|ARM.Build.0 = Release|ARM
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Release|ARM.Deploy.0 = Release|ARM
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Release|Win32.ActiveCfg = Release|Win32
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Release|Win32.Build.0 = Release|Win32
+		{F59B48BC-5646-4F8B-90B2-4B09A9D94C5C}.Release|Win32.Deploy.0 = Release|Win32
+		{33048AF1-031A-4CE6-B61E-FAD2DB832E9E}.Debug|ARM.ActiveCfg = Debug|ARM
+		{33048AF1-031A-4CE6-B61E-FAD2DB832E9E}.Debug|ARM.Build.0 = Debug|ARM
+		{33048AF1-031A-4CE6-B61E-FAD2DB832E9E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{33048AF1-031A-4CE6-B61E-FAD2DB832E9E}.Debug|Win32.Build.0 = Debug|Win32
+		{33048AF1-031A-4CE6-B61E-FAD2DB832E9E}.Release|ARM.ActiveCfg = Release|ARM
+		{33048AF1-031A-4CE6-B61E-FAD2DB832E9E}.Release|ARM.Build.0 = Release|ARM
+		{33048AF1-031A-4CE6-B61E-FAD2DB832E9E}.Release|Win32.ActiveCfg = Release|Win32
+		{33048AF1-031A-4CE6-B61E-FAD2DB832E9E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

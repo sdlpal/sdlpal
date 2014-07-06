@@ -1,0 +1,1 @@
+Download SDL2 sources from http://libsdl.org/ and extract here.
