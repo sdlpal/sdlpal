@@ -809,14 +809,14 @@ PAL_TouchEventFilter(
 --*/
 {
 #ifdef PAL_HAS_TOUCH
-   static SDL_TouchID finger1 = 0, finger2 = 0;
+   static SDL_TouchID finger1 = -1, finger2 = -1;
    static int prev_touch1 = TOUCH_NONE;
    static int prev_touch2 = TOUCH_NONE;
 
    switch (lpEvent->type)
    {
    case SDL_FINGERDOWN:
-	  if (finger1 == 0)
+	  if (finger1 == -1)
 	  {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
 
@@ -824,7 +824,7 @@ PAL_TouchEventFilter(
          prev_touch1 = area;
          PAL_SetTouchAction(area);
 	  }
-	  else if (finger2 == 0)
+	  else if (finger2 == -1)
 	  {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
 
@@ -838,13 +838,13 @@ PAL_TouchEventFilter(
 	  if (lpEvent->tfinger.fingerId == finger1)
 	  {
 		 PAL_UnsetTouchAction(prev_touch1);
-		 finger1 = 0;
+		 finger1 = -1;
 		 prev_touch1 = TOUCH_NONE;
 	  }
 	  else if (lpEvent->tfinger.fingerId == finger2)
 	  {
 		 PAL_UnsetTouchAction(prev_touch2);
-		 finger2 = 0;
+		 finger2 = -1;
 		 prev_touch2 = TOUCH_NONE;
 	  }
 	  break;

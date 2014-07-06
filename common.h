@@ -110,7 +110,6 @@ extern "C"
 
 #elif defined (__ANDROID__)
 
-#define PAL_HAS_JOYSTICKS     0
 #define PAL_PREFIX            "/mnt/sdcard/sdlpal/"
 #define PAL_SAVE_PREFIX       "/mnt/sdcard/sdlpal/"
 #define PAL_HAS_TOUCH         1
