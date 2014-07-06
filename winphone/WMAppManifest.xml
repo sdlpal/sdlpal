@@ -1,12 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{f59b48bc-5646-4f8b-90b2-4b09a9d94c5c}" Title="SDLPal" RuntimeType="Modern Native" Version="1.0.0.0" Genre="apps.normal" Author="SDLPal author" Description="SDL-based reimplementation of classic Chinese RPG &quot;Xian Jian Qi Xia Zhuan&quot;." Publisher="SDLPal" PublisherID="{f27682c8-453b-451e-8c75-76c006cdede4}">
+  <App xmlns="" ProductID="{f59b48bc-5646-4f8b-90b2-4b09a9d94c5c}" Title="SDLPal" RuntimeType="Modern Native" Version="2.0.0.0" Genre="apps.normal" Author="Wei Mingzhi" Description="SDL-based reimplementation of classic Chinese RPG &quot;Xian Jian Qi Xia Zhuan&quot;." Publisher="SDLPal" PublisherID="{f27682c8-453b-451e-8c75-76c006cdede4}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
-      <Capability Name="ID_CAP_NETWORKING" />
-      <Capability Name="ID_CAP_MEDIALIB_AUDIO" />
-      <Capability Name="ID_CAP_MEDIALIB_PLAYBACK" />
+      <Capability Name="ID_CAP_REMOVABLE_STORAGE" />
     </Capabilities>
     <Tasks>
       <DefaultTask Name="_default" ImagePath="SDLPal.exe" ImageParams="" />

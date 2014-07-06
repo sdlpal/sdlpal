@@ -502,8 +502,6 @@ main(
 #ifdef _WIN32
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
    putenv("SDL_VIDEODRIVER=directx");
-#else
-   putenv("SDL_VIDEODRIVER=windows");
 #endif
 #endif
 

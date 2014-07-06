@@ -116,8 +116,8 @@ extern "C"
 
 #elif defined (__WINPHONE__)
 
-#define PAL_PREFIX            "./"
-#define PAL_SAVE_PREFIX       "./"
+#define PAL_PREFIX            "./Assets/Data/"
+#define PAL_SAVE_PREFIX       "./" // ???
 #define PAL_HAS_TOUCH         1
 
 #else

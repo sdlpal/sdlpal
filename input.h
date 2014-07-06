@@ -78,6 +78,12 @@ PAL_ShutdownInput(
    VOID
 );
 
+int
+PAL_PollEvent(
+   SDL_Event *event
+);
+
+
 extern BOOL g_fUseJoystick;
 
 #ifdef __cplusplus

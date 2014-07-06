@@ -23,6 +23,7 @@
 //
 
 #include "util.h"
+#include "input.h"
 
 #ifdef PAL_HAS_NATIVEMIDI
 #include "midi.h"

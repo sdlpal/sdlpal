@@ -1074,7 +1074,6 @@ PAL_ProcessEvent(
    while (PAL_PollEvent(NULL));
 }
 
-
 int
 PAL_PollEvent(
    SDL_Event *event
