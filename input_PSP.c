@@ -388,7 +388,7 @@ PAL_ProcessEvent(
 
 --*/
 {
-   while (SDL_PollEvent(NULL));
+   while (PAL_PollEvent(NULL));
    PAL_JoystickEventFilter();
 }
 

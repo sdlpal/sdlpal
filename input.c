@@ -24,7 +24,7 @@
 #include "main.h"
 #include <math.h>
 
-PALINPUTSTATE            g_InputState;
+volatile PALINPUTSTATE   g_InputState;
 static SDL_Joystick     *g_pJoy = NULL;
 BOOL                     g_fUseJoystick = TRUE;
 
@@ -875,18 +875,11 @@ PAL_TouchEventFilter(
 #endif
 }
 
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
 static int SDLCALL
 PAL_EventFilter(
    const SDL_Event       *lpEvent
 )
-#else
-static int SDLCALL
-PAL_EventFilter(
-   void                  *userdata,
-   SDL_Event             *lpEvent
-)
-#endif
+
 /*++
   Purpose:
 
@@ -997,13 +990,11 @@ PAL_InitInput(
 
 --*/
 {
-   memset(&g_InputState, 0, sizeof(g_InputState));
+   memset((void *)&g_InputState, 0, sizeof(g_InputState));
    g_InputState.dir = kDirUnknown;
    g_InputState.prevdir = kDirUnknown;
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
    SDL_SetEventFilter(PAL_EventFilter);
-#else
-   SDL_SetEventFilter(PAL_EventFilter, NULL);
 #endif
 
    //
@@ -1080,5 +1071,49 @@ PAL_ProcessEvent(
 #ifdef PAL_HAS_NATIVEMIDI
    MIDI_CheckLoop();
 #endif
-   while (SDL_PollEvent(NULL));
+   while (PAL_PollEvent(NULL));
+}
+
+
+int
+PAL_PollEvent(
+   SDL_Event *event
+)
+/*++
+  Purpose:
+
+    Poll and process one event.
+
+  Parameters:
+
+    [OUT] event - Events polled from SDL.
+
+  Return value:
+
+    Return value of PAL_PollEvent.
+
+--*/
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+   //
+   // SDL2 changed the timing of event callback so we need to handle
+   // events manually when polled
+   //
+   SDL_Event evt;
+
+   int ret = SDL_PollEvent(&evt);
+   if (ret != 0)
+   {
+	  PAL_EventFilter(&evt);
+   }
+
+   if (event != NULL)
+   {
+	  *event = evt;
+   }
+
+   return ret;
+#else
+   return SDL_PollEvent(&evt);
+#endif
 }

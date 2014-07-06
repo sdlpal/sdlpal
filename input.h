@@ -36,7 +36,7 @@ typedef struct tagPALINPUTSTATE
    DWORD                  dwKeyPress;
 } PALINPUTSTATE;
 
-extern PALINPUTSTATE g_InputState;
+extern volatile PALINPUTSTATE g_InputState;
 
 enum PALKEY
 {

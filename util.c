@@ -267,12 +267,12 @@ UTIL_Delay(
 {
    unsigned int t = SDL_GetTicks() + ms;
 
-   while (SDL_PollEvent(NULL));
+   while (PAL_PollEvent(NULL));
 
    while (SDL_GetTicks() < t)
    {
       SDL_Delay(1);
-      while (SDL_PollEvent(NULL));
+      while (PAL_PollEvent(NULL));
    }
 
 #ifdef PAL_HAS_NATIVEMIDI
