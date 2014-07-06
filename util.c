@@ -403,10 +403,80 @@ UTIL_OpenRequiredFile(
 
    fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
 
+#ifndef _WIN32
+   if (fp == NULL)
+   {
+	  //
+	  // try converting the filename to upper-case.
+	  //
+	  char *pBuf = strdup(lpszFileName);
+	  char *p = pBuf;
+	  while (*p)
+	  {
+		 if (*p >= 'a' && *p <= 'z')
+		 {
+			*p -= 'a' - 'A';
+		 }
+		 p++;
+	  }
+
+	  fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
+	  free(pBuf);
+   }
+#endif
+
    if (fp == NULL)
    {
       TerminateOnError("File not found: %s!\n", lpszFileName);
    }
+
+   return fp;
+}
+
+FILE *
+UTIL_OpenFile(
+   LPCSTR            lpszFileName
+)
+/*++
+  Purpose:
+
+    Open a file. If fails, return NULL.
+
+  Parameters:
+
+    [IN]  lpszFileName - file name to open.
+
+  Return value:
+
+    Pointer to the file.
+
+--*/
+{
+   FILE         *fp;
+
+   fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
+
+#ifndef _WIN32
+   if (fp == NULL)
+   {
+	  //
+	  // try converting the filename to upper-case.
+	  //
+	  char *pBuf = strdup(lpszFileName);
+	  char *p = pBuf;
+	  while (*p)
+	  {
+		 if (*p >= 'a' && *p <= 'z')
+		 {
+			*p -= 'a' - 'A';
+		 }
+		 p++;
+	  }
+
+	  fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
+	  free(pBuf);
+   }
+#endif
 
    return fp;
 }

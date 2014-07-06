@@ -70,7 +70,7 @@ MIDI_Play(
       return;
    }
 
-   fp = fopen(PAL_PREFIX "midi.mkf", "rb");
+   fp = UTIL_OpenFile("midi.mkf");
    if (fp == NULL)
    {
       return;

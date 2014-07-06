@@ -313,10 +313,10 @@ SOUND_OpenAudio(
    //
    // Load the MKF file.
    //
-   gSndPlayer.mkf = fopen(va("%s%s", PAL_PREFIX, "voc.mkf"), "rb");
+   gSndPlayer.mkf = UTIL_OpenFile("voc.mkf");
    if (gSndPlayer.mkf == NULL)
    {
-      gSndPlayer.mkf = fopen(va("%s%s", PAL_PREFIX, "sounds.mkf"), "rb");
+      gSndPlayer.mkf = UTIL_OpenFile("sounds.mkf");
       if (gSndPlayer.mkf == NULL)
       {
          return -2;
@@ -409,7 +409,7 @@ SOUND_ReloadVOC(
 )
 {
    fclose(gSndPlayer.mkf);
-   gSndPlayer.mkf = fopen(va("%s%s", PAL_PREFIX, "voc.mkf"), "rb");
+   gSndPlayer.mkf = UTIL_OpenFile("voc.mkf");
    g_fUseWav = FALSE;
 }
 #endif
