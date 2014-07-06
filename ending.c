@@ -278,6 +278,9 @@ PAL_ScrollFBP(
       {
          PAL_FadeIn(gpGlobals->wNumPalette, gpGlobals->fNightPalette, 1);
          gpGlobals->fNeedToFadeIn = FALSE;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+         SDL_SetSurfacePalette(p, gpScreen->format->palette);
+#endif
       }
 
       UTIL_Delay(800 / wScrollSpeed);
@@ -329,7 +332,7 @@ PAL_EndingAnimation(
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    SDL_SetSurfacePalette(pUpper, gpScreen->format->palette);
-   SDL_SetSurfacePalette(pUpper, gpScreen->format->palette);
+   SDL_SetSurfacePalette(pLower, gpScreen->format->palette);
 #endif
 
    PAL_MKFDecompressChunk(buf, 64000, 61, gpGlobals->f.fpFBP);
@@ -397,6 +400,10 @@ PAL_EndingAnimation(
       {
          PAL_FadeIn(gpGlobals->wNumPalette, gpGlobals->fNightPalette, 1);
          gpGlobals->fNeedToFadeIn = FALSE;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+         SDL_SetSurfacePalette(pUpper, gpScreen->format->palette);
+         SDL_SetSurfacePalette(pLower, gpScreen->format->palette);
+#endif
       }
 
       UTIL_Delay(50);
