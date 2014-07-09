@@ -30,6 +30,7 @@
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+#include "SDL_video.h"
 #include "SDL_messagebox.h"
 #endif
 
@@ -302,9 +303,10 @@ TerminateOnError(
    fprintf(stderr, "\nFATAL ERROR: %s\n", string);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-
-   SDL_ShowSimpleMessageBox(0, "FATAL ERROR", string, NULL);
-
+   {
+      extern SDL_Window *gpWindow;
+      SDL_ShowSimpleMessageBox(0, "FATAL ERROR", string, gpWindow);
+   }
 #else
 
 #ifdef _WIN32

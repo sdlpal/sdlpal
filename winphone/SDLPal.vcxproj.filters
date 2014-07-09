@@ -8,8 +8,8 @@
     <Filter Include="adplug">
       <UniqueIdentifier>{e0154447-2329-47d7-8713-a66a8cc6b0c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="libmad">
-      <UniqueIdentifier>{d7305349-86de-434f-93f2-ee998fc710e6}</UniqueIdentifier>
+    <Filter Include="Assets\Data">
+      <UniqueIdentifier>{b92e17f5-b5dd-48b2-924f-59695abbed55}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -101,48 +101,6 @@
     <ClInclude Include="..\adplug\surroundopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="..\libmad\bit.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\decoder.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\fixed.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\frame.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\huffman.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\layer3.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\layer12.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\libmad_config.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\libmad_global.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\mad.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\music_mad.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\stream.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\synth.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libmad\timer.h">
-      <Filter>libmad</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\battle.c" />
@@ -200,56 +158,66 @@
     <ClCompile Include="..\adplug\surroundopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\libmad\bit.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\decoder.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\fixed.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\frame.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\huffman.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\layer3.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\layer12.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\music_mad.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\stream.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\synth.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libmad\timer.c">
-      <Filter>libmad</Filter>
-    </ClCompile>
     <ClCompile Include="SDL2\src\main\winrt\SDL_winrt_main_NonXAML.cpp" />
+    <ClCompile Include="WinPhoneUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\libmad\D.dat">
-      <Filter>libmad</Filter>
+    <None Include="Assets\Data\DATA.MKF">
+      <Filter>Assets\Data</Filter>
     </None>
-    <None Include="..\libmad\imdct_s.dat">
-      <Filter>libmad</Filter>
+    <None Include="Assets\Data\ABC.MKF">
+      <Filter>Assets\Data</Filter>
     </None>
-    <None Include="..\libmad\qc_table.dat">
-      <Filter>libmad</Filter>
+    <None Include="Assets\Data\BALL.MKF">
+      <Filter>Assets\Data</Filter>
     </None>
-    <None Include="..\libmad\rq_table.dat">
-      <Filter>libmad</Filter>
+    <None Include="Assets\Data\F.MKF">
+      <Filter>Assets\Data</Filter>
     </None>
-    <None Include="..\libmad\sf_table.dat">
-      <Filter>libmad</Filter>
+    <None Include="Assets\Data\FBP.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\FIRE.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\GOP.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\MAP.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\M.MSG">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\MGO.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\MUS.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\PAT.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\RGM.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\RNG.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\VOC.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\SSS.MKF">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\WOR16.ASC">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\wor16.fon">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="Assets\Data\WORD.DAT">
+      <Filter>Assets\Data</Filter>
     </None>
   </ItemGroup>
 </Project>

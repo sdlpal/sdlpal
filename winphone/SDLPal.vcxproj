@@ -55,6 +55,18 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <IncludePath>.\SDL2\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <IncludePath>.\SDL2\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>.\SDL2\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>.\SDL2\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>PSAPI_VERSION=2;%(PreprocessorDefinitions);__WINPHONE__=1</PreprocessorDefinitions>
@@ -85,11 +97,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
-      <PreprocessorDefinitions>PSAPI_VERSION=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>PSAPI_VERSION=2;%(PreprocessorDefinitions);__WINPHONE__=1</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -99,11 +111,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <PreprocessorDefinitions>PSAPI_VERSION=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>PSAPI_VERSION=2;%(PreprocessorDefinitions);__WINPHONE__=1</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -118,13 +130,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\ApplicationIcon.png" />
-    <Image Include="Assets\AlignmentGrid.png" />
-    <Image Include="Assets\Tiles\FlipCycleTileLarge.png" />
-    <Image Include="Assets\Tiles\FlipCycleTileMedium.png" />
-    <Image Include="Assets\Tiles\FlipCycleTileSmall.png" />
-    <Image Include="Assets\Tiles\IconicTileMediumLarge.png" />
-    <Image Include="Assets\Tiles\IconicTileSmall.png" />
+    <Image Include="Assets\ApplicationIcon.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\AlignmentGrid.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Tiles\FlipCycleTileLarge.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Tiles\FlipCycleTileMedium.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Tiles\FlipCycleTileSmall.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Tiles\IconicTileMediumLarge.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Tiles\IconicTileSmall.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="WMAppManifest.xml">
@@ -154,20 +180,6 @@
     <ClInclude Include="..\global.h" />
     <ClInclude Include="..\input.h" />
     <ClInclude Include="..\itemmenu.h" />
-    <ClInclude Include="..\libmad\bit.h" />
-    <ClInclude Include="..\libmad\decoder.h" />
-    <ClInclude Include="..\libmad\fixed.h" />
-    <ClInclude Include="..\libmad\frame.h" />
-    <ClInclude Include="..\libmad\huffman.h" />
-    <ClInclude Include="..\libmad\layer12.h" />
-    <ClInclude Include="..\libmad\layer3.h" />
-    <ClInclude Include="..\libmad\libmad_config.h" />
-    <ClInclude Include="..\libmad\libmad_global.h" />
-    <ClInclude Include="..\libmad\mad.h" />
-    <ClInclude Include="..\libmad\music_mad.h" />
-    <ClInclude Include="..\libmad\stream.h" />
-    <ClInclude Include="..\libmad\synth.h" />
-    <ClInclude Include="..\libmad\timer.h" />
     <ClInclude Include="..\magicmenu.h" />
     <ClInclude Include="..\main.h" />
     <ClInclude Include="..\map.h" />
@@ -206,17 +218,6 @@
     <ClCompile Include="..\global.c" />
     <ClCompile Include="..\input.c" />
     <ClCompile Include="..\itemmenu.c" />
-    <ClCompile Include="..\libmad\bit.c" />
-    <ClCompile Include="..\libmad\decoder.c" />
-    <ClCompile Include="..\libmad\fixed.c" />
-    <ClCompile Include="..\libmad\frame.c" />
-    <ClCompile Include="..\libmad\huffman.c" />
-    <ClCompile Include="..\libmad\layer12.c" />
-    <ClCompile Include="..\libmad\layer3.c" />
-    <ClCompile Include="..\libmad\music_mad.c" />
-    <ClCompile Include="..\libmad\stream.c" />
-    <ClCompile Include="..\libmad\synth.c" />
-    <ClCompile Include="..\libmad\timer.c" />
     <ClCompile Include="..\magicmenu.c" />
     <ClCompile Include="..\main.c" />
     <ClCompile Include="..\map.c" />
@@ -239,19 +240,83 @@
     <ClCompile Include="SDL2\src\main\winrt\SDL_winrt_main_NonXAML.cpp">
       <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</CompileAsWinRT>
       <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</CompileAsWinRT>
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</CompileAsWinRT>
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</CompileAsWinRT>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\libmad\D.dat" />
-    <None Include="..\libmad\imdct_s.dat" />
-    <None Include="..\libmad\qc_table.dat" />
-    <None Include="..\libmad\rq_table.dat" />
-    <None Include="..\libmad\sf_table.dat" />
+    <ClCompile Include="WinPhoneUtil.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</CompileAsWinRT>
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</CompileAsWinRT>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="SDL2\VisualC-WinRT\WinPhone80_VS2012\SDL-WinPhone80.vcxproj">
       <Project>{33048af1-031a-4ce6-b61e-fad2db832e9e}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <_CustomResource Include="Assets\Data\**\*">
+      <Link>Assets\Data\%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <DeploymentContent>true</DeploymentContent>
+    </_CustomResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Data\ABC.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\BALL.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\DATA.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\F.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\FBP.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\FIRE.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\GOP.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\M.MSG">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\MAP.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\MGO.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\MUS.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\PAT.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\RGM.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\RNG.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\SSS.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\VOC.MKF">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\WOR16.ASC">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\wor16.fon">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Data\WORD.DAT">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsPhone\v$(TargetPlatformVersion)\Microsoft.Cpp.WindowsPhone.$(TargetPlatformVersion).targets" />

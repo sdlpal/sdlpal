@@ -28,7 +28,7 @@ SDL_Surface              *gpScreen           = NULL;
 SDL_Surface              *gpScreenBak        = NULL;
 
 #if SDL_VERSION_ATLEAST(2,0,0)
-static SDL_Window        *gpWindow           = NULL;
+SDL_Window               *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
 static SDL_Texture       *gpTexture          = NULL;
 static SDL_Texture       *gpTouchOverlay     = NULL;

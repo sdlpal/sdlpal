@@ -116,9 +116,16 @@ extern "C"
 
 #elif defined (__WINPHONE__)
 
-#define PAL_PREFIX            "./Assets/Data/"
-#define PAL_SAVE_PREFIX       "./" // ???
+#define PAL_PREFIX            "Assets\\Data\\"
+#define PAL_SAVE_PREFIX       "" // ???
 #define PAL_HAS_TOUCH         1
+#include <stdio.h>
+#ifdef __cplusplus
+#include <cstdio>
+#endif
+
+FILE *MY_fopen(const char *path, const char *mode);
+#define fopen MY_fopen
 
 #else
 
@@ -128,7 +135,7 @@ extern "C"
 #define PAL_ALLOW_KEYREPEAT   1
 #define PAL_HAS_CD            1
 #endif
-#if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO)
+#if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO) && !defined (__WINPHONE__)
 #define PAL_HAS_MP3           1
 #endif
 #endif
