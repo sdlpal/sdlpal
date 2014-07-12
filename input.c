@@ -853,7 +853,7 @@ PAL_TouchEventFilter(
       if (lpEvent->tfinger.fingerId == finger1)
       {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-         if (prev_touch1 != area)
+         if (prev_touch1 != area && area != TOUCH_NONE)
          {
             PAL_UnsetTouchAction(prev_touch1);
             prev_touch1 = area;
@@ -863,7 +863,7 @@ PAL_TouchEventFilter(
       else if (lpEvent->tfinger.fingerId == finger2)
       {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-         if (prev_touch2 != area)
+         if (prev_touch2 != area && area != TOUCH_NONE)
          {
             PAL_UnsetTouchAction(prev_touch2);
             prev_touch2 = area;

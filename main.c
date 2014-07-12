@@ -396,7 +396,6 @@ PAL_SplashScreen(
       }
 
       PAL_RLEBlitToSurface(lpBitmapTitle, gpScreen, PAL_XY(255, 10));
-
       VIDEO_UpdateScreen(NULL);
 
       //
@@ -503,6 +502,10 @@ main(
       buf[p - argv[0]] = '\0';
       chdir(buf);
    }
+#endif
+
+#ifdef __WINPHONE__
+   SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
 #endif
 
    UTIL_OpenLog();
