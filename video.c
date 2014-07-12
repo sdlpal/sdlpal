@@ -546,6 +546,7 @@ VIDEO_SetPalette(
    VIDEO_UpdateScreen(NULL);
 #else
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
+   SDL_SetPalette(gpScreenBak, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
 #if (defined (__SYMBIAN32__))
    {

@@ -184,6 +184,8 @@ PAL_CreateBox(
 
 #if SDL_VERSION_ATLEAST(2,0,0)
       SDL_SetSurfacePalette(save, gpScreen->format->palette);
+#else
+      SDL_SetPalette(save, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
 #endif
       SDL_BlitSurface(gpScreen, &rect, save, NULL);
 
@@ -298,6 +300,8 @@ PAL_CreateSingleLineBox(
 
 #if SDL_VERSION_ATLEAST(2,0,0)
       SDL_SetSurfacePalette(save, gpScreen->format->palette);
+#else
+      SDL_SetPalette(save, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
       SDL_BlitSurface(gpScreen, &rect, save, NULL);
 

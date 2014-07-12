@@ -94,6 +94,8 @@ PAL_ShowFBP(
          gpScreen->format->Bmask, gpScreen->format->Amask);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       SDL_SetSurfacePalette(p, gpScreen->format->palette);
+#else
+      SDL_SetPalette(p, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
       PAL_FBPBlitToSurface(buf, p);
       VIDEO_BackupScreen();
@@ -206,6 +208,8 @@ PAL_ScrollFBP(
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    SDL_SetSurfacePalette(p, gpScreen->format->palette);
+#else
+   SDL_SetPalette(p, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
 
    VIDEO_BackupScreen();
@@ -280,6 +284,8 @@ PAL_ScrollFBP(
          gpGlobals->fNeedToFadeIn = FALSE;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
          SDL_SetSurfacePalette(p, gpScreen->format->palette);
+#else
+         SDL_SetPalette(p, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
       }
 
@@ -333,6 +339,9 @@ PAL_EndingAnimation(
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    SDL_SetSurfacePalette(pUpper, gpScreen->format->palette);
    SDL_SetSurfacePalette(pLower, gpScreen->format->palette);
+#else
+   SDL_SetPalette(pUpper, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
+   SDL_SetPalette(pLower, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
 
    PAL_MKFDecompressChunk(buf, 64000, 61, gpGlobals->f.fpFBP);
@@ -403,6 +412,9 @@ PAL_EndingAnimation(
 #if SDL_VERSION_ATLEAST(2, 0, 0)
          SDL_SetSurfacePalette(pUpper, gpScreen->format->palette);
          SDL_SetSurfacePalette(pLower, gpScreen->format->palette);
+#else
+         SDL_SetSurfacePalette(pUpper, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
+         SDL_SetSurfacePalette(pLower, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
 #endif
       }
 

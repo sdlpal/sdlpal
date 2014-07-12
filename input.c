@@ -993,9 +993,6 @@ PAL_InitInput(
    memset((void *)&g_InputState, 0, sizeof(g_InputState));
    g_InputState.dir = kDirUnknown;
    g_InputState.prevdir = kDirUnknown;
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
-   SDL_SetEventFilter(PAL_EventFilter);
-#endif
 
    //
    // Check for joystick
@@ -1093,11 +1090,6 @@ PAL_PollEvent(
 
 --*/
 {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-   //
-   // SDL2 changed the timing of event callback so we need to handle
-   // events manually when polled
-   //
    SDL_Event evt;
 
    int ret = SDL_PollEvent(&evt);
@@ -1112,7 +1104,4 @@ PAL_PollEvent(
    }
 
    return ret;
-#else
-   return SDL_PollEvent(event);
-#endif
 }

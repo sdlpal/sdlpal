@@ -260,6 +260,9 @@ PAL_SplashScreen(
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    SDL_SetSurfacePalette(lpBitmapDown, gpScreen->format->palette);
    SDL_SetSurfacePalette(lpBitmapUp, gpScreen->format->palette);
+#else
+   SDL_SetPalette(lpBitmapDown, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
+   SDL_SetPalette(lpBitmapUp, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
 #endif
 
    //
@@ -335,6 +338,9 @@ PAL_SplashScreen(
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	  SDL_SetSurfacePalette(lpBitmapDown, gpScreen->format->palette);
 	  SDL_SetSurfacePalette(lpBitmapUp, gpScreen->format->palette);
+#else
+      SDL_SetPalette(lpBitmapDown, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
+      SDL_SetPalette(lpBitmapUp, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
 #endif
 
       //
@@ -430,6 +436,9 @@ PAL_SplashScreen(
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 			   SDL_SetSurfacePalette(lpBitmapDown, gpScreen->format->palette);
 			   SDL_SetSurfacePalette(lpBitmapUp, gpScreen->format->palette);
+#else
+			   SDL_SetPalette(lpBitmapDown, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
+			   SDL_SetPalette(lpBitmapUp, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
                UTIL_Delay(8);
                dwTime += 250;

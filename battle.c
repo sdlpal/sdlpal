@@ -602,6 +602,8 @@ PAL_LoadBattleBackground(
    }
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    SDL_SetSurfacePalette(g_Battle.lpBackground, gpScreen->format->palette);
+#else
+   SDL_SetPalette(g_Battle.lpBackground, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
    //
    // Load the picture
@@ -1353,6 +1355,8 @@ PAL_StartBattle(
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    SDL_SetSurfacePalette(g_Battle.lpSceneBuf, gpScreen->format->palette);
+#else
+   SDL_SetPalette(g_Battle.lpSceneBuf, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
 
    PAL_UpdateEquipments();
