@@ -1113,6 +1113,6 @@ PAL_PollEvent(
 
    return ret;
 #else
-   return SDL_PollEvent(&evt);
+   return SDL_PollEvent(event);
 #endif
 }
