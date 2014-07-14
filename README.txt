@@ -26,7 +26,7 @@ COMPILE UNDER WINDOWS
 
 The following compilers/IDEs are supported under Windows:
 
-1) Microsoft Visual C++ 6.0 or higher
+1) Microsoft Visual Studio 2005 or higher
 2) Dev-C++ 4.9.9.2
 3) Open Watcom 1.7
 

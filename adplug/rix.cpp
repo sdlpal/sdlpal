@@ -203,14 +203,14 @@ inline void CrixPlayer::data_initial()
   I = mus_block+1;
   if(rhythm != 0)
     {
-      //		ad_a0b0_reg(6);
-      //		ad_a0b0_reg(7);
-      //		ad_a0b0_reg(8);
+      ad_a0b0_reg(6);
+      ad_a0b0_reg(7);
+      ad_a0b0_reg(8);
       ad_a0b0l_reg_(8,0x18,0);
       ad_a0b0l_reg_(7,0x1F,0);
     }
   bd_modify = 0;
-  //	ad_bd_reg();
+  ad_bd_reg();
   band = 0; music_on = 1;
 }
 /*----------------------------------------------------------*/
@@ -234,12 +234,12 @@ inline uint16_t CrixPlayer::ad_initial()
 			addrs_head[k] = j;
 			k++;
       }
-  //ad_bd_reg();
-  //ad_08_reg();
-  //for(i=0;i<9;i++) ad_a0b0_reg(i);
+  ad_bd_reg();
+  ad_08_reg();
+  for(i=0;i<9;i++) ad_a0b0_reg(i);
   e0_reg_flag = 0x20;
-  //for(i=0;i<18;i++) ad_bop(0xE0+reg_data[i],0);
-  //ad_bop(1,e0_reg_flag);
+  for(i=0;i<18;i++) ad_bop(0xE0+reg_data[i],0);
+  ad_bop(1,e0_reg_flag);
   return 1;//ad_test();
 }
 /*----------------------------------------------------------*/
