@@ -8,7 +8,7 @@ SDLPAL is an SDL-based reimplementation of the classic Chinese-language RPG
 LICENSE
 =======
 
-SDLPAL is Copyrighted (c) 2009-2011 Wei Mingzhi <whistler_wmz@users.sf.net>.
+SDLPAL is Copyrighted (c) 2009-2014 Wei Mingzhi <whistler_wmz@users.sf.net>.
 All rights reserved.
 
 SDLPAL is distributed under the terms of GNU General Public License, version 3
@@ -30,7 +30,7 @@ The following compilers/IDEs are supported under Windows:
 2) Dev-C++ 4.9.9.2
 3) Open Watcom 1.7
 
-To compile, open the respective project file (sdlpal.dsp, sdlpal.dev, or
+To compile, open the respective project file (sdlpal.sln, sdlpal.dev, or
 sdlpal.wpj). You need to have SDL development files installed.
 
 
