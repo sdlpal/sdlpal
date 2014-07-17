@@ -164,6 +164,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		714FD4011977C6860024BE26 /* big5font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = big5font.h; path = ../../../big5font.h; sourceTree = "<group>"; };
+		714FD4021977C6860024BE26 /* gbfont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gbfont.h; path = ../../../gbfont.h; sourceTree = "<group>"; };
 		7165505D195BB372006E1227 /* SDLPal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDLPal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		71655060195BB372006E1227 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		71655062195BB372006E1227 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -562,6 +564,7 @@
 				716551FE195BB6DA006E1227 /* ascii.h */,
 				716551FF195BB6DA006E1227 /* battle.c */,
 				71655200195BB6DA006E1227 /* battle.h */,
+				714FD4011977C6860024BE26 /* big5font.h */,
 				71655201195BB6DA006E1227 /* common.h */,
 				71655202195BB6DA006E1227 /* ending.c */,
 				71655203195BB6DA006E1227 /* ending.h */,
@@ -571,6 +574,7 @@
 				71655207195BB6DA006E1227 /* font.h */,
 				71655208195BB6DA006E1227 /* game.c */,
 				71655209195BB6DA006E1227 /* game.h */,
+				714FD4021977C6860024BE26 /* gbfont.h */,
 				7165520A195BB6DA006E1227 /* getopt.c */,
 				7165520B195BB6DA006E1227 /* getopt.h */,
 				7165520C195BB6DA006E1227 /* global.c */,

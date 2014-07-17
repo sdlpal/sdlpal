@@ -185,9 +185,11 @@
 		7104FDA80D772FBC00A97E53 /* rix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rix.h; path = adplug/rix.h; sourceTree = SOURCE_ROOT; };
 		71147E3E14085E31003FB2DB /* surroundopl.cpp */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.cpp.cpp; name = surroundopl.cpp; path = adplug/surroundopl.cpp; sourceTree = "<group>"; };
 		71147E3F14085E31003FB2DB /* surroundopl.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = surroundopl.h; path = adplug/surroundopl.h; sourceTree = "<group>"; };
-		7138FD0B1424E4810060DE76 /* demuopl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067993; lastKnownFileType = sourcecode.c.h; name = demuopl.h; path = adplug/demuopl.h; sourceTree = "<group>"; };
-		7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */ = {isa = PBXFileReference; fileEncoding = 18446744071562067993; lastKnownFileType = sourcecode.cpp.cpp; name = dosbox_opl.cpp; path = adplug/dosbox_opl.cpp; sourceTree = "<group>"; };
-		7138FD0D1424E4810060DE76 /* dosbox_opl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067993; lastKnownFileType = sourcecode.c.h; name = dosbox_opl.h; path = adplug/dosbox_opl.h; sourceTree = "<group>"; };
+		7138FD0B1424E4810060DE76 /* demuopl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.c.h; name = demuopl.h; path = adplug/demuopl.h; sourceTree = "<group>"; };
+		7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.cpp.cpp; name = dosbox_opl.cpp; path = adplug/dosbox_opl.cpp; sourceTree = "<group>"; };
+		7138FD0D1424E4810060DE76 /* dosbox_opl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.c.h; name = dosbox_opl.h; path = adplug/dosbox_opl.h; sourceTree = "<group>"; };
+		714FD3FF1977C65B0024BE26 /* big5font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = big5font.h; sourceTree = "<group>"; };
+		714FD4001977C65B0024BE26 /* gbfont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gbfont.h; sourceTree = "<group>"; };
 		716EB9C60D77340300D5DE1F /* sdlpal.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sdlpal.icns; sourceTree = SOURCE_ROOT; };
 		717AE62F182663E100B10A11 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		71E23E7113F6D1AD001287B6 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.c; name = bit.c; path = libmad/bit.c; sourceTree = "<group>"; };
@@ -287,6 +289,8 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				714FD3FF1977C65B0024BE26 /* big5font.h */,
+				714FD4001977C65B0024BE26 /* gbfont.h */,
 				71F0F6D10DAA63B400F88C16 /* ending.c */,
 				71F0F6D20DAA63B400F88C16 /* ending.h */,
 				71F0F6D30DAA63B400F88C16 /* itemmenu.c */,
