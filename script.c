@@ -549,12 +549,12 @@ PAL_AdditionalCredits(
 
    int        i = 0;
 
-   PAL_DrawOpeningMenuBackground();
-
 #ifdef PAL_WIN95
    extern BOOL fIsBig5;
    fIsBig5 = TRUE;
 #endif
+
+   PAL_DrawOpeningMenuBackground();
 
    while (rgszStrings[i][0] != '\0')
    {
