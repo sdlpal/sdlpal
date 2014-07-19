@@ -51,8 +51,14 @@ PAL_MagicSelectionMenuUpdate(
 
 --*/
 {
+#ifndef PAL_WIN95
    int         i, j, k;
    BYTE        bColor;
+#else
+   int         i, j, k, line;
+   BYTE        bColor;
+   WORD        wScript;
+#endif
 
    //
    // Check for inputs
@@ -103,6 +109,7 @@ PAL_MagicSelectionMenuUpdate(
    //
    PAL_CreateBox(PAL_XY(10, 42), 4, 16, 1, FALSE);
 
+#ifndef PAL_WIN95
    if (gpGlobals->lpObjectDesc == NULL)
    {
       //
@@ -167,6 +174,33 @@ PAL_MagicSelectionMenuUpdate(
          kNumColorYellow, kNumAlignRight);
       PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
    }
+#else
+   wScript = gpGlobals->g.rgObject[rgMagicItem[g_iCurrentItem].wMagic].item.wScriptDesc;
+   line = 0;
+   while (wScript && gpGlobals->g.lprgScriptEntry[wScript].wOperation != 0)
+   {
+      if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
+      {
+         wScript = PAL_RunAutoScript(wScript, line);
+         line++;
+      }
+      else
+      {
+         wScript = PAL_RunAutoScript(wScript, 0);
+      }
+   }
+
+   //
+   // Draw the MP of the selected magic.
+   //
+   PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
+   PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
+      gpScreen, PAL_XY(45, 14));
+   PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),
+      kNumColorYellow, kNumAlignRight);
+   PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
+#endif
+
 
    //
    // Draw the texts of the current page

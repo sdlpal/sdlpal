@@ -339,7 +339,11 @@ PAL_DrawText(
 
    urect.x = rect.x;
    urect.y = rect.y;
+#ifdef PAL_WIN95
+   urect.h = 17;
+#else
    urect.h = 16;
+#endif
    urect.w = 0;
 
    while (*lpszText)
@@ -350,7 +354,7 @@ PAL_DrawText(
       if (*lpszText & 0x80)
       {
          //
-         // BIG-5 Chinese Character
+         // Chinese Character
          //
          wChar = SWAP16(((LPBYTE)lpszText)[0] | (((LPBYTE)lpszText)[1] << 8));
          if (fShadow)
@@ -385,6 +389,13 @@ PAL_DrawText(
    //
    if (fUpdate && urect.w > 0)
    {
+#ifdef PAL_WIN95
+      urect.w++;
+      if (urect.x + urect.w > 320)
+      {
+         urect.w = 320 - urect.x;
+      }
+#endif
       VIDEO_UpdateScreen(&urect);
    }
 }
@@ -729,7 +740,10 @@ PAL_ShowDialogText(
    {
       if (g_TextLib.nCurrentDialogLine == 0 &&
          g_TextLib.bDialogPosition != kDialogCenter &&
-         (BYTE)lpszText[len - 1] == 0x47 && (BYTE)lpszText[len - 2] == 0xA1)
+         (((BYTE)lpszText[len - 1] == 0x47 && (BYTE)lpszText[len - 2] == 0xA1) ||
+          ((BYTE)lpszText[len - 1] == 0xBA && (BYTE)lpszText[len - 2] == 0xA3) ||
+          ((BYTE)lpszText[len - 1] == 0xC3 && (BYTE)lpszText[len - 2] == 0xA1) ||
+          ((BYTE)lpszText[len - 1] == ':')))
       {
          //
          // name of character
@@ -769,7 +783,7 @@ PAL_ShowDialogText(
                }
                lpszText++;
                break;
-
+#ifndef PAL_WIN95
             case '\'':
                //
                // Set the font color to Red
@@ -784,7 +798,7 @@ PAL_ShowDialogText(
                }
                lpszText++;
                break;
-
+#endif
             case '\"':
                //
                // Set the font color to Yellow

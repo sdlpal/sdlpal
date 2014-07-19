@@ -196,6 +196,9 @@ typedef struct tagOBJECT_ITEM
    WORD         wScriptOnUse;    // script executed when using this item
    WORD         wScriptOnEquip;  // script executed when equipping this item
    WORD         wScriptOnThrow;  // script executed when throwing this item to enemy
+#ifdef PAL_WIN95
+   WORD         wScriptDesc;     // description script
+#endif
    WORD         wFlags;          // flags
 } OBJECT_ITEM;
 
@@ -214,6 +217,9 @@ typedef struct tagOBJECT_MAGIC
    WORD         wReserved1;        // always zero
    WORD         wScriptOnSuccess;  // when magic succeed, execute script from here
    WORD         wScriptOnUse;      // when use this magic, execute script from here
+#ifdef PAL_WIN95
+   WORD         wScriptDesc;       // description script
+#endif
    WORD         wReserved2;        // always zero
    WORD         wFlags;            // flags
 } OBJECT_MAGIC;
@@ -241,7 +247,11 @@ typedef struct tagOBJECT_POISON
 
 typedef union tagOBJECT
 {
+#ifdef PAL_WIN95
+   WORD              rgwData[7];
+#else
    WORD              rgwData[6];
+#endif
    OBJECT_PLAYER     player;
    OBJECT_ITEM       item;
    OBJECT_MAGIC      magic;
@@ -549,9 +559,9 @@ typedef struct tagGLOBALVARS
    ALLEXPERIENCE    Exp;                 // experience status
    POISONSTATUS     rgPoisonStatus[MAX_POISONS][MAX_PLAYABLE_PLAYER_ROLES]; // poison status
    INVENTORY        rgInventory[MAX_INVENTORY];  // inventory status
-
+#ifndef PAL_WIN95
    LPOBJECTDESC     lpObjectDesc;
-
+#endif
    DWORD            dwFrameNum;
 } GLOBALVARS, *LPGLOBALVARS;
 

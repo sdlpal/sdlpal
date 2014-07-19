@@ -44,8 +44,13 @@ PAL_ItemSelectMenuUpdate(
 
 --*/
 {
+#ifndef PAL_WIN95
    int                i, j, k;
    WORD               wObject;
+#else
+   int                i, j, k, line;
+   WORD               wObject, wScript;
+#endif
    BYTE               bColor;
    static BYTE        bufImage[2048];
    static WORD        wPrevImageIndex = 0xFFFF;
@@ -219,6 +224,7 @@ PAL_ItemSelectMenuUpdate(
    //
    // Draw the description of the selected item
    //
+#ifndef PAL_WIN95
    if (!g_fNoDesc && gpGlobals->lpObjectDesc != NULL)
    {
       char szDesc[512], *next;
@@ -251,6 +257,25 @@ PAL_ItemSelectMenuUpdate(
          }
       }
    }
+#else
+   if (!g_fNoDesc)
+   {
+      wScript = gpGlobals->g.rgObject[wObject].item.wScriptDesc;
+      line = 0;
+      while (wScript && gpGlobals->g.lprgScriptEntry[wScript].wOperation != 0)
+      {
+         if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
+         {
+            wScript = PAL_RunAutoScript(wScript, (1 << 15) | line);
+            line++;
+         }
+         else
+         {
+            wScript = PAL_RunAutoScript(wScript, 0);
+         }
+      }
+   }
+#endif
 
    if (g_InputState.dwKeyPress & kKeySearch)
    {

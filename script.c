@@ -2125,8 +2125,13 @@ PAL_InterpretInstruction(
       //
       // Show FBP picture
       //
+#ifdef PAL_WIN95
+      SDL_FillRect(gpScreen, NULL, 0);
+      VIDEO_UpdateScreen(NULL);
+#else
       PAL_EndingSetEffectSprite(0);
       PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[1]);
+#endif
       break;
 
    case 0x0077:
@@ -2612,7 +2617,9 @@ PAL_InterpretInstruction(
       //
       // Show the ending animation
       //
+#ifndef PAL_WIN95
       PAL_EndingAnimation();
+#endif
       break;
 
    case 0x0097:
@@ -2880,6 +2887,9 @@ PAL_InterpretInstruction(
       //
       // Quit game
       //
+#ifdef PAL_WIN95
+      // TODO: ending
+#endif
       PAL_AdditionalCredits();
       PAL_Shutdown();
       exit(0);
@@ -2924,6 +2934,7 @@ PAL_InterpretInstruction(
       //
       // Scroll FBP to the screen
       //
+#ifndef PAL_WIN95
       if (pScript->rgwOperand[0] == 68)
       {
          //
@@ -2936,17 +2947,20 @@ PAL_InterpretInstruction(
       {
          PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], pScript->rgwOperand[1]);
       }
+#endif
       break;
 
    case 0x00A5:
       //
       // Show FBP picture with sprite effects
       //
+#ifndef PAL_WIN95
       if (pScript->rgwOperand[1] != 0xFFFF)
       {
          PAL_EndingSetEffectSprite(pScript->rgwOperand[1]);
       }
       PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[2]);
+#endif
       break;
 
    case 0x00A6:
@@ -3315,6 +3329,9 @@ PAL_RunAutoScript(
 {
    LPSCRIPTENTRY          pScript;
    LPEVENTOBJECT          pEvtObj;
+#ifdef PAL_WIN95
+   int                    iDescLine = 0;
+#endif
 
 begin:
    pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
@@ -3411,8 +3428,26 @@ begin:
       break;
 
    case 0xFFFF:
+#ifdef PAL_WIN95
+      iDescLine = (wEventObjectID & ~(1 << 15));
+      if (wEventObjectID & (1 << 15))
+      {
+         PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(75, iDescLine * 16 + 150), DESCTEXT_COLOR, TRUE, FALSE);
+      }
+      else
+      {
+         PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(100, iDescLine * 16 + 3), DESCTEXT_COLOR, TRUE, FALSE);
+      }
+      iDescLine++;
+#endif
 	  wScriptEntry++;
 	  break;
+
+#ifdef PAL_WIN95
+   case 0x00A7:
+	  wScriptEntry++;
+      break;
+#endif
 
    default:
       //

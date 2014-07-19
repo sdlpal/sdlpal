@@ -74,9 +74,9 @@ PAL_InitGlobals(
    gpGlobals->f.fpFIRE = UTIL_OpenRequiredFile("fire.mkf");
    gpGlobals->f.fpRGM = UTIL_OpenRequiredFile("rgm.mkf");
    gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
-
+#ifndef PAL_WIN95
    gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
-
+#endif
    gpGlobals->bCurrentSaveSlot = 1;
 
    return 0;
@@ -130,8 +130,9 @@ PAL_FreeGlobals(
       //
       // Free the object description data
       //
+#ifndef PAL_WIN95
       PAL_FreeObjectDesc(gpGlobals->lpObjectDesc);
-
+#endif
       //
       // Delete the instance
       //

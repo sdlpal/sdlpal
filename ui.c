@@ -681,6 +681,8 @@ PAL_DrawNumber(
    }
 }
 
+#ifndef PAL_WIN95
+
 LPOBJECTDESC
 PAL_LoadObjectDesc(
    LPCSTR         lpszFileName
@@ -806,3 +808,5 @@ PAL_GetObjectDesc(
 
    return NULL;
 }
+
+#endif

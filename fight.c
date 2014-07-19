@@ -2227,7 +2227,9 @@ PAL_BattleShowPlayerPreMagicAnim(
    PAL_BattleDelay(2, 0, TRUE);
 
    g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 5;
+#ifndef PAL_WIN95
    SOUND_Play(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
+#endif
 
    if (!fSummon)
    {
@@ -2239,7 +2241,9 @@ PAL_BattleShowPlayerPreMagicAnim(
       index = gpGlobals->g.rgwBattleEffectIndex[PAL_GetPlayerBattleSprite(wPlayerRole)][0];
       index *= 10;
       index += 15;
-
+#ifdef PAL_WIN95
+      SOUND_Play(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
+#endif
       for (i = 0; i < 10; i++)
       {
          LPCBITMAPRLE b = PAL_SpriteGetFrame(g_Battle.lpEffectSprite, index++);
@@ -2468,12 +2472,22 @@ PAL_BattleShowPlayerDefMagicAnim(
    }
 }
 
+#ifndef PAL_WIN95
 static VOID
 PAL_BattleShowPlayerOffMagicAnim(
    WORD         wPlayerIndex,
    WORD         wObjectID,
    SHORT        sTarget
 )
+#else
+static VOID
+PAL_BattleShowPlayerOffMagicAnim(
+   WORD         wPlayerIndex,
+   WORD         wObjectID,
+   SHORT        sTarget,
+   BOOL         fSummon
+)
+#endif
 /*++
   Purpose:
 
@@ -2512,6 +2526,13 @@ PAL_BattleShowPlayerOffMagicAnim(
 
    n = PAL_SpriteGetNumFrames(lpSpriteEffect);
 
+#ifdef PAL_WIN95
+   if (wPlayerIndex != (WORD)-1)
+   {
+      g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
+   }
+#endif
+
    PAL_BattleDelay(1, 0, TRUE);
 
    l = n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
@@ -2522,15 +2543,22 @@ PAL_BattleShowPlayerOffMagicAnim(
    wave = gpGlobals->wScreenWave;
    gpGlobals->wScreenWave += gpGlobals->g.lprgMagic[iMagicNum].wWave;
 
+#ifdef PAL_WIN95
+   if (!fSummon && gpGlobals->g.lprgMagic[iMagicNum].wSound != 0)
+   {
+      SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+   }
+#endif
+
    for (i = 0; i < l; i++)
    {
       LPCBITMAPRLE b;
-
+#ifndef PAL_WIN95
       if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay && wPlayerIndex != (WORD)-1)
       {
          g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
       }
-
+#endif
       blow = ((g_Battle.iBlow > 0) ? RandomLong(0, g_Battle.iBlow) : RandomLong(g_Battle.iBlow, 0));
 
       for (k = 0; k <= g_Battle.wMaxEnemyIndex; k++)
@@ -2561,17 +2589,8 @@ PAL_BattleShowPlayerOffMagicAnim(
 
          b = PAL_SpriteGetFrame(lpSpriteEffect, k);
 
-#if 1
+#ifndef PAL_WIN95
          if ((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0)
-         {
-            SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
-         }
-#else
-         //
-         // HACKHACK: Some of the sound effects in the original game are rather screwed
-         //
-         if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay ||
-            (((i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0) && iMagicNum == 89))
          {
             SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
          }
@@ -2947,6 +2966,10 @@ PAL_BattleShowPlayerSummonMagicAnim(
 
    PAL_BattleBackupScene();
 
+#ifdef PAL_WIN95
+   SOUND_Play(gpGlobals->g.lprgMagic[wMagicNum].wSound);
+#endif
+
    //
    // Load the sprite of the summoned god
    //
@@ -3003,7 +3026,11 @@ PAL_BattleShowPlayerSummonMagicAnim(
    //
    // Show the actual magic effect
    //
+#ifdef PAL_WIN95
+   PAL_BattleShowPlayerOffMagicAnim((WORD)-1, wEffectMagicID, -1, TRUE);
+#else
    PAL_BattleShowPlayerOffMagicAnim((WORD)-1, wEffectMagicID, -1);
+#endif
 }
 
 static VOID
@@ -3649,7 +3676,11 @@ PAL_BattlePlayerPerformAction(
          g_Battle.rgPlayer[wPlayerIndex].iColorShift = 0;
          PAL_BattleDelay(3, 0, TRUE);
 
+#ifdef PAL_WIN95
+         PAL_BattleShowPlayerOffMagicAnim((WORD)-1, wObject, sTarget, FALSE);
+#else
          PAL_BattleShowPlayerOffMagicAnim((WORD)-1, wObject, sTarget);
+#endif
       }
 
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
@@ -3930,7 +3961,11 @@ PAL_BattlePlayerPerformAction(
             }
             else
             {
+#ifdef PAL_WIN95
+               PAL_BattleShowPlayerOffMagicAnim(wPlayerIndex, wObject, sTarget, FALSE);
+#else
                PAL_BattleShowPlayerOffMagicAnim(wPlayerIndex, wObject, sTarget);
+#endif
             }
 
             gpGlobals->g.rgObject[wObject].magic.wScriptOnSuccess =
@@ -4910,7 +4945,11 @@ PAL_BattleSimulateMagic(
    //
    // Show the magic animation
    //
+#ifdef PAL_WIN95
+   PAL_BattleShowPlayerOffMagicAnim(0xFFFF, wMagicObjectID, sTarget, FALSE);
+#else
    PAL_BattleShowPlayerOffMagicAnim(0xFFFF, wMagicObjectID, sTarget);
+#endif
 
    if (gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[wMagicObjectID].magic.wMagicNumber].wBaseDamage > 0 ||
       wBaseDamage > 0)

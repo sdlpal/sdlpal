@@ -30,12 +30,19 @@
 #include <fat.h>
 #endif
 
+#ifdef PAL_WIN95
+#define BITMAPNUM_SPLASH_UP         3
+#define BITMAPNUM_SPLASH_DOWN       4
+#define SPRITENUM_SPLASH_TITLE      0x47
+#define SPRITENUM_SPLASH_CRANE      0x49
+#define NUM_RIX_TITLE               0x5
+#else
 #define BITMAPNUM_SPLASH_UP         0x26
 #define BITMAPNUM_SPLASH_DOWN       0x27
 #define SPRITENUM_SPLASH_TITLE      0x47
 #define SPRITENUM_SPLASH_CRANE      0x49
 #define NUM_RIX_TITLE               0x5
-
+#endif
 static VOID
 PAL_Init(
    WORD             wScreenWidth,
@@ -135,10 +142,18 @@ PAL_Init(
    PAL_InitResources();
    SOUND_OpenAudio();
 
+#ifdef PAL_WIN95
+#ifdef _DEBUG
+   SDL_WM_SetCaption("Pal WIN95 (Debug Build)", NULL);
+#else
+   SDL_WM_SetCaption("Pal WIN95", NULL);
+#endif
+#else
 #ifdef _DEBUG
    SDL_WM_SetCaption("Pal (Debug Build)", NULL);
 #else
    SDL_WM_SetCaption("Pal", NULL);
+#endif
 #endif
 }
 

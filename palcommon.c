@@ -861,12 +861,18 @@ PAL_MKFGetDecompressedSize(
    // Read the header.
    //
    fseek(fp, uiOffset, SEEK_SET);
+#ifdef PAL_WIN95
    fread(buf, sizeof(DWORD), 2, fp);
+   buf[0] = SWAP32(buf[0]);
 
+   return (INT)buf[0];
+#else
+   fread(buf, sizeof(DWORD), 2, fp);
    buf[0] = SWAP32(buf[0]);
    buf[1] = SWAP32(buf[1]);
 
    return (buf[0] != 0x315f4a59) ? -1 : (INT)buf[1];
+#endif
 }
 
 INT

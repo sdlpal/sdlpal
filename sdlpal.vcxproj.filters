@@ -349,6 +349,12 @@
     <ClInclude Include="libmad\timer.h">
       <Filter>libmad</Filter>
     </ClInclude>
+    <ClInclude Include="big5font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gbfont.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="sdlpal.ico">
