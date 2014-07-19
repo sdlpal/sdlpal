@@ -618,7 +618,14 @@ SOUND_PlayChannel(
       return;
    }
    memcpy(wavecvt.buf, bufdec, wavespec.size);
-   free(bufdec);
+   if (g_fUseWav)
+   {
+      SDL_FreeWAV(bufdec);
+   }
+   else
+   {
+      free(bufdec);
+   }
 
    //
    // Run the audio converter

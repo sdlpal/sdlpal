@@ -641,7 +641,11 @@ PAL_SpriteGetFrame(
    // Get the offset of the frame
    //
    iFrameNum <<= 1;
+#ifdef PAL_WIN95
+   offset = ((lpSprite[iFrameNum] | (lpSprite[iFrameNum + 1] << 8)) << 1);
+#else
    offset = (WORD)((lpSprite[iFrameNum] | (lpSprite[iFrameNum + 1] << 8)) << 1);
+#endif
    return &lpSprite[offset];
 }
 
@@ -862,7 +866,7 @@ PAL_MKFGetDecompressedSize(
    //
    fseek(fp, uiOffset, SEEK_SET);
 #ifdef PAL_WIN95
-   fread(buf, sizeof(DWORD), 2, fp);
+   fread(buf, sizeof(DWORD), 1, fp);
    buf[0] = SWAP32(buf[0]);
 
    return (INT)buf[0];

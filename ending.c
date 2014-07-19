@@ -413,8 +413,8 @@ PAL_EndingAnimation(
          SDL_SetSurfacePalette(pUpper, gpScreen->format->palette);
          SDL_SetSurfacePalette(pLower, gpScreen->format->palette);
 #else
-         SDL_SetSurfacePalette(pUpper, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
-         SDL_SetSurfacePalette(pLower, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
+         SDL_SetPalette(pUpper, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
+         SDL_SetPalette(pLower, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
 #endif
       }
 
