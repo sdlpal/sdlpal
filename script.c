@@ -551,6 +551,11 @@ PAL_AdditionalCredits(
 
    PAL_DrawOpeningMenuBackground();
 
+#ifdef PAL_WIN95
+   extern BOOL fIsBig5;
+   fIsBig5 = TRUE;
+#endif
+
    while (rgszStrings[i][0] != '\0')
    {
       PAL_DrawText(rgszStrings[i], PAL_XY(25, 20 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);

@@ -54,6 +54,9 @@ MIDI_Play(
    unsigned char   *buf;
    int              size;
    SDL_RWops       *rw;
+#ifdef PAL_WIN95
+   char             filename[1024];
+#endif
 
    if (g_pMid != NULL && iNumRIX == iMidCurrent && native_midi_active())
    {
@@ -70,6 +73,18 @@ MIDI_Play(
       return;
    }
 
+#ifdef PAL_WIN95
+   sprintf(filename, "%s/musics/%.3d.mid", PAL_PREFIX, iNumRIX);
+
+   g_pMid = native_midi_loadsong(filename);
+   if (g_pMid != NULL)
+   {
+      native_midi_start(g_pMid);
+
+      iMidCurrent = iNumRIX;
+      fMidLoop = fLoop;
+   }
+#else
    fp = UTIL_OpenFile("midi.mkf");
    if (fp == NULL)
    {
@@ -107,6 +122,7 @@ MIDI_Play(
 
    SDL_RWclose(rw);
    free(buf);
+#endif
 }
 
 VOID

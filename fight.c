@@ -2189,11 +2189,19 @@ PAL_BattleShowPlayerUseItemAnim(
    }
 }
 
+#ifdef PAL_WIN95
+VOID
+PAL_BattleShowPlayerPreMagicAnim(
+   WORD         wPlayerIndex,
+   WORD         wObjectID
+)
+#else
 VOID
 PAL_BattleShowPlayerPreMagicAnim(
    WORD         wPlayerIndex,
    BOOL         fSummon
 )
+#endif
 /*++
   Purpose:
 
@@ -2214,6 +2222,13 @@ PAL_BattleShowPlayerPreMagicAnim(
    int   i, j;
    DWORD dwTime = SDL_GetTicks();
    WORD  wPlayerRole = gpGlobals->rgParty[wPlayerIndex].wPlayerRole;
+#ifdef PAL_WIN95
+   BOOL  fSummon = FALSE;
+   int   iMagicNum = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
+
+   if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeSummon)
+      fSummon = TRUE;
+#endif
 
    for (i = 0; i < 4; i++)
    {
@@ -3605,7 +3620,11 @@ PAL_BattlePlayerPerformAction(
 
       if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon)
       {
+#ifdef PAL_WIN95
+         PAL_BattleShowPlayerPreMagicAnim(wPlayerIndex, wObject);
+#else
          PAL_BattleShowPlayerPreMagicAnim(wPlayerIndex, TRUE);
+#endif
          PAL_BattleShowPlayerSummonMagicAnim((WORD)-1, wObject);
       }
       else
@@ -3884,8 +3903,12 @@ PAL_BattlePlayerPerformAction(
       wObject = g_Battle.rgPlayer[wPlayerIndex].action.wActionID;
       wMagicNum = gpGlobals->g.rgObject[wObject].magic.wMagicNumber;
 
+#ifdef PAL_WIN95
+      PAL_BattleShowPlayerPreMagicAnim(wPlayerIndex, wObject);
+#else
       PAL_BattleShowPlayerPreMagicAnim(wPlayerIndex,
          (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon));
+#endif
 
       if (!gpGlobals->fAutoBattle)
       {

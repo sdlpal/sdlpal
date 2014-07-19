@@ -89,7 +89,7 @@
 #include "gbfont.h"
 #include "big5font.h"
 
-static BOOL fIsBig5 = FALSE;
+BOOL fIsBig5 = FALSE;
 
 INT
 PAL_InitFont(
