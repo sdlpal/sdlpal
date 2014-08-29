@@ -530,6 +530,7 @@ main(
 
 #ifdef __WINPHONE__
    SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
+   SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
 #endif
 
    UTIL_OpenLog();

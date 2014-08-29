@@ -95,6 +95,12 @@ PAL_KeyboardEventFilter(
          break;
 #endif
 
+#ifdef __WINPHONE__
+	  case SDLK_AC_BACK:
+         WinPhone_OnBackKeyPress();
+         break;
+#endif
+
       case SDLK_UP:
       case SDLK_KP8:
          g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);

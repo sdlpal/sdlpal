@@ -42,3 +42,8 @@ MY_fopen(const char *path, const char *mode)
 	}
 	return fp;
 }
+
+extern "C" void
+WinPhone_OnBackKeyPress()
+{
+}
