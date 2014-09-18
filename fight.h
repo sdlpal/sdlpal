@@ -76,11 +76,23 @@ PAL_BattleEnemyPerformAction(
    WORD         wEnemyIndex
 );
 
+#ifdef PAL_WIN95
+
+VOID
+PAL_BattleShowPlayerPreMagicAnim(
+   WORD         wPlayerIndex,
+   WORD         wObjectID
+);
+
+#else
+
 VOID
 PAL_BattleShowPlayerPreMagicAnim(
    WORD         wPlayerIndex,
    BOOL         fSummon
 );
+
+#endif
 
 VOID
 PAL_BattleDelay(
