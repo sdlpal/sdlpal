@@ -226,7 +226,7 @@ PAL_DrawCharOnSurface(
    //
    // Draw the character to the surface.
    //
-   if (y > lpSurface->h) return;
+   if (y >= lpSurface->h) return;
 
    y *= lpSurface->pitch;
    for (i = 0; i < 32; i++)
@@ -237,21 +237,21 @@ PAL_DrawCharOnSurface(
          if (pChar[i] & (1 << (7 - j)))
          {
             if (dx < lpSurface->w)
-			{
+            {
                ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
-			}
-			else
-			{
-			   break;
-			}
+            }
+            else
+            {
+               break;
+            }
          }
          dx++;
       }
       y += (i & 1) * lpSurface->pitch;
-	  if (y / lpSurface->pitch > lpSurface->h)
-	  {
-		 break;
-	  }
+      if (y / lpSurface->pitch >= lpSurface->h)
+      {
+         break;
+      }
    }
 }
 
