@@ -300,6 +300,8 @@ PAL_DrawASCIICharOnSurface(
    //
    // Draw the character to the surface.
    //
+   if (y >= lpSurface->h) return;
+
    y *= lpSurface->pitch;
    for (i = 0; i < 15; i++)
    {
@@ -313,6 +315,10 @@ PAL_DrawASCIICharOnSurface(
          dx++;
       }
       y += lpSurface->pitch;
+      if (y / lpSurface->pitch >= lpSurface->h)
+      {
+         break;
+      }
    }
 }
 
