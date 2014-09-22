@@ -310,7 +310,14 @@ PAL_DrawASCIICharOnSurface(
       {
          if (pChar[i] & (1 << j))
          {
-            ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
+            if (dx < lpSurface->w)
+            {
+               ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
+            }
+            else
+            {
+               break;
+            }
          }
          dx++;
       }
