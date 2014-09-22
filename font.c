@@ -237,11 +237,21 @@ PAL_DrawCharOnSurface(
          if (pChar[i] & (1 << (7 - j)))
          {
             if (dx < lpSurface->w)
+			{
                ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
+			}
+			else
+			{
+			   break;
+			}
          }
          dx++;
       }
       y += (i & 1) * lpSurface->pitch;
+	  if (y / lpSurface->pitch > lpSurface->h)
+	  {
+		 break;
+	  }
    }
 }
 
