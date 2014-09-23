@@ -126,7 +126,6 @@ extern "C"
 
 FILE *MY_fopen(const char *path, const char *mode);
 #define fopen MY_fopen
-void WinPhone_OnBackKeyPress();
 
 #else
 

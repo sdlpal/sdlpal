@@ -95,12 +95,6 @@ PAL_KeyboardEventFilter(
          break;
 #endif
 
-#ifdef __WINPHONE__
-	  case SDLK_AC_BACK:
-         WinPhone_OnBackKeyPress();
-         break;
-#endif
-
       case SDLK_UP:
       case SDLK_KP8:
          g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -143,6 +137,9 @@ PAL_KeyboardEventFilter(
       case SDLK_LALT:
       case SDLK_RALT:
       case SDLK_KP0:
+#ifdef __WINPHONE__
+	  case SDLK_AC_BACK:
+#endif
          g_InputState.dwKeyPress |= kKeyMenu;
          break;
 
@@ -760,7 +757,7 @@ PAL_SetTouchAction(
       }
       else
       {
-         g_InputState.dwKeyPress |= kKeyThrowItem;
+         g_InputState.dwKeyPress |= kKeyForce;
       }
 	  break;
 
