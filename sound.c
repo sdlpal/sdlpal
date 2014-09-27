@@ -52,6 +52,7 @@ typedef struct tagSNDPLAYER
 {
    FILE                     *mkf;
    SDL_AudioSpec             spec;
+   SDL_mutex                *mtx;
    LPBYTE                    buf[2], pos[2];
    INT                       audio_len[2];
 #ifdef PAL_HAS_CD
@@ -245,6 +246,8 @@ SOUND_FillAudio(
       return;
    }
 
+   SDL_mutexP(gSndPlayer.mtx);
+
    for (i = 0; i < 2; i++)
    {
       //
@@ -277,6 +280,7 @@ SOUND_FillAudio(
       gSndPlayer.pos[i] += len;
       gSndPlayer.audio_len[i] -= len;
    }
+   SDL_mutexV(gSndPlayer.mtx);
 }
 
 INT
@@ -355,6 +359,7 @@ SOUND_OpenAudio(
    gSndPlayer.pos[1] = NULL;
    gSndPlayer.audio_len[1] = 0;
 
+   gSndPlayer.mtx = SDL_CreateMutex();
    gSndOpened = TRUE;
 
    //
@@ -433,6 +438,7 @@ SOUND_CloseAudio(
 
 --*/
 {
+   SDL_mutexP(gSndPlayer.mtx);
    SDL_CloseAudio();
 
    if (gSndPlayer.buf[0] != NULL)
@@ -452,6 +458,8 @@ SOUND_CloseAudio(
       fclose(gSndPlayer.mkf);
       gSndPlayer.mkf = NULL;
    }
+
+   SDL_DestroyMutex(gSndPlayer.mtx);
 
 #ifdef PAL_HAS_MP3
    SDL_mutexP(gSndPlayer.lock);
@@ -564,12 +572,14 @@ SOUND_PlayChannel(
    //
    // Stop playing current sound.
    //
+   SDL_mutexP(gSndPlayer.mtx);
    if (gSndPlayer.buf[iChannel] != NULL)
    {
       LPBYTE p = gSndPlayer.buf[iChannel];
       gSndPlayer.buf[iChannel] = NULL;
       free(p);
    }
+   SDL_mutexV(gSndPlayer.mtx);
 
    if (iSoundNum < 0)
    {
@@ -635,9 +645,17 @@ SOUND_PlayChannel(
       return;
    }
 
+   SDL_mutexP(gSndPlayer.mtx);
+   if (gSndPlayer.buf[iChannel] != NULL)
+   {
+	   LPBYTE p = gSndPlayer.buf[iChannel];
+	   gSndPlayer.buf[iChannel] = NULL;
+	   free(p);
+   }
    gSndPlayer.buf[iChannel] = wavecvt.buf;
    gSndPlayer.audio_len[iChannel] = wavecvt.len * wavecvt.len_mult;
    gSndPlayer.pos[iChannel] = wavecvt.buf;
+   SDL_mutexV(gSndPlayer.mtx);
 }
 
 VOID
