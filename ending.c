@@ -464,10 +464,11 @@ PAL_EndingScreen(
 
 	SDL_FillRect(gpScreen, NULL, 0);
 	PAL_SetPalette(4, FALSE);
+	gpGlobals->fNeedToFadeIn = TRUE;
 	PAL_EndingAnimation();
 
 	gpGlobals->wNumPalette = 4;
-	RIX_Play(0, FALSE, 1);
+	RIX_Play(0, FALSE, 2);
 	PAL_ColorFade(7, 15, FALSE);
 
 	if (!SOUND_PlayCDA(2))
@@ -504,7 +505,7 @@ PAL_EndingScreen(
 	PAL_ShowFBP(68, 6);
 
 	PAL_WaitForKey(0);
-	RIX_Play(0, FALSE, 0.5);
+	RIX_Play(0, FALSE, 1);
 	UTIL_Delay(500);
 
 	if (!SOUND_PlayCDA(13))
@@ -522,7 +523,7 @@ PAL_EndingScreen(
 	PAL_ScrollFBP(60, 0xf, TRUE);
 	PAL_ScrollFBP(59, 0xf, TRUE);
 
-	RIX_Play(0, FALSE, 3);
+	RIX_Play(0, FALSE, 6);
 	PAL_FadeOut(3);
 }
 #endif
