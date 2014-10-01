@@ -2893,7 +2893,7 @@ PAL_InterpretInstruction(
       // Quit game
       //
 #ifdef PAL_WIN95
-      // TODO: ending
+      PAL_EndingScreen();
 #endif
       PAL_AdditionalCredits();
       PAL_Shutdown();

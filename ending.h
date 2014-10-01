@@ -50,6 +50,13 @@ PAL_EndingAnimation(
    VOID
 );
 
+#ifdef PAL_WIN95
+VOID
+PAL_EndingScreen(
+   VOID
+);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

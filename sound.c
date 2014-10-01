@@ -275,7 +275,7 @@ SOUND_FillAudio(
 #ifdef __SYMBIAN32__
       SDL_MixAudio(stream, gSndPlayer.pos[i], len, g_iVolume);
 #else
-      SDL_MixAudio(stream, gSndPlayer.pos[i], len, SDL_MIX_MAXVOLUME);
+      SDL_MixAudio(stream, gSndPlayer.pos[i], len, SDL_MIX_MAXVOLUME * 2 / 3);
 #endif
       gSndPlayer.pos[i] += len;
       gSndPlayer.audio_len[i] -= len;

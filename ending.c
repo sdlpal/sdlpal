@@ -344,11 +344,19 @@ PAL_EndingAnimation(
    SDL_SetPalette(pLower, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
 
+#ifdef PAL_WIN95
+   PAL_MKFDecompressChunk(buf, 64000, 69, gpGlobals->f.fpFBP);
+   PAL_FBPBlitToSurface(buf, pUpper);
+
+   PAL_MKFDecompressChunk(buf, 64000, 70, gpGlobals->f.fpFBP);
+   PAL_FBPBlitToSurface(buf, pLower);
+#else
    PAL_MKFDecompressChunk(buf, 64000, 61, gpGlobals->f.fpFBP);
    PAL_FBPBlitToSurface(buf, pUpper);
 
    PAL_MKFDecompressChunk(buf, 64000, 62, gpGlobals->f.fpFBP);
    PAL_FBPBlitToSurface(buf, pLower);
+#endif
 
    PAL_MKFDecompressChunk(buf, 64000, 571, gpGlobals->f.fpMGO);
    PAL_MKFDecompressChunk(bufGirl, 6000, 572, gpGlobals->f.fpMGO);
@@ -387,8 +395,11 @@ PAL_EndingAnimation(
       // Draw the beast
       //
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(buf, 0), gpScreen, PAL_XY(0, -400 + i));
+#ifdef PAL_WIN95
+	  PAL_RLEBlitToSurface(buf + 0x8444, gpScreen, PAL_XY(0, -200 + i));
+#else
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(buf, 1), gpScreen, PAL_XY(0, -200 + i));
-
+#endif
       //
       // Draw the girl
       //
@@ -429,3 +440,89 @@ PAL_EndingAnimation(
    free(buf);
    free(bufGirl);
 }
+
+#ifdef PAL_WIN95
+
+VOID
+PAL_EndingScreen(
+   VOID
+)
+{
+	RIX_Play(0x1a, TRUE, 0);
+	PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 110, 150, 7);
+	PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 151, 999, 9);
+
+	PAL_FadeOut(2);
+
+	RIX_Play(0x19, TRUE, 0);
+
+	PAL_ShowFBP(75, 0);
+	PAL_FadeIn(5, FALSE, 1);
+	PAL_ScrollFBP(74, 0xf, TRUE);
+
+	PAL_FadeOut(1);
+
+	SDL_FillRect(gpScreen, NULL, 0);
+	PAL_SetPalette(4, FALSE);
+	PAL_EndingAnimation();
+
+	gpGlobals->wNumPalette = 4;
+	RIX_Play(0, FALSE, 1);
+	PAL_ColorFade(7, 15, FALSE);
+
+	if (!SOUND_PlayCDA(2))
+	{
+		RIX_Play(0x11, TRUE, 0);
+	}
+
+	SDL_FillRect(gpScreen, NULL, 0);
+	PAL_SetPalette(0, FALSE);
+	PAL_RNGPlay(0xb, 0, 999, 7);
+
+	PAL_FadeOut(2);
+
+	SDL_FillRect(gpScreen, NULL, 0);
+	PAL_SetPalette(8, FALSE);
+	PAL_RNGPlay(10, 0, 999, 6);
+
+	PAL_EndingSetEffectSprite(0);
+	PAL_ShowFBP(77, 10);
+
+	VIDEO_BackupScreen();
+
+	PAL_EndingSetEffectSprite(0x27b);
+	PAL_ShowFBP(76, 7);
+
+	PAL_SetPalette(5, FALSE);
+	PAL_ShowFBP(73, 7);
+	PAL_ScrollFBP(72, 0xf, TRUE);
+
+	PAL_ShowFBP(71, 7);
+	PAL_ShowFBP(68, 7);
+
+	PAL_EndingSetEffectSprite(0);
+	PAL_ShowFBP(68, 6);
+
+	PAL_WaitForKey(0);
+	RIX_Play(0, FALSE, 0.5);
+	UTIL_Delay(500);
+
+	if (!SOUND_PlayCDA(13))
+	{
+		RIX_Play(9, TRUE, 0);
+	}
+
+	PAL_ScrollFBP(67, 0xf, TRUE);
+	PAL_ScrollFBP(66, 0xf, TRUE);
+	PAL_ScrollFBP(65, 0xf, TRUE);
+	PAL_ScrollFBP(64, 0xf, TRUE);
+	PAL_ScrollFBP(63, 0xf, TRUE);
+	PAL_ScrollFBP(62, 0xf, TRUE);
+	PAL_ScrollFBP(61, 0xf, TRUE);
+	PAL_ScrollFBP(60, 0xf, TRUE);
+	PAL_ScrollFBP(59, 0xf, TRUE);
+
+	RIX_Play(0, FALSE, 3);
+	PAL_FadeOut(3);
+}
+#endif
