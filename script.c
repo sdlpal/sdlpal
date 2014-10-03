@@ -524,7 +524,7 @@ PAL_AdditionalCredits(
       "                    (" __DATE__ ")",
 #endif
       " ",
-      "  (c) 2009-2011, Wei Mingzhi",
+      "  (c) 2009-2014, Wei Mingzhi",
       "      <whistler_wmz@users.sf.net>.",
 #ifdef __SYMBIAN32__
       "  Symbian S60 \xB2\xBE\xB4\xD3 (c) 2009, netwan.",
