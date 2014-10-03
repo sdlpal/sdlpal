@@ -148,7 +148,11 @@ PAL_ShowFBP(
    //
    // HACKHACK: to make the ending show correctly
    //
+#ifdef PAL_WIN95
+   if (wChunkNum != 68)
+#else
    if (wChunkNum != 49)
+#endif
    {
       PAL_FBPBlitToSurface(buf, gpScreen);
    }
@@ -463,11 +467,10 @@ PAL_EndingScreen(
 	PAL_FadeOut(1);
 
 	SDL_FillRect(gpScreen, NULL, 0);
-	PAL_SetPalette(4, FALSE);
+	gpGlobals->wNumPalette = 4;
 	gpGlobals->fNeedToFadeIn = TRUE;
 	PAL_EndingAnimation();
 
-	gpGlobals->wNumPalette = 4;
 	RIX_Play(0, FALSE, 2);
 	PAL_ColorFade(7, 15, FALSE);
 
@@ -483,7 +486,8 @@ PAL_EndingScreen(
 	PAL_FadeOut(2);
 
 	SDL_FillRect(gpScreen, NULL, 0);
-	PAL_SetPalette(8, FALSE);
+	gpGlobals->wNumPalette = 8;
+	gpGlobals->fNeedToFadeIn = TRUE;
 	PAL_RNGPlay(10, 0, 999, 6);
 
 	PAL_EndingSetEffectSprite(0);
