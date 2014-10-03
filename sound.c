@@ -48,6 +48,10 @@ static BOOL  g_fUseWav = FALSE;
 INT          g_iVolume  = SDL_MIX_MAXVOLUME * 0.1;
 #endif
 
+#ifdef PAL_CLASSIC
+int          g_iCurrChannel = 0;
+#endif
+
 typedef struct tagSNDPLAYER
 {
    FILE                     *mkf;

@@ -72,7 +72,12 @@ SOUND_PlayCDA(
    INT    iNumTrack
 );
 
+#ifdef PAL_CLASSIC
+extern int g_iCurrChannel;
+#define SOUND_Play(i) SOUND_PlayChannel((i), (g_iCurrChannel ^= 1))
+#else
 #define SOUND_Play(i) SOUND_PlayChannel((i), 0)
+#endif
 
 extern BOOL       g_fNoSound;
 extern BOOL       g_fNoMusic;
