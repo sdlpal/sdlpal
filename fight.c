@@ -4718,8 +4718,12 @@ PAL_BattleEnemyPerformAction(
 
          g_Battle.rgPlayer[sTarget].iColorShift = 6;
       }
-
-      SOUND_Play(iSound);
+#ifdef PAL_WIN95
+      if (iSound != 0)
+#endif
+      {
+         SOUND_Play(iSound);
+      }
       PAL_BattleDelay(1, 0, FALSE);
 
       g_Battle.rgPlayer[sTarget].iColorShift = 0;
