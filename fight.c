@@ -4635,8 +4635,12 @@ PAL_BattleEnemyPerformAction(
          g_Battle.rgEnemy[wEnemyIndex].pos = PAL_XY(x, y);
          PAL_BattleDelay(1, 0, FALSE);
       }
-
-      SOUND_Play(g_Battle.rgEnemy[wEnemyIndex].e.wActionSound);
+#ifdef PAL_WIN95
+      if (g_Battle.rgEnemy[wEnemyIndex].e.wActionSound != 0)
+#endif
+      {
+         SOUND_Play(g_Battle.rgEnemy[wEnemyIndex].e.wActionSound);
+      }
       PAL_BattleDelay(1, 0, FALSE);
 
       ex = PAL_X(g_Battle.rgPlayer[sTarget].pos) - 44;
