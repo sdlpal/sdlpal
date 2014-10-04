@@ -107,6 +107,8 @@ PAL_KeyboardEventFilter(
             exit(0);
          }
          g_uiLastBackKeyTime = SDL_GetTicks();
+         VIDEO_UpdateScreen(NULL);
+         UTIL_Delay(800);
          break;
 #endif
 
