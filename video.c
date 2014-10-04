@@ -444,7 +444,7 @@ VIDEO_UpdateScreen(
       if (gpBackKeyMessage)
       {
          extern unsigned int g_uiLastBackKeyTime;
-         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
          {
            SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
          }
@@ -510,7 +510,7 @@ VIDEO_UpdateScreen(
       if (gpBackKeyMessage)
       {
          extern unsigned int g_uiLastBackKeyTime;
-         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
          {
            SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
          }
@@ -547,7 +547,7 @@ VIDEO_UpdateScreen(
       if (gpBackKeyMessage)
       {
          extern unsigned int g_uiLastBackKeyTime;
-         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
          {
            SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
          }
@@ -1012,7 +1012,7 @@ VIDEO_SwitchScreen(
       if (gpBackKeyMessage)
       {
          extern unsigned int g_uiLastBackKeyTime;
-         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
          {
            SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
          }
@@ -1165,7 +1165,7 @@ VIDEO_FadeScreen(
             if (gpBackKeyMessage)
             {
                extern unsigned int g_uiLastBackKeyTime;
-               if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+               if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
                {
                  SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
                }
@@ -1196,7 +1196,7 @@ VIDEO_FadeScreen(
             if (gpBackKeyMessage)
             {
                extern unsigned int g_uiLastBackKeyTime;
-               if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+               if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
                {
                   SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
                }

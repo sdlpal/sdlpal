@@ -101,7 +101,7 @@ PAL_KeyboardEventFilter(
 
 #ifdef __WINPHONE__
       case SDLK_AC_BACK:
-         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
          {
             PAL_Shutdown();
             exit(0);
