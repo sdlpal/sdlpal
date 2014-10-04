@@ -33,6 +33,10 @@ BOOL                     g_fUseJoystick = TRUE;
 #define MAX_DEADZONE 16384
 #endif
 
+#if defined(__WINPHONE__)
+unsigned int g_uiLastBackKeyTime = 0;
+#endif
+
 static VOID
 PAL_KeyboardEventFilter(
    const SDL_Event       *lpEvent
@@ -95,6 +99,17 @@ PAL_KeyboardEventFilter(
          break;
 #endif
 
+#ifdef __WINPHONE__
+      case SDLK_AC_BACK:
+         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         {
+            PAL_Shutdown();
+            exit(0);
+         }
+         g_uiLastBackKeyTime = SDL_GetTicks();
+         break;
+#endif
+
       case SDLK_UP:
       case SDLK_KP8:
          g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -137,9 +152,6 @@ PAL_KeyboardEventFilter(
       case SDLK_LALT:
       case SDLK_RALT:
       case SDLK_KP0:
-#ifdef __WINPHONE__
-	  case SDLK_AC_BACK:
-#endif
          g_InputState.dwKeyPress |= kKeyMenu;
          break;
 

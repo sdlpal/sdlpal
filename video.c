@@ -32,6 +32,9 @@ SDL_Window               *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
 static SDL_Texture       *gpTexture          = NULL;
 static SDL_Texture       *gpTouchOverlay     = NULL;
+#ifdef __WINPHONE__
+static SDL_Texture       *gpBackKeyMessage   = NULL;
+#endif
 #endif
 
 // The real screen surface
@@ -189,6 +192,27 @@ VIDEO_Init(
       SDL_FreeSurface(overlay);
    }
 
+#ifdef __WINPHONE__
+   {
+      //
+      // Totally ugly hack to satisfy M$'s silly requirements.
+      // No need to understand this crap.
+      //
+      SDL_Color palette[256] = { 0 };
+      SDL_Surface *p;
+      palette[0].r = palette[0].g = palette[0].b = palette[0].a = 0;
+      palette[1].r = palette[1].g = palette[1].b = palette[1].a = 255;
+      SDL_FillRect(gpScreenBak, NULL, 0);
+      VIDEO_SetPalette(palette);
+      p = gpScreen;
+      gpScreen = gpScreenBak;
+      PAL_DrawText("Press Back key again to quit", PAL_XY(30, 30), 1, FALSE, FALSE);
+      gpScreen = p;
+      gpBackKeyMessage = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
+      SDL_FillRect(gpScreenBak, NULL, 0);
+   }
+#endif
+
 #else
 
    //
@@ -314,6 +338,14 @@ VIDEO_Shutdown(
    }
    gpTouchOverlay = NULL;
 
+#ifdef __WINPHONE__
+   if (gpBackKeyMessage)
+   {
+      SDL_DestroyTexture(gpBackKeyMessage);
+   }
+   gpBackKeyMessage = NULL;
+#endif
+
    if (gpTexture)
    {
 	  SDL_DestroyTexture(gpTexture);
@@ -408,6 +440,16 @@ VIDEO_UpdateScreen(
       {
          SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
       }
+#ifdef __WINPHONE__
+      if (gpBackKeyMessage)
+      {
+         extern unsigned int g_uiLastBackKeyTime;
+         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         {
+           SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
+         }
+      }
+#endif
       SDL_RenderPresent(gpRenderer);
 #else
       SDL_UpdateRect(gpScreenReal, dstrect.x, dstrect.y, dstrect.w, dstrect.h);
@@ -464,6 +506,16 @@ VIDEO_UpdateScreen(
       {
          SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
       }
+#ifdef __WINPHONE__
+      if (gpBackKeyMessage)
+      {
+         extern unsigned int g_uiLastBackKeyTime;
+         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         {
+           SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
+         }
+      }
+#endif
       SDL_RenderPresent(gpRenderer);
 #else
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
@@ -491,6 +543,16 @@ VIDEO_UpdateScreen(
       {
          SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
       }
+#ifdef __WINPHONE__
+      if (gpBackKeyMessage)
+      {
+         extern unsigned int g_uiLastBackKeyTime;
+         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         {
+           SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
+         }
+      }
+#endif
       SDL_RenderPresent(gpRenderer);
 #else
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
@@ -946,6 +1008,16 @@ VIDEO_SwitchScreen(
       {
          SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
       }
+#ifdef __WINPHONE__
+      if (gpBackKeyMessage)
+      {
+         extern unsigned int g_uiLastBackKeyTime;
+         if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+         {
+           SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
+         }
+      }
+#endif
       SDL_RenderPresent(gpRenderer);
 #else
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
@@ -1083,12 +1155,22 @@ VIDEO_FadeScreen(
 
             SDL_FillRect(gpScreenReal, &dstrect, 0);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-			SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
-			SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-			if (gpTouchOverlay)
-			{
-			   SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-			}
+            SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
+            SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+            if (gpTouchOverlay)
+            {
+               SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+            }
+#ifdef __WINPHONE__
+            if (gpBackKeyMessage)
+            {
+               extern unsigned int g_uiLastBackKeyTime;
+               if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+               {
+                 SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
+               }
+            }
+#endif
 			SDL_RenderPresent(gpRenderer);
 #else
 			SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
@@ -1104,15 +1186,25 @@ VIDEO_FadeScreen(
 
             SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-			SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
-			SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-			if (gpTouchOverlay)
-			{
-			   SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-			}
-			SDL_RenderPresent(gpRenderer);
+            SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
+            SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+            if (gpTouchOverlay)
+            {
+               SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
+            }
+#ifdef __WINPHONE__
+            if (gpBackKeyMessage)
+            {
+               extern unsigned int g_uiLastBackKeyTime;
+               if (SDL_GetTicks() - g_uiLastBackKeyTime < 800)
+               {
+                  SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
+               }
+            }
+#endif
+            SDL_RenderPresent(gpRenderer);
 #else
-			SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+            SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 #endif
          }
       }
