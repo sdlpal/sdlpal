@@ -40,5 +40,11 @@ MY_fopen(const char *path, const char *mode)
 		_snprintf_s(buf, 1024, "%s\\%s", p, path);
 		fp = _fsopen(buf, mode, 0x40);
 	}
+	if (fp == NULL)
+	{
+		p = GetRootPath();
+		_snprintf_s(buf, 1024, "%s\\Shared\\%s", p, path);
+		fp = _fsopen(buf, mode, 0x40);
+	}
 	return fp;
 }
