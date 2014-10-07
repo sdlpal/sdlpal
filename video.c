@@ -198,18 +198,27 @@ VIDEO_Init(
       // Totally ugly hack to satisfy M$'s silly requirements.
       // No need to understand this crap.
       //
+#ifdef PAL_WIN95
+      extern BOOL fIsBig5;
+#endif
       SDL_Color palette[256] = { 0 };
       SDL_Surface *p;
+#ifdef PAL_WIN95
+      fIsBig5 = TRUE;
+#endif
       palette[0].r = palette[0].g = palette[0].b = palette[0].a = 0;
       palette[1].r = palette[1].g = palette[1].b = palette[1].a = 255;
       SDL_FillRect(gpScreenBak, NULL, 0);
       VIDEO_SetPalette(palette);
       p = gpScreen;
       gpScreen = gpScreenBak;
-      PAL_DrawText("Press Back key again to quit", PAL_XY(30, 30), 1, FALSE, FALSE);
+      PAL_DrawText("\xA6\x41\xA6\xB8\xAB\xF6 Back \xB5\xB2\xA7\xF4", PAL_XY(30, 30), 1, FALSE, FALSE);
       gpScreen = p;
       gpBackKeyMessage = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
       SDL_FillRect(gpScreenBak, NULL, 0);
+#ifdef PAL_WIN95
+      fIsBig5 = FALSE;
+#endif
    }
 #endif
 
@@ -1167,7 +1176,7 @@ VIDEO_FadeScreen(
                extern unsigned int g_uiLastBackKeyTime;
                if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
                {
-                 SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
+                  SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
                }
             }
 #endif
