@@ -161,6 +161,7 @@
 		716552AA195BBE1B006E1227 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552A9195BBE1B006E1227 /* CoreAudio.framework */; };
 		716552AE195BBE7D006E1227 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AD195BBE7D006E1227 /* AudioToolbox.framework */; };
 		716552B0195BBECE006E1227 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AF195BBECE006E1227 /* QuartzCore.framework */; };
+		71AA35801A0BCA4E00793FFF /* util.m in Sources */ = {isa = PBXBuildFile; fileRef = 71AA357F1A0BCA4E00793FFF /* util.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -505,6 +506,7 @@
 		716552AB195BBE4C006E1227 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		716552AD195BBE7D006E1227 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		716552AF195BBECE006E1227 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		71AA357F1A0BCA4E00793FFF /* util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = util.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -630,6 +632,7 @@
 		71655067195BB372006E1227 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				71AA357F1A0BCA4E00793FFF /* util.m */,
 				7165507D195BB3D8006E1227 /* Icon.png */,
 				71655068195BB372006E1227 /* SDLPal-Info.plist */,
 				71655072195BB372006E1227 /* Default.png */,
@@ -1283,6 +1286,7 @@
 				716552A6195BBDFF006E1227 /* SDL_audiotypecvt.c in Sources */,
 				716552A7195BBDFF006E1227 /* SDL_mixer.c in Sources */,
 				716552A8195BBDFF006E1227 /* SDL_wave.c in Sources */,
+				71AA35801A0BCA4E00793FFF /* util.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

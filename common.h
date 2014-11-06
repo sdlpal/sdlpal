@@ -104,8 +104,8 @@ extern "C"
 
 #elif defined (__IOS__)
 
-#define PAL_PREFIX            "../Documents/"
-#define PAL_SAVE_PREFIX       "../Documents/"
+#define PAL_PREFIX            UTIL_IOS_BasePath()
+#define PAL_SAVE_PREFIX       UTIL_IOS_SavePath()
 #define PAL_HAS_TOUCH         1
 
 #elif defined (__ANDROID__)
@@ -202,7 +202,10 @@ typedef unsigned char       UCHAR, *PUCHAR;
 
 typedef unsigned short      WORD, *LPWORD;
 typedef unsigned int        DWORD, *LPDWORD;
-typedef int                 INT, *LPINT, BOOL, *LPBOOL;
+typedef int                 INT, *LPINT;
+#ifndef __OBJC__
+typedef int                 BOOL, *LPBOOL;
+#endif
 typedef unsigned int        UINT, *PUINT, UINT32, *PUINT32;
 typedef unsigned char       BYTE, *LPBYTE;
 typedef CONST BYTE         *LPCBYTE;

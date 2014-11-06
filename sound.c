@@ -369,7 +369,10 @@ SOUND_OpenAudio(
    //
    // Initialize the music subsystem.
    //
-   RIX_Init(va("%s%s", PAL_PREFIX, "mus.mkf"));
+   if (RIX_Init(va("%s%s", PAL_PREFIX, "mus.mkf")) < 0)
+   {
+      RIX_Init(va("%s%s", PAL_PREFIX, "MUS.MKF"));
+   }
 
 #ifdef PAL_HAS_CD
    //

@@ -183,7 +183,7 @@ VIDEO_Init(
    //
    // Create texture for overlay.
    //
-   overlay = SDL_LoadBMP(PAL_PREFIX "overlay.bmp");
+   overlay = SDL_LoadBMP(va("%s%s", PAL_PREFIX, "overlay.bmp"));
    if (overlay != NULL)
    {
       SDL_SetColorKey(overlay, SDL_RLEACCEL, SDL_MapRGB(overlay->format, 255, 0, 255));

@@ -90,6 +90,20 @@ VOID
 UTIL_CloseFile(
    FILE                *fp
 );
+    
+#ifdef __IOS__
+
+LPCSTR
+UTIL_IOS_BasePath(
+   VOID
+);
+
+LPCSTR
+UTIL_IOS_SavePath(
+   VOID
+);
+    
+#endif
 
 #define _PATH_LOG           PAL_PREFIX "log.txt"
 #define LOG_EMERG           0 /* system is unusable */
