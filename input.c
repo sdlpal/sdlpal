@@ -141,11 +141,11 @@ PAL_KeyboardEventFilter(
 
 #if defined(DINGOO)
       case SDLK_SPACE:
-		 g_InputState.dwKeyPress = kKeyMenu;
+         g_InputState.dwKeyPress = kKeyMenu;
          break;
 
       case SDLK_LCTRL:
-		 g_InputState.dwKeyPress = kKeySearch;
+         g_InputState.dwKeyPress = kKeySearch;
          break;
 #else
       case SDLK_ESCAPE:
@@ -288,7 +288,7 @@ PAL_MouseEventFilter(
 --*/
 {
 #ifdef PAL_HAS_MOUSE
-   static short hitTest = 0; // Double click detect;	
+   static short hitTest = 0; // Double click detect;   
    const SDL_VideoInfo *vi;
 
    double       screenWidth, gridWidth;
@@ -297,9 +297,9 @@ PAL_MouseEventFilter(
    double       thumbx;
    double       thumby;
    INT          gridIndex;
-   BOOL			isLeftMouseDBClick = FALSE;
-   BOOL			isLeftMouseClick = FALSE;
-   BOOL			isRightMouseClick = FALSE;
+   BOOL         isLeftMouseDBClick = FALSE;
+   BOOL         isLeftMouseClick = FALSE;
+   BOOL         isRightMouseClick = FALSE;
    static INT   lastReleaseButtonTime, lastPressButtonTime, betweenTime;
    static INT   lastPressx = 0;
    static INT   lastPressy = 0;
@@ -345,19 +345,19 @@ PAL_MouseEventFilter(
          g_InputState.dir = kDirEast;
          break;
       case 1:
-    	 //g_InputState.prevdir = g_InputState.dir;
-    	 //g_InputState.dir = kDirNorth;
+        //g_InputState.prevdir = g_InputState.dir;
+        //g_InputState.dir = kDirNorth;
          g_InputState.dwKeyPress |= kKeyUp;
          break;
       case 7:
-    	 //g_InputState.prevdir = g_InputState.dir;
-    	 //g_InputState.dir = kDirSouth; 
+        //g_InputState.prevdir = g_InputState.dir;
+        //g_InputState.dir = kDirSouth; 
          g_InputState.dwKeyPress |= kKeyDown;
          break;
       case 3:
-    	 //g_InputState.prevdir = g_InputState.dir;
-    	 //g_InputState.dir = kDirWest;
-    	 g_InputState.dwKeyPress |= kKeyLeft;
+        //g_InputState.prevdir = g_InputState.dir;
+        //g_InputState.dir = kDirWest;
+        g_InputState.dwKeyPress |= kKeyLeft;
          break;
       case 5:
          //g_InputState.prevdir = g_InputState.dir;
@@ -374,82 +374,82 @@ PAL_MouseEventFilter(
       if (abs(lastPressx - lastReleasex) < 25 &&
                      abs(lastPressy - lastReleasey) < 25)
       {
-		  betweenTime = lastReleaseButtonTime - lastPressButtonTime;
-		  if (betweenTime >500)
-		  {
-			  isRightMouseClick = TRUE;
-		  }
-		  else if (betweenTime >=0)
-		  {
-			  if((betweenTime < 100) && (hitTest >= 2))
-			  {
-				  isLeftMouseClick = TRUE;
-			  	  hitTest = 0;  
-			  }
-			  else
-			  {  
-				  isLeftMouseClick = TRUE;
-				  if(betweenTime > 100)
-				  {
-					  hitTest = 0;
-				  }
-				  
-			  }
-		  }
+        betweenTime = lastReleaseButtonTime - lastPressButtonTime;
+        if (betweenTime >500)
+        {
+           isRightMouseClick = TRUE;
+        }
+        else if (betweenTime >=0)
+        {
+           if((betweenTime < 100) && (hitTest >= 2))
+           {
+              isLeftMouseClick = TRUE;
+                hitTest = 0;  
+           }
+           else
+           {  
+              isLeftMouseClick = TRUE;
+              if(betweenTime > 100)
+              {
+                 hitTest = 0;
+              }
+              
+           }
+        }
       }
       switch (gridIndex)
       {
       case 2:
-    	 if( isLeftMouseDBClick )
-		 {
-			 SOUND_AdjustVolume(1);
-			 break;
-		 }
+        if( isLeftMouseDBClick )
+       {
+          SOUND_AdjustVolume(1);
+          break;
+       }
       case 6:
       case 0:
-    	 if( isLeftMouseDBClick )
-		 {
-			 SOUND_AdjustVolume(0);
-			 break;
-		 }
+        if( isLeftMouseDBClick )
+       {
+          SOUND_AdjustVolume(0);
+          break;
+       }
       case 7:
-    	  if (isRightMouseClick) //repeat attack
-    	  {
-    	     g_InputState.dwKeyPress |= kKeyRepeat;
-    	     break;
-    	  }
+         if (isRightMouseClick) //repeat attack
+         {
+            g_InputState.dwKeyPress |= kKeyRepeat;
+            break;
+         }
       case 8:
          g_InputState.dir = kDirUnknown;
          g_InputState.prevdir = kDirUnknown;
          break;
       case 1:
-    	 if( isRightMouseClick )
-		 {
-			 g_InputState.dwKeyPress |= kKeyForce;
-		 }
-    	 break;
+        if( isRightMouseClick )
+       {
+          g_InputState.dwKeyPress |= kKeyForce;
+       }
+        break;
       case 3:
-    	 if( isRightMouseClick )
-		 {
-			 g_InputState.dwKeyPress |= kKeyAuto;
-		 }
-    	 break;
+        if( isRightMouseClick )
+       {
+          g_InputState.dwKeyPress |= kKeyAuto;
+       }
+        break;
       case 5:
-    	 if( isRightMouseClick )
-		 {
-			 g_InputState.dwKeyPress |= kKeyDefend;
-		 }
-		 break;
+        if( isRightMouseClick )
+       {
+          g_InputState.dwKeyPress |= kKeyDefend;
+       }
+       break;
       case 4:
-		if (isRightMouseClick) // menu
-		{
-		   g_InputState.dwKeyPress |= kKeyMenu;
-		}
-		else if (isLeftMouseClick) // search
-		{
-		   g_InputState.dwKeyPress |= kKeySearch;
-		}
-		
+      if (isRightMouseClick) // menu
+      {
+         g_InputState.dwKeyPress |= kKeyMenu;
+      }
+      else if (isLeftMouseClick) // search
+      {
+         g_InputState.dwKeyPress |= kKeySearch;
+      }
+      
         break;
       }
       break;
@@ -520,17 +520,17 @@ PAL_JoystickEventFilter(
          // X axis
          //
 #if defined(GPH)
-		if (lpEvent->jaxis.value > MAX_DEADZONE) {
-			g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-			g_InputState.dir = kDirEast;
-			g_InputState.dwKeyPress = kKeyRight;
-		} else if (lpEvent->jaxis.value < MIN_DEADZONE) {
-			g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-			g_InputState.dir = kDirWest;
-			g_InputState.dwKeyPress = kKeyLeft;
-		} else {
-			g_InputState.dir = kDirUnknown;
-		}
+      if (lpEvent->jaxis.value > MAX_DEADZONE) {
+         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+         g_InputState.dir = kDirEast;
+         g_InputState.dwKeyPress = kKeyRight;
+      } else if (lpEvent->jaxis.value < MIN_DEADZONE) {
+         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+         g_InputState.dir = kDirWest;
+         g_InputState.dwKeyPress = kKeyLeft;
+      } else {
+         g_InputState.dir = kDirUnknown;
+      }
 #else
          if (lpEvent->jaxis.value > 20000)
          {
@@ -567,17 +567,17 @@ PAL_JoystickEventFilter(
          // Y axis
          //
 #if defined(GPH)
-		if (lpEvent->jaxis.value > MAX_DEADZONE) {
-			g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-			g_InputState.dir = kDirSouth;
-			g_InputState.dwKeyPress = kKeyDown;
-		} else if (lpEvent->jaxis.value < MIN_DEADZONE) {
-			g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-			g_InputState.dir = kDirNorth;
-			g_InputState.dwKeyPress = kKeyUp;
-		} else {
-			g_InputState.dir = kDirUnknown;
-		}
+      if (lpEvent->jaxis.value > MAX_DEADZONE) {
+         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+         g_InputState.dir = kDirSouth;
+         g_InputState.dwKeyPress = kKeyDown;
+      } else if (lpEvent->jaxis.value < MIN_DEADZONE) {
+         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+         g_InputState.dir = kDirNorth;
+         g_InputState.dwKeyPress = kKeyUp;
+      } else {
+         g_InputState.dir = kDirUnknown;
+      }
 #else
          if (lpEvent->jaxis.value > 20000)
          {
@@ -620,29 +620,29 @@ PAL_JoystickEventFilter(
       switch (lpEvent->jbutton.button)
       {
 #if defined(GP2XWIZ)
-		case 14:
+      case 14:
 #elif defined(CAANOO)
-		case 3:
+      case 3:
 #endif
-			g_InputState.dwKeyPress = kKeyMenu;
-			break;
+         g_InputState.dwKeyPress = kKeyMenu;
+         break;
 
 #if defined(GP2XWIZ)
-		case 13:
+      case 13:
 #elif defined(CAANOO)
-		case 2:
+      case 2:
 #endif
-			g_InputState.dwKeyPress = kKeySearch;
-			break;
+         g_InputState.dwKeyPress = kKeySearch;
+         break;
 #else
 #if defined(GEKKO)
       switch (lpEvent->jbutton.button)
       {
-		case 2:
+      case 2:
          g_InputState.dwKeyPress |= kKeyMenu;
          break;
 
-		case 3:
+      case 3:
          g_InputState.dwKeyPress |= kKeySearch;
          break;
 #else
@@ -666,12 +666,12 @@ PAL_JoystickEventFilter(
 #ifdef PAL_HAS_TOUCH
 
 #define  TOUCH_NONE     0
-#define	 TOUCH_UP		1
-#define	 TOUCH_DOWN		2
-#define	 TOUCH_LEFT		3
-#define	 TOUCH_RIGHT	4
-#define	 TOUCH_BUTTON1	5
-#define	 TOUCH_BUTTON2	6
+#define    TOUCH_UP      1
+#define    TOUCH_DOWN      2
+#define    TOUCH_LEFT      3
+#define    TOUCH_RIGHT   4
+#define    TOUCH_BUTTON1   5
+#define    TOUCH_BUTTON2   6
 #define  TOUCH_BUTTON3  7
 #define  TOUCH_BUTTON4  8
 
@@ -686,7 +686,7 @@ PAL_GetTouchArea(
       //
       // Upper area
       //
-	  return TOUCH_NONE;
+     return TOUCH_NONE;
    }
    else if (X < 1.0 / 3)
    {
@@ -694,43 +694,43 @@ PAL_GetTouchArea(
       {
          return TOUCH_UP;
       }
-	  else if (Y - 0.75 > fabs(X - 1.0 / 3 / 2) * (0.5 / (1.0 / 3)))
-	  {
-		 return TOUCH_DOWN;
-	  }
-	  else if (X < 1.0 / 3 / 2 && fabs(Y - 0.75) < 0.25 - X * (0.5 / (1.0 / 3)))
-	  {
-		 return TOUCH_LEFT;
-	  }
-	  else
-	  {
-		 return TOUCH_RIGHT;
-	  }
+     else if (Y - 0.75 > fabs(X - 1.0 / 3 / 2) * (0.5 / (1.0 / 3)))
+     {
+       return TOUCH_DOWN;
+     }
+     else if (X < 1.0 / 3 / 2 && fabs(Y - 0.75) < 0.25 - X * (0.5 / (1.0 / 3)))
+     {
+       return TOUCH_LEFT;
+     }
+     else
+     {
+       return TOUCH_RIGHT;
+     }
    }
    else if (X > 1.0 - 1.0 / 3)
    {
-	  if (X < 1.0 - (1.0 / 3 / 2))
-	  {
-		 if (Y < 0.75)
-		 {
-			return TOUCH_BUTTON1;
-		 }
-		 else
-		 {
-			return TOUCH_BUTTON3;
-		 }
-	  }
-	  else
-	  {
-		 if (Y < 0.75)
-		 {
-			return TOUCH_BUTTON2;
-		 }
-		 else
-		 {
-			return TOUCH_BUTTON4;
-		 }
-	  }
+     if (X < 1.0 - (1.0 / 3 / 2))
+     {
+       if (Y < 0.75)
+       {
+         return TOUCH_BUTTON1;
+       }
+       else
+       {
+         return TOUCH_BUTTON3;
+       }
+     }
+     else
+     {
+       if (Y < 0.75)
+       {
+         return TOUCH_BUTTON2;
+       }
+       else
+       {
+         return TOUCH_BUTTON4;
+       }
+     }
    }
 
    return TOUCH_NONE;
@@ -744,24 +744,24 @@ PAL_SetTouchAction(
    switch (area)
    {
    case TOUCH_UP:
-	  g_InputState.dir = kDirNorth;
-	  g_InputState.dwKeyPress |= kKeyUp;
-	  break;
+     g_InputState.dir = kDirNorth;
+     g_InputState.dwKeyPress |= kKeyUp;
+     break;
 
    case TOUCH_DOWN:
-	  g_InputState.dir = kDirSouth;
-	  g_InputState.dwKeyPress |= kKeyDown;
-	  break;
+     g_InputState.dir = kDirSouth;
+     g_InputState.dwKeyPress |= kKeyDown;
+     break;
 
    case TOUCH_LEFT:
-	  g_InputState.dir = kDirWest;
-	  g_InputState.dwKeyPress |= kKeyLeft;
-	  break;
+     g_InputState.dir = kDirWest;
+     g_InputState.dwKeyPress |= kKeyLeft;
+     break;
 
    case TOUCH_RIGHT:
-	  g_InputState.dir = kDirEast;
-	  g_InputState.dwKeyPress |= kKeyRight;
-	  break;
+     g_InputState.dir = kDirEast;
+     g_InputState.dwKeyPress |= kKeyRight;
+     break;
 
    case TOUCH_BUTTON1:
       if (gpGlobals->fInBattle)
@@ -772,19 +772,19 @@ PAL_SetTouchAction(
       {
          g_InputState.dwKeyPress |= kKeyForce;
       }
-	  break;
+     break;
 
    case TOUCH_BUTTON2:
-	  g_InputState.dwKeyPress |= kKeyMenu;
-	  break;
+     g_InputState.dwKeyPress |= kKeyMenu;
+     break;
 
    case TOUCH_BUTTON3:
       g_InputState.dwKeyPress |= kKeyUseItem;
-	  break;
+     break;
 
    case TOUCH_BUTTON4:
-	  g_InputState.dwKeyPress |= kKeySearch;
-	  break;
+     g_InputState.dwKeyPress |= kKeySearch;
+     break;
    }
 }
 
@@ -799,8 +799,8 @@ PAL_UnsetTouchAction(
    case TOUCH_DOWN:
    case TOUCH_LEFT:
    case TOUCH_RIGHT:
-	  g_InputState.dir = kDirUnknown;
-	  break;
+     g_InputState.dir = kDirUnknown;
+     break;
    }
 }
 #endif
@@ -832,38 +832,38 @@ PAL_TouchEventFilter(
    switch (lpEvent->type)
    {
    case SDL_FINGERDOWN:
-	  if (finger1 == -1)
-	  {
+     if (finger1 == -1)
+     {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
 
          finger1 = lpEvent->tfinger.fingerId;
          prev_touch1 = area;
          PAL_SetTouchAction(area);
-	  }
-	  else if (finger2 == -1)
-	  {
+     }
+     else if (finger2 == -1)
+     {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
 
          finger2 = lpEvent->tfinger.fingerId;
          prev_touch2 = area;
          PAL_SetTouchAction(area);
-	  }
-	  break;
+     }
+     break;
 
    case SDL_FINGERUP:
-	  if (lpEvent->tfinger.fingerId == finger1)
-	  {
-		 PAL_UnsetTouchAction(prev_touch1);
-		 finger1 = -1;
-		 prev_touch1 = TOUCH_NONE;
-	  }
-	  else if (lpEvent->tfinger.fingerId == finger2)
-	  {
-		 PAL_UnsetTouchAction(prev_touch2);
-		 finger2 = -1;
-		 prev_touch2 = TOUCH_NONE;
-	  }
-	  break;
+     if (lpEvent->tfinger.fingerId == finger1)
+     {
+       PAL_UnsetTouchAction(prev_touch1);
+       finger1 = -1;
+       prev_touch1 = TOUCH_NONE;
+     }
+     else if (lpEvent->tfinger.fingerId == finger2)
+     {
+       PAL_UnsetTouchAction(prev_touch2);
+       finger2 = -1;
+       prev_touch2 = TOUCH_NONE;
+     }
+     break;
 
    case SDL_FINGERMOTION:
       if (lpEvent->tfinger.fingerId == finger1)
@@ -932,7 +932,7 @@ PAL_EventFilter(
 
    case SDL_APP_DIDENTERFOREGROUND:
       g_bRenderPaused = FALSE;
-	  VIDEO_UpdateScreen(NULL);
+     VIDEO_UpdateScreen(NULL);
       break;
 #endif
 
@@ -1016,12 +1016,25 @@ PAL_InitInput(
 #ifdef PAL_HAS_JOYSTICKS
    if (SDL_NumJoysticks() > 0 && g_fUseJoystick)
    {
-      g_pJoy = SDL_JoystickOpen(0);
+      //
+      // HACKHACK: applesmc shouldn't be considered as a real joystick
+      //
+      if (strcmp(SDL_JoystickName(0), "applesmc") != 0)
+      {
+         if (SDL_NumJoysticks() > 1)
+         {
+            g_pJoy = SDL_JoystickOpen(1);
+         }
+      }
       if (g_pJoy != NULL)
       {
          SDL_JoystickEventState(SDL_ENABLE);
       }
    }
+#endif
+
+#ifdef PAL_ALLOW_KEYREPEAT
+   SDL_EnableKeyRepeat(0, 0);
 #endif
 }
 
@@ -1111,12 +1124,12 @@ PAL_PollEvent(
    int ret = SDL_PollEvent(&evt);
    if (ret != 0)
    {
-	  PAL_EventFilter(&evt);
+      PAL_EventFilter(&evt);
    }
 
    if (event != NULL)
    {
-	  *event = evt;
+      *event = evt;
    }
 
    return ret;
