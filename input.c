@@ -113,30 +113,42 @@ PAL_KeyboardEventFilter(
 
       case SDLK_UP:
       case SDLK_KP8:
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirNorth;
-         g_InputState.dwKeyPress |= kKeyUp;
+         if (gpGlobals->fInBattle || g_InputState.dir != kDirNorth)
+         {
+            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+            g_InputState.dir = kDirNorth;
+            g_InputState.dwKeyPress |= kKeyUp;
+         }
          break;
 
       case SDLK_DOWN:
       case SDLK_KP2:
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirSouth;
-         g_InputState.dwKeyPress |= kKeyDown;
+         if (gpGlobals->fInBattle || g_InputState.dir != kDirSouth)
+         {
+            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+            g_InputState.dir = kDirSouth;
+            g_InputState.dwKeyPress |= kKeyDown;
+         }
          break;
 
       case SDLK_LEFT:
       case SDLK_KP4:
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirWest;
-         g_InputState.dwKeyPress |= kKeyLeft;
+         if (gpGlobals->fInBattle || g_InputState.dir != kDirWest)
+         {
+            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+            g_InputState.dir = kDirWest;
+            g_InputState.dwKeyPress |= kKeyLeft;
+         }
          break;
 
-      case SDLK_RIGHT:
-      case SDLK_KP6:
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirEast;
-         g_InputState.dwKeyPress |= kKeyRight;
+     case SDLK_RIGHT:
+     case SDLK_KP6:
+         if (gpGlobals->fInBattle || g_InputState.dir != kDirEast)
+         {
+            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+            g_InputState.dir = kDirEast;
+            g_InputState.dwKeyPress |= kKeyRight;
+         }
          break;
 
 #if defined(DINGOO)

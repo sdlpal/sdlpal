@@ -131,8 +131,8 @@ FILE *MY_fopen(const char *path, const char *mode);
 
 #define PAL_HAS_JOYSTICKS     1
 #ifndef _WIN32_WCE
-#define PAL_ALLOW_KEYREPEAT   1
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+#define PAL_ALLOW_KEYREPEAT   1
 #define PAL_HAS_CD            1
 #endif
 #if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO) && !defined (__WINPHONE__)
