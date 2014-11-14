@@ -1028,22 +1028,25 @@ PAL_InitInput(
 #ifdef PAL_HAS_JOYSTICKS
    if (SDL_NumJoysticks() > 0 && g_fUseJoystick)
    {
+      g_pJoy = SDL_JoystickOpen(0);
+
       //
-      // HACKHACK: applesmc shouldn't be considered as a real joystick
+      // HACKHACK: applesmc and Android Accelerometer shouldn't be considered as real joysticks
       //
-#ifdef __linux__
-      if (strcmp(SDL_JoystickName(0), "applesmc") == 0)
+      if (strcmp(SDL_JoystickName(g_pJoy), "applesmc") == 0 || strcmp(SDL_JoystickName(g_pJoy), "Android Accelerometer") == 0)
       {
+         SDL_JoystickClose(g_pJoy);
+
          if (SDL_NumJoysticks() > 1)
          {
             g_pJoy = SDL_JoystickOpen(1);
          }
+         else
+         {
+            g_pJoy = NULL;
+         }
       }
-      else
-#endif
-      {
-         g_pJoy = SDL_JoystickOpen(0);
-      }
+
       if (g_pJoy != NULL)
       {
          SDL_JoystickEventState(SDL_ENABLE);
