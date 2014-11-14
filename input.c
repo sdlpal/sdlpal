@@ -1031,12 +1031,18 @@ PAL_InitInput(
       //
       // HACKHACK: applesmc shouldn't be considered as a real joystick
       //
-      if (strcmp(SDL_JoystickName(0), "applesmc") != 0)
+#ifdef __linux__
+      if (strcmp(SDL_JoystickName(0), "applesmc") == 0)
       {
          if (SDL_NumJoysticks() > 1)
          {
             g_pJoy = SDL_JoystickOpen(1);
          }
+      }
+      else
+#endif
+      {
+         g_pJoy = SDL_JoystickOpen(0);
       }
       if (g_pJoy != NULL)
       {
