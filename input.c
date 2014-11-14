@@ -698,7 +698,7 @@ PAL_GetTouchArea(
       //
       // Upper area
       //
-     return TOUCH_NONE;
+      return TOUCH_NONE;
    }
    else if (X < 1.0 / 3)
    {
@@ -706,43 +706,43 @@ PAL_GetTouchArea(
       {
          return TOUCH_UP;
       }
-     else if (Y - 0.75 > fabs(X - 1.0 / 3 / 2) * (0.5 / (1.0 / 3)))
-     {
-       return TOUCH_DOWN;
-     }
-     else if (X < 1.0 / 3 / 2 && fabs(Y - 0.75) < 0.25 - X * (0.5 / (1.0 / 3)))
-     {
-       return TOUCH_LEFT;
-     }
-     else
-     {
-       return TOUCH_RIGHT;
-     }
+      else if (Y - 0.75 > fabs(X - 1.0 / 3 / 2) * (0.5 / (1.0 / 3)))
+      {
+         return TOUCH_DOWN;
+      }
+      else if (X < 1.0 / 3 / 2 && fabs(Y - 0.75) < 0.25 - X * (0.5 / (1.0 / 3)))
+      {
+         return TOUCH_LEFT;
+      }
+      else
+      {
+         return TOUCH_RIGHT;
+      }
    }
    else if (X > 1.0 - 1.0 / 3)
    {
-     if (X < 1.0 - (1.0 / 3 / 2))
-     {
-       if (Y < 0.75)
-       {
-         return TOUCH_BUTTON1;
-       }
-       else
-       {
-         return TOUCH_BUTTON3;
-       }
-     }
-     else
-     {
-       if (Y < 0.75)
-       {
-         return TOUCH_BUTTON2;
-       }
-       else
-       {
-         return TOUCH_BUTTON4;
-       }
-     }
+      if (X < 1.0 - (1.0 / 3 / 2))
+      {
+         if (Y < 0.75)
+         {
+            return TOUCH_BUTTON1;
+         }
+         else
+         {
+            return TOUCH_BUTTON3;
+         }
+      }
+      else
+      {
+         if (Y < 0.75)
+         {
+            return TOUCH_BUTTON2;
+         }
+         else
+         {
+            return TOUCH_BUTTON4;
+         }
+      }
    }
 
    return TOUCH_NONE;
@@ -756,24 +756,24 @@ PAL_SetTouchAction(
    switch (area)
    {
    case TOUCH_UP:
-     g_InputState.dir = kDirNorth;
-     g_InputState.dwKeyPress |= kKeyUp;
-     break;
+      g_InputState.dir = kDirNorth;
+      g_InputState.dwKeyPress |= kKeyUp;
+      break;
 
    case TOUCH_DOWN:
-     g_InputState.dir = kDirSouth;
-     g_InputState.dwKeyPress |= kKeyDown;
-     break;
+      g_InputState.dir = kDirSouth;
+      g_InputState.dwKeyPress |= kKeyDown;
+      break;
 
    case TOUCH_LEFT:
-     g_InputState.dir = kDirWest;
-     g_InputState.dwKeyPress |= kKeyLeft;
-     break;
+      g_InputState.dir = kDirWest;
+      g_InputState.dwKeyPress |= kKeyLeft;
+      break;
 
    case TOUCH_RIGHT:
-     g_InputState.dir = kDirEast;
-     g_InputState.dwKeyPress |= kKeyRight;
-     break;
+      g_InputState.dir = kDirEast;
+      g_InputState.dwKeyPress |= kKeyRight;
+      break;
 
    case TOUCH_BUTTON1:
       if (gpGlobals->fInBattle)
@@ -784,19 +784,19 @@ PAL_SetTouchAction(
       {
          g_InputState.dwKeyPress |= kKeyForce;
       }
-     break;
+      break;
 
    case TOUCH_BUTTON2:
-     g_InputState.dwKeyPress |= kKeyMenu;
-     break;
+      g_InputState.dwKeyPress |= kKeyMenu;
+      break;
 
    case TOUCH_BUTTON3:
       g_InputState.dwKeyPress |= kKeyUseItem;
-     break;
+      break;
 
    case TOUCH_BUTTON4:
-     g_InputState.dwKeyPress |= kKeySearch;
-     break;
+      g_InputState.dwKeyPress |= kKeySearch;
+      break;
    }
 }
 
@@ -811,8 +811,8 @@ PAL_UnsetTouchAction(
    case TOUCH_DOWN:
    case TOUCH_LEFT:
    case TOUCH_RIGHT:
-     g_InputState.dir = kDirUnknown;
-     break;
+      g_InputState.dir = kDirUnknown;
+      break;
    }
 }
 #endif
@@ -846,34 +846,34 @@ PAL_TouchEventFilter(
    case SDL_FINGERDOWN:
      if (finger1 == -1)
      {
-         int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
+        int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
 
-         finger1 = lpEvent->tfinger.fingerId;
-         prev_touch1 = area;
-         PAL_SetTouchAction(area);
+        finger1 = lpEvent->tfinger.fingerId;
+        prev_touch1 = area;
+        PAL_SetTouchAction(area);
      }
      else if (finger2 == -1)
      {
-         int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
+        int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
 
-         finger2 = lpEvent->tfinger.fingerId;
-         prev_touch2 = area;
-         PAL_SetTouchAction(area);
+        finger2 = lpEvent->tfinger.fingerId;
+        prev_touch2 = area;
+        PAL_SetTouchAction(area);
      }
      break;
 
    case SDL_FINGERUP:
      if (lpEvent->tfinger.fingerId == finger1)
      {
-       PAL_UnsetTouchAction(prev_touch1);
-       finger1 = -1;
-       prev_touch1 = TOUCH_NONE;
+        PAL_UnsetTouchAction(prev_touch1);
+        finger1 = -1;
+        prev_touch1 = TOUCH_NONE;
      }
      else if (lpEvent->tfinger.fingerId == finger2)
      {
-       PAL_UnsetTouchAction(prev_touch2);
-       finger2 = -1;
-       prev_touch2 = TOUCH_NONE;
+        PAL_UnsetTouchAction(prev_touch2);
+        finger2 = -1;
+        prev_touch2 = TOUCH_NONE;
      }
      break;
 
@@ -944,7 +944,7 @@ PAL_EventFilter(
 
    case SDL_APP_DIDENTERFOREGROUND:
       g_bRenderPaused = FALSE;
-     VIDEO_UpdateScreen(NULL);
+      VIDEO_UpdateScreen(NULL);
       break;
 #endif
 
