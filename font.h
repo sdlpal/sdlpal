@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #ifndef FONT_H
 #define FONT_H
@@ -48,6 +50,15 @@ PAL_DrawCharOnSurface(
    BYTE                     bColor
 );
 
+#ifdef PAL_UNICODE
+
+INT
+PAL_CharWidth(
+   WORD                     wChar
+);
+
+#else
+
 VOID
 PAL_DrawASCIICharOnSurface(
    BYTE                     bChar,
@@ -55,6 +66,8 @@ PAL_DrawASCIICharOnSurface(
    PAL_POS                  pos,
    BYTE                     bColor
 );
+
+#endif
 
 #ifdef __cplusplus
 }

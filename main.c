@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 #include "getopt.h"
@@ -114,7 +116,7 @@ PAL_Init(
 
    SDL_WM_SetCaption("Loading...", NULL);
 
-   e = PAL_InitGlobals();
+   e = PAL_InitGlobals(CP_BIG5, 10);	// TODO: Fix it for dynamic loading from configuration file
    if (e != 0)
    {
       TerminateOnError("Could not initialize global data: %d.\n", e);

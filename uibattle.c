@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 
@@ -544,7 +546,11 @@ PAL_BattleUIMiscItemSubMenuUpdate(
 
 VOID
 PAL_BattleUIShowText(
+#ifdef PAL_UNICODE
+   LPCWSTR       lpszText,
+#else
    LPCSTR        lpszText,
+#endif
    WORD          wDuration
 )
 /*++
@@ -566,12 +572,20 @@ PAL_BattleUIShowText(
 {
    if (SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
    {
+#  ifdef PAL_UNICODE
+      wcscpy(g_Battle.UI.szNextMsg, lpszText);
+#  else
       strcpy(g_Battle.UI.szNextMsg, lpszText);
+#  endif
       g_Battle.UI.wNextMsgDuration = wDuration;
    }
    else
    {
+#  ifdef PAL_UNICODE
+      wcscpy(g_Battle.UI.szMsg, lpszText);
+#  else
       strcpy(g_Battle.UI.szMsg, lpszText);
+#  endif
       g_Battle.UI.dwMsgShowTime = SDL_GetTicks() + wDuration;
    }
 }
@@ -1691,7 +1705,14 @@ end:
       // The text should be shown in a small window at the center of the screen
       //
       PAL_POS    pos;
+#  ifdef PAL_UNICODE
+	  int        i, w = wcslen(g_Battle.UI.szMsg), len = 0;
+
+	  for (i = 0; i < w; i++)
+		  len += PAL_CharWidth(g_Battle.UI.szMsg[i]) >> 3;
+#  else
       int        len = strlen(g_Battle.UI.szMsg);
+#  endif
 
       //
       // Create the window box
@@ -1707,7 +1728,11 @@ end:
    }
    else if (g_Battle.UI.szNextMsg[0] != '\0')
    {
+#  ifdef PAL_UNICODE
+      wcscpy(g_Battle.UI.szMsg, g_Battle.UI.szNextMsg);
+#  else
       strcpy(g_Battle.UI.szMsg, g_Battle.UI.szNextMsg);
+#  endif
       g_Battle.UI.dwMsgShowTime = SDL_GetTicks() + g_Battle.UI.wNextMsgDuration;
       g_Battle.UI.szNextMsg[0] = '\0';
    }

@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #ifndef UI_H
 #define UI_H
@@ -141,7 +143,11 @@ typedef struct tagMENUITEM
 typedef struct tagOBJECTDESC
 {
    WORD                        wObjectID;
+#ifdef PAL_UNICODE
+   LPWSTR                      lpDesc;
+#else
    LPSTR                       lpDesc;
+#endif
    struct tagOBJECTDESC       *next;
 } OBJECTDESC, *LPOBJECTDESC;
 
@@ -222,7 +228,11 @@ PAL_FreeObjectDesc(
    LPOBJECTDESC    lpObjectDesc
 );
 
+#ifdef PAL_UNICODE
+LPCWSTR
+#else
 LPCSTR
+#endif
 PAL_GetObjectDesc(
    LPOBJECTDESC   lpObjectDesc,
    WORD           wObjectID

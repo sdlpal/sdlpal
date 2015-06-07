@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 
@@ -37,7 +39,12 @@ LPGLOBALVARS gpGlobals = NULL;
 
 INT
 PAL_InitGlobals(
+#ifdef PAL_UNICODE
+   CODEPAGE      iCodePage,
+   DWORD         dwWordLength
+#else
    VOID
+#endif
 )
 /*++
   Purpose:
@@ -46,7 +53,8 @@ PAL_InitGlobals(
 
   Parameters:
 
-    None.
+    [IN]  iCodePage - the code page for text conversion.
+	[IN]  dwWordLength - the length of each word.
 
   Return value:
 
@@ -78,6 +86,10 @@ PAL_InitGlobals(
    gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
 #endif
    gpGlobals->bCurrentSaveSlot = 1;
+#ifdef PAL_UNICODE
+   gpGlobals->iCodePage = iCodePage;
+   gpGlobals->dwWordLength = dwWordLength;
+#endif
 
    return 0;
 }

@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 
@@ -227,18 +229,31 @@ PAL_ItemSelectMenuUpdate(
 #ifndef PAL_WIN95
    if (!g_fNoDesc && gpGlobals->lpObjectDesc != NULL)
    {
+#  ifdef PAL_UNICODE
+	  WCHAR szDesc[512], *next;
+	  const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
+#  else
       char szDesc[512], *next;
       const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
+#  endif
 
       if (d != NULL)
       {
          k = 150;
+#     ifdef PAL_UNICODE
+		 wcscpy(szDesc, d);
+#     else
          strcpy(szDesc, d);
+#     endif
          d = szDesc;
 
          while (TRUE)
          {
-            next = strchr(d, '*');
+#        ifdef PAL_UNICODE
+			next = wcschr(d, '*');
+#        else
+			next = strchr(d, '*');
+#        endif
             if (next != NULL)
             {
                *next = '\0';

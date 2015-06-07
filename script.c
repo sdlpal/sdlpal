@@ -21,6 +21,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 
@@ -516,28 +518,63 @@ PAL_AdditionalCredits(
 
 --*/
 {
+#ifdef PAL_UNICODE
+   LPCWSTR rgszStrings[] = {
+      L"SDLPAL (http://sdlpal.codeplex.com/)",
+#  ifdef PAL_CLASSIC
+	  L"         (\x7D93\x5178\x7279\x5225\x7BC7  " WIDETEXT(__DATE__) L")",
+#  else
+	  L"                    (" WIDETEXT(__DATE__) L")",
+#  endif
+      L" ",
+	  L"  (c) 2009-2011, Wei Mingzhi",
+	  L"      <whistler_wmz@users.sf.net>.",
+#  ifdef __SYMBIAN32__
+	  L"  Symbian S60 \x79FB\x690D (c) 2009, netwan.",
+#  endif
+#  ifdef GPH
+	  L"  GPH Caanoo & Wiz \x79FB\x690D (c) 2011, Rikku2000.",
+#  endif
+#  ifdef GEKKO
+	  L"  Nintendo WII \x79FB\x690D (c) 2012, Rikku2000.",
+#  endif
+#  ifdef DINGOO
+	  L"  DINGOO & Dingux \x79FB\x690D (c) 2011, Rikku2000.",
+#  endif
+#  ifdef ANDROID
+	  L"  ANDROID \x79FB\x690D (c) 2013, Rikku2000.",
+#  endif
+	  L" ",
+	  L"\x672C\x7A0B\x5F0F\x662F\x81EA\x7531\x8EDF\x9AD4\xFF0C\x6309\x7167"
+	  L" GNU General",
+	  L"Public License (GPLv3) \x767C\x4F48",
+	  L" ",
+	  L"                 ...\x6309 Enter \x7D50\x675F",
+	  L""
+   };
+#else
    LPCSTR rgszStrings[] = {
       "SDLPAL (http://sdlpal.codeplex.com/)",
-#ifdef PAL_CLASSIC
+#  ifdef PAL_CLASSIC
       "         (\xB8\x67\xA8\xE5\xAF\x53\xA7\x4F\xBD\x67  " __DATE__ ")",
-#else
+#  else
       "                    (" __DATE__ ")",
-#endif
+#  endif
       " ",
       "  (c) 2009-2014, Wei Mingzhi",
       "      <whistler_wmz@users.sf.net>.",
-#ifdef __SYMBIAN32__
+#  ifdef __SYMBIAN32__
       "  Symbian S60 \xB2\xBE\xB4\xD3 (c) 2009, netwan.",
-#endif
-#ifdef GPH
+#  endif
+#  ifdef GPH
       "  GPH Caanoo & Wiz \xB2\xBE\xB4\xD3 (c) 2011, Rikku2000.",
-#endif
-#ifdef GEKKO
+#  endif
+#  ifdef GEKKO
       "  Nintendo WII \xB2\xBE\xB4\xD3 (c) 2012, Rikku2000.",
-#endif
-#ifdef DINGOO
+#  endif
+#  ifdef DINGOO
       "  DINGOO & Dingux \xB2\xBE\xB4\xD3 (c) 2011, Rikku2000.",
-#endif
+#  endif
       " ",
       "\xA5\xBB\xB5\x7B\xA6\xA1\xAC\x4F\xA6\xDB\xA5\xD1\xB3\x6E\xC5\xE9\xA1\x41\xAB\xF6\xB7\xD3"
       " GNU General",
@@ -546,10 +583,11 @@ PAL_AdditionalCredits(
       "                 ...\xAB\xF6 Enter \xB5\xB2\xA7\xF4",
       ""
    };
+#endif
 
    int        i = 0;
 
-#ifdef PAL_WIN95
+#if defined(PAL_WIN95) && !defined(PAL_UNICODE)
    extern BOOL fIsBig5;
    fIsBig5 = TRUE;
 #endif
@@ -1412,7 +1450,11 @@ PAL_InterpretInstruction(
       //
       if (gpGlobals->wCollectValue > 0)
       {
+#     ifdef PAL_UNICODE
+         WCHAR s[256];
+#     else
          char s[256];
+#     endif
 
 #ifdef PAL_CLASSIC
          i = RandomLong(1, gpGlobals->wCollectValue);
@@ -1434,8 +1476,13 @@ PAL_InterpretInstruction(
          PAL_AddItemToInventory(gpGlobals->g.lprgStore[0].rgwItems[i], 1);
 
          PAL_StartDialog(kDialogCenterWindow, 0, 0, FALSE);
+#     ifdef PAL_UNICODE
+		 wcscpy(s, PAL_GetWord(42));
+		 wcscat(s, PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
+#     else
          strcpy(s, PAL_GetWord(42));
          strcat(s, PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
+#     endif
          PAL_ShowDialogText(s);
       }
       else
@@ -3293,8 +3340,24 @@ PAL_RunTriggerScript(
          //
          // Print dialog text
          //
-         PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
-         wScriptEntry++;
+		 // Support for Japanese
+		 // If the second parameter is zero, then follow the standard behavior
+		 // Otherwise, use the extended behavior
+		 if (pScript->rgwOperand[1] == 0)
+		 {
+            PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
+            wScriptEntry++;
+		 }
+		 else
+		 {
+			// If the second parameter is set to 2, first display the text
+			if (pScript->rgwOperand[1] == 2)
+			{
+				PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
+			}
+			// Then, jump to script given by the third parameter.
+			wScriptEntry = pScript->rgwOperand[2];
+		 }
          break;
 
       default:

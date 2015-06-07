@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 
@@ -131,8 +133,13 @@ PAL_MagicSelectionMenuUpdate(
    }
    else
    {
+#  ifdef PAL_UNICODE
+      WCHAR szDesc[512], *next;
+      const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
+#  else
       char szDesc[512], *next;
       const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
+#  endif
 
       //
       // Draw the magic description.
@@ -140,12 +147,20 @@ PAL_MagicSelectionMenuUpdate(
       if (d != NULL)
       {
          k = 3;
+#     ifdef PAL_UNICODE
+		 wcscpy(szDesc, d);
+#     else
          strcpy(szDesc, d);
+#     endif
          d = szDesc;
 
          while (TRUE)
          {
-            next = strchr(d, '*');
+#        ifdef PAL_UNICODE
+			next = wcschr(d, '*');
+#        else
+			next = strchr(d, '*');
+#        endif
             if (next != NULL)
             {
                *next = '\0';

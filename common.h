@@ -17,12 +17,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #ifndef _COMMON_H
 #define _COMMON_H
 
-//#define PAL_WIN95          1 // not valid for now
+//#define PAL_WIN95          1
 //#define PAL_CLASSIC        1
+#define PAL_UNICODE        1
 
 #ifdef __cplusplus
 extern "C"
@@ -214,6 +217,8 @@ typedef void               *LPVOID;
 typedef const void         *LPCVOID;
 typedef CHAR               *LPSTR;
 typedef const CHAR         *LPCSTR;
+typedef USHORT             *LPWSTR;
+typedef const USHORT       *LPCWSTR;
 
 #endif
 
@@ -222,6 +227,16 @@ typedef const CHAR         *LPCSTR;
 #else
 #define PAL_LARGE           /* */
 #endif
+
+#define __WIDETEXT(quote) L##quote
+#define WIDETEXT(quote) __WIDETEXT(quote)
+
+typedef enum tagCODEPAGE {
+	CP_BIG5 = 0,
+	CP_GBK = 1,
+	CP_SHIFTJIS = 2,
+	CP_MAX = 3
+} CODEPAGE;
 
 #ifdef __cplusplus
 }

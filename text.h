@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #ifndef _TEXT_H
 #define _TEXT_H
@@ -42,19 +44,31 @@ PAL_FreeText(
    VOID
 );
 
+#ifdef PAL_UNICODE
+LPCWSTR
+#else
 LPCSTR
+#endif
 PAL_GetWord(
    WORD       wNumWord
 );
 
+#ifdef PAL_UNICODE
+LPCWSTR
+#else
 LPCSTR
+#endif
 PAL_GetMsg(
    WORD       wNumMsg
 );
 
 VOID
 PAL_DrawText(
+#ifdef PAL_UNICODE
+   LPCWSTR    lpszText,
+#else
    LPCSTR     lpszText,
+#endif
    PAL_POS    pos,
    BYTE       bColor,
    BOOL       fShadow,
@@ -76,7 +90,11 @@ PAL_StartDialog(
 
 VOID
 PAL_ShowDialogText(
-   LPCSTR       szText
+#ifdef PAL_UNICODE
+   LPCWSTR    lpszText
+#else
+   LPCSTR     lpszText
+#endif
 );
 
 VOID
@@ -98,5 +116,15 @@ BOOL
 PAL_DialogIsPlayingRNG(
    VOID
 );
+
+#ifdef PAL_UNICODE
+INT
+PAL_MultiByteToWideChar(
+   unsigned char *mbs,
+   int           mbslength,
+   WCHAR         *wcs,
+   int           wcslength
+);
+#endif
 
 #endif

@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #ifndef GLOBAL_H
 #define GLOBAL_H
@@ -563,6 +565,10 @@ typedef struct tagGLOBALVARS
    LPOBJECTDESC     lpObjectDesc;
 #endif
    DWORD            dwFrameNum;
+#ifdef PAL_UNICODE
+   CODEPAGE         iCodePage;
+   DWORD            dwWordLength;
+#endif
 } GLOBALVARS, *LPGLOBALVARS;
 
 typedef struct tagSAVEDGAME
@@ -600,7 +606,12 @@ extern LPGLOBALVARS gpGlobals;
 
 INT
 PAL_InitGlobals(
+#ifdef PAL_UNICODE
+   CODEPAGE      iCodePage,
+   DWORD         dwWordLength
+#else
    VOID
+#endif
 );
 
 VOID

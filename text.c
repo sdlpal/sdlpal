@@ -21,10 +21,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 
+#ifndef PAL_UNICODE
 #define WORD_LENGTH      10
+#endif
 
 #define   FONT_COLOR_DEFAULT        0x4F
 #define   FONT_COLOR_YELLOW         0x2D
@@ -34,6 +38,17 @@
 
 BOOL      g_fUpdatedInBattle      = FALSE;
 
+#ifdef PAL_UNICODE
+#define INCLUDE_CODEPAGE_H
+#include "codepage.h"
+
+static const WCHAR* gc_rgszAdditionalWords[CP_MAX][6] = {
+   { L"\x6230\x9B25\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
+   { L"\x6218\x6597\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
+   { L"\x6226\x95D8\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
+};
+static const WCHAR** g_rgszAdditionalWords;
+#else
 static const char g_rgszAdditionalWords[][WORD_LENGTH + 1] = {
    {0xBE, 0xD4, 0xB0, 0xAB, 0xB3, 0x74, 0xAB, 0xD7, 0x00, 0x00, 0x00}, // Battle Speed
    {0xA4, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // 1
@@ -42,12 +57,18 @@ static const char g_rgszAdditionalWords[][WORD_LENGTH + 1] = {
    {0xA5, 0x7C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // 4
    {0xA4, 0xAD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // 5
 };
+#endif
 
 typedef struct tagTEXTLIB
 {
+#ifdef PAL_UNICODE
+   LPWSTR*         lpWordBuf;
+   LPWSTR*         lpMsgBuf;
+#else
    LPBYTE          lpWordBuf;
    LPBYTE          lpMsgBuf;
    LPDWORD         lpMsgOffset;
+#endif
 
    int             nWords;
    int             nMsgs;
@@ -89,6 +110,12 @@ PAL_InitText(
 --*/
 {
    FILE       *fpMsg, *fpWord;
+#ifdef PAL_UNICODE
+   DWORD      *offsets;
+   LPBYTE      temp;
+   LPWSTR      tmp;
+   int         wlen, wpos;
+#endif
    int         i;
 
    //
@@ -103,28 +130,68 @@ PAL_InitText(
    fseek(fpWord, 0, SEEK_END);
    i = ftell(fpWord);
 
+#ifdef PAL_UNICODE
+   //
+   // Each word has 10 or 16 bytes
+   //
+   g_TextLib.nWords = (i + (gpGlobals->dwWordLength - 1)) / gpGlobals->dwWordLength;
+#else
    //
    // Each word has 10 bytes
    //
    g_TextLib.nWords = (i + (WORD_LENGTH - 1)) / WORD_LENGTH;
+#endif
 
    //
    // Read the words
    //
+#ifdef PAL_UNICODE
+   temp = (LPBYTE)malloc(i);
+   if (temp == NULL)
+#else
    g_TextLib.lpWordBuf = (LPBYTE)malloc(i);
    if (g_TextLib.lpWordBuf == NULL)
+#endif
    {
       fclose(fpWord);
       fclose(fpMsg);
       return -1;
    }
    fseek(fpWord, 0, SEEK_SET);
+#ifdef PAL_UNICODE
+   fread(temp, i, 1, fpWord);
+#else
    fread(g_TextLib.lpWordBuf, i, 1, fpWord);
+#endif
 
    //
    // Close the words file
    //
    fclose(fpWord);
+
+#ifdef PAL_UNICODE
+   // Split the words and do code page conversion
+   for (i = 0, wlen = 0; i < g_TextLib.nWords; i++)
+   {
+	   int base = i * gpGlobals->dwWordLength;
+	   int pos = base + gpGlobals->dwWordLength - 1;
+	   while (pos >= base && temp[pos] == ' ') temp[pos--] = 0;
+	   wlen += PAL_MultiByteToWideChar(temp + base, gpGlobals->dwWordLength, NULL, 0) + 1;
+   }
+   g_TextLib.lpWordBuf = (LPWSTR*)malloc(g_TextLib.nWords * sizeof(LPWSTR));
+   tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
+   for (i = 0, wpos = 0; i < g_TextLib.nWords; i++)
+   {
+	   int l;
+	   g_TextLib.lpWordBuf[i] = tmp + wpos;
+	   l = PAL_MultiByteToWideChar(temp + i * gpGlobals->dwWordLength, gpGlobals->dwWordLength, g_TextLib.lpWordBuf[i], wlen - wpos);
+	   if (l > 0 && g_TextLib.lpWordBuf[i][l - 1] == '1')
+		   g_TextLib.lpWordBuf[i][l - 1] = 0;
+	   g_TextLib.lpWordBuf[i][l] = 0;
+	   wpos += l + 1;
+   }
+   free(temp);
+#endif
 
    //
    // Read the message offsets. The message offsets are in SSS.MKF #3
@@ -132,16 +199,25 @@ PAL_InitText(
    i = PAL_MKFGetChunkSize(3, gpGlobals->f.fpSSS) / sizeof(DWORD);
    g_TextLib.nMsgs = i - 1;
 
+#ifdef PAL_UNICODE
+   offsets = (LPDWORD)malloc(i * sizeof(DWORD));
+   if (offsets == NULL)
+#else
    g_TextLib.lpMsgOffset = (LPDWORD)malloc(i * sizeof(DWORD));
    if (g_TextLib.lpMsgOffset == NULL)
+#endif
    {
       free(g_TextLib.lpWordBuf);
       fclose(fpMsg);
       return -1;
    }
 
+#ifdef PAL_UNICODE
+   PAL_MKFReadChunk((LPBYTE)(offsets), i * sizeof(DWORD), 3, gpGlobals->f.fpSSS);
+#else
    PAL_MKFReadChunk((LPBYTE)(g_TextLib.lpMsgOffset), i * sizeof(DWORD), 3,
       gpGlobals->f.fpSSS);
+#endif
 
    //
    // Read the messages.
@@ -149,19 +225,55 @@ PAL_InitText(
    fseek(fpMsg, 0, SEEK_END);
    i = ftell(fpMsg);
 
+#ifdef PAL_UNICODE
+   temp = (LPBYTE)malloc(i);
+   if (temp == NULL)
+#else
    g_TextLib.lpMsgBuf = (LPBYTE)malloc(i);
    if (g_TextLib.lpMsgBuf == NULL)
+#endif
    {
+#ifdef PAL_UNICODE
+      free(offsets);
+	  free(g_TextLib.lpWordBuf[0]);
+#else
       free(g_TextLib.lpMsgOffset);
+#endif
       free(g_TextLib.lpWordBuf);
       fclose(fpMsg);
       return -1;
    }
 
    fseek(fpMsg, 0, SEEK_SET);
+#ifdef PAL_UNICODE
+   fread(temp, 1, i, fpMsg);
+#else
    fread(g_TextLib.lpMsgBuf, 1, i, fpMsg);
+#endif
 
    fclose(fpMsg);
+
+#ifdef PAL_UNICODE
+   // Split messages and do code page conversion here
+   for (i = 0, wlen = 0; i < g_TextLib.nMsgs; i++)
+   {
+	   wlen += PAL_MultiByteToWideChar(temp + SWAP32(offsets[i]), SWAP32(offsets[i + 1]) - SWAP32(offsets[i]), NULL, 0) + 1;
+   }
+   g_TextLib.lpMsgBuf = (LPWSTR*)malloc(g_TextLib.nMsgs * sizeof(LPWSTR));
+   tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
+   for (i = 0, wpos = 0; i < g_TextLib.nMsgs; i++)
+   {
+	   int l;
+	   g_TextLib.lpMsgBuf[i] = tmp + wpos;
+	   l = PAL_MultiByteToWideChar(temp + SWAP32(offsets[i]), SWAP32(offsets[i + 1]) - SWAP32(offsets[i]), g_TextLib.lpMsgBuf[i], wlen - wpos);
+	   g_TextLib.lpMsgBuf[i][l] = 0;
+	   wpos += l + 1;
+   }
+   free(temp);
+   free(offsets);
+
+   g_rgszAdditionalWords = gc_rgszAdditionalWords[gpGlobals->iCodePage];
+#endif
 
    g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
    g_TextLib.bIcon = 0;
@@ -199,24 +311,34 @@ PAL_FreeText(
 {
    if (g_TextLib.lpMsgBuf != NULL)
    {
+#  ifdef PAL_UNICODE
+      free(g_TextLib.lpMsgBuf[0]);
+#  endif
       free(g_TextLib.lpMsgBuf);
       g_TextLib.lpMsgBuf = NULL;
    }
-
+#ifndef PAL_UNICODE
    if (g_TextLib.lpMsgOffset != NULL)
    {
       free(g_TextLib.lpMsgOffset);
       g_TextLib.lpMsgOffset = NULL;
    }
-
+#endif
    if (g_TextLib.lpWordBuf != NULL)
    {
+#  ifdef PAL_UNICODE
+      free(g_TextLib.lpWordBuf[0]);
+#  endif
       free(g_TextLib.lpWordBuf);
       g_TextLib.lpWordBuf = NULL;
    }
 }
 
+#ifdef PAL_UNICODE
+LPCWSTR
+#else
 LPCSTR
+#endif
 PAL_GetWord(
    WORD       wNumWord
 )
@@ -235,7 +357,9 @@ PAL_GetWord(
 
 --*/
 {
+#ifndef PAL_UNICODE
    static char buf[WORD_LENGTH + 1];
+#endif
 
    if (wNumWord >= PAL_ADDITIONAL_WORD_FIRST)
    {
@@ -247,6 +371,9 @@ PAL_GetWord(
       return NULL;
    }
 
+#ifdef PAL_UNICODE
+   return g_TextLib.lpWordBuf[wNumWord];
+#else
    memcpy(buf, &g_TextLib.lpWordBuf[wNumWord * WORD_LENGTH], WORD_LENGTH);
    buf[WORD_LENGTH] = '\0';
 
@@ -261,9 +388,14 @@ PAL_GetWord(
    }
 
    return buf;
+#endif
 }
 
+#ifdef PAL_UNICODE
+LPCWSTR
+#else
 LPCSTR
+#endif
 PAL_GetMsg(
    WORD       wNumMsg
 )
@@ -282,6 +414,9 @@ PAL_GetMsg(
 
 --*/
 {
+#ifdef PAL_UNICODE
+	return (wNumMsg >= g_TextLib.nMsgs) ? NULL : g_TextLib.lpMsgBuf[wNumMsg];
+#else
    static char    buf[256];
    DWORD          dwOffset, dwSize;
 
@@ -298,11 +433,16 @@ PAL_GetMsg(
    buf[dwSize] = '\0';
 
    return buf;
+#endif
 }
 
 VOID
 PAL_DrawText(
+#ifdef PAL_UNICODE
+   LPCWSTR    lpszText,
+#else
    LPCSTR     lpszText,
+#endif
    PAL_POS    pos,
    BYTE       bColor,
    BOOL       fShadow,
@@ -332,14 +472,16 @@ PAL_DrawText(
 --*/
 {
    SDL_Rect   rect, urect;
+#ifndef PAL_UNICODE
    WORD       wChar;
+#endif
 
    rect.x = PAL_X(pos);
    rect.y = PAL_Y(pos);
 
    urect.x = rect.x;
    urect.y = rect.y;
-#ifdef PAL_WIN95
+#if defined(PAL_WIN95) || defined(PAL_UNICODE)
    urect.h = 17;
 #else
    urect.h = 16;
@@ -351,6 +493,19 @@ PAL_DrawText(
       //
       // Draw the character
       //
+#  ifdef PAL_UNICODE
+	  int char_width = PAL_CharWidth(*lpszText);
+
+      if (fShadow)
+      {
+		  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y + 1), 0);
+		  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y), 0);
+      }
+	  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x, rect.y), bColor);
+      lpszText++;
+	  rect.x += char_width;
+	  urect.w += char_width;
+#  else
       if (*lpszText & 0x80)
       {
          //
@@ -382,6 +537,7 @@ PAL_DrawText(
          rect.x += 8;
          urect.w += 8;
       }
+#  endif
    }
 
    //
@@ -645,7 +801,11 @@ PAL_DialogWaitForKey(
 
 VOID
 PAL_ShowDialogText(
+#ifdef PAL_UNICODE
+   LPCWSTR      lpszText
+#else
    LPCSTR       lpszText
+#endif
 )
 /*++
   Purpose:
@@ -663,7 +823,11 @@ PAL_ShowDialogText(
 --*/
 {
    SDL_Rect        rect;
+#ifdef PAL_UNICODE
+   int             x, y;
+#else
    int             x, y, len = strlen(lpszText);
+#endif
 
    PAL_ClearKeyState();
    g_TextLib.bIcon = 0;
@@ -706,7 +870,12 @@ PAL_ShowDialogText(
       {
          PAL_POS    pos;
          LPBOX      lpBox;
+#     ifdef PAL_UNICODE
+		 int        i, w = wcslen(lpszText), len = 0;
 
+		 for (i = 0; i < w; i++)
+            len += PAL_CharWidth(lpszText[i]) >> 3;
+#     endif
          //
          // Create the window box
          //
@@ -738,12 +907,19 @@ PAL_ShowDialogText(
    }
    else
    {
+#  ifdef PAL_UNICODE
+      int len = wcslen(lpszText);
+#  endif
       if (g_TextLib.nCurrentDialogLine == 0 &&
          g_TextLib.bDialogPosition != kDialogCenter &&
+#  ifdef PAL_UNICODE
+		 (lpszText[len - 1] == 0xff1a ||
+#  else
          (((BYTE)lpszText[len - 1] == 0x47 && (BYTE)lpszText[len - 2] == 0xA1) ||
           ((BYTE)lpszText[len - 1] == 0xBA && (BYTE)lpszText[len - 2] == 0xA3) ||
           ((BYTE)lpszText[len - 1] == 0xC3 && (BYTE)lpszText[len - 2] == 0xA1) ||
-          ((BYTE)lpszText[len - 1] == ':')))
+#  endif
+		  lpszText[len - 1] == ':'))
       {
          //
          // name of character
@@ -755,7 +931,11 @@ PAL_ShowDialogText(
          //
          // normal texts
          //
+#     ifdef PAL_UNICODE
+         WCHAR text[2];
+#     else
          char text[3];
+#     endif
 
          if (!g_TextLib.fPlayingRNG && g_TextLib.nCurrentDialogLine == 0)
          {
@@ -818,7 +998,11 @@ PAL_ShowDialogText(
                //
                // Set the delay time of text-displaying
                //
+#           ifdef PAL_UNICODE
+               g_TextLib.iDelayTime = wcstol(lpszText + 1, NULL, 10) * 10 / 7;
+#           else
                g_TextLib.iDelayTime = atoi(lpszText + 1) * 10 / 7;
+#           endif
                lpszText += 3;
                break;
 
@@ -826,8 +1010,12 @@ PAL_ShowDialogText(
                //
                // Delay for a period and quit
                //
+#           ifdef PAL_UNICODE
+               UTIL_Delay(wcstol(lpszText + 1, NULL, 10) * 80 / 7);
+#           else
                UTIL_Delay(atoi(lpszText + 1) * 80 / 7);
-               g_TextLib.nCurrentDialogLine = 0;
+#           endif
+			   g_TextLib.nCurrentDialogLine = 0;
                g_TextLib.fUserSkip = FALSE;
                return; // don't go further
 
@@ -851,6 +1039,10 @@ PAL_ShowDialogText(
                lpszText++;
 
             default:
+#           ifdef PAL_UNICODE
+               text[0] = *lpszText++;
+			   text[1] = 0;
+#           else
                if (*lpszText & 0x80)
                {
                   text[0] = lpszText[0];
@@ -864,9 +1056,14 @@ PAL_ShowDialogText(
                   text[1] = '\0';
                   lpszText++;
                }
+#           endif
 
                PAL_DrawText(text, PAL_XY(x, y), g_TextLib.bCurrentFontColor, TRUE, TRUE);
+#           ifdef PAL_UNICODE
+			   x += PAL_CharWidth(text[0]);
+#           else
                x += ((text[0] & 0x80) ? 16 : 8);
+#           endif
 
                if (!g_TextLib.fUserSkip)
                {
@@ -1001,3 +1198,186 @@ PAL_DialogIsPlayingRNG(
 {
    return g_TextLib.fPlayingRNG;
 }
+
+#ifdef PAL_UNICODE
+INT
+PAL_MultiByteToWideChar(
+   unsigned char *mbs,
+   int           mbslength,
+   WCHAR         *wcs,
+   int           wcslength
+)
+/*++
+  Purpose:
+
+    Convert multi-byte string into the corresponding unicode string.
+
+  Parameters:
+
+    [IN]  mbs - .
+	[IN]  mbslength - .
+	[IN]  wcs - .
+	[IN]  wcslength - .
+
+  Return value:
+
+    The length
+
+--*/
+{
+	int i = 0, j = 0, state = 0, wlen = 0, null = 0;
+
+	if (mbslength == -1)
+	{
+		mbslength = strlen(mbs);
+		null = 1;
+	}
+
+	if (!wcs)
+	{
+		switch (gpGlobals->iCodePage)
+		{
+		case CP_SHIFTJIS:
+			for (i = 0; i < mbslength && mbs[i]; i++)
+			{
+				if (state == 0)
+				{
+					if (mbs[i] <= 0x80 || mbs[i] >= 0xfd || (mbs[i] >= 0xa0 && mbs[i] <= 0xdf))
+						wlen++;
+					else
+						state = 1;
+				}
+				else
+				{
+					wlen++;
+					state = 0;
+				}
+			}
+			return wlen + null + state;
+		case CP_GBK:
+		case CP_BIG5:
+			for (i = 0; i < mbslength && mbs[i]; i++)
+			{
+				if (state == 0)
+				{
+					if (mbs[i] <= 0x80 || mbs[i] == 0xff)
+						wlen++;
+					else
+						state = 1;
+				}
+				else
+				{
+					wlen++;
+					state = 0;
+				}
+			}
+			return wlen + null + state;
+		default:
+			return -1;
+		}
+	}
+	else
+	{
+		unsigned short invalid_char;
+		switch (gpGlobals->iCodePage)
+		{
+		case CP_SHIFTJIS:
+			invalid_char = 0x30fb;
+			for (i = 0; i < mbslength && wlen < wcslength && mbs[i]; i++)
+			{
+				if (state == 0)
+				{
+					if (mbs[i] <= 0x80)
+						wcs[wlen++] = mbs[i];
+					else if (mbs[i] >= 0xa0 && mbs[i] <= 0xdf)
+						wcs[wlen++] = cptbl_jis_half[mbs[i] - 0xa0];
+					else if (mbs[i] == 0xfd)
+						wcs[wlen++] = 0xf8f1;
+					else if (mbs[i] == 0xfe)
+						wcs[wlen++] = 0xf8f2;
+					else if (mbs[i] == 0xff)
+						wcs[wlen++] = 0xf8f3;
+					else
+						state = 1;
+				}
+				else
+				{
+					if (mbs[i] < 0x40)
+						wcs[wlen++] = 0x30fb;
+					else if (mbs[i - 1] < 0xa0)
+						wcs[wlen++] = cptbl_jis[mbs[i - 1] - 0x81][mbs[i] - 0x40];
+					else
+						wcs[wlen++] = cptbl_jis[mbs[i - 1] - 0xc1][mbs[i] - 0x40];
+					state = 0;
+				}
+			}
+			break;
+		case CP_GBK:
+			invalid_char = 0x3f;
+			for (i = 0; i < mbslength && wlen < wcslength && mbs[i]; i++)
+			{
+				if (state == 0)
+				{
+					if (mbs[i] < 0x80)
+						wcs[wlen++] = mbs[i];
+					else if (mbs[i] == 0x80)
+						wcs[wlen++] = 0x20ac;
+					else if (mbs[i] == 0xff)
+						wcs[wlen++] = 0xf8f5;
+					else
+						state = 1;
+				}
+				else
+				{
+					if (mbs[i] < 0x40)
+						wcs[wlen++] = invalid_char;
+					else
+						wcs[wlen++] = cptbl_gbk[mbs[i - 1] - 0x81][mbs[i] - 0x40];
+					state = 0;
+				}
+			}
+			break;
+		case CP_BIG5:
+			invalid_char = 0x3f;
+			for (i = 0; i < mbslength && wlen < wcslength && mbs[i]; i++)
+			{
+				if (state == 0)
+				{
+					if (mbs[i] <= 0x80)
+						wcs[wlen++] = mbs[i];
+					else if (mbs[i] == 0xff)
+						wcs[wlen++] = 0xf8f8;
+					else
+						state = 1;
+				}
+				else
+				{
+					if (mbs[i] < 0x40 || (mbs[i] >= 0x7f && mbs[i] <= 0xa0))
+						wcs[wlen++] = invalid_char;
+					else if (mbs[i] <= 0x7e)
+						wcs[wlen++] = cptbl_big5[mbs[i - 1] - 0x81][mbs[i] - 0x40];
+					else
+						wcs[wlen++] = cptbl_big5[mbs[i - 1] - 0x81][mbs[i] - 0x60];
+					state = 0;
+				}
+			}
+			break;
+		default:
+			return -1;
+		}
+		if (state == 1 && wlen < wcslength)
+		{
+			wcs[wlen++] = invalid_char;
+		}
+		if (null)
+		{
+			if (wlen < wcslength)
+				wcs[wlen++] = 0;
+			else
+				wcs[wlen - 1] = 0;
+		}
+		return wlen;
+
+	}
+}
+#endif

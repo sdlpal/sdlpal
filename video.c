@@ -198,12 +198,12 @@ VIDEO_Init(
       // Totally ugly hack to satisfy M$'s silly requirements.
       // No need to understand this crap.
       //
-#ifdef PAL_WIN95
+#if defined(PAL_WIN95) && !defined(PAL_UNICODE)
       extern BOOL fIsBig5;
 #endif
       SDL_Color palette[256] = { 0 };
       SDL_Surface *p;
-#ifdef PAL_WIN95
+#if defined(PAL_WIN95) && !defined(PAL_UNICODE)
       fIsBig5 = TRUE;
 #endif
       palette[0].r = palette[0].g = palette[0].b = palette[0].a = 0;
@@ -212,11 +212,26 @@ VIDEO_Init(
       VIDEO_SetPalette(palette);
       p = gpScreen;
       gpScreen = gpScreenBak;
+#  ifdef PAL_UNICODE
+	  switch(gpGlobals->iCodePage)
+	  {
+	  case CP_BIG5:
+		  PAL_DrawText(L"\x518D\x6B21\x6309 Back \x7D50\x675F", PAL_XY(30, 30), 1, FALSE, FALSE);
+		  break;
+	  case CP_GBK:
+		  PAL_DrawText(L"\x518D\x6B21\x6309 Back \x7ED3\x675F", PAL_XY(30, 30), 1, FALSE, FALSE);
+		  break;
+	  case CP_SHIFTJIS:
+		  PAL_DrawText(L"Press Back again to end", PAL_XY(30, 30), 1, FALSE, FALSE);	// TODO: Japanese string
+		  break;
+	  }
+#  else
       PAL_DrawText("\xA6\x41\xA6\xB8\xAB\xF6 Back \xB5\xB2\xA7\xF4", PAL_XY(30, 30), 1, FALSE, FALSE);
+#  endif
       gpScreen = p;
       gpBackKeyMessage = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
       SDL_FillRect(gpScreenBak, NULL, 0);
-#ifdef PAL_WIN95
+#if defined(PAL_WIN95) && !defined(PAL_UNICODE)
       fIsBig5 = FALSE;
 #endif
    }
