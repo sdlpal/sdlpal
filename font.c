@@ -35,7 +35,7 @@ PAL_InitFont(
 /*++
   Purpose:
 
-    Load the font files.
+    None.
 
   Parameters:
 
@@ -43,7 +43,7 @@ PAL_InitFont(
 
   Return value:
 
-    0 if succeed.
+    Always return 0.
 
 --*/
 {
@@ -57,7 +57,7 @@ PAL_FreeFont(
 /*++
   Purpose:
 
-    Free the memory used for fonts.
+    None.
 
   Parameters:
 
@@ -161,6 +161,20 @@ INT
 PAL_CharWidth(
    WORD                     wChar
 )
+/*++
+  Purpose:
+
+    Get the text width of a character.
+
+  Parameters:
+
+    [IN]  wChar - the unicode character for width calculation.
+
+  Return value:
+
+    The width of the character, 16 for full-width char and 8 for half-width char.
+
+--*/
 {
 	if ((wChar >= 0xd800 && wChar < unicode_upper_base) || wChar >= unicode_upper_top)
 	{

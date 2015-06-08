@@ -120,9 +120,9 @@ PAL_DialogIsPlayingRNG(
 #ifdef PAL_UNICODE
 INT
 PAL_MultiByteToWideChar(
-   unsigned char *mbs,
+   LPCSTR        mbs,
    int           mbslength,
-   WCHAR         *wcs,
+   LPWSTR        wcs,
    int           wcslength
 );
 #endif

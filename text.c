@@ -1202,9 +1202,9 @@ PAL_DialogIsPlayingRNG(
 #ifdef PAL_UNICODE
 INT
 PAL_MultiByteToWideChar(
-   unsigned char *mbs,
+   LPCSTR        mbs,
    int           mbslength,
-   WCHAR         *wcs,
+   LPWSTR        wcs,
    int           wcslength
 )
 /*++
@@ -1214,14 +1214,17 @@ PAL_MultiByteToWideChar(
 
   Parameters:
 
-    [IN]  mbs - .
-	[IN]  mbslength - .
-	[IN]  wcs - .
-	[IN]  wcslength - .
+    [IN]  mbs - Pointer to the multi-byte string.
+	[IN]  mbslength - Length of the multi-byte string, or -1 for auto-detect.
+	[IN]  wcs - Pointer to the wide string buffer.
+	[IN]  wcslength - Length of the wide string buffer.
 
   Return value:
 
-    The length
+    The length of converted wide string. If mbslength is set to -1, the returned
+	value includes the terminal null-char; otherwise, the null-char is not included.
+	If wcslength is set to 0, wcs can be set to NULL and the return value is the
+	required length of the wide string buffer.
 
 --*/
 {

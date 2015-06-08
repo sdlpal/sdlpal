@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Japanese support, 2015
+//
 
 #ifndef UIGAME_H
 #define UIGAME_H
@@ -97,13 +99,13 @@ PAL_MenuTextMaxWidth(
 
 INT
 PAL_WordMaxWidth(
-   INT            nFirstWorld,
+   INT            nFirstWord,
    INT            nWordNum
 );
 
 INT
 PAL_WordWidth(
-   INT            nFirstWorld
+   INT            nWordIndex
 );
 
 #ifdef __cplusplus

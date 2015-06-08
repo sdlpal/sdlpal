@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Japanese support, 2015
+//
 
 #include "main.h"
 
@@ -1931,6 +1933,21 @@ PAL_MenuTextMaxWidth(
    LPMENUITEM     rgMenuItem,
    INT            nMenuItem
 )
+/*++
+  Purpose:
+
+    Calculate the maximal text width of all the menu items in number of full width characters.
+
+  Parameters:
+
+    [IN]  rgMenuItem - Pointer to the menu item array.
+	[IN]  nMenuItem - Number of menu items.
+
+  Return value:
+
+    Maximal text width.
+
+--*/
 {
 	int i, r = 0;
 	for (i = 0; i < nMenuItem; i++)
@@ -1952,14 +1969,29 @@ PAL_MenuTextMaxWidth(
 
 INT
 PAL_WordMaxWidth(
-   INT            nFirstWorld,
+   INT            nFirstWord,
    INT            nWordNum
 )
+/*++
+  Purpose:
+
+    Calculate the maximal text width of a specific range of words in number of full width characters.
+
+  Parameters:
+
+    [IN]  nFirstWord - First index of word.
+	[IN]  nWordNum - Number of words.
+
+  Return value:
+
+    Maximal text width.
+
+--*/
 {
 	int i, r = 0;
 	for (i = 0; i < nWordNum; i++)
 	{
-		LPCWSTR itemText = PAL_GetWord(nFirstWorld + i);
+		LPCWSTR itemText = PAL_GetWord(nFirstWord + i);
 		int j = 0, l = wcslen(itemText), w = 0;
 		for (j = 0; j < l; j++)
 		{
@@ -1976,10 +2008,24 @@ PAL_WordMaxWidth(
 
 INT
 PAL_WordWidth(
-   INT            nWordNum
+   INT            nWordIndex
 )
+/*++
+  Purpose:
+
+    Calculate the text width of a specific word.
+
+  Parameters:
+
+	[IN]  nWordNum - Index of the word.
+
+  Return value:
+
+    Text width.
+
+--*/
 {
-	LPCWSTR itemText = PAL_GetWord(nWordNum);
+	LPCWSTR itemText = PAL_GetWord(nWordIndex);
 	int i, l = wcslen(itemText), w = 0;
 	for (i = 0; i < l; i++)
 	{
