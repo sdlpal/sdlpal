@@ -50,11 +50,12 @@ MIDI_Play(
 
 --*/
 {
+#ifndef PAL_WIN95
    FILE            *fp;
    unsigned char   *buf;
    int              size;
    SDL_RWops       *rw;
-#ifdef PAL_WIN95
+#else
    char             filename[1024];
 #endif
 
