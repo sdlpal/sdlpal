@@ -101,6 +101,10 @@
     <ClInclude Include="..\adplug\surroundopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
+    <ClInclude Include="..\big5font.h" />
+    <ClInclude Include="..\codepage.h" />
+    <ClInclude Include="..\fontglyph.h" />
+    <ClInclude Include="..\gbfont.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\battle.c" />
