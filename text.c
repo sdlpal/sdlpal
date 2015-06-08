@@ -1245,7 +1245,7 @@ PAL_MultiByteToWideChar(
 			{
 				if (state == 0)
 				{
-					if (mbs[i] <= 0x80 || mbs[i] >= 0xfd || (mbs[i] >= 0xa0 && mbs[i] <= 0xdf))
+					if ((BYTE)mbs[i] <= 0x80 || (BYTE)mbs[i] >= 0xfd || ((BYTE)mbs[i] >= 0xa0 && (BYTE)mbs[i] <= 0xdf))
 						wlen++;
 					else
 						state = 1;
@@ -1263,7 +1263,7 @@ PAL_MultiByteToWideChar(
 			{
 				if (state == 0)
 				{
-					if (mbs[i] <= 0x80 || mbs[i] == 0xff)
+					if ((BYTE)mbs[i] <= 0x80 || (BYTE)mbs[i] == 0xff)
 						wlen++;
 					else
 						state = 1;
@@ -1281,7 +1281,7 @@ PAL_MultiByteToWideChar(
 	}
 	else
 	{
-		unsigned short invalid_char;
+		WCHAR invalid_char;
 		switch (gpGlobals->iCodePage)
 		{
 		case CP_SHIFTJIS:
@@ -1290,27 +1290,27 @@ PAL_MultiByteToWideChar(
 			{
 				if (state == 0)
 				{
-					if (mbs[i] <= 0x80)
+					if ((BYTE)mbs[i] <= 0x80)
 						wcs[wlen++] = mbs[i];
-					else if (mbs[i] >= 0xa0 && mbs[i] <= 0xdf)
-						wcs[wlen++] = cptbl_jis_half[mbs[i] - 0xa0];
-					else if (mbs[i] == 0xfd)
+					else if ((BYTE)mbs[i] >= 0xa0 && (BYTE)mbs[i] <= 0xdf)
+						wcs[wlen++] = cptbl_jis_half[(BYTE)mbs[i] - 0xa0];
+					else if ((BYTE)mbs[i] == 0xfd)
 						wcs[wlen++] = 0xf8f1;
-					else if (mbs[i] == 0xfe)
+					else if ((BYTE)mbs[i] == 0xfe)
 						wcs[wlen++] = 0xf8f2;
-					else if (mbs[i] == 0xff)
+					else if ((BYTE)mbs[i] == 0xff)
 						wcs[wlen++] = 0xf8f3;
 					else
 						state = 1;
 				}
 				else
 				{
-					if (mbs[i] < 0x40)
+					if ((BYTE)mbs[i] < 0x40)
 						wcs[wlen++] = 0x30fb;
-					else if (mbs[i - 1] < 0xa0)
-						wcs[wlen++] = cptbl_jis[mbs[i - 1] - 0x81][mbs[i] - 0x40];
+					else if ((BYTE)mbs[i - 1] < 0xa0)
+						wcs[wlen++] = cptbl_jis[(BYTE)mbs[i - 1] - 0x81][(BYTE)mbs[i] - 0x40];
 					else
-						wcs[wlen++] = cptbl_jis[mbs[i - 1] - 0xc1][mbs[i] - 0x40];
+						wcs[wlen++] = cptbl_jis[(BYTE)mbs[i - 1] - 0xc1][(BYTE)mbs[i] - 0x40];
 					state = 0;
 				}
 			}
@@ -1321,21 +1321,21 @@ PAL_MultiByteToWideChar(
 			{
 				if (state == 0)
 				{
-					if (mbs[i] < 0x80)
+					if ((BYTE)mbs[i] < 0x80)
 						wcs[wlen++] = mbs[i];
-					else if (mbs[i] == 0x80)
+					else if ((BYTE)mbs[i] == 0x80)
 						wcs[wlen++] = 0x20ac;
-					else if (mbs[i] == 0xff)
+					else if ((BYTE)mbs[i] == 0xff)
 						wcs[wlen++] = 0xf8f5;
 					else
 						state = 1;
 				}
 				else
 				{
-					if (mbs[i] < 0x40)
+					if ((BYTE)mbs[i] < 0x40)
 						wcs[wlen++] = invalid_char;
 					else
-						wcs[wlen++] = cptbl_gbk[mbs[i - 1] - 0x81][mbs[i] - 0x40];
+						wcs[wlen++] = cptbl_gbk[(BYTE)mbs[i - 1] - 0x81][(BYTE)mbs[i] - 0x40];
 					state = 0;
 				}
 			}
@@ -1346,21 +1346,21 @@ PAL_MultiByteToWideChar(
 			{
 				if (state == 0)
 				{
-					if (mbs[i] <= 0x80)
+					if ((BYTE)mbs[i] <= 0x80)
 						wcs[wlen++] = mbs[i];
-					else if (mbs[i] == 0xff)
+					else if ((BYTE)mbs[i] == 0xff)
 						wcs[wlen++] = 0xf8f8;
 					else
 						state = 1;
 				}
 				else
 				{
-					if (mbs[i] < 0x40 || (mbs[i] >= 0x7f && mbs[i] <= 0xa0))
+					if ((BYTE)mbs[i] < 0x40 || ((BYTE)mbs[i] >= 0x7f && (BYTE)mbs[i] <= 0xa0))
 						wcs[wlen++] = invalid_char;
 					else if (mbs[i] <= 0x7e)
-						wcs[wlen++] = cptbl_big5[mbs[i - 1] - 0x81][mbs[i] - 0x40];
+						wcs[wlen++] = cptbl_big5[(BYTE)mbs[i - 1] - 0x81][(BYTE)mbs[i] - 0x40];
 					else
-						wcs[wlen++] = cptbl_big5[mbs[i - 1] - 0x81][mbs[i] - 0x60];
+						wcs[wlen++] = cptbl_big5[(BYTE)mbs[i - 1] - 0x81][(BYTE)mbs[i] - 0x60];
 					state = 0;
 				}
 			}
