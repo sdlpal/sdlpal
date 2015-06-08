@@ -83,11 +83,12 @@ PAL_OpeningMenu(
 {
    WORD          wItemSelected;
    WORD          wDefaultItem     = 0;
+   INT           w[2] = { PAL_WordWidth(MAINMENU_LABEL_NEWGAME), PAL_WordWidth(MAINMENU_LABEL_LOADGAME) };
 
    MENUITEM      rgMainMenuItem[2] = {
       // value   label                     enabled   position
-      {  0,      MAINMENU_LABEL_NEWGAME,   TRUE,     PAL_XY(125, 95)  },
-      {  1,      MAINMENU_LABEL_LOADGAME,  TRUE,     PAL_XY(125, 112) }
+      {  0,      MAINMENU_LABEL_NEWGAME,   TRUE,     PAL_XY(125 - (w[0] > 4 ? (w[0] - 4) * 8 : 0), 95)  },
+      {  1,      MAINMENU_LABEL_LOADGAME,  TRUE,     PAL_XY(125 - (w[1] > 4 ? (w[1] - 4) * 8 : 0), 112) }
    };
 
    //
@@ -159,26 +160,27 @@ PAL_SaveSlotMenu(
 --*/
 {
    LPBOX           rgpBox[5];
-   int             i;
+   int             i, w = PAL_WordMaxWidth(LOADMENU_LABEL_SLOT_FIRST, 5);
+   int             dx = (w > 4) ? (w - 4) * 16 : 0;
    FILE           *fp;
    WORD            wItemSelected;
    WORD            wSavedTimes;
 
    MENUITEM        rgMenuItem[5];
 
-   const SDL_Rect  rect = {195, 7, 120, 190};
+   const SDL_Rect  rect = { 195 - dx, 7, 120 + dx, 190 };
 
    //
    // Create the boxes and create the menu items
    //
    for (i = 0; i < 5; i++)
    {
-      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(195, 7 + 38 * i), 6, TRUE);
+      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(195 - dx, 7 + 38 * i), 6 + (w > 4 ? w - 4 : 0), TRUE);
 
       rgMenuItem[i].wValue = i + 1;
       rgMenuItem[i].fEnabled = TRUE;
       rgMenuItem[i].wNumWord = LOADMENU_LABEL_SLOT_FIRST + i;
-      rgMenuItem[i].pos = PAL_XY(210, 17 + 38 * i);
+	  rgMenuItem[i].pos = PAL_XY(210 - dx, 17 + 38 * i);
    }
 
    //
@@ -247,9 +249,11 @@ PAL_ConfirmMenu(
    LPBOX           rgpBox[2];
    MENUITEM        rgMenuItem[2];
    int             i;
+   int             w[2] = { PAL_WordWidth(CONFIRMMENU_LABEL_NO), PAL_WordWidth(CONFIRMMENU_LABEL_YES) };
+   int             dx[2] = { (w[0] - 1) * 16, (w[1] - 1) * 16 };
    WORD            wReturnValue;
 
-   const SDL_Rect  rect = {130, 100, 125, 50};
+   const SDL_Rect  rect = { 130, 100, 125 + dx[0] + dx[1], 50 };
 
    //
    // Create menu items
@@ -260,16 +264,17 @@ PAL_ConfirmMenu(
    rgMenuItem[0].wNumWord = CONFIRMMENU_LABEL_NO;
 
    rgMenuItem[1].fEnabled = TRUE;
-   rgMenuItem[1].pos = PAL_XY(220, 110);
+   rgMenuItem[1].pos = PAL_XY(220 + dx[0], 110);
    rgMenuItem[1].wValue = 1;
    rgMenuItem[1].wNumWord = CONFIRMMENU_LABEL_YES;
 
    //
    // Create the boxes
    //
+   dx[1] = dx[0]; dx[0] = 0;
    for (i = 0; i < 2; i++)
    {
-      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * i, 100), 2, TRUE);
+      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * i + dx[i], 100), 2 + (w[i] - 1), TRUE);
    }
 
    VIDEO_UpdateScreen(&rect);
@@ -314,8 +319,10 @@ PAL_SwitchMenu(
    LPBOX           rgpBox[2];
    MENUITEM        rgMenuItem[2];
    int             i;
+   int             w[2] = { PAL_WordWidth(SWITCHMENU_LABEL_DISABLE), PAL_WordWidth(SWITCHMENU_LABEL_ENABLE) };
+   int             dx[2] = { (w[0] - 1) * 16, (w[1] - 1) * 16 };
    WORD            wReturnValue;
-   const SDL_Rect  rect = {130, 100, 125, 50};
+   const SDL_Rect  rect = { 130, 100, 125 + dx[0] + dx[1], 50 };
 
    //
    // Create menu items
@@ -326,16 +333,17 @@ PAL_SwitchMenu(
    rgMenuItem[0].wNumWord = SWITCHMENU_LABEL_DISABLE;
 
    rgMenuItem[1].fEnabled = TRUE;
-   rgMenuItem[1].pos = PAL_XY(220, 110);
+   rgMenuItem[1].pos = PAL_XY(220 + dx[0], 110);
    rgMenuItem[1].wValue = 1;
    rgMenuItem[1].wNumWord = SWITCHMENU_LABEL_ENABLE;
 
    //
    // Create the boxes
    //
+   dx[1] = dx[0]; dx[0] = 0;
    for (i = 0; i < 2; i++)
    {
-      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * i, 100), 2, TRUE);
+      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * i + dx[i], 100), 2 + (w[i] - 1), TRUE);
    }
 
    VIDEO_UpdateScreen(&rect);
@@ -511,7 +519,7 @@ PAL_SystemMenu(
    WORD                wReturnValue;
    int                 iSlot, i, iSavedTimes;
    FILE               *fp;
-   const SDL_Rect      rect = {40, 60, 100, 135};
+   const SDL_Rect      rect = {40, 60, 120, 135};
 
    //
    // Create menu items
@@ -543,9 +551,9 @@ PAL_SystemMenu(
    // Create the menu box.
    //
 #ifdef PAL_CLASSIC
-   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 4, 3, 0, TRUE);
+   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 4, PAL_MenuTextMaxWidth(rgSystemMenuItem, 5) - 1, 0, TRUE);
 #else
-   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 5, 3, 0, TRUE);
+   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 5, PAL_MenuTextMaxWidth(rgSystemMenuItem, 6) - 1, 0, TRUE);
 #endif
    VIDEO_UpdateScreen(&rect);
 
@@ -995,7 +1003,7 @@ PAL_InGameMenu(
    //
    // Create the menu box.
    //
-   lpMenuBox = PAL_CreateBox(PAL_XY(3, 37), 3, 1, 0, TRUE);
+   lpMenuBox = PAL_CreateBox(PAL_XY(3, 37), 3, PAL_MenuTextMaxWidth(rgMainMenuItem, 4) - 1, 0, TRUE);
    VIDEO_UpdateScreen(&rect);
 
    //
@@ -1916,4 +1924,66 @@ PAL_EquipItemMenu(
          }
       }
    }
+}
+
+INT
+PAL_MenuTextMaxWidth(
+   LPMENUITEM     rgMenuItem,
+   INT            nMenuItem
+)
+{
+	int i, r = 0;
+	for (i = 0; i < nMenuItem; i++)
+	{
+		LPCWSTR itemText = PAL_GetWord(rgMenuItem[i].wNumWord);
+		int j = 0, l = wcslen(itemText), w = 0;
+		for (j = 0; j < l; j++)
+		{
+			w += PAL_CharWidth(itemText[j]);
+		}
+		w = (w + 8) >> 4;
+		if (r < w)
+		{
+			r = w;
+		}
+	}
+	return r;
+}
+
+INT
+PAL_WordMaxWidth(
+   INT            nFirstWorld,
+   INT            nWordNum
+)
+{
+	int i, r = 0;
+	for (i = 0; i < nWordNum; i++)
+	{
+		LPCWSTR itemText = PAL_GetWord(nFirstWorld + i);
+		int j = 0, l = wcslen(itemText), w = 0;
+		for (j = 0; j < l; j++)
+		{
+			w += PAL_CharWidth(itemText[j]);
+		}
+		w = (w + 8) >> 4;
+		if (r < w)
+		{
+			r = w;
+		}
+	}
+	return r;
+}
+
+INT
+PAL_WordWidth(
+   INT            nWordNum
+)
+{
+	LPCWSTR itemText = PAL_GetWord(nWordNum);
+	int i, l = wcslen(itemText), w = 0;
+	for (i = 0; i < l; i++)
+	{
+		w += PAL_CharWidth(itemText[i]);
+	}
+	return (w + 8) >> 4;
 }

@@ -606,12 +606,7 @@ extern LPGLOBALVARS gpGlobals;
 
 INT
 PAL_InitGlobals(
-#ifdef PAL_UNICODE
-   CODEPAGE      iCodePage,
-   DWORD         dwWordLength
-#else
    VOID
-#endif
 );
 
 VOID

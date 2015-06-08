@@ -116,7 +116,7 @@ PAL_Init(
 
    SDL_WM_SetCaption("Loading...", NULL);
 
-   e = PAL_InitGlobals(CP_BIG5, 10);	// TODO: Fix it for dynamic loading from configuration file
+   e = PAL_InitGlobals();
    if (e != 0)
    {
       TerminateOnError("Could not initialize global data: %d.\n", e);

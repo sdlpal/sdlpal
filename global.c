@@ -39,12 +39,7 @@ LPGLOBALVARS gpGlobals = NULL;
 
 INT
 PAL_InitGlobals(
-#ifdef PAL_UNICODE
-   CODEPAGE      iCodePage,
-   DWORD         dwWordLength
-#else
    VOID
-#endif
 )
 /*++
   Purpose:
@@ -62,6 +57,12 @@ PAL_InitGlobals(
 
 --*/
 {
+#ifdef PAL_UNICODE
+   FILE     *fp;
+   CODEPAGE  iCodePage = CP_BIG5;	// Default for PAL DOS
+   DWORD     dwWordLength = 10;		// Default for PAL DOS/WIN95
+#endif
+
    if (gpGlobals == NULL)
    {
       gpGlobals = (LPGLOBALVARS)calloc(1, sizeof(GLOBALVARS));
@@ -70,6 +71,55 @@ PAL_InitGlobals(
          return -1;
       }
    }
+
+#ifdef PAL_UNICODE
+   if (fp = UTIL_OpenFile("sdlpal.cfg"))
+   {
+	   PAL_LARGE char buf[512];
+
+	   //
+	   // Load the configuration data
+	   //
+	   while (fgets(buf, 512, fp) != NULL)
+	   {
+		   char *p = buf;
+
+		   //
+		   // Skip leading spaces
+		   //
+		   while (*p && isspace(*p)) p++;
+
+		   //
+		   // Skip comments
+		   //
+		   if (*p && *p != '#')
+		   {
+			   char *ptr;
+			   if (ptr = strchr(p, '='))
+			   {
+				   char *end = ptr - 1;
+				   *ptr++ = 0;
+
+				   //
+				   // Skip tailing & leading spaces
+				   //
+				   while (isspace(*end) && end >= p) *end-- = 0;
+
+				   if (SDL_strcasecmp(p, "CODEPAGE") == 0)
+				   {
+					   sscanf(ptr, "%d", &iCodePage);
+				   }
+				   else if (SDL_strcasecmp(p, "WORDLENGTH") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwWordLength);
+				   }
+			   }
+		   }
+	   }
+
+	   UTIL_CloseFile(fp);
+   }
+#endif
 
    //
    // Open files

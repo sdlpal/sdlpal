@@ -218,6 +218,7 @@ PAL_DrawNumber(
    NUMALIGN        align
 );
 
+#ifndef PAL_WIN95
 LPOBJECTDESC
 PAL_LoadObjectDesc(
    LPCSTR          lpszFileName
@@ -228,15 +229,16 @@ PAL_FreeObjectDesc(
    LPOBJECTDESC    lpObjectDesc
 );
 
-#ifdef PAL_UNICODE
+#  ifdef PAL_UNICODE
 LPCWSTR
-#else
+#  else
 LPCSTR
-#endif
+#  endif
 PAL_GetObjectDesc(
    LPOBJECTDESC   lpObjectDesc,
    WORD           wObjectID
 );
+#endif
 
 extern LPSPRITE gpSpriteUI;
 
