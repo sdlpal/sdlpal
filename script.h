@@ -27,6 +27,10 @@ extern "C"
 {
 #endif
 
+#ifdef PAL_WIN95
+#define PAL_ITEM_DESC_BOTTOM	(1 << 15)
+#endif
+
 WORD
 PAL_RunTriggerScript(
    WORD           wScriptEntry,

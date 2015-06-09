@@ -56,17 +56,34 @@ PAL_ItemSelectMenuUpdate(
    BYTE               bColor;
    static BYTE        bufImage[2048];
    static WORD        wPrevImageIndex = 0xFFFF;
+#ifdef PAL_UNICODE
+   const int          iItemsPerLine = 34 / gpGlobals->dwWordLength;
+   const int          iItemTextWidth = 8 * gpGlobals->dwWordLength + 20;
+   const int          iLinesPerPage = 7 - gpGlobals->dwExtraDescLines;
+   const int          iBoxHeightOffset = gpGlobals->dwExtraDescLines * 16;
+   const int          iCursorXOffset = gpGlobals->dwWordLength * 5 / 2;
+   const int          iAmountXOffset = gpGlobals->dwWordLength * 8 + 1;
+   const int          iPageLineOffset = (iLinesPerPage + 1) / 2;
+#else
+   const int          iItemsPerLine = 3;
+   const int          iItemTextWidth = 100;
+   const int          iLinesPerPage = 7;
+   const int          iBoxHeightOffset = 0;
+   const int          iCursorXOffset = 25;
+   const int          iAmountXOffset = 81;
+   const int          iPageLineOffset = 4;
+#endif
 
    //
    // Process input
    //
    if (g_InputState.dwKeyPress & kKeyUp)
    {
-      gpGlobals->iCurInvMenuItem -= 3;
+      gpGlobals->iCurInvMenuItem -= iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyDown)
    {
-      gpGlobals->iCurInvMenuItem += 3;
+      gpGlobals->iCurInvMenuItem += iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyLeft)
    {
@@ -78,11 +95,11 @@ PAL_ItemSelectMenuUpdate(
    }
    else if (g_InputState.dwKeyPress & kKeyPgUp)
    {
-      gpGlobals->iCurInvMenuItem -= 3 * 7;
+      gpGlobals->iCurInvMenuItem -= iItemsPerLine * iLinesPerPage;
    }
    else if (g_InputState.dwKeyPress & kKeyPgDn)
    {
-      gpGlobals->iCurInvMenuItem += 3 * 7;
+      gpGlobals->iCurInvMenuItem += iItemsPerLine * iLinesPerPage;
    }
    else if (g_InputState.dwKeyPress & kKeyMenu)
    {
@@ -104,20 +121,20 @@ PAL_ItemSelectMenuUpdate(
    //
    // Redraw the box
    //
-   PAL_CreateBox(PAL_XY(2, 0), 6, 17, 1, FALSE);
+   PAL_CreateBox(PAL_XY(2, 0), iLinesPerPage - 1, 17, 1, FALSE);
 
    //
    // Draw the texts in the current page
    //
-   i = gpGlobals->iCurInvMenuItem / 3 * 3 - 3 * 4;
+   i = gpGlobals->iCurInvMenuItem / iItemsPerLine * iItemsPerLine - iItemsPerLine * iPageLineOffset;
    if (i < 0)
    {
       i = 0;
    }
 
-   for (j = 0; j < 7; j++)
+   for (j = 0; j < iLinesPerPage; j++)
    {
-      for (k = 0; k < 3; k++)
+      for (k = 0; k < iItemsPerLine; k++)
       {
          wObject = gpGlobals->rgInventory[i].wItem;
          bColor = MENUITEM_COLOR;
@@ -127,7 +144,7 @@ PAL_ItemSelectMenuUpdate(
             //
             // End of the list reached
             //
-            j = 7;
+            j = iLinesPerPage;
             break;
          }
 
@@ -172,7 +189,7 @@ PAL_ItemSelectMenuUpdate(
          //
          // Draw the text
          //
-         PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * 100, 12 + j * 18),
+		 PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * iItemTextWidth, 12 + j * 18),
             bColor, TRUE, FALSE);
 
          //
@@ -181,7 +198,7 @@ PAL_ItemSelectMenuUpdate(
          if (i == gpGlobals->iCurInvMenuItem)
          {
             PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_CURSOR),
-               gpScreen, PAL_XY(40 + k * 100, 22 + j * 18));
+               gpScreen, PAL_XY(15 + iCursorXOffset + k * iItemTextWidth, 22 + j * 18));
          }
 
          //
@@ -190,7 +207,7 @@ PAL_ItemSelectMenuUpdate(
 		 if ((SHORT)gpGlobals->rgInventory[i].nAmount - (SHORT)gpGlobals->rgInventory[i].nAmountInUse > 1)
 		 {
             PAL_DrawNumber(gpGlobals->rgInventory[i].nAmount - gpGlobals->rgInventory[i].nAmountInUse,
-               2, PAL_XY(96 + k * 100, 17 + j * 18), kNumColorCyan, kNumAlignRight);
+               2, PAL_XY(15 + iAmountXOffset + k * iItemTextWidth, 17 + j * 18), kNumColorCyan, kNumAlignRight);
 		 }
 
          i++;
@@ -281,8 +298,15 @@ PAL_ItemSelectMenuUpdate(
       {
          if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
          {
-            wScript = PAL_RunAutoScript(wScript, (1 << 15) | line);
-            line++;
+#ifdef PAL_UNICODE
+			 int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
+#endif
+			 wScript = PAL_RunAutoScript(wScript, PAL_ITEM_DESC_BOTTOM | line);
+#ifdef PAL_UNICODE
+			 line += line_incr;
+#else
+			 line++;
+#endif
          }
          else
          {
@@ -300,10 +324,10 @@ PAL_ItemSelectMenuUpdate(
       {
          if (gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount > 0)
          {
-            j = (gpGlobals->iCurInvMenuItem < 3 * 4) ? (gpGlobals->iCurInvMenuItem / 3) : 4;
-            k = gpGlobals->iCurInvMenuItem % 3;
+			 j = (gpGlobals->iCurInvMenuItem < iItemsPerLine * iPageLineOffset) ? (gpGlobals->iCurInvMenuItem / iItemsPerLine) : iPageLineOffset;
+			k = gpGlobals->iCurInvMenuItem % iItemsPerLine;
 
-            PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * 100, 12 + j * 18),
+            PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * iItemTextWidth, 12 + j * 18),
                MENUITEM_COLOR_CONFIRMED, FALSE, FALSE);
          }
 

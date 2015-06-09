@@ -3497,18 +3497,40 @@ begin:
 
    case 0xFFFF:
 #ifdef PAL_WIN95
-      iDescLine = (wEventObjectID & ~(1 << 15));
-      if (wEventObjectID & (1 << 15))
-      {
-         PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(75, iDescLine * 16 + 150), DESCTEXT_COLOR, TRUE, FALSE);
-      }
-      else
-      {
-         PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(100, iDescLine * 16 + 3), DESCTEXT_COLOR, TRUE, FALSE);
-      }
-      iDescLine++;
-#endif
+	  // Support for Japanese
+	  // If the second parameter is zero, then follow the standard behavior
+	  // Otherwise, use the extended behavior
+      // Either zero or two displays text
+	  if (pScript->rgwOperand[1] == 0 || pScript->rgwOperand[1] == 2)
+	  {
+		  iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
+		  if (wEventObjectID & PAL_ITEM_DESC_BOTTOM)
+		  {
+#  ifdef PAL_UNICODE
+			  int YOffset = gpGlobals->dwExtraDescLines * 16;
+#  else
+			  int YOffset = 0;
+#  endif
+			  PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(75, iDescLine * 16 + 150 - YOffset), DESCTEXT_COLOR, TRUE, FALSE);
+		  }
+		  else
+		  {
+			  PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(100, iDescLine * 16 + 3), DESCTEXT_COLOR, TRUE, FALSE);
+		  }
+		  iDescLine++;
+	  }
+	  if (pScript->rgwOperand[1] != 0)
+	  {
+		  // Then, jump to script given by the third parameter.
+		  wScriptEntry = pScript->rgwOperand[2];
+	  }
+	  else
+	  {
+		  wScriptEntry++;
+	  }
+#else
 	  wScriptEntry++;
+#endif
 	  break;
 
 #ifdef PAL_WIN95

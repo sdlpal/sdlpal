@@ -61,17 +61,32 @@ PAL_MagicSelectionMenuUpdate(
    BYTE        bColor;
    WORD        wScript;
 #endif
+#ifdef PAL_UNICODE
+   const int   iItemsPerLine = 32 / gpGlobals->dwWordLength;
+   const int   iItemTextWidth = 8 * gpGlobals->dwWordLength + 7;
+   const int   iLinesPerPage = 5 - gpGlobals->dwExtraDescLines;
+   const int   iBoxYOffset = gpGlobals->dwExtraDescLines * 16;
+   const int   iCursorXOffset = gpGlobals->dwWordLength * 5 / 2;
+   const int   iPageLineOffset = iLinesPerPage / 2;
+#else
+   const int   iItemsPerLine = 3;
+   const int   iItemTextWidth = 87;
+   const int   iLinesPerPage = 5;
+   const int   iBoxYOffset = 0;
+   const int   iCursorXOffset = 25;
+   const int   iPageLineOffset = 2;
+#endif
 
    //
    // Check for inputs
    //
    if (g_InputState.dwKeyPress & kKeyUp)
    {
-      g_iCurrentItem -= 3;
+      g_iCurrentItem -= iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyDown)
    {
-      g_iCurrentItem += 3;
+      g_iCurrentItem += iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyLeft)
    {
@@ -83,11 +98,11 @@ PAL_MagicSelectionMenuUpdate(
    }
    else if (g_InputState.dwKeyPress & kKeyPgUp)
    {
-      g_iCurrentItem -= 3 * 5;
+      g_iCurrentItem -= iItemsPerLine * iLinesPerPage;
    }
    else if (g_InputState.dwKeyPress & kKeyPgDn)
    {
-      g_iCurrentItem += 3 * 5;
+      g_iCurrentItem += iItemsPerLine * iLinesPerPage;
    }
    else if (g_InputState.dwKeyPress & kKeyMenu)
    {
@@ -109,7 +124,7 @@ PAL_MagicSelectionMenuUpdate(
    //
    // Create the box.
    //
-   PAL_CreateBox(PAL_XY(10, 42), 4, 16, 1, FALSE);
+   PAL_CreateBox(PAL_XY(10, 42 + iBoxYOffset), iLinesPerPage - 1, 16, 1, FALSE);
 
 #ifndef PAL_WIN95
    if (gpGlobals->lpObjectDesc == NULL)
@@ -196,9 +211,16 @@ PAL_MagicSelectionMenuUpdate(
    {
       if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
       {
-         wScript = PAL_RunAutoScript(wScript, line);
-         line++;
-      }
+#ifdef PAL_UNICODE
+         int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
+#endif
+		 wScript = PAL_RunAutoScript(wScript, line);
+#ifdef PAL_UNICODE
+		 line += line_incr;
+#else
+		 line++;
+#endif
+	  }
       else
       {
          wScript = PAL_RunAutoScript(wScript, 0);
@@ -220,15 +242,15 @@ PAL_MagicSelectionMenuUpdate(
    //
    // Draw the texts of the current page
    //
-   i = g_iCurrentItem / 3 * 3 - 3 * 2;
+   i = g_iCurrentItem / iItemsPerLine * iItemsPerLine - iItemsPerLine * iPageLineOffset;
    if (i < 0)
    {
       i = 0;
    }
 
-   for (j = 0; j < 5; j++)
+   for (j = 0; j < iLinesPerPage; j++)
    {
-      for (k = 0; k < 3; k++)
+      for (k = 0; k < iItemsPerLine; k++)
       {
          bColor = MENUITEM_COLOR;
 
@@ -237,7 +259,7 @@ PAL_MagicSelectionMenuUpdate(
             //
             // End of the list reached
             //
-            j = 5;
+            j = iLinesPerPage;
             break;
          }
 
@@ -261,7 +283,7 @@ PAL_MagicSelectionMenuUpdate(
          // Draw the text
          //
          PAL_DrawText(PAL_GetWord(rgMagicItem[i].wMagic),
-            PAL_XY(35 + k * 87, 54 + j * 18), bColor, TRUE, FALSE);
+            PAL_XY(35 + k * iItemTextWidth, 54 + j * 18 + iBoxYOffset), bColor, TRUE, FALSE);
 
          //
          // Draw the cursor on the current selected item
@@ -269,7 +291,7 @@ PAL_MagicSelectionMenuUpdate(
          if (i == g_iCurrentItem)
          {
             PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_CURSOR),
-               gpScreen, PAL_XY(60 + k * 87, 64 + j * 18));
+               gpScreen, PAL_XY(35 + iCursorXOffset + k * iItemTextWidth, 64 + j * 18 + iBoxYOffset));
          }
 
          i++;
@@ -280,11 +302,11 @@ PAL_MagicSelectionMenuUpdate(
    {
       if (rgMagicItem[g_iCurrentItem].fEnabled)
       {
-         j = g_iCurrentItem % 3;
-         k = (g_iCurrentItem < 3 * 2) ? (g_iCurrentItem / 3) : 2;
+         j = g_iCurrentItem % iItemsPerLine;
+		 k = (g_iCurrentItem < iItemsPerLine * iPageLineOffset) ? (g_iCurrentItem / iItemsPerLine) : iPageLineOffset;
 
-         j = 35 + j * 87;
-         k = 54 + k * 18;
+		 j = 35 + j * iItemTextWidth;
+		 k = 54 + k * 18 + iBoxYOffset;
 
          PAL_DrawText(PAL_GetWord(rgMagicItem[g_iCurrentItem].wMagic), PAL_XY(j, k),
             MENUITEM_COLOR_CONFIRMED, FALSE, TRUE);
