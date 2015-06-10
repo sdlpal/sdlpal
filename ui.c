@@ -683,6 +683,112 @@ PAL_DrawNumber(
    }
 }
 
+INT
+PAL_MenuTextMaxWidth(
+   LPMENUITEM     rgMenuItem,
+   INT            nMenuItem
+)
+/*++
+  Purpose:
+
+    Calculate the maximal text width of all the menu items in number of full width characters.
+
+  Parameters:
+
+    [IN]  rgMenuItem - Pointer to the menu item array.
+	[IN]  nMenuItem - Number of menu items.
+
+  Return value:
+
+    Maximal text width.
+
+--*/
+{
+	int i, r = 0;
+	for (i = 0; i < nMenuItem; i++)
+	{
+		LPCWSTR itemText = PAL_GetWord(rgMenuItem[i].wNumWord);
+		int j = 0, l = wcslen(itemText), w = 0;
+		for (j = 0; j < l; j++)
+		{
+			w += PAL_CharWidth(itemText[j]);
+		}
+		w = (w + 8) >> 4;
+		if (r < w)
+		{
+			r = w;
+		}
+	}
+	return r;
+}
+
+INT
+PAL_WordMaxWidth(
+   INT            nFirstWord,
+   INT            nWordNum
+)
+/*++
+  Purpose:
+
+    Calculate the maximal text width of a specific range of words in number of full width characters.
+
+  Parameters:
+
+    [IN]  nFirstWord - First index of word.
+	[IN]  nWordNum - Number of words.
+
+  Return value:
+
+    Maximal text width.
+
+--*/
+{
+	int i, r = 0;
+	for (i = 0; i < nWordNum; i++)
+	{
+		LPCWSTR itemText = PAL_GetWord(nFirstWord + i);
+		int j = 0, l = wcslen(itemText), w = 0;
+		for (j = 0; j < l; j++)
+		{
+			w += PAL_CharWidth(itemText[j]);
+		}
+		w = (w + 8) >> 4;
+		if (r < w)
+		{
+			r = w;
+		}
+	}
+	return r;
+}
+
+INT
+PAL_WordWidth(
+   INT            nWordIndex
+)
+/*++
+  Purpose:
+
+    Calculate the text width of a specific word.
+
+  Parameters:
+
+	[IN]  nWordNum - Index of the word.
+
+  Return value:
+
+    Text width.
+
+--*/
+{
+	LPCWSTR itemText = PAL_GetWord(nWordIndex);
+	int i, l = wcslen(itemText), w = 0;
+	for (i = 0; i < l; i++)
+	{
+		w += PAL_CharWidth(itemText[i]);
+	}
+	return (w + 8) >> 4;
+}
+
 #ifndef PAL_WIN95
 
 LPOBJECTDESC

@@ -519,15 +519,35 @@ PAL_AdditionalCredits(
 --*/
 {
 #ifdef PAL_UNICODE
+   LPCWSTR rgszcps[][CP_MAX] = {
+	   // Traditional Chinese, Simplified Chinese, Japanese
+	   { L"", L"", L"" },
+	   { L"        (\x7D93\x5178\x7279\x5225\x7BC7", L"        (\x7ECF\x5178\x7279\x522B\x7BC7", L"(\x53E4\x5178\x7684\x306A\x30D0\x30FC\x30B8\x30E7\x30F3" },
+	   { L"", L"", L"" },
+	   { L"", L"", L"" },
+	   { L"", L"", L"" },
+#if defined(__SYMBIAN32__) || defined(GPH) || defined(GEKKO) || defined(DINGOO) || defined(ANDROID)
+	   { L"", L"", L"" },
+#endif
+	   { L"", L"", L"" },
+	   { L"\x672C\x7A0B\x5F0F\x662F\x81EA\x7531\x8EDF\x9AD4\xFF0C\x6309\x7167 GNU General",
+	     L"\x672C\x7A0B\x5E8F\x662F\x81EA\x7531\x8F6F\x4EF6\xFF0C\x6309\x7167 GNU General",
+		 L"\x3053\x306E\x30D7\x30ED\x30B0\x30E9\x30E0\x306F\x30D5\x30EA\x30FC\x30BD\x30D5\x30C8\x30A6\x30A7\x30A2\x3001"
+	   },
+	   { L"Public License (GPLv3) \x767C\x4F48", L"Public License (GPLv3) \x53D1\x5E03", L"GNU General Public License (GPLv3)\x306E" },
+	   { L"", L"", L"\x4E0B\x3067\x30EA\x30EA\x30FC\x30B9\x3055\x308C\x3066" },
+	   { L"              ...\x6309 Enter \x7D50\x675F", L"              ...\x6309 Enter \x7ED3\x675F", L"...Enter\x30AD\x30FC\x3092\x62BC\x3057\x3066\x7D42\x4E86\x3057\x307E\x3059" }
+   };
+
    LPCWSTR rgszStrings[] = {
       L"SDLPAL (http://sdlpal.codeplex.com/)",
 #  ifdef PAL_CLASSIC
-	  L"         (\x7D93\x5178\x7279\x5225\x7BC7  " WIDETEXT(__DATE__) L")",
+	  L" %s  " WIDETEXT(__DATE__) L")",
 #  else
 	  L"                    (" WIDETEXT(__DATE__) L")",
 #  endif
       L" ",
-	  L"  (c) 2009-2011, Wei Mingzhi",
+	  L"  (c) 2009-2015, Wei Mingzhi",
 	  L"      <whistler_wmz@users.sf.net>.",
 #  ifdef __SYMBIAN32__
 	  L"  Symbian S60 \x79FB\x690D (c) 2009, netwan.",
@@ -545,12 +565,11 @@ PAL_AdditionalCredits(
 	  L"  ANDROID \x79FB\x690D (c) 2013, Rikku2000.",
 #  endif
 	  L" ",
-	  L"\x672C\x7A0B\x5F0F\x662F\x81EA\x7531\x8EDF\x9AD4\xFF0C\x6309\x7167"
-	  L" GNU General",
-	  L"Public License (GPLv3) \x767C\x4F48",
-	  L" ",
-	  L"                 ...\x6309 Enter \x7D50\x675F",
-	  L""
+	  L"%s",
+	  L"%s",
+	  L"%s",
+	  L"   %s",
+      NULL
    };
 #else
    LPCSTR rgszStrings[] = {
@@ -561,7 +580,7 @@ PAL_AdditionalCredits(
       "                    (" __DATE__ ")",
 #  endif
       " ",
-      "  (c) 2009-2014, Wei Mingzhi",
+      "  (c) 2009-2015, Wei Mingzhi",
       "      <whistler_wmz@users.sf.net>.",
 #  ifdef __SYMBIAN32__
       "  Symbian S60 \xB2\xBE\xB4\xD3 (c) 2009, netwan.",
@@ -575,13 +594,16 @@ PAL_AdditionalCredits(
 #  ifdef DINGOO
       "  DINGOO & Dingux \xB2\xBE\xB4\xD3 (c) 2011, Rikku2000.",
 #  endif
-      " ",
+#  ifdef ANDROID
+	  "  ANDROID \xB2\xBE\xB4\xD3 (c) 2013, Rikku2000.",
+#  endif
+	  " ",
       "\xA5\xBB\xB5\x7B\xA6\xA1\xAC\x4F\xA6\xDB\xA5\xD1\xB3\x6E\xC5\xE9\xA1\x41\xAB\xF6\xB7\xD3"
       " GNU General",
       "Public License (GPLv3) \xB5\x6F\xA7\x47",
       " ",
       "                 ...\xAB\xF6 Enter \xB5\xB2\xA7\xF4",
-      ""
+      NULL
    };
 #endif
 
@@ -594,10 +616,15 @@ PAL_AdditionalCredits(
 
    PAL_DrawOpeningMenuBackground();
 
-   while (rgszStrings[i][0] != '\0')
+   for (i = 0; rgszStrings[i]; i++)
    {
+#ifdef PAL_UNICODE
+      WCHAR buffer[50];
+	  swprintf(buffer, 50, rgszStrings[i], rgszcps[i][gpGlobals->iCodePage]);
+	  PAL_DrawText(buffer, PAL_XY(25, 20 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
+#else
       PAL_DrawText(rgszStrings[i], PAL_XY(25, 20 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
-      i++;
+#endif
    }
 
    PAL_SetPalette(0, FALSE);

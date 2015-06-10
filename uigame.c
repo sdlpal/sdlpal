@@ -1163,6 +1163,8 @@ PAL_PlayerStatus(
       //
       for (i = 0; i < MAX_PLAYER_EQUIPMENTS; i++)
       {
+         int offset = 0;
+
          w = gpGlobals->g.PlayerRoles.rgwEquipment[i][iPlayerRole];
 
          if (w == 0)
@@ -1183,8 +1185,19 @@ PAL_PlayerStatus(
          //
          // Draw the text label
          //
+#ifdef PAL_UNICODE
+         offset = PAL_WordWidth(w) * 16;
+         if (rgEquipPos[i][0] + offset + 5 > 320)
+         {
+            offset = 314 - rgEquipPos[i][0] - offset;
+         }
+         else
+         {
+            offset = 0;
+         }
+#endif
          PAL_DrawText(PAL_GetWord(w),
-            PAL_XY(rgEquipPos[i][0] + 5, rgEquipPos[i][1] + 38), STATUS_COLOR_EQUIPMENT, TRUE, FALSE);
+            PAL_XY(rgEquipPos[i][0] + offset + 5, rgEquipPos[i][1] + 38), STATUS_COLOR_EQUIPMENT, TRUE, FALSE);
       }
 
       //
@@ -1926,110 +1939,4 @@ PAL_EquipItemMenu(
          }
       }
    }
-}
-
-INT
-PAL_MenuTextMaxWidth(
-   LPMENUITEM     rgMenuItem,
-   INT            nMenuItem
-)
-/*++
-  Purpose:
-
-    Calculate the maximal text width of all the menu items in number of full width characters.
-
-  Parameters:
-
-    [IN]  rgMenuItem - Pointer to the menu item array.
-	[IN]  nMenuItem - Number of menu items.
-
-  Return value:
-
-    Maximal text width.
-
---*/
-{
-	int i, r = 0;
-	for (i = 0; i < nMenuItem; i++)
-	{
-		LPCWSTR itemText = PAL_GetWord(rgMenuItem[i].wNumWord);
-		int j = 0, l = wcslen(itemText), w = 0;
-		for (j = 0; j < l; j++)
-		{
-			w += PAL_CharWidth(itemText[j]);
-		}
-		w = (w + 8) >> 4;
-		if (r < w)
-		{
-			r = w;
-		}
-	}
-	return r;
-}
-
-INT
-PAL_WordMaxWidth(
-   INT            nFirstWord,
-   INT            nWordNum
-)
-/*++
-  Purpose:
-
-    Calculate the maximal text width of a specific range of words in number of full width characters.
-
-  Parameters:
-
-    [IN]  nFirstWord - First index of word.
-	[IN]  nWordNum - Number of words.
-
-  Return value:
-
-    Maximal text width.
-
---*/
-{
-	int i, r = 0;
-	for (i = 0; i < nWordNum; i++)
-	{
-		LPCWSTR itemText = PAL_GetWord(nFirstWord + i);
-		int j = 0, l = wcslen(itemText), w = 0;
-		for (j = 0; j < l; j++)
-		{
-			w += PAL_CharWidth(itemText[j]);
-		}
-		w = (w + 8) >> 4;
-		if (r < w)
-		{
-			r = w;
-		}
-	}
-	return r;
-}
-
-INT
-PAL_WordWidth(
-   INT            nWordIndex
-)
-/*++
-  Purpose:
-
-    Calculate the text width of a specific word.
-
-  Parameters:
-
-	[IN]  nWordNum - Index of the word.
-
-  Return value:
-
-    Text width.
-
---*/
-{
-	LPCWSTR itemText = PAL_GetWord(nWordIndex);
-	int i, l = wcslen(itemText), w = 0;
-	for (i = 0; i < l; i++)
-	{
-		w += PAL_CharWidth(itemText[i]);
-	}
-	return (w + 8) >> 4;
 }

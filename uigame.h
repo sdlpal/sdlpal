@@ -91,23 +91,6 @@ PAL_EquipItemMenu(
    WORD           wItem
 );
 
-INT
-PAL_MenuTextMaxWidth(
-   LPMENUITEM     rgMenuItem,
-   INT            nMenuItem
-);
-
-INT
-PAL_WordMaxWidth(
-   INT            nFirstWord,
-   INT            nWordNum
-);
-
-INT
-PAL_WordWidth(
-   INT            nWordIndex
-);
-
 #ifdef __cplusplus
 }
 #endif

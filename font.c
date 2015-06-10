@@ -24,6 +24,8 @@
 #include "font.h"
 #include "util.h"
 
+#define _FONT_C
+
 #if defined(PAL_UNICODE)
 
 #include "fontglyph.h"
@@ -262,7 +264,7 @@ BOOL fIsBig5 = FALSE;
 
 INT
 PAL_InitFont(
-VOID
+   VOID
 )
 /*++
 Purpose:
@@ -299,7 +301,7 @@ Return value:
 
 VOID
 PAL_FreeFont(
-VOID
+   VOID
 )
 /*++
 Purpose:
@@ -329,10 +331,10 @@ static BOOL is_gb(unsigned char b1, unsigned char b2)
 
 VOID
 PAL_DrawCharOnSurface(
-WORD                     wChar,
-SDL_Surface             *lpSurface,
-PAL_POS                  pos,
-BYTE                     bColor
+   WORD                     wChar,
+   SDL_Surface             *lpSurface,
+   PAL_POS                  pos,
+   BYTE                     bColor
 )
 /*++
 Purpose:
@@ -426,10 +428,10 @@ None.
 
 VOID
 PAL_DrawASCIICharOnSurface(
-BYTE                     bChar,
-SDL_Surface             *lpSurface,
-PAL_POS                  pos,
-BYTE                     bColor
+   BYTE                     bChar,
+   SDL_Surface             *lpSurface,
+   PAL_POS                  pos,
+   BYTE                     bColor
 )
 /*++
 Purpose:
