@@ -1423,7 +1423,7 @@ PAL_BattleStartFrame(
                g_Battle.ActionQueue[j].fIsEnemy = TRUE;
                g_Battle.ActionQueue[j].wIndex = i;
                g_Battle.ActionQueue[j].wDexterity = PAL_GetEnemyDexterity(i);
-               g_Battle.ActionQueue[j].wDexterity *= RandomFloat(0.9, 1.1);
+               g_Battle.ActionQueue[j].wDexterity *= RandomFloat(0.9f, 1.1f);
 
                j++;
 
@@ -1432,7 +1432,7 @@ PAL_BattleStartFrame(
                   g_Battle.ActionQueue[j].fIsEnemy = TRUE;
                   g_Battle.ActionQueue[j].wIndex = i;
                   g_Battle.ActionQueue[j].wDexterity = PAL_GetEnemyDexterity(i);
-                  g_Battle.ActionQueue[j].wDexterity *= RandomFloat(0.9, 1.1);
+                  g_Battle.ActionQueue[j].wDexterity *= RandomFloat(0.9f, 1.1f);
 
                   j++;
                }
@@ -1504,7 +1504,7 @@ PAL_BattleStartFrame(
                      wDexterity /= 2;
                   }
 
-                  wDexterity *= RandomFloat(0.9, 1.1);
+                  wDexterity *= RandomFloat(0.9f, 1.1f);
 
                   g_Battle.ActionQueue[j].wDexterity = wDexterity;
                }

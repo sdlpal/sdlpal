@@ -77,12 +77,12 @@ PAL_FBPBlitToSurface(
    SDL_Surface      *lpDstSurface
 );
 
-UINT
+INT
 PAL_RLEGetWidth(
    LPCBITMAPRLE      lpBitmapRLE
 );
 
-UINT
+INT
 PAL_RLEGetHeight(
    LPCBITMAPRLE      lpBitmapRLE
 );

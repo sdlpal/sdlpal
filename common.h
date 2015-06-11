@@ -166,11 +166,7 @@ FILE *MY_fopen(const char *path, const char *mode);
 #define vsnprintf _vsnprintf
 
 #ifdef _MSC_VER
-#pragma warning (disable:4018)
-#pragma warning (disable:4028)
 #pragma warning (disable:4244)
-#pragma warning (disable:4305)
-#pragma warning (disable:4761)
 #pragma warning (disable:4996)
 #endif
 
@@ -186,6 +182,7 @@ typedef const BYTE *LPCBYTE;
 #else
 
 #include <unistd.h>
+#include <wchar.h>
 
 #define CONST               const
 #ifndef FALSE
@@ -196,6 +193,7 @@ typedef const BYTE *LPCBYTE;
 #endif
 #define VOID                void
 typedef char                CHAR;
+typedef wchar_t             WCHAR;
 typedef short               SHORT;
 typedef long                LONG;
 
@@ -217,8 +215,8 @@ typedef void               *LPVOID;
 typedef const void         *LPCVOID;
 typedef CHAR               *LPSTR;
 typedef const CHAR         *LPCSTR;
-typedef USHORT             *LPWSTR;
-typedef const USHORT       *LPCWSTR;
+typedef WCHAR              *LPWSTR;
+typedef const WCHAR        *LPCWSTR;
 
 #endif
 

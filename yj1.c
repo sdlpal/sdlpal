@@ -421,7 +421,8 @@ Decompress(
    INT           DestSize
 )
 {
-   unsigned int len = 0, ptr = 0, Length = 0;
+   int Length;
+   unsigned int len = 0, ptr = 0;
    unsigned char* src = (unsigned char*)Source + 4;
    unsigned char* dest;
    Tree tree;

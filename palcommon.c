@@ -489,7 +489,7 @@ PAL_FBPBlitToSurface(
    return 0;
 }
 
-UINT
+INT
 PAL_RLEGetWidth(
    LPCBITMAPRLE    lpBitmapRLE
 )
@@ -528,7 +528,7 @@ PAL_RLEGetWidth(
    return lpBitmapRLE[0] | (lpBitmapRLE[1] << 8);
 }
 
-UINT
+INT
 PAL_RLEGetHeight(
    LPCBITMAPRLE       lpBitmapRLE
 )
