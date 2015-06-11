@@ -184,7 +184,6 @@ typedef const BYTE *LPCBYTE;
 #include <unistd.h>
 #include <wchar.h>
 
-#define CONST               const
 #ifndef FALSE
 #define FALSE               0
 #endif
@@ -209,7 +208,7 @@ typedef int                 BOOL, *LPBOOL;
 #endif
 typedef unsigned int        UINT, *PUINT, UINT32, *PUINT32;
 typedef unsigned char       BYTE, *LPBYTE;
-typedef CONST BYTE         *LPCBYTE;
+typedef const BYTE         *LPCBYTE;
 typedef float               FLOAT, *LPFLOAT;
 typedef void               *LPVOID;
 typedef const void         *LPCVOID;
