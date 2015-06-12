@@ -1357,7 +1357,7 @@ PAL_MultiByteToWideChar(
 				{
 					if ((BYTE)mbs[i] < 0x40 || ((BYTE)mbs[i] >= 0x7f && (BYTE)mbs[i] <= 0xa0))
 						wcs[wlen++] = invalid_char;
-					else if (mbs[i] <= 0x7e)
+					else if ((BYTE)mbs[i] <= 0x7e)
 						wcs[wlen++] = cptbl_big5[(BYTE)mbs[i - 1] - 0x81][(BYTE)mbs[i] - 0x40];
 					else
 						wcs[wlen++] = cptbl_big5[(BYTE)mbs[i - 1] - 0x81][(BYTE)mbs[i] - 0x60];
