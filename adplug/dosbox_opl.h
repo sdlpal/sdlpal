@@ -1,17 +1,17 @@
 /*
- *  Copyright (C) 2002-2011  The DOSBox Team
+ *  Copyright (C) 2002-2013  The DOSBox Team
  *  OPL2/OPL3 emulation library
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
  *  License as published by the Free Software Foundation; either
  *  version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *  Lesser General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -28,10 +28,10 @@
 #define fltype double
 
 /*
-	define Bits, Bitu, Bit32s, Bit32u, Bit16s, Bit16u, Bit8s, Bit8u here
-*/
+ define Bits, Bitu, Bit32s, Bit32u, Bit16s, Bit16u, Bit8s, Bit8u here
+ */
 
-#ifdef _MSC_VER
+#if _MSC_VER <= 1600
 #include <windows.h>
 #define uintptr_t ULONG
 #define intptr_t LONG
@@ -55,11 +55,10 @@ typedef uint8_t		Bit8u;
 typedef int8_t		Bit8s;
 
 
-
 /*
-	define attribution that inlines/forces inlining of a function (optional)
-*/
-#define OPL_INLINE INLINE
+ define attribution that inlines/forces inlining of a function (optional)
+ */
+#define OPL_INLINE inline
 
 
 #undef NUM_CHANNELS
@@ -123,16 +122,16 @@ typedef int8_t		Bit8s;
 
 
 /* operator struct definition
-     For OPL2 all 9 channels consist of two operators each, carrier and modulator.
-     Channel x has operators x as modulator and operators (9+x) as carrier.
-     For OPL3 all 18 channels consist either of two operators (2op mode) or four
-     operators (4op mode) which is determined through register4 of the second
-     adlib register set.
-     Only the channels 0,1,2 (first set) and 9,10,11 (second set) can act as
-     4op channels. The two additional operators for a channel y come from the
-     2op channel y+3 so the operatorss y, (9+y), y+3, (9+y)+3 make up a 4op
-     channel.
-*/
+ For OPL2 all 9 channels consist of two operators each, carrier and modulator.
+ Channel x has operators x as modulator and operators (9+x) as carrier.
+ For OPL3 all 18 channels consist either of two operators (2op mode) or four
+ operators (4op mode) which is determined through register4 of the second
+ adlib register set.
+ Only the channels 0,1,2 (first set) and 9,10,11 (second set) can act as
+ 4op channels. The two additional operators for a channel y come from the
+ 2op channel y+3 so the operatorss y, (9+y), y+3, (9+y)+3 make up a 4op
+ channel.
+ */
 typedef struct operator_struct {
 	Bit32s cval, lastcval;			// current output/last output (used for feedback)
 	Bit32u tcount, wfpos, tinc;		// time (position in waveform) and time increment
@@ -157,12 +156,13 @@ typedef struct operator_struct {
 	Bits env_step_a,env_step_d,env_step_r;	// number of std samples of one step (for attack/decay/release mode)
 	Bit8u step_skip_pos_a;			// position of 8-cyclic step skipping (always 2^x to check against mask)
 	Bits env_step_skip_a;			// bitmask that determines if a step is skipped (respective bit is zero then)
-
+    
 #if defined(OPLTYPE_IS_OPL3)
 	bool is_4op,is_4op_attached;	// base of a 4op channel/part of a 4op channel
 	Bit32s left_pan,right_pan;		// opl3 stereo panning amount
 #endif
 } op_type;
+
 
 // enable an operator
 void enable_operator(Bitu regbase, op_type* op_pt);
@@ -186,3 +186,5 @@ void adlib_getsample(Bit16s* sndptr, Bits numsamples);
 
 Bitu adlib_reg_read(Bitu port);
 void adlib_write_index(Bitu port, Bit8u val);
+
+static Bit32u generator_add;	// should be a chip parameter

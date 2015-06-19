@@ -61,7 +61,8 @@ PAL_InitGlobals(
    FILE     *fp;
    CODEPAGE  iCodePage = CP_BIG5;	// Default for PAL DOS/WIN95
    DWORD     dwWordLength = 10;		// Default for PAL DOS/WIN95
-   DWORD     dwExtraDescLines = 0;	// Default for PAL DOS/WIN95
+   DWORD     dwExtraMagicDescLines = 0;	// Default for PAL DOS/WIN95
+   DWORD     dwExtraItemDescLines = 0;	// Default for PAL DOS/WIN95
 #endif
 
    if (gpGlobals == NULL)
@@ -114,9 +115,13 @@ PAL_InitGlobals(
 				   {
 					   sscanf(ptr, "%u", &dwWordLength);
 				   }
-				   else if (SDL_strcasecmp(p, "EXTRADESCLINES") == 0)
+				   else if (SDL_strcasecmp(p, "EXTRAMAGICDESCLINES") == 0)
 				   {
-					   sscanf(ptr, "%u", &dwExtraDescLines);
+					   sscanf(ptr, "%u", &dwExtraMagicDescLines);
+				   }
+				   else if (SDL_strcasecmp(p, "EXTRAITEMDESCLINES") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwExtraItemDescLines);
 				   }
 			   }
 		   }
@@ -144,7 +149,8 @@ PAL_InitGlobals(
 #ifdef PAL_UNICODE
    gpGlobals->iCodePage = iCodePage;
    gpGlobals->dwWordLength = dwWordLength;
-   gpGlobals->dwExtraDescLines = dwExtraDescLines;
+   gpGlobals->dwExtraMagicDescLines = dwExtraMagicDescLines;
+   gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
 #endif
 
    return 0;

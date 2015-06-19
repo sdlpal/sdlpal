@@ -3534,7 +3534,7 @@ begin:
 		  if (wEventObjectID & PAL_ITEM_DESC_BOTTOM)
 		  {
 #  ifdef PAL_UNICODE
-			  int YOffset = gpGlobals->dwExtraDescLines * 16;
+			  int YOffset = gpGlobals->dwExtraItemDescLines * 16;
 #  else
 			  int YOffset = 0;
 #  endif

@@ -176,6 +176,15 @@
     <ClCompile Include="libmad\timer.c">
       <Filter>libmad</Filter>
     </ClCompile>
+    <ClCompile Include="resampler.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="adplug\adlibemu.c">
+      <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="adplug\demuopl.cpp">
+      <Filter>adplug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ascii.h">
@@ -360,6 +369,15 @@
     </ClInclude>
     <ClInclude Include="big5font.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resampler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="adplug\adlibemu.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="adplug\kemuopl.h">
+      <Filter>adplug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

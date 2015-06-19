@@ -19,12 +19,22 @@
 
 #include "rixplay.h"
 
-#define USE_SURROUNDOPL      0
-#define USE_DEMUOPL          0
+#define USE_SURROUNDOPL      1
+#define USE_DEMUOPL          1
+#define USE_KEMUOPL          0
+#define USE_SSRC             1
+
+#define OPL_SAMPLERATE       49716
+#include "resampler.h"
 
 #include "adplug/opl.h"
 #include "adplug/emuopl.h"
+#if USE_KEMUOPL
+#include "adplug/kemuopl.h"
+#endif
+#if USE_DEMUOPL
 #include "adplug/demuopl.h"
+#endif
 #include "adplug/surroundopl.h"
 #include "adplug/rix.h"
 
@@ -38,6 +48,7 @@ typedef struct tagRIXPLAYER
    tagRIXPLAYER() : iCurrentMusic(-1) {}
    Copl                      *opl;
    CrixPlayer                *rix;
+   void                      *resampler[2];
    INT                        iCurrentMusic; // current playing music number
    INT                        iNextMusic; // the next music number to switch to
    DWORD                      dwStartFadeTime;
@@ -45,7 +56,7 @@ typedef struct tagRIXPLAYER
    enum { FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
    BOOL                       fLoop;
    BOOL                       fNextLoop;
-   BYTE                       buf[PAL_SAMPLE_RATE / 70 * 2 * PAL_CHANNELS];
+   BYTE                       buf[OPL_SAMPLERATE / 70 * sizeof(short) * PAL_CHANNELS];
    LPBYTE                     pos;
 } RIXPLAYER, *LPRIXPLAYER;
 
@@ -190,7 +201,46 @@ RIX_FillBuffer(
                return;
             }
          }
-         gpRixPlayer->opl->update((short *)(gpRixPlayer->buf), PAL_SAMPLE_RATE / 70);
+          int sample_count = OPL_SAMPLERATE / 70;
+          if( gpRixPlayer->resampler[0] ) {
+              
+              unsigned int samples_written = 0;
+			  short *tempBuf = (short*)_alloca(64 * 2 * sizeof(short));
+              short *finalBuf = (short*)gpRixPlayer->buf;
+              
+              while ( sample_count )
+              {
+                  int to_write = resampler_get_free_count( gpRixPlayer->resampler[0] );
+                  if ( to_write )
+                  {
+                      gpRixPlayer->opl->update( tempBuf, to_write );
+                      for ( int i = 0; i < to_write; i++ )
+                      {
+                          resampler_write_sample( gpRixPlayer->resampler[0], tempBuf[i * 2] );
+                          resampler_write_sample( gpRixPlayer->resampler[1], tempBuf[i * 2 + 1] );
+                      }
+                  }
+                  
+                  /* if ( !lanczos_resampler_ready( m_resampler ) ) break; */ /* We assume that by filling the input buffer completely every pass, there will always be samples ready. */
+                  
+                  int ls = resampler_get_sample( gpRixPlayer->resampler[0] );
+                  int rs = resampler_get_sample( gpRixPlayer->resampler[1] );
+                  resampler_remove_sample( gpRixPlayer->resampler[0] );
+                  resampler_remove_sample( gpRixPlayer->resampler[1] );
+                  
+                  finalBuf[ samples_written++ ] = ls/256.0;
+                  finalBuf[ samples_written++ ] = rs/256.0;
+                  --sample_count;
+              }
+              
+//              p_chunk.set_data_size( samples_written );
+//              p_chunk.set_sample_rate( srate );
+//              p_chunk.set_channels( 2, audio_chunk::channel_config_stereo );
+//              p_chunk.set_sample_count( samples_written / 2 );
+//              
+//              audio_math::convert_from_int32( sample_buffer.get_ptr(), samples_written, p_chunk.get_data(), 1 << 8 );
+          }else
+              gpRixPlayer->opl->update((short *)(gpRixPlayer->buf), sample_count);
       }
 
       l = sizeof(gpRixPlayer->buf) - (gpRixPlayer->pos - gpRixPlayer->buf);
@@ -207,9 +257,6 @@ RIX_FillBuffer(
       {
          SHORT s = SWAP16((int)(*(SHORT *)(gpRixPlayer->pos)) * volume / SDL_MIX_MAXVOLUME);
 
-#if !USE_SURROUNDOPL
-         for (int j = 0; j < PAL_CHANNELS; j++)
-#endif
          {
             *(SHORT *)(stream) = s;
             stream += sizeof(SHORT);
@@ -248,19 +295,48 @@ RIX_Init(
    {
       return -1;
    }
-#if USE_SURROUNDOPL && (PAL_CHANNELS == 2)
-#	if USE_DEMUOPL
-   gpRixPlayer->opl = new CSurroundopl(new CDemuopl(PAL_SAMPLE_RATE, true, false),
-      new CDemuopl(PAL_SAMPLE_RATE, true, false), true);
-#	else
-   gpRixPlayer->opl = new CSurroundopl(new CEmuopl(PAL_SAMPLE_RATE, true, false),
-      new CEmuopl(PAL_SAMPLE_RATE, true, false), true);
-#	endif
+#if PAL_CHANNELS == 2
+#   if USE_SURROUNDOPL
+#       if USE_DEMUOPL
+   gpRixPlayer->opl = new CSurroundopl(new CDemuopl(OPL_SAMPLERATE, true, false),
+                                       new CDemuopl(OPL_SAMPLERATE, true, false), true);
+#       elif USE_KEMUOPL
+   gpRixPlayer->opl = new CSurroundopl(new CKemuopl(OPL_SAMPLERATE, true, false),
+                                       new CKemuopl(OPL_SAMPLERATE, true, false), true);
+#       else
+   gpRixPlayer->opl = new CSurroundopl(new CEmuopl(OPL_SAMPLERATE, true, false),
+                                       new CEmuopl(OPL_SAMPLERATE, true, false), true);
+#       endif
+#   if OPL_SAMPLERATE != PAL_SAMPLE_RATE && USE_SSRC
+    resampler_init();
+    gpRixPlayer->resampler[0] = resampler_create();
+    gpRixPlayer->resampler[1] = resampler_create();
+    
+    resampler_set_quality( gpRixPlayer->resampler[0], RESAMPLER_QUALITY_MAX );
+    resampler_set_quality( gpRixPlayer->resampler[1], RESAMPLER_QUALITY_MAX );
+    
+    resampler_set_rate( gpRixPlayer->resampler[0], OPL_SAMPLERATE / (double)PAL_SAMPLE_RATE );
+    resampler_set_rate( gpRixPlayer->resampler[1], OPL_SAMPLERATE / (double)PAL_SAMPLE_RATE );
+#   else
+    gpRixPlayer->resampler[0] = 0;
+    gpRixPlayer->resampler[1] = 0;
+#   endif
+#   else
+#       if USE_DEMUOPL
+    gpRixPlayer->opl = new CDemuopl(OPL_SAMPLERATE, true, true);
+#       elif USE_KEMUOPL
+    gpRixPlayer->opl = new CKemuopl(OPL_SAMPLERATE, true, true);
+#       else
+    gpRixPlayer->opl = new CEmuopl(OPL_SAMPLERATE, true, true);
+#       endif
+#   endif
 #else
 #	if USE_DEMUOPL
-   gpRixPlayer->opl = new CDemuopl(PAL_SAMPLE_RATE, true, false);
+    gpRixPlayer->opl = new CDemuopl(OPL_SAMPLERATE, true, false);
+#	elif USE_KEMUOPL
+    gpRixPlayer->opl = new CKemuopl(OPL_SAMPLERATE, true, false);
 #	else
-   gpRixPlayer->opl = new CEmuopl(PAL_SAMPLE_RATE, true, false);
+   gpRixPlayer->opl = new CEmuopl(OPL_SAMPLERATE, true, false);
 #	endif
 #endif
 
@@ -368,6 +444,13 @@ RIX_Play(
    // Stop the current CD music.
    //
    SOUND_PlayCDA(-1);
+    
+    gpRixPlayer->opl->init();
+    if ( gpRixPlayer->resampler[0] )
+        resampler_clear( gpRixPlayer->resampler[0] );
+    if ( gpRixPlayer->resampler[1] )
+        resampler_clear( gpRixPlayer->resampler[1] );
+//    gpRixPlayer->rix->rewind(iNumRIX);
 
    DWORD t = SDL_GetTicks();
    gpRixPlayer->fNextLoop = fLoop;

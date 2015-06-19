@@ -568,7 +568,8 @@ typedef struct tagGLOBALVARS
 #ifdef PAL_UNICODE
    CODEPAGE         iCodePage;
    DWORD            dwWordLength;
-   DWORD            dwExtraDescLines;
+   DWORD            dwExtraMagicDescLines;
+   DWORD            dwExtraItemDescLines;
 #endif
 } GLOBALVARS, *LPGLOBALVARS;
 

@@ -59,11 +59,12 @@ PAL_ItemSelectMenuUpdate(
 #ifdef PAL_UNICODE
    const int          iItemsPerLine = 34 / gpGlobals->dwWordLength;
    const int          iItemTextWidth = 8 * gpGlobals->dwWordLength + 20;
-   const int          iLinesPerPage = 7 - gpGlobals->dwExtraDescLines;
-   const int          iBoxHeightOffset = gpGlobals->dwExtraDescLines * 16;
+   const int          iLinesPerPage = 7 - gpGlobals->dwExtraItemDescLines;
+   const int          iBoxHeightOffset = gpGlobals->dwExtraItemDescLines * 16;
    const int          iCursorXOffset = gpGlobals->dwWordLength * 5 / 2;
    const int          iAmountXOffset = gpGlobals->dwWordLength * 8 + 1;
    const int          iPageLineOffset = (iLinesPerPage + 1) / 2;
+   const int          iPictureYOffset = (gpGlobals->dwExtraItemDescLines > 1) ? (gpGlobals->dwExtraItemDescLines - 1) * 16 : 0;
 #else
    const int          iItemsPerLine = 3;
    const int          iItemTextWidth = 100;
@@ -72,6 +73,7 @@ PAL_ItemSelectMenuUpdate(
    const int          iCursorXOffset = 25;
    const int          iAmountXOffset = 81;
    const int          iPageLineOffset = 4;
+   const int          iPictureYOffset = 0;
 #endif
 
    //
@@ -218,7 +220,7 @@ PAL_ItemSelectMenuUpdate(
    // Draw the picture of current selected item
    //
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX), gpScreen,
-      PAL_XY(5, 140));
+      PAL_XY(5, 140 - iPictureYOffset));
 
    wObject = gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem;
 
@@ -237,7 +239,7 @@ PAL_ItemSelectMenuUpdate(
 
    if (wPrevImageIndex != 0xFFFF)
    {
-      PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(12, 148));
+      PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(12, 148 - iPictureYOffset));
    }
 
    //

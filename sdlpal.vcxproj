@@ -179,7 +179,7 @@
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;winmm.lib;sdl2.lib;sdl2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\SDL2-2.0.3\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Develop\SDL2-2.0.3\VisualC\SDL\Win32\Debug\;D:\Develop\SDL2-2.0.3\VisualC\SDLMain\Win32\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -217,7 +217,7 @@
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;winmm.lib;sdl2.lib;sdl2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\SDL2-2.0.3\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Develop\SDL2-2.0.3\VisualC\SDL\Win32\Debug\;D:\Develop\SDL2-2.0.3\VisualC\SDLMain\Win32\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -228,6 +228,8 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="adplug\adlibemu.c" />
+    <ClCompile Include="adplug\demuopl.cpp" />
     <ClCompile Include="battle.c">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug_WIN95|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -398,6 +400,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_WIN95|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="resampler.c" />
     <ClCompile Include="rixplay.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug_WIN95|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -547,6 +550,9 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release_WIN95|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_WIN95|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WIN95|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WIN95|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="adplug\emuopl.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -740,6 +746,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="adplug\adlibemu.h" />
+    <ClInclude Include="adplug\kemuopl.h" />
     <ClInclude Include="ascii.h" />
     <ClInclude Include="battle.h" />
     <ClInclude Include="big5font.h" />
@@ -763,6 +771,7 @@
     <ClInclude Include="palette.h" />
     <ClInclude Include="play.h" />
     <ClInclude Include="res.h" />
+    <ClInclude Include="resampler.h" />
     <ClInclude Include="rixplay.h" />
     <ClInclude Include="rngplay.h" />
     <ClInclude Include="scene.h" />

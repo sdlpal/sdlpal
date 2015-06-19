@@ -64,8 +64,8 @@ PAL_MagicSelectionMenuUpdate(
 #ifdef PAL_UNICODE
    const int   iItemsPerLine = 32 / gpGlobals->dwWordLength;
    const int   iItemTextWidth = 8 * gpGlobals->dwWordLength + 7;
-   const int   iLinesPerPage = 5 - gpGlobals->dwExtraDescLines;
-   const int   iBoxYOffset = gpGlobals->dwExtraDescLines * 16;
+   const int   iLinesPerPage = 5 - gpGlobals->dwExtraMagicDescLines;
+   const int   iBoxYOffset = gpGlobals->dwExtraMagicDescLines * 16;
    const int   iCursorXOffset = gpGlobals->dwWordLength * 5 / 2;
    const int   iPageLineOffset = iLinesPerPage / 2;
 #else
