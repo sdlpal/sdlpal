@@ -612,10 +612,7 @@ VIDEO_SetPalette(
       return;
    }
 
-   for (i = 0; i < 256; i++)
-   {
-      palette->colors[i] = rgPalette[i];
-   }
+   SDL_SetPaletteColors(palette, rgPalette, 0, 256);
 
    SDL_SetSurfacePalette(gpScreen, palette);
    SDL_SetSurfacePalette(gpScreenBak, palette);
