@@ -615,6 +615,9 @@ VIDEO_SetPalette(
    SDL_SetSurfaceColorMod(gpScreenBak, 0xFF, 0xFF, 0xFF);
 
    VIDEO_UpdateScreen(NULL);
+
+   // The palette should be freed, or memory leak occurs.
+   SDL_FreePalette(palette);
 #else
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenBak, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
