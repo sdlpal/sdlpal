@@ -469,11 +469,7 @@ UTIL_OpenFile(
 	  char *p = pBuf;
 	  while (*p)
 	  {
-		 if (*p >= 'a' && *p <= 'z')
-		 {
-			*p -= 'a' - 'A';
-		 }
-		 p++;
+         *p++ = toupper(*p);
 	  }
 
 	  fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");

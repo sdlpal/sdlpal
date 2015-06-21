@@ -604,7 +604,6 @@ VIDEO_SetPalette(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   int            i;
    SDL_Palette   *palette = SDL_AllocPalette(256);
 
    if (palette == NULL)

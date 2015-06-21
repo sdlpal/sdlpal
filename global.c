@@ -25,17 +25,24 @@
 
 LPGLOBALVARS gpGlobals = NULL;
 
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#define DO_BYTESWAP(buf, size)
+#else
 #define DO_BYTESWAP(buf, size)                                   \
-   for (i = 0; i < (size) / 2; i++)                              \
-   {                                                             \
-      ((LPWORD)(buf))[i] = SWAP16(((LPWORD)(buf))[i]);           \
-   }
+   do {                                                          \
+      int i;                                                     \
+      for (i = 0; i < (size) / 2; i++)                           \
+      {                                                          \
+         ((LPWORD)(buf))[i] = SWAP16(((LPWORD)(buf))[i]);        \
+      }                                                          \
+   } while(0)
+#endif
 
 #define LOAD_DATA(buf, size, chunknum, fp)                       \
-   {                                                             \
+   do {                                                          \
       PAL_MKFReadChunk((LPBYTE)(buf), (size), (chunknum), (fp)); \
       DO_BYTESWAP(buf, size);                                    \
-   }
+   } while(0)
 
 INT
 PAL_InitGlobals(
@@ -59,7 +66,7 @@ PAL_InitGlobals(
 {
 #ifdef PAL_UNICODE
    FILE     *fp;
-   CODEPAGE  iCodePage = CP_BIG5;	// Default for PAL DOS/WIN95
+   CODEPAGE  iCodePage = CP_UNKNOWN;
    DWORD     dwWordLength = 10;		// Default for PAL DOS/WIN95
    DWORD     dwExtraMagicDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwExtraItemDescLines = 0;	// Default for PAL DOS/WIN95
@@ -128,6 +135,48 @@ PAL_InitGlobals(
 	   }
 
 	   UTIL_CloseFile(fp);
+   }
+
+   // Codepage auto detect 
+   if (CP_UNKNOWN == iCodePage)
+   {
+	   // Try to convert the content of word.dat with different codepages,
+	   // and use the codepage with minimal inconvertible characters
+	   // Works fine currently with SC/TC/JP.
+	   if (fp = UTIL_OpenFile("word.dat"))
+	   {
+		   char *buf;
+		   long len;
+		   int i, j, c, m = INT_MAX, m_i;
+		   fseek(fp, 0, SEEK_END);
+		   len = ftell(fp);
+		   buf = (char *)malloc(len);
+		   fseek(fp, 0, SEEK_SET);
+		   fread(buf, 1, len, fp);
+		   UTIL_CloseFile(fp);
+		   for (i = CP_MIN; i < CP_MAX; i++)
+		   {
+			   int wlen = PAL_MultiByteToWideChar(buf, len, NULL, 0);
+			   WCHAR *wbuf = (WCHAR *)malloc(wlen * sizeof(WCHAR));
+			   PAL_MultiByteToWideChar(buf, len, wbuf, wlen);
+			   for (j = c = 0; j < wlen; j++)
+			   {
+				   c += (wbuf[j] == PAL_GetInvalidChar(i)) ? 1 : 0;
+			   }
+			   if (c < m)
+			   {
+				   m = c;
+				   m_i = i;
+			   }
+			   free(wbuf);
+		   }
+		   free(buf);
+		   iCodePage = m_i;
+	   }
+	   else
+	   {
+		   iCodePage = CP_BIG5;
+	   }
    }
 #endif
 
@@ -237,7 +286,6 @@ PAL_ReadGlobalGameData(
 --*/
 {
    const GAMEDATA    *p = &gpGlobals->g;
-   unsigned int       i;
 
    LOAD_DATA(p->lprgScriptEntry, p->nScriptEntry * sizeof(SCRIPTENTRY),
       4, gpGlobals->f.fpSSS);
@@ -422,7 +470,6 @@ PAL_LoadGame(
 {
    FILE                     *fp;
    PAL_LARGE SAVEDGAME       s;
-   UINT32                    i;
 
    //
    // Try to open the specified file

@@ -1383,4 +1383,18 @@ PAL_MultiByteToWideChar(
 
 	}
 }
+
+WCHAR
+PAL_GetInvalidChar(
+   CODEPAGE      iCodePage
+)
+{
+   switch(iCodePage)
+   {
+   case CP_BIG5:     return 0x3f;
+   case CP_GBK:      return 0x3f;
+   case CP_SHIFTJIS: return 0x30fb;
+   default:          return 0;
+   }
+}
 #endif

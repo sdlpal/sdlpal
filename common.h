@@ -229,6 +229,8 @@ typedef const WCHAR        *LPCWSTR;
 #define WIDETEXT(quote) __WIDETEXT(quote)
 
 typedef enum tagCODEPAGE {
+	CP_UNKNOWN = -1,
+	CP_MIN = 0,
 	CP_BIG5 = 0,
 	CP_GBK = 1,
 	CP_SHIFTJIS = 2,
