@@ -855,9 +855,11 @@ static void resampler_fill(resampler * r)
             if ( write_extra > SINC_WIDTH * 2 - 1 )
                 write_extra = SINC_WIDTH * 2 - 1;
             memcpy( r->buffer_out + resampler_buffer_size, r->buffer_out, write_extra * sizeof(r->buffer_out[0]) );
+#ifdef RESAMPLER_SSE
             if ( resampler_has_sse )
                 used = resampler_run_blep_sse( r, &out, out + write_size + write_extra );
             else
+#endif
                 used = resampler_run_blep( r, &out, out + write_size + write_extra );
             memcpy( r->buffer_out, r->buffer_out + resampler_buffer_size, write_extra * sizeof(r->buffer_out[0]) );
             if (!used)

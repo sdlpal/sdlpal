@@ -31,7 +31,7 @@
  define Bits, Bitu, Bit32s, Bit32u, Bit16s, Bit16u, Bit8s, Bit8u here
  */
 
-#if _MSC_VER <= 1600
+#if defined(_MSC_VER) && _MSC_VER <= 1600
 #include <windows.h>
 #define uintptr_t ULONG
 #define intptr_t LONG

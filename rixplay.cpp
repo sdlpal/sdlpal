@@ -56,7 +56,7 @@ typedef struct tagRIXPLAYER
    enum { FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
    BOOL                       fLoop;
    BOOL                       fNextLoop;
-   BYTE                       buf[OPL_SAMPLERATE / 70 * sizeof(short) * PAL_CHANNELS];
+   BYTE                       buf[PAL_SAMPLE_RATE / 70 * sizeof(short) * PAL_CHANNELS];
    LPBYTE                     pos;
 } RIXPLAYER, *LPRIXPLAYER;
 
@@ -201,11 +201,11 @@ RIX_FillBuffer(
                return;
             }
          }
-          int sample_count = OPL_SAMPLERATE / 70;
+          int sample_count = PAL_SAMPLE_RATE / 70;
           if( gpRixPlayer->resampler[0] ) {
               
               unsigned int samples_written = 0;
-			  short *tempBuf = (short*)_alloca(64 * 2 * sizeof(short));
+			  short tempBuf[64 * PAL_CHANNELS]; // hard code on resampler defination
               short *finalBuf = (short*)gpRixPlayer->buf;
               
               while ( sample_count )
@@ -295,49 +295,40 @@ RIX_Init(
    {
       return -1;
    }
-#if PAL_CHANNELS == 2
-#   if USE_SURROUNDOPL
-#       if USE_DEMUOPL
-   gpRixPlayer->opl = new CSurroundopl(new CDemuopl(OPL_SAMPLERATE, true, false),
-                                       new CDemuopl(OPL_SAMPLERATE, true, false), true);
-#       elif USE_KEMUOPL
-   gpRixPlayer->opl = new CSurroundopl(new CKemuopl(OPL_SAMPLERATE, true, false),
-                                       new CKemuopl(OPL_SAMPLERATE, true, false), true);
-#       else
-   gpRixPlayer->opl = new CSurroundopl(new CEmuopl(OPL_SAMPLERATE, true, false),
-                                       new CEmuopl(OPL_SAMPLERATE, true, false), true);
-#       endif
-#   if OPL_SAMPLERATE != PAL_SAMPLE_RATE && USE_SSRC
-    resampler_init();
-    gpRixPlayer->resampler[0] = resampler_create();
-    gpRixPlayer->resampler[1] = resampler_create();
-    
-    resampler_set_quality( gpRixPlayer->resampler[0], RESAMPLER_QUALITY_MAX );
-    resampler_set_quality( gpRixPlayer->resampler[1], RESAMPLER_QUALITY_MAX );
-    
-    resampler_set_rate( gpRixPlayer->resampler[0], OPL_SAMPLERATE / (double)PAL_SAMPLE_RATE );
-    resampler_set_rate( gpRixPlayer->resampler[1], OPL_SAMPLERATE / (double)PAL_SAMPLE_RATE );
-#   else
-    gpRixPlayer->resampler[0] = 0;
-    gpRixPlayer->resampler[1] = 0;
-#   endif
-#   else
-#       if USE_DEMUOPL
-    gpRixPlayer->opl = new CDemuopl(OPL_SAMPLERATE, true, true);
-#       elif USE_KEMUOPL
-    gpRixPlayer->opl = new CKemuopl(OPL_SAMPLERATE, true, true);
-#       else
-    gpRixPlayer->opl = new CEmuopl(OPL_SAMPLERATE, true, true);
-#       endif
-#   endif
+
+#if PAL_CHANNELS == 2 && !USE_SURROUNDOPL
+   const bool opl_stereo = true;
 #else
-#	if USE_DEMUOPL
-    gpRixPlayer->opl = new CDemuopl(OPL_SAMPLERATE, true, false);
-#	elif USE_KEMUOPL
-    gpRixPlayer->opl = new CKemuopl(OPL_SAMPLERATE, true, false);
-#	else
-   gpRixPlayer->opl = new CEmuopl(OPL_SAMPLERATE, true, false);
-#	endif
+   const bool opl_stereo = false;
+#endif
+
+#if USE_DEMUOPL
+   typedef CDemuopl COpl;
+#elif USE_KEMUOPL
+   typedef CKemuopl COpl;
+#else
+   typedef CEmuopl  COpl;
+#endif
+
+#if PAL_CHANNELS == 2 && USE_SURROUNDOPL
+   gpRixPlayer->opl = new CSurroundopl(new COpl(OPL_SAMPLERATE, true, false),
+                                       new COpl(OPL_SAMPLERATE, true, false), true);
+#  if OPL_SAMPLERATE != PAL_SAMPLE_RATE && USE_SSRC
+   resampler_init();
+   gpRixPlayer->resampler[0] = resampler_create();
+   gpRixPlayer->resampler[1] = resampler_create();
+
+   resampler_set_quality( gpRixPlayer->resampler[0], RESAMPLER_QUALITY_MAX );
+   resampler_set_quality( gpRixPlayer->resampler[1], RESAMPLER_QUALITY_MAX );
+
+   resampler_set_rate( gpRixPlayer->resampler[0], OPL_SAMPLERATE / (double)PAL_SAMPLE_RATE );
+   resampler_set_rate( gpRixPlayer->resampler[1], OPL_SAMPLERATE / (double)PAL_SAMPLE_RATE );
+#  else
+   gpRixPlayer->resampler[0] = NULL;
+   gpRixPlayer->resampler[1] = NULL;
+#  endif
+#else
+   gpRixPlayer->opl = new COpl(OPL_SAMPLERATE, true, opl_stereo);
 #endif
 
    if (gpRixPlayer->opl == NULL)
