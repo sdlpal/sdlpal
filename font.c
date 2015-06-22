@@ -124,18 +124,19 @@ PAL_DrawCharOnSurface(
 	// Draw the character to the surface.
 	//
 	LPBYTE dest = (LPBYTE)lpSurface->pixels + y * lpSurface->pitch + x;
+	LPBYTE top = (LPBYTE)lpSurface->pixels + lpSurface->h * lpSurface->pitch;
 	if (font_width[wChar] == 32)
 	{
-		for (i = 0; i < 32; i += 2, dest += lpSurface->pitch)
+		for (i = 0; i < 32 && dest < top; i += 2, dest += lpSurface->pitch)
 		{
-			for (j = 0; j < 8; j++)
+			for (j = 0; j < 8 && x + j < lpSurface->w; j++)
 			{
 				if (unicode_font[wChar][i] & (1 << (7 - j)))
 				{
 					dest[j] = bColor;
 				}
 			}
-			for (j = 0; j < 8; j++)
+			for (j = 0; j < 8 && x + j + 8 < lpSurface->w; j++)
 			{
 				if (unicode_font[wChar][i + 1] & (1 << (7 - j)))
 				{
@@ -146,9 +147,9 @@ PAL_DrawCharOnSurface(
 	}
 	else
 	{
-		for (i = 0; i < 16; i++, dest += lpSurface->pitch)
+		for (i = 0; i < 16 && dest < top; i++, dest += lpSurface->pitch)
 		{
-			for (j = 0; j < 8; j++)
+			for (j = 0; j < 8 && x + j < lpSurface->w; j++)
 			{
 				if (unicode_font[wChar][i] & (1 << (7 - j)))
 				{
