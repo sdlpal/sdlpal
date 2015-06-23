@@ -134,6 +134,9 @@ RIX_FillBuffer(
                (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
             gpRixPlayer->dwStartFadeTime = t;
             gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
+			gpRixPlayer->opl->init();
+			if (gpRixPlayer->resampler[0]) resampler_clear(gpRixPlayer->resampler[0]);
+			if (gpRixPlayer->resampler[1]) resampler_clear(gpRixPlayer->resampler[1]);
             return;
          }
          else if (t >= gpRixPlayer->dwEndFadeTime)
@@ -436,13 +439,6 @@ RIX_Play(
    //
    SOUND_PlayCDA(-1);
     
-    gpRixPlayer->opl->init();
-    if ( gpRixPlayer->resampler[0] )
-        resampler_clear( gpRixPlayer->resampler[0] );
-    if ( gpRixPlayer->resampler[1] )
-        resampler_clear( gpRixPlayer->resampler[1] );
-//    gpRixPlayer->rix->rewind(iNumRIX);
-
    DWORD t = SDL_GetTicks();
    gpRixPlayer->fNextLoop = fLoop;
 
