@@ -943,3 +943,16 @@ void resampler_remove_sample(void *_r)
         r->read_pos = ( r->read_pos + 1 ) % resampler_buffer_size;
     }
 }
+
+/* Get a 16-bit sample without overflow */
+short resampler_get_and_remove_sample(void *_r)
+{
+	int sample = (int)round(resampler_get_sample(_r) / 256.0);
+	resampler_remove_sample(_r);
+	if (sample >= 32767)
+		return 32767;
+	else if (sample <= -32767)
+		return -32767;
+	else
+		return (short)sample;
+}

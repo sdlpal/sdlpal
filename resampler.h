@@ -56,6 +56,8 @@ int resampler_get_sample_count(void *);
 int resampler_get_sample(void *);
 void resampler_remove_sample(void *);
 
+short resampler_get_and_remove_sample(void *_r);
+
 #ifdef __cplusplus
 }
 #endif

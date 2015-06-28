@@ -226,13 +226,13 @@ RIX_FillBuffer(
                   
                   /* if ( !lanczos_resampler_ready( m_resampler ) ) break; */ /* We assume that by filling the input buffer completely every pass, there will always be samples ready. */
                   
-                  int ls = resampler_get_sample( gpRixPlayer->resampler[0] );
-                  int rs = resampler_get_sample( gpRixPlayer->resampler[1] );
-                  resampler_remove_sample( gpRixPlayer->resampler[0] );
-                  resampler_remove_sample( gpRixPlayer->resampler[1] );
+                  //int ls = resampler_get_sample( gpRixPlayer->resampler[0] );
+                  //int rs = resampler_get_sample( gpRixPlayer->resampler[1] );
+                  //resampler_remove_sample( gpRixPlayer->resampler[0] );
+                  //resampler_remove_sample( gpRixPlayer->resampler[1] );
                   
-                  finalBuf[ samples_written++ ] = ls/256.0;
-                  finalBuf[ samples_written++ ] = rs/256.0;
+                  finalBuf[samples_written++] = resampler_get_and_remove_sample(gpRixPlayer->resampler[0]);
+                  finalBuf[samples_written++] = resampler_get_and_remove_sample(gpRixPlayer->resampler[1]);
                   --sample_count;
               }
               
