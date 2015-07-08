@@ -827,6 +827,9 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_WIN95|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="CREDITS.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -522,7 +522,7 @@ PAL_AdditionalCredits(
    LPCWSTR rgszcps[][CP_MAX] = {
 	   // Traditional Chinese, Simplified Chinese, Japanese
 	   { L"", L"", L"" },
-	   { L"        (\x7D93\x5178\x7279\x5225\x7BC7", L"        (\x7ECF\x5178\x7279\x522B\x7BC7", L"(\x53E4\x5178\x7684\x306A\x30D0\x30FC\x30B8\x30E7\x30F3" },
+	   { L"        (\x7D93\x5178\x7279\x5225\x7BC7", L"        (\x7ECF\x5178\x7279\x522B\x7BC7", L"(\x30AF\x30E9\x30B7\x30C3\x30AF\x306E\x7279\x522B\x7DE8" },
 	   { L"", L"", L"" },
 	   { L"", L"", L"" },
 	   { L"", L"", L"" },
@@ -532,10 +532,10 @@ PAL_AdditionalCredits(
 	   { L"", L"", L"" },
 	   { L"\x672C\x7A0B\x5F0F\x662F\x81EA\x7531\x8EDF\x9AD4\xFF0C\x6309\x7167 GNU General",
 	     L"\x672C\x7A0B\x5E8F\x662F\x81EA\x7531\x8F6F\x4EF6\xFF0C\x6309\x7167 GNU General",
-		 L"\x3053\x306E\x30D7\x30ED\x30B0\x30E9\x30E0\x306F\x30D5\x30EA\x30FC\x30BD\x30D5\x30C8\x30A6\x30A7\x30A2\x3001"
+		 L"\x3053\x306E\x30D7\x30ED\x30B0\x30E9\x30E0\x306F\x81EA\x7531\x30BD\x30D5\x30C8\x30A6\x30A7\x30A2\x3067"
 	   },
-	   { L"Public License (GPLv3) \x767C\x4F48", L"Public License (GPLv3) \x53D1\x5E03", L"GNU General Public License (GPLv3)\x306E" },
-	   { L"", L"", L"\x4E0B\x3067\x30EA\x30EA\x30FC\x30B9\x3055\x308C\x3066" },
+	   { L"Public License v3 \x767C\x4F48", L"Public License v3 \x53D1\x5E03", L"\x3059\x3001GNU General Public License v3" },
+	   { L"", L"", L"\x306E\x4E0B\x3067\x914D\x5E03\x3055\x308C\x3066\x3044\x307E\x3059\x3002" },
 	   { L"              ...\x6309 Enter \x7D50\x675F", L"              ...\x6309 Enter \x7ED3\x675F", L"...Enter\x30AD\x30FC\x3092\x62BC\x3057\x3066\x7D42\x4E86\x3057\x307E\x3059" }
    };
 

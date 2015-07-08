@@ -14,3 +14,8 @@ SDL (http://www.libsdl.org/)
 Adplug (http://adplug.sourceforge.net/)
 SDL_mixer (http://www.libsdl.org/projects/SDL_mixer/)
 libmad (http://www.underbit.com/products/mad/)
+
+OTHER THANKS
+------------
+And thanks to Kovu Wu and Shikon for their contribution in Japanese
+language proofreading.
