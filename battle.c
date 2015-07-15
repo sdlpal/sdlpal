@@ -635,7 +635,7 @@ PAL_BattleWon(
 
 --*/
 {
-   const SDL_Rect   rect = {65, 60, 200, 100};
+   const SDL_Rect   rect = {0, 60, 320, 100};
    const SDL_Rect   rect1 = {80, 0, 180, 200};
 
    int              i, j, iTotalCount;
@@ -651,6 +651,8 @@ PAL_BattleWon(
 
    if (g_Battle.iExpGained > 0)
    {
+      int w1 = PAL_WordWidth(BATTLEWIN_GETEXP_LABEL) + 3;
+	  int ww1 = (w1 - 8) << 3;
       //
       // Play the "battle win" music
       //
@@ -659,14 +661,14 @@ PAL_BattleWon(
       //
       // Show the message about the total number of exp. and cash gained
       //
-      PAL_CreateSingleLineBox(PAL_XY(83, 60), 8, FALSE);
-      PAL_CreateSingleLineBox(PAL_XY(65, 105), 10, FALSE);
+	  PAL_CreateSingleLineBox(PAL_XY(83 - ww1, 60), w1, FALSE);
+	  PAL_CreateSingleLineBox(PAL_XY(65, 105), 10, FALSE);
 
-      PAL_DrawText(PAL_GetWord(BATTLEWIN_GETEXP_LABEL), PAL_XY(95, 70), 0, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(BATTLEWIN_BEATENEMY_LABEL), PAL_XY(77, 115), 0, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(BATTLEWIN_DOLLAR_LABEL), PAL_XY(197, 115), 0, FALSE, FALSE);
+	  PAL_DrawText(PAL_GetWord(BATTLEWIN_GETEXP_LABEL), PAL_XY(95 - ww1, 70), 0, FALSE, FALSE);
+	  PAL_DrawText(PAL_GetWord(BATTLEWIN_BEATENEMY_LABEL), PAL_XY(77, 115), 0, FALSE, FALSE);
+	  PAL_DrawText(PAL_GetWord(BATTLEWIN_DOLLAR_LABEL), PAL_XY(197, 115), 0, FALSE, FALSE);
 
-      PAL_DrawNumber(g_Battle.iExpGained, 5, PAL_XY(182, 74), kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(g_Battle.iExpGained, 5, PAL_XY(182 + ww1, 74), kNumColorYellow, kNumAlignRight);
       PAL_DrawNumber(g_Battle.iCashGained, 5, PAL_XY(162, 119), kNumColorYellow, kNumAlignMid);
 
       VIDEO_UpdateScreen(&rect);
@@ -910,14 +912,20 @@ PAL_BattleWon(
 
          if (PAL_AddMagic(w, gpGlobals->g.lprgLevelUpMagic[j].m[w].wMagic))
          {
-            PAL_CreateSingleLineBox(PAL_XY(65, 105), 10, FALSE);
+            int ww;
+            int w1 = (ww = PAL_WordWidth(gpGlobals->g.PlayerRoles.rgwName[w])) > 3 ? ww : 3;
+			int w2 = (ww = PAL_WordWidth(BATTLEWIN_ADDMAGIC_LABEL)) > 2 ? ww : 2;
+			int w3 = (ww = PAL_WordWidth(gpGlobals->g.lprgLevelUpMagic[j].m[w].wMagic)) > 5 ? ww : 5;
+			ww = (w1 + w2 + w3 - 10) << 3;
+
+            PAL_CreateSingleLineBox(PAL_XY(65 - ww, 105), w1 + w2 + w3, FALSE);
 
             PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]),
-               PAL_XY(75, 115), 0, FALSE, FALSE);
-            PAL_DrawText(PAL_GetWord(BATTLEWIN_ADDMAGIC_LABEL), PAL_XY(75 + 16 * 3, 115),
+               PAL_XY(75 - ww, 115), 0, FALSE, FALSE);
+            PAL_DrawText(PAL_GetWord(BATTLEWIN_ADDMAGIC_LABEL), PAL_XY(75 + 16 * w1 - ww, 115),
                0, FALSE, FALSE);
             PAL_DrawText(PAL_GetWord(gpGlobals->g.lprgLevelUpMagic[j].m[w].wMagic),
-               PAL_XY(75 + 16 * 5, 115), 0x1B, FALSE, FALSE);
+               PAL_XY(75 + 16 * (w1 + w2) - ww, 115), 0x1B, FALSE, FALSE);
 
             VIDEO_UpdateScreen(&rect);
             PAL_WaitForKey(3000);

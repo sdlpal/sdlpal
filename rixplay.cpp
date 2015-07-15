@@ -22,7 +22,7 @@
 #define USE_SURROUNDOPL      1
 #define USE_DEMUOPL          1
 #define USE_KEMUOPL          0
-#define USE_SSRC             1
+#define USE_RESAMPLER        1
 
 #define OPL_SAMPLERATE       49716
 #include "resampler.h"
@@ -316,7 +316,7 @@ RIX_Init(
 #if PAL_CHANNELS == 2 && USE_SURROUNDOPL
    gpRixPlayer->opl = new CSurroundopl(new COpl(OPL_SAMPLERATE, true, false),
                                        new COpl(OPL_SAMPLERATE, true, false), true);
-#  if OPL_SAMPLERATE != PAL_SAMPLE_RATE && USE_SSRC
+#  if OPL_SAMPLERATE != PAL_SAMPLE_RATE && USE_RESAMPLER
    resampler_init();
    gpRixPlayer->resampler[0] = resampler_create();
    gpRixPlayer->resampler[1] = resampler_create();

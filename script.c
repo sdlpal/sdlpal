@@ -522,7 +522,7 @@ PAL_AdditionalCredits(
    LPCWSTR rgszcps[][CP_MAX] = {
 	   // Traditional Chinese, Simplified Chinese, Japanese
 	   { L"", L"", L"" },
-	   { L"        (\x7D93\x5178\x7279\x5225\x7BC7", L"        (\x7ECF\x5178\x7279\x522B\x7BC7", L"(\x30AF\x30E9\x30B7\x30C3\x30AF\x306E\x7279\x522B\x7DE8" },
+	   { L"       (\x7D93\x5178\x7279\x5225\x7BC7", L"       (\x7ECF\x5178\x7279\x522B\x7BC7", L"(\x30AF\x30E9\x30B7\x30C3\x30AF\x7279\x5225\x7DE8" },
 	   { L"", L"", L"" },
 	   { L"", L"", L"" },
 	   { L"", L"", L"" },
@@ -542,7 +542,7 @@ PAL_AdditionalCredits(
    LPCWSTR rgszStrings[] = {
       L"SDLPAL (http://sdlpal.codeplex.com/)",
 #  ifdef PAL_CLASSIC
-	  L" %s  " WIDETEXT(__DATE__) L")",
+	  L"  %s  " WIDETEXT(__DATE__) L")",
 #  else
 	  L"                    (" WIDETEXT(__DATE__) L")",
 #  endif
