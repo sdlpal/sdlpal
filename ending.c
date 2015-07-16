@@ -148,11 +148,7 @@ PAL_ShowFBP(
    //
    // HACKHACK: to make the ending show correctly
    //
-#ifdef PAL_WIN95
-   if (wChunkNum != 68)
-#else
-   if (wChunkNum != 49)
-#endif
+   if (wChunkNum != (gpGlobals->fIsWIN95 ? 68 : 49))
    {
       PAL_FBPBlitToSurface(buf, gpScreen);
    }
@@ -348,19 +344,11 @@ PAL_EndingAnimation(
    SDL_SetPalette(pLower, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
 
-#ifdef PAL_WIN95
-   PAL_MKFDecompressChunk(buf, 64000, 69, gpGlobals->f.fpFBP);
+   PAL_MKFDecompressChunk(buf, 64000, gpGlobals->fIsWIN95 ? 69 : 61, gpGlobals->f.fpFBP);
    PAL_FBPBlitToSurface(buf, pUpper);
 
-   PAL_MKFDecompressChunk(buf, 64000, 70, gpGlobals->f.fpFBP);
+   PAL_MKFDecompressChunk(buf, 64000, gpGlobals->fIsWIN95 ? 70 : 62, gpGlobals->f.fpFBP);
    PAL_FBPBlitToSurface(buf, pLower);
-#else
-   PAL_MKFDecompressChunk(buf, 64000, 61, gpGlobals->f.fpFBP);
-   PAL_FBPBlitToSurface(buf, pUpper);
-
-   PAL_MKFDecompressChunk(buf, 64000, 62, gpGlobals->f.fpFBP);
-   PAL_FBPBlitToSurface(buf, pLower);
-#endif
 
    PAL_MKFDecompressChunk(buf, 64000, 571, gpGlobals->f.fpMGO);
    PAL_MKFDecompressChunk(bufGirl, 6000, 572, gpGlobals->f.fpMGO);
@@ -399,11 +387,7 @@ PAL_EndingAnimation(
       // Draw the beast
       //
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(buf, 0), gpScreen, PAL_XY(0, -400 + i));
-#ifdef PAL_WIN95
-	  PAL_RLEBlitToSurface(buf + 0x8444, gpScreen, PAL_XY(0, -200 + i));
-#else
-      PAL_RLEBlitToSurface(PAL_SpriteGetFrame(buf, 1), gpScreen, PAL_XY(0, -200 + i));
-#endif
+	  PAL_RLEBlitToSurface(gpGlobals->fIsWIN95 ? buf + 0x8444 : PAL_SpriteGetFrame(buf, 1), gpScreen, PAL_XY(0, -200 + i));
       //
       // Draw the girl
       //
@@ -444,8 +428,6 @@ PAL_EndingAnimation(
    free(buf);
    free(bufGirl);
 }
-
-#ifdef PAL_WIN95
 
 VOID
 PAL_EndingScreen(
@@ -530,4 +512,4 @@ PAL_EndingScreen(
 	RIX_Play(0, FALSE, 6);
 	PAL_FadeOut(3);
 }
-#endif
+

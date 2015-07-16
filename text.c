@@ -481,7 +481,7 @@ PAL_DrawText(
 
    urect.x = rect.x;
    urect.y = rect.y;
-#if defined(PAL_WIN95) || defined(PAL_UNICODE)
+#if defined(PAL_UNICODE)
    urect.h = 17;
 #else
    urect.h = 16;
@@ -545,13 +545,14 @@ PAL_DrawText(
    //
    if (fUpdate && urect.w > 0)
    {
-#ifdef PAL_WIN95
-      urect.w++;
-      if (urect.x + urect.w > 320)
-      {
-         urect.w = 320 - urect.x;
+      if (gpGlobals->fIsWIN95)
+	  {
+         urect.w++;
+         if (urect.x + urect.w > 320)
+         {
+            urect.w = 320 - urect.x;
+         }
       }
-#endif
       VIDEO_UpdateScreen(&urect);
    }
 }
@@ -963,8 +964,8 @@ PAL_ShowDialogText(
                }
                lpszText++;
                break;
-#ifndef PAL_WIN95
             case '\'':
+               // !PAL_WIN95
                //
                // Set the font color to Red
                //
@@ -978,7 +979,6 @@ PAL_ShowDialogText(
                }
                lpszText++;
                break;
-#endif
             case '\"':
                //
                // Set the font color to Yellow

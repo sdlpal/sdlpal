@@ -609,11 +609,6 @@ PAL_AdditionalCredits(
 
    int        i = 0;
 
-#if defined(PAL_WIN95) && !defined(PAL_UNICODE)
-   extern BOOL fIsBig5;
-   fIsBig5 = TRUE;
-#endif
-
    PAL_DrawOpeningMenuBackground();
 
    for (i = 0; rgszStrings[i]; i++)
@@ -2204,13 +2199,16 @@ PAL_InterpretInstruction(
       //
       // Show FBP picture
       //
-#ifdef PAL_WIN95
-      SDL_FillRect(gpScreen, NULL, 0);
-      VIDEO_UpdateScreen(NULL);
-#else
-      PAL_EndingSetEffectSprite(0);
-      PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[1]);
-#endif
+      if (gpGlobals->fIsWIN95)
+	  {
+         SDL_FillRect(gpScreen, NULL, 0);
+         VIDEO_UpdateScreen(NULL);
+      }
+      else
+	  {
+         PAL_EndingSetEffectSprite(0);
+         PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[1]);
+      }
       break;
 
    case 0x0077:
@@ -2696,9 +2694,8 @@ PAL_InterpretInstruction(
       //
       // Show the ending animation
       //
-#ifndef PAL_WIN95
-      PAL_EndingAnimation();
-#endif
+      if (!gpGlobals->fIsWIN95)
+         PAL_EndingAnimation();
       break;
 
    case 0x0097:
@@ -2966,9 +2963,8 @@ PAL_InterpretInstruction(
       //
       // Quit game
       //
-#ifdef PAL_WIN95
-      PAL_EndingScreen();
-#endif
+      if (gpGlobals->fIsWIN95)
+         PAL_EndingScreen();
       PAL_AdditionalCredits();
       PAL_Shutdown();
       exit(0);
@@ -3013,33 +3009,35 @@ PAL_InterpretInstruction(
       //
       // Scroll FBP to the screen
       //
-#ifndef PAL_WIN95
-      if (pScript->rgwOperand[0] == 68)
-      {
-         //
-         // HACKHACK: to make the ending picture show correctly
-         //
-         PAL_ShowFBP(69, 0);
-         PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], TRUE);
+      if (!gpGlobals->fIsWIN95)
+	  {
+         if (pScript->rgwOperand[0] == 68)
+         {
+            //
+            // HACKHACK: to make the ending picture show correctly
+            //
+            PAL_ShowFBP(69, 0);
+            PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], TRUE);
+         }
+         else
+         {
+            PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], pScript->rgwOperand[1]);
+         }
       }
-      else
-      {
-         PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], pScript->rgwOperand[1]);
-      }
-#endif
       break;
 
    case 0x00A5:
       //
       // Show FBP picture with sprite effects
       //
-#ifndef PAL_WIN95
-      if (pScript->rgwOperand[1] != 0xFFFF)
-      {
-         PAL_EndingSetEffectSprite(pScript->rgwOperand[1]);
+      if (!gpGlobals->fIsWIN95)
+	  {
+         if (pScript->rgwOperand[1] != 0xFFFF)
+         {
+            PAL_EndingSetEffectSprite(pScript->rgwOperand[1]);
+         }
+         PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[2]);
       }
-      PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[2]);
-#endif
       break;
 
    case 0x00A6:
@@ -3424,9 +3422,7 @@ PAL_RunAutoScript(
 {
    LPSCRIPTENTRY          pScript;
    LPEVENTOBJECT          pEvtObj;
-#ifdef PAL_WIN95
    int                    iDescLine = 0;
-#endif
 
 begin:
    pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
@@ -3523,48 +3519,49 @@ begin:
       break;
 
    case 0xFFFF:
-#ifdef PAL_WIN95
-	  // Support for Japanese
-	  // If the second parameter is zero, then follow the standard behavior
-	  // Otherwise, use the extended behavior
-      // Either zero or two displays text
-	  if (pScript->rgwOperand[1] == 0 || pScript->rgwOperand[1] == 2)
-	  {
-		  iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
-		  if (wEventObjectID & PAL_ITEM_DESC_BOTTOM)
-		  {
+	   if (gpGlobals->fIsWIN95)
+	   {
+		   // Support for Japanese
+		   // If the second parameter is zero, then follow the standard behavior
+		   // Otherwise, use the extended behavior
+		   // Either zero or two displays text
+		   if (pScript->rgwOperand[1] == 0 || pScript->rgwOperand[1] == 2)
+		   {
+			   iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
+			   if (wEventObjectID & PAL_ITEM_DESC_BOTTOM)
+			   {
 #  ifdef PAL_UNICODE
-			  int YOffset = gpGlobals->dwExtraItemDescLines * 16;
+				   int YOffset = gpGlobals->dwExtraItemDescLines * 16;
 #  else
-			  int YOffset = 0;
+				   int YOffset = 0;
 #  endif
-			  PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(75, iDescLine * 16 + 150 - YOffset), DESCTEXT_COLOR, TRUE, FALSE);
-		  }
-		  else
-		  {
-			  PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(100, iDescLine * 16 + 3), DESCTEXT_COLOR, TRUE, FALSE);
-		  }
-		  iDescLine++;
-	  }
-	  if (pScript->rgwOperand[1] != 0)
-	  {
-		  // Then, jump to script given by the third parameter.
-		  wScriptEntry = pScript->rgwOperand[2];
-	  }
-	  else
-	  {
-		  wScriptEntry++;
-	  }
-#else
-	  wScriptEntry++;
-#endif
+				   PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(75, iDescLine * 16 + 150 - YOffset), DESCTEXT_COLOR, TRUE, FALSE);
+			   }
+			   else
+			   {
+				   PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(100, iDescLine * 16 + 3), DESCTEXT_COLOR, TRUE, FALSE);
+			   }
+			   iDescLine++;
+		   }
+		   if (pScript->rgwOperand[1] != 0)
+		   {
+			   // Then, jump to script given by the third parameter.
+			   wScriptEntry = pScript->rgwOperand[2];
+		   }
+		   else
+		   {
+			   wScriptEntry++;
+		   }
+	   }
+	   else
+	   {
+		   wScriptEntry++;
+	   }
 	  break;
 
-#ifdef PAL_WIN95
    case 0x00A7:
 	  wScriptEntry++;
       break;
-#endif
 
    default:
       //

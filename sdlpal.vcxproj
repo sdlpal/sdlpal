@@ -126,7 +126,7 @@
     <ClCompile>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>..\SDL2-2.0.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_WIN95;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -202,7 +202,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\SDL2-2.0.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_WIN95;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -750,7 +750,6 @@
     <ClInclude Include="adplug\kemuopl.h" />
     <ClInclude Include="ascii.h" />
     <ClInclude Include="battle.h" />
-    <ClInclude Include="big5font.h" />
     <ClInclude Include="codepage.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="ending.h" />
@@ -758,7 +757,6 @@
     <ClInclude Include="font.h" />
     <ClInclude Include="fontglyph.h" />
     <ClInclude Include="game.h" />
-    <ClInclude Include="gbfont.h" />
     <ClInclude Include="getopt.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="input.h" />

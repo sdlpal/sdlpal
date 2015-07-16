@@ -198,14 +198,8 @@ VIDEO_Init(
       // Totally ugly hack to satisfy M$'s silly requirements.
       // No need to understand this crap.
       //
-#if defined(PAL_WIN95) && !defined(PAL_UNICODE)
-      extern BOOL fIsBig5;
-#endif
       SDL_Color palette[256] = { 0 };
       SDL_Surface *p;
-#if defined(PAL_WIN95) && !defined(PAL_UNICODE)
-      fIsBig5 = TRUE;
-#endif
       palette[0].r = palette[0].g = palette[0].b = palette[0].a = 0;
       palette[1].r = palette[1].g = palette[1].b = palette[1].a = 255;
       SDL_FillRect(gpScreenBak, NULL, 0);
@@ -231,9 +225,6 @@ VIDEO_Init(
       gpScreen = p;
       gpBackKeyMessage = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
       SDL_FillRect(gpScreenBak, NULL, 0);
-#if defined(PAL_WIN95) && !defined(PAL_UNICODE)
-      fIsBig5 = FALSE;
-#endif
    }
 #endif
 

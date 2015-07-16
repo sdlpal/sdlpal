@@ -22,6 +22,7 @@
 //
 
 #include "palcommon.h"
+#include "global.h"
 
 INT
 PAL_RLEBlitToSurface(
@@ -641,11 +642,8 @@ PAL_SpriteGetFrame(
    // Get the offset of the frame
    //
    iFrameNum <<= 1;
-#ifdef PAL_WIN95
    offset = ((lpSprite[iFrameNum] | (lpSprite[iFrameNum + 1] << 8)) << 1);
-#else
-   offset = (WORD)((lpSprite[iFrameNum] | (lpSprite[iFrameNum + 1] << 8)) << 1);
-#endif
+   if (!gpGlobals->fIsWIN95) offset = (WORD)offset;
    return &lpSprite[offset];
 }
 
@@ -865,18 +863,21 @@ PAL_MKFGetDecompressedSize(
    // Read the header.
    //
    fseek(fp, uiOffset, SEEK_SET);
-#ifdef PAL_WIN95
-   fread(buf, sizeof(DWORD), 1, fp);
-   buf[0] = SWAP32(buf[0]);
+   if (gpGlobals->fIsWIN95)
+   {
+      fread(buf, sizeof(DWORD), 1, fp);
+      buf[0] = SWAP32(buf[0]);
 
-   return (INT)buf[0];
-#else
-   fread(buf, sizeof(DWORD), 2, fp);
-   buf[0] = SWAP32(buf[0]);
-   buf[1] = SWAP32(buf[1]);
+      return (INT)buf[0];
+   }
+   else
+   {
+      fread(buf, sizeof(DWORD), 2, fp);
+      buf[0] = SWAP32(buf[0]);
+      buf[1] = SWAP32(buf[1]);
 
-   return (buf[0] != 0x315f4a59) ? -1 : (INT)buf[1];
-#endif
+      return (buf[0] != 0x315f4a59) ? -1 : (INT)buf[1];
+   }
 }
 
 INT

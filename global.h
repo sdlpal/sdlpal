@@ -85,6 +85,11 @@ extern "C"
 // maximum number of level
 #define     MAX_LEVELS                   99
 
+#define     OBJECT_ITEM_START            0x3D
+#define     OBJECT_ITEM_END              0x126
+#define     OBJECT_MAGIC_START           0x127
+#define     OBJECT_MAGIC_END             0x18D
+
 // status of characters
 typedef enum tagSTATUS
 {
@@ -191,17 +196,26 @@ typedef enum tagITEMFLAG
 } ITEMFLAG;
 
 // items
-typedef struct tagOBJECT_ITEM
+typedef struct tagOBJECT_ITEM_DOS
 {
    WORD         wBitmap;         // bitmap number in BALL.MKF
    WORD         wPrice;          // price
    WORD         wScriptOnUse;    // script executed when using this item
    WORD         wScriptOnEquip;  // script executed when equipping this item
    WORD         wScriptOnThrow;  // script executed when throwing this item to enemy
-#ifdef PAL_WIN95
-   WORD         wScriptDesc;     // description script
-#endif
    WORD         wFlags;          // flags
+} OBJECT_ITEM_DOS;
+
+// items
+typedef struct tagOBJECT_ITEM
+{
+	WORD         wBitmap;         // bitmap number in BALL.MKF
+	WORD         wPrice;          // price
+	WORD         wScriptOnUse;    // script executed when using this item
+	WORD         wScriptOnEquip;  // script executed when equipping this item
+	WORD         wScriptOnThrow;  // script executed when throwing this item to enemy
+	WORD         wScriptDesc;     // description script
+	WORD         wFlags;          // flags
 } OBJECT_ITEM;
 
 typedef enum tagMAGICFLAG
@@ -213,17 +227,26 @@ typedef enum tagMAGICFLAG
 } MAGICFLAG;
 
 // magics
-typedef struct tagOBJECT_MAGIC
+typedef struct tagOBJECT_MAGIC_DOS
 {
    WORD         wMagicNumber;      // magic number, according to DATA.MKF #3
    WORD         wReserved1;        // always zero
    WORD         wScriptOnSuccess;  // when magic succeed, execute script from here
    WORD         wScriptOnUse;      // when use this magic, execute script from here
-#ifdef PAL_WIN95
-   WORD         wScriptDesc;       // description script
-#endif
    WORD         wReserved2;        // always zero
    WORD         wFlags;            // flags
+} OBJECT_MAGIC_DOS;
+
+// magics
+typedef struct tagOBJECT_MAGIC
+{
+	WORD         wMagicNumber;      // magic number, according to DATA.MKF #3
+	WORD         wReserved1;        // always zero
+	WORD         wScriptOnSuccess;  // when magic succeed, execute script from here
+	WORD         wScriptOnUse;      // when use this magic, execute script from here
+	WORD         wScriptDesc;       // description script
+	WORD         wReserved2;        // always zero
+	WORD         wFlags;            // flags
 } OBJECT_MAGIC;
 
 // enemies
@@ -247,18 +270,24 @@ typedef struct tagOBJECT_POISON
    WORD         wEnemyScript;    // script executed when enemy has this poison (per round)
 } OBJECT_POISON;
 
+typedef union tagOBJECT_DOS
+{
+	WORD              rgwData[6];
+	OBJECT_PLAYER     player;
+	OBJECT_ITEM_DOS   item;
+	OBJECT_MAGIC_DOS  magic;
+	OBJECT_ENEMY      enemy;
+	OBJECT_POISON     poison;
+} OBJECT_DOS, *LPOBJECT_DOS;
+
 typedef union tagOBJECT
 {
-#ifdef PAL_WIN95
-   WORD              rgwData[7];
-#else
-   WORD              rgwData[6];
-#endif
-   OBJECT_PLAYER     player;
-   OBJECT_ITEM       item;
-   OBJECT_MAGIC      magic;
-   OBJECT_ENEMY      enemy;
-   OBJECT_POISON     poison;
+	WORD              rgwData[7];
+	OBJECT_PLAYER     player;
+	OBJECT_ITEM       item;
+	OBJECT_MAGIC      magic;
+	OBJECT_ENEMY      enemy;
+	OBJECT_POISON     poison;
 } OBJECT, *LPOBJECT;
 
 typedef struct tagSCRIPTENTRY
@@ -561,48 +590,16 @@ typedef struct tagGLOBALVARS
    ALLEXPERIENCE    Exp;                 // experience status
    POISONSTATUS     rgPoisonStatus[MAX_POISONS][MAX_PLAYABLE_PLAYER_ROLES]; // poison status
    INVENTORY        rgInventory[MAX_INVENTORY];  // inventory status
-#ifndef PAL_WIN95
    LPOBJECTDESC     lpObjectDesc;
-#endif
    DWORD            dwFrameNum;
 #ifdef PAL_UNICODE
    CODEPAGE         iCodePage;
    DWORD            dwWordLength;
    DWORD            dwExtraMagicDescLines;
    DWORD            dwExtraItemDescLines;
+   BOOL             fIsWIN95;
 #endif
 } GLOBALVARS, *LPGLOBALVARS;
-
-typedef struct tagSAVEDGAME
-{
-   WORD             wSavedTimes;             // saved times
-   WORD             wViewportX, wViewportY;  // viewport location
-   WORD             nPartyMember;            // number of members in party
-   WORD             wNumScene;               // scene number
-   WORD             wPaletteOffset;
-   WORD             wPartyDirection;         // party direction
-   WORD             wNumMusic;               // music number
-   WORD             wNumBattleMusic;         // battle music number
-   WORD             wNumBattleField;         // battle field number
-   WORD             wScreenWave;             // level of screen waving
-   WORD             wBattleSpeed;            // battle speed
-   WORD             wCollectValue;           // value of "collected" items
-   WORD             wLayer;
-   WORD             wChaseRange;
-   WORD             wChasespeedChangeCycles;
-   WORD             nFollower;
-   WORD             rgwReserved2[3];         // unused
-   DWORD            dwCash;                  // amount of cash
-   PARTY            rgParty[MAX_PLAYABLE_PLAYER_ROLES];       // player party
-   TRAIL            rgTrail[MAX_PLAYABLE_PLAYER_ROLES];       // player trail
-   ALLEXPERIENCE    Exp;                     // experience data
-   PLAYERROLES      PlayerRoles;
-   POISONSTATUS     rgPoisonStatus[MAX_POISONS][MAX_PLAYABLE_PLAYER_ROLES]; // poison status
-   INVENTORY        rgInventory[MAX_INVENTORY];               // inventory status
-   SCENE            rgScene[MAX_SCENES];
-   OBJECT           rgObject[MAX_OBJECTS];
-   EVENTOBJECT      rgEventObject[MAX_EVENT_OBJECTS];
-} SAVEDGAME, *LPSAVEDGAME;
 
 extern LPGLOBALVARS gpGlobals;
 

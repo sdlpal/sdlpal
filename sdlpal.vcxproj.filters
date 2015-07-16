@@ -107,9 +107,6 @@
     <ClCompile Include="video.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="yj1.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="adplug\binfile.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
@@ -184,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="adplug\demuopl.cpp">
       <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="yj1.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -362,12 +362,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="fontglyph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gbfont.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="big5font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resampler.h">

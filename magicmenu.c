@@ -53,14 +53,9 @@ PAL_MagicSelectionMenuUpdate(
 
 --*/
 {
-#ifndef PAL_WIN95
-   int         i, j, k;
-   BYTE        bColor;
-#else
    int         i, j, k, line;
    BYTE        bColor;
    WORD        wScript;
-#endif
 #ifdef PAL_UNICODE
    const int   iItemsPerLine = 32 / gpGlobals->dwWordLength;
    const int   iItemTextWidth = 8 * gpGlobals->dwWordLength + 7;
@@ -126,71 +121,106 @@ PAL_MagicSelectionMenuUpdate(
    //
    PAL_CreateBox(PAL_XY(10, 42 + iBoxYOffset), iLinesPerPage - 1, 16, 1, FALSE);
 
-#ifndef PAL_WIN95
-   if (gpGlobals->lpObjectDesc == NULL)
+   if (!gpGlobals->fIsWIN95)
    {
-      //
-      // Draw the cash amount.
-      //
-      PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
-      PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(10, 10), 0, FALSE, FALSE);
-      PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(49, 14), kNumColorYellow, kNumAlignRight);
+      if (gpGlobals->lpObjectDesc == NULL)
+      {
+         //
+         // Draw the cash amount.
+         //
+         PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
+         PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(10, 10), 0, FALSE, FALSE);
+         PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(49, 14), kNumColorYellow, kNumAlignRight);
 
-      //
-      // Draw the MP of the selected magic.
-      //
-      PAL_CreateSingleLineBox(PAL_XY(215, 0), 5, FALSE);
-      PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
-         gpScreen, PAL_XY(260, 14));
-      PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(230, 14),
-         kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(265, 14), kNumColorCyan, kNumAlignRight);
+         //
+         // Draw the MP of the selected magic.
+         //
+         PAL_CreateSingleLineBox(PAL_XY(215, 0), 5, FALSE);
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
+            gpScreen, PAL_XY(260, 14));
+         PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(230, 14),
+            kNumColorYellow, kNumAlignRight);
+         PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(265, 14), kNumColorCyan, kNumAlignRight);
+      }
+      else
+      {
+#  ifdef PAL_UNICODE
+         WCHAR szDesc[512], *next;
+         const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
+#  else
+         char szDesc[512], *next;
+         const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
+#  endif
+
+         //
+         // Draw the magic description.
+         //
+         if (d != NULL)
+         {
+            k = 3;
+#     ifdef PAL_UNICODE
+		    wcscpy(szDesc, d);
+#     else
+            strcpy(szDesc, d);
+#     endif
+            d = szDesc;
+
+            while (TRUE)
+            {
+#        ifdef PAL_UNICODE
+               next = wcschr(d, '*');
+#        else
+               next = strchr(d, '*');
+#        endif
+               if (next != NULL)
+               {
+                  *next++ = '\0';
+               }
+
+               PAL_DrawText(d, PAL_XY(100, k), DESCTEXT_COLOR, TRUE, FALSE);
+               k += 16;
+
+               if (next == NULL)
+               {
+                  break;
+               }
+
+               d = next;
+            }
+         }
+
+         //
+         // Draw the MP of the selected magic.
+         //
+         PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
+            gpScreen, PAL_XY(45, 14));
+         PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),
+            kNumColorYellow, kNumAlignRight);
+         PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
+      }
    }
    else
    {
-#  ifdef PAL_UNICODE
-      WCHAR szDesc[512], *next;
-      const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
-#  else
-      char szDesc[512], *next;
-      const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
-#  endif
-
-      //
-      // Draw the magic description.
-      //
-      if (d != NULL)
+      wScript = gpGlobals->g.rgObject[rgMagicItem[g_iCurrentItem].wMagic].item.wScriptDesc;
+      line = 0;
+      while (wScript && gpGlobals->g.lprgScriptEntry[wScript].wOperation != 0)
       {
-         k = 3;
-#     ifdef PAL_UNICODE
-		 wcscpy(szDesc, d);
-#     else
-         strcpy(szDesc, d);
-#     endif
-         d = szDesc;
-
-         while (TRUE)
+         if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
          {
-#        ifdef PAL_UNICODE
-			next = wcschr(d, '*');
-#        else
-			next = strchr(d, '*');
-#        endif
-            if (next != NULL)
-            {
-               *next = '\0';
-               next++;
-            }
-
-            PAL_DrawText(d, PAL_XY(100, k), DESCTEXT_COLOR, TRUE, FALSE);
-            k += 16;
-
-            if (next == NULL)
-            {
-               break;
-            }
-
-            d = next;
+#ifdef PAL_UNICODE
+            int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
+#endif
+            wScript = PAL_RunAutoScript(wScript, line);
+#ifdef PAL_UNICODE
+            line += line_incr;
+#else
+            line++;
+#endif
+	     }
+         else
+         {
+            wScript = PAL_RunAutoScript(wScript, 0);
          }
       }
 
@@ -204,39 +234,6 @@ PAL_MagicSelectionMenuUpdate(
          kNumColorYellow, kNumAlignRight);
       PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
    }
-#else
-   wScript = gpGlobals->g.rgObject[rgMagicItem[g_iCurrentItem].wMagic].item.wScriptDesc;
-   line = 0;
-   while (wScript && gpGlobals->g.lprgScriptEntry[wScript].wOperation != 0)
-   {
-      if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
-      {
-#ifdef PAL_UNICODE
-         int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
-#endif
-		 wScript = PAL_RunAutoScript(wScript, line);
-#ifdef PAL_UNICODE
-		 line += line_incr;
-#else
-		 line++;
-#endif
-	  }
-      else
-      {
-         wScript = PAL_RunAutoScript(wScript, 0);
-      }
-   }
-
-   //
-   // Draw the MP of the selected magic.
-   //
-   PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
-   PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
-      gpScreen, PAL_XY(45, 14));
-   PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),
-      kNumColorYellow, kNumAlignRight);
-   PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
-#endif
 
 
    //

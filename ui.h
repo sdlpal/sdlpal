@@ -49,11 +49,8 @@ extern "C"
 
 #define DESCTEXT_COLOR                     0x2E
 
-#ifdef PAL_WIN95
-#define MAINMENU_BACKGROUND_FBPNUM         2
-#else
-#define MAINMENU_BACKGROUND_FBPNUM         60
-#endif
+#define MAINMENU_BACKGROUND_FBPNUM         (gpGlobals->fIsWIN95 ? 2 :60)
+
 #define RIX_NUM_OPENINGMENU                4
 #define MAINMENU_LABEL_NEWGAME             7
 #define MAINMENU_LABEL_LOADGAME            8
@@ -235,7 +232,6 @@ PAL_WordWidth(
    INT            nWordIndex
 );
 
-#ifndef PAL_WIN95
 LPOBJECTDESC
 PAL_LoadObjectDesc(
    LPCSTR          lpszFileName
@@ -255,7 +251,6 @@ PAL_GetObjectDesc(
    LPOBJECTDESC   lpObjectDesc,
    WORD           wObjectID
 );
-#endif
 
 extern LPSPRITE gpSpriteUI;
 

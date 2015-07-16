@@ -132,8 +132,22 @@ PAL_MKFDecompressChunk(
 );
 
 // From yj1.c:
+extern INT
+(*Decompress)(
+   LPCVOID      Source,
+   LPVOID       Destination,
+   INT          DestSize
+);
+
 INT
-Decompress(
+YJ1_Decompress(
+   LPCVOID      Source,
+   LPVOID       Destination,
+   INT          DestSize
+);
+
+INT
+YJ2_Decompress(
    LPCVOID      Source,
    LPVOID       Destination,
    INT          DestSize

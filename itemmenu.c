@@ -46,13 +46,8 @@ PAL_ItemSelectMenuUpdate(
 
 --*/
 {
-#ifndef PAL_WIN95
-   int                i, j, k;
-   WORD               wObject;
-#else
    int                i, j, k, line;
    WORD               wObject, wScript;
-#endif
    BYTE               bColor;
    static BYTE        bufImage[2048];
    static WORD        wPrevImageIndex = 0xFFFF;
@@ -245,78 +240,80 @@ PAL_ItemSelectMenuUpdate(
    //
    // Draw the description of the selected item
    //
-#ifndef PAL_WIN95
-   if (!g_fNoDesc && gpGlobals->lpObjectDesc != NULL)
+   if (!gpGlobals->fIsWIN95)
    {
-#  ifdef PAL_UNICODE
-	  WCHAR szDesc[512], *next;
-	  const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
-#  else
-      char szDesc[512], *next;
-      const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
-#  endif
-
-      if (d != NULL)
-      {
-         k = 150;
+      if (!g_fNoDesc && gpGlobals->lpObjectDesc != NULL)
+	  {
 #     ifdef PAL_UNICODE
-		 wcscpy(szDesc, d);
+         WCHAR szDesc[512], *next;
+         const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
 #     else
-         strcpy(szDesc, d);
+         char szDesc[512], *next;
+         const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
 #     endif
-         d = szDesc;
 
-         while (TRUE)
+         if (d != NULL)
          {
+            k = 150;
 #        ifdef PAL_UNICODE
-			next = wcschr(d, '*');
+            wcscpy(szDesc, d);
 #        else
-			next = strchr(d, '*');
+            strcpy(szDesc, d);
 #        endif
-            if (next != NULL)
+            d = szDesc;
+
+            while (TRUE)
             {
-               *next = '\0';
-               next++;
+#           ifdef PAL_UNICODE
+               next = wcschr(d, '*');
+#           else
+               next = strchr(d, '*');
+#           endif
+               if (next != NULL)
+               {
+                  *next++ = '\0';
+               }
+
+               PAL_DrawText(d, PAL_XY(75, k), DESCTEXT_COLOR, TRUE, FALSE);
+               k += 16;
+
+               if (next == NULL)
+               {
+                  break;
+               }
+
+               d = next;
             }
-
-            PAL_DrawText(d, PAL_XY(75, k), DESCTEXT_COLOR, TRUE, FALSE);
-            k += 16;
-
-            if (next == NULL)
-            {
-               break;
-            }
-
-            d = next;
          }
       }
    }
-#else
-   if (!g_fNoDesc)
+   else
    {
-      wScript = gpGlobals->g.rgObject[wObject].item.wScriptDesc;
-      line = 0;
-      while (wScript && gpGlobals->g.lprgScriptEntry[wScript].wOperation != 0)
+      if (!g_fNoDesc)
       {
-         if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
+         wScript = gpGlobals->g.rgObject[wObject].item.wScriptDesc;
+         line = 0;
+         while (wScript && gpGlobals->g.lprgScriptEntry[wScript].wOperation != 0)
          {
+            if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
+            {
 #ifdef PAL_UNICODE
-			 int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
+              int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
 #endif
-			 wScript = PAL_RunAutoScript(wScript, PAL_ITEM_DESC_BOTTOM | line);
+               wScript = PAL_RunAutoScript(wScript, PAL_ITEM_DESC_BOTTOM | line);
 #ifdef PAL_UNICODE
-			 line += line_incr;
+               line += line_incr;
 #else
-			 line++;
+               line++;
 #endif
-         }
-         else
-         {
-            wScript = PAL_RunAutoScript(wScript, 0);
+            }
+            else
+            {
+               wScript = PAL_RunAutoScript(wScript, 0);
+            }
          }
       }
    }
-#endif
 
    if (g_InputState.dwKeyPress & kKeySearch)
    {

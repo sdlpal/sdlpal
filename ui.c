@@ -789,8 +789,6 @@ PAL_WordWidth(
 	return (w + 8) >> 4;
 }
 
-#ifndef PAL_WIN95
-
 LPOBJECTDESC
 PAL_LoadObjectDesc(
    LPCSTR         lpszFileName
@@ -931,5 +929,3 @@ PAL_GetObjectDesc(
 
    return NULL;
 }
-
-#endif
