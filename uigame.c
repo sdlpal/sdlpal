@@ -1185,7 +1185,6 @@ PAL_PlayerStatus(
          //
          // Draw the text label
          //
-#ifdef PAL_UNICODE
          offset = PAL_WordWidth(w) * 16;
          if (rgEquipPos[i][0] + offset + 5 > 320)
          {
@@ -1195,7 +1194,6 @@ PAL_PlayerStatus(
          {
             offset = 0;
          }
-#endif
          PAL_DrawText(PAL_GetWord(w),
             PAL_XY(rgEquipPos[i][0] + offset + 5, rgEquipPos[i][1] + 38), STATUS_COLOR_EQUIPMENT, TRUE, FALSE);
       }

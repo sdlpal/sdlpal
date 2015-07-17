@@ -51,7 +51,6 @@ PAL_ItemSelectMenuUpdate(
    BYTE               bColor;
    static BYTE        bufImage[2048];
    static WORD        wPrevImageIndex = 0xFFFF;
-#ifdef PAL_UNICODE
    const int          iItemsPerLine = 34 / gpGlobals->dwWordLength;
    const int          iItemTextWidth = 8 * gpGlobals->dwWordLength + 20;
    const int          iLinesPerPage = 7 - gpGlobals->dwExtraItemDescLines;
@@ -60,16 +59,6 @@ PAL_ItemSelectMenuUpdate(
    const int          iAmountXOffset = gpGlobals->dwWordLength * 8 + 1;
    const int          iPageLineOffset = (iLinesPerPage + 1) / 2;
    const int          iPictureYOffset = (gpGlobals->dwExtraItemDescLines > 1) ? (gpGlobals->dwExtraItemDescLines - 1) * 16 : 0;
-#else
-   const int          iItemsPerLine = 3;
-   const int          iItemTextWidth = 100;
-   const int          iLinesPerPage = 7;
-   const int          iBoxHeightOffset = 0;
-   const int          iCursorXOffset = 25;
-   const int          iAmountXOffset = 81;
-   const int          iPageLineOffset = 4;
-   const int          iPictureYOffset = 0;
-#endif
 
    //
    // Process input
@@ -244,31 +233,18 @@ PAL_ItemSelectMenuUpdate(
    {
       if (!g_fNoDesc && gpGlobals->lpObjectDesc != NULL)
 	  {
-#     ifdef PAL_UNICODE
          WCHAR szDesc[512], *next;
          const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
-#     else
-         char szDesc[512], *next;
-         const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
-#     endif
 
          if (d != NULL)
          {
             k = 150;
-#        ifdef PAL_UNICODE
             wcscpy(szDesc, d);
-#        else
-            strcpy(szDesc, d);
-#        endif
             d = szDesc;
 
             while (TRUE)
             {
-#           ifdef PAL_UNICODE
                next = wcschr(d, '*');
-#           else
-               next = strchr(d, '*');
-#           endif
                if (next != NULL)
                {
                   *next++ = '\0';
@@ -297,15 +273,9 @@ PAL_ItemSelectMenuUpdate(
          {
             if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
             {
-#ifdef PAL_UNICODE
-              int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
-#endif
+               int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
                wScript = PAL_RunAutoScript(wScript, PAL_ITEM_DESC_BOTTOM | line);
-#ifdef PAL_UNICODE
                line += line_incr;
-#else
-               line++;
-#endif
             }
             else
             {

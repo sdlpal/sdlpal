@@ -140,11 +140,7 @@ typedef struct tagMENUITEM
 typedef struct tagOBJECTDESC
 {
    WORD                        wObjectID;
-#ifdef PAL_UNICODE
    LPWSTR                      lpDesc;
-#else
-   LPSTR                       lpDesc;
-#endif
    struct tagOBJECTDESC       *next;
 } OBJECTDESC, *LPOBJECTDESC;
 
@@ -242,11 +238,7 @@ PAL_FreeObjectDesc(
    LPOBJECTDESC    lpObjectDesc
 );
 
-#  ifdef PAL_UNICODE
 LPCWSTR
-#  else
-LPCSTR
-#  endif
 PAL_GetObjectDesc(
    LPOBJECTDESC   lpObjectDesc,
    WORD           wObjectID

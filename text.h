@@ -44,31 +44,19 @@ PAL_FreeText(
    VOID
 );
 
-#ifdef PAL_UNICODE
 LPCWSTR
-#else
-LPCSTR
-#endif
 PAL_GetWord(
    WORD       wNumWord
 );
 
-#ifdef PAL_UNICODE
 LPCWSTR
-#else
-LPCSTR
-#endif
 PAL_GetMsg(
    WORD       wNumMsg
 );
 
 VOID
 PAL_DrawText(
-#ifdef PAL_UNICODE
    LPCWSTR    lpszText,
-#else
-   LPCSTR     lpszText,
-#endif
    PAL_POS    pos,
    BYTE       bColor,
    BOOL       fShadow,
@@ -90,11 +78,7 @@ PAL_StartDialog(
 
 VOID
 PAL_ShowDialogText(
-#ifdef PAL_UNICODE
    LPCWSTR    lpszText
-#else
-   LPCSTR     lpszText
-#endif
 );
 
 VOID
@@ -117,7 +101,6 @@ PAL_DialogIsPlayingRNG(
    VOID
 );
 
-#ifdef PAL_UNICODE
 INT
 PAL_MultiByteToWideChar(
    LPCSTR        mbs,
@@ -130,6 +113,5 @@ WCHAR
 PAL_GetInvalidChar(
    CODEPAGE      iCodePage
 );
-#endif
 
 #endif

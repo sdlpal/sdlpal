@@ -826,31 +826,22 @@ PAL_LoadObjectDesc(
    //
    while (fgets(buf, 512, fp) != NULL)
    {
-#  ifdef PAL_UNICODE
       int wlen;
-#  endif
       p = strchr(buf, '=');
       if (p == NULL)
       {
          continue;
       }
 
-      *p = '\0';
-      p++;
-#  ifdef PAL_UNICODE
+      *p++ = '\0';
 	  wlen = PAL_MultiByteToWideChar(p, -1, NULL, 0);
-#  endif
 
       pNew = UTIL_calloc(1, sizeof(OBJECTDESC));
 
       sscanf(buf, "%x", &i);
       pNew->wObjectID = i;
-#  ifdef PAL_UNICODE
 	  pNew->lpDesc = (LPWSTR)malloc(wlen * sizeof(WCHAR));
 	  PAL_MultiByteToWideChar(p, -1, pNew->lpDesc, wlen);
-#  else
-      pNew->lpDesc = strdup(p);
-#  endif
 
       pNew->next = lpDesc;
       lpDesc = pNew;
@@ -890,11 +881,7 @@ PAL_FreeObjectDesc(
    }
 }
 
-#ifdef PAL_UNICODE
 LPCWSTR
-#else
-LPCSTR
-#endif
 PAL_GetObjectDesc(
    LPOBJECTDESC   lpObjectDesc,
    WORD           wObjectID

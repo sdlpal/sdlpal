@@ -4803,11 +4803,7 @@ PAL_BattleStealFromEnemy(
 {
    int   iPlayerIndex = g_Battle.wMovingPlayerIndex;
    int   offset, x, y, i;
-#ifdef PAL_UNICODE
    WCHAR s[256] = L"";
-#else
-   char  s[256] = "";
-#endif
 
    g_Battle.rgPlayer[iPlayerIndex].wCurrentFrame = 10;
    offset = ((INT)wTarget - iPlayerIndex) * 8;
@@ -4858,15 +4854,7 @@ PAL_BattleStealFromEnemy(
 
          if (c > 0)
          {
-#        ifdef PAL_UNICODE
-			 swprintf(s, 256, L"%s %d %s", PAL_GetWord(34), c, PAL_GetWord(10));
-#        else
-			 strcpy(s, PAL_GetWord(34));
-			 strcat(s, " ");
-			 strcat(s, va("%d", c));
-			 strcat(s, " ");
-			 strcat(s, PAL_GetWord(10));
-#        endif
+            swprintf(s, 256, L"%s %d %s", PAL_GetWord(34), c, PAL_GetWord(10));
          }
       }
       else
@@ -4877,13 +4865,8 @@ PAL_BattleStealFromEnemy(
          g_Battle.rgEnemy[wTarget].e.nStealItem--;
          PAL_AddItemToInventory(g_Battle.rgEnemy[wTarget].e.wStealItem, 1);
 
-#     ifdef PAL_UNICODE
 		 wcscpy(s, PAL_GetWord(34));
          wcscat(s, PAL_GetWord(g_Battle.rgEnemy[wTarget].e.wStealItem));
-#     else
-		 strcpy(s, PAL_GetWord(34));
-		 strcat(s, PAL_GetWord(g_Battle.rgEnemy[wTarget].e.wStealItem));
-#     endif
 	  }
 
       if (s[0] != '\0')

@@ -56,21 +56,12 @@ PAL_MagicSelectionMenuUpdate(
    int         i, j, k, line;
    BYTE        bColor;
    WORD        wScript;
-#ifdef PAL_UNICODE
    const int   iItemsPerLine = 32 / gpGlobals->dwWordLength;
    const int   iItemTextWidth = 8 * gpGlobals->dwWordLength + 7;
    const int   iLinesPerPage = 5 - gpGlobals->dwExtraMagicDescLines;
    const int   iBoxYOffset = gpGlobals->dwExtraMagicDescLines * 16;
    const int   iCursorXOffset = gpGlobals->dwWordLength * 5 / 2;
    const int   iPageLineOffset = iLinesPerPage / 2;
-#else
-   const int   iItemsPerLine = 3;
-   const int   iItemTextWidth = 87;
-   const int   iLinesPerPage = 5;
-   const int   iBoxYOffset = 0;
-   const int   iCursorXOffset = 25;
-   const int   iPageLineOffset = 2;
-#endif
 
    //
    // Check for inputs
@@ -144,13 +135,8 @@ PAL_MagicSelectionMenuUpdate(
       }
       else
       {
-#  ifdef PAL_UNICODE
          WCHAR szDesc[512], *next;
          const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
-#  else
-         char szDesc[512], *next;
-         const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
-#  endif
 
          //
          // Draw the magic description.
@@ -158,20 +144,12 @@ PAL_MagicSelectionMenuUpdate(
          if (d != NULL)
          {
             k = 3;
-#     ifdef PAL_UNICODE
 		    wcscpy(szDesc, d);
-#     else
-            strcpy(szDesc, d);
-#     endif
             d = szDesc;
 
             while (TRUE)
             {
-#        ifdef PAL_UNICODE
                next = wcschr(d, '*');
-#        else
-               next = strchr(d, '*');
-#        endif
                if (next != NULL)
                {
                   *next++ = '\0';
@@ -208,15 +186,9 @@ PAL_MagicSelectionMenuUpdate(
       {
          if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
          {
-#ifdef PAL_UNICODE
             int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
-#endif
             wScript = PAL_RunAutoScript(wScript, line);
-#ifdef PAL_UNICODE
             line += line_incr;
-#else
-            line++;
-#endif
 	     }
          else
          {

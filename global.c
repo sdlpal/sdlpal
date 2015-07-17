@@ -64,14 +64,13 @@ PAL_InitGlobals(
 
 --*/
 {
-#ifdef PAL_UNICODE
    FILE     *fp;
    CODEPAGE  iCodePage = CP_UNKNOWN;
    DWORD     dwWordLength = 10;		// Default for PAL DOS/WIN95
    DWORD     dwExtraMagicDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwExtraItemDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwIsDOS = 1;				// Default for DOS
-#endif
+   DWORD     dwUseEmbeddedFonts = 1;	// Default for using embedded fonts in DOS version
 
    if (gpGlobals == NULL)
    {
@@ -82,7 +81,6 @@ PAL_InitGlobals(
       }
    }
 
-#ifdef PAL_UNICODE
    if (fp = UTIL_OpenFile("sdlpal.cfg"))
    {
 	   PAL_LARGE char buf[512];
@@ -135,6 +133,10 @@ PAL_InitGlobals(
 				   {
 					   sscanf(ptr, "%u", &dwIsDOS);
 				   }
+				   else if (SDL_strcasecmp(p, "USEEMBEDDEDFONTS") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwUseEmbeddedFonts);
+				   }
 			   }
 		   }
 	   }
@@ -183,10 +185,10 @@ PAL_InitGlobals(
 		   iCodePage = CP_BIG5;
 	   }
    }
-#endif
 
    // Choose version
    gpGlobals->fIsWIN95 = dwIsDOS ? FALSE : TRUE;
+   gpGlobals->fUseEmbeddedFonts = dwIsDOS && dwUseEmbeddedFonts ? TRUE : FALSE;
    // Set decompress function
    Decompress = gpGlobals->fIsWIN95 ? YJ2_Decompress : YJ1_Decompress;
 
@@ -204,12 +206,11 @@ PAL_InitGlobals(
 
    gpGlobals->lpObjectDesc = gpGlobals->fIsWIN95 ? NULL : PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
    gpGlobals->bCurrentSaveSlot = 1;
-#ifdef PAL_UNICODE
+
    gpGlobals->iCodePage = iCodePage;
    gpGlobals->dwWordLength = dwWordLength;
    gpGlobals->dwExtraMagicDescLines = dwExtraMagicDescLines;
    gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
-#endif
 
    return 0;
 }

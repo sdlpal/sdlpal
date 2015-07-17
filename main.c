@@ -115,7 +115,7 @@ PAL_Init(
       TerminateOnError("Could not initialize global data: %d.\n", e);
    }
 
-   e = PAL_InitFont();
+   e = PAL_InitFont(gpGlobals->fUseEmbeddedFonts);
    if (e != 0)
    {
       TerminateOnError("Could not load fonts: %d.\n", e);

@@ -592,13 +592,13 @@ typedef struct tagGLOBALVARS
    INVENTORY        rgInventory[MAX_INVENTORY];  // inventory status
    LPOBJECTDESC     lpObjectDesc;
    DWORD            dwFrameNum;
-#ifdef PAL_UNICODE
+
    CODEPAGE         iCodePage;
    DWORD            dwWordLength;
    DWORD            dwExtraMagicDescLines;
    DWORD            dwExtraItemDescLines;
    BOOL             fIsWIN95;
-#endif
+   BOOL             fUseEmbeddedFonts;
 } GLOBALVARS, *LPGLOBALVARS;
 
 extern LPGLOBALVARS gpGlobals;

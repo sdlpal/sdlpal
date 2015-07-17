@@ -518,7 +518,6 @@ PAL_AdditionalCredits(
 
 --*/
 {
-#ifdef PAL_UNICODE
    LPCWSTR rgszcps[][CP_MAX] = {
 	   // Traditional Chinese, Simplified Chinese, Japanese
 	   { L"", L"", L"" },
@@ -571,41 +570,6 @@ PAL_AdditionalCredits(
 	  L"   %s",
       NULL
    };
-#else
-   LPCSTR rgszStrings[] = {
-      "SDLPAL (http://sdlpal.codeplex.com/)",
-#  ifdef PAL_CLASSIC
-      "         (\xB8\x67\xA8\xE5\xAF\x53\xA7\x4F\xBD\x67  " __DATE__ ")",
-#  else
-      "                    (" __DATE__ ")",
-#  endif
-      " ",
-      "  (c) 2009-2015, Wei Mingzhi",
-      "      <whistler_wmz@users.sf.net>.",
-#  ifdef __SYMBIAN32__
-      "  Symbian S60 \xB2\xBE\xB4\xD3 (c) 2009, netwan.",
-#  endif
-#  ifdef GPH
-      "  GPH Caanoo & Wiz \xB2\xBE\xB4\xD3 (c) 2011, Rikku2000.",
-#  endif
-#  ifdef GEKKO
-      "  Nintendo WII \xB2\xBE\xB4\xD3 (c) 2012, Rikku2000.",
-#  endif
-#  ifdef DINGOO
-      "  DINGOO & Dingux \xB2\xBE\xB4\xD3 (c) 2011, Rikku2000.",
-#  endif
-#  ifdef ANDROID
-	  "  ANDROID \xB2\xBE\xB4\xD3 (c) 2013, Rikku2000.",
-#  endif
-	  " ",
-      "\xA5\xBB\xB5\x7B\xA6\xA1\xAC\x4F\xA6\xDB\xA5\xD1\xB3\x6E\xC5\xE9\xA1\x41\xAB\xF6\xB7\xD3"
-      " GNU General",
-      "Public License (GPLv3) \xB5\x6F\xA7\x47",
-      " ",
-      "                 ...\xAB\xF6 Enter \xB5\xB2\xA7\xF4",
-      NULL
-   };
-#endif
 
    int        i = 0;
 
@@ -613,13 +577,9 @@ PAL_AdditionalCredits(
 
    for (i = 0; rgszStrings[i]; i++)
    {
-#ifdef PAL_UNICODE
       WCHAR buffer[50];
 	  swprintf(buffer, 50, rgszStrings[i], rgszcps[i][gpGlobals->iCodePage]);
 	  PAL_DrawText(buffer, PAL_XY(25, 20 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
-#else
-      PAL_DrawText(rgszStrings[i], PAL_XY(25, 20 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
-#endif
    }
 
    PAL_SetPalette(0, FALSE);
@@ -1472,11 +1432,7 @@ PAL_InterpretInstruction(
       //
       if (gpGlobals->wCollectValue > 0)
       {
-#     ifdef PAL_UNICODE
          WCHAR s[256];
-#     else
-         char s[256];
-#     endif
 
 #ifdef PAL_CLASSIC
          i = RandomLong(1, gpGlobals->wCollectValue);
@@ -1498,13 +1454,8 @@ PAL_InterpretInstruction(
          PAL_AddItemToInventory(gpGlobals->g.lprgStore[0].rgwItems[i], 1);
 
          PAL_StartDialog(kDialogCenterWindow, 0, 0, FALSE);
-#     ifdef PAL_UNICODE
 		 wcscpy(s, PAL_GetWord(42));
 		 wcscat(s, PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
-#     else
-         strcpy(s, PAL_GetWord(42));
-         strcat(s, PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
-#     endif
          PAL_ShowDialogText(s);
       }
       else
@@ -3530,11 +3481,7 @@ begin:
 			   iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
 			   if (wEventObjectID & PAL_ITEM_DESC_BOTTOM)
 			   {
-#  ifdef PAL_UNICODE
 				   int YOffset = gpGlobals->dwExtraItemDescLines * 16;
-#  else
-				   int YOffset = 0;
-#  endif
 				   PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(75, iDescLine * 16 + 150 - YOffset), DESCTEXT_COLOR, TRUE, FALSE);
 			   }
 			   else

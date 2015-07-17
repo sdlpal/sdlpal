@@ -23,16 +23,18 @@
 
 #include "font.h"
 #include "util.h"
+#include "text.h"
 
 #define _FONT_C
 
-#if defined(PAL_UNICODE)
-
 #include "fontglyph.h"
+#include "ascii.h"
+
+static int _font_height = 16;
 
 INT
 PAL_InitFont(
-   VOID
+   BOOL      fUseEmbeddedFonts
 )
 /*++
   Purpose:
@@ -49,7 +51,87 @@ PAL_InitFont(
 
 --*/
 {
-   return 0;
+	if (fUseEmbeddedFonts)
+	{
+		FILE *fp;
+		char *char_buf;
+		wchar_t *wchar_buf;
+		int nBytes, nChars, i;
+
+		//
+		// Load the wor16.asc file.
+		//
+		if (NULL == (fp = UTIL_OpenFile("wor16.asc")))
+		{
+			return 0;
+		}
+		
+		//
+		// Get the size of wor16.asc file.
+		//
+		fseek(fp, 0, SEEK_END);
+		nBytes = ftell(fp);
+
+		//
+		// Allocate buffer & read all the character codes.
+		//
+		if (NULL == (char_buf = (char *)malloc(nBytes)))
+		{
+			fclose(fp);
+			return 0;
+		}
+		fseek(fp, 0, SEEK_SET);
+		fread(char_buf, 1, nBytes, fp);
+
+		//
+		// Close wor16.asc file.
+		//
+		fclose(fp);
+
+		//
+		// Convert characters into unicode
+		//
+		nChars = PAL_MultiByteToWideChar(char_buf, nBytes, NULL, 0);
+		if (NULL == (wchar_buf = (wchar_t *)malloc(nChars * sizeof(wchar_t))))
+		{
+			free(char_buf);
+			return 0;
+		}
+		PAL_MultiByteToWideChar(char_buf, nBytes, wchar_buf, nChars);
+		free(char_buf);
+
+		//
+		// Read bitmaps from wor16.fon file.
+		//
+		fp = UTIL_OpenFile("wor16.fon");
+
+		//
+		// The font glyph data begins at offset 0x682 in wor16.fon.
+		//
+		fseek(fp, 0x682, SEEK_SET);
+
+		//
+		// Replace the original fonts
+		//
+		for (i = 0; i < nChars; i++)
+		{
+			fread(unicode_font[wchar_buf[i]], 30, 1, fp);
+			unicode_font[wchar_buf[i]][30] = 0;
+			unicode_font[wchar_buf[i]][31] = 0;
+		}
+		free(wchar_buf);
+		
+		fclose(fp);
+
+		for (int i = 0; i < 0x80; i++)
+		{
+			memcpy(unicode_font[i], &iso_font[i * 15], 15);
+			unicode_font[i][15] = 0;
+		}
+		_font_height = 15;
+	}
+
+	return 0;
 }
 
 VOID
@@ -127,7 +209,7 @@ PAL_DrawCharOnSurface(
 	LPBYTE top = (LPBYTE)lpSurface->pixels + lpSurface->h * lpSurface->pitch;
 	if (font_width[wChar] == 32)
 	{
-		for (i = 0; i < 32 && dest < top; i += 2, dest += lpSurface->pitch)
+		for (i = 0; i < _font_height * 2 && dest < top; i += 2, dest += lpSurface->pitch)
 		{
 			for (j = 0; j < 8 && x + j < lpSurface->w; j++)
 			{
@@ -147,7 +229,7 @@ PAL_DrawCharOnSurface(
 	}
 	else
 	{
-		for (i = 0; i < 16 && dest < top; i++, dest += lpSurface->pitch)
+		for (i = 0; i < _font_height && dest < top; i++, dest += lpSurface->pitch)
 		{
 			for (j = 0; j < 8 && x + j < lpSurface->w; j++)
 			{
@@ -194,274 +276,3 @@ PAL_CharWidth(
 
 	return font_width[wChar] >> 1;
 }
-
-#else
-
-typedef struct tagFont
-{
-   LPWORD           lpBufChar;
-   LPBYTE           lpBufGlyph;
-   INT              nChar;
-} FONT, *LPFONT;
-
-static LPFONT gpFont = NULL;
-
-INT
-PAL_InitFont(
-   VOID
-)
-/*++
-  Purpose:
-
-    Load the font files.
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    0 if succeed, -1 if cannot allocate memory, -2 if cannot load files.
-
---*/
-{
-   FILE *fp;
-
-   if (gpFont != NULL)
-   {
-      //
-      // Already initialized
-      //
-      return 0;
-   }
-
-   gpFont = (LPFONT)calloc(1, sizeof(FONT));
-   if (gpFont == NULL)
-   {
-      return -1;
-   }
-
-   //
-   // Load the wor16.asc file.
-   //
-   fp = UTIL_OpenRequiredFile("wor16.asc");
-
-   //
-   // Get the size of wor16.asc file.
-   //
-   fseek(fp, 0, SEEK_END);
-   gpFont->nChar = ftell(fp);
-   gpFont->nChar /= 2;
-
-   //
-   // Read all the character codes.
-   //
-   gpFont->lpBufChar = (LPWORD)calloc(gpFont->nChar, sizeof(WORD));
-   if (gpFont->lpBufChar == NULL)
-   {
-      free(gpFont);
-      gpFont = NULL;
-      return -1;
-   }
-
-   fseek(fp, 0, SEEK_SET);
-   fread(gpFont->lpBufChar, sizeof(WORD), gpFont->nChar, fp);
-
-   //
-   // Close wor16.asc file.
-   //
-   fclose(fp);
-
-   //
-   // Read all bitmaps from wor16.fon file.
-   //
-   fp = UTIL_OpenRequiredFile("wor16.fon");
-
-   gpFont->lpBufGlyph = (LPBYTE)calloc(gpFont->nChar, 30);
-   if (gpFont->lpBufGlyph == NULL)
-   {
-      free(gpFont->lpBufChar);
-      free(gpFont);
-      gpFont = NULL;
-      return -1;
-   }
-
-   //
-   // The font glyph data begins at offset 0x682 in wor16.fon.
-   //
-   fseek(fp, 0x682, SEEK_SET);
-   fread(gpFont->lpBufGlyph, 30, gpFont->nChar, fp);
-   fclose(fp);
-
-   return 0;
-}
-
-VOID
-PAL_FreeFont(
-   VOID
-)
-/*++
-  Purpose:
-
-    Free the memory used for fonts.
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    None.
-
---*/
-{
-   if (gpFont != NULL)
-   {
-      free(gpFont->lpBufChar);
-      free(gpFont->lpBufGlyph);
-      free(gpFont);
-   }
-
-   gpFont = NULL;
-}
-
-VOID
-PAL_DrawCharOnSurface(
-   WORD                     wChar,
-   SDL_Surface             *lpSurface,
-   PAL_POS                  pos,
-   BYTE                     bColor
-)
-/*++
-  Purpose:
-
-    Draw a BIG-5 Chinese character on a surface.
-
-  Parameters:
-
-    [IN]  wChar - the character to be drawn (in BIG-5).
-
-    [OUT] lpSurface - the destination surface.
-
-    [IN]  pos - the destination location of the surface.
-
-    [IN]  bColor - the color of the character.
-
-  Return value:
-
-    None.
-
---*/
-{
-   int       i, j, dx;
-   int       x = PAL_X(pos), y = PAL_Y(pos);
-   LPBYTE    pChar;
-
-   //
-   // Check for NULL pointer.
-   //
-   if (lpSurface == NULL || gpFont == NULL)
-   {
-      return;
-   }
-
-   //
-   // Locate for this character in the font lib.
-   //
-   for (i = 0; i < gpFont->nChar; i++)
-   {
-      if (gpFont->lpBufChar[i] == wChar)
-      {
-         break;
-      }
-   }
-
-   if (i >= gpFont->nChar)
-   {
-      //
-      // This character does not exist in the font lib.
-      //
-      return;
-   }
-
-   pChar = gpFont->lpBufGlyph + i * 30;
-
-   //
-   // Draw the character to the surface.
-   //
-   y *= lpSurface->pitch;
-   for (i = 0; i < 30; i++)
-   {
-      dx = x + ((i & 1) << 3);
-      for (j = 0; j < 8; j++)
-      {
-         if (pChar[i] & (1 << (7 - j)))
-         {
-            ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
-         }
-         dx++;
-      }
-      y += (i & 1) * lpSurface->pitch;
-   }
-}
-
-VOID
-PAL_DrawASCIICharOnSurface(
-   BYTE                     bChar,
-   SDL_Surface             *lpSurface,
-   PAL_POS                  pos,
-   BYTE                     bColor
-)
-/*++
-  Purpose:
-
-    Draw a ASCII character on a surface.
-
-  Parameters:
-
-    [IN]  bChar - the character to be drawn.
-
-    [OUT] lpSurface - the destination surface.
-
-    [IN]  pos - the destination location of the surface.
-
-    [IN]  bColor - the color of the character.
-
-  Return value:
-
-    None.
-
---*/
-{
-   int i, j, dx;
-   int x = PAL_X(pos), y = PAL_Y(pos);
-   LPBYTE pChar = &iso_font[(int)(bChar & ~128) * 15];
-
-   //
-   // Check for NULL pointer.
-   //
-   if (lpSurface == NULL)
-   {
-      return;
-   }
-
-   //
-   // Draw the character to the surface.
-   //
-   y *= lpSurface->pitch;
-   for (i = 0; i < 15; i++)
-   {
-      dx = x;
-      for (j = 0; j < 8; j++)
-      {
-         if (pChar[i] & (1 << j))
-         {
-            ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
-         }
-         dx++;
-      }
-      y += lpSurface->pitch;
-   }
-}
-
-#endif

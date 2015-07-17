@@ -206,7 +206,6 @@ VIDEO_Init(
       VIDEO_SetPalette(palette);
       p = gpScreen;
       gpScreen = gpScreenBak;
-#  ifdef PAL_UNICODE
 	  switch(gpGlobals->iCodePage)
 	  {
 	  case CP_BIG5:
@@ -219,9 +218,6 @@ VIDEO_Init(
 		  PAL_DrawText(L"Press Back again to end", PAL_XY(30, 30), 1, FALSE, FALSE);	// TODO: Japanese string
 		  break;
 	  }
-#  else
-      PAL_DrawText("\xA6\x41\xA6\xB8\xAB\xF6 Back \xB5\xB2\xA7\xF4", PAL_XY(30, 30), 1, FALSE, FALSE);
-#  endif
       gpScreen = p;
       gpBackKeyMessage = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
       SDL_FillRect(gpScreenBak, NULL, 0);

@@ -34,7 +34,7 @@ extern "C"
 
 INT
 PAL_InitFont(
-   VOID
+   BOOL      fUseEmbeddedFonts
 );
 
 VOID
@@ -50,24 +50,10 @@ PAL_DrawCharOnSurface(
    BYTE                     bColor
 );
 
-#ifdef PAL_UNICODE
-
 INT
 PAL_CharWidth(
    WORD                     wChar
 );
-
-#else
-
-VOID
-PAL_DrawASCIICharOnSurface(
-   BYTE                     bChar,
-   SDL_Surface             *lpSurface,
-   PAL_POS                  pos,
-   BYTE                     bColor
-);
-
-#endif
 
 #ifdef __cplusplus
 }
