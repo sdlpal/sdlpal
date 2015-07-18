@@ -1,0 +1,31 @@
+#####################################################
+# Configuration file for SDLPAL                     #
+#                                                   #
+# Lines started with '#' is treated as comments.    #
+#####################################################
+
+# CodePage: Indicates the codepage to use, 0 for big5, 1 for gbk, 2 for shift-jis.
+#           If not specified, SDLPAL will try to detect automatically (default).
+#CodePage=0
+
+# WordLength: Idicates the length of each word, 10 for chinese version (default),
+#             16 for japanese version
+#WordLength=10
+
+# ExtraMagicDescLines: Idicates number of extra lines for magic description,
+#                      0 for chinese version (default), 1 for japanese version.
+#ExtraMagicDescLines=0
+
+# ExtraItemDescLines: Idicates number of extra lines for item description,
+#                     0 for chinese version (default), 2 for japanese version.
+#ExtraItemDescLines=0
+
+# DOS: Indicates whether to use DOS-version resources or WIN-version resources.
+#      Non-zero for DOS-version (default), zero for WIN95-version.
+#DOS=1
+
+# UseEmbeddedFonts: Indicates whether to use DOS-version's embedded fonts.
+#                   Non-zero for using DOS-version's embedded fonts (default),
+#                   zero for using SDLPAL's internal fonts.
+# Note that this value is ignored when the DOS option is zero.
+#UseEmbeddedFonts=1

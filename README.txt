@@ -8,7 +8,7 @@ SDLPAL is an SDL-based reimplementation of the classic Chinese-language RPG
 LICENSE
 =======
 
-SDLPAL is Copyrighted (c) 2009-2014 Wei Mingzhi <whistler_wmz@users.sf.net>.
+SDLPAL is Copyrighted (c) 2009-2015 Wei Mingzhi <whistler_wmz@users.sf.net>.
 All rights reserved.
 
 SDLPAL is distributed under the terms of GNU General Public License, version 3
@@ -26,12 +26,12 @@ COMPILE UNDER WINDOWS
 
 The following compilers/IDEs are supported under Windows:
 
-1) Microsoft Visual Studio 2010 or higher
+1) Microsoft Visual Studio 2013 or higher
 2) Dev-C++ 4.9.9.2
 3) Open Watcom 1.7
 
 To compile, open the respective project file (sdlpal.sln, sdlpal.dev, or
-sdlpal.wpj). You need to have SDL development files installed.
+sdlpal.wpj). You need to have SDL 2.0 development files installed.
 
 
 COMPILE UNDER GNU/LINUX
@@ -41,12 +41,12 @@ To compile, type:
 
 make
 
-You need to have SDL development files installed. The compiled executable
+You need to have SDL 2.0 development files installed. The compiled executable
 should be generated with the filename 'sdlpal' at the top directory of source
 files.
 
-SDLPAL should also be able to run under other UNIX-like systems, however
-it's not tested.
+SDLPAL should also be able to compile and run under other UNIX-like systems, 
+however it's not tested.
 
 
 COMPILE UNDER MAC OS X
@@ -83,6 +83,20 @@ copy the SDLPAL executable to the same directory, and run the executable.
 
 Note that the filenames of data files should be in lower-case under GNU/Linux
 (or other UNIX-like operating systems).
+
+
+CONFIGURE THE GAME
+==================
+
+PAL has several variants using different and incompatible resource files. Now
+SDLPAL supports several configuration options for supporting such variants.
+
+To set these configuration options, create a file named as 'sdlpal.cfg' (make
+sure to use lower-case file name in UNIX-like operating systems) in the game
+directory created by the above step. If no configuration file exists, SDLPAL
+uses default values that supports the original resources of DOS version.
+
+Please refer the 'sdlpal.cfg.example' in src directory for its format.
 
 
 -END OF FILE-

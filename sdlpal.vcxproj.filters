@@ -393,6 +393,9 @@
     <None Include="libmad\sf_table.dat">
       <Filter>libmad</Filter>
     </None>
+    <None Include="sdlpal.cfg.example">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sdlpal.rc">
@@ -401,6 +404,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="CREDITS.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="README.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

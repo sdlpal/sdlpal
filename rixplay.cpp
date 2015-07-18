@@ -158,7 +158,10 @@ RIX_FillBuffer(
                   (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
                gpRixPlayer->dwStartFadeTime = t;
                gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
-            }
+			   gpRixPlayer->opl->init();
+			   if (gpRixPlayer->resampler[0]) resampler_clear(gpRixPlayer->resampler[0]);
+			   if (gpRixPlayer->resampler[1]) resampler_clear(gpRixPlayer->resampler[1]);
+			}
             return;
          }
          volume = (INT)(volume * (1.0f - (t - gpRixPlayer->dwStartFadeTime) /
