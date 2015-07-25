@@ -133,8 +133,8 @@ RIX_FillBuffer(
             gpRixPlayer->dwEndFadeTime = t +
                (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
             gpRixPlayer->dwStartFadeTime = t;
-            gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
 			gpRixPlayer->opl->init();
+			gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
 			if (gpRixPlayer->resampler[0]) resampler_clear(gpRixPlayer->resampler[0]);
 			if (gpRixPlayer->resampler[1]) resampler_clear(gpRixPlayer->resampler[1]);
             return;
@@ -157,8 +157,8 @@ RIX_FillBuffer(
                gpRixPlayer->dwEndFadeTime = t +
                   (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
                gpRixPlayer->dwStartFadeTime = t;
-               gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
 			   gpRixPlayer->opl->init();
+			   gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
 			   if (gpRixPlayer->resampler[0]) resampler_clear(gpRixPlayer->resampler[0]);
 			   if (gpRixPlayer->resampler[1]) resampler_clear(gpRixPlayer->resampler[1]);
 			}

@@ -200,4 +200,8 @@ void CSurroundopl::write(int reg, int val)
 
 };
 
-void CSurroundopl::init() {};
+void CSurroundopl::init()
+{
+	a->init();
+	b->init();
+}

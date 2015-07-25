@@ -730,9 +730,11 @@ PAL_ShowDialogText(
    {
       int len = wcslen(lpszText);
       if (g_TextLib.nCurrentDialogLine == 0 &&
-         g_TextLib.bDialogPosition != kDialogCenter &&
-		 (lpszText[len - 1] == 0xff1a ||
-		  lpszText[len - 1] == ':'))
+          g_TextLib.bDialogPosition != kDialogCenter &&
+		  (lpszText[len - 1] == 0xff1a ||
+		   lpszText[len - 1] == 0x2236 || // Special case for Pal WIN95 Simplified Chinese version
+		   lpszText[len - 1] == ':')
+		 )
       {
          //
          // name of character

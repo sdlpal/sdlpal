@@ -28,24 +28,23 @@
 
 #include <assert.h>
 
-struct OPLHandler;
-
 class CDemuopl: public Copl
 {
 public:
     CDemuopl(int rate, bool bit16, bool usestereo);
-    
+	~CDemuopl();
+
     void update(short *buf, int samples);
     
     // template methods
     void write(int reg, int val);
     
-    void init() {};
+    void init();
     
 protected:
-    bool use16bit,stereo;
-    OPLHandler *pHandler;
-    static int channels;
+	opl_chip* chip;
+	int rate;
+	bool use16bit, stereo;
 };
 
 #endif
