@@ -32,7 +32,9 @@ typedef enum tagDIALOGPOSITION
    kDialogCenterWindow
 } DIALOGLOCATION;
 
+#ifndef PAL_CLASSIC
 #define PAL_ADDITIONAL_WORD_FIRST           10000
+#endif
 
 INT
 PAL_InitText(

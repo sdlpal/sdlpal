@@ -37,12 +37,14 @@ BOOL      g_fUpdatedInBattle      = FALSE;
 #define INCLUDE_CODEPAGE_H
 #include "codepage.h"
 
+#ifndef PAL_CLASSIC
 static const WCHAR* gc_rgszAdditionalWords[CP_MAX][6] = {
    { L"\x6230\x9B25\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
    { L"\x6218\x6597\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
-   { L"\x6226\x95D8\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
+   { L"\x6226\x95D8\x901F\x3055", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
 };
 static const WCHAR** g_rgszAdditionalWords;
+#endif
 
 typedef struct tagTEXTLIB
 {
@@ -207,7 +209,9 @@ PAL_InitText(
    free(temp);
    free(offsets);
 
+#ifndef PAL_CLASSIC
    g_rgszAdditionalWords = gc_rgszAdditionalWords[gpGlobals->iCodePage];
+#endif
 
    g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
    g_TextLib.bIcon = 0;
@@ -276,10 +280,12 @@ PAL_GetWord(
 
 --*/
 {
+#ifndef PAL_CLASSIC
    if (wNumWord >= PAL_ADDITIONAL_WORD_FIRST)
    {
       return g_rgszAdditionalWords[wNumWord - PAL_ADDITIONAL_WORD_FIRST];
    }
+#endif
 
    if (wNumWord >= g_TextLib.nWords)
    {
