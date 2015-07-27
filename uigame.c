@@ -1843,7 +1843,10 @@ PAL_EquipItemMenu(
       if (wItem != 0)
       {
          PAL_DrawText(PAL_GetWord(wItem), PAL_XY(5, 70), MENUITEM_COLOR_CONFIRMED, TRUE, FALSE);
-         PAL_DrawNumber(PAL_GetItemAmount(wItem), 2, PAL_XY(65, 73), kNumColorCyan, kNumAlignRight);
+		 if (gpGlobals->dwWordLength > 10)
+            PAL_DrawNumber(PAL_GetItemAmount(wItem), 2, PAL_XY(51, 57), kNumColorCyan, kNumAlignRight);
+         else
+            PAL_DrawNumber(PAL_GetItemAmount(wItem), 2, PAL_XY(65, 73), kNumColorCyan, kNumAlignRight);
       }
 
       //

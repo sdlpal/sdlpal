@@ -148,7 +148,7 @@ void CrixPlayer::rewind(int subsong)
 	  length=offset2-offset1+1;
 	  rix_buf=file_buffer+offset1;
   }
-  opl->init();
+  //opl->init();	// disable for seamless continuance
   opl->write(1,32);	// go to OPL2 mode
   set_new_int();
   data_initial();

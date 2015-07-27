@@ -22,7 +22,7 @@ CDemuopl::~CDemuopl()
 
 void CDemuopl::init()
 {
-	if (chip) adlib_release(chip);
+	adlib_release(chip);
 	chip = adlib_init(rate);
 }
 
@@ -32,17 +32,17 @@ void CDemuopl::update(short *buf, int samples)
 
 	short *mixbuf1 = NULL;
 	short *outbuf;
-	if (use16bit) outbuf = buf;
-	else{
-		mixbuf1 = new short[samples * 2];
-		outbuf = mixbuf1;
-	}
+	if (use16bit)
+		outbuf = buf;
+	else
+		outbuf = mixbuf1 = new short[samples * 2];
 	adlib_getsample(chip, outbuf, samples);
-	if (stereo)
+	if (stereo) {
 		for (int i = samples - 1; i >= 0; i--) {
 			outbuf[i * 2] = outbuf[i];
 			outbuf[i * 2 + 1] = outbuf[i];
 		}
+	}
 	//now reduce to 8bit if we need to
 	if (!use16bit) {
 		for (int i = 0; i < (stereo ? samples * 2 : samples); i++)

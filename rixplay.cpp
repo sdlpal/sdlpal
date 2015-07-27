@@ -18,30 +18,37 @@
 //
 
 #include "rixplay.h"
-
-#define USE_SURROUNDOPL      1
-#define USE_DEMUOPL          1
-#define USE_KEMUOPL          0
-#define USE_RESAMPLER        1
+#include "sound.h"
 
 #define OPL_SAMPLERATE       49716
+
+#if OPL_SAMPLERATE != PAL_SAMPLE_RATE
+#define USE_RESAMPLER        1
+#endif
+#if PAL_CHANNELS == 2
+#define USE_SURROUNDOPL      1
+#endif
+#define USE_DEMUOPL          1
+
+#if USE_RESAMPLER
 #include "resampler.h"
+#endif
 
 #include "adplug/opl.h"
-#include "adplug/emuopl.h"
-#if USE_KEMUOPL
-#include "adplug/kemuopl.h"
-#endif
 #if USE_DEMUOPL
 #include "adplug/demuopl.h"
+#else
+#include "adplug/emuopl.h"
 #endif
+#if USE_SURROUNDOPL
 #include "adplug/surroundopl.h"
+#endif
 #include "adplug/rix.h"
 
 extern "C" BOOL g_fNoMusic;
+#ifdef __SYMBIAN32__
 extern "C" INT  g_iVolume;
-
-#include "sound.h"
+#endif
 
 typedef struct tagRIXPLAYER
 {
@@ -52,8 +59,8 @@ typedef struct tagRIXPLAYER
    INT                        iCurrentMusic; // current playing music number
    INT                        iNextMusic; // the next music number to switch to
    DWORD                      dwStartFadeTime;
-   DWORD                      dwEndFadeTime;
-   enum { FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
+   DWORD                      dwFadeLength;
+   enum { NONE, FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
    BOOL                       fLoop;
    BOOL                       fNextLoop;
    BYTE                       buf[PAL_SAMPLE_RATE / 70 * sizeof(short) * PAL_CHANNELS];
@@ -64,217 +71,181 @@ static LPRIXPLAYER gpRixPlayer = NULL;
 
 VOID
 RIX_FillBuffer(
-   LPBYTE     stream,
-   INT        len
-)
-/*++
-  Purpose:
+	LPBYTE     stream,
+	INT        len
+	)
+	/*++
+	  Purpose:
 
-    Fill the background music into the sound buffer. Called by the SDL sound
-    callback function only (sound.c: SOUND_FillAudio).
+		Fill the background music into the sound buffer. Called by the SDL sound
+		callback function only (sound.c: SOUND_FillAudio).
 
-  Parameters:
+	  Parameters:
 
-    [OUT] stream - pointer to the stream buffer.
+		[OUT] stream - pointer to the stream buffer.
 
-    [IN]  len - Length of the buffer.
+		[IN]  len - Length of the buffer.
 
-  Return value:
+	  Return value:
 
-    None.
+		None.
 
---*/
+	--*/
 {
-   INT       i, l, oldlen, volume = SDL_MIX_MAXVOLUME / 2;
-   UINT      t = SDL_GetTicks();
+	INT       i, l, volume = SDL_MIX_MAXVOLUME / 2;
+	UINT      t = SDL_GetTicks();
 
 #ifdef __SYMBIAN32__
-   volume = g_iVolume / 2;
+	volume = g_iVolume / 2;
 #endif
 
-   oldlen = len;
+	if (gpRixPlayer == NULL)
+	{
+		//
+		// Not initialized
+		//
+		return;
+	}
 
-   if (gpRixPlayer == NULL)
-   {
-      //
-      // Not initialized
-      //
-      return;
-   }
-
-   //
-   // fading in or fading out
-   //
-   if (gpRixPlayer->dwEndFadeTime > 0)
-   {
-      switch (gpRixPlayer->FadeType)
-      {
-      case RIXPLAYER::FADE_IN:
-         if (t >= gpRixPlayer->dwEndFadeTime)
-         {
-            gpRixPlayer->dwEndFadeTime = 0;
-         }
-         else
-         {
-            volume = (INT)(volume * (t - gpRixPlayer->dwStartFadeTime) /
-               (FLOAT)(gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime));
-         }
-         break;
-
-      case RIXPLAYER::FADE_OUT:
-         if (gpRixPlayer->iCurrentMusic == -1)
-         {
-            //
-            // There is no current playing music. Just start playing the next one.
-            //
-            gpRixPlayer->iCurrentMusic = gpRixPlayer->iNextMusic;
-            gpRixPlayer->fLoop = gpRixPlayer->fNextLoop;
-            gpRixPlayer->FadeType = RIXPLAYER::FADE_IN;
-            gpRixPlayer->dwEndFadeTime = t +
-               (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
-            gpRixPlayer->dwStartFadeTime = t;
-			gpRixPlayer->opl->init();
-			gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
-			if (gpRixPlayer->resampler[0]) resampler_clear(gpRixPlayer->resampler[0]);
-			if (gpRixPlayer->resampler[1]) resampler_clear(gpRixPlayer->resampler[1]);
-            return;
-         }
-         else if (t >= gpRixPlayer->dwEndFadeTime)
-         {
-            if (gpRixPlayer->iNextMusic <= 0)
-            {
-               gpRixPlayer->iCurrentMusic = -1;
-               gpRixPlayer->dwEndFadeTime = 0;
-            }
-            else
-            {
-               //
-               // Fade to the next music
-               //
-               gpRixPlayer->iCurrentMusic = gpRixPlayer->iNextMusic;
-               gpRixPlayer->fLoop = gpRixPlayer->fNextLoop;
-               gpRixPlayer->FadeType = RIXPLAYER::FADE_IN;
-               gpRixPlayer->dwEndFadeTime = t +
-                  (gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime);
-               gpRixPlayer->dwStartFadeTime = t;
-			   gpRixPlayer->opl->init();
-			   gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
-			   if (gpRixPlayer->resampler[0]) resampler_clear(gpRixPlayer->resampler[0]);
-			   if (gpRixPlayer->resampler[1]) resampler_clear(gpRixPlayer->resampler[1]);
+	//
+	// fading in or fading out
+	//
+	switch (gpRixPlayer->FadeType)
+	{
+	case RIXPLAYER::FADE_IN:
+		if (t >= gpRixPlayer->dwStartFadeTime + gpRixPlayer->dwFadeLength)
+		{
+			gpRixPlayer->FadeType = RIXPLAYER::NONE;
+		}
+		else
+		{
+			volume = (INT)(volume * (t - gpRixPlayer->dwStartFadeTime) / (FLOAT)gpRixPlayer->dwFadeLength);
+		}
+		break;
+	case RIXPLAYER::FADE_OUT:
+		if (gpRixPlayer->iCurrentMusic == -1 || t >= gpRixPlayer->dwStartFadeTime + gpRixPlayer->dwFadeLength)
+		{
+			//
+			// There is no current playing music, or fading time has passed.
+			// Start playing the next one.
+			//
+			if (gpRixPlayer->iNextMusic > 0)
+			{
+				gpRixPlayer->iCurrentMusic = gpRixPlayer->iNextMusic;
+				gpRixPlayer->fLoop = gpRixPlayer->fNextLoop;
+				gpRixPlayer->FadeType = RIXPLAYER::FADE_IN;
+				gpRixPlayer->dwStartFadeTime = t;
+				gpRixPlayer->opl->init();
+				gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
+				if (gpRixPlayer->resampler[0]) resampler_clear(gpRixPlayer->resampler[0]);
+				if (gpRixPlayer->resampler[1]) resampler_clear(gpRixPlayer->resampler[1]);
 			}
-            return;
-         }
-         volume = (INT)(volume * (1.0f - (t - gpRixPlayer->dwStartFadeTime) /
-            (FLOAT)(gpRixPlayer->dwEndFadeTime - gpRixPlayer->dwStartFadeTime)));
-         break;
-      }
-   }
+			else
+			{
+				gpRixPlayer->iCurrentMusic = -1;
+				gpRixPlayer->FadeType = RIXPLAYER::NONE;
+			}
+			return;
+		}
+		else
+		{
+			volume = (INT)(volume * (1.0f - (t - gpRixPlayer->dwStartFadeTime) / (FLOAT)gpRixPlayer->dwFadeLength));
+		}
+		break;
+	default:
+		if (gpRixPlayer->iCurrentMusic <= 0)
+		{
+			//
+			// No current playing music
+			//
+			return;
+		}
+	}
 
-   if (gpRixPlayer->iCurrentMusic <= 0)
-   {
-      //
-      // No current playing music
-      //
-      return;
-   }
+	//
+	// Fill the buffer with sound data
+	//
+	while (len > 0)
+	{
+		if (gpRixPlayer->pos == NULL ||
+			gpRixPlayer->pos - gpRixPlayer->buf >= (int)sizeof(gpRixPlayer->buf))
+		{
+			gpRixPlayer->pos = gpRixPlayer->buf;
+			if (!gpRixPlayer->rix->update())
+			{
+				if (!gpRixPlayer->fLoop)
+				{
+					//
+					// Not loop, simply terminate the music
+					//
+					gpRixPlayer->iCurrentMusic = -1;
+					gpRixPlayer->FadeType = RIXPLAYER::NONE;
+					return;
+				}
+				gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
+				if (!gpRixPlayer->rix->update())
+				{
+					//
+					// Something must be wrong
+					//
+					gpRixPlayer->iCurrentMusic = -1;
+					gpRixPlayer->FadeType = RIXPLAYER::NONE;
+					return;
+				}
+			}
+			int sample_count = PAL_SAMPLE_RATE / 70;
+			if (gpRixPlayer->resampler[0])
+			{
+				unsigned int samples_written = 0;
+				short tempBuf[64 * PAL_CHANNELS]; // hard code on resampler defination
+				short *finalBuf = (short*)gpRixPlayer->buf;
 
-   //
-   // Fill the buffer with sound data
-   //
-   while (len > 0)
-   {
-      if (gpRixPlayer->pos == NULL ||
-         gpRixPlayer->pos - gpRixPlayer->buf >= (int)sizeof(gpRixPlayer->buf))
-      {
-         gpRixPlayer->pos = gpRixPlayer->buf;
-         if (!gpRixPlayer->rix->update())
-         {
-            if (!gpRixPlayer->fLoop)
-            {
-               //
-               // Not loop, simply terminate the music
-               //
-               gpRixPlayer->iCurrentMusic = -1;
-               return;
-            }
-            gpRixPlayer->rix->rewind(gpRixPlayer->iCurrentMusic);
-            if (!gpRixPlayer->rix->update())
-            {
-               //
-               // Something must be wrong
-               //
-               gpRixPlayer->iCurrentMusic = -1;
-               return;
-            }
-         }
-          int sample_count = PAL_SAMPLE_RATE / 70;
-          if( gpRixPlayer->resampler[0] ) {
-              
-              unsigned int samples_written = 0;
-			  short tempBuf[64 * PAL_CHANNELS]; // hard code on resampler defination
-              short *finalBuf = (short*)gpRixPlayer->buf;
-              
-              while ( sample_count )
-              {
-                  int to_write = resampler_get_free_count( gpRixPlayer->resampler[0] );
-                  if ( to_write )
-                  {
-                      gpRixPlayer->opl->update( tempBuf, to_write );
-                      for ( int i = 0; i < to_write; i++ )
-                      {
-                          resampler_write_sample( gpRixPlayer->resampler[0], tempBuf[i * 2] );
-                          resampler_write_sample( gpRixPlayer->resampler[1], tempBuf[i * 2 + 1] );
-                      }
-                  }
-                  
-                  /* if ( !lanczos_resampler_ready( m_resampler ) ) break; */ /* We assume that by filling the input buffer completely every pass, there will always be samples ready. */
-                  
-                  //int ls = resampler_get_sample( gpRixPlayer->resampler[0] );
-                  //int rs = resampler_get_sample( gpRixPlayer->resampler[1] );
-                  //resampler_remove_sample( gpRixPlayer->resampler[0] );
-                  //resampler_remove_sample( gpRixPlayer->resampler[1] );
-                  
-                  finalBuf[samples_written++] = resampler_get_and_remove_sample(gpRixPlayer->resampler[0]);
-                  finalBuf[samples_written++] = resampler_get_and_remove_sample(gpRixPlayer->resampler[1]);
-                  --sample_count;
-              }
-              
-//              p_chunk.set_data_size( samples_written );
-//              p_chunk.set_sample_rate( srate );
-//              p_chunk.set_channels( 2, audio_chunk::channel_config_stereo );
-//              p_chunk.set_sample_count( samples_written / 2 );
-//              
-//              audio_math::convert_from_int32( sample_buffer.get_ptr(), samples_written, p_chunk.get_data(), 1 << 8 );
-          }else
-              gpRixPlayer->opl->update((short *)(gpRixPlayer->buf), sample_count);
-      }
+				while (sample_count)
+				{
+					int to_write = resampler_get_free_count(gpRixPlayer->resampler[0]);
+					if (to_write)
+					{
+						gpRixPlayer->opl->update(tempBuf, to_write);
+						for (int i = 0; i < to_write; i++)
+						{
+							resampler_write_sample(gpRixPlayer->resampler[0], tempBuf[i * 2]);
+							resampler_write_sample(gpRixPlayer->resampler[1], tempBuf[i * 2 + 1]);
+						}
+					}
 
-      l = sizeof(gpRixPlayer->buf) - (gpRixPlayer->pos - gpRixPlayer->buf);
-      if (len < l)
-      {
-         l = len;
-      }
+					finalBuf[samples_written++] = resampler_get_and_remove_sample(gpRixPlayer->resampler[0]);
+					finalBuf[samples_written++] = resampler_get_and_remove_sample(gpRixPlayer->resampler[1]);
+					--sample_count;
+				}
+			}
+			else
+			{
+				gpRixPlayer->opl->update((short *)(gpRixPlayer->buf), sample_count);
+			}
+		}
 
-      //
-      // Put audio data into buffer and adjust volume
-      // WARNING: for signed 16-bit little-endian only
-      //
-      for (i = 0; i < (int)(l / sizeof(SHORT)); i++)
-      {
-         SHORT s = SWAP16((int)(*(SHORT *)(gpRixPlayer->pos)) * volume / SDL_MIX_MAXVOLUME);
+		l = sizeof(gpRixPlayer->buf) - (gpRixPlayer->pos - gpRixPlayer->buf);
+		if (len < l)
+		{
+			l = len;
+		}
 
-         {
-            *(SHORT *)(stream) = s;
-            stream += sizeof(SHORT);
-         }
+		//
+		// Put audio data into buffer and adjust volume
+		// WARNING: for signed 16-bit little-endian only
+		//
+		for (i = 0; i < (int)(l / sizeof(SHORT)); i++)
+		{
+			SHORT s = SWAP16((int)(*(SHORT *)(gpRixPlayer->pos)) * volume / SDL_MIX_MAXVOLUME);
 
-         gpRixPlayer->pos += sizeof(SHORT);
-      }
+			*(SHORT *)(stream) = s;
+			stream += sizeof(SHORT);
 
-      len -= l;
-   }
+			gpRixPlayer->pos += sizeof(SHORT);
+		}
 
-   stream -= oldlen;
+		len -= l;
+	}
 }
 
 INT
@@ -302,24 +273,16 @@ RIX_Init(
       return -1;
    }
 
-#if PAL_CHANNELS == 2 && !USE_SURROUNDOPL
-   const bool opl_stereo = true;
-#else
-   const bool opl_stereo = false;
-#endif
-
 #if USE_DEMUOPL
    typedef CDemuopl COpl;
-#elif USE_KEMUOPL
-   typedef CKemuopl COpl;
 #else
    typedef CEmuopl  COpl;
 #endif
 
-#if PAL_CHANNELS == 2 && USE_SURROUNDOPL
+#if USE_SURROUNDOPL
    gpRixPlayer->opl = new CSurroundopl(new COpl(OPL_SAMPLERATE, true, false),
                                        new COpl(OPL_SAMPLERATE, true, false), true);
-#  if OPL_SAMPLERATE != PAL_SAMPLE_RATE && USE_RESAMPLER
+#  if USE_RESAMPLER
    resampler_init();
    gpRixPlayer->resampler[0] = resampler_create();
    gpRixPlayer->resampler[1] = resampler_create();
@@ -334,7 +297,7 @@ RIX_Init(
    gpRixPlayer->resampler[1] = NULL;
 #  endif
 #else
-   gpRixPlayer->opl = new COpl(OPL_SAMPLERATE, true, opl_stereo);
+   gpRixPlayer->opl = new COpl(OPL_SAMPLERATE, true, PAL_CHANNELS == 2);
 #endif
 
    if (gpRixPlayer->opl == NULL)
@@ -366,8 +329,8 @@ RIX_Init(
    //
    // Success.
    //
+   gpRixPlayer->FadeType = RIXPLAYER::NONE;
    gpRixPlayer->iCurrentMusic = -1;
-   gpRixPlayer->dwEndFadeTime = 0;
    gpRixPlayer->pos = NULL;
    gpRixPlayer->fLoop = FALSE;
    gpRixPlayer->fNextLoop = FALSE;
@@ -452,6 +415,6 @@ RIX_Play(
 
    gpRixPlayer->iNextMusic = iNumRIX;
    gpRixPlayer->dwStartFadeTime = t;
-   gpRixPlayer->dwEndFadeTime = t + (DWORD)(flFadeTime * 1000) / 2;
+   gpRixPlayer->dwFadeLength = (DWORD)(flFadeTime * 1000) / 2;
    gpRixPlayer->FadeType = RIXPLAYER::FADE_OUT;
 }

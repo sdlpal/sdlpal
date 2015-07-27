@@ -121,6 +121,9 @@ typedef int8_t		Bit8s;
 #define TREM_FREQ			((fltype)(3.7))			// tremolo at 3.7hz
 
 
+typedef struct opl_chip_struct opl_chip;
+
+
 /* operator struct definition
  For OPL2 all 9 channels consist of two operators each, carrier and modulator.
  Channel x has operators x as modulator and operators (9+x) as carrier.
@@ -133,6 +136,8 @@ typedef int8_t		Bit8s;
  channel.
  */
 typedef struct operator_struct {
+	opl_chip* chip;					// the opl chip
+
 	Bit32s cval, lastcval;			// current output/last output (used for feedback)
 	Bit32u tcount, wfpos, tinc;		// time (position in waveform) and time increment
 	fltype amp, step_amp;			// and amplification (envelope)
@@ -164,29 +169,26 @@ typedef struct operator_struct {
 } op_type;
 
 
-typedef struct opl_chip_struct opl_chip;
-
 // enable an operator
-void enable_operator(opl_chip* opl, Bitu regbase, op_type* op_pt);
+void enable_operator(Bitu regbase, op_type* op_pt);
 
 // functions to change parameters of an operator
-void change_frequency(opl_chip* opl, Bitu chanbase, Bitu regbase, op_type* op_pt);
+void change_frequency(Bitu chanbase, Bitu regbase, op_type* op_pt);
 
-void change_attackrate(opl_chip* opl, Bitu regbase, op_type* op_pt);
-void change_decayrate(opl_chip* opl, Bitu regbase, op_type* op_pt);
-void change_releaserate(opl_chip* opl, Bitu regbase, op_type* op_pt);
-void change_sustainlevel(opl_chip* opl, Bitu regbase, op_type* op_pt);
-void change_waveform(opl_chip* opl, Bitu regbase, op_type* op_pt);
-void change_keepsustain(opl_chip* opl, Bitu regbase, op_type* op_pt);
-void change_vibrato(opl_chip* opl, Bitu regbase, op_type* op_pt);
-void change_feedback(opl_chip* opl, Bitu chanbase, op_type* op_pt);
+void change_attackrate(Bitu regbase, op_type* op_pt);
+void change_decayrate(Bitu regbase, op_type* op_pt);
+void change_releaserate(Bitu regbase, op_type* op_pt);
+void change_sustainlevel(Bitu regbase, op_type* op_pt);
+void change_waveform(Bitu regbase, op_type* op_pt);
+void change_keepsustain(Bitu regbase, op_type* op_pt);
+void change_vibrato(Bitu regbase, op_type* op_pt);
+void change_feedback(Bitu chanbase, op_type* op_pt);
 
 // general functions
 opl_chip* adlib_init(Bit32u samplerate);
+void adlib_release(opl_chip* opl);
 void adlib_write(opl_chip* opl, Bitu idx, Bit8u val);
 void adlib_getsample(opl_chip* opl, Bit16s* sndptr, Bits numsamples);
 
 Bitu adlib_reg_read(opl_chip* opl, Bitu port);
 void adlib_write_index(opl_chip* opl, Bitu port, Bit8u val);
-
-void adlib_release(opl_chip* opl);
