@@ -29,3 +29,37 @@
 #                   zero for using SDLPAL's internal fonts.
 # Note that this value is ignored when the DOS option is zero.
 #UseEmbeddedFonts=1
+
+# CD: Indicates which type of CD audio source to use. Valid types include 'RAW',
+#     'OGG' and 'MP3'. 'RAW' means use the SDL 1.2's CDAudio API (default when
+#     compiled with SDL 1.2), 'OGG' means use files named as '100xx.ogg' inside
+#     the 'ogg' directory (default when compiled with SDL 2.0), while 'MP3'
+#     means use files named as '100xx.mp3' inside the 'mp3' directory.
+#CD=OGG
+
+# MUSIC: Indicates which type of music source to use. Valid types include 
+#        'RIX', 'MIDI', 'OGG' and 'MP3'. 'RIX' means use the RIX music (default),
+#        'MIDI' means midi (either in 'mus.mkf' or inside 'musics' directory),
+#        'OGG' means use files named as 'xx.ogg' inside the 'ogg' directory, while
+#        'MP3' means use files named as 'xx.mp3' inside the 'mp3' directory.
+#MUSIC=RIX
+
+# OPL: Indicates which type of opl emulator to use. Valid types include 'DOSBOX'
+#      (default) and 'MAME'.  'DOSBOX' means use the opl emulator from dosbox
+#      project, while 'MAME' means use the opl emulator from M.A.M.E project (due
+#      to license issues, this option currently is only for testing purpose and can
+#      only be enabled when complied with a special macro definition.)
+#OPL=DOSBOX
+
+# Stereo: Indicates whether to use mono audio or stereo audio. Non-zero means to use
+#         stereo audio (default), while zero means only use mono audio.
+#Stereo=1
+
+# UseSurroundOPL: Indicates whether to use surround opl emulator or not. Non-zero
+#                 means to using (default), while zero means not to use. Only
+#                 valid when Stereo is set to non-zero.
+#UseSurroundOPL=1
+
+# SampleRate: Indicates which sample rate to use, valid values include 44100 (default),
+#             22050, and some other rates.
+#SampleRate=44100

@@ -41,7 +41,7 @@ BOOL      g_fUpdatedInBattle      = FALSE;
 static const WCHAR* gc_rgszAdditionalWords[CP_MAX][6] = {
    { L"\x6230\x9B25\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
    { L"\x6218\x6597\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
-   { L"\x6226\x95D8\x901F\x3055", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
+   { L"\x6226\x95D8\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
 };
 static const WCHAR** g_rgszAdditionalWords;
 #endif

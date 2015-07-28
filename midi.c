@@ -21,7 +21,7 @@
 
 #include "main.h"
 
-#if !defined (CYGWIN) && !defined (DINGOO) &&  !defined (GEKKO) && !defined (GPH)
+#if PAL_HAS_NATIVEMIDI
 
 static INT iMidCurrent = -1;
 static BOOL fMidLoop = FALSE;
@@ -79,7 +79,8 @@ MIDI_Play(
          fMidLoop = fLoop;
       }
    }
-   else
+
+   if (!g_pMid)
    {
       unsigned char   *buf;
       int              size;

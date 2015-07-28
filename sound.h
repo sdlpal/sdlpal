@@ -24,12 +24,8 @@
 
 #include "common.h"
 
-#ifndef PAL_SAMPLE_RATE
-#define PAL_SAMPLE_RATE     44100 /*49716*/
-#endif
-
-#ifndef PAL_CHANNELS
-#define PAL_CHANNELS        2
+#ifndef PAL_MAX_SAMPLERATE
+#define PAL_MAX_SAMPLERATE 48000
 #endif
 
 #ifdef __cplusplus
@@ -53,6 +49,11 @@ SOUND_PlayChannel(
    INT    iChannel
 );
 
+SDL_AudioSpec*
+SOUND_GetAudioSpec(
+   VOID
+);
+
 #ifdef __SYMBIAN32__
 VOID
 SOUND_AdjustVolume(
@@ -61,7 +62,7 @@ SOUND_AdjustVolume(
 #endif
 
 VOID
-PAL_PlayMUS(
+SOUND_PlayMUS(
    INT       iNumRIX,
    BOOL      fLoop,
    FLOAT     flFadeTime
@@ -81,9 +82,6 @@ extern int g_iCurrChannel;
 
 extern BOOL       g_fNoSound;
 extern BOOL       g_fNoMusic;
-#ifdef PAL_HAS_NATIVEMIDI
-extern BOOL       g_fUseMidi;
-#endif
 
 #ifdef __cplusplus
 }

@@ -24,6 +24,7 @@
 #include "main.h"
 
 LPGLOBALVARS gpGlobals = NULL;
+extern BOOL g_fUseMidi;
 
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 #define DO_BYTESWAP(buf, size)
@@ -66,11 +67,17 @@ PAL_InitGlobals(
 {
    FILE     *fp;
    CODEPAGE  iCodePage = CP_UNKNOWN;
-   DWORD     dwWordLength = 10;		// Default for PAL DOS/WIN95
+   DWORD     dwWordLength = 10;			// Default for PAL DOS/WIN95
    DWORD     dwExtraMagicDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwExtraItemDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwIsDOS = 1;				// Default for DOS
    DWORD     dwUseEmbeddedFonts = 1;	// Default for using embedded fonts in DOS version
+   DWORD     dwUseSurroundOPL = 1;		// Default for using surround opl
+   DWORD     dwUseStereo = 1;			// Default for stereo audio
+   INT       iSampleRate = 44100;		// Default for 44KHz
+   MUSICTYPE eMusicType = g_fUseMidi ? MUSIC_MIDI : MUSIC_RIX;
+   MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;
+   OPLTYPE   eOPLType = OPL_DOSBOX;
 
    if (gpGlobals == NULL)
    {
@@ -137,6 +144,52 @@ PAL_InitGlobals(
 				   {
 					   sscanf(ptr, "%u", &dwUseEmbeddedFonts);
 				   }
+				   else if (SDL_strcasecmp(p, "USESURROUNDOPL") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwUseSurroundOPL);
+				   }
+				   else if (SDL_strcasecmp(p, "STEREO") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwUseStereo);
+				   }
+				   else if (SDL_strcasecmp(p, "SAMPLERATE") == 0)
+				   {
+					   sscanf(ptr, "%d", &iSampleRate);
+					   if (iSampleRate > PAL_MAX_SAMPLERATE) iSampleRate = PAL_MAX_SAMPLERATE;
+				   }
+				   else if (SDL_strcasecmp(p, "CD") == 0)
+				   {
+					   char cd_type[32];
+					   sscanf(ptr, "%31s", cd_type);
+					   if (PAL_HAS_MP3 && SDL_strcasecmp(cd_type, "MP3") == 0)
+						   eCDType = MUSIC_MP3;
+					   else if (PAL_HAS_OGG && SDL_strcasecmp(cd_type, "OGG") == 0)
+						   eCDType = MUSIC_OGG;
+					   else if (PAL_HAS_SDLCD && SDL_strcasecmp(cd_type, "RAW") == 0)
+						   eCDType = MUSIC_SDLCD;
+				   }
+				   else if (SDL_strcasecmp(p, "MUSIC") == 0)
+				   {
+					   char music_type[32];
+					   sscanf(ptr, "%31s", music_type);
+					   if (PAL_HAS_NATIVEMIDI && SDL_strcasecmp(music_type, "MIDI") == 0)
+						   eMusicType = MUSIC_MIDI;
+					   else if (PAL_HAS_MP3 && SDL_strcasecmp(music_type, "MP3") == 0)
+						   eMusicType = MUSIC_MP3;
+					   else if (PAL_HAS_OGG && SDL_strcasecmp(music_type, "OGG") == 0)
+						   eMusicType = MUSIC_OGG;
+					   else if (SDL_strcasecmp(music_type, "RIX") == 0)
+						   eMusicType = MUSIC_RIX;
+				   }
+				   else if (SDL_strcasecmp(p, "OPL") == 0)
+				   {
+					   char opl_type[32];
+					   sscanf(ptr, "%31s", opl_type);
+					   if (SDL_strcasecmp(opl_type, "DOSBOX") == 0)
+						   eOPLType = OPL_DOSBOX;
+					   else if (PAL_HAS_MAME && SDL_strcasecmp(opl_type, "MAME") == 0)
+						   eOPLType = OPL_MAME;
+				   }
 			   }
 		   }
 	   }
@@ -189,6 +242,13 @@ PAL_InitGlobals(
    // Choose version
    gpGlobals->fIsWIN95 = dwIsDOS ? FALSE : TRUE;
    gpGlobals->fUseEmbeddedFonts = dwIsDOS && dwUseEmbeddedFonts ? TRUE : FALSE;
+   gpGlobals->fUseSurroundOPL = dwUseStereo && dwUseSurroundOPL ? TRUE : FALSE;
+   gpGlobals->iAudioChannels = dwUseStereo ? 2 : 1;
+   gpGlobals->iSampleRate = iSampleRate;
+   gpGlobals->eMusicType = eMusicType;
+   gpGlobals->eCDType = eCDType;
+   gpGlobals->eOPLType = eOPLType;
+
    // Set decompress function
    Decompress = gpGlobals->fIsWIN95 ? YJ2_Decompress : YJ1_Decompress;
 

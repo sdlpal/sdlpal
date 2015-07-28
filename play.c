@@ -576,7 +576,7 @@ PAL_StartFrame(
       //
       if (PAL_ConfirmMenu())
       {
-         PAL_PlayMUS(0, FALSE, 2);
+         SOUND_PlayMUS(0, FALSE, 2);
          PAL_FadeOut(2);
          PAL_Shutdown();
          exit(0);

@@ -30,6 +30,7 @@ extern "C"
 {
 #endif
 
+#include <wchar.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -134,12 +135,17 @@ FILE *MY_fopen(const char *path, const char *mode);
 #ifndef _WIN32_WCE
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
 #define PAL_ALLOW_KEYREPEAT   1
-#define PAL_HAS_CD            1
+#define PAL_HAS_SDLCD         1
+#else
+#define PAL_HAS_SDLCD         0
 #endif
 #if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO) && !defined (__WINPHONE__)
 #define PAL_HAS_MP3           1
 #endif
 #endif
+#define PAL_HAS_OGG           1
+#define PAL_HAS_MAME          1   /* Should not be enabled for now, until M.A.M.E goes open source licenses */
+
 #ifndef PAL_PREFIX
 #define PAL_PREFIX            "./"
 #endif
@@ -161,7 +167,9 @@ FILE *MY_fopen(const char *path, const char *mode);
 #include <io.h>
 #endif
 
+#if defined(_MSC_VER) && _MSC_VER < 1900
 #define vsnprintf _vsnprintf
+#endif
 
 #ifdef _MSC_VER
 #pragma warning (disable:4244)
@@ -180,7 +188,6 @@ typedef const BYTE *LPCBYTE;
 #else
 
 #include <unistd.h>
-#include <wchar.h>
 
 #ifndef FALSE
 #define FALSE               0

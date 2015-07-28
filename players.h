@@ -30,28 +30,42 @@ extern "C"
 {
 #endif
 
-VOID
-RIX_FillBuffer(
-   LPBYTE     stream,
-   INT        len
-);
+typedef struct tagMUSICPLAYER
+{
+#define MUSICPLAYER_FUNCTIONS \
+	VOID (*Shutdown)(VOID*); \
+	BOOL (*Play)(VOID*, INT, BOOL, FLOAT); \
+	VOID (*FillBuffer)(VOID*, LPBYTE, INT)
 
-INT
+	MUSICPLAYER_FUNCTIONS;
+} MUSICPLAYER, *LPMUSICPLAYER;
+
+/* RIX */
+
+LPMUSICPLAYER
 RIX_Init(
    LPCSTR     szFileName
 );
 
-VOID
-RIX_Shutdown(
-   VOID
+/* OGG */
+#if PAL_HAS_OGG
+
+LPMUSICPLAYER
+OGG_Init(
+	LPCSTR    szFileName
 );
 
-VOID
-RIX_Play(
-   INT       iNumRIX,
-   BOOL      fLoop,
-   FLOAT     flFadeTime
+#endif
+
+/* MP3 */
+#if PAL_HAS_MP3
+
+LPMUSICPLAYER
+MP3_Init(
+	LPCSTR    szFileName
 );
+
+#endif
 
 #ifdef __cplusplus
 }

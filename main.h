@@ -30,7 +30,7 @@
 #include "map.h"
 #include "res.h"
 #include "scene.h"
-#include "rixplay.h"
+#include "players.h"
 #include "sound.h"
 #include "video.h"
 #include "input.h"

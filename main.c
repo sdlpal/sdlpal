@@ -38,6 +38,8 @@
 #define SPRITENUM_SPLASH_CRANE      0x49
 #define NUM_RIX_TITLE               0x05
 
+BOOL g_fUseMidi = FALSE;
+
 static VOID
 PAL_Init(
    WORD             wScreenWidth,
@@ -313,7 +315,7 @@ PAL_SplashScreen(
    if (!SOUND_PlayCDA(7))
    {
       fUseCD = FALSE;
-      PAL_PlayMUS(NUM_RIX_TITLE, TRUE, 2);
+      SOUND_PlayMUS(NUM_RIX_TITLE, TRUE, 2);
    }
 
    //
@@ -482,7 +484,7 @@ PAL_SplashScreen(
 
    if (!fUseCD)
    {
-      PAL_PlayMUS(0, FALSE, 1);
+      SOUND_PlayMUS(0, FALSE, 1);
    }
 
    PAL_FadeOut(1);

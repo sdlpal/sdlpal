@@ -21,6 +21,36 @@
     <Filter Include="libmad">
       <UniqueIdentifier>{1e3bd586-dfa2-4acb-8f38-8497f4539508}</UniqueIdentifier>
     </Filter>
+    <Filter Include="liboggvorbis">
+      <UniqueIdentifier>{41409523-ae4d-4412-8d91-8fb39f6d8121}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\src">
+      <UniqueIdentifier>{57265997-2f74-4813-ab40-18931967e914}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\src\modes">
+      <UniqueIdentifier>{389e57bc-2e50-49da-8358-81f59b8c067b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\src\books">
+      <UniqueIdentifier>{16724879-654d-4118-b03c-ec26d3e25011}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\src\books\coupled">
+      <UniqueIdentifier>{e24ad128-dd33-48d9-af61-1baeb222252e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\src\books\floor">
+      <UniqueIdentifier>{2ecd2b9f-7f2c-4ab7-82af-ff35d0dd195a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\src\books\uncoupled">
+      <UniqueIdentifier>{8e0d5701-eaeb-472a-b680-7f82b722f6f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\include">
+      <UniqueIdentifier>{fd63ae43-f47a-450a-a5a9-e7c9d462d157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\include\ogg">
+      <UniqueIdentifier>{e3c854bc-f6de-4b0c-82c3-1f0b05c1520e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\include\vorbis">
+      <UniqueIdentifier>{1da4fd33-6d94-4dbe-b0cd-2a9c9041df62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="battle.c">
@@ -185,6 +215,84 @@
     <ClCompile Include="yj1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="liboggvorbis\src\analysis.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\bitrate.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\bitwise.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\block.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\codebook.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\envelope.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\floor0.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\floor1.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\framing.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\info.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\lookup.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\lpc.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\lsp.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\mapping0.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\mdct.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\psy.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\registry.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\res0.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\sharedbook.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\smallft.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\synthesis.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\vorbisenc.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\vorbisfile.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="liboggvorbis\src\window.c">
+      <Filter>liboggvorbis\src</Filter>
+    </ClCompile>
+    <ClCompile Include="oggplay.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mp3player.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ascii.h">
@@ -242,9 +350,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="res.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rixplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="rngplay.h">
@@ -372,6 +477,150 @@
     </ClInclude>
     <ClInclude Include="adplug\kemuopl.h">
       <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\floor_all.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\psych_8.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\psych_11.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\psych_16.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\psych_44.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\residue_8.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\residue_16.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\residue_44.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\residue_44p51.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\residue_44u.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\setup_8.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\setup_11.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\setup_16.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\setup_22.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\setup_32.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\setup_44.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\setup_44p51.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\setup_44u.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\modes\setup_X.h">
+      <Filter>liboggvorbis\src\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\books\coupled\res_books_51.h">
+      <Filter>liboggvorbis\src\books\coupled</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\books\coupled\res_books_stereo.h">
+      <Filter>liboggvorbis\src\books\coupled</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\books\floor\floor_books.h">
+      <Filter>liboggvorbis\src\books\floor</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\books\uncoupled\res_books_uncoupled.h">
+      <Filter>liboggvorbis\src\books\uncoupled</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\backends.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\bitrate.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\codebook.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\codec_internal.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\envelope.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\highlevel.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\lookup.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\lookup_data.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\lpc.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\lsp.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\masking.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\mdct.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\misc.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\os.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\psy.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\registry.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\scales.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\smallft.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\src\window.h">
+      <Filter>liboggvorbis\src</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\include\vorbis\codec.h">
+      <Filter>liboggvorbis\include\vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\include\vorbis\vorbisenc.h">
+      <Filter>liboggvorbis\include\vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\include\vorbis\vorbisfile.h">
+      <Filter>liboggvorbis\include\vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\include\ogg\ogg.h">
+      <Filter>liboggvorbis\include\ogg</Filter>
+    </ClInclude>
+    <ClInclude Include="liboggvorbis\include\ogg\os_types.h">
+      <Filter>liboggvorbis\include\ogg</Filter>
+    </ClInclude>
+    <ClInclude Include="players.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

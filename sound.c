@@ -20,27 +20,24 @@
 //
 
 #include "palcommon.h"
-#include "common.h"
+#include "global.h"
 #include "sound.h"
-#include "rixplay.h"
+#include "players.h"
 #include "util.h"
+#include "resampler.h"
 
 #ifdef PAL_HAS_NATIVEMIDI
 #include "midi.h"
 #endif
 
-#ifdef PAL_HAS_MP3
-#include "libmad/music_mad.h"
+#if PAL_HAS_OGG
+#include <vorbis/codec.h>
 #endif
 
 static BOOL  gSndOpened = FALSE;
 
 BOOL         g_fNoSound = FALSE;
 BOOL         g_fNoMusic = FALSE;
-
-#ifdef PAL_HAS_NATIVEMIDI
-BOOL         g_fUseMidi = FALSE;
-#endif
 
 static BOOL  g_fUseWav = FALSE;
 
@@ -52,6 +49,8 @@ INT          g_iVolume  = SDL_MIX_MAXVOLUME * 0.1;
 int          g_iCurrChannel = 0;
 #endif
 
+#define PAL_CDTRACK_BASE    10000
+
 typedef struct tagSNDPLAYER
 {
    FILE                     *mkf;
@@ -59,14 +58,10 @@ typedef struct tagSNDPLAYER
    SDL_mutex                *mtx;
    LPBYTE                    buf[2], pos[2];
    INT                       audio_len[2];
-#ifdef PAL_HAS_CD
+   MUSICPLAYER              *pMusPlayer;
+   MUSICPLAYER              *pCDPlayer;
+#if PAL_HAS_SDLCD
    SDL_CD                   *pCD;
-#endif
-#ifdef PAL_HAS_MP3
-   mad_data                 *pMP3;
-   BOOL                      fMP3Loop;
-   INT                       iCurrentMP3;
-   SDL_mutex                *lock;
 #endif
 } SNDPLAYER;
 
@@ -141,7 +136,7 @@ SOUND_LoadVOCFromBuffer(
       //
       // Convert the sample manually, as SDL doesn't like "strange" sample rates.
       //
-      x = (INT)(len * ((FLOAT)PAL_SAMPLE_RATE / freq));
+      x = (INT)(len * ((FLOAT)gpGlobals->iSampleRate / freq));
 
       *lppBuffer = (LPBYTE)calloc(1, x);
       if (*lppBuffer == NULL)
@@ -150,7 +145,7 @@ SOUND_LoadVOCFromBuffer(
       }
       for (i = 0; i < x; i++)
       {
-         l = (INT)(i * (freq / (FLOAT)PAL_SAMPLE_RATE));
+         l = (INT)(i * (freq / (FLOAT)gpGlobals->iSampleRate));
          if (l >= len)
          {
             l = len - 1;
@@ -160,7 +155,7 @@ SOUND_LoadVOCFromBuffer(
 
       lpSpec->channels = 1;
       lpSpec->format = AUDIO_U8;
-      lpSpec->freq = PAL_SAMPLE_RATE;
+      lpSpec->freq = gpGlobals->iSampleRate;
       lpSpec->size = x;
 
 #else
@@ -221,25 +216,17 @@ SOUND_FillAudio(
    //
    if (!g_fNoMusic)
    {
-#ifdef PAL_HAS_MP3
-      SDL_mutexP(gSndPlayer.lock);
+	   SDL_mutexP(gSndPlayer.mtx);
+	   if (gSndPlayer.pMusPlayer)
+	   {
+		   gSndPlayer.pMusPlayer->FillBuffer(gSndPlayer.pMusPlayer, stream, len);
+	   }
 
-      if (gSndPlayer.pMP3 != NULL)
-      {
-         mad_getSamples(gSndPlayer.pMP3, stream, len);
-
-         if (!mad_isPlaying(gSndPlayer.pMP3) && gSndPlayer.fMP3Loop)
-         {
-            mad_seek(gSndPlayer.pMP3, 0);
-            mad_start(gSndPlayer.pMP3);
-
-            mad_getSamples(gSndPlayer.pMP3, stream, len);
-         }
-      }
-
-      SDL_mutexV(gSndPlayer.lock);
-#endif
-      RIX_FillBuffer(stream, len);
+	   if (gSndPlayer.pCDPlayer)
+	   {
+		   gSndPlayer.pCDPlayer->FillBuffer(gSndPlayer.pCDPlayer, stream, len);
+	   }
+	   SDL_mutexV(gSndPlayer.mtx);
    }
 
    //
@@ -307,6 +294,9 @@ SOUND_OpenAudio(
 --*/
 {
    SDL_AudioSpec spec;
+   char *mkfs[2];
+   BOOL use_wave[2];
+   int i;
 
    if (gSndOpened)
    {
@@ -321,27 +311,42 @@ SOUND_OpenAudio(
    //
    // Load the MKF file.
    //
-   gSndPlayer.mkf = UTIL_OpenFile("voc.mkf");
-   if (gSndPlayer.mkf == NULL)
+   if (gpGlobals->fIsWIN95)
    {
-      gSndPlayer.mkf = UTIL_OpenFile("sounds.mkf");
-      if (gSndPlayer.mkf == NULL)
-      {
-         return -2;
-      }
-      g_fUseWav = TRUE;
+	   mkfs[0] = "sounds.mkf"; use_wave[0] = TRUE;
+	   mkfs[1] = "voc.mkf"; use_wave[1] = FALSE;
    }
    else
    {
-      g_fUseWav = FALSE;
+	   mkfs[0] = "voc.mkf"; use_wave[0] = FALSE;
+	   mkfs[1] = "sounds.mkf"; use_wave[1] = TRUE;
    }
+
+   for (i = 0; i < 2; i++)
+   {
+	   gSndPlayer.mkf = UTIL_OpenFile(mkfs[i]);
+	   if (gSndPlayer.mkf)
+	   {
+		   g_fUseWav = use_wave[i];
+		   break;
+	   }
+   }
+   if (gSndPlayer.mkf == NULL)
+   {
+      return -2;
+   }
+
+   //
+   // Initialize the resampler
+   //
+   resampler_init();
 
    //
    // Open the sound subsystem.
    //
-   gSndPlayer.spec.freq = PAL_SAMPLE_RATE;
+   gSndPlayer.spec.freq = gpGlobals->iSampleRate;
    gSndPlayer.spec.format = AUDIO_S16;
-   gSndPlayer.spec.channels = PAL_CHANNELS;
+   gSndPlayer.spec.channels = gpGlobals->iAudioChannels;
    gSndPlayer.spec.samples = 1024;
    gSndPlayer.spec.callback = SOUND_FillAudio;
 
@@ -369,42 +374,79 @@ SOUND_OpenAudio(
    //
    // Initialize the music subsystem.
    //
-   if (RIX_Init(va("%s%s", PAL_PREFIX, "mus.mkf")) < 0)
+   switch (gpGlobals->eMusicType)
    {
-      RIX_Init(va("%s%s", PAL_PREFIX, "MUS.MKF"));
+   case MUSIC_RIX:
+	   if (!(gSndPlayer.pMusPlayer = RIX_Init(va("%s%s", PAL_PREFIX, "mus.mkf"))))
+	   {
+		   gSndPlayer.pMusPlayer = RIX_Init(va("%s%s", PAL_PREFIX, "MUS.MKF"));
+	   }
+	   break;
+   case MUSIC_MP3:
+#if PAL_HAS_MP3
+	   gSndPlayer.pMusPlayer = MP3_Init(NULL);
+#else
+	   gSndPlayer.pMusPlayer = NULL;
+#endif
+	   break;
+   case MUSIC_OGG:
+#if PAL_HAS_OGG
+	   gSndPlayer.pMusPlayer = OGG_Init(NULL);
+#else
+	   gSndPlayer.pMusPlayer = NULL;
+#endif
+	   break;
+   case MUSIC_MIDI:
+	   gSndPlayer.pMusPlayer = NULL;
+	   break;
    }
 
-#ifdef PAL_HAS_CD
    //
    // Initialize the CD audio.
    //
+   switch (gpGlobals->eCDType)
    {
-      int i;
-      gSndPlayer.pCD = NULL;
+   case MUSIC_SDLCD:
+   {
+#if PAL_HAS_SDLCD
+	   int i;
+	   gSndPlayer.pCD = NULL;
 
-      for (i = 0; i < SDL_CDNumDrives(); i++)
-      {
-         gSndPlayer.pCD = SDL_CDOpen(i);
-         if (gSndPlayer.pCD != NULL)
-         {
-            if (!CD_INDRIVE(SDL_CDStatus(gSndPlayer.pCD)))
-            {
-               SDL_CDClose(gSndPlayer.pCD);
-               gSndPlayer.pCD = NULL;
-            }
-            else
-            {
-               break;
-            }
-         }
-      }
+	   for (i = 0; i < SDL_CDNumDrives(); i++)
+	   {
+		   gSndPlayer.pCD = SDL_CDOpen(i);
+		   if (gSndPlayer.pCD != NULL)
+		   {
+			   if (!CD_INDRIVE(SDL_CDStatus(gSndPlayer.pCD)))
+			   {
+				   SDL_CDClose(gSndPlayer.pCD);
+				   gSndPlayer.pCD = NULL;
+			   }
+			   else
+			   {
+				   break;
+			   }
+		   }
+	   }
+#endif
+	   gSndPlayer.pCDPlayer = NULL;
+	   break;
    }
+   case MUSIC_MP3:
+#if PAL_HAS_MP3
+	   gSndPlayer.pCDPlayer = MP3_Init(NULL);
+#else
+	   gSndPlayer.pCDPlayer = NULL;
 #endif
-
-#ifdef PAL_HAS_MP3
-   gSndPlayer.iCurrentMP3 = -1;
-   gSndPlayer.lock = SDL_CreateMutex();
+	   break;
+   case MUSIC_OGG:
+#if PAL_HAS_OGG
+	   gSndPlayer.pCDPlayer = OGG_Init(NULL);
+#else
+	   gSndPlayer.pCDPlayer = NULL;
 #endif
+	   break;
+   }
 
    //
    // Let the callback function run so that musics will be played.
@@ -466,24 +508,19 @@ SOUND_CloseAudio(
       gSndPlayer.mkf = NULL;
    }
 
-   SDL_DestroyMutex(gSndPlayer.mtx);
-
-#ifdef PAL_HAS_MP3
-   SDL_mutexP(gSndPlayer.lock);
-
-   if (gSndPlayer.pMP3 != NULL)
+   if (gSndPlayer.pMusPlayer)
    {
-      mad_stop(gSndPlayer.pMP3);
-      mad_closeFile(gSndPlayer.pMP3);
-      gSndPlayer.pMP3 = NULL;
+	   gSndPlayer.pMusPlayer->Shutdown(gSndPlayer.pMusPlayer);
+	   gSndPlayer.pMusPlayer = NULL;
    }
 
-   SDL_DestroyMutex(gSndPlayer.lock);
-#endif
+   if (gSndPlayer.pCDPlayer)
+   {
+	   gSndPlayer.pCDPlayer->Shutdown(gSndPlayer.pCDPlayer);
+	   gSndPlayer.pCDPlayer = NULL;
+   }
 
-   RIX_Shutdown();
-
-#ifdef PAL_HAS_CD
+#if PAL_HAS_SDLCD
    if (gSndPlayer.pCD != NULL)
    {
       SOUND_PlayCDA(-1);
@@ -494,6 +531,16 @@ SOUND_CloseAudio(
 #ifdef PAL_HAS_NATIVEMIDI
    MIDI_Play(0, FALSE);
 #endif
+
+   SDL_DestroyMutex(gSndPlayer.mtx);
+}
+
+SDL_AudioSpec*
+SOUND_GetAudioSpec(
+	VOID
+)
+{
+	return &gSndPlayer.spec;
 }
 
 #ifdef __SYMBIAN32__
@@ -666,63 +713,27 @@ SOUND_PlayChannel(
 }
 
 VOID
-PAL_PlayMUS(
+SOUND_PlayMUS(
    INT       iNumRIX,
    BOOL      fLoop,
    FLOAT     flFadeTime
 )
 {
+	SDL_mutexP(gSndPlayer.mtx);
+
 #ifdef PAL_HAS_NATIVEMIDI
-   if (g_fUseMidi)
+   if (gpGlobals->eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(iNumRIX, fLoop);
       return;
    }
 #endif
 
-#ifdef PAL_HAS_MP3
-   SDL_mutexP(gSndPlayer.lock);
-
-   if (gSndPlayer.pMP3 != NULL)
+   if (gSndPlayer.pMusPlayer)
    {
-      if (iNumRIX == gSndPlayer.iCurrentMP3 && !g_fNoMusic)
-      {
-         SDL_mutexV(gSndPlayer.lock);
-         return;
-      }
-
-      mad_stop(gSndPlayer.pMP3);
-      mad_closeFile(gSndPlayer.pMP3);
-
-      gSndPlayer.pMP3 = NULL;
+	   gSndPlayer.pMusPlayer->Play(gSndPlayer.pMusPlayer, iNumRIX, fLoop, flFadeTime);
    }
-
-   SDL_mutexV(gSndPlayer.lock);
-
-   gSndPlayer.iCurrentMP3 = -1;
-
-   if (iNumRIX > 0)
-   {
-      SDL_mutexP(gSndPlayer.lock);
-
-      gSndPlayer.pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNumRIX), &gSndPlayer.spec);
-      if (gSndPlayer.pMP3 != NULL)
-      {
-         RIX_Play(0, FALSE, flFadeTime);
-
-         mad_start(gSndPlayer.pMP3);
-         gSndPlayer.fMP3Loop = fLoop;
-         gSndPlayer.iCurrentMP3 = iNumRIX;
-         SDL_mutexV(gSndPlayer.lock);
-
-         return;
-      }
-
-      SDL_mutexV(gSndPlayer.lock);
-   }
-#endif
-
-   RIX_Play(iNumRIX, fLoop, flFadeTime);
+   SDL_mutexV(gSndPlayer.mtx);
 }
 
 BOOL
@@ -744,7 +755,8 @@ SOUND_PlayCDA(
 
 --*/
 {
-#ifdef PAL_HAS_CD
+	BOOL ret = FALSE;
+#if PAL_HAS_SDLCD
    if (gSndPlayer.pCD != NULL)
    {
       if (CD_INDRIVE(SDL_CDStatus(gSndPlayer.pCD)))
@@ -753,7 +765,7 @@ SOUND_PlayCDA(
 
          if (iNumTrack != -1)
          {
-            PAL_PlayMUS(-1, FALSE, 0);
+            SOUND_PlayMUS(-1, FALSE, 0);
 
             if (SDL_CDPlayTracks(gSndPlayer.pCD, iNumTrack - 1, 0, 1, 0) == 0)
             {
@@ -763,6 +775,20 @@ SOUND_PlayCDA(
       }
    }
 #endif
+   SDL_mutexP(gSndPlayer.mtx);
+   if (gSndPlayer.pCDPlayer)
+   {
+	   if (iNumTrack != -1)
+	   {
+		   SOUND_PlayMUS(-1, FALSE, 0);
+		   ret = gSndPlayer.pCDPlayer->Play(gSndPlayer.pCDPlayer, PAL_CDTRACK_BASE + iNumTrack, TRUE, 0);
+	   }
+	   else
+	   {
+		   ret = gSndPlayer.pCDPlayer->Play(gSndPlayer.pCDPlayer, -1, FALSE, 0);
+	   }
+   }
+   SDL_mutexV(gSndPlayer.mtx);
 
-   return FALSE;
+   return ret;
 }

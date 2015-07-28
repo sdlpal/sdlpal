@@ -25,6 +25,7 @@
 #define GLOBAL_H
 
 #include "common.h"
+#include "palcommon.h"
 #include "map.h"
 #include "ui.h"
 
@@ -542,6 +543,21 @@ typedef struct tagPOISONSTATUS
    WORD              wPoisonScript;   // script entry
 } POISONSTATUS, *LPPOISONSTATUS;
 
+typedef enum tagMUSICTYPE
+{
+	MUSIC_RIX,
+	MUSIC_MIDI,
+	MUSIC_MP3,
+	MUSIC_OGG,
+	MUSIC_SDLCD
+} MUSICTYPE, *LPMUSICTYPE;
+
+typedef enum tagOPLTYPE
+{
+	OPL_DOSBOX,
+	OPL_MAME
+} OPLTYPE, *LPOPLTYPE;
+
 typedef struct tagGLOBALVARS
 {
    FILES            f;
@@ -593,12 +609,19 @@ typedef struct tagGLOBALVARS
    LPOBJECTDESC     lpObjectDesc;
    DWORD            dwFrameNum;
 
+   /* Configurable options */
    CODEPAGE         iCodePage;
    DWORD            dwWordLength;
    DWORD            dwExtraMagicDescLines;
    DWORD            dwExtraItemDescLines;
+   INT              iAudioChannels;
+   INT              iSampleRate;
+   MUSICTYPE        eMusicType;
+   MUSICTYPE        eCDType;
+   OPLTYPE          eOPLType;
    BOOL             fIsWIN95;
    BOOL             fUseEmbeddedFonts;
+   BOOL             fUseSurroundOPL;
 } GLOBALVARS, *LPGLOBALVARS;
 
 extern LPGLOBALVARS gpGlobals;
