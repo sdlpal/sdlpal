@@ -614,8 +614,10 @@ typedef struct tagGLOBALVARS
    DWORD            dwWordLength;
    DWORD            dwExtraMagicDescLines;
    DWORD            dwExtraItemDescLines;
+   double           dSurroundOPLOffset;
    INT              iAudioChannels;
    INT              iSampleRate;
+   INT              iOPLSampleRate;
    MUSICTYPE        eMusicType;
    MUSICTYPE        eCDType;
    OPLTYPE          eOPLType;

@@ -61,5 +61,13 @@
 #UseSurroundOPL=1
 
 # SampleRate: Indicates which sample rate to use, valid values include 44100 (default),
-#             22050, and some other rates.
+#             and 22050. Other values (<=48000) are supported but not recommended.
 #SampleRate=44100
+
+# OPLSampleRate: Indicates which sample rate to use for opl emulator. Suggested value
+#                is 49716, but other values may also be used.
+#OPLSampleRate=49716
+
+# SurroundOPLOffset: Indicates the frequency offset of surround opl. The default and
+#                    recommended value is 384.0, but other values may also be used.
+#SurroundOPLOffset=384.0

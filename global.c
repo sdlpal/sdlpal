@@ -74,7 +74,9 @@ PAL_InitGlobals(
    DWORD     dwUseEmbeddedFonts = 1;	// Default for using embedded fonts in DOS version
    DWORD     dwUseSurroundOPL = 1;		// Default for using surround opl
    DWORD     dwUseStereo = 1;			// Default for stereo audio
-   INT       iSampleRate = 44100;		// Default for 44KHz
+   float     flSurroundOPLOffset = 384.0f;// Default for 384.0
+   INT       iSampleRate = 44100;		// Default for 44100 Hz
+   INT       iOPLSampleRate = 49716;	// Default for 49716 Hz
    MUSICTYPE eMusicType = g_fUseMidi ? MUSIC_MIDI : MUSIC_RIX;
    MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;
    OPLTYPE   eOPLType = OPL_DOSBOX;
@@ -156,6 +158,14 @@ PAL_InitGlobals(
 				   {
 					   sscanf(ptr, "%d", &iSampleRate);
 					   if (iSampleRate > PAL_MAX_SAMPLERATE) iSampleRate = PAL_MAX_SAMPLERATE;
+				   }
+				   else if (SDL_strcasecmp(p, "OPLSAMPLERATE") == 0)
+				   {
+					   sscanf(ptr, "%d", &iOPLSampleRate);
+				   }
+				   else if (SDL_strcasecmp(p, "SURROUNDOPLOFFSET") == 0)
+				   {
+					   sscanf(ptr, "%f", &flSurroundOPLOffset);
 				   }
 				   else if (SDL_strcasecmp(p, "CD") == 0)
 				   {
@@ -239,15 +249,22 @@ PAL_InitGlobals(
 	   }
    }
 
-   // Choose version
+   //
+   // Set configurable global options
    gpGlobals->fIsWIN95 = dwIsDOS ? FALSE : TRUE;
    gpGlobals->fUseEmbeddedFonts = dwIsDOS && dwUseEmbeddedFonts ? TRUE : FALSE;
    gpGlobals->fUseSurroundOPL = dwUseStereo && dwUseSurroundOPL ? TRUE : FALSE;
    gpGlobals->iAudioChannels = dwUseStereo ? 2 : 1;
    gpGlobals->iSampleRate = iSampleRate;
+   gpGlobals->iOPLSampleRate = iOPLSampleRate;
+   gpGlobals->dSurroundOPLOffset = flSurroundOPLOffset;
    gpGlobals->eMusicType = eMusicType;
    gpGlobals->eCDType = eCDType;
    gpGlobals->eOPLType = eOPLType;
+   gpGlobals->iCodePage = iCodePage;
+   gpGlobals->dwWordLength = dwWordLength;
+   gpGlobals->dwExtraMagicDescLines = dwExtraMagicDescLines;
+   gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
 
    // Set decompress function
    Decompress = gpGlobals->fIsWIN95 ? YJ2_Decompress : YJ1_Decompress;
@@ -266,11 +283,6 @@ PAL_InitGlobals(
 
    gpGlobals->lpObjectDesc = gpGlobals->fIsWIN95 ? NULL : PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
    gpGlobals->bCurrentSaveSlot = 1;
-
-   gpGlobals->iCodePage = iCodePage;
-   gpGlobals->dwWordLength = dwWordLength;
-   gpGlobals->dwExtraMagicDescLines = dwExtraMagicDescLines;
-   gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
 
    return 0;
 }

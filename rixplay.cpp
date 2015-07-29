@@ -21,8 +21,6 @@
 #include "players.h"
 #include "sound.h"
 
-#define OPL_SAMPLERATE       49716
-
 #include "resampler.h"
 #include "adplug/opl.h"
 #include "adplug/demuopl.h"
@@ -363,15 +361,15 @@ RIX_Init(
 		{
 		case OPL_DOSBOX:
 			pRixPlayer->opl = new CSurroundopl(
-				new CDemuopl(OPL_SAMPLERATE, true, false),
-				new CDemuopl(OPL_SAMPLERATE, true, false),
-				true);
+				new CDemuopl(gpGlobals->iOPLSampleRate, true, false),
+				new CDemuopl(gpGlobals->iOPLSampleRate, true, false),
+				true, gpGlobals->iOPLSampleRate, gpGlobals->dSurroundOPLOffset);
 			break;
 		case OPL_MAME:
 			pRixPlayer->opl = new CSurroundopl(
-				new CEmuopl(OPL_SAMPLERATE, true, false),
-				new CEmuopl(OPL_SAMPLERATE, true, false),
-				true);
+				new CEmuopl(gpGlobals->iOPLSampleRate, true, false),
+				new CEmuopl(gpGlobals->iOPLSampleRate, true, false),
+				true, gpGlobals->iOPLSampleRate, gpGlobals->dSurroundOPLOffset);
 			break;
 		}
 	}
@@ -380,10 +378,10 @@ RIX_Init(
 		switch (gpGlobals->eOPLType)
 		{
 		case OPL_DOSBOX:
-			pRixPlayer->opl = new CDemuopl(OPL_SAMPLERATE, true, gpGlobals->iAudioChannels == 2);
+			pRixPlayer->opl = new CDemuopl(gpGlobals->iOPLSampleRate, true, gpGlobals->iAudioChannels == 2);
 			break;
 		case OPL_MAME:
-			pRixPlayer->opl = new CEmuopl(OPL_SAMPLERATE, true, gpGlobals->iAudioChannels == 2);
+			pRixPlayer->opl = new CEmuopl(gpGlobals->iOPLSampleRate, true, gpGlobals->iAudioChannels == 2);
 			break;
 		}
 	}
@@ -414,13 +412,13 @@ RIX_Init(
 		return NULL;
 	}
 
-	if (OPL_SAMPLERATE != gpGlobals->iSampleRate)
+	if (gpGlobals->iOPLSampleRate != gpGlobals->iSampleRate)
 	{
 		for (int i = 0; i < gpGlobals->iAudioChannels; i++)
 		{
 			pRixPlayer->resampler[i] = resampler_create();
 			resampler_set_quality(pRixPlayer->resampler[i], RESAMPLER_QUALITY_MAX);
-			resampler_set_rate(pRixPlayer->resampler[i], OPL_SAMPLERATE / (double)gpGlobals->iSampleRate);
+			resampler_set_rate(pRixPlayer->resampler[i], (double)gpGlobals->iOPLSampleRate / (double)gpGlobals->iSampleRate);
 		}
 	}
 
