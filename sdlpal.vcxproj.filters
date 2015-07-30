@@ -290,7 +290,7 @@
     <ClCompile Include="oggplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mp3player.c">
+    <ClCompile Include="mp3play.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

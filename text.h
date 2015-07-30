@@ -111,6 +111,15 @@ PAL_MultiByteToWideChar(
    int           wcslength
 );
 
+INT
+PAL_MultiByteToWideCharCP(
+	CODEPAGE      cp,
+	LPCSTR        mbs,
+	int           mbslength,
+	LPWSTR        wcs,
+	int           wcslength
+	);
+
 WCHAR
 PAL_GetInvalidChar(
    CODEPAGE      iCodePage

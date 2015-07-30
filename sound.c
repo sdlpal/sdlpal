@@ -25,6 +25,7 @@
 #include "players.h"
 #include "util.h"
 #include "resampler.h"
+#include <math.h>
 
 #ifdef PAL_HAS_NATIVEMIDI
 #include "midi.h"
@@ -39,8 +40,6 @@ static BOOL  gSndOpened = FALSE;
 BOOL         g_fNoSound = FALSE;
 BOOL         g_fNoMusic = FALSE;
 
-static BOOL  g_fUseWav = FALSE;
-
 #ifdef __SYMBIAN32__
 INT          g_iVolume  = SDL_MIX_MAXVOLUME * 0.1;
 #endif
@@ -51,6 +50,8 @@ int          g_iCurrChannel = 0;
 
 #define PAL_CDTRACK_BASE    10000
 
+typedef LPCBYTE(*FNLoadSoundData)(LPCBYTE, DWORD, SDL_AudioSpec *);
+
 typedef struct tagSNDPLAYER
 {
    FILE                     *mkf;
@@ -58,126 +59,362 @@ typedef struct tagSNDPLAYER
    SDL_mutex                *mtx;
    LPBYTE                    buf[2], pos[2];
    INT                       audio_len[2];
+   void                     *resampler;
    MUSICPLAYER              *pMusPlayer;
    MUSICPLAYER              *pCDPlayer;
 #if PAL_HAS_SDLCD
    SDL_CD                   *pCD;
 #endif
+   FNLoadSoundData           LoadSoundData;
 } SNDPLAYER;
 
 static SNDPLAYER gSndPlayer;
 
-static SDL_AudioSpec *
-SOUND_LoadVOCFromBuffer(
-   LPCBYTE                lpVOC,
-   DWORD                  dwLen,
-   SDL_AudioSpec         *lpSpec,
-   LPBYTE                *lppBuffer
-)
+typedef struct tagRIFFHEADER
+{
+	DWORD   riff_sig;	/* 'RIFF' */
+	DWORD   data_length;	/* Total length minus eight, little-endian */
+	DWORD   riff_type;	/* 'WAVE' */
+} RIFFHEADER, *LPRIFFHEADER;
+typedef const RIFFHEADER *LPCRIFFHEADER;
+
+typedef struct tagRIFFCHUNK
+{
+	DWORD   chunk_type;	/* 'fmt ' and so on */
+	DWORD   chunk_length;	/* Total chunk length minus eight, little-endian */
+} RIFFCHUNK, *LPRIFFCHUNK;
+typedef const RIFFCHUNK *LPCRIFFCHUNK;
+
+typedef struct tagWAVEFORMATPCM
+{
+	WORD    wFormatTag;        /* format type */
+	WORD    nChannels;         /* number of channels (i.e. mono, stereo, etc.) */
+	DWORD   nSamplesPerSec;    /* sample rate */
+	DWORD   nAvgBytesPerSec;   /* for buffer estimation */
+	WORD    nBlockAlign;       /* block size of data */
+	WORD    wBitsPerSample;
+} WAVEFORMATPCM, *LPWAVEFORMATPCM;
+typedef const WAVEFORMATPCM *LPCWAVEFORMATPCM;
+
+static LPCBYTE
+SOUND_LoadWAVEData(
+	LPCBYTE                lpData,
+	DWORD                  dwLen,
+	SDL_AudioSpec         *lpSpec
+	)
+	/*++
+		Purpose:
+
+		Return the WAVE data pointer inside the input buffer.
+
+		Parameters:
+
+		[IN]  lpData - pointer to the buffer of the WAVE file.
+
+		[IN]  dwLen - length of the buffer of the WAVE file.
+
+		[OUT] lpSpec - pointer to the SDL_AudioSpec structure, which contains
+                       some basic information about the WAVE file.
+
+		Return value:
+
+		Pointer to the WAVE data inside the input buffer, NULL if failed.
+
+	--*/
+{
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#	define RIFF		'RIFF'
+#	define WAVE		'WAVE'
+#	define FMT		'fmt '
+#	define DATA		'data'
+#	define PCM     0x0100
+#else
+#	define RIFF		'FFIR'
+#	define WAVE		'EVAW'
+#	define FMT		' tmf'
+#	define DATA		'atad'
+#	define PCM     0x0001
+#endif
+	LPCRIFFHEADER lpRiff = (LPCRIFFHEADER)lpData;
+	LPCRIFFCHUNK lpChunk;
+	LPCWAVEFORMATPCM lpFormat = NULL;
+	LPCBYTE lpWaveData = NULL;
+	DWORD len;
+
+	if (dwLen < sizeof(RIFFHEADER) || lpRiff->riff_sig != RIFF || lpRiff->riff_type != WAVE || dwLen < SDL_SwapLE32(lpRiff->data_length) + 8)
+	{
+		return NULL;
+	}
+
+	lpChunk = (LPCRIFFCHUNK)(lpRiff + 1); dwLen -= sizeof(RIFFHEADER);
+	while (dwLen >= sizeof(RIFFCHUNK))
+	{
+		len = SDL_SwapLE32(lpChunk->chunk_length);
+		if (dwLen >= sizeof(RIFFCHUNK) + len)
+			dwLen -= sizeof(RIFFCHUNK) + len;
+		else
+			return NULL;
+
+		switch (lpChunk->chunk_type)
+		{
+		case FMT:
+			lpFormat = (LPCWAVEFORMATPCM)(lpChunk + 1);
+			if (len != sizeof(WAVEFORMATPCM) || lpFormat->wFormatTag != PCM)
+			{
+				return NULL;
+			}
+			break;
+		case DATA:
+			lpWaveData = (LPCBYTE)(lpChunk + 1);
+			dwLen = 0;
+			break;
+		}
+		lpChunk = (LPCRIFFCHUNK)((LPCBYTE)(lpChunk + 1) + len);
+	}
+
+	if (lpFormat == NULL || lpWaveData == NULL)
+	{
+		return NULL;
+	}
+
+	lpSpec->channels = lpFormat->nChannels;
+	lpSpec->format = (lpFormat->wBitsPerSample == 16) ? AUDIO_S16 : AUDIO_U8;
+	lpSpec->freq = lpFormat->nSamplesPerSec;
+	lpSpec->size = len;
+
+	return lpWaveData;
+
+#undef RIFF
+#undef WAVE
+#undef FMT
+}
+
+typedef struct tagVOCHEADER
+{
+	char    signature[0x14];	/* "Creative Voice File\x1A" */
+	WORD    data_offset;		/* little endian */
+	WORD	version;
+	WORD	version_checksum;
+} VOCHEADER, *LPVOCHEADER;
+typedef const VOCHEADER *LPCVOCHEADER;
+
+static LPCBYTE
+SOUND_LoadVOCData(
+	LPCBYTE                lpData,
+	DWORD                  dwLen,
+	SDL_AudioSpec         *lpSpec
+	)
 /*++
-  Purpose:
+	Purpose:
 
-    Load a VOC file in a buffer. Currently supports type 01 block only.
+	Return the VOC data pointer inside the input buffer. Currently supports type 01 block only.
 
-  Parameters:
+	Parameters:
 
-    [IN]  lpVOC - pointer to the buffer of the VOC file.
+	[IN]  lpData - pointer to the buffer of the VOC file.
 
-    [IN]  dwLen - length of the buffer of the VOC file.
+	[IN]  dwLen - length of the buffer of the VOC file.
 
-    [OUT] lpSpec - pointer to the SDL_AudioSpec structure, which contains
+	[OUT] lpSpec - pointer to the SDL_AudioSpec structure, which contains
                    some basic information about the VOC file.
 
-    [OUT] lppBuffer - the output buffer.
+	Return value:
 
-  Return value:
+	Pointer to the WAVE data inside the input buffer, NULL if failed.
 
-    Pointer to the SDL_AudioSpec structure, NULL if failed.
-
+	Reference: http://sox.sourceforge.net/AudioFormats-11.html
 --*/
 {
-   INT freq, len, x, i, l;
-   SDL_RWops *rw;
+	LPCVOCHEADER lpVOC = (LPCVOCHEADER)lpData;
 
-   if (g_fUseWav)
-   {
-      rw = SDL_RWFromConstMem(lpVOC, dwLen);
-      if (rw == NULL) return NULL;
+	if (dwLen < sizeof(VOCHEADER) || memcmp(lpVOC->signature, "Creative Voice File\x1A", 0x14) || SDL_SwapLE16(lpVOC->data_offset) >= dwLen)
+	{
+		return NULL;
+	}
 
-      len = dwLen;
+	lpData += SDL_SwapLE16(lpVOC->data_offset);
+	dwLen -= SDL_SwapLE16(lpVOC->data_offset);
 
-      SDL_LoadWAV_RW(rw, 1, lpSpec, lppBuffer, (Uint32 *)&len);
-      lpSpec->size = len;
+	while (dwLen && *lpData)
+	{
+		DWORD len;
+		if (dwLen >= 4)
+		{
+			len = lpData[1] | (lpData[2] << 8) | (lpData[3] << 16);
+			if (dwLen >= len + 4)
+				dwLen -= len + 4;
+			else
+				return NULL;
+		}
+		else
+		{
+			return NULL;
+		}
+		if (*lpData == 0x01)
+		{
+			if (lpData[5] != 0) return NULL;	/* Only 8-bit is supported */
 
-      return lpSpec;
-   }
-   else
-   {
-      //
-      // Skip header
-      //
-      lpVOC += 0x1B;
+			lpSpec->format = AUDIO_U8;
+			lpSpec->channels = 1;
+			lpSpec->freq = ((1000000 / (256 - lpData[4]) + 99) / 100) * 100; /* Round to next 100Hz */
+			lpSpec->size = len - 2;
 
-      //
-      // Length is 3 bytes long
-      //
-      len = (lpVOC[0] | (lpVOC[1] << 8) | (lpVOC[2] << 16)) - 2;
-      lpVOC += 3;
+			return lpData + 6;
+		}
+		else
+		{
+			lpData += len + 4;
+		}
+	}
 
-      //
-      // One byte for frequency
-      //
-      freq = 1000000 / (256 - *lpVOC);
+	return NULL;
+}
 
-#if 1
+static void
+SOUND_ResampleU8(
+	LPCBYTE                lpData,
+	const SDL_AudioSpec   *lpSpec,
+	LPBYTE                 lpBuffer,
+	DWORD                  dwLen,
+	void                  *resampler
+	)
+/*++
+	Purpose:
 
-      lpVOC += 2;
+	Resample 8-bit unsigned PCM data into 16-bit signed (little-endian) PCM data.
 
-      //
-      // Convert the sample manually, as SDL doesn't like "strange" sample rates.
-      //
-      x = (INT)(len * ((FLOAT)gpGlobals->iSampleRate / freq));
+	Parameters:
 
-      *lppBuffer = (LPBYTE)calloc(1, x);
-      if (*lppBuffer == NULL)
-      {
-         return NULL;
-      }
-      for (i = 0; i < x; i++)
-      {
-         l = (INT)(i * (freq / (FLOAT)gpGlobals->iSampleRate));
-         if (l >= len)
-         {
-            l = len - 1;
-         }
-         (*lppBuffer)[i] = lpVOC[l];
-      }
+	[IN]  lpData - pointer to the buffer of the input PCM data.
 
-      lpSpec->channels = 1;
-      lpSpec->format = AUDIO_U8;
-      lpSpec->freq = gpGlobals->iSampleRate;
-      lpSpec->size = x;
+	[IN]  lpSpec - pointer to the SDL_AudioSpec structure, which contains
+                   some basic information about the input PCM data.
 
-#else
+	[IN]  lpBuffer - pointer of the buffer of the output PCM data.
 
-      *lppBuffer = (unsigned char *)malloc(len);
-      if (*lppBuffer == NULL)
-      {
-         return NULL;
-      }
+	[IN]  dwLen - length of the buffer of the output PCM data, should be exactly
+                  the number of bytes needed of the resampled data.
 
-      lpSpec->channels = 1;
-      lpSpec->format = AUDIO_U8;
-      lpSpec->freq = freq;
-      lpSpec->size = len;
+	[IN]  resampler - pointer of the resampler instance.
 
-      lpVOC += 2;
-      memcpy(*lppBuffer, lpVOC, len);
+	Return value:
 
-#endif
+	None.
+--*/
+{
+	int src_samples = lpSpec->size / lpSpec->channels, i;
 
-      return lpSpec;
-   }
+	for (i = 0; i < lpSpec->channels; i++)
+	{
+		LPCBYTE src = lpData + i;
+		short *dst = (short *)lpBuffer + i;
+		int channel_len = dwLen / lpSpec->channels, total_bytes = 0;
+
+		resampler_clear(resampler);
+		while (total_bytes < channel_len && src_samples > 0)
+		{
+			int to_write, j;
+			to_write = resampler_get_free_count(resampler);
+			if (to_write > src_samples) to_write = src_samples;
+			for (j = 0; j < to_write; j++)
+			{
+				resampler_write_sample(resampler, (*src ^ 0x80) << 8);
+				src += lpSpec->channels;
+			}
+			src_samples -= to_write;
+			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
+			{
+				*dst = SDL_SwapLE16(resampler_get_and_remove_sample(resampler));
+				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
+			}
+		}
+		/* Flush resampler's output buffer */
+		while (total_bytes < channel_len)
+		{
+			int j, to_write = resampler_get_free_count(resampler);
+			for (j = 0; j < to_write; j++)
+				resampler_write_sample(resampler, (src[-lpSpec->channels] ^ 0x80) << 8);
+			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
+			{
+				*dst = SDL_SwapLE16(resampler_get_and_remove_sample(resampler));
+				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
+			}
+		}
+	}
+}
+
+static void
+SOUND_ResampleS16(
+	LPCBYTE                lpData,
+	const SDL_AudioSpec   *lpSpec,
+	LPBYTE                 lpBuffer,
+	DWORD                  dwLen,
+	void                  *resampler
+	)
+/*++
+	Purpose:
+
+	Resample 16-bit signed (little-endian) PCM data into 16-bit signed (little-endian) PCM data.
+
+	Parameters:
+
+	[IN]  lpData - pointer to the buffer of the input PCM data.
+
+	[IN]  lpSpec - pointer to the SDL_AudioSpec structure, which contains
+                   some basic information about the input PCM data.
+
+	[IN]  lpBuffer - pointer of the buffer of the output PCM data.
+
+	[IN]  dwLen - length of the buffer of the output PCM data, should be exactly
+                  the number of bytes needed of the resampled data.
+
+	[IN]  resampler - pointer of the resampler instance.
+
+	Return value:
+
+	None.
+--*/
+{
+	int src_samples = lpSpec->size / lpSpec->channels / 2, i;
+
+	for (i = 0; i < lpSpec->channels; i++)
+	{
+		const short *src = (short *)lpData + i;
+		short *dst = (short *)lpBuffer + i;
+		int channel_len = dwLen / lpSpec->channels, total_bytes = 0;
+
+		resampler_clear(resampler);
+		while (total_bytes < channel_len && src_samples > 0)
+		{
+			int to_write, j;
+			to_write = resampler_get_free_count(resampler);
+			if (to_write > src_samples) to_write = src_samples;
+			for (j = 0; j < to_write; j++)
+			{
+				resampler_write_sample(resampler, SDL_SwapLE16(*src));
+				src += lpSpec->channels;
+			}
+			src_samples -= to_write;
+			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
+			{
+				*dst = SDL_SwapLE16(resampler_get_and_remove_sample(resampler));
+				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
+			}
+		}
+		/* Flush resampler's output buffer */
+		while (total_bytes < channel_len)
+		{
+			int j, to_write = resampler_get_free_count(resampler);
+			short val = SDL_SwapLE16(src[-lpSpec->channels]);
+			for (j = 0; j < to_write; j++)
+				resampler_write_sample(resampler, val);
+			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
+			{
+				*dst = SDL_SwapLE16(resampler_get_and_remove_sample(resampler));
+				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
+			}
+		}
+	}
 }
 
 static VOID SDLCALL
@@ -295,7 +532,7 @@ SOUND_OpenAudio(
 {
    SDL_AudioSpec spec;
    char *mkfs[2];
-   BOOL use_wave[2];
+   FNLoadSoundData func[2];
    int i;
 
    if (gSndOpened)
@@ -313,13 +550,13 @@ SOUND_OpenAudio(
    //
    if (gpGlobals->fIsWIN95)
    {
-	   mkfs[0] = "sounds.mkf"; use_wave[0] = TRUE;
-	   mkfs[1] = "voc.mkf"; use_wave[1] = FALSE;
+	   mkfs[0] = "sounds.mkf"; func[0] = SOUND_LoadWAVEData;
+	   mkfs[1] = "voc.mkf"; func[1] = SOUND_LoadVOCData;
    }
    else
    {
-	   mkfs[0] = "voc.mkf"; use_wave[0] = FALSE;
-	   mkfs[1] = "sounds.mkf"; use_wave[1] = TRUE;
+	   mkfs[0] = "voc.mkf"; func[0] = SOUND_LoadVOCData;
+	   mkfs[1] = "sounds.mkf"; func[1] = SOUND_LoadWAVEData;
    }
 
    for (i = 0; i < 2; i++)
@@ -327,7 +564,7 @@ SOUND_OpenAudio(
 	   gSndPlayer.mkf = UTIL_OpenFile(mkfs[i]);
 	   if (gSndPlayer.mkf)
 	   {
-		   g_fUseWav = use_wave[i];
+		   gSndPlayer.LoadSoundData = func[i];
 		   break;
 	   }
    }
@@ -340,6 +577,7 @@ SOUND_OpenAudio(
    // Initialize the resampler
    //
    resampler_init();
+   gSndPlayer.resampler = resampler_create();
 
    //
    // Open the sound subsystem.
@@ -456,18 +694,6 @@ SOUND_OpenAudio(
    return 0;
 }
 
-#ifdef PSP
-void
-SOUND_ReloadVOC(
-	void
-)
-{
-   fclose(gSndPlayer.mkf);
-   gSndPlayer.mkf = UTIL_OpenFile("voc.mkf");
-   g_fUseWav = FALSE;
-}
-#endif
-
 VOID
 SOUND_CloseAudio(
    VOID
@@ -531,6 +757,12 @@ SOUND_CloseAudio(
 #ifdef PAL_HAS_NATIVEMIDI
    MIDI_Play(0, FALSE);
 #endif
+
+   if (gSndPlayer.resampler)
+   {
+      resampler_delete(gSndPlayer.resampler);
+	  gSndPlayer.resampler = NULL;
+   }
 
    SDL_DestroyMutex(gSndPlayer.mtx);
 }
@@ -615,7 +847,7 @@ SOUND_PlayChannel(
    SDL_AudioCVT    wavecvt;
    SDL_AudioSpec   wavespec;
    LPBYTE          buf, bufdec;
-   UINT            samplesize;
+   LPCBYTE         bufsrc;
    int             len;
 
    if (!gSndOpened || g_fNoSound)
@@ -629,9 +861,8 @@ SOUND_PlayChannel(
    SDL_mutexP(gSndPlayer.mtx);
    if (gSndPlayer.buf[iChannel] != NULL)
    {
-      LPBYTE p = gSndPlayer.buf[iChannel];
+      free(gSndPlayer.buf[iChannel]);
       gSndPlayer.buf[iChannel] = NULL;
-      free(p);
    }
    SDL_mutexV(gSndPlayer.mtx);
 
@@ -649,7 +880,7 @@ SOUND_PlayChannel(
       return;
    }
 
-   buf = (LPBYTE)calloc(len, 1);
+   buf = (LPBYTE)malloc(len);
    if (buf == NULL)
    {
       return;
@@ -660,8 +891,42 @@ SOUND_PlayChannel(
    //
    PAL_MKFReadChunk(buf, len, iSoundNum, gSndPlayer.mkf);
 
-   SOUND_LoadVOCFromBuffer(buf, len, &wavespec, &bufdec);
-   free(buf);
+   bufsrc = gSndPlayer.LoadSoundData(buf, len, &wavespec);
+   if (bufsrc == NULL)
+   {
+	   free(buf);
+	   return;
+   }
+
+   if (wavespec.freq != gSndPlayer.spec.freq)
+   {
+	   /* Resampler is needed */
+	   resampler_set_quality(gSndPlayer.resampler, SOUND_IsIntegerConversion(wavespec.freq) ? RESAMPLER_QUALITY_MIN : gpGlobals->iResampleQuality);
+	   resampler_set_rate(gSndPlayer.resampler, (double)wavespec.freq / (double)gSndPlayer.spec.freq);
+	   len = (int)ceil(wavespec.size * (double)gSndPlayer.spec.freq / (double)wavespec.freq) * (SDL_AUDIO_BITSIZE(AUDIO_S16) / SDL_AUDIO_BITSIZE(wavespec.format));
+	   if (len >= wavespec.channels * 2)
+	   {
+		   bufdec = malloc(len);
+		   if (wavespec.format == AUDIO_S16)
+			   SOUND_ResampleS16(bufsrc, &wavespec, bufdec, len, gSndPlayer.resampler);
+		   else
+			   SOUND_ResampleU8(bufsrc, &wavespec, bufdec, len, gSndPlayer.resampler);
+		   /* Free the original buffer and reset the pointer for simpler later operations */
+		   free(buf); buf = bufdec;
+		   wavespec.format = AUDIO_S16;
+		   wavespec.freq = gSndPlayer.spec.freq;
+	   }
+	   else
+	   {
+		   free(buf);
+		   return;
+	   }
+   }
+   else
+   {
+	   bufdec = (LPBYTE)bufsrc;
+	   len = wavespec.size;
+   }
 
    //
    // Build the audio converter and create conversion buffers
@@ -669,42 +934,34 @@ SOUND_PlayChannel(
    if (SDL_BuildAudioCVT(&wavecvt, wavespec.format, wavespec.channels, wavespec.freq,
       gSndPlayer.spec.format, gSndPlayer.spec.channels, gSndPlayer.spec.freq) < 0)
    {
-      free(bufdec);
+      free(buf);
       return;
    }
 
-   samplesize = ((wavespec.format & 0xFF) / 8) * wavespec.channels;
-   wavecvt.len = wavespec.size & ~(samplesize - 1);
+   wavecvt.len = len & ~((SDL_AUDIO_BITSIZE(wavespec.format) >> 3) * wavespec.channels - 1);
    wavecvt.buf = (LPBYTE)malloc(wavecvt.len * wavecvt.len_mult);
    if (wavecvt.buf == NULL)
    {
-      free(bufdec);
+      free(buf);
       return;
    }
-   memcpy(wavecvt.buf, bufdec, wavespec.size);
-   if (g_fUseWav)
-   {
-      SDL_FreeWAV(bufdec);
-   }
-   else
-   {
-      free(bufdec);
-   }
+   memcpy(wavecvt.buf, bufdec, len);
+   free(buf);
 
    //
    // Run the audio converter
    //
    if (SDL_ConvertAudio(&wavecvt) < 0)
    {
+      free(wavecvt.buf);
       return;
    }
 
    SDL_mutexP(gSndPlayer.mtx);
    if (gSndPlayer.buf[iChannel] != NULL)
    {
-	   LPBYTE p = gSndPlayer.buf[iChannel];
+	   free(gSndPlayer.buf[iChannel]);
 	   gSndPlayer.buf[iChannel] = NULL;
-	   free(p);
    }
    gSndPlayer.buf[iChannel] = wavecvt.buf;
    gSndPlayer.audio_len[iChannel] = wavecvt.len * wavecvt.len_mult;

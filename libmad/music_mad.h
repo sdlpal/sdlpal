@@ -40,6 +40,7 @@ enum {
 
 typedef struct {
   SDL_RWops *rw;
+  void *resampler[2];	/* SDLPAL: Avoid to use SDL's stupid resampler */
   struct mad_stream stream;
   struct mad_frame frame;
   struct mad_synth synth;
@@ -48,6 +49,8 @@ typedef struct {
   int volume;
   int status;
   int output_begin, output_end;
+  int upsample; /* SDLPAL: Is upsample or downsample */
+  int resampler_quality; /* SDLPAL:resampler quality */
   SDL_AudioSpec mixer;
   SDL_AudioCVT cvt;
 
@@ -55,8 +58,8 @@ typedef struct {
   unsigned char output_buffer[MAD_OUTPUT_BUFFER_SIZE];
 } mad_data;
 
-mad_data *mad_openFile(const char *filename, SDL_AudioSpec *mixer);
-mad_data *mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer);
+mad_data *mad_openFile(const char *filename, SDL_AudioSpec *mixer, int resampler_quality);
+mad_data *mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer, int resampler_quality);
 void mad_closeFile(mad_data *mp3_mad);
 
 void mad_start(mad_data *mp3_mad);

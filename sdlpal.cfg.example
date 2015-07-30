@@ -4,8 +4,8 @@
 # Lines started with '#' is treated as comments.    #
 #####################################################
 
-# CodePage: Indicates the codepage to use, 0 for big5, 1 for gbk, 2 for shift-jis.
-#           If not specified, SDLPAL will try to detect automatically (default).
+# CodePage: Indicates the codepage to use, 0 for big5 (default), 1 for gbk,
+#           2 for shift-jis.
 #CodePage=0
 
 # WordLength: Idicates the length of each word, 10 for chinese version (default),
@@ -71,3 +71,7 @@
 # SurroundOPLOffset: Indicates the frequency offset of surround opl. The default and
 #                    recommended value is 384.0, but other values may also be used.
 #SurroundOPLOffset=384.0
+
+# ResampleQuality: Indicates the resample quality, valid values from 0 to 4 (default).
+#                  Larger value indicates higher quality and higher hardware requirement.
+#ResampleQuality=4

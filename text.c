@@ -988,7 +988,8 @@ PAL_DialogIsPlayingRNG(
 }
 
 INT
-PAL_MultiByteToWideChar(
+PAL_MultiByteToWideCharCP(
+   CODEPAGE      cp,
    LPCSTR        mbs,
    int           mbslength,
    LPWSTR        wcs,
@@ -1001,6 +1002,7 @@ PAL_MultiByteToWideChar(
 
   Parameters:
 
+    [IN]  cp - Code page for conversion.
     [IN]  mbs - Pointer to the multi-byte string.
 	[IN]  mbslength - Length of the multi-byte string, or -1 for auto-detect.
 	[IN]  wcs - Pointer to the wide string buffer.
@@ -1025,7 +1027,7 @@ PAL_MultiByteToWideChar(
 
 	if (!wcs)
 	{
-		switch (gpGlobals->iCodePage)
+		switch (cp)
 		{
 		case CP_SHIFTJIS:
 			for (i = 0; i < mbslength && mbs[i]; i++)
@@ -1069,7 +1071,7 @@ PAL_MultiByteToWideChar(
 	else
 	{
 		WCHAR invalid_char;
-		switch (gpGlobals->iCodePage)
+		switch (cp)
 		{
 		case CP_SHIFTJIS:
 			invalid_char = 0x30fb;
@@ -1169,6 +1171,37 @@ PAL_MultiByteToWideChar(
 		return wlen;
 
 	}
+}
+
+INT
+PAL_MultiByteToWideChar(
+   LPCSTR        mbs,
+   int           mbslength,
+   LPWSTR        wcs,
+   int           wcslength
+)
+/*++
+  Purpose:
+
+    Convert multi-byte string into the corresponding unicode string.
+
+  Parameters:
+
+    [IN]  mbs - Pointer to the multi-byte string.
+	[IN]  mbslength - Length of the multi-byte string, or -1 for auto-detect.
+	[IN]  wcs - Pointer to the wide string buffer.
+	[IN]  wcslength - Length of the wide string buffer.
+
+  Return value:
+
+    The length of converted wide string. If mbslength is set to -1, the returned
+	value includes the terminal null-char; otherwise, the null-char is not included.
+	If wcslength is set to 0, wcs can be set to NULL and the return value is the
+	required length of the wide string buffer.
+
+--*/
+{
+	return PAL_MultiByteToWideCharCP(gpGlobals->iCodePage, mbs, mbslength, wcs, wcslength);
 }
 
 WCHAR

@@ -226,7 +226,7 @@ RIX_FillBuffer(
 		SHORT* ptr = (SHORT*)stream;
 		for (i = 0; i < (int)(l / sizeof(SHORT)); i++)
 		{
-			*ptr++ = SWAP16((int)(*(SHORT *)(pRixPlayer->pos)) * volume / SDL_MIX_MAXVOLUME);
+			*ptr++ = SDL_SwapLE16((int)(*(SHORT *)(pRixPlayer->pos)) * volume / SDL_MIX_MAXVOLUME);
 			pRixPlayer->pos += sizeof(SHORT);
 		}
 		stream = (LPBYTE)ptr;
@@ -417,7 +417,7 @@ RIX_Init(
 		for (int i = 0; i < gpGlobals->iAudioChannels; i++)
 		{
 			pRixPlayer->resampler[i] = resampler_create();
-			resampler_set_quality(pRixPlayer->resampler[i], RESAMPLER_QUALITY_MAX);
+			resampler_set_quality(pRixPlayer->resampler[i], SOUND_IsIntegerConversion(gpGlobals->iOPLSampleRate) ? RESAMPLER_QUALITY_MIN : gpGlobals->iResampleQuality);
 			resampler_set_rate(pRixPlayer->resampler[i], (double)gpGlobals->iOPLSampleRate / (double)gpGlobals->iSampleRate);
 		}
 	}

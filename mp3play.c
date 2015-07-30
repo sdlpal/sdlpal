@@ -18,11 +18,13 @@
 //
 
 #include "util.h"
+#include "global.h"
 
 #if PAL_HAS_MP3
 
 #include "sound.h"
 #include "players.h"
+#include "resampler.h"
 #include "libmad/music_mad.h"
 
 typedef struct tagMP3PLAYER
@@ -109,9 +111,9 @@ MP3_Play(
 
 	if (iNum > 0)
 	{
-		if ((player->pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNum), SOUND_GetAudioSpec())) == NULL)
+		if ((player->pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gpGlobals->iResampleQuality)) == NULL)
 		{
-			player->pMP3 = mad_openFile(va("%s/MP3/%.2d.MP3", PAL_PREFIX, iNum), SOUND_GetAudioSpec());
+			player->pMP3 = mad_openFile(va("%s/MP3/%.2d.MP3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gpGlobals->iResampleQuality);
 		}
 
 		if (player->pMP3)
