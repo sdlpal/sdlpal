@@ -675,7 +675,7 @@ PAL_MKFGetChunkCount(
    fseek(fp, 0, SEEK_SET);
    fread(&iNumChunk, sizeof(INT), 1, fp);
 
-   iNumChunk = (SWAP32(iNumChunk) - 4) / 4;
+   iNumChunk = (SDL_SwapLE32(iNumChunk) - 4) / 4;
    return iNumChunk;
 }
 
@@ -721,8 +721,8 @@ PAL_MKFGetChunkSize(
    fseek(fp, 4 * uiChunkNum, SEEK_SET);
    fread(&uiOffset, sizeof(UINT), 1, fp);
    fread(&uiNextOffset, sizeof(UINT), 1, fp);
-   uiOffset = SWAP32(uiOffset);
-   uiNextOffset = SWAP32(uiNextOffset);
+   uiOffset = SDL_SwapLE32(uiOffset);
+   uiNextOffset = SDL_SwapLE32(uiNextOffset);
 
    //
    // Return the length of the chunk.
@@ -785,8 +785,8 @@ PAL_MKFReadChunk(
    fseek(fp, 4 * uiChunkNum, SEEK_SET);
    fread(&uiOffset, 4, 1, fp);
    fread(&uiNextOffset, 4, 1, fp);
-   uiOffset = SWAP32(uiOffset);
-   uiNextOffset = SWAP32(uiNextOffset);
+   uiOffset = SDL_SwapLE32(uiOffset);
+   uiNextOffset = SDL_SwapLE32(uiNextOffset);
 
    //
    // Get the length of the chunk.
@@ -857,7 +857,7 @@ PAL_MKFGetDecompressedSize(
    //
    fseek(fp, 4 * uiChunkNum, SEEK_SET);
    fread(&uiOffset, 4, 1, fp);
-   uiOffset = SWAP32(uiOffset);
+   uiOffset = SDL_SwapLE32(uiOffset);
 
    //
    // Read the header.
@@ -866,15 +866,15 @@ PAL_MKFGetDecompressedSize(
    if (gpGlobals->fIsWIN95)
    {
       fread(buf, sizeof(DWORD), 1, fp);
-      buf[0] = SWAP32(buf[0]);
+      buf[0] = SDL_SwapLE32(buf[0]);
 
       return (INT)buf[0];
    }
    else
    {
       fread(buf, sizeof(DWORD), 2, fp);
-      buf[0] = SWAP32(buf[0]);
-      buf[1] = SWAP32(buf[1]);
+      buf[0] = SDL_SwapLE32(buf[0]);
+      buf[1] = SDL_SwapLE32(buf[1]);
 
       return (buf[0] != 0x315f4a59) ? -1 : (INT)buf[1];
    }

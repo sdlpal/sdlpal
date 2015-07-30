@@ -73,6 +73,13 @@ SOUND_PlayCDA(
    INT    iNumTrack
 );
 
+#ifdef PSP
+VOID
+SOUND_Reload(
+	VOID
+);
+#endif
+
 #ifdef PAL_CLASSIC
 extern int g_iCurrChannel;
 #define SOUND_Play(i) SOUND_PlayChannel((i), (g_iCurrChannel ^= 1))

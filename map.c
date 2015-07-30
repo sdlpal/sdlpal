@@ -119,8 +119,8 @@ PAL_LoadMap(
    {
       for (j = 0; j < 64; j++)
       {
-         map->Tiles[i][j][0] = SWAP32(map->Tiles[i][j][0]);
-         map->Tiles[i][j][1] = SWAP32(map->Tiles[i][j][1]);
+         map->Tiles[i][j][0] = SDL_SwapLE32(map->Tiles[i][j][0]);
+         map->Tiles[i][j][1] = SDL_SwapLE32(map->Tiles[i][j][1]);
       }
    }
 

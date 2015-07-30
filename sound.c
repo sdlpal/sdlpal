@@ -511,6 +511,51 @@ SOUND_FillAudio(
    SDL_mutexV(gSndPlayer.mtx);
 }
 
+static VOID
+SOUND_LoadMKF(
+	VOID
+	)
+/*++
+  Purpose:
+
+    Load MKF contents into memory.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+	char *mkfs[2];
+	FNLoadSoundData func[2];
+	int i;
+
+	if (gpGlobals->fIsWIN95)
+	{
+		mkfs[0] = "sounds.mkf"; func[0] = SOUND_LoadWAVEData;
+		mkfs[1] = "voc.mkf"; func[1] = SOUND_LoadVOCData;
+	}
+	else
+	{
+		mkfs[0] = "voc.mkf"; func[0] = SOUND_LoadVOCData;
+		mkfs[1] = "sounds.mkf"; func[1] = SOUND_LoadWAVEData;
+	}
+
+	for (i = 0; i < 2; i++)
+	{
+		gSndPlayer.mkf = UTIL_OpenFile(mkfs[i]);
+		if (gSndPlayer.mkf)
+		{
+			gSndPlayer.LoadSoundData = func[i];
+			break;
+		}
+	}
+}
+
 INT
 SOUND_OpenAudio(
    VOID
@@ -548,26 +593,7 @@ SOUND_OpenAudio(
    //
    // Load the MKF file.
    //
-   if (gpGlobals->fIsWIN95)
-   {
-	   mkfs[0] = "sounds.mkf"; func[0] = SOUND_LoadWAVEData;
-	   mkfs[1] = "voc.mkf"; func[1] = SOUND_LoadVOCData;
-   }
-   else
-   {
-	   mkfs[0] = "voc.mkf"; func[0] = SOUND_LoadVOCData;
-	   mkfs[1] = "sounds.mkf"; func[1] = SOUND_LoadWAVEData;
-   }
-
-   for (i = 0; i < 2; i++)
-   {
-	   gSndPlayer.mkf = UTIL_OpenFile(mkfs[i]);
-	   if (gSndPlayer.mkf)
-	   {
-		   gSndPlayer.LoadSoundData = func[i];
-		   break;
-	   }
-   }
+   SOUND_LoadMKF();
    if (gSndPlayer.mkf == NULL)
    {
       return -2;
@@ -1049,3 +1075,14 @@ SOUND_PlayCDA(
 
    return ret;
 }
+
+#ifdef PSP
+void
+SOUND_Reload(
+	void
+	)
+{
+	fclose(gSndPlayer.mkf);
+	SOUND_LoadMKF();
+}
+#endif

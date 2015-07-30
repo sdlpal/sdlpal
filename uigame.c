@@ -198,7 +198,7 @@ PAL_SaveSlotMenu(
       else
       {
          fread(&wSavedTimes, sizeof(WORD), 1, fp);
-         wSavedTimes = SWAP16(wSavedTimes);
+         wSavedTimes = SDL_SwapLE16(wSavedTimes);
          fclose(fp);
       }
 
@@ -601,7 +601,7 @@ PAL_SystemMenu(
                WORD wSavedTimes;
                fread(&wSavedTimes, sizeof(WORD), 1, fp);
                fclose(fp);
-               wSavedTimes = SWAP16(wSavedTimes);
+               wSavedTimes = SDL_SwapLE16(wSavedTimes);
                if ((int)wSavedTimes > iSavedTimes)
                {
                   iSavedTimes = wSavedTimes;

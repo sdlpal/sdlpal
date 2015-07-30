@@ -35,7 +35,7 @@ extern BOOL g_fUseMidi;
       int i;                                                     \
       for (i = 0; i < (size) / 2; i++)                           \
       {                                                          \
-         ((LPWORD)(buf))[i] = SWAP16(((LPWORD)(buf))[i]);        \
+         ((LPWORD)(buf))[i] = SDL_SwapLE16(((LPWORD)(buf))[i]);  \
       }                                                          \
    } while(0)
 #endif

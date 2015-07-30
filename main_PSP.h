@@ -63,7 +63,7 @@ int PSPSuspendCallback(int arg1, int pwrflags, void *common)
     gpGlobals->f.fpFIRE = UTIL_OpenRequiredFile("fire.mkf");
     gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
     gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
-    SOUND_ReloadVOC();
+    SOUND_Reload();
   }
   int cbid;
   cbid = sceKernelCreateCallback("suspend Callback", PSPSuspendCallback, NULL);

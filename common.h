@@ -66,14 +66,6 @@ extern "C"
 
 #endif
 
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-#define SWAP16(X)    (X)
-#define SWAP32(X)    (X)
-#else
-#define SWAP16(X)    SDL_Swap16(X)
-#define SWAP32(X)    SDL_Swap32(X)
-#endif
-
 #ifndef max
 #define max(a, b)    (((a) > (b)) ? (a) : (b))
 #endif
@@ -139,12 +131,6 @@ FILE *MY_fopen(const char *path, const char *mode);
 #else
 #define PAL_HAS_SDLCD         0
 #endif
-#if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO) && !defined (__WINPHONE__)
-#define PAL_HAS_MP3           1
-#endif
-#endif
-#define PAL_HAS_OGG           1
-#define PAL_HAS_MAME          1   /* Should not be enabled for now, until M.A.M.E goes open source licenses */
 
 #ifndef PAL_PREFIX
 #define PAL_PREFIX            "./"
@@ -155,8 +141,15 @@ FILE *MY_fopen(const char *path, const char *mode);
 
 #endif
 
+#if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO) && !defined (__WINPHONE__)
+#define PAL_HAS_MP3           1
+#endif
+#endif
+#define PAL_HAS_OGG           1
+#define PAL_HAS_MAME          1   /* Should not be enabled for now, until M.A.M.E goes open source licenses */
+
 #ifndef SDL_INIT_CDROM
-#define SDL_INIT_CDROM        0
+#define SDL_INIT_CDROM        0	  /* Compatibility with SDL 1.2 */
 #endif
 
 #ifdef _WIN32
