@@ -208,6 +208,12 @@ inline void CrixPlayer::data_initial()
       ad_a0b0_reg(8);
       ad_a0b0l_reg_(8,0x18,0);
       ad_a0b0l_reg_(7,0x1F,0);
+
+	  // This is required for correct attack effect, by louyihua
+	  opl->write(0xa8, 87);
+	  opl->write(0xb8, 9);
+	  opl->write(0xa7, 3);
+	  opl->write(0xb7, 10);
     }
   bd_modify = 0;
   ad_bd_reg();
