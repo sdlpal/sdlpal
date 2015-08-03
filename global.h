@@ -554,6 +554,7 @@ typedef enum tagMUSICTYPE
 
 typedef enum tagOPLTYPE
 {
+	OPL_DOSBOX_OLD,
 	OPL_DOSBOX,
 	OPL_MAME
 } OPLTYPE, *LPOPLTYPE;

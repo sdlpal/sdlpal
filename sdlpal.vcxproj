@@ -60,6 +60,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -118,6 +119,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="adplug\adlibemu.c" />
+    <ClCompile Include="adplug\dbemuopl.cpp" />
+    <ClCompile Include="adplug\dbopl.cpp" />
     <ClCompile Include="adplug\demuopl.cpp" />
     <ClCompile Include="battle.c">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -455,6 +458,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="adplug\adlibemu.h" />
+    <ClInclude Include="adplug\dbemuopl.h" />
+    <ClInclude Include="adplug\dbopl.h" />
     <ClInclude Include="adplug\kemuopl.h" />
     <ClInclude Include="ascii.h" />
     <ClInclude Include="battle.h" />

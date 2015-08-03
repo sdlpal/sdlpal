@@ -33,8 +33,8 @@
 
 #if defined(_MSC_VER) && _MSC_VER <= 1600
 #include <windows.h>
-#define uintptr_t ULONG
-#define intptr_t LONG
+#define uintptr_t ULONG_PTR
+#define intptr_t LONG_PTR
 #define uint32_t DWORD
 #define int32_t INT
 #define uint16_t WORD

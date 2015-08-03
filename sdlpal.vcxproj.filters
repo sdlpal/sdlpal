@@ -293,6 +293,12 @@
     <ClCompile Include="mp3play.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="adplug\dbopl.cpp">
+      <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="adplug\dbemuopl.cpp">
+      <Filter>adplug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ascii.h">
@@ -621,6 +627,12 @@
     </ClInclude>
     <ClInclude Include="players.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="adplug\dbopl.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="adplug\dbemuopl.h">
+      <Filter>adplug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

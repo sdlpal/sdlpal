@@ -576,9 +576,6 @@ SOUND_OpenAudio(
 --*/
 {
    SDL_AudioSpec spec;
-   char *mkfs[2];
-   FNLoadSoundData func[2];
-   int i;
 
    if (gSndOpened)
    {

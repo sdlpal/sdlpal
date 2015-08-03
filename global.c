@@ -203,6 +203,8 @@ PAL_InitGlobals(
 					   sscanf(ptr, "%31s", opl_type);
 					   if (SDL_strcasecmp(opl_type, "DOSBOX") == 0)
 						   eOPLType = OPL_DOSBOX;
+					   else if (SDL_strcasecmp(opl_type, "DOSBOXOLD") == 0)
+						   eOPLType = OPL_DOSBOX_OLD;
 					   else if (PAL_HAS_MAME && SDL_strcasecmp(opl_type, "MAME") == 0)
 						   eOPLType = OPL_MAME;
 				   }
