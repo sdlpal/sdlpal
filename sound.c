@@ -40,10 +40,6 @@ static BOOL  gSndOpened = FALSE;
 BOOL         g_fNoSound = FALSE;
 BOOL         g_fNoMusic = FALSE;
 
-#ifdef __SYMBIAN32__
-INT          g_iVolume  = SDL_MIX_MAXVOLUME * 0.1;
-#endif
-
 #ifdef PAL_CLASSIC
 int          g_iCurrChannel = 0;
 #endif
@@ -500,11 +496,7 @@ SOUND_FillAudio(
       // Mix as much data as possible
       //
       len = (len > gSndPlayer.audio_len[i]) ? gSndPlayer.audio_len[i] : len;
-#ifdef __SYMBIAN32__
-      SDL_MixAudio(stream, gSndPlayer.pos[i], len, g_iVolume);
-#else
-      SDL_MixAudio(stream, gSndPlayer.pos[i], len, SDL_MIX_MAXVOLUME * 2 / 3);
-#endif
+      SDL_MixAudio(stream, gSndPlayer.pos[i], len, gpGlobals->iVolume);
       gSndPlayer.pos[i] += len;
       gSndPlayer.audio_len[i] -= len;
    }
@@ -798,11 +790,9 @@ SOUND_GetAudioSpec(
 	return &gSndPlayer.spec;
 }
 
-#ifdef __SYMBIAN32__
-
 VOID
 SOUND_AdjustVolume(
-   INT    iDirectory
+   INT    iDirection
 )
 /*++
   Purpose:
@@ -811,7 +801,7 @@ SOUND_AdjustVolume(
 
   Parameters:
 
-    [IN]  iDirectory - value, Increase (>0) or decrease (<=0) 3% volume.
+    [IN]  iDirection - value, Increase (>0) or decrease (<=0) 3% volume.
 
   Return value:
 
@@ -819,31 +809,23 @@ SOUND_AdjustVolume(
 
 --*/
 {
-   if (iDirectory > 0)
+   if (iDirection > 0)
    {
-      if (g_iVolume <= SDL_MIX_MAXVOLUME)
+      gpGlobals->iVolume += SDL_MIX_MAXVOLUME * 0.03;
+      if (gpGlobals->iVolume > SDL_MIX_MAXVOLUME)
       {
-         g_iVolume += SDL_MIX_MAXVOLUME * 0.03;
-      }
-      else
-      {
-         g_iVolume = SDL_MIX_MAXVOLUME;
+		  gpGlobals->iVolume = SDL_MIX_MAXVOLUME;
       }
    }
    else
    {
-      if (g_iVolume > 0)
+      gpGlobals->iVolume -= SDL_MIX_MAXVOLUME * 0.03;
+      if (gpGlobals->iVolume < 0)
       {
-         g_iVolume -= SDL_MIX_MAXVOLUME * 0.03;
-      }
-      else
-      {
-         g_iVolume = 0;
+		  gpGlobals->iVolume = 0;
       }
    }
 }
-
-#endif
 
 VOID
 SOUND_PlayChannel(

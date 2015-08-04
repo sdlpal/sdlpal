@@ -32,9 +32,6 @@
 #include "adplug/rix.h"
 
 extern "C" BOOL g_fNoMusic;
-#ifdef __SYMBIAN32__
-extern "C" INT  g_iVolume;
-#endif
 
 typedef struct tagRIXPLAYER :
 	public MUSICPLAYER
@@ -78,12 +75,7 @@ RIX_FillBuffer(
 
 --*/
 {
-	INT       i, l;
-#ifdef __SYMBIAN32__
-	INT       volume = g_iVolume / 2;
-#else
-	INT       volume = SDL_MIX_MAXVOLUME / 2;
-#endif
+	INT       i, l, volume = gpGlobals->iVolume * 3 / 4;
 	UINT      t = SDL_GetTicks();
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
 

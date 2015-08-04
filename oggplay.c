@@ -66,9 +66,9 @@ typedef struct tagOGGPLAYER
 	BOOL             fUseResampler;
 } OGGPLAYER, *LPOGGPLAYER;
 
-static SDL_FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, int volume)
+static SDL_FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
 {
-	int val = floor(pcm * 32767.f + .5f) * volume / SDL_MIX_MAXVOLUME;
+	int val = (int)(floor(pcm * 32767.f + .5f) * volume);
 	/* might as well guard against clipping */
 	if (val > 32767) {
 		val = 32767;
@@ -257,11 +257,7 @@ OGG_FillBuffer(
 	)
 {
 	LPOGGPLAYER player = (LPOGGPLAYER)object;
-#ifdef __SYMBIAN32__
-	int volume = g_iVolume / 2;
-#else
-	int volume = SDL_MIX_MAXVOLUME / 2;
-#endif
+	double volume = (double)gpGlobals->iVolume / (SDL_MIX_MAXVOLUME * 3 / 4);
 
 	if (player->fReady) {
 		ogg_packet       op; /* one raw packet of data for decode */

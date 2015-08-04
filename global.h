@@ -623,6 +623,7 @@ typedef struct tagGLOBALVARS
    INT              iSampleRate;
    INT              iOPLSampleRate;
    INT              iResampleQuality;
+   INT              iVolume;
    MUSICTYPE        eMusicType;
    MUSICTYPE        eCDType;
    OPLTYPE          eOPLType;

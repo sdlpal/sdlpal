@@ -54,12 +54,10 @@ SOUND_GetAudioSpec(
    VOID
 );
 
-#ifdef __SYMBIAN32__
 VOID
 SOUND_AdjustVolume(
    INT    iDirectory
 );
-#endif
 
 VOID
 SOUND_PlayMUS(

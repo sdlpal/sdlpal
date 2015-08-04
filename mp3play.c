@@ -58,6 +58,8 @@ MP3_FillBuffer(
 {
 	LPMP3PLAYER player = (LPMP3PLAYER)object;
 	if (player->pMP3) {
+		player->pMP3->volume = gpGlobals->iVolume * 3 / 4;
+
 		mad_getSamples(player->pMP3, stream, len);
 
 		if (!mad_isPlaying(player->pMP3) && player->fLoop)

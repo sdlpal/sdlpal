@@ -80,6 +80,7 @@ PAL_InitGlobals(
    INT       iOPLSampleRate = 49716;	// Default for 49716 Hz
    INT       iResampleQuality = RESAMPLER_QUALITY_MAX;	// Default to maximum quality
    INT       iAudioBufferSize = 1024;	// Default for 1024 samples
+   INT       iVolume = 100;				// Default for 100%
    MUSICTYPE eMusicType = g_fUseMidi ? MUSIC_MIDI : MUSIC_RIX;
    MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;
    OPLTYPE   eOPLType = OPL_DOSBOX;
@@ -186,6 +187,14 @@ PAL_InitGlobals(
 					   else if (iAudioBufferSize < 2)
 						   iAudioBufferSize = 2;
 				   }
+				   else if (SDL_strcasecmp(p, "VOLUME") == 0)
+				   {
+					   sscanf(ptr, "%d", &iVolume);
+					   if (iVolume > 100)
+						   iVolume = 100;
+					   else if (iVolume < 0)
+						   iVolume = 0;
+				   }
 				   else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)
 				   {
 					   int n = 1;
@@ -287,6 +296,7 @@ PAL_InitGlobals(
    gpGlobals->dwExtraMagicDescLines = dwExtraMagicDescLines;
    gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
    gpGlobals->wAudioBufferSize = (WORD)iAudioBufferSize;
+   gpGlobals->iVolume = SDL_MIX_MAXVOLUME * iVolume / 100;
 
    //
    // Set decompress function
