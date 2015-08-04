@@ -64,6 +64,7 @@ uint8_t CrixPlayer::for40reg[] = {0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,
 					0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F};
 const uint16_t CrixPlayer::mus_time = 0x4268;
 
+
 /*** public methods *************************************/
 
 CPlayer *CrixPlayer::factory(Copl *newopl)
@@ -73,6 +74,7 @@ CPlayer *CrixPlayer::factory(Copl *newopl)
 
 CrixPlayer::CrixPlayer(Copl *newopl)
   : CPlayer(newopl), flag_mkf(0), file_buffer(0), rix_buf(0)
+	, extra_regs(NULL), extra_vals(NULL), extra_length(0)
 {
 }
 
@@ -80,6 +82,28 @@ CrixPlayer::~CrixPlayer()
 {
   if(file_buffer)
     delete [] file_buffer;
+  if (extra_regs) delete[] extra_regs;
+  if (extra_vals) delete[] extra_vals;
+}
+
+void CrixPlayer::set_extra_init(uint32_t* regs, uint8_t* datas, int n)
+{
+	extra_length = n;
+	if (extra_regs) delete[] extra_regs;
+	if (extra_vals) delete[] extra_vals;
+
+	if (n > 0)
+	{
+		extra_regs = new uint32_t[n];
+		extra_vals = new uint8_t[n];
+		if (extra_regs) memcpy(extra_regs, regs, n * sizeof(uint32_t));
+		if (extra_vals) memcpy(extra_vals, datas, n * sizeof(uint8_t));
+	}
+	else
+	{
+		extra_regs = NULL;
+		extra_vals = NULL;
+	}
 }
 
 bool CrixPlayer::load(const std::string &filename, const CFileProvider &fp)
@@ -210,11 +234,16 @@ inline void CrixPlayer::data_initial()
       ad_a0b0l_reg_(7,0x1F,0);
 
 	  // This is required for correct attack effect, by louyihua
-	  opl->write(0xa8, 87);
-	  opl->write(0xb8, 9);
-	  opl->write(0xa7, 3);
-	  opl->write(0xb7, 10);
-    }
+	  if (extra_regs && extra_vals && extra_length > 0)
+	  {
+		  for (uint32_t i = 0; i < extra_length; i++)
+			  opl->write(extra_regs[i], extra_vals[i]);
+	  }
+	  //opl->write(0xa8, 87);
+	  //opl->write(0xb8, 9);
+	  //opl->write(0xa7, 3);
+	  //opl->write(0xb7, 10);
+  }
   bd_modify = 0;
   ad_bd_reg();
   band = 0; music_on = 1;

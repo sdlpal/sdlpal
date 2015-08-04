@@ -22,7 +22,7 @@
 
 #include "player.h"
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && _MSC_VER <= 1600
 #include <windows.h>
 #define uint8_t BYTE
 #define uint16_t WORD
@@ -48,12 +48,16 @@ class CrixPlayer: public CPlayer
   std::string gettype()
     { return std::string("Softstar RIX OPL Music Format"); };
 
+  void set_extra_init(uint32_t* regs, uint8_t* datas, int n);
+
  protected:	
   typedef struct {
     uint8_t v[14];
   } ADDT;
 
   int flag_mkf;
+  uint32_t *extra_regs;
+  uint8_t *extra_vals;
   uint8_t *file_buffer;
   uint8_t *rix_buf;  /* rix files' f_buffer */
   uint16_t f_buffer[300];//9C0h-C18h
@@ -65,7 +69,7 @@ class CrixPlayer: public CPlayer
   uint16_t insbuf[28];
   uint16_t displace[11];
   ADDT reg_bufs[18];
-  uint32_t pos,length;
+  uint32_t pos,length, extra_length;
   uint8_t index;
 
   static const uint8_t adflag[18];

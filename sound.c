@@ -608,7 +608,7 @@ SOUND_OpenAudio(
    gSndPlayer.spec.freq = gpGlobals->iSampleRate;
    gSndPlayer.spec.format = AUDIO_S16;
    gSndPlayer.spec.channels = gpGlobals->iAudioChannels;
-   gSndPlayer.spec.samples = 1024;
+   gSndPlayer.spec.samples = gpGlobals->wAudioBufferSize;
    gSndPlayer.spec.callback = SOUND_FillAudio;
 
    if (SDL_OpenAudio(&gSndPlayer.spec, &spec) < 0)

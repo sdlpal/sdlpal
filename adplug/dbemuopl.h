@@ -40,9 +40,12 @@ public:
 	void init();
 
 protected:
-	DBOPL::Handler handler;
-	int rate;
+	DBOPL::Chip chip;
+	int32_t* buffer;
+	int rate, maxlen;
 	bool use16bit, stereo;
+
+	static bool _inited;
 };
 
 #endif

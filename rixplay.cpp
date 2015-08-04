@@ -120,6 +120,7 @@ RIX_FillBuffer(
 			if (pRixPlayer->iNextMusic > 0)
 			{
 				pRixPlayer->iCurrentMusic = pRixPlayer->iNextMusic;
+				pRixPlayer->iNextMusic = -1;
 				pRixPlayer->fLoop = pRixPlayer->fNextLoop;
 				pRixPlayer->FadeType = RIXPLAYER::FADE_IN;
 				pRixPlayer->dwStartFadeTime = t;
@@ -168,7 +169,10 @@ RIX_FillBuffer(
 					// Not loop, simply terminate the music
 					//
 					pRixPlayer->iCurrentMusic = -1;
-					pRixPlayer->FadeType = RIXPLAYER::NONE;
+					if (pRixPlayer->FadeType != RIXPLAYER::FADE_OUT && pRixPlayer->iNextMusic == -1)
+					{
+						pRixPlayer->FadeType = RIXPLAYER::NONE;
+					}
 					return;
 				}
 				pRixPlayer->rix->rewind(pRixPlayer->iCurrentMusic);
@@ -432,11 +436,16 @@ RIX_Init(
 		}
 	}
 
+	if (gpGlobals->pExtraFMRegs && gpGlobals->pExtraFMVals)
+	{
+		pRixPlayer->rix->set_extra_init(gpGlobals->pExtraFMRegs, gpGlobals->pExtraFMVals, gpGlobals->dwExtraLength);
+	}
+
 	//
 	// Success.
 	//
 	pRixPlayer->FadeType = RIXPLAYER::NONE;
-	pRixPlayer->iCurrentMusic = -1;
+	pRixPlayer->iCurrentMusic = pRixPlayer->iNextMusic = -1;
 	pRixPlayer->pos = NULL;
 	pRixPlayer->fLoop = FALSE;
 	pRixPlayer->fNextLoop = FALSE;

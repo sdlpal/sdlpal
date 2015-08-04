@@ -1324,9 +1324,9 @@ void Chip::Setup( Bit32u rate ) {
 }
 
 static bool doneTables = false;
-void InitTables( void ) {
+bool InitTables( void ) {
 	if ( doneTables )
-		return;
+		return true;
 	doneTables = true;
 #if ( DBOPL_WAVE == WAVE_HANDLER ) || ( DBOPL_WAVE == WAVE_TABLELOG )
 	//Exponential volume table, same as the real adlib
@@ -1477,41 +1477,6 @@ void InitTables( void ) {
 		}
 	}
 #endif
+	return true;
 }
-
-Bit32u Handler::WriteAddr( Bit32u port, Bit8u val ) {
-	return chip.WriteAddr( port, val );
-
-}
-void Handler::WriteReg( Bit32u addr, Bit8u val ) {
-	chip.WriteReg( addr, val );
-}
-
-void Handler::Generate( Bit16s* buf, Bitu samples ) {
-	while (samples > 0) {
-		Bitu n = samples > 512 ? 512 : samples;
-		if (!chip.opl3Active) {
-			chip.GenerateBlock2(n, buffer);
-		}
-		else {
-			chip.GenerateBlock3(n, buffer);
-		}
-		for (Bitu i = 0; i < n; i++) {
-			if (buffer[i] > 32767)
-				buf[i] = 32767;
-			else if (buffer[i] < -32768)
-				buf[i] = -32768;
-			else
-				buf[i] = (Bit16s)buffer[i];
-		}
-		samples -= n; buf += n;
-	}
-}
-
-void Handler::Init( Bitu rate ) {
-	InitTables();
-	chip.Setup( rate );
-}
-
-
 };		//Namespace DBOPL

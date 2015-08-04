@@ -611,6 +611,9 @@ typedef struct tagGLOBALVARS
    DWORD            dwFrameNum;
 
    /* Configurable options */
+   uint32_t        *pExtraFMRegs;
+   uint8_t         *pExtraFMVals;
+   uint32_t         dwExtraLength;
    CODEPAGE         iCodePage;
    DWORD            dwWordLength;
    DWORD            dwExtraMagicDescLines;
@@ -623,6 +626,7 @@ typedef struct tagGLOBALVARS
    MUSICTYPE        eMusicType;
    MUSICTYPE        eCDType;
    OPLTYPE          eOPLType;
+   WORD             wAudioBufferSize;
    BOOL             fIsWIN95;
    BOOL             fUseEmbeddedFonts;
    BOOL             fUseSurroundOPL;

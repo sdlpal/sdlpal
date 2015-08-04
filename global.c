@@ -79,6 +79,7 @@ PAL_InitGlobals(
    INT       iSampleRate = 44100;		// Default for 44100 Hz
    INT       iOPLSampleRate = 49716;	// Default for 49716 Hz
    INT       iResampleQuality = RESAMPLER_QUALITY_MAX;	// Default to maximum quality
+   INT       iAudioBufferSize = 1024;	// Default for 1024 samples
    MUSICTYPE eMusicType = g_fUseMidi ? MUSIC_MIDI : MUSIC_RIX;
    MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;
    OPLTYPE   eOPLType = OPL_DOSBOX;
@@ -91,6 +92,10 @@ PAL_InitGlobals(
          return -1;
       }
    }
+
+   gpGlobals->pExtraFMRegs = NULL;
+   gpGlobals->pExtraFMVals = NULL;
+   gpGlobals->dwExtraLength = 0;
 
    if (fp = UTIL_OpenFile("sdlpal.cfg"))
    {
@@ -173,6 +178,54 @@ PAL_InitGlobals(
 				   {
 					   sscanf(ptr, "%f", &flSurroundOPLOffset);
 				   }
+				   else if (SDL_strcasecmp(p, "AUDIOBUFFERSIZE") == 0)
+				   {
+					   sscanf(ptr, "%d", &iAudioBufferSize);
+					   if (iAudioBufferSize > 32768)
+						   iAudioBufferSize = 32768;
+					   else if (iAudioBufferSize < 2)
+						   iAudioBufferSize = 2;
+				   }
+				   else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)
+				   {
+					   int n = 1;
+					   char *p;
+					   for (p = ptr; *p < *end; p++)
+					   {
+						   if (*p == ',')
+							   n++;
+					   }
+					   n &= ~0x1;
+
+					   if (n > 0)
+					   {
+						   uint32_t *regs = malloc(sizeof(uint32_t) * (n >> 1));
+						   uint8_t *vals = malloc(sizeof(uint8_t) * (n >> 1));
+						   uint32_t d, i, v = 1;
+						   if (regs && vals)
+						   {
+							   for (p = ptr, i = 0; *p < *end; p++, i++)
+							   {
+								   if (sscanf(p, "%u", &regs[i]) == 0) { v = 0; break; }
+								   while (*p < *end && *p != ',') p++; p++;
+								   if (sscanf(p, "%u", &d) == 0) { v = 0; break; }
+								   while (*p < *end && *p != ',') p++;
+								   vals[i] = (uint8_t)d;
+							   }
+							   if (v)
+							   {
+								   gpGlobals->pExtraFMRegs = regs;
+								   gpGlobals->pExtraFMVals = vals;
+								   gpGlobals->dwExtraLength = n >> 1;
+							   }
+							   else
+							   {
+								   free(regs);
+								   free(vals);
+							   }
+						   }
+					   }
+				   }
 				   else if (SDL_strcasecmp(p, "CD") == 0)
 				   {
 					   char cd_type[32];
@@ -233,6 +286,7 @@ PAL_InitGlobals(
    gpGlobals->dwWordLength = dwWordLength;
    gpGlobals->dwExtraMagicDescLines = dwExtraMagicDescLines;
    gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
+   gpGlobals->wAudioBufferSize = (WORD)iAudioBufferSize;
 
    //
    // Set decompress function

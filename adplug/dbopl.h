@@ -279,12 +279,6 @@ namespace DBOPL {
 		Chip();
 	};
 
-	struct Handler {
-		DBOPL::Chip chip;
-		Bit32s buffer[512 * 2];
-		Bit32u WriteAddr(Bit32u port, Bit8u val);
-		void WriteReg(Bit32u addr, Bit8u val);
-		void Generate(Bit16s* buf, Bitu samples);
-		void Init(Bitu rate);
-	};
+	bool InitTables(void);
+
 };		//Namespace
