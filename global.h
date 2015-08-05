@@ -611,9 +611,11 @@ typedef struct tagGLOBALVARS
    DWORD            dwFrameNum;
 
    /* Configurable options */
+#if USE_RIX_EXTRA_INIT
    uint32_t        *pExtraFMRegs;
    uint8_t         *pExtraFMVals;
    uint32_t         dwExtraLength;
+#endif
    CODEPAGE         iCodePage;
    DWORD            dwWordLength;
    DWORD            dwExtraMagicDescLines;

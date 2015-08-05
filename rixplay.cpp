@@ -304,17 +304,56 @@ RIX_Play(
 	//
 	SOUND_PlayCDA(-1);
 
-	pRixPlayer->fNextLoop = fLoop;
-
-	if (iNumRIX == pRixPlayer->iCurrentMusic)
+	if (iNumRIX == pRixPlayer->iCurrentMusic && pRixPlayer->iNextMusic == -1)
 	{
+		/* Will play the same music without any pending play changes,
+		   just change the loop attribute */
+		pRixPlayer->fLoop = fLoop;
 		return TRUE;
 	}
 
+	if (pRixPlayer->FadeType != RIXPLAYER::NONE)
+	{
+		/* There is a previous running fading out or fading in.
+		Start time should be adjusted for a seamless effect. */
+		DWORD dwFadeLength = (DWORD)(flFadeTime * 1000) / 2, now = SDL_GetTicks();
+		if (pRixPlayer->FadeType == RIXPLAYER::FADE_OUT)
+		{
+			if (now >= pRixPlayer->dwStartFadeTime + pRixPlayer->dwFadeLength)
+			{
+				/* Fading out has been completed, so the next call of RIX_FillBuffer should just start fading in. */
+				pRixPlayer->dwStartFadeTime = now - dwFadeLength;
+			}
+			else
+			{
+				/* Fading out is in progress, so the next call of RIX_FillBuffer should start fading out with the same volume. */
+				pRixPlayer->dwStartFadeTime = now - (DWORD)ceil((double)dwFadeLength * (now - pRixPlayer->dwStartFadeTime) / pRixPlayer->dwFadeLength);
+			}
+		}
+		else
+		{
+			if (now >= pRixPlayer->dwStartFadeTime + pRixPlayer->dwFadeLength)
+			{
+				/* Fading in has been completed, so the next call of RIX_FillBuffer just need to start fading out. */
+				pRixPlayer->dwStartFadeTime = now;
+			}
+			else
+			{
+				/* Fading in is in progress, so the next call of RIX_FillBuffer should just start fading out with the same volume. */
+				pRixPlayer->dwStartFadeTime = now - (DWORD)ceil((double)dwFadeLength * (1.0 - (double)(now - pRixPlayer->dwStartFadeTime) / pRixPlayer->dwFadeLength));
+			}
+		}
+		pRixPlayer->dwFadeLength = dwFadeLength;
+	}
+	else
+	{
+		pRixPlayer->dwStartFadeTime = SDL_GetTicks();
+		pRixPlayer->dwFadeLength = (DWORD)(flFadeTime * 1000) / 2;
+	}
+
 	pRixPlayer->iNextMusic = iNumRIX;
-	pRixPlayer->dwStartFadeTime = SDL_GetTicks();
-	pRixPlayer->dwFadeLength = (DWORD)(flFadeTime * 1000) / 2;
 	pRixPlayer->FadeType = RIXPLAYER::FADE_OUT;
+	pRixPlayer->fNextLoop = fLoop;
 	pRixPlayer->fReady = TRUE;
 
 	return TRUE;
@@ -428,10 +467,12 @@ RIX_Init(
 		}
 	}
 
+#if USE_RIX_EXTRA_INIT
 	if (gpGlobals->pExtraFMRegs && gpGlobals->pExtraFMVals)
 	{
 		pRixPlayer->rix->set_extra_init(gpGlobals->pExtraFMRegs, gpGlobals->pExtraFMVals, gpGlobals->dwExtraLength);
 	}
+#endif
 
 	//
 	// Success.

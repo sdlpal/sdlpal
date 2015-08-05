@@ -86,6 +86,7 @@ CrixPlayer::~CrixPlayer()
   if (extra_vals) delete[] extra_vals;
 }
 
+#if USE_RIX_EXTRA_INIT
 void CrixPlayer::set_extra_init(uint32_t* regs, uint8_t* datas, int n)
 {
 	extra_length = n;
@@ -105,6 +106,7 @@ void CrixPlayer::set_extra_init(uint32_t* regs, uint8_t* datas, int n)
 		extra_vals = NULL;
 	}
 }
+#endif
 
 bool CrixPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
@@ -234,15 +236,18 @@ inline void CrixPlayer::data_initial()
       ad_a0b0l_reg_(7,0x1F,0);
 
 	  // This is required for correct attack effect, by louyihua
+#if USE_RIX_EXTRA_INIT
 	  if (extra_regs && extra_vals && extra_length > 0)
 	  {
 		  for (uint32_t i = 0; i < extra_length; i++)
 			  opl->write(extra_regs[i], extra_vals[i]);
 	  }
-	  //opl->write(0xa8, 87);
-	  //opl->write(0xb8, 9);
-	  //opl->write(0xa7, 3);
-	  //opl->write(0xb7, 10);
+#else
+	  opl->write(0xa8, 87);
+	  opl->write(0xb8, 9);
+	  opl->write(0xa7, 3);
+	  opl->write(0xb7, 15/*10*/);	// Changed from 10 (original value) to 15 for better quality
+#endif
   }
   bd_modify = 0;
   ad_bd_reg();

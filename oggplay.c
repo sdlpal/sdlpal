@@ -257,10 +257,10 @@ OGG_FillBuffer(
 	)
 {
 	LPOGGPLAYER player = (LPOGGPLAYER)object;
-	double volume = (double)gpGlobals->iVolume / (SDL_MIX_MAXVOLUME * 3 / 4);
 
 	if (player->fReady) {
 		ogg_packet       op; /* one raw packet of data for decode */
+		double volume = (double)gpGlobals->iVolume / (SDL_MIX_MAXVOLUME * 3 / 4);
 		int total_bytes = 0, stage = player->iStage;
 
 		while (total_bytes < len) {

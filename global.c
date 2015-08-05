@@ -94,9 +94,11 @@ PAL_InitGlobals(
       }
    }
 
+#if USE_RIX_EXTRA_INIT
    gpGlobals->pExtraFMRegs = NULL;
    gpGlobals->pExtraFMVals = NULL;
    gpGlobals->dwExtraLength = 0;
+#endif
 
    if (fp = UTIL_OpenFile("sdlpal.cfg"))
    {
@@ -195,6 +197,7 @@ PAL_InitGlobals(
 					   else if (iVolume < 0)
 						   iVolume = 0;
 				   }
+#if USE_RIX_EXTRA_INIT
 				   else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)
 				   {
 					   int n = 1;
@@ -235,6 +238,7 @@ PAL_InitGlobals(
 						   }
 					   }
 				   }
+#endif
 				   else if (SDL_strcasecmp(p, "CD") == 0)
 				   {
 					   char cd_type[32];
