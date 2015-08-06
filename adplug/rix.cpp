@@ -74,7 +74,9 @@ CPlayer *CrixPlayer::factory(Copl *newopl)
 
 CrixPlayer::CrixPlayer(Copl *newopl)
   : CPlayer(newopl), flag_mkf(0), file_buffer(0), rix_buf(0)
+#if USE_RIX_EXTRA_INIT
 	, extra_regs(NULL), extra_vals(NULL), extra_length(0)
+#endif
 {
 }
 
@@ -82,8 +84,10 @@ CrixPlayer::~CrixPlayer()
 {
   if(file_buffer)
     delete [] file_buffer;
+#if USE_RIX_EXTRA_INIT
   if (extra_regs) delete[] extra_regs;
   if (extra_vals) delete[] extra_vals;
+#endif
 }
 
 #if USE_RIX_EXTRA_INIT
@@ -139,45 +143,53 @@ bool CrixPlayer::update()
 	return !play_end;
 }
 
-void CrixPlayer::rewind(int subsong)
+void CrixPlayer::rewind(int subsong, bool reinit)
 {
-  I = 0; T = 0;
-  mus_block = 0;
-  ins_block = 0;
-  rhythm = 0;
-  music_on = 0;
-  pause_flag = 0;
-  band = 0;
-  band_low = 0;
-  e0_reg_flag = 0;
-  bd_modify = 0;
-  sustain = 0;
-  play_end = 0;
-  pos = index = 0; 
+	play_end = 0;
+	pos = 0;
 
-  memset(f_buffer,   0,     sizeof(f_buffer));
-  memset(a0b0_data2, 0,     sizeof(a0b0_data2));
-  memset(a0b0_data3, 0,     sizeof(a0b0_data3));
-  memset(a0b0_data4, 0,     sizeof(a0b0_data4));
-  memset(a0b0_data5, 0,     sizeof(a0b0_data5));
-  memset(addrs_head, 0,     sizeof(addrs_head));
-  memset(insbuf,     0,     sizeof(insbuf));
-  memset(displace,   0,     sizeof(displace));
-  memset(reg_bufs,   0,     sizeof(reg_bufs));
-  memset(for40reg,   0x7F,  sizeof(for40reg));
+	if (reinit)
+	{
+		I = 0; T = 0;
+		mus_block = 0;
+		ins_block = 0;
+		rhythm = 0;
+		music_on = 0;
+		pause_flag = 0;
+		band = 0;
+		band_low = 0;
+		e0_reg_flag = 0;
+		bd_modify = 0;
+		sustain = 0;
 
-  if(flag_mkf)
-  {
-	  uint32_t *buf_index=(uint32_t *)file_buffer;
-	  int offset1=RIX_SWAP32(buf_index[subsong]),offset2;
-	  while((offset2=RIX_SWAP32(buf_index[++subsong]))==offset1);
-	  length=offset2-offset1+1;
-	  rix_buf=file_buffer+offset1;
-  }
-  //opl->init();	// disable for seamless continuance
-  opl->write(1,32);	// go to OPL2 mode
-  set_new_int();
-  data_initial();
+		memset(f_buffer, 0, sizeof(f_buffer));
+		memset(a0b0_data2, 0, sizeof(a0b0_data2));
+		memset(a0b0_data3, 0, sizeof(a0b0_data3));
+		memset(a0b0_data4, 0, sizeof(a0b0_data4));
+		memset(a0b0_data5, 0, sizeof(a0b0_data5));
+		memset(addrs_head, 0, sizeof(addrs_head));
+		memset(insbuf, 0, sizeof(insbuf));
+		memset(displace, 0, sizeof(displace));
+		memset(reg_bufs, 0, sizeof(reg_bufs));
+		memset(for40reg, 0x7F, sizeof(for40reg));
+	}
+
+	if (flag_mkf)
+	{
+		uint32_t *buf_index = (uint32_t *)file_buffer;
+		int offset1 = RIX_SWAP32(buf_index[subsong]), offset2;
+		while ((offset2 = RIX_SWAP32(buf_index[++subsong])) == offset1);
+		length = offset2 - offset1 + 1;
+		rix_buf = file_buffer + offset1;
+	}
+
+	if (reinit)
+	{
+		opl->init();
+		opl->write(1, 32);	// go to OPL2 mode
+		set_new_int();
+		data_initial();
+	}
 }
 
 unsigned int CrixPlayer::getsubsongs()

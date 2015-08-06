@@ -135,7 +135,6 @@ RIX_FillBuffer(
 						pRixPlayer->dwStartFadeTime = SDL_GetTicks();
 					pRixPlayer->iTotalFadeOutSamples = 0;
 					pRixPlayer->iRemainingFadeSamples = pRixPlayer->iTotalFadeInSamples;
-					pRixPlayer->opl->init();
 					pRixPlayer->rix->rewind(pRixPlayer->iCurrentMusic);
 					if (pRixPlayer->resampler[0]) resampler_clear(pRixPlayer->resampler[0]);
 					if (pRixPlayer->resampler[1]) resampler_clear(pRixPlayer->resampler[1]);
@@ -192,7 +191,7 @@ RIX_FillBuffer(
 						}
 						return;
 					}
-					pRixPlayer->rix->rewind(pRixPlayer->iCurrentMusic);
+					pRixPlayer->rix->rewind(pRixPlayer->iCurrentMusic, false);
 					if (!pRixPlayer->rix->update())
 					{
 						//
