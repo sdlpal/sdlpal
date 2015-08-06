@@ -188,6 +188,13 @@ PAL_InitGlobals(
 						   iAudioBufferSize = 32768;
 					   else if (iAudioBufferSize < 2)
 						   iAudioBufferSize = 2;
+					   if ((iAudioBufferSize & (iAudioBufferSize - 1)) != 0)
+					   {
+						   /* Make sure iAudioBufferSize is power of 2 */
+						   int n = 0;
+						   while (iAudioBufferSize) { iAudioBufferSize >>= 1; n++; }
+						   iAudioBufferSize = 1 << (n - 1);
+					   }
 				   }
 				   else if (SDL_strcasecmp(p, "VOLUME") == 0)
 				   {
