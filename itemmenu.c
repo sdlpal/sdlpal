@@ -46,7 +46,7 @@ PAL_ItemSelectMenuUpdate(
 
 --*/
 {
-   int                i, j, k, line;
+   int                i, j, k, line, item_delta;
    WORD               wObject, wScript;
    BYTE               bColor;
    static BYTE        bufImage[2048];
@@ -65,27 +65,27 @@ PAL_ItemSelectMenuUpdate(
    //
    if (g_InputState.dwKeyPress & kKeyUp)
    {
-      gpGlobals->iCurInvMenuItem -= iItemsPerLine;
+      item_delta = -iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyDown)
    {
-      gpGlobals->iCurInvMenuItem += iItemsPerLine;
+      item_delta = iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyLeft)
    {
-      gpGlobals->iCurInvMenuItem--;
+      item_delta = -1;
    }
    else if (g_InputState.dwKeyPress & kKeyRight)
    {
-      gpGlobals->iCurInvMenuItem++;
+      item_delta = 1;
    }
    else if (g_InputState.dwKeyPress & kKeyPgUp)
    {
-      gpGlobals->iCurInvMenuItem -= iItemsPerLine * iLinesPerPage;
+      item_delta = -(iItemsPerLine * iLinesPerPage);
    }
    else if (g_InputState.dwKeyPress & kKeyPgDn)
    {
-      gpGlobals->iCurInvMenuItem += iItemsPerLine * iLinesPerPage;
+      item_delta = iItemsPerLine * iLinesPerPage;
    }
    else if (g_InputState.dwKeyPress & kKeyMenu)
    {
@@ -95,14 +95,16 @@ PAL_ItemSelectMenuUpdate(
    //
    // Make sure the current menu item index is in bound
    //
-   if (gpGlobals->iCurInvMenuItem < 0)
-   {
-      gpGlobals->iCurInvMenuItem = 0;
-   }
-   else if (gpGlobals->iCurInvMenuItem >= g_iNumInventory)
-   {
-      gpGlobals->iCurInvMenuItem = g_iNumInventory - 1;
-   }
+   //if (gpGlobals->iCurInvMenuItem < 0)
+   //{
+   //   gpGlobals->iCurInvMenuItem = 0;
+   //}
+   //else if (gpGlobals->iCurInvMenuItem >= g_iNumInventory)
+   //{
+   //   gpGlobals->iCurInvMenuItem = g_iNumInventory - 1;
+   //}
+   if (gpGlobals->iCurInvMenuItem + item_delta >= 0 && gpGlobals->iCurInvMenuItem + item_delta < g_iNumInventory)
+      gpGlobals->iCurInvMenuItem += item_delta;
 
    //
    // Redraw the box

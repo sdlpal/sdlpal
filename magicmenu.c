@@ -53,7 +53,7 @@ PAL_MagicSelectionMenuUpdate(
 
 --*/
 {
-   int         i, j, k, line;
+   int         i, j, k, line, item_delta;
    BYTE        bColor;
    WORD        wScript;
    const int   iItemsPerLine = 32 / gpGlobals->dwWordLength;
@@ -68,27 +68,27 @@ PAL_MagicSelectionMenuUpdate(
    //
    if (g_InputState.dwKeyPress & kKeyUp)
    {
-      g_iCurrentItem -= iItemsPerLine;
+      item_delta = -iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyDown)
    {
-      g_iCurrentItem += iItemsPerLine;
+      item_delta = iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyLeft)
    {
-      g_iCurrentItem--;
+      item_delta = -1;
    }
    else if (g_InputState.dwKeyPress & kKeyRight)
    {
-      g_iCurrentItem++;
+      item_delta = 1;
    }
    else if (g_InputState.dwKeyPress & kKeyPgUp)
    {
-      g_iCurrentItem -= iItemsPerLine * iLinesPerPage;
+      item_delta = -(iItemsPerLine * iLinesPerPage);
    }
    else if (g_InputState.dwKeyPress & kKeyPgDn)
    {
-      g_iCurrentItem += iItemsPerLine * iLinesPerPage;
+      item_delta = iItemsPerLine * iLinesPerPage;
    }
    else if (g_InputState.dwKeyPress & kKeyMenu)
    {
@@ -98,14 +98,16 @@ PAL_MagicSelectionMenuUpdate(
    //
    // Make sure the current menu item index is in bound
    //
-   if (g_iCurrentItem < 0)
-   {
-      g_iCurrentItem = 0;
-   }
-   else if (g_iCurrentItem >= g_iNumMagic)
-   {
-      g_iCurrentItem = g_iNumMagic - 1;
-   }
+   //if (g_iCurrentItem < 0)
+   //{
+   //   g_iCurrentItem = 0;
+   //}
+   //else if (g_iCurrentItem >= g_iNumMagic)
+   //{
+   //   g_iCurrentItem = g_iNumMagic - 1;
+   //}
+   if (g_iCurrentItem + item_delta >= 0 && g_iCurrentItem + item_delta < g_iNumMagic)
+      g_iCurrentItem += item_delta;
 
    //
    // Create the box.
