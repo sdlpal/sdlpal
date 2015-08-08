@@ -46,6 +46,9 @@ protected:
 	bool use16bit, stereo;
 
 	static bool _inited;
+
+	void update_opl3(short *buf, int samples);
+	void update_opl2(short *buf, int samples);
 };
 
 #endif

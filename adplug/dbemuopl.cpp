@@ -51,15 +51,67 @@ void CDBemuopl::init()
 
 void CDBemuopl::update(short *buf, int samples)
 {
+	if (chip.opl3Active)
+		update_opl3(buf, samples);
+	else
+		update_opl2(buf, samples);
+}
+
+void CDBemuopl::write(int reg, int val)
+{
+	chip.WriteReg(reg, (Bit8u)val);
+}
+
+// OPL3 generate stereo samples
+void CDBemuopl::update_opl3(short *buf, int samples)
+{
+	if (maxlen < samples * 2)
+	{
+		if (buffer) delete[] buffer;
+		buffer = new int32_t[maxlen = samples * 2];
+	}
+
+	chip.GenerateBlock3(samples, buffer);
+
+	if (use16bit)
+	{
+		if (stereo)
+		{
+			for (int i = 0; i < samples * 2; i++)
+				buf[i] = conver_to_int16(buffer[i]);
+		}
+		else
+		{
+			for (int i = 0; i < samples; i++)
+				buf[i] = conver_to_int16((buffer[i * 2] + buffer[i * 2 + 1]) >> 1);
+		}
+	}
+	else
+	{
+		uint8_t* outbuf = (uint8_t*)buf;
+		if (stereo)
+		{
+			for (int i = 0; i < samples * 2; i++)
+				outbuf[i] = conver_to_uint8(buffer[i]);
+		}
+		else
+		{
+			for (int i = 0; i < samples; i++)
+				outbuf[i] = conver_to_uint8((buffer[i * 2] + buffer[i * 2 + 1]) >> 1);
+		}
+	}
+}
+
+// OPL2 generate mono samples
+void CDBemuopl::update_opl2(short *buf, int samples)
+{
 	if (maxlen < samples)
 	{
 		if (buffer) delete[] buffer;
-		buffer = new int32_t[(maxlen = samples) * (stereo ? 2 : 1)];
+		buffer = new int32_t[maxlen = samples];
 	}
-	if (chip.opl3Active)
-		chip.GenerateBlock3(samples, buffer);
-	else
-		chip.GenerateBlock2(samples, buffer);
+
+	chip.GenerateBlock2(samples, buffer);
 
 	if (use16bit)
 	{
@@ -88,10 +140,4 @@ void CDBemuopl::update(short *buf, int samples)
 				outbuf[i] = conver_to_uint8(buffer[i]);
 		}
 	}
-}
-
-// template methods
-void CDBemuopl::write(int reg, int val)
-{
-	chip.WriteReg(reg, (Bit8u)val);
 }
