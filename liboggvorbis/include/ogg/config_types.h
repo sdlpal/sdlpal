@@ -2,7 +2,7 @@
 #ifndef _CONFIG_TYPES_H
 #define _CONFIG_TYPES_H
 
-#if defined(__ANDROID__) || defined(__IOS__)
+#if defined(__ANDROID__) || defined(__IOS__) || defined(__linux__)
 
 /* Android or iOS compiler */
 #	include <stdint.h>

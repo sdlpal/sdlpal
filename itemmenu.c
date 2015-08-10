@@ -54,7 +54,6 @@ PAL_ItemSelectMenuUpdate(
    const int          iItemsPerLine = 34 / gpGlobals->dwWordLength;
    const int          iItemTextWidth = 8 * gpGlobals->dwWordLength + 20;
    const int          iLinesPerPage = 7 - gpGlobals->dwExtraItemDescLines;
-   const int          iBoxHeightOffset = gpGlobals->dwExtraItemDescLines * 16;
    const int          iCursorXOffset = gpGlobals->dwWordLength * 5 / 2;
    const int          iAmountXOffset = gpGlobals->dwWordLength * 8 + 1;
    const int          iPageLineOffset = (iLinesPerPage + 1) / 2;

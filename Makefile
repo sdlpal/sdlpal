@@ -32,7 +32,7 @@ FILES += $(ADPLUG_FILES)
 FILES += $(LIBMAD_FILES)
 FILES += $(LIBOGGVORBIS_FILES)
 
-CFLAGS = `sdl-config --cflags` -g -Wall -O2 -fno-strict-aliasing
+CFLAGS = `sdl-config --cflags` -g -Wall -O2 -fno-strict-aliasing -Iliboggvorbis/include -Iliboggvorbis/src
 LDFLAGS = `sdl-config --libs` -lstdc++ -lm
 
 $(TARGET):

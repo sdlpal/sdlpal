@@ -74,6 +74,23 @@ extern "C"
 #define min(a, b)    (((a) < (b)) ? (a) : (b))
 #endif
 
+/* This is need when compiled with SDL 1.2 */
+#ifndef SDL_FORCE_INLINE
+#if defined(_MSC_VER)
+#define SDL_FORCE_INLINE __forceinline
+#elif ( (defined(__GNUC__) && (__GNUC__ >= 4)) || defined(__clang__) )
+#define SDL_FORCE_INLINE __attribute__((always_inline)) static __inline__
+#else
+#define SDL_FORCE_INLINE static SDL_INLINE
+#endif
+#endif /* SDL_FORCE_INLINE not defined */
+
+#if defined(_MSC_VER)
+#define PAL_FORCE_INLINE static SDL_FORCE_INLINE
+#else
+#define PAL_FORCE_INLINE SDL_FORCE_INLINE
+#endif
+
 #if defined (__SYMBIAN32__)
 
 #undef  _WIN32
@@ -158,6 +175,10 @@ FILE *MY_fopen(const char *path, const char *mode);
 
 #ifndef SDL_INIT_CDROM
 #define SDL_INIT_CDROM        0	  /* Compatibility with SDL 1.2 */
+#endif
+
+#ifndef SDL_AUDIO_BITSIZE
+# define SDL_AUDIO_BITSIZE(x)         (x & 0xFF)
 #endif
 
 #ifdef _WIN32

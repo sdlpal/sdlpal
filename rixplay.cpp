@@ -17,6 +17,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <math.h>
 #include "global.h"
 #include "players.h"
 #include "sound.h"
@@ -78,7 +79,6 @@ RIX_FillBuffer(
 --*/
 {
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
-	const INT block_size = SDL_AUDIO_BITSIZE(SOUND_GetAudioSpec()->format) * SOUND_GetAudioSpec()->channels;
 	const INT max_volume = gpGlobals->iVolume * 3 / 4;
 
 	if (pRixPlayer == NULL || !pRixPlayer->fReady)

@@ -43,12 +43,6 @@
 
 #define OGG_BUFFER_LENGTH 4096
 
-#if defined(_MSC_VER)
-#define FORCE_INLINE static SDL_FORCE_INLINE
-#else
-#define FORCE_INLINE SDL_FORCE_INLINE
-#endif
-
 typedef struct tagOGGPLAYER
 {
 	MUSICPLAYER_FUNCTIONS;
@@ -72,7 +66,7 @@ typedef struct tagOGGPLAYER
 	BOOL             fUseResampler;
 } OGGPLAYER, *LPOGGPLAYER;
 
-FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
+PAL_FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
 {
 	int val = (int)(floor(pcm * 32767.f + .5f) * volume);
 	/* might as well guard against clipping */
@@ -85,7 +79,7 @@ FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
 	return (ogg_int16_t)val;
 }
 
-FORCE_INLINE void OGG_FillResample(LPOGGPLAYER player, ogg_int16_t* stream)
+PAL_FORCE_INLINE void OGG_FillResample(LPOGGPLAYER player, ogg_int16_t* stream)
 {
 	if (gpGlobals->iAudioChannels == 2) {
 		stream[0] = SDL_SwapLE16(resampler_get_and_remove_sample(player->resampler[0]));

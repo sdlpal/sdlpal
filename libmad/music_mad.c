@@ -26,6 +26,10 @@
 #include "music_mad.h"
 #include "../resampler.h" /* SDLPAL */
 
+#ifndef SDL_AUDIO_BITSIZE
+# define SDL_AUDIO_BITSIZE(x)         (x & 0xFF)
+#endif
+
 mad_data *
 mad_openFile(const char *filename, SDL_AudioSpec *mixer, int resampler_quality) {
   SDL_RWops *rw;

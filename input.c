@@ -25,7 +25,12 @@
 #include <math.h>
 
 volatile PALINPUTSTATE   g_InputState;
+#if PAL_HAS_JOYSTICKS
 static SDL_Joystick     *g_pJoy = NULL;
+#endif
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+#define SDL_JoystickNameForIndex SDL_JoystickName
+#endif
 BOOL                     g_fUseJoystick = TRUE;
 
 #if defined(GPH)
@@ -488,7 +493,7 @@ PAL_JoystickEventFilter(
 
 --*/
 {
-#ifdef PAL_HAS_JOYSTICKS
+#if PAL_HAS_JOYSTICKS
    switch (lpEvent->type)
    {
 #if defined (GEKKO)
@@ -1025,25 +1030,19 @@ PAL_InitInput(
    //
    // Check for joystick
    //
-#ifdef PAL_HAS_JOYSTICKS
+#if PAL_HAS_JOYSTICKS
    if (SDL_NumJoysticks() > 0 && g_fUseJoystick)
    {
-      g_pJoy = SDL_JoystickOpen(0);
-
-      //
-      // HACKHACK: applesmc and Android Accelerometer shouldn't be considered as real joysticks
-      //
-      if (strcmp(SDL_JoystickName(g_pJoy), "applesmc") == 0 || strcmp(SDL_JoystickName(g_pJoy), "Android Accelerometer") == 0)
+      int i;
+	  for (i = 0; i < SDL_NumJoysticks(); i++)
       {
-         SDL_JoystickClose(g_pJoy);
-
-         if (SDL_NumJoysticks() > 1)
+         //
+         // HACKHACK: applesmc and Android Accelerometer shouldn't be considered as real joysticks
+         //
+         if (strcmp(SDL_JoystickNameForIndex(i), "applesmc") != 0 && strcmp(SDL_JoystickNameForIndex(i), "Android Accelerometer") != 0)
          {
-            g_pJoy = SDL_JoystickOpen(1);
-         }
-         else
-         {
-            g_pJoy = NULL;
+            g_pJoy = SDL_JoystickOpen(i);
+            break;
          }
       }
 
@@ -1078,7 +1077,7 @@ PAL_ShutdownInput(
 
 --*/
 {
-#ifdef PAL_HAS_JOYSTICKS
+#if PAL_HAS_JOYSTICKS
 #if SDL_VERSION_ATLEAST(2,0,0)
    if (g_pJoy != NULL)
    {

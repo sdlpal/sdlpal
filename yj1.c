@@ -349,7 +349,7 @@ static int yj2_build_tree(YJ2_Tree *tree)
 	return 1;
 }
 
-static int yj2_bt(const char* data, unsigned int pos)
+static int yj2_bt(const unsigned char* data, unsigned int pos)
 {
 	return (data[pos >> 3] & (unsigned char)(1 << (pos & 0x7))) >> (pos & 0x7);
 }
