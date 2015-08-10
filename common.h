@@ -123,29 +123,37 @@ FILE *MY_fopen(const char *path, const char *mode);
 
 #else
 
-#define PAL_HAS_JOYSTICKS     1
-#ifndef _WIN32_WCE
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
-#define PAL_ALLOW_KEYREPEAT   1
-#define PAL_HAS_SDLCD         1
-#else
+# define PAL_HAS_JOYSTICKS     1
+
+# ifndef _WIN32_WCE
+
+#  if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+#   define PAL_ALLOW_KEYREPEAT   1
+#   define PAL_HAS_SDLCD         1
+#  endif
+
+#  ifndef PAL_PREFIX
+#   define PAL_PREFIX            "./"
+#  endif
+
+#  ifndef PAL_SAVE_PREFIX
+#   define PAL_SAVE_PREFIX       "./"
+#  endif
+
+# endif
+
+//# if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH)
+//#  define PAL_HAS_MP3         1
+//# endif
+
+#endif
+
+#ifndef PAL_HAS_SDLCD
 #define PAL_HAS_SDLCD         0
 #endif
 
-#ifndef PAL_PREFIX
-#define PAL_PREFIX            "./"
-#endif
-#ifndef PAL_SAVE_PREFIX
-#define PAL_SAVE_PREFIX       "./"
-#endif
-
-#endif
-
-#if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO) && !defined (__WINPHONE__)
-#define PAL_HAS_MP3           1
-#endif
-#endif
-#define PAL_HAS_OGG           1
+#define PAL_HAS_MP3           1   /* Try always enable MP3. If compilation/run failed, please change this value to 0. */
+#define PAL_HAS_OGG           1   /* Try always enable OGG. If compilation/run failed, please change this value to 0. */
 #define PAL_HAS_MAME          1   /* Should not be enabled for now, until M.A.M.E goes open source licenses */
 
 #ifndef SDL_INIT_CDROM
@@ -215,6 +223,10 @@ typedef const CHAR         *LPCSTR;
 typedef WCHAR              *LPWSTR;
 typedef const WCHAR        *LPCWSTR;
 
+#endif
+
+#ifndef PAL_HAS_NATIVEMIDI
+#define PAL_HAS_NATIVEMIDI  0
 #endif
 
 #if defined (__SYMBIAN32__)

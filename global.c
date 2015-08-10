@@ -544,7 +544,7 @@ PAL_LoadDefaultGame(
       //
       // Convert the DOS-style data structure to WIN-style data structure
       //
-      for (int i = 0; i < MAX_OBJECTS; i++)
+      for (i = 0; i < MAX_OBJECTS; i++)
       {
          memcpy(&p->rgObject[i], &objects[i], sizeof(OBJECT_DOS));
 	     if (i >= OBJECT_ITEM_START && i <= OBJECT_MAGIC_END)
@@ -751,6 +751,7 @@ PAL_LoadGame_DOS(
 {
    FILE                     *fp;
    PAL_LARGE SAVEDGAME_DOS   s;
+   int                       i;
 
    //
    // Try to open the specified file
@@ -786,7 +787,7 @@ PAL_LoadGame_DOS(
    //
    // Convert the DOS-style data structure to WIN-style data structure
    //
-   for (int i = 0; i < MAX_OBJECTS; i++)
+   for (i = 0; i < MAX_OBJECTS; i++)
    {
       memcpy(&gpGlobals->g.rgObject[i], &s.rgObject[i], sizeof(OBJECT_DOS));
 	  if (i >= OBJECT_ITEM_START && i <= OBJECT_MAGIC_END)
@@ -954,7 +955,7 @@ PAL_SaveGame_DOS(
    //
    // Convert the WIN-style data structure to DOS-style data structure
    //
-   for (int i = 0; i < MAX_OBJECTS; i++)
+   for (i = 0; i < MAX_OBJECTS; i++)
    {
       memcpy(&s.rgObject[i], &gpGlobals->g.rgObject[i], sizeof(OBJECT_DOS));
 	  if (i >= OBJECT_ITEM_START && i <= OBJECT_MAGIC_END)
