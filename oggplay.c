@@ -17,7 +17,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-// This file is based on the decoder_example.c from libvorbis-1.3.4.
+// This file uses some code from decoder_example.c in libvorbis-1.3.4.
 
 #include "util.h"
 #include "global.h"
@@ -25,7 +25,7 @@
 #include "sound.h"
 #include <math.h>
 #if PAL_HAS_OGG
-#include <vorbis\vorbisfile.h>
+#include <vorbis/vorbisfile.h>
 
 #include "resampler.h"
 
@@ -42,6 +42,12 @@
 #define STAGE_REWIND     4
 
 #define OGG_BUFFER_LENGTH 4096
+
+#if defined(_MSC_VER)
+#define FORCE_INLINE static SDL_FORCE_INLINE
+#else
+#define FORCE_INLINE SDL_FORCE_INLINE
+#endif
 
 typedef struct tagOGGPLAYER
 {
@@ -66,7 +72,7 @@ typedef struct tagOGGPLAYER
 	BOOL             fUseResampler;
 } OGGPLAYER, *LPOGGPLAYER;
 
-static SDL_FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
+FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
 {
 	int val = (int)(floor(pcm * 32767.f + .5f) * volume);
 	/* might as well guard against clipping */
@@ -79,7 +85,7 @@ static SDL_FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
 	return (ogg_int16_t)val;
 }
 
-static SDL_FORCE_INLINE void OGG_FillResample(LPOGGPLAYER player, ogg_int16_t* stream)
+FORCE_INLINE void OGG_FillResample(LPOGGPLAYER player, ogg_int16_t* stream)
 {
 	if (gpGlobals->iAudioChannels == 2) {
 		stream[0] = SDL_SwapLE16(resampler_get_and_remove_sample(player->resampler[0]));

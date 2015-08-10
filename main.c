@@ -585,7 +585,7 @@ main(
          g_fUseJoystick = FALSE;
          break;
 
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
       case 'm':
          //
          // Use MIDI music

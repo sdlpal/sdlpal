@@ -634,6 +634,9 @@
     <ClInclude Include="adplug\dbemuopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
+    <ClInclude Include="config_types.h">
+      <Filter>liboggvorbis\include\ogg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="sdlpal.ico">

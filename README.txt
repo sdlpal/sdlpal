@@ -96,7 +96,7 @@ sure to use lower-case file name in UNIX-like operating systems) in the game
 directory created by the above step. If no configuration file exists, SDLPAL
 uses default values that supports the original resources of DOS version.
 
-Please refer the 'sdlpal.cfg.example' in src directory for its format.
+Please refer to the 'sdlpal.cfg.example' for configuration file format.
 
 
 -END OF FILE-

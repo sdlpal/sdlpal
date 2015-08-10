@@ -27,7 +27,7 @@
 #include "resampler.h"
 #include <math.h>
 
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
 #include "midi.h"
 #endif
 
@@ -769,7 +769,7 @@ SOUND_CloseAudio(
    }
 #endif
 
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
    MIDI_Play(0, FALSE);
 #endif
 
@@ -983,7 +983,7 @@ SOUND_PlayMUS(
 {
 	SDL_mutexP(gSndPlayer.mtx);
 
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
    if (gpGlobals->eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(iNumRIX, fLoop);

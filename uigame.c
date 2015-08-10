@@ -630,7 +630,7 @@ PAL_SystemMenu(
       // Music
       //
       g_fNoMusic = !PAL_SwitchMenu(!g_fNoMusic);
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
       if (gpGlobals->eMusicType == MUSIC_MIDI)
       {
          if (g_fNoMusic)

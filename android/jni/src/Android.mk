@@ -5,8 +5,9 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := main
 
 SDL_PATH := ../SDL2
+OGG_PATH := ../../../liboggvorbis
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include ../../../liboggvorbis/include
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include $(LOCAL_PATH)/$(OGG_PATH)/include $(LOCAL_PATH)/$(OGG_PATH)/src
 
 LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	../../../battle.c \

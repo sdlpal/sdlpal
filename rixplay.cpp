@@ -213,7 +213,7 @@ RIX_FillBuffer(
 						int to_write = resampler_get_free_count(pRixPlayer->resampler[0]);
 						if (to_write)
 						{
-							short *tempBuf = (short*)_alloca(to_write * gpGlobals->iAudioChannels * sizeof(short));
+							short *tempBuf = (short*)alloca(to_write * gpGlobals->iAudioChannels * sizeof(short));
 							pRixPlayer->opl->update(tempBuf, to_write);
 							for (int i = 0; i < to_write; i++)
 								for (int j = 0; j < gpGlobals->iAudioChannels; j++)

@@ -25,7 +25,7 @@
 #include "util.h"
 #include "input.h"
 
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
 #include "midi.h"
 #endif
 
@@ -277,7 +277,7 @@ UTIL_Delay(
       while (PAL_PollEvent(NULL));
    }
 
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
    MIDI_CheckLoop();
 #endif
 }

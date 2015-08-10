@@ -49,7 +49,7 @@
 #include "play.h"
 #include "game.h"
 
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
 #include "midi.h"
 #endif
 
