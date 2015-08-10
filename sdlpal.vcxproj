@@ -469,7 +469,7 @@
     <ClInclude Include="battle.h" />
     <ClInclude Include="codepage.h" />
     <ClInclude Include="common.h" />
-    <ClInclude Include="config_types.h" />
+    <ClInclude Include="liboggvorbis\include\ogg\config_types.h" />
     <ClInclude Include="ending.h" />
     <ClInclude Include="fight.h" />
     <ClInclude Include="font.h" />
