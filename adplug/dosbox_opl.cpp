@@ -170,8 +170,6 @@ static const fltype decrelconst[4] = {
 	(fltype)(1/22.44608)
 };
 
-#pragma region Operators
-
 void operator_advance(op_type* op_pt, Bit32s vib) {
 	op_pt->wfpos = op_pt->tcount;						// waveform position
 	
@@ -505,8 +503,6 @@ void disable_operator(op_type* op_pt, Bit32u act_type) {
 		}
 	}
 }
-
-#pragma endregion
 
 
 opl_chip* adlib_init(Bit32u samplerate) {

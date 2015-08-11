@@ -90,6 +90,10 @@ PAL_ItemSelectMenuUpdate(
    {
       return 0;
    }
+   else
+   {
+      item_delta = 0;
+   }
 
    //
    // Make sure the current menu item index is in bound

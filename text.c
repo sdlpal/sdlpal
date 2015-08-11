@@ -138,7 +138,7 @@ PAL_InitText(
 	   int base = i * gpGlobals->dwWordLength;
 	   int pos = base + gpGlobals->dwWordLength - 1;
 	   while (pos >= base && temp[pos] == ' ') temp[pos--] = 0;
-	   wlen += PAL_MultiByteToWideChar(temp + base, gpGlobals->dwWordLength, NULL, 0) + 1;
+	   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + base, gpGlobals->dwWordLength, NULL, 0) + 1;
    }
    g_TextLib.lpWordBuf = (LPWSTR*)malloc(g_TextLib.nWords * sizeof(LPWSTR));
    tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
@@ -146,7 +146,7 @@ PAL_InitText(
    {
 	   int l;
 	   g_TextLib.lpWordBuf[i] = tmp + wpos;
-	   l = PAL_MultiByteToWideChar(temp + i * gpGlobals->dwWordLength, gpGlobals->dwWordLength, g_TextLib.lpWordBuf[i], wlen - wpos);
+	   l = PAL_MultiByteToWideChar((LPCSTR)temp + i * gpGlobals->dwWordLength, gpGlobals->dwWordLength, g_TextLib.lpWordBuf[i], wlen - wpos);
 	   if (l > 0 && g_TextLib.lpWordBuf[i][l - 1] == '1')
 		   g_TextLib.lpWordBuf[i][l - 1] = 0;
 	   g_TextLib.lpWordBuf[i][l] = 0;
@@ -194,7 +194,7 @@ PAL_InitText(
    // Split messages and do code page conversion here
    for (i = 0, wlen = 0; i < g_TextLib.nMsgs; i++)
    {
-	   wlen += PAL_MultiByteToWideChar(temp + SDL_SwapLE32(offsets[i]), SDL_SwapLE32(offsets[i + 1]) - SDL_SwapLE32(offsets[i]), NULL, 0) + 1;
+	   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + SDL_SwapLE32(offsets[i]), SDL_SwapLE32(offsets[i + 1]) - SDL_SwapLE32(offsets[i]), NULL, 0) + 1;
    }
    g_TextLib.lpMsgBuf = (LPWSTR*)malloc(g_TextLib.nMsgs * sizeof(LPWSTR));
    tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
@@ -202,7 +202,7 @@ PAL_InitText(
    {
 	   int l;
 	   g_TextLib.lpMsgBuf[i] = tmp + wpos;
-	   l = PAL_MultiByteToWideChar(temp + SDL_SwapLE32(offsets[i]), SDL_SwapLE32(offsets[i + 1]) - SDL_SwapLE32(offsets[i]), g_TextLib.lpMsgBuf[i], wlen - wpos);
+	   l = PAL_MultiByteToWideChar((LPCSTR)temp + SDL_SwapLE32(offsets[i]), SDL_SwapLE32(offsets[i + 1]) - SDL_SwapLE32(offsets[i]), g_TextLib.lpMsgBuf[i], wlen - wpos);
 	   g_TextLib.lpMsgBuf[i][l] = 0;
 	   wpos += l + 1;
    }
@@ -1017,7 +1017,7 @@ PAL_MultiByteToWideCharCP(
 
 --*/
 {
-	int i = 0, j = 0, state = 0, wlen = 0, null = 0;
+	int i = 0, state = 0, wlen = 0, null = 0;
 
 	if (mbslength == -1)
 	{
