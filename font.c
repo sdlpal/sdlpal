@@ -115,9 +115,10 @@ PAL_InitFont(
 		//
 		for (i = 0; i < nChars; i++)
 		{
-			fread(unicode_font[wchar_buf[i]], 30, 1, fp);
-			unicode_font[wchar_buf[i]][30] = 0;
-			unicode_font[wchar_buf[i]][31] = 0;
+			wchar_t w = (wchar_buf[i] >= unicode_upper_base) ? (wchar_buf[i] - unicode_upper_base + 0xd800) : wchar_buf[i];
+			fread(unicode_font[w], 30, 1, fp);
+			unicode_font[w][30] = 0;
+			unicode_font[w][31] = 0;
 		}
 		free(wchar_buf);
 		
