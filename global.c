@@ -79,7 +79,7 @@ PAL_InitGlobals(
    INT       iSampleRate = 44100;		// Default for 44100 Hz
    INT       iOPLSampleRate = 49716;	// Default for 49716 Hz
    INT       iResampleQuality = RESAMPLER_QUALITY_MAX;	// Default to maximum quality
-   INT       iAudioBufferSize = 1024;	// Default for 1024 samples
+   INT       iAudioBufferSize = PAL_AUDIO_DEFAULT_BUFFER_SIZE;
    INT       iVolume = 100;				// Default for 100%
    MUSICTYPE eMusicType = g_fUseMidi ? MUSIC_MIDI : MUSIC_RIX;
    MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;

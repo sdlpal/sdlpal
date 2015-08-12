@@ -105,6 +105,15 @@ UTIL_IOS_SavePath(
     
 #endif
 
+#ifdef __WINPHONE__
+
+LPCSTR
+UTIL_WP_SavePath(
+   VOID
+);
+
+#endif
+
 #define _PATH_LOG           PAL_PREFIX "log.txt"
 #define LOG_EMERG           0 /* system is unusable */
 #define LOG_ALERT           1 /* action must be taken immediately */

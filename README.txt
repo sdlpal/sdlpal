@@ -8,14 +8,30 @@ SDLPAL is an SDL-based reimplementation of the classic Chinese-language RPG
 LICENSE
 =======
 
-SDLPAL is Copyrighted (c) 2009-2015 Wei Mingzhi <whistler_wmz@users.sf.net>.
+SDLPAL is originally created by Wei Mingzhi from 2009.
+Copyright (c) 2009-2011 Wei Mingzhi <whistler_wmz@users.sf.net>.
+Copyright (c) 2011-2015 SDLPAL development team.
 All rights reserved.
 
 SDLPAL is distributed under the terms of GNU General Public License, version 3
 (or any later version) as published by the Free Software Foundation. See
 gpl.txt for details.
 
-Also see credits.txt for additional credits.
+Many of the ideas of this program are based on documents from PAL
+Research Project (https://github.com/palxex/palresearch), and portions of the
+code are based on the work done by Baldur and louyihua.
+
+The getopt.c file is based on source code in OpenBSD.
+
+This program made extensive use of the following libraries:
+
+SDL (http://www.libsdl.org/)
+Adplug (http://adplug.sourceforge.net/)
+SDL_mixer (http://www.libsdl.org/projects/SDL_mixer/)
+libmad (http://www.underbit.com/products/mad/)
+libogg & libvorbis (http://www.vorbis.com/)
+
+Also see authors.txt for additional authors.
 
 This program does NOT include any code or data files of the original game,
 which is proprietary and copyrighted by SoftStar Inc.
@@ -26,9 +42,9 @@ COMPILE UNDER WINDOWS
 
 The following compilers/IDEs are supported under Windows:
 
-1) Microsoft Visual Studio 2013 or higher
-2) Dev-C++ 4.9.9.2
-3) Open Watcom 1.7
+1) Microsoft Visual Studio 2013 or higher (official)
+2) Dev-C++ 4.9.9.2 (unofficial)
+3) Open Watcom 1.7 (unofficial)
 
 To compile, open the respective project file (sdlpal.sln, sdlpal.dev, or
 sdlpal.wpj). You need to have SDL 2.0 development files installed.

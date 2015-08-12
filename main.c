@@ -32,6 +32,14 @@
 #include <fat.h>
 #endif
 
+#ifdef __WINPHONE__
+#include <setjmp.h>
+
+static jmp_buf g_exit_jmp_env;
+# define LONGJMP_EXIT_CODE          0xff
+
+#endif
+
 #define BITMAPNUM_SPLASH_UP         (gpGlobals->fIsWIN95 ? 0x03 : 0x26)
 #define BITMAPNUM_SPLASH_DOWN       (gpGlobals->fIsWIN95 ? 0x04 : 0x27)
 #define SPRITENUM_SPLASH_TITLE      0x47
@@ -99,6 +107,12 @@ PAL_Init(
    //
    // Initialize subsystems.
    //
+   e = PAL_InitGlobals();
+   if (e != 0)
+   {
+	   TerminateOnError("Could not initialize global data: %d.\n", e);
+   }
+
 #ifdef GEKKO
    e = VIDEO_Init_GEKKO(wScreenWidth, wScreenHeight, fFullScreen);
 #else
@@ -110,12 +124,6 @@ PAL_Init(
    }
 
    SDL_WM_SetCaption("Loading...", NULL);
-
-   e = PAL_InitGlobals();
-   if (e != 0)
-   {
-      TerminateOnError("Could not initialize global data: %d.\n", e);
-   }
 
    e = PAL_InitFont(gpGlobals->fUseEmbeddedFonts);
    if (e != 0)
@@ -191,6 +199,9 @@ PAL_Shutdown(
 #if defined(GPH)
 	chdir("/usr/gp2x");
 	execl("./gp2xmenu", "./gp2xmenu", NULL);
+#endif
+#ifdef __WINPHONE__
+	longjmp(g_exit_jmp_env, LONGJMP_EXIT_CODE);
 #endif
 }
 
@@ -631,6 +642,14 @@ main(
    sdlpal_psp_init();
 #endif
    PAL_Init(wScreenWidth, wScreenHeight, fFullScreen);
+
+#ifdef __WINPHONE__
+   //
+   // In windows phone, calling exit(0) directly will cause an abnormal exit.
+   // By using setjmp/longjmp to avoid this.
+   //
+   if (setjmp(g_exit_jmp_env) == LONGJMP_EXIT_CODE) return 0;
+#endif
 
    //
    // Show the trademark screen and splash screen

@@ -30,6 +30,10 @@ extern "C"
 {
 #endif
 
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <wchar.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -128,41 +132,27 @@ extern "C"
 #elif defined (__WINPHONE__)
 
 #define PAL_PREFIX            "Assets\\Data\\"
-#define PAL_SAVE_PREFIX       "" // ???
+#define PAL_SAVE_PREFIX       UTIL_WP_SavePath()
 #define PAL_HAS_TOUCH         1
-#include <stdio.h>
-#ifdef __cplusplus
-#include <cstdio>
-#endif
-
-FILE *MY_fopen(const char *path, const char *mode);
-#define fopen MY_fopen
+#define PAL_AUDIO_DEFAULT_BUFFER_SIZE   4096
 
 #else
 
-# define PAL_HAS_JOYSTICKS     1
+#define PAL_HAS_JOYSTICKS     1
 
-# ifndef _WIN32_WCE
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+# define PAL_ALLOW_KEYREPEAT   1
+# define PAL_HAS_SDLCD         1
+#endif
 
-#  if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
-#   define PAL_ALLOW_KEYREPEAT   1
-#   define PAL_HAS_SDLCD         1
-#  endif
+#define PAL_PREFIX            "./"
+#define PAL_SAVE_PREFIX       "./"
 
-#  ifndef PAL_PREFIX
-#   define PAL_PREFIX            "./"
-#  endif
+#endif
 
-#  ifndef PAL_SAVE_PREFIX
-#   define PAL_SAVE_PREFIX       "./"
-#  endif
-
-# endif
-
-//# if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH)
-//#  define PAL_HAS_MP3         1
-//# endif
-
+/* Default for 1024 samples */
+#ifndef PAL_AUDIO_DEFAULT_BUFFER_SIZE
+#define PAL_AUDIO_DEFAULT_BUFFER_SIZE   1024
 #endif
 
 #ifndef PAL_HAS_SDLCD
@@ -185,17 +175,15 @@ FILE *MY_fopen(const char *path, const char *mode);
 
 #include <windows.h>
 
-#if !defined(__BORLANDC__) && !defined(_WIN32_WCE)
+#if !defined(__BORLANDC__)
 #include <io.h>
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER < 1900
-#define vsnprintf _vsnprintf
-#endif
-
-#ifdef _MSC_VER
-#pragma warning (disable:4244)
-#pragma warning (disable:4996)
+#if defined(_MSC_VER)
+# if _MSC_VER < 1900
+#  define vsnprintf _vsnprintf
+# endif
+# pragma warning (disable:4244)
 #endif
 
 #ifndef _LPCBYTE_DEFINED

@@ -779,6 +779,7 @@ SOUND_CloseAudio(
 	  gSndPlayer.resampler = NULL;
    }
 
+   SDL_mutexV(gSndPlayer.mtx);
    SDL_DestroyMutex(gSndPlayer.mtx);
 }
 

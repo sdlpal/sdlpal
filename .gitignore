@@ -210,3 +210,9 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+# Windows Phone associated file
+winphone/SDLPal/Assets/Data/*
+!winphone/SDLPal/Assets/Data/README.txt
+winphone/SDL2/*
+!winphone/SDL2/README.txt
