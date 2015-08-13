@@ -343,6 +343,14 @@ typedef const WCHAR        *LPCWSTR;
 #define __WIDETEXT(quote) L##quote
 #define WIDETEXT(quote) __WIDETEXT(quote)
 
+#define PAL_DelayUntil(t) \
+   PAL_ProcessEvent(); \
+   while (!SDL_TICKS_PASSED(SDL_GetTicks(), (t))) \
+   { \
+      PAL_ProcessEvent(); \
+      SDL_Delay(1); \
+   }
+
 typedef enum tagCODEPAGE {
 	CP_UNKNOWN = -1,
 	CP_MIN = 0,

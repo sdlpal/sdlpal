@@ -566,7 +566,7 @@ PAL_BattleUIShowText(
 
 --*/
 {
-   if (SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
+   if (!SDL_TICKS_PASSED(SDL_GetTicks(), g_Battle.UI.dwMsgShowTime))
    {
       wcscpy(g_Battle.UI.szNextMsg, lpszText);
       g_Battle.UI.wNextMsgDuration = wDuration;
@@ -1687,7 +1687,7 @@ end:
    // Show the text message if there is one.
    //
 #ifndef PAL_CLASSIC
-   if (SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
+   if (!SDL_TICKS_PASSED(SDL_GetTicks(), g_Battle.UI.dwMsgShowTime))
    {
       //
       // The text should be shown in a small window at the center of the screen

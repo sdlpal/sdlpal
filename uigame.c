@@ -1408,7 +1408,7 @@ PAL_ItemUseMenu(
          //
          // See if we should change the highlight color
          //
-         if (SDL_GetTicks() > dwColorChangeTime)
+         if (SDL_TICKS_PASSED(SDL_GetTicks(), dwColorChangeTime))
          {
             if ((WORD)bSelectedColor + 1 >=
                (WORD)MENUITEM_COLOR_SELECTED_FIRST + MENUITEM_COLOR_SELECTED_TOTALNUM)
@@ -1866,7 +1866,7 @@ PAL_EquipItemMenu(
          //
          // See if we should change the highlight color
          //
-         if (SDL_GetTicks() > dwColorChangeTime)
+         if (SDL_TICKS_PASSED(SDL_GetTicks(), dwColorChangeTime))
          {
             if ((WORD)bSelectedColor + 1 >=
                (WORD)MENUITEM_COLOR_SELECTED_FIRST + MENUITEM_COLOR_SELECTED_TOTALNUM)

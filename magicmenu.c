@@ -462,7 +462,7 @@ PAL_MagicSelectionMenu(
       }
 
       PAL_ProcessEvent();
-      while (SDL_GetTicks() < dwTime)
+      while (!SDL_TICKS_PASSED(SDL_GetTicks(), dwTime))
       {
          PAL_ProcessEvent();
          if (g_InputState.dwKeyPress != 0)

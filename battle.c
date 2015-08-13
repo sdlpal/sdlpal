@@ -247,12 +247,7 @@ PAL_BattleFadeScene(
    {
       for (j = 0; j < 6; j++)
       {
-         PAL_ProcessEvent();
-         while (SDL_GetTicks() <= time)
-         {
-            PAL_ProcessEvent();
-            SDL_Delay(1);
-         }
+         PAL_DelayUntil(time);
          time = SDL_GetTicks() + 16;
 
          //
@@ -396,12 +391,7 @@ PAL_BattleMain(
       //
       // Wait for the time of one frame. Accept input here.
       //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= dwTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(dwTime);
 
       //
       // Set the time of the next frame.

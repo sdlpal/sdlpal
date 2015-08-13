@@ -408,7 +408,7 @@ PAL_GetTimeChargingSpeed(
 {
    if ((g_Battle.UI.state == kBattleUISelectMove &&
       g_Battle.UI.MenuState != kBattleMenuMain) ||
-      SDL_GetTicks() < g_Battle.UI.dwMsgShowTime)
+      !SDL_TICKS_PASSED(SDL_GetTicks(), g_Battle.UI.dwMsgShowTime))
    {
       //
       // Pause the time when there are submenus or text messages
@@ -490,12 +490,7 @@ PAL_BattleDelay(
       //
       // Wait for the time of one frame. Accept input here.
       //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= dwTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(dwTime);
 
       //
       // Set the time of the next frame.
@@ -2003,12 +1998,7 @@ PAL_BattleShowPlayerAttackAnim(
       //
       // Wait for the time of one frame. Accept input here.
       //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= dwTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(dwTime);
 
       //
       // Set the time of the next frame.
@@ -2255,12 +2245,7 @@ PAL_BattleShowPlayerPreMagicAnim(
          //
          // Wait for the time of one frame. Accept input here.
          //
-         PAL_ProcessEvent();
-         while (SDL_GetTicks() <= dwTime)
-         {
-            PAL_ProcessEvent();
-            SDL_Delay(1);
-         }
+		 PAL_DelayUntil(dwTime);
 
          //
          // Set the time of the next frame.
@@ -2365,12 +2350,7 @@ PAL_BattleShowPlayerDefMagicAnim(
       //
       // Wait for the time of one frame. Accept input here.
       //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= dwTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(dwTime);
 
       //
       // Set the time of the next frame.
@@ -2592,12 +2572,7 @@ PAL_BattleShowPlayerOffMagicAnim(
       //
       // Wait for the time of one frame. Accept input here.
       //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= dwTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(dwTime);
 
       //
       // Set the time of the next frame.
@@ -2792,12 +2767,7 @@ PAL_BattleShowEnemyMagicAnim(
       //
       // Wait for the time of one frame. Accept input here.
       //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= dwTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(dwTime);
 
       //
       // Set the time of the next frame.
@@ -2988,12 +2958,7 @@ PAL_BattleShowPlayerSummonMagicAnim(
       //
       // Wait for the time of one frame. Accept input here.
       //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= dwTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(dwTime);
 
       //
       // Set the time of the next frame.

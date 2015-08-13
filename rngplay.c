@@ -470,12 +470,7 @@ PAL_RNGPlay(
       //
       // Delay for a while
       //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= iTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(iTime);
    }
 
    fclose(fp);

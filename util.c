@@ -271,7 +271,7 @@ UTIL_Delay(
 
    while (PAL_PollEvent(NULL));
 
-   while (SDL_GetTicks() < t)
+   while (!SDL_TICKS_PASSED(SDL_GetTicks(), t))
    {
       SDL_Delay(1);
       while (PAL_PollEvent(NULL));

@@ -139,12 +139,7 @@ PAL_PartyWalkTo(
 
    while (xOffset != 0 || yOffset != 0)
    {
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= t)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(t);
 
       t = SDL_GetTicks() + FRAME_TIME;
 
@@ -252,12 +247,7 @@ PAL_PartyRideEventObject(
 
    while (xOffset != 0 || yOffset != 0)
    {
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= t)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(t);
 
       t = SDL_GetTicks() + FRAME_TIME;
 
@@ -2322,12 +2312,7 @@ PAL_InterpretInstruction(
             //
             // Delay for one frame
             //
-            PAL_ProcessEvent();
-            while (SDL_GetTicks() < time)
-            {
-               PAL_ProcessEvent();
-               SDL_Delay(1);
-            }
+			PAL_DelayUntil(time);
             time = SDL_GetTicks() + FRAME_TIME;
          } while (++i < (SHORT)(pScript->rgwOperand[2]));
       }
@@ -3225,12 +3210,7 @@ PAL_RunTriggerScript(
 
             for (i = 0; i < (pScript->rgwOperand[0] ? pScript->rgwOperand[0] : 1); i++)
             {
-               PAL_ProcessEvent();
-               while (SDL_GetTicks() < time)
-               {
-                  PAL_ProcessEvent();
-                  SDL_Delay(1);
-               }
+               PAL_DelayUntil(time);
 
                time = SDL_GetTicks() + FRAME_TIME;
 
