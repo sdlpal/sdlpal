@@ -25,17 +25,26 @@
     </Image>
     <Filter Include="资产\Data">
       <UniqueIdentifier>{77c8944a-e166-4a2c-b515-9550e82a9d63}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="资产\Data\OGG">
       <UniqueIdentifier>{08b020ee-aa73-48f6-83b9-ad6573dd0dcc}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="资产\Data\MP3">
       <UniqueIdentifier>{eb7b143d-6d18-479d-8908-7d6fc6f86449}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="SDL2">
+      <UniqueIdentifier>{1b4126fa-ab18-4d2a-8fc0-dff551a94158}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinPhoneUtil.cpp" />
-    <ClCompile Include="..\SDL2\src\main\winrt\SDL_winrt_main_NonXAML.cpp" />
+    <ClCompile Include="..\SDL2\src\main\winrt\SDL_winrt_main_NonXAML.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -83,6 +92,9 @@
     <None Include="Assets\Data\RNG.MKF">
       <Filter>资产\Data</Filter>
     </None>
+    <None Include="Assets\Data\sdlpal.cfg">
+      <Filter>资产\Data</Filter>
+    </None>
     <None Include="Assets\Data\SSS.MKF">
       <Filter>资产\Data</Filter>
     </None>
@@ -96,9 +108,6 @@
       <Filter>资产\Data</Filter>
     </None>
     <None Include="Assets\Data\WORD.DAT">
-      <Filter>资产\Data</Filter>
-    </None>
-    <None Include="Assets\Data\sdlpal.cfg">
       <Filter>资产\Data</Filter>
     </None>
     <None Include="Assets\Data\OGG\10002.ogg">

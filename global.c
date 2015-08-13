@@ -24,8 +24,8 @@
 #include "main.h"
 #include "resampler.h"
 
-LPGLOBALVARS gpGlobals = NULL;
-extern BOOL g_fUseMidi;
+static GLOBALVARS _gGlobals;
+GLOBALVARS * const  gpGlobals = &_gGlobals;
 
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 #define DO_BYTESWAP(buf, size)
@@ -71,6 +71,10 @@ PAL_InitGlobals(
    DWORD     dwWordLength = 10;			// Default for PAL DOS/WIN95
    DWORD     dwExtraMagicDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwExtraItemDescLines = 0;	// Default for PAL DOS/WIN95
+   DWORD     dwScreenWidth = 0;
+   DWORD     dwScreenHeight = 0;
+   DWORD     dwFullScreen = FALSE;
+   DWORD     dwKeepAspectRatio = TRUE;
    DWORD     dwIsDOS = 1;				// Default for DOS
    DWORD     dwUseEmbeddedFonts = 1;	// Default for using embedded fonts in DOS version
    DWORD     dwUseSurroundOPL = 1;		// Default for using surround opl
@@ -81,18 +85,9 @@ PAL_InitGlobals(
    INT       iResampleQuality = RESAMPLER_QUALITY_MAX;	// Default to maximum quality
    INT       iAudioBufferSize = PAL_AUDIO_DEFAULT_BUFFER_SIZE;
    INT       iVolume = 100;				// Default for 100%
-   MUSICTYPE eMusicType = g_fUseMidi ? MUSIC_MIDI : MUSIC_RIX;
+   MUSICTYPE eMusicType = MUSIC_RIX;
    MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;
    OPLTYPE   eOPLType = OPL_DOSBOX;
-
-   if (gpGlobals == NULL)
-   {
-      gpGlobals = (LPGLOBALVARS)calloc(1, sizeof(GLOBALVARS));
-      if (gpGlobals == NULL)
-      {
-         return -1;
-      }
-   }
 
 #if USE_RIX_EXTRA_INIT
    gpGlobals->pExtraFMRegs = NULL;
@@ -180,6 +175,22 @@ PAL_InitGlobals(
 				   else if (SDL_strcasecmp(p, "SURROUNDOPLOFFSET") == 0)
 				   {
 					   sscanf(ptr, "%f", &flSurroundOPLOffset);
+				   }
+				   else if (SDL_strcasecmp(p, "WINDOWWIDTH") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwScreenWidth);
+				   }
+				   else if (SDL_strcasecmp(p, "WINDOWHEIGHT") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwScreenHeight);
+				   }
+				   else if (SDL_strcasecmp(p, "FULLSCREEN") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwFullScreen);
+				   }
+				   else if (SDL_strcasecmp(p, "KEEPASPECTRATIO") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwKeepAspectRatio);
 				   }
 				   else if (SDL_strcasecmp(p, "AUDIOBUFFERSIZE") == 0)
 				   {
@@ -308,6 +319,29 @@ PAL_InitGlobals(
    gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
    gpGlobals->wAudioBufferSize = (WORD)iAudioBufferSize;
    gpGlobals->iVolume = SDL_MIX_MAXVOLUME * iVolume / 100;
+#if defined(NDS) || defined(__SYMBIAN32__) || defined(GEKKO) || defined(PSP) || defined(GEKKO) || defined(GPH) || defined(DINGOO) || defined(__IOS__) || defined(__ANDROID__)
+   gpGlobals->dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
+   gpGlobals->dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
+#elif defined(__WINPHONE__)
+   if (UTIL_WP_GetScreenSize(&dwScreenWidth, &dwScreenHeight))
+   {
+      gpGlobals->dwScreenWidth = dwScreenWidth;
+      gpGlobals->dwScreenHeight = dwScreenHeight;
+   }
+   else
+   {
+      gpGlobals->dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
+      gpGlobals->dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
+   }
+#else
+   gpGlobals->dwScreenWidth = dwScreenWidth ? dwScreenWidth : PAL_DEFAULT_WINDOW_WIDTH;
+   gpGlobals->dwScreenHeight = dwScreenHeight ? dwScreenHeight : (dwFullScreen ? PAL_DEFAULT_FULLSCREEN_HEIGHT : PAL_DEFAULT_WINDOW_HEIGHT);
+#endif
+#if SDL_VERSION_ATLEAST(2,0,0)
+   gpGlobals->fKeepAspectRatio = dwKeepAspectRatio ? TRUE : FALSE;
+#else
+   gpGlobals->fFullScreen = dwFullScreen ? TRUE : FALSE;
+#endif
 
    //
    // Set decompress function
@@ -351,45 +385,40 @@ PAL_FreeGlobals(
 
 --*/
 {
-   if (gpGlobals != NULL)
-   {
-      //
-      // Close all opened files
-      //
-      UTIL_CloseFile(gpGlobals->f.fpFBP);
-      UTIL_CloseFile(gpGlobals->f.fpMGO);
-      UTIL_CloseFile(gpGlobals->f.fpBALL);
-      UTIL_CloseFile(gpGlobals->f.fpDATA);
-      UTIL_CloseFile(gpGlobals->f.fpF);
-      UTIL_CloseFile(gpGlobals->f.fpFIRE);
-      UTIL_CloseFile(gpGlobals->f.fpRGM);
-      UTIL_CloseFile(gpGlobals->f.fpSSS);
+   //
+   // Close all opened files
+   //
+   UTIL_CloseFile(gpGlobals->f.fpFBP);
+   UTIL_CloseFile(gpGlobals->f.fpMGO);
+   UTIL_CloseFile(gpGlobals->f.fpBALL);
+   UTIL_CloseFile(gpGlobals->f.fpDATA);
+   UTIL_CloseFile(gpGlobals->f.fpF);
+   UTIL_CloseFile(gpGlobals->f.fpFIRE);
+   UTIL_CloseFile(gpGlobals->f.fpRGM);
+   UTIL_CloseFile(gpGlobals->f.fpSSS);
 
-      //
-      // Free the game data
-      //
-      free(gpGlobals->g.lprgEventObject);
-      free(gpGlobals->g.lprgScriptEntry);
-      free(gpGlobals->g.lprgStore);
-      free(gpGlobals->g.lprgEnemy);
-      free(gpGlobals->g.lprgEnemyTeam);
-      free(gpGlobals->g.lprgMagic);
-      free(gpGlobals->g.lprgBattleField);
-      free(gpGlobals->g.lprgLevelUpMagic);
+   //
+   // Free the game data
+   //
+   free(gpGlobals->g.lprgEventObject);
+   free(gpGlobals->g.lprgScriptEntry);
+   free(gpGlobals->g.lprgStore);
+   free(gpGlobals->g.lprgEnemy);
+   free(gpGlobals->g.lprgEnemyTeam);
+   free(gpGlobals->g.lprgMagic);
+   free(gpGlobals->g.lprgBattleField);
+   free(gpGlobals->g.lprgLevelUpMagic);
 
-      //
-      // Free the object description data
-      //
-	  if (!gpGlobals->fIsWIN95)
-         PAL_FreeObjectDesc(gpGlobals->lpObjectDesc);
+   //
+   // Free the object description data
+   //
+   if (!gpGlobals->fIsWIN95)
+      PAL_FreeObjectDesc(gpGlobals->lpObjectDesc);
 
-      //
-      // Delete the instance
-      //
-      free(gpGlobals);
-   }
-
-   gpGlobals = NULL;
+   //
+   // Clear the instance
+   //
+   memset(gpGlobals, 0, sizeof(GLOBALVARS));
 }
 
 

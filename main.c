@@ -22,7 +22,6 @@
 //
 
 #include "main.h"
-#include "getopt.h"
 
 #ifdef PSP
 #include "main_PSP.h"
@@ -46,13 +45,10 @@ static jmp_buf g_exit_jmp_env;
 #define SPRITENUM_SPLASH_CRANE      0x49
 #define NUM_RIX_TITLE               0x05
 
-BOOL g_fUseMidi = FALSE;
 
 static VOID
 PAL_Init(
-   WORD             wScreenWidth,
-   WORD             wScreenHeight,
-   BOOL             fFullScreen
+   VOID
 )
 /*++
   Purpose:
@@ -61,11 +57,7 @@ PAL_Init(
 
   Parameters:
 
-    [IN]  wScreenWidth - width of the screen.
-
-    [IN]  wScreenHeight - height of the screen.
-
-    [IN]  fFullScreen - TRUE to use full screen mode, FALSE to use windowed mode.
+    None.
 
   Return value:
 
@@ -113,11 +105,7 @@ PAL_Init(
 	   TerminateOnError("Could not initialize global data: %d.\n", e);
    }
 
-#ifdef GEKKO
-   e = VIDEO_Init_GEKKO(wScreenWidth, wScreenHeight, fFullScreen);
-#else
-   e = VIDEO_Init(wScreenWidth, wScreenHeight, fFullScreen);
-#endif
+   e = VIDEO_Startup();
    if (e != 0)
    {
       TerminateOnError("Could not initialize Video: %d.\n", e);
@@ -523,10 +511,6 @@ main(
 
 --*/
 {
-   WORD          wScreenWidth = 0, wScreenHeight = 0;
-   int           c;
-   BOOL          fFullScreen = FALSE;
-
 #if defined(__APPLE__) && !defined(__IOS__)
    char *p = strstr(argv[0], "/Pal.app/");
 
@@ -546,94 +530,9 @@ main(
 
    UTIL_OpenLog();
 
-#ifdef _WIN32
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+#if defined(_WIN32) && SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
    putenv("SDL_VIDEODRIVER=directx");
 #endif
-#endif
-
-#ifndef __SYMBIAN32__
-   //
-   // Parse parameters.
-   //
-   while ((c = getopt(argc, argv, "w:h:fjm")) != -1)
-   {
-      switch (c)
-      {
-      case 'w':
-         //
-         // Set the width of the screen
-         //
-         wScreenWidth = atoi(optarg);
-         if (wScreenHeight == 0)
-         {
-            wScreenHeight = wScreenWidth * 200 / 320;
-         }
-         break;
-
-      case 'h':
-         //
-         // Set the height of the screen
-         //
-         wScreenHeight = atoi(optarg);
-         if (wScreenWidth == 0)
-         {
-            wScreenWidth = wScreenHeight * 320 / 200;
-         }
-         break;
-
-      case 'f':
-         //
-         // Fullscreen Mode
-         //
-         fFullScreen = TRUE;
-         break;
-
-      case 'j':
-         //
-         // Disable joystick
-         //
-         g_fUseJoystick = FALSE;
-         break;
-
-#if PAL_HAS_NATIVEMIDI
-      case 'm':
-         //
-         // Use MIDI music
-         //
-         g_fUseMidi = TRUE;
-         break;
-#endif
-      }
-   }
-#endif
-
-   //
-   // Default resolution is 640x400 (windowed) or 640x480 (fullscreen).
-   //
-   if (wScreenWidth == 0)
-   {
-#ifdef __SYMBIAN32__
-#ifdef __S60_5X__
-      wScreenWidth = 640;
-      wScreenHeight = 360;
-#else
-      wScreenWidth = 320;
-      wScreenHeight = 240;
-#endif
-#else
-#if defined(GPH) || defined(DINGOO)
-      wScreenWidth = 320;
-      wScreenHeight = 240;
-#elif defined (__IOS__) || defined (__ANDROID__)
-      wScreenWidth = 320;
-      wScreenHeight = 200;
-#else
-      wScreenWidth = 640;
-      wScreenHeight = fFullScreen ? 480 : 400;
-#endif
-#endif
-   }
 
    //
    // Initialize everything
@@ -641,7 +540,7 @@ main(
 #ifdef PSP
    sdlpal_psp_init();
 #endif
-   PAL_Init(wScreenWidth, wScreenHeight, fFullScreen);
+   PAL_Init();
 
 #ifdef __WINPHONE__
    //

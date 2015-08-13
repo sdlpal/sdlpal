@@ -103,6 +103,18 @@ extern "C"
 #define PAL_HAS_MOUSE         1
 #define PAL_PREFIX            "e:/data/pal/"
 #define PAL_SAVE_PREFIX       "e:/data/pal/"
+# ifdef __S60_5X__
+#  define PAL_DEFAULT_WINDOW_WIDTH   640
+#  define PAL_DEFAULT_WINDOW_HEIGHT  360
+# else
+#  define PAL_DEFAULT_WINDOW_WIDTH   320
+#  define PAL_DEFAULT_WINDOW_HEIGHT  240
+# endif
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
+# endif
 
 #elif defined (GEKKO)
 
@@ -111,23 +123,85 @@ extern "C"
 #define PAL_PREFIX            "SD:/apps/sdlpal/"
 #define PAL_SAVE_PREFIX       "SD:/apps/sdlpal/"
 
+#define PAL_DEFAULT_WINDOW_WIDTH   640
+#define PAL_DEFAULT_WINDOW_HEIGHT  480
+
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
+# endif
+
 #elif defined (PSP)
 
 #define PAL_HAS_JOYSTICKS     0
 #define PAL_PREFIX            "ms0:/"
 #define PAL_SAVE_PREFIX       "ms0:/PSP/SAVEDATA/SDLPAL/"
 
+#define PAL_DEFAULT_WINDOW_WIDTH   320
+#define PAL_DEFAULT_WINDOW_HEIGHT  240
+
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | SDL_FULLSCREEN)
+# endif
+
+#elif defined(GPH) || defined(DINGOO)
+
+#define PAL_PREFIX            "./"
+#define PAL_SAVE_PREFIX       "./"
+
+#  define PAL_DEFAULT_WINDOW_WIDTH   320
+#  define PAL_DEFAULT_WINDOW_HEIGHT  240
+
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | SDL_FULLSCREEN)
+# endif
+
+#elif defined(NDS)
+
+#define PAL_PREFIX            "./"
+#define PAL_SAVE_PREFIX       "./"
+
+#  define PAL_DEFAULT_WINDOW_WIDTH   293
+#  define PAL_DEFAULT_WINDOW_HEIGHT  196
+
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | SDL_FULLSCREEN)
+# endif
+
 #elif defined (__IOS__)
 
 #define PAL_PREFIX            UTIL_IOS_BasePath()
 #define PAL_SAVE_PREFIX       UTIL_IOS_SavePath()
 #define PAL_HAS_TOUCH         1
+#define PAL_DEFAULT_WINDOW_WIDTH   320
+#define PAL_DEFAULT_WINDOW_HEIGHT  200
+
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_FULLSCREEN)
+# endif
 
 #elif defined (__ANDROID__)
 
 #define PAL_PREFIX            "/mnt/sdcard/sdlpal/"
 #define PAL_SAVE_PREFIX       "/mnt/sdcard/sdlpal/"
 #define PAL_HAS_TOUCH         1
+#define PAL_DEFAULT_WINDOW_WIDTH   320
+#define PAL_DEFAULT_WINDOW_HEIGHT  200
+
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_FULLSCREEN)
+# endif
 
 #elif defined (__WINPHONE__)
 
@@ -135,6 +209,14 @@ extern "C"
 #define PAL_SAVE_PREFIX       UTIL_WP_SavePath()
 #define PAL_HAS_TOUCH         1
 #define PAL_AUDIO_DEFAULT_BUFFER_SIZE   4096
+#define PAL_DEFAULT_WINDOW_WIDTH   320
+#define PAL_DEFAULT_WINDOW_HEIGHT  200
+
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
+# endif
 
 #else
 
@@ -148,6 +230,20 @@ extern "C"
 #define PAL_PREFIX            "./"
 #define PAL_SAVE_PREFIX       "./"
 
+#define PAL_DEFAULT_WINDOW_WIDTH   640
+#define PAL_DEFAULT_WINDOW_HEIGHT  400
+#define PAL_DEFAULT_FULLSCREEN_HEIGHT 480
+
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_FULLSCREEN)
+# endif
+
+#endif
+
+#ifndef PAL_DEFAULT_FULLSCREEN_HEIGHT
+# define PAL_DEFAULT_FULLSCREEN_HEIGHT PAL_DEFAULT_WINDOW_HEIGHT
 #endif
 
 /* Default for 1024 samples */

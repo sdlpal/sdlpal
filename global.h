@@ -620,6 +620,8 @@ typedef struct tagGLOBALVARS
    DWORD            dwWordLength;
    DWORD            dwExtraMagicDescLines;
    DWORD            dwExtraItemDescLines;
+   DWORD            dwScreenWidth;
+   DWORD            dwScreenHeight;
    double           dSurroundOPLOffset;
    INT              iAudioChannels;
    INT              iSampleRate;
@@ -633,9 +635,15 @@ typedef struct tagGLOBALVARS
    BOOL             fIsWIN95;
    BOOL             fUseEmbeddedFonts;
    BOOL             fUseSurroundOPL;
+#if SDL_VERSION_ATLEAST(2,0,0)
+   BOOL             fKeepAspectRatio;
+#else
+   BOOL             fFullScreen;
+#endif
+   BOOL             fEnableJoyStick;
 } GLOBALVARS, *LPGLOBALVARS;
 
-extern LPGLOBALVARS gpGlobals;
+extern GLOBALVARS * const gpGlobals;
 
 INT
 PAL_InitGlobals(

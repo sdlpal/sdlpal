@@ -82,3 +82,24 @@
 
 # Volume: Indicates the global volume. Valid values are from 0 to 100, default is 100.
 #Volume=100
+
+# WindowWidth: Indicates the width of game window. Default value varies on different
+#              platforms. On desktop, the default value is 640.
+#WindowWidth=640
+
+# WindowHeight: Indicates the height of game window. Default value varies on different
+#               platforms. On desktop, the default value is 400 for non-fullsceen mode,
+#               and 480 for full-screen mode.
+#WindowHeight=400
+
+# FullScreen: Indicates whether the game should started fullscreen or not, default is not.
+#             Currently only valid when the game is built with SDL 1.2 builds. If the game
+#             is built with SDL 2.0 or higher, this value is ignored.
+#FullScreen=0
+
+# KeepAspectRatio: Indicates whether the content in game window should keep its original
+#                  aspect ratio (default) or not. When aspect ratio is kept, there may be
+#                  left/right or top/bottom black edges in the game window. Currently this
+#                  value is only valid if the game is built with SDL 2.0 or higher, otherwise
+#                  this value is ignored.
+#KeepAspectRatio=1

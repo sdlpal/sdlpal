@@ -112,6 +112,12 @@ UTIL_WP_SavePath(
    VOID
 );
 
+BOOL
+UTIL_WP_GetScreenSize(
+   DWORD *pdwScreenWidth,
+   DWORD *pdwScreenHeight
+);
+
 #endif
 
 #define _PATH_LOG           PAL_PREFIX "log.txt"
