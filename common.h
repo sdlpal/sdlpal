@@ -205,7 +205,7 @@ extern "C"
 
 #elif defined (__WINPHONE__)
 
-#define PAL_PREFIX            "Assets\\Data\\"
+#define PAL_PREFIX            UTIL_WP_BasePath()
 #define PAL_SAVE_PREFIX       UTIL_WP_SavePath()
 #define PAL_HAS_TOUCH         1
 #define PAL_AUDIO_DEFAULT_BUFFER_SIZE   4096

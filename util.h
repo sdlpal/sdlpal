@@ -108,6 +108,11 @@ UTIL_IOS_SavePath(
 #ifdef __WINPHONE__
 
 LPCSTR
+UTIL_WP_BasePath(
+   VOID
+);
+
+LPCSTR
 UTIL_WP_SavePath(
    VOID
 );

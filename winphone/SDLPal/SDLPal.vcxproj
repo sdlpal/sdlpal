@@ -181,124 +181,12 @@
     <ClCompile Include="WinPhoneUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Data\ABC.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\BALL.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\DATA.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\F.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\FBP.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\FIRE.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\GOP.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\M.MSG">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\MAP.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\MGO.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\MUS.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10002.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10003.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10004.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10005.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10006.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10007.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10008.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10009.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10010.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10011.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10012.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\OGG\10013.ogg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\PAT.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\RGM.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\RNG.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\sdlpal.cfg">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\SSS.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\VOC.MKF">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\WOR16.ASC">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\WOR16.FON">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Assets\Data\WORD.DAT">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\SDL2\VisualC-WinRT\WinPhone81_VS2013\SDL-WinPhone81.vcxproj">
       <Project>{48fadc0e-964d-4dab-bced-372e0ad19577}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\SDLPalLib\SDLPalLib.vcxproj">
+    <ProjectReference Include="..\SDLPalCore\SDLPalCore.vcxproj">
       <Project>{704d3871-2e86-42ef-a607-cbcfb7a7ebab}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="Assets\Data\MP3\10002.MP3" />
-    <Media Include="Assets\Data\MP3\10003.MP3" />
-    <Media Include="Assets\Data\MP3\10004.MP3" />
-    <Media Include="Assets\Data\MP3\10005.MP3" />
-    <Media Include="Assets\Data\MP3\10006.MP3" />
-    <Media Include="Assets\Data\MP3\10007.MP3" />
-    <Media Include="Assets\Data\MP3\10008.MP3" />
-    <Media Include="Assets\Data\MP3\10009.MP3" />
-    <Media Include="Assets\Data\MP3\10010.MP3" />
-    <Media Include="Assets\Data\MP3\10011.MP3" />
-    <Media Include="Assets\Data\MP3\10012.MP3" />
-    <Media Include="Assets\Data\MP3\10013.MP3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

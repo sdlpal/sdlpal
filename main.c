@@ -524,6 +524,15 @@ main(
 #endif
 
 #ifdef __WINPHONE__
+   //
+   // In windows phone, calling exit(0) directly will cause an abnormal exit.
+   // By using setjmp/longjmp to avoid this.
+   //
+   if (setjmp(g_exit_jmp_env) == LONGJMP_EXIT_CODE) return 0;
+
+   // We should first check the SD card before running actual codes
+   UTIL_WP_BasePath();
+
    SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
    SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
 #endif
@@ -541,14 +550,6 @@ main(
    sdlpal_psp_init();
 #endif
    PAL_Init();
-
-#ifdef __WINPHONE__
-   //
-   // In windows phone, calling exit(0) directly will cause an abnormal exit.
-   // By using setjmp/longjmp to avoid this.
-   //
-   if (setjmp(g_exit_jmp_env) == LONGJMP_EXIT_CODE) return 0;
-#endif
 
    //
    // Show the trademark screen and splash screen

@@ -21,9 +21,25 @@
         </m3:DefaultTile>
         <m3:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="black" />
       </m3:VisualElements>
+      <Extensions>
+        <Extension Category="windows.fileTypeAssociation">
+          <FileTypeAssociation Name="pal">
+            <SupportedFileTypes>
+              <FileType>.mkf</FileType>
+              <FileType>.dat</FileType>
+              <FileType>.msg</FileType>
+              <FileType>.cfg</FileType>
+              <FileType>.asc</FileType>
+              <FileType>.mp3</FileType>
+              <FileType>.ogg</FileType>
+              <FileType>.rpg</FileType>
+            </SupportedFileTypes>
+          </FileTypeAssociation>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>
-    <Capability Name="internetClientServer" />
+    <Capability Name="removableStorage" />
   </Capabilities>
 </Package>
