@@ -23,6 +23,9 @@ code are based on the work done by Baldur and louyihua.
 
 The getopt.c file is based on source code in OpenBSD.
 
+The resampler code is based on the code in Kode54's foo_input_adplug project
+(https://github.com/kode54/foo_input_adplug).
+
 This program made extensive use of the following libraries:
 
 SDL (http://www.libsdl.org/)
@@ -31,7 +34,10 @@ SDL_mixer (http://www.libsdl.org/projects/SDL_mixer/)
 libmad (http://www.underbit.com/products/mad/)
 libogg & libvorbis (http://www.vorbis.com/)
 
-Also see authors.txt for additional authors.
+And some of the OPL simulation cores this program used are from the DOSBOX
+project (http://www.dosbox.com).
+
+Please see authors.txt for additional authors.
 
 This program does NOT include any code or data files of the original game,
 which is proprietary and copyrighted by SoftStar Inc.

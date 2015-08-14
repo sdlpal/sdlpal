@@ -667,7 +667,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CREDITS.txt">
+    <Text Include="AUTHORS.txt">
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="README.txt">

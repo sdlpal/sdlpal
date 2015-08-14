@@ -24,7 +24,15 @@
 extern "C" {
 # endif
 
-# define FPM_INTEL
+# if defined(_MSC_VER)
+#  if defined(_M_ARM)
+#   define FPM_ARM
+#  else
+#   define FPM_INTEL
+#  endif
+# else
+#  define FPM_INTEL
+#endif
 
 
 
