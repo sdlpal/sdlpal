@@ -531,7 +531,7 @@ main(
    if (setjmp(g_exit_jmp_env) == LONGJMP_EXIT_CODE) return 0;
 
    // We should first check the SD card before running actual codes
-   UTIL_WP_BasePath();
+   UTIL_BasePath();
 
    SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
    SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");

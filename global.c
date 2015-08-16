@@ -319,11 +319,11 @@ PAL_InitGlobals(
    gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
    gpGlobals->wAudioBufferSize = (WORD)iAudioBufferSize;
    gpGlobals->iVolume = SDL_MIX_MAXVOLUME * iVolume / 100;
-#if defined(NDS) || defined(__SYMBIAN32__) || defined(GEKKO) || defined(PSP) || defined(GEKKO) || defined(GPH) || defined(DINGOO) || defined(__IOS__) || defined(__ANDROID__)
+#if defined(NDS) || defined(__SYMBIAN32__) || defined(GEKKO) || defined(PSP) || defined(GEKKO) || defined(GPH) || defined(DINGOO) || defined(__ANDROID__)
    gpGlobals->dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
    gpGlobals->dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
-#elif defined(__WINPHONE__)
-   if (UTIL_WP_GetScreenSize(&dwScreenWidth, &dwScreenHeight))
+#elif defined(__WINPHONE__) || defined(__IOS__)
+   if (UTIL_GetScreenSize(&dwScreenWidth, &dwScreenHeight))
    {
       gpGlobals->dwScreenWidth = dwScreenWidth;
       gpGlobals->dwScreenHeight = dwScreenHeight;

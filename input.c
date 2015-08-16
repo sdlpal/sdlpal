@@ -695,30 +695,54 @@ PAL_JoystickEventFilter(
 #define  TOUCH_BUTTON3  7
 #define  TOUCH_BUTTON4  8
 
+static float gfTouchXMin = 0.0f;
+static float gfTouchXMax = 1.0f;
+static float gfTouchYMin = 0.0f;
+static float gfTouchYMax = 1.0f;
+
+VOID
+PAL_SetTouchBounds(
+   DWORD dwScreenWidth,
+   DWORD dwScreenHeight,
+   SDL_Rect renderRect
+)
+{
+   gfTouchXMin = (float)renderRect.x / dwScreenWidth;
+   gfTouchXMax = (float)(renderRect.x + renderRect.w) / dwScreenWidth;
+   gfTouchYMin = (float)renderRect.y / dwScreenHeight;
+   gfTouchYMax = (float)(renderRect.y + renderRect.h) / dwScreenHeight;
+}
+
 static int
 PAL_GetTouchArea(
    float X,
    float Y
 )
 {
-   if (Y < 0.5)
+   if (X < gfTouchXMin || X > gfTouchXMax || Y < 0.5f || Y > gfTouchYMax)
    {
       //
-      // Upper area
+      // Upper area or cropped area
       //
       return TOUCH_NONE;
    }
-   else if (X < 1.0 / 3)
+   else
    {
-      if (Y - 0.5 < (1.0 / 6 - fabs(X - 1.0 / 3 / 2)) * (0.5 / (1.0 / 3)))
+      X = (X - gfTouchXMin) / (gfTouchXMax - gfTouchXMin);
+	  Y = (Y - gfTouchYMin) / (gfTouchYMax - gfTouchYMin);
+   }
+
+   if (X < 1.0f / 3)
+   {
+      if (Y - 0.5f < (1.0f / 6 - fabsf(X - 1.0f / 3 / 2)) * (0.5f / (1.0f / 3)))
       {
          return TOUCH_UP;
       }
-      else if (Y - 0.75 > fabs(X - 1.0 / 3 / 2) * (0.5 / (1.0 / 3)))
+      else if (Y - 0.75f > fabsf(X - 1.0f / 3 / 2) * (0.5f / (1.0f / 3)))
       {
          return TOUCH_DOWN;
       }
-      else if (X < 1.0 / 3 / 2 && fabs(Y - 0.75) < 0.25 - X * (0.5 / (1.0 / 3)))
+      else if (X < 1.0f / 3 / 2 && fabsf(Y - 0.75f) < 0.25f - X * (0.5f / (1.0f / 3)))
       {
          return TOUCH_LEFT;
       }
@@ -727,11 +751,11 @@ PAL_GetTouchArea(
          return TOUCH_RIGHT;
       }
    }
-   else if (X > 1.0 - 1.0 / 3)
+   else if (X > 1.0f - 1.0f / 3)
    {
-      if (X < 1.0 - (1.0 / 3 / 2))
+      if (X < 1.0f - (1.0f / 3 / 2))
       {
-         if (Y < 0.75)
+         if (Y < 0.75f)
          {
             return TOUCH_BUTTON1;
          }
@@ -742,7 +766,7 @@ PAL_GetTouchArea(
       }
       else
       {
-         if (Y < 0.75)
+         if (Y < 0.75f)
          {
             return TOUCH_BUTTON2;
          }
@@ -752,8 +776,10 @@ PAL_GetTouchArea(
          }
       }
    }
-
-   return TOUCH_NONE;
+   else 
+   {
+      return TOUCH_NONE;
+   }
 }
 
 static VOID

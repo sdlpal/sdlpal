@@ -170,7 +170,33 @@ VIDEO_Startup(
       SDL_FreeSurface(overlay);
    }
 
-#ifdef __WINPHONE__
+   //
+   // Check whether to keep the aspect ratio
+   //
+   gpRenderRect = NULL;
+   if (gpGlobals->fKeepAspectRatio)
+   {
+	   float ax = (float)gpGlobals->dwScreenWidth / 320.0f;
+	   float ay = (float)gpGlobals->dwScreenHeight / 200.0f;
+	   if (ax != ay)
+	   {
+		   float ratio = (ax > ay) ? ay : ax;
+		   WORD w = (WORD)(ratio * 320.0f);
+		   WORD h = (WORD)(ratio * 200.0f);
+		   if (w % 4 != 0) w += 4 - (w % 4);
+		   if (h % 4 != 0) h += 4 - (h % 4);
+		   gRenderRect.x = (gpGlobals->dwScreenWidth - w) / 2;
+		   gRenderRect.y = (gpGlobals->dwScreenHeight - h) / 2;
+		   gRenderRect.w = w;
+		   gRenderRect.h = h;
+		   gpRenderRect = &gRenderRect;
+# if PAL_HAS_TOUCH
+		   PAL_SetTouchBounds(gpGlobals->dwScreenWidth, gpGlobals->dwScreenHeight, gRenderRect);
+# endif
+	   }
+   }
+
+# ifdef __WINPHONE__
    {
       //
       // Totally ugly hack to satisfy M$'s silly requirements.
@@ -198,27 +224,7 @@ VIDEO_Startup(
       gpBackKeyMessage = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
       SDL_FillRect(gpScreenBak, NULL, 0);
    }
-#endif
-
-   gpRenderRect = NULL;
-   if (gpGlobals->fKeepAspectRatio)
-   {
-	   float ax = (float)gpGlobals->dwScreenWidth / 320.0f;
-	   float ay = (float)gpGlobals->dwScreenHeight / 200.0f;
-	   if (ax != ay)
-	   {
-		   float ratio = (ax > ay) ? ay : ax;
-		   WORD w = (WORD)(ratio * 320.0f);
-		   WORD h = (WORD)(ratio * 200.0f);
-		   if (w % 4 != 0) w += 4 - (w % 4);
-		   if (h % 4 != 0) h += 4 - (h % 4);
-		   gRenderRect.x = (gpGlobals->dwScreenWidth - w) / 2;
-		   gRenderRect.y = (gpGlobals->dwScreenHeight - h) / 2;
-		   gRenderRect.w = w;
-		   gRenderRect.h = h;
-		   gpRenderRect = &gRenderRect;
-	   }
-   }
+# endif
 #else
 
    //

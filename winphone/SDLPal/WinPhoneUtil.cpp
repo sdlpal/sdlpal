@@ -60,7 +60,7 @@ static bool CheckGamePath(Windows::Storage::StorageFolder^ root)
 }
 
 extern "C"
-LPCSTR UTIL_WP_BasePath(VOID)
+LPCSTR UTIL_BasePath(VOID)
 {
 	if (g_basepath.empty())
 	{
@@ -100,7 +100,7 @@ LPCSTR UTIL_WP_BasePath(VOID)
 }
 
 extern "C"
-LPCSTR UTIL_WP_SavePath(VOID)
+LPCSTR UTIL_SavePath(VOID)
 {
 	if (g_savepath.empty())
 	{
@@ -112,7 +112,7 @@ LPCSTR UTIL_WP_SavePath(VOID)
 }
 
 extern "C"
-BOOL UTIL_WP_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
+BOOL UTIL_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
 {
 	DXGI_OUTPUT_DESC desc;
 	IDXGIFactory1* pFactory = nullptr;

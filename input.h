@@ -83,6 +83,14 @@ PAL_PollEvent(
    SDL_Event *event
 );
 
+# if PAL_HAS_TOUCH
+VOID
+PAL_SetTouchBounds(
+   DWORD dwScreenWidth,
+   DWORD dwScreenHeight,
+   SDL_Rect renderRect
+);
+# endif
 
 extern BOOL g_fUseJoystick;
 

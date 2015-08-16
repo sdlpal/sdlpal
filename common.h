@@ -177,8 +177,8 @@ extern "C"
 
 #elif defined (__IOS__)
 
-#define PAL_PREFIX            UTIL_IOS_BasePath()
-#define PAL_SAVE_PREFIX       UTIL_IOS_SavePath()
+#define PAL_PREFIX            UTIL_BasePath()
+#define PAL_SAVE_PREFIX       UTIL_SavePath()
 #define PAL_HAS_TOUCH         1
 #define PAL_DEFAULT_WINDOW_WIDTH   320
 #define PAL_DEFAULT_WINDOW_HEIGHT  200
@@ -205,8 +205,8 @@ extern "C"
 
 #elif defined (__WINPHONE__)
 
-#define PAL_PREFIX            UTIL_WP_BasePath()
-#define PAL_SAVE_PREFIX       UTIL_WP_SavePath()
+#define PAL_PREFIX            UTIL_BasePath()
+#define PAL_SAVE_PREFIX       UTIL_SavePath()
 #define PAL_HAS_TOUCH         1
 #define PAL_AUDIO_DEFAULT_BUFFER_SIZE   4096
 #define PAL_DEFAULT_WINDOW_WIDTH   320

@@ -90,35 +90,21 @@ VOID
 UTIL_CloseFile(
    FILE                *fp
 );
-    
-#ifdef __IOS__
+
+#if defined(__WINPHONE__) || defined(__IOS__)
 
 LPCSTR
-UTIL_IOS_BasePath(
+UTIL_BasePath(
    VOID
 );
 
 LPCSTR
-UTIL_IOS_SavePath(
-   VOID
-);
-    
-#endif
-
-#ifdef __WINPHONE__
-
-LPCSTR
-UTIL_WP_BasePath(
-   VOID
-);
-
-LPCSTR
-UTIL_WP_SavePath(
+UTIL_SavePath(
    VOID
 );
 
 BOOL
-UTIL_WP_GetScreenSize(
+UTIL_GetScreenSize(
    DWORD *pdwScreenWidth,
    DWORD *pdwScreenHeight
 );
