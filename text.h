@@ -48,12 +48,18 @@ PAL_FreeText(
 
 LPCWSTR
 PAL_GetWord(
-   WORD       wNumWord
+   int        iNumWord
 );
 
 LPCWSTR
 PAL_GetMsg(
-   WORD       wNumMsg
+   int        iNumMsg
+);
+
+int
+PAL_GetMsgNum(
+   int        iIndex,
+   int        iOrder
 );
 
 VOID

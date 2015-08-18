@@ -397,31 +397,31 @@ UTIL_OpenRequiredFile(
 
 --*/
 {
-   FILE         *fp;
+   return UTIL_OpenRequiredFileForMode(lpszFileName, "rb");
+}
 
-   fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
+FILE *
+UTIL_OpenRequiredFileForMode(
+   LPCSTR            lpszFileName,
+   LPCSTR            szMode
+)
+/*++
+  Purpose:
 
-#ifndef _WIN32
-   if (fp == NULL)
-   {
-	  //
-	  // try converting the filename to upper-case.
-	  //
-	  char *pBuf = strdup(lpszFileName);
-	  char *p = pBuf;
-	  while (*p)
-	  {
-		 if (*p >= 'a' && *p <= 'z')
-		 {
-			*p -= 'a' - 'A';
-		 }
-		 p++;
-	  }
+    Open a required file. If fails, quit the program.
 
-	  fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
-	  free(pBuf);
-   }
-#endif
+  Parameters:
+
+    [IN]  lpszFileName - file name to open.
+    [IN]  szMode - file open mode.
+
+  Return value:
+
+    Pointer to the file.
+
+--*/
+{
+   FILE *fp = UTIL_OpenFileForMode(lpszFileName, szMode);
 
    if (fp == NULL)
    {
@@ -450,29 +450,53 @@ UTIL_OpenFile(
 
 --*/
 {
-   FILE         *fp;
+   return UTIL_OpenFileForMode(lpszFileName, "rb");
+}
 
-   fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
+FILE *
+UTIL_OpenFileForMode(
+   LPCSTR            lpszFileName,
+   LPCSTR            szMode
+)
+/*++
+  Purpose:
+
+    Open a file. If fails, return NULL.
+
+  Parameters:
+
+    [IN]  lpszFileName - file name to open.
+    [IN]  szMode - file open mode.
+
+  Return value:
+
+    Pointer to the file.
+
+--*/
+{
+	FILE         *fp;
+
+	fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), szMode);
 
 #ifndef _WIN32
-   if (fp == NULL)
-   {
-	  //
-	  // try converting the filename to upper-case.
-	  //
-	  char *pBuf = strdup(lpszFileName);
-	  char *p = pBuf;
-	  while (*p)
-	  {
-         *p++ = toupper(*p);
-	  }
-
-	  fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
-	  free(pBuf);
-   }
+	if (fp == NULL)
+	{
+		//
+		// try to find the matching file in the directory.
+		//
+		struct dirent **list;
+		int n = scandir(PAL_PREFIX, &list, 0, alphasort);
+		while (n-- > 0)
+		{
+			if (!fp && strcasecmp(list[n]->d_name, lpszFileName) == 0)
+				fp = fopen(va("%s%s", PAL_PREFIX, list[n]->d_name), szMode);
+			free(list[n]);
+		}
+		free(list);
+	}
 #endif
 
-   return fp;
+	return fp;
 }
 
 VOID

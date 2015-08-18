@@ -68,7 +68,6 @@ PAL_InitGlobals(
 {
    FILE     *fp;
    CODEPAGE  iCodePage = CP_BIG5;		// Default for BIG5
-   DWORD     dwWordLength = 10;			// Default for PAL DOS/WIN95
    DWORD     dwExtraMagicDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwExtraItemDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwScreenWidth = 0;
@@ -89,13 +88,7 @@ PAL_InitGlobals(
    MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;
    OPLTYPE   eOPLType = OPL_DOSBOX;
 
-#if USE_RIX_EXTRA_INIT
-   gpGlobals->pExtraFMRegs = NULL;
-   gpGlobals->pExtraFMVals = NULL;
-   gpGlobals->dwExtraLength = 0;
-#endif
-
-   if (fp = UTIL_OpenFile("sdlpal.cfg"))
+   if (fp = UTIL_OpenFileForMode("sdlpal.cfg", "r"))
    {
 	   PAL_LARGE char buf[512];
 
@@ -130,10 +123,6 @@ PAL_InitGlobals(
 				   if (SDL_strcasecmp(p, "CODEPAGE") == 0)
 				   {
 					   sscanf(ptr, "%d", &iCodePage);
-				   }
-				   else if (SDL_strcasecmp(p, "WORDLENGTH") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwWordLength);
 				   }
 				   else if (SDL_strcasecmp(p, "EXTRAMAGICDESCLINES") == 0)
 				   {
@@ -214,6 +203,15 @@ PAL_InitGlobals(
 						   iVolume = 100;
 					   else if (iVolume < 0)
 						   iVolume = 0;
+				   }
+				   else if (SDL_strcasecmp(p, "MESSAGEFILENAME") == 0)
+				   {
+					   char *end = ptr + strlen(ptr);
+					   if (end > ptr)
+					   {
+						   if (end[-1] == '\n') end[-1] = 0;
+						   gpGlobals->pszMsgName = strdup(ptr);
+					   }
 				   }
 #if USE_RIX_EXTRA_INIT
 				   else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)
@@ -314,7 +312,7 @@ PAL_InitGlobals(
    gpGlobals->eCDType = eCDType;
    gpGlobals->eOPLType = eOPLType;
    gpGlobals->iCodePage = iCodePage;
-   gpGlobals->dwWordLength = dwWordLength;
+   gpGlobals->dwWordLength = 10;	// This is the default value for Chinese version
    gpGlobals->dwExtraMagicDescLines = dwExtraMagicDescLines;
    gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
    gpGlobals->wAudioBufferSize = (WORD)iAudioBufferSize;
@@ -414,6 +412,13 @@ PAL_FreeGlobals(
    //
    if (!gpGlobals->fIsWIN95)
       PAL_FreeObjectDesc(gpGlobals->lpObjectDesc);
+
+#if USE_RIX_EXTRA_INIT
+   free(gpGlobals->pExtraFMRegs);
+   free(gpGlobals->pExtraFMVals);
+   free(gpGlobals->dwExtraLength);
+#endif
+   free(gpGlobals->pszMsgName);
 
    //
    // Clear the instance

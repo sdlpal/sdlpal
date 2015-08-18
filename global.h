@@ -611,6 +611,7 @@ typedef struct tagGLOBALVARS
    DWORD            dwFrameNum;
 
    /* Configurable options */
+   char            *pszMsgName;
 #if USE_RIX_EXTRA_INIT
    uint32_t        *pExtraFMRegs;
    uint8_t         *pExtraFMVals;

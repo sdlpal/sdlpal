@@ -237,7 +237,7 @@ extern "C"
 # if SDL_VERSION_ATLEAST(2,0,0)
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
 # else
-#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_FULLSCREEN)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
 
 #endif
@@ -294,6 +294,7 @@ typedef const BYTE *LPCBYTE;
 #else
 
 #include <unistd.h>
+#include <dirent.h>
 
 #ifndef FALSE
 #define FALSE               0
@@ -343,6 +344,11 @@ typedef const WCHAR        *LPCWSTR;
 #define __WIDETEXT(quote) L##quote
 #define WIDETEXT(quote) __WIDETEXT(quote)
 
+// For SDL 1.2 compatibility
+#ifndef SDL_TICKS_PASSED
+#define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)
+#endif
+
 #define PAL_DelayUntil(t) \
    PAL_ProcessEvent(); \
    while (!SDL_TICKS_PASSED(SDL_GetTicks(), (t))) \
@@ -357,7 +363,8 @@ typedef enum tagCODEPAGE {
 	CP_BIG5 = 0,
 	CP_GBK = 1,
 	CP_SHIFTJIS = 2,
-	CP_MAX = 3
+	CP_MAX = 3,
+	CP_UTF_8 = CP_MAX + 1
 } CODEPAGE;
 
 #ifdef __cplusplus

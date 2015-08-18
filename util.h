@@ -82,8 +82,20 @@ UTIL_OpenRequiredFile(
 );
 
 FILE *
+UTIL_OpenRequiredFileForMode(
+   LPCSTR               lpszFileName,
+   LPCSTR               szMode
+);
+
+FILE *
 UTIL_OpenFile(
    LPCSTR               lpszFileName
+);
+
+FILE *
+UTIL_OpenFileForMode(
+   LPCSTR               lpszFileName,
+   LPCSTR               szMode
 );
 
 VOID

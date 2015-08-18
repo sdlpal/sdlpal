@@ -3296,24 +3296,37 @@ PAL_RunTriggerScript(
          //
          // Print dialog text
          //
-		 // Support for Japanese
-		 // If the second parameter is zero, then follow the standard behavior
-		 // Otherwise, use the extended behavior
-		 if (pScript->rgwOperand[1] == 0)
-		 {
+         if (gpGlobals->pszMsgName)
+         {
+            int idx = 0, iMsg;
+            while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)
+			{
+               if (iMsg == 0)
+               {
+                  //
+                  // Restore the screen
+                  //
+                  PAL_ClearDialog(TRUE);
+                  VIDEO_RestoreScreen();
+                  VIDEO_UpdateScreen(NULL);
+               }
+			   else
+                  PAL_ShowDialogText(PAL_GetMsg(iMsg));
+            }
+            while (gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF
+                || gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0x008E)
+            {
+               //
+               // Skip all following continuous 0xFFFF & 0x008E instructions
+               //
+               wScriptEntry++;
+            }
+         }
+		 else
+         {
             PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
             wScriptEntry++;
-		 }
-		 else
-		 {
-			// If the second parameter is set to 2, first display the text
-			if (pScript->rgwOperand[1] == 2)
-			{
-				PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
-			}
-			// Then, jump to script given by the third parameter.
-			wScriptEntry = pScript->rgwOperand[2];
-		 }
+         }
          break;
 
       default:
@@ -3452,32 +3465,38 @@ begin:
    case 0xFFFF:
 	   if (gpGlobals->fIsWIN95)
 	   {
-		   // Support for Japanese
-		   // If the second parameter is zero, then follow the standard behavior
-		   // Otherwise, use the extended behavior
-		   // Either zero or two displays text
-		   if (pScript->rgwOperand[1] == 0 || pScript->rgwOperand[1] == 2)
+		   iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
+		   if (gpGlobals->pszMsgName)
 		   {
-			   iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
-			   if (wEventObjectID & PAL_ITEM_DESC_BOTTOM)
+			   int idx = 0, iMsg;
+			   while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)
 			   {
-				   int YOffset = gpGlobals->dwExtraItemDescLines * 16;
-				   PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(75, iDescLine * 16 + 150 - YOffset), DESCTEXT_COLOR, TRUE, FALSE);
+				   if (iMsg > 0)
+				   {
+					   if (wEventObjectID & PAL_ITEM_DESC_BOTTOM)
+					   {
+						   int YOffset = gpGlobals->dwExtraItemDescLines * 16;
+						   PAL_DrawText(PAL_GetMsg(iMsg), PAL_XY(75, iDescLine * 16 + 150 - YOffset), DESCTEXT_COLOR, TRUE, FALSE);
+					   }
+					   else
+					   {
+						   PAL_DrawText(PAL_GetMsg(iMsg), PAL_XY(100, iDescLine * 16 + 3), DESCTEXT_COLOR, TRUE, FALSE);
+					   }
+					   iDescLine++;
+				   }
 			   }
-			   else
+			   while (gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF)
 			   {
-				   PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(100, iDescLine * 16 + 3), DESCTEXT_COLOR, TRUE, FALSE);
+				   //
+				   // Skip all following continuous 0xFFFF instructions
+				   //
+				   wScriptEntry++;
 			   }
-			   iDescLine++;
-		   }
-		   if (pScript->rgwOperand[1] != 0)
-		   {
-			   // Then, jump to script given by the third parameter.
-			   wScriptEntry = pScript->rgwOperand[2];
 		   }
 		   else
 		   {
-			   wScriptEntry++;
+			   PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
+			   iDescLine++; wScriptEntry++;
 		   }
 	   }
 	   else

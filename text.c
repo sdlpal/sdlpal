@@ -34,6 +34,8 @@
 
 BOOL      g_fUpdatedInBattle      = FALSE;
 
+#define   MESSAGE_MAX_BUFFER_SIZE   512
+
 #define INCLUDE_CODEPAGE_H
 #include "codepage.h"
 
@@ -48,11 +50,13 @@ static const WCHAR** g_rgszAdditionalWords;
 
 typedef struct tagTEXTLIB
 {
-   LPWSTR*         lpWordBuf;
-   LPWSTR*         lpMsgBuf;
+   LPWSTR         *lpWordBuf;
+   LPWSTR         *lpMsgBuf;
+   int           **lpIndexBuf;
 
    int             nWords;
    int             nMsgs;
+   int             nIndices;
 
    int             nCurrentDialogLine;
    BYTE            bCurrentFontColor;
@@ -69,6 +73,248 @@ typedef struct tagTEXTLIB
 } TEXTLIB, *LPTEXTLIB;
 
 static TEXTLIB         g_TextLib;
+
+PAL_FORCE_INLINE int
+PAL_ParseLine(
+	char     *line,
+	char    **value,
+	int      *length
+	)
+{
+	//
+	// Remove the leading spaces
+	//
+	while (*line && iswspace(*line)) line++;
+	//
+	// Skip comments starting with '#'
+	//
+	if (*line && *line != '#')
+	{
+		//
+		// Split the index and value
+		//
+		LPSTR val = strchr(line, '=');
+		if (val)
+		{
+			//
+			// Remove the trailing spaces
+			//
+			LPSTR end = line + strlen(line);
+			int index;
+			if (end > line && end[-1] == '\n') *(--end) = 0;
+			while (end > line && iswspace(end[-1])) *(--end) = 0;
+
+			//
+			// Parse the index and pass out value
+			//
+			if (sscanf(line, "%d", &index) == 1)
+			{
+				*value = val + 1;
+				*length = end - *value;
+				return index;
+			}
+		}
+	}
+	return 0;
+}
+
+PAL_FORCE_INLINE char *
+PAL_CheckLongLine(
+	FILE     *fp,
+	char     *temp
+	)
+{
+	int n = strlen(temp);
+	if (n == MESSAGE_MAX_BUFFER_SIZE - 1 && temp[n - 1] != '\n' && !feof(fp))
+	{
+		// Line too long, try to read it as a whole
+		int nn = 2;
+		char *tmp = strdup(temp);
+		while (!feof(fp))
+		{
+			if (!(tmp = (char *)realloc(tmp, nn * MESSAGE_MAX_BUFFER_SIZE)))
+			{
+				TerminateOnError("PAL_ReadFileAndSplitLine(): failed to allocate memory for long line!");
+			}
+			if (fgets(tmp + n, MESSAGE_MAX_BUFFER_SIZE + 1, fp))
+			{
+				n += strlen(tmp + n);
+				if (n < MESSAGE_MAX_BUFFER_SIZE - 1 || temp[n - 1] == '\n')
+					break;
+				else
+					nn++;
+			}
+		}
+		return tmp;
+	}
+	else
+		return temp;
+}
+
+static int
+PAL_ReadFileAndSplitLine(
+	FILE     *fp,
+	LPWSTR  **buffer
+	)
+{
+	char temp[MESSAGE_MAX_BUFFER_SIZE];
+	struct _list_entry_1
+	{
+		struct _list_entry_1 *next;
+		wchar_t *value;
+		int length;
+		int index;
+	} *head = NULL, *item;
+	int max = 0;
+
+	while (!feof(fp))
+	{
+		if (fgets(temp, MESSAGE_MAX_BUFFER_SIZE, fp))
+		{
+			//
+			// Read one line and parse it
+			//
+			char *buffer = PAL_CheckLongLine(fp, temp), *v;
+			int l, n = PAL_ParseLine(buffer, &v, &l);
+			if (n > 0)
+			{
+				//
+				// First save values (converted wide string) into a linked list
+				//
+				if (head)
+				{
+					item->next = (struct _list_entry_1 *)malloc(sizeof(struct _list_entry_1));
+					item = item->next;
+				}
+				else
+					item = head = (struct _list_entry_1 *)malloc(sizeof(struct _list_entry_1));
+				item->length = PAL_MultiByteToWideCharCP(CP_UTF_8, v, l, NULL, 0);
+				item->value = (LPWSTR)malloc((item->length + 1) * sizeof(WCHAR));
+				PAL_MultiByteToWideCharCP(CP_UTF_8, v, l + 1, item->value, item->length + 1);
+				item->index = (max < n) ? (max = n) : n; item->next = NULL;
+			}
+			if (buffer != temp) free(buffer);
+		}
+	}
+
+	if (max > 0)
+	{
+		//
+		// Move values from linked list to array
+		//
+		LPWSTR *array = (LPWSTR *)calloc(max += 1, sizeof(LPWSTR));
+		for (item = head; item; )
+		{
+			struct _list_entry_1 *temp = item->next;
+			array[item->index] = item->value;
+			free(item); item = temp;
+		}
+		*buffer = array;
+	}
+
+	fclose(fp);
+
+	return max > 0 ? max : -1;
+}
+
+static int
+PAL_ReadIndexFile(
+	FILE     *fp,
+	int    ***buffer
+	)
+{
+	char temp[MESSAGE_MAX_BUFFER_SIZE];
+	struct _index_entry
+	{
+		struct _index_entry *next;
+		int value;
+	};
+	struct _list_entry_2
+	{
+		struct _list_entry_2 *next;
+		struct _index_entry *value;
+		int length;
+		int index;
+	} *head = NULL, *item;
+	int max = 0;
+
+	while (!feof(fp))
+	{
+		if (fgets(temp, MESSAGE_MAX_BUFFER_SIZE, fp))
+		{
+			//
+			// Read one line and parse it
+			//
+			char *buffer = PAL_CheckLongLine(fp, temp), *v, *e;
+			int l, n = PAL_ParseLine(buffer, &v, &l), i;
+			if (n >= 0)
+			{
+				//
+				// First save values into a linked list
+				//
+				struct _index_entry *j;
+				if (head)
+				{
+					item->next = (struct _list_entry_2 *)malloc(sizeof(struct _list_entry_2));
+					item = item->next;
+				}
+				else
+					item = head = (struct _list_entry_2 *)malloc(sizeof(struct _list_entry_2));
+				item->index = (max < n) ? (max = n) : n;
+				item->value = NULL; item->next = NULL;
+				item->length = 0;
+				while (*v && (i = strtol(v, &e, 10)) >= 0)
+				{
+					//
+					// Each message index is also first stored into a linked list
+					//
+					if (e > v)
+					{
+						if (item->value)
+						{
+							j->next = (struct _index_entry *)malloc(sizeof(struct _index_entry));
+							j = j->next;
+						}
+						else
+							j = item->value = (struct _index_entry *)malloc(sizeof(struct _index_entry));
+						j->value = i; item->length++;
+					}
+					v = e + 1;
+				}
+				j->next = (struct _index_entry *)malloc(sizeof(struct _index_entry));
+				j->next->value = -1; j->next->next = NULL; item->length++;
+			}
+			if (buffer != temp) free(buffer);
+		}
+	}
+
+	if (max > 0)
+	{
+		//
+		// Move values from linked lists to arrays
+		//
+		int **array = (int **)calloc(max += 1, sizeof(int *));
+		for (item = head; item; )
+		{
+			struct _index_entry *j = item->value;
+			struct _list_entry_2 *temp = item->next;
+			int i = 0;
+			array[item->index] = (int *)malloc(item->length * sizeof(int));
+			while (j)
+			{
+				struct _index_entry *t = j->next;
+				array[item->index][i++] = j->value;
+				free(j); j = t;
+			}
+			free(item); item = temp;
+		}
+		*buffer = array;
+	}
+
+	fclose(fp);
+
+	return max > 0 ? max : -1;
+}
 
 INT
 PAL_InitText(
@@ -91,123 +337,174 @@ PAL_InitText(
 --*/
 {
    FILE       *fpMsg, *fpWord;
-   DWORD      *offsets;
-   LPBYTE      temp;
-   LPWSTR      tmp;
-   int         wlen, wpos;
    int         i;
 
-   //
-   // Open the message and word data files.
-   //
-   fpMsg = UTIL_OpenRequiredFile("m.msg");
-   fpWord = UTIL_OpenRequiredFile("word.dat");
-
-   //
-   // See how many words we have
-   //
-   fseek(fpWord, 0, SEEK_END);
-   i = ftell(fpWord);
-
-   //
-   // Each word has 10 or 16 bytes
-   //
-   g_TextLib.nWords = (i + (gpGlobals->dwWordLength - 1)) / gpGlobals->dwWordLength;
-
-   //
-   // Read the words
-   //
-   temp = (LPBYTE)malloc(i);
-   if (temp == NULL)
+   if (gpGlobals->pszMsgName)
    {
-      fclose(fpWord);
-      fclose(fpMsg);
-      return -1;
+	   FILE       *fpIndex;
+	   char       *filename = (char *)alloca((i = strlen(gpGlobals->pszMsgName)) + 5);
+
+	   //
+	   // Open the message, index and word data files.
+	   //
+	   strcpy(filename, gpGlobals->pszMsgName);
+	   strcpy(filename + i, ".msg"); fpMsg = UTIL_OpenRequiredFileForMode(filename, "r");
+	   strcpy(filename + i, ".idx"); fpIndex = UTIL_OpenRequiredFileForMode(filename, "r");
+	   strcpy(filename + i, ".wrd"); fpWord = UTIL_OpenRequiredFileForMode(filename, "r");
+
+	   //
+	   // Read the contents of the message, index and word data files.
+	   //
+	   if ((g_TextLib.nWords = PAL_ReadFileAndSplitLine(fpWord, &g_TextLib.lpWordBuf)) <= 0)
+	   {
+		   fclose(fpIndex);
+		   fclose(fpMsg);
+		   return -1;
+	   }
+	   else
+	   {
+		   DWORD dwWordLength = 0;
+		   for (i = 1; i < g_TextLib.nWords; i++)
+		   {
+			   LPWSTR ptr = g_TextLib.lpWordBuf[i];
+			   DWORD n = 0;
+			   while (*ptr) n += PAL_CharWidth(*ptr++) >> 3;
+			   if (dwWordLength < n) dwWordLength = n;
+		   }
+		   gpGlobals->dwWordLength = dwWordLength;
+	   }
+	   if ((g_TextLib.nMsgs = PAL_ReadFileAndSplitLine(fpMsg, &g_TextLib.lpMsgBuf)) <= 0)
+	   {
+		   fclose(fpIndex);
+		   return -1;
+	   }
+	   if ((g_TextLib.nIndices = PAL_ReadIndexFile(fpIndex, &g_TextLib.lpIndexBuf)) <= 0)
+	   {
+		   return -1;
+	   }
    }
-   fseek(fpWord, 0, SEEK_SET);
-   fread(temp, i, 1, fpWord);
-
-   //
-   // Close the words file
-   //
-   fclose(fpWord);
-
-   // Split the words and do code page conversion
-   for (i = 0, wlen = 0; i < g_TextLib.nWords; i++)
+   else
    {
-	   int base = i * gpGlobals->dwWordLength;
-	   int pos = base + gpGlobals->dwWordLength - 1;
-	   while (pos >= base && temp[pos] == ' ') temp[pos--] = 0;
-	   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + base, gpGlobals->dwWordLength, NULL, 0) + 1;
+	   FILE       *fpMsg, *fpWord;
+	   DWORD      *offsets;
+	   LPWSTR      tmp;
+	   LPBYTE      temp;
+	   int         wpos, wlen;
+
+	   //
+	   // Open the message and word data files.
+	   //
+	   fpMsg = UTIL_OpenRequiredFile("m.msg");
+	   fpWord = UTIL_OpenRequiredFile("word.dat");
+
+	   //
+	   // See how many words we have
+	   //
+	   fseek(fpWord, 0, SEEK_END);
+	   i = ftell(fpWord);
+
+	   //
+	   // Each word has 10 or 16 bytes
+	   //
+	   g_TextLib.nWords = (i + (gpGlobals->dwWordLength - 1)) / gpGlobals->dwWordLength;
+
+	   //
+	   // Read the words
+	   //
+	   temp = (LPBYTE)malloc(i);
+	   if (temp == NULL)
+	   {
+		   fclose(fpWord);
+		   fclose(fpMsg);
+		   return -1;
+	   }
+	   fseek(fpWord, 0, SEEK_SET);
+	   fread(temp, i, 1, fpWord);
+
+	   //
+	   // Close the words file
+	   //
+	   fclose(fpWord);
+
+	   // Split the words and do code page conversion
+	   for (i = 0, wlen = 0; i < g_TextLib.nWords; i++)
+	   {
+		   int base = i * gpGlobals->dwWordLength;
+		   int pos = base + gpGlobals->dwWordLength - 1;
+		   while (pos >= base && temp[pos] == ' ') temp[pos--] = 0;
+		   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + base, gpGlobals->dwWordLength, NULL, 0) + 1;
+	   }
+	   g_TextLib.lpWordBuf = (LPWSTR*)malloc(g_TextLib.nWords * sizeof(LPWSTR));
+	   tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
+	   for (i = 0, wpos = 0; i < g_TextLib.nWords; i++)
+	   {
+		   int l;
+		   g_TextLib.lpWordBuf[i] = tmp + wpos;
+		   l = PAL_MultiByteToWideChar((LPCSTR)temp + i * gpGlobals->dwWordLength, gpGlobals->dwWordLength, g_TextLib.lpWordBuf[i], wlen - wpos);
+		   if (l > 0 && g_TextLib.lpWordBuf[i][l - 1] == '1')
+			   g_TextLib.lpWordBuf[i][l - 1] = 0;
+		   g_TextLib.lpWordBuf[i][l] = 0;
+		   wpos += l + 1;
+	   }
+	   free(temp);
+
+	   //
+	   // Read the message offsets. The message offsets are in SSS.MKF #3
+	   //
+	   i = PAL_MKFGetChunkSize(3, gpGlobals->f.fpSSS) / sizeof(DWORD);
+	   g_TextLib.nMsgs = i - 1;
+
+	   offsets = (LPDWORD)malloc(i * sizeof(DWORD));
+	   if (offsets == NULL)
+	   {
+		   free(g_TextLib.lpWordBuf);
+		   fclose(fpMsg);
+		   return -1;
+	   }
+
+	   PAL_MKFReadChunk((LPBYTE)(offsets), i * sizeof(DWORD), 3, gpGlobals->f.fpSSS);
+
+	   //
+	   // Read the messages.
+	   //
+	   fseek(fpMsg, 0, SEEK_END);
+	   i = ftell(fpMsg);
+
+	   temp = (LPBYTE)malloc(i);
+	   if (temp == NULL)
+	   {
+		   free(offsets);
+		   free(g_TextLib.lpWordBuf[0]);
+		   free(g_TextLib.lpWordBuf);
+		   fclose(fpMsg);
+		   return -1;
+	   }
+
+	   fseek(fpMsg, 0, SEEK_SET);
+	   fread(temp, 1, i, fpMsg);
+
+	   fclose(fpMsg);
+
+	   // Split messages and do code page conversion here
+	   for (i = 0, wlen = 0; i < g_TextLib.nMsgs; i++)
+	   {
+		   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + SDL_SwapLE32(offsets[i]), SDL_SwapLE32(offsets[i + 1]) - SDL_SwapLE32(offsets[i]), NULL, 0) + 1;
+	   }
+	   g_TextLib.lpMsgBuf = (LPWSTR*)malloc(g_TextLib.nMsgs * sizeof(LPWSTR));
+	   tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
+	   for (i = 0, wpos = 0; i < g_TextLib.nMsgs; i++)
+	   {
+		   int l;
+		   g_TextLib.lpMsgBuf[i] = tmp + wpos;
+		   l = PAL_MultiByteToWideChar((LPCSTR)temp + SDL_SwapLE32(offsets[i]), SDL_SwapLE32(offsets[i + 1]) - SDL_SwapLE32(offsets[i]), g_TextLib.lpMsgBuf[i], wlen - wpos);
+		   g_TextLib.lpMsgBuf[i][l] = 0;
+		   wpos += l + 1;
+	   }
+	   free(temp);
+	   free(offsets);
+
+	   g_TextLib.lpIndexBuf = NULL;
    }
-   g_TextLib.lpWordBuf = (LPWSTR*)malloc(g_TextLib.nWords * sizeof(LPWSTR));
-   tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
-   for (i = 0, wpos = 0; i < g_TextLib.nWords; i++)
-   {
-	   int l;
-	   g_TextLib.lpWordBuf[i] = tmp + wpos;
-	   l = PAL_MultiByteToWideChar((LPCSTR)temp + i * gpGlobals->dwWordLength, gpGlobals->dwWordLength, g_TextLib.lpWordBuf[i], wlen - wpos);
-	   if (l > 0 && g_TextLib.lpWordBuf[i][l - 1] == '1')
-		   g_TextLib.lpWordBuf[i][l - 1] = 0;
-	   g_TextLib.lpWordBuf[i][l] = 0;
-	   wpos += l + 1;
-   }
-   free(temp);
-
-   //
-   // Read the message offsets. The message offsets are in SSS.MKF #3
-   //
-   i = PAL_MKFGetChunkSize(3, gpGlobals->f.fpSSS) / sizeof(DWORD);
-   g_TextLib.nMsgs = i - 1;
-
-   offsets = (LPDWORD)malloc(i * sizeof(DWORD));
-   if (offsets == NULL)
-   {
-      free(g_TextLib.lpWordBuf);
-      fclose(fpMsg);
-      return -1;
-   }
-
-   PAL_MKFReadChunk((LPBYTE)(offsets), i * sizeof(DWORD), 3, gpGlobals->f.fpSSS);
-
-   //
-   // Read the messages.
-   //
-   fseek(fpMsg, 0, SEEK_END);
-   i = ftell(fpMsg);
-
-   temp = (LPBYTE)malloc(i);
-   if (temp == NULL)
-   {
-      free(offsets);
-	  free(g_TextLib.lpWordBuf[0]);
-      free(g_TextLib.lpWordBuf);
-      fclose(fpMsg);
-      return -1;
-   }
-
-   fseek(fpMsg, 0, SEEK_SET);
-   fread(temp, 1, i, fpMsg);
-
-   fclose(fpMsg);
-
-   // Split messages and do code page conversion here
-   for (i = 0, wlen = 0; i < g_TextLib.nMsgs; i++)
-   {
-	   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + SDL_SwapLE32(offsets[i]), SDL_SwapLE32(offsets[i + 1]) - SDL_SwapLE32(offsets[i]), NULL, 0) + 1;
-   }
-   g_TextLib.lpMsgBuf = (LPWSTR*)malloc(g_TextLib.nMsgs * sizeof(LPWSTR));
-   tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
-   for (i = 0, wpos = 0; i < g_TextLib.nMsgs; i++)
-   {
-	   int l;
-	   g_TextLib.lpMsgBuf[i] = tmp + wpos;
-	   l = PAL_MultiByteToWideChar((LPCSTR)temp + SDL_SwapLE32(offsets[i]), SDL_SwapLE32(offsets[i + 1]) - SDL_SwapLE32(offsets[i]), g_TextLib.lpMsgBuf[i], wlen - wpos);
-	   g_TextLib.lpMsgBuf[i][l] = 0;
-	   wpos += l + 1;
-   }
-   free(temp);
-   free(offsets);
 
 #ifndef PAL_CLASSIC
    g_rgszAdditionalWords = gc_rgszAdditionalWords[gpGlobals->iCodePage];
@@ -247,23 +544,39 @@ PAL_FreeText(
 
 --*/
 {
+   int i;
    if (g_TextLib.lpMsgBuf != NULL)
    {
-      free(g_TextLib.lpMsgBuf[0]);
+      if (gpGlobals->pszMsgName)
+         for(i = 0; i < g_TextLib.nMsgs; i++) free(g_TextLib.lpMsgBuf[i]);
+      else
+         free(g_TextLib.lpMsgBuf[0]);
       free(g_TextLib.lpMsgBuf);
       g_TextLib.lpMsgBuf = NULL;
    }
    if (g_TextLib.lpWordBuf != NULL)
    {
-      free(g_TextLib.lpWordBuf[0]);
+      if (gpGlobals->pszMsgName)
+         for(i = 0; i < g_TextLib.nWords; i++) free(g_TextLib.lpWordBuf[i]);
+      else
+         free(g_TextLib.lpWordBuf[0]);
       free(g_TextLib.lpWordBuf);
       g_TextLib.lpWordBuf = NULL;
+   }
+   if (g_TextLib.lpIndexBuf != NULL)
+   {
+      if (gpGlobals->pszMsgName)
+         for(i = 0; i < g_TextLib.nIndices; i++) free(g_TextLib.lpIndexBuf[i]);
+      else
+         free(g_TextLib.lpIndexBuf[0]);
+      free(g_TextLib.lpIndexBuf);
+      g_TextLib.lpIndexBuf = NULL;
    }
 }
 
 LPCWSTR
 PAL_GetWord(
-   WORD       wNumWord
+   int        iNumWord
 )
 /*++
   Purpose:
@@ -287,17 +600,12 @@ PAL_GetWord(
    }
 #endif
 
-   if (wNumWord >= g_TextLib.nWords)
-   {
-      return NULL;
-   }
-
-   return g_TextLib.lpWordBuf[wNumWord];
+   return (iNumWord >= g_TextLib.nWords || !g_TextLib.lpWordBuf[iNumWord]) ? L"" : g_TextLib.lpWordBuf[iNumWord];
 }
 
 LPCWSTR
 PAL_GetMsg(
-   WORD       wNumMsg
+   int        iNumMsg
 )
 /*++
   Purpose:
@@ -314,7 +622,31 @@ PAL_GetMsg(
 
 --*/
 {
-   return (wNumMsg >= g_TextLib.nMsgs) ? NULL : g_TextLib.lpMsgBuf[wNumMsg];
+   return (iNumMsg >= g_TextLib.nMsgs || !g_TextLib.lpMsgBuf[iNumMsg]) ? L"" : g_TextLib.lpMsgBuf[iNumMsg];
+}
+
+int
+PAL_GetMsgNum(
+   int        iIndex,
+   int        iOrder
+)
+/*++
+  Purpose:
+
+    Get the number of specified message from index & order.
+
+  Parameters:
+
+    [IN]  iMsgIndex - index.
+	[IN]  iOrder - order inside the index.
+
+  Return value:
+
+    The number of message. Zero means pausing for key, and -1 means end.
+
+--*/
+{
+   return (iIndex >= g_TextLib.nMsgs || !g_TextLib.lpIndexBuf[iIndex]) ? -1 : g_TextLib.lpIndexBuf[iIndex][iOrder];
 }
 
 VOID
@@ -1047,7 +1379,7 @@ PAL_MultiByteToWideCharCP(
 					state = 0;
 				}
 			}
-			return wlen + null + state;
+			break;
 		case CP_GBK:
 		case CP_BIG5:
 			for (i = 0; i < mbslength && mbs[i]; i++)
@@ -1065,10 +1397,43 @@ PAL_MultiByteToWideCharCP(
 					state = 0;
 				}
 			}
-			return wlen + null + state;
+			break;
+		case CP_UTF_8:
+			for (i = 0; i < mbslength && mbs[i]; i++)
+			{
+				if (state == 0)
+				{
+					if ((BYTE)mbs[i] >= 0x80)
+					{
+						BYTE s = (BYTE)mbs[i] << 1;
+						while (s >= 0x80) { state++; s <<= 1; }
+						if (state < 1 || state > 3)
+						{
+							state = 0;
+							wlen++;
+						}
+					}
+					else
+						wlen++;
+				}
+				else
+				{
+					if ((BYTE)mbs[i] >= 0x80 && (BYTE)mbs[i] < 0xc0)
+					{
+						if (--state == 0) wlen++;
+					}
+					else
+					{
+						state = 0; wlen++;
+					}
+				}
+			}
+			break;
 		default:
 			return -1;
 		}
+		if (i < mbslength && !mbs[i]) null = 1;
+		return wlen + null + (state != 0);
 	}
 	else
 	{
@@ -1156,14 +1521,53 @@ PAL_MultiByteToWideCharCP(
 				}
 			}
 			break;
+		case CP_UTF_8:
+			invalid_char = 0x3f;
+			for (i = 0; i < mbslength && wlen < wcslength && mbs[i]; i++)
+			{
+				if (state == 0)
+				{
+					if ((BYTE)mbs[i] >= 0x80)
+					{
+						BYTE s = (BYTE)mbs[i] << 1;
+						while (s >= 0x80) { state++; s <<= 1; }
+						if (state < 1 || state > 3)
+						{
+							state = 0;
+							wcs[wlen++] = invalid_char;
+						}
+						else
+						{
+							wcs[wlen] = s >> (state + 1);
+						}
+					}
+					else
+						wcs[wlen++] = mbs[i];
+				}
+				else
+				{
+					if ((BYTE)mbs[i] >= 0x80 && (BYTE)mbs[i] < 0xc0)
+					{
+						wcs[wlen] <<= 6;
+						wcs[wlen] |= (BYTE)mbs[i] & 0x3f;
+						if (--state == 0) wlen++;
+					}
+					else
+					{
+						state = 0;
+						wcs[wlen++] = invalid_char;
+					}
+				}
+			}
+			break;
 		default:
 			return -1;
 		}
-		if (state == 1 && wlen < wcslength)
+		if (state != 0 && wlen < wcslength)
 		{
 			wcs[wlen++] = invalid_char;
 		}
-		if (null)
+		if (null || (i < mbslength && !mbs[i]))
 		{
 			if (wlen < wcslength)
 				wcs[wlen++] = 0;
@@ -1171,7 +1575,6 @@ PAL_MultiByteToWideCharCP(
 				wcs[wlen - 1] = 0;
 		}
 		return wlen;
-
 	}
 }
 
@@ -1216,6 +1619,7 @@ PAL_GetInvalidChar(
    case CP_BIG5:     return 0x3f;
    case CP_GBK:      return 0x3f;
    case CP_SHIFTJIS: return 0x30fb;
+   case CP_UTF_8:    return 0x3f;
    default:          return 0;
    }
 }
