@@ -119,201 +119,251 @@ PAL_ParseLine(
 }
 
 PAL_FORCE_INLINE char *
-PAL_CheckLongLine(
-	FILE     *fp,
-	char     *temp
+PAL_ReadOneLine(
+	char     *temp,
+	int      limit,
+	FILE     *fp
 	)
 {
-	int n = strlen(temp);
-	if (n == MESSAGE_MAX_BUFFER_SIZE - 1 && temp[n - 1] != '\n' && !feof(fp))
+	if (fgets(temp, limit, fp))
 	{
-		// Line too long, try to read it as a whole
-		int nn = 2;
-		char *tmp = strdup(temp);
-		while (!feof(fp))
+		int n = strlen(temp);
+		if (n == limit - 1 && temp[n - 1] != '\n' && !feof(fp))
 		{
-			if (!(tmp = (char *)realloc(tmp, nn * MESSAGE_MAX_BUFFER_SIZE)))
+			// Line too long, try to read it as a whole
+			int nn = 2;
+			char *tmp = strdup(temp);
+			while (!feof(fp))
 			{
-				TerminateOnError("PAL_ReadFileAndSplitLine(): failed to allocate memory for long line!");
+				if (!(tmp = (char *)realloc(tmp, nn * limit)))
+				{
+					TerminateOnError("PAL_ReadOneLine(): failed to allocate memory for long line!");
+				}
+				if (fgets(tmp + n, limit + 1, fp))
+				{
+					n += strlen(tmp + n);
+					if (n < limit - 1 || temp[n - 1] == '\n')
+						break;
+					else
+						nn++;
+				}
 			}
-			if (fgets(tmp + n, MESSAGE_MAX_BUFFER_SIZE + 1, fp))
-			{
-				n += strlen(tmp + n);
-				if (n < MESSAGE_MAX_BUFFER_SIZE - 1 || temp[n - 1] == '\n')
-					break;
-				else
-					nn++;
-			}
+			if (tmp[n - 1] == '\n') tmp[n - 1] = 0;
+			return tmp;
 		}
-		return tmp;
+		else
+		{
+			if (n > 0 && temp[n - 1] == '\n') temp[n - 1] = 0;
+			return temp;
+		}
 	}
 	else
-		return temp;
+		return NULL;
 }
 
 static int
-PAL_ReadFileAndSplitLine(
-	FILE     *fp,
-	LPWSTR  **buffer
+PAL_ReadMessageFile(
+	FILE     *fp
 	)
 {
 	char temp[MESSAGE_MAX_BUFFER_SIZE];
-	struct _list_entry_1
+	struct _msg_entry
 	{
-		struct _list_entry_1 *next;
+		struct _msg_entry *next;
 		wchar_t *value;
-		int length;
+	} *cur_val;
+	struct _msg_list_entry
+	{
+		struct _msg_list_entry *next;
+		struct _msg_entry *value;
 		int index;
+		int count;
 	} *head = NULL, *item;
-	int max = 0;
+	struct _word_list_entry
+	{
+		struct _word_list_entry *next;
+		wchar_t *value;
+	} whead = { NULL, NULL }, *witem = NULL;
+	enum _message_state
+	{
+		ST_OUTSIDE,
+		ST_DIALOG,
+		ST_WORD
+	} state = ST_OUTSIDE;
+	int idx_cnt = 0, msg_cnt = 0, word_cnt = 0, sid, eid = -1;
 
 	while (!feof(fp))
 	{
-		if (fgets(temp, MESSAGE_MAX_BUFFER_SIZE, fp))
+		char *buffer;
+		if (buffer = PAL_ReadOneLine(temp, MESSAGE_MAX_BUFFER_SIZE, fp))
 		{
-			//
-			// Read one line and parse it
-			//
-			char *buffer = PAL_CheckLongLine(fp, temp), *v;
-			int l, n = PAL_ParseLine(buffer, &v, &l);
-			if (n > 0)
+			switch(state)
 			{
+			case ST_OUTSIDE:
 				//
-				// First save values (converted wide string) into a linked list
+				// Skip comments starting with '#'
 				//
-				if (head)
+				if (*buffer && *buffer != '#')
 				{
-					item->next = (struct _list_entry_1 *)malloc(sizeof(struct _list_entry_1));
-					item = item->next;
+					if (strncmp(buffer, "[BEGIN DIALOG]", 14) == 0 &&
+						sscanf(buffer + 14, "%d", &sid) == 1 &&
+						sid == eid + 1)
+					{
+						state = ST_DIALOG;
+						//
+						// First save values (converted wide string) into a linked list
+						//
+						if (head)
+						{
+							item->next = (struct _msg_list_entry *)malloc(sizeof(struct _msg_list_entry));
+							item = item->next;
+						}
+						else
+						{
+							head = (struct _msg_list_entry *)malloc(sizeof(struct _msg_list_entry));
+							item = head;
+						}
+						item->value = NULL; item->index = sid;
+						item->count = 0; cur_val = NULL;
+						if (idx_cnt < item->index) idx_cnt = item->index;
+					}
+					else if (strncmp(buffer, "[BEGIN WORDS]", 13) == 0 && !witem)
+					{
+						state = ST_WORD;
+						//
+						// First save values (converted wide string) into a linked list
+						//
+						witem = &whead;
+					}
+					else
+					{
+						// Just ignore invalid lines
+#ifdef ENABLE_LOG
+						UTIL_WriteLog(LOG_ERR, "PAL_ReadMessageFile(): encounter invalid line '%s'!\n", line);
+#endif
+						int iii = 1;
+					}
+				}
+				break;
+			case ST_DIALOG:
+				//
+				// Check if to end one dialog
+				//
+				if (strncmp(buffer, "[END DIALOG]", 12) == 0 &&
+					sscanf(buffer + 12, "%d", &eid) == 1 && eid >= sid)
+				{
+					// End dialog
+					state = ST_OUTSIDE;
 				}
 				else
-					item = head = (struct _list_entry_1 *)malloc(sizeof(struct _list_entry_1));
-				item->length = PAL_MultiByteToWideCharCP(CP_UTF_8, v, l, NULL, 0);
-				item->value = (LPWSTR)malloc((item->length + 1) * sizeof(WCHAR));
-				PAL_MultiByteToWideCharCP(CP_UTF_8, v, l + 1, item->value, item->length + 1);
-				item->index = (max < n) ? (max = n) : n; item->next = NULL;
+				{
+					if (cur_val)
+					{
+						cur_val->next = (struct _msg_entry *)malloc(sizeof(struct _msg_entry));
+						cur_val = cur_val->next;
+					}
+					else
+						cur_val = (struct _msg_entry *)malloc(sizeof(struct _msg_entry));
+					if (strncmp(buffer, "[CLEAR DIALOG]", 14) == 0)
+					{
+						cur_val->value = NULL;
+					}
+					else
+					{
+						int len = PAL_MultiByteToWideCharCP(CP_UTF_8, buffer, -1, NULL, 0);
+						cur_val->value = (wchar_t *)malloc(len * sizeof(wchar_t));
+						PAL_MultiByteToWideCharCP(CP_UTF_8, buffer, -1, cur_val->value, len);
+						msg_cnt++;
+					}
+					if (!item->value) item->value = cur_val;
+					cur_val->next = NULL; item->count++;
+				}
+				break;
+			case ST_WORD:
+				//
+				// Check if to end word list
+				//
+				if (strncmp(buffer, "[END WORDS]", 11) == 0)
+				{
+					// End word list
+					state = ST_OUTSIDE;
+				}
+				else
+				{
+					char *v;
+					int l, i = PAL_ParseLine(buffer, &v, &l);
+					if (i > 0)
+					{
+						int len = PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, NULL, 0);
+						struct _word_list_entry *val = (struct _word_list_entry *)malloc(sizeof(struct _word_list_entry));
+						val->value = (wchar_t *)malloc(len * sizeof(wchar_t));
+						PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, val->value, len);
+						val->next = NULL; witem->next = val; witem = witem->next;
+						if (word_cnt < i) word_cnt = i;
+					}
+				}
+				break;
+			default:
+				TerminateOnError("PAL_ReadMessageFile(): Reached an unknown state. Something really wrong may have happened!");
+				break;
 			}
+
 			if (buffer != temp) free(buffer);
 		}
 	}
 
-	if (max > 0)
+	if (msg_cnt > 0)
 	{
 		//
 		// Move values from linked list to array
 		//
-		LPWSTR *array = (LPWSTR *)calloc(max += 1, sizeof(LPWSTR));
+		int idx_msg = 1;
+		g_TextLib.nIndices = (idx_cnt += 1);
+		g_TextLib.nMsgs = (msg_cnt += 1);
+		g_TextLib.lpIndexBuf = (int **)calloc(idx_cnt, sizeof(int *));
+		g_TextLib.lpMsgBuf = (LPWSTR *)calloc(msg_cnt, sizeof(LPWSTR));
 		for (item = head; item; )
 		{
-			struct _list_entry_1 *temp = item->next;
-			array[item->index] = item->value;
-			free(item); item = temp;
-		}
-		*buffer = array;
-	}
-
-	fclose(fp);
-
-	return max > 0 ? max : -1;
-}
-
-static int
-PAL_ReadIndexFile(
-	FILE     *fp,
-	int    ***buffer
-	)
-{
-	char temp[MESSAGE_MAX_BUFFER_SIZE];
-	struct _index_entry
-	{
-		struct _index_entry *next;
-		int value;
-	};
-	struct _list_entry_2
-	{
-		struct _list_entry_2 *next;
-		struct _index_entry *value;
-		int length;
-		int index;
-	} *head = NULL, *item;
-	int max = 0;
-
-	while (!feof(fp))
-	{
-		if (fgets(temp, MESSAGE_MAX_BUFFER_SIZE, fp))
-		{
-			//
-			// Read one line and parse it
-			//
-			char *buffer = PAL_CheckLongLine(fp, temp), *v, *e;
-			int l, n = PAL_ParseLine(buffer, &v, &l), i;
-			if (n >= 0)
+			struct _msg_list_entry *temp = item->next;
+			struct _msg_entry *msg = item->value;
+			int index = 0;
+			g_TextLib.lpIndexBuf[item->index] = (int *)calloc(item->count + 1, sizeof(int));
+			while (msg)
 			{
-				//
-				// First save values into a linked list
-				//
-				struct _index_entry *j;
-				if (head)
+				struct _msg_entry *tmp = msg->next;
+				if (msg->value)
 				{
-					item->next = (struct _list_entry_2 *)malloc(sizeof(struct _list_entry_2));
-					item = item->next;
+					g_TextLib.lpIndexBuf[item->index][index++] = idx_msg;
+					g_TextLib.lpMsgBuf[idx_msg++] = msg->value;
 				}
 				else
-					item = head = (struct _list_entry_2 *)malloc(sizeof(struct _list_entry_2));
-				item->index = (max < n) ? (max = n) : n;
-				item->value = NULL; item->next = NULL;
-				item->length = 0;
-				while (*v && (i = strtol(v, &e, 10)) >= 0)
-				{
-					//
-					// Each message index is also first stored into a linked list
-					//
-					if (e > v)
-					{
-						if (item->value)
-						{
-							j->next = (struct _index_entry *)malloc(sizeof(struct _index_entry));
-							j = j->next;
-						}
-						else
-							j = item->value = (struct _index_entry *)malloc(sizeof(struct _index_entry));
-						j->value = i; item->length++;
-					}
-					v = e + 1;
-				}
-				j->next = (struct _index_entry *)malloc(sizeof(struct _index_entry));
-				j->next->value = -1; j->next->next = NULL; item->length++;
+					g_TextLib.lpIndexBuf[item->index][index++] = 0;
+				free(msg); msg = tmp;
 			}
-			if (buffer != temp) free(buffer);
+			g_TextLib.lpIndexBuf[item->index][item->count] = -1;
+			free(item); item = temp;
 		}
 	}
 
-	if (max > 0)
+	if (word_cnt > 0)
 	{
 		//
-		// Move values from linked lists to arrays
+		// Move values from linked list to array
 		//
-		int **array = (int **)calloc(max += 1, sizeof(int *));
-		for (item = head; item; )
+		int index = 1;
+		g_TextLib.nWords = (word_cnt += 1);
+		g_TextLib.lpWordBuf = (LPWSTR *)calloc(word_cnt, sizeof(LPWSTR));
+		for (witem = whead.next; witem; )
 		{
-			struct _index_entry *j = item->value;
-			struct _list_entry_2 *temp = item->next;
-			int i = 0;
-			array[item->index] = (int *)malloc(item->length * sizeof(int));
-			while (j)
-			{
-				struct _index_entry *t = j->next;
-				array[item->index][i++] = j->value;
-				free(j); j = t;
-			}
-			free(item); item = temp;
+			struct _word_list_entry *temp = witem->next;
+			g_TextLib.lpWordBuf[index++] = witem->value;
+			free(witem); witem = temp;
 		}
-		*buffer = array;
 	}
 
 	fclose(fp);
 
-	return max > 0 ? max : -1;
+	return (msg_cnt > 0 && word_cnt > 0) ? 1 : 0;
 }
 
 INT
@@ -336,34 +386,24 @@ PAL_InitText(
 
 --*/
 {
-   FILE       *fpMsg, *fpWord;
-   int         i;
-
    if (gpGlobals->pszMsgName)
    {
-	   FILE       *fpIndex;
-	   char       *filename = (char *)alloca((i = strlen(gpGlobals->pszMsgName)) + 5);
-
 	   //
 	   // Open the message, index and word data files.
 	   //
-	   strcpy(filename, gpGlobals->pszMsgName);
-	   strcpy(filename + i, ".msg"); fpMsg = UTIL_OpenRequiredFileForMode(filename, "r");
-	   strcpy(filename + i, ".idx"); fpIndex = UTIL_OpenRequiredFileForMode(filename, "r");
-	   strcpy(filename + i, ".wrd"); fpWord = UTIL_OpenRequiredFileForMode(filename, "r");
+	   FILE *fp = UTIL_OpenRequiredFileForMode(gpGlobals->pszMsgName, "r");
 
 	   //
 	   // Read the contents of the message, index and word data files.
 	   //
-	   if ((g_TextLib.nWords = PAL_ReadFileAndSplitLine(fpWord, &g_TextLib.lpWordBuf)) <= 0)
+	   if (!PAL_ReadMessageFile(fp))
 	   {
-		   fclose(fpIndex);
-		   fclose(fpMsg);
 		   return -1;
 	   }
 	   else
 	   {
 		   DWORD dwWordLength = 0;
+		   int i;
 		   for (i = 1; i < g_TextLib.nWords; i++)
 		   {
 			   LPWSTR ptr = g_TextLib.lpWordBuf[i];
@@ -373,15 +413,6 @@ PAL_InitText(
 		   }
 		   gpGlobals->dwWordLength = dwWordLength;
 	   }
-	   if ((g_TextLib.nMsgs = PAL_ReadFileAndSplitLine(fpMsg, &g_TextLib.lpMsgBuf)) <= 0)
-	   {
-		   fclose(fpIndex);
-		   return -1;
-	   }
-	   if ((g_TextLib.nIndices = PAL_ReadIndexFile(fpIndex, &g_TextLib.lpIndexBuf)) <= 0)
-	   {
-		   return -1;
-	   }
    }
    else
    {
@@ -389,7 +420,7 @@ PAL_InitText(
 	   DWORD      *offsets;
 	   LPWSTR      tmp;
 	   LPBYTE      temp;
-	   int         wpos, wlen;
+	   int         wpos, wlen, i;
 
 	   //
 	   // Open the message and word data files.
