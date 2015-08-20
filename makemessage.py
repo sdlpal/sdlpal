@@ -92,7 +92,7 @@ def main():
 
             if is_msg_group == 0:
                 is_msg_group = 1
-                output += "%s %d\n" % ('[BEGIN DIALOG]', w1)
+                output += "%s %d\n" % ('[BEGIN MESSAGE]', w1)
 
             last_index = w1
             msg_count += 1
@@ -106,12 +106,12 @@ def main():
         elif op == 0x008E:
 
             if is_msg_group == 1:
-                output += "%s\n" % ('[CLEAR DIALOG]')
+                output += "%s\n" % ('[CLEAR MESSAGE]')
 
         else:
             if is_msg_group == 1:
                 is_msg_group = 0
-                output += "%s %d\n\n" % ('[END DIALOG]', last_index)
+                output += "%s %d\n\n" % ('[END MESSAGE]', last_index)
 
     try:
         with open(options.outfile, "wt") as f:

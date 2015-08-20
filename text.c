@@ -205,8 +205,8 @@ PAL_ReadMessageFile(
 				//
 				if (*buffer && *buffer != '#')
 				{
-					if (strncmp(buffer, "[BEGIN DIALOG]", 14) == 0 &&
-						sscanf(buffer + 14, "%d", &sid) == 1 &&
+					if (strncmp(buffer, "[BEGIN MESSAGE]", 15) == 0 &&
+						sscanf(buffer + 15, "%d", &sid) == 1 &&
 						sid == eid + 1)
 					{
 						state = ST_DIALOG;
@@ -241,7 +241,6 @@ PAL_ReadMessageFile(
 #ifdef ENABLE_LOG
 						UTIL_WriteLog(LOG_ERR, "PAL_ReadMessageFile(): encounter invalid line '%s'!\n", line);
 #endif
-						int iii = 1;
 					}
 				}
 				break;
@@ -249,8 +248,8 @@ PAL_ReadMessageFile(
 				//
 				// Check if to end one dialog
 				//
-				if (strncmp(buffer, "[END DIALOG]", 12) == 0 &&
-					sscanf(buffer + 12, "%d", &eid) == 1 && eid >= sid)
+				if (strncmp(buffer, "[END MESSAGE]", 13) == 0 &&
+					sscanf(buffer + 13, "%d", &eid) == 1 && eid >= sid)
 				{
 					// End dialog
 					state = ST_OUTSIDE;
@@ -264,7 +263,7 @@ PAL_ReadMessageFile(
 					}
 					else
 						cur_val = (struct _msg_entry *)malloc(sizeof(struct _msg_entry));
-					if (strncmp(buffer, "[CLEAR DIALOG]", 14) == 0)
+					if (strncmp(buffer, "[CLEAR MESSAGE]", 15) == 0)
 					{
 						cur_val->value = NULL;
 					}

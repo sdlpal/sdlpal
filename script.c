@@ -3366,7 +3366,6 @@ PAL_RunAutoScript(
 {
    LPSCRIPTENTRY          pScript;
    LPEVENTOBJECT          pEvtObj;
-   int                    iDescLine = 0;
 
 begin:
    pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
@@ -3465,7 +3464,10 @@ begin:
    case 0xFFFF:
 	   if (gpGlobals->fIsWIN95)
 	   {
-		   iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
+		   int XBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 75 : 100;
+		   int YBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 150 - gpGlobals->dwExtraItemDescLines * 16 : 3;
+		   int iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
+
 		   if (gpGlobals->pszMsgName)
 		   {
 			   int idx = 0, iMsg;
@@ -3473,15 +3475,7 @@ begin:
 			   {
 				   if (iMsg > 0)
 				   {
-					   if (wEventObjectID & PAL_ITEM_DESC_BOTTOM)
-					   {
-						   int YOffset = gpGlobals->dwExtraItemDescLines * 16;
-						   PAL_DrawText(PAL_GetMsg(iMsg), PAL_XY(75, iDescLine * 16 + 150 - YOffset), DESCTEXT_COLOR, TRUE, FALSE);
-					   }
-					   else
-					   {
-						   PAL_DrawText(PAL_GetMsg(iMsg), PAL_XY(100, iDescLine * 16 + 3), DESCTEXT_COLOR, TRUE, FALSE);
-					   }
+					   PAL_DrawText(PAL_GetMsg(iMsg), PAL_XY(XBase, iDescLine * 16 + YBase), DESCTEXT_COLOR, TRUE, FALSE);
 					   iDescLine++;
 				   }
 			   }
@@ -3495,8 +3489,8 @@ begin:
 		   }
 		   else
 		   {
-			   PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
-			   iDescLine++; wScriptEntry++;
+			   PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(XBase, iDescLine * 16 + YBase), DESCTEXT_COLOR, TRUE, FALSE);
+			   wScriptEntry++;
 		   }
 	   }
 	   else
