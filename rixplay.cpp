@@ -425,11 +425,13 @@ RIX_Init(
 				new CDBemuopl(gpGlobals->iOPLSampleRate, true, false),
 				true, gpGlobals->iOPLSampleRate, gpGlobals->dSurroundOPLOffset);
 			break;
+#if PAL_HAS_MAME
 		case OPL_MAME:
 			pRixPlayer->opl = new CSurroundopl(
 				new CEmuopl(gpGlobals->iOPLSampleRate, true, false),
 				new CEmuopl(gpGlobals->iOPLSampleRate, true, false),
 				true, gpGlobals->iOPLSampleRate, gpGlobals->dSurroundOPLOffset);
+#endif
 			break;
 		}
 	}
@@ -443,9 +445,11 @@ RIX_Init(
 		case OPL_DOSBOX:
 			pRixPlayer->opl = new CDBemuopl(gpGlobals->iOPLSampleRate, true, gpGlobals->iAudioChannels == 2);
 			break;
+#if PAL_HAS_MAME
 		case OPL_MAME:
 			pRixPlayer->opl = new CEmuopl(gpGlobals->iOPLSampleRate, true, gpGlobals->iAudioChannels == 2);
 			break;
+#endif
 		}
 	}
 
