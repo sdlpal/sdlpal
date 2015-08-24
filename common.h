@@ -279,6 +279,7 @@ extern "C"
 # if _MSC_VER < 1900
 #  define vsnprintf _vsnprintf
 # endif
+# define strdup _strdup
 # pragma warning (disable:4244)
 #endif
 

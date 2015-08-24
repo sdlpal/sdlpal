@@ -153,7 +153,8 @@ PAL_ReadOneLine(
 		}
 		else
 		{
-			if (n > 0 && temp[n - 1] == '\n') temp[n - 1] = 0;
+			if (n > 0 && temp[n - 1] == '\n') temp[--n] = 0;
+			if (n > 0 && temp[n - 1] == '\r') temp[--n] = 0;
 			return temp;
 		}
 	}
@@ -171,14 +172,14 @@ PAL_ReadMessageFile(
 	{
 		struct _msg_entry *next;
 		wchar_t *value;
-	} *cur_val;
+	} *cur_val = NULL;
 	struct _msg_list_entry
 	{
 		struct _msg_list_entry *next;
 		struct _msg_entry *value;
 		int index;
 		int count;
-	} *head = NULL, *item;
+	} *head = NULL, *item = NULL;
 	struct _word_list_entry
 	{
 		struct _word_list_entry *next;

@@ -51,7 +51,8 @@ static bool CheckGamePath(Windows::Storage::StorageFolder^ root)
 		for (int i = 0; i < 2; i++)
 		{
 			auto filetask = concurrency::create_task(foldertask.get()->GetFileAsync(optional_required_files[i]));
-			if (WaitOnTask(filetask, 500) && _waccess_s(filetask.get()->Path->Begin(), 2) == 0) return true;
+			try { if (WaitOnTask(filetask, 500) && _waccess_s(filetask.get()->Path->Begin(), 2) == 0) return true; }
+			catch(Platform::Exception^) {}
 		}
 	}
 	catch(Platform::Exception^)

@@ -206,12 +206,10 @@ PAL_InitGlobals(
 				   }
 				   else if (SDL_strcasecmp(p, "MESSAGEFILENAME") == 0)
 				   {
-					   char *end = ptr + strlen(ptr);
-					   if (end > ptr)
-					   {
-						   if (end[-1] == '\n') end[-1] = 0;
-						   gpGlobals->pszMsgName = strdup(ptr);
-					   }
+					   int n = strlen(ptr);
+					   if (n > 0 && ptr[n - 1] == '\n') ptr[--n] = 0;
+					   if (n > 0 && ptr[n - 1] == '\r') end[--n] = 0;
+					   if (n > 0) gpGlobals->pszMsgName = strdup(ptr);
 				   }
 #if USE_RIX_EXTRA_INIT
 				   else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)

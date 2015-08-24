@@ -33,6 +33,7 @@
               <FileType>.mp3</FileType>
               <FileType>.ogg</FileType>
               <FileType>.rpg</FileType>
+              <FileType>.bmp</FileType>
             </SupportedFileTypes>
           </FileTypeAssociation>
         </Extension>
