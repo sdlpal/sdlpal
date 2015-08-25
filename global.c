@@ -208,7 +208,7 @@ PAL_InitGlobals(
 				   {
 					   int n = strlen(ptr);
 					   if (n > 0 && ptr[n - 1] == '\n') ptr[--n] = 0;
-					   if (n > 0 && ptr[n - 1] == '\r') end[--n] = 0;
+					   if (n > 0 && ptr[n - 1] == '\r') ptr[--n] = 0;
 					   if (n > 0) gpGlobals->pszMsgName = strdup(ptr);
 				   }
 #if USE_RIX_EXTRA_INIT

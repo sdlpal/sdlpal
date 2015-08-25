@@ -79,10 +79,32 @@ def main():
     if len(data_bytes) % options.wordwidth != 0:
         data_bytes += [0x20 for i in range(0, options.wordwidth - len(data_bytes) % options.wordwidth)]
 
-    output = "[BEGIN WORDS]\n"
+    output = "# All lines, except those inside [BEIGN MESSAGE] and [END MESSAGE], can be commented by adding the sharp '#' mark at the first of the line.\n\n"
+
+    output += "# This section contains the information that will be displayed when a user finishes the game.\n"
+    output += "# Only the keys listed here are valid. Other keys will be ignored.\n"
+    output += "[BEGIN CREDITS]\n"
+    output += "# Place the translated text of 'Classical special build' here in no more than 24 half-wide characters.\n"
+    output += "1= Classical special build\n"
+    output += "# Place the translated porting information template at the following two lines. Be aware that each replaced line will be truncated into at most 40 half-wide characters.\n"
+    output += "6= ${platform} port by ${author}, ${year}.\n"
+    output += "7=\n"
+    output += "# Place the translated GNU licensing information at the following three lines. Be aware that each line will be truncated into at most 40 half-wide characters.\n"
+    output += "8=   This is a free software and it is\n"
+    output += "9=   published under GNU General Public\n"
+    output += "10=    License v3.\n"
+    output += "# Place the translated text at the following line. Be aware that each line will be truncated into at most 40 half-wide characters.\n"
+    output += "11=    ...Press Enter to continue\n"
+    output += "[END CREDITS]\n\n"
+
+    output += "# This section contains the words used by the game.\n"
+    output += "[BEGIN WORDS]\n"
+    output += "# Each line is a pattern of 'key=value', where key is an integer and value is a string.\n"
     for i in range(0, len(data_bytes) / options.wordwidth):
         output += "%d=%s\n" % (i, data_bytes[i * options.wordwidth: (i + 1) * options.wordwidth].rstrip('\x20\x00').decode(options.encoding).encode('utf-8'))
     output += "[END WORDS]\n\n"
+
+    output += "# The following sections contain dialog/description texts used by the game.\n\n"
 
     print "Now Processing. Please wait..."
     

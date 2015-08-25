@@ -116,6 +116,10 @@ extern "C"
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
 
+# define PAL_PLATFORM         "  Symbian S60 \x79FB\x690D (c) 2009, netwan."
+# define PAL_CREDIT           "netwan"
+# define PAL_PORTYEAR         "2009"
+
 #elif defined (GEKKO)
 
 #define PAL_HAS_JOYSTICKS     1
@@ -132,6 +136,10 @@ extern "C"
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
 
+# define PAL_PLATFORM         "Nintendo WII"
+# define PAL_CREDIT           "Rikku2000"
+# define PAL_PORTYEAR         "2012"
+
 #elif defined (PSP)
 
 #define PAL_HAS_JOYSTICKS     0
@@ -147,6 +155,10 @@ extern "C"
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | SDL_FULLSCREEN)
 # endif
 
+# define PAL_PLATFORM         "Sony PSP"
+# define PAL_CREDIT           "(Unknown)"
+# define PAL_PORTYEAR         "2011"
+
 #elif defined(GPH) || defined(DINGOO)
 
 #define PAL_PREFIX            "./"
@@ -160,6 +172,14 @@ extern "C"
 # else
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | SDL_FULLSCREEN)
 # endif
+
+# if defined(GPH)
+#  define PAL_PLATFORM         "GPH Caanoo & Wiz"
+# else
+#  define PAL_PLATFORM         "DINGOO & Dingux"
+# endif
+# define PAL_CREDIT           "Rikku2000"
+# define PAL_PORTYEAR         "2011"
 
 #elif defined(NDS)
 
@@ -175,6 +195,10 @@ extern "C"
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | SDL_FULLSCREEN)
 # endif
 
+# define PAL_PLATFORM         "Nintendo DS"
+# define PAL_CREDIT           "(Unknown)"
+# define PAL_PORTYEAR         "2012"
+
 #elif defined (__IOS__)
 
 #define PAL_PREFIX            UTIL_BasePath()
@@ -188,6 +212,10 @@ extern "C"
 # else
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_FULLSCREEN)
 # endif
+
+# define PAL_PLATFORM         "Apple iOS"
+# define PAL_CREDIT           "(Unknown)"
+# define PAL_PORTYEAR         "2015"
 
 #elif defined (__ANDROID__)
 
@@ -203,6 +231,10 @@ extern "C"
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_FULLSCREEN)
 # endif
 
+# define PAL_PLATFORM         "Android"
+# define PAL_CREDIT           "Rikku2000"
+# define PAL_PORTYEAR         "2013"
+
 #elif defined (__WINPHONE__)
 
 #define PAL_PREFIX            UTIL_BasePath()
@@ -217,6 +249,10 @@ extern "C"
 # else
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
+
+# define PAL_PLATFORM         "Windows Phone"
+# define PAL_CREDIT           "(Unknown)"
+# define PAL_PORTYEAR         "2015"
 
 #else
 
@@ -239,6 +275,10 @@ extern "C"
 # else
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
+
+# define PAL_PLATFORM         NULL
+# define PAL_CREDIT           NULL
+# define PAL_PORTYEAR         NULL
 
 #endif
 
@@ -278,6 +318,7 @@ extern "C"
 #if defined(_MSC_VER)
 # if _MSC_VER < 1900
 #  define vsnprintf _vsnprintf
+#  define snprintf _snprintf
 # endif
 # define strdup _strdup
 # pragma warning (disable:4244)

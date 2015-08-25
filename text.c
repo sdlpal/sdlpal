@@ -40,18 +40,23 @@ BOOL      g_fUpdatedInBattle      = FALSE;
 #include "codepage.h"
 
 #ifndef PAL_CLASSIC
-static const WCHAR* gc_rgszAdditionalWords[CP_MAX][6] = {
+static LPWSTR gc_rgszAdditionalWords[CP_MAX][PAL_ADDITIONAL_WORD_COUNT] = {
    { L"\x6230\x9B25\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
    { L"\x6218\x6597\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
    { L"\x6226\x95D8\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
 };
-static const WCHAR** g_rgszAdditionalWords;
+static LPWSTR gc_rgszDefaultAdditionalWords[PAL_ADDITIONAL_WORD_COUNT] = { NULL, L"1", "2", "3", L"4", L"5" };
 #endif
+
+LPWSTR g_rcCredits[12];
 
 typedef struct tagTEXTLIB
 {
    LPWSTR         *lpWordBuf;
    LPWSTR         *lpMsgBuf;
+#ifndef PAL_CLASSIC
+   LPWSTR         *lpExtraWordBuf;
+#endif
    int           **lpIndexBuf;
 
    int             nWords;
@@ -78,7 +83,8 @@ PAL_FORCE_INLINE int
 PAL_ParseLine(
 	char     *line,
 	char    **value,
-	int      *length
+	int      *length,
+	int       deltrail
 	)
 {
 	//
@@ -102,7 +108,7 @@ PAL_ParseLine(
 			LPSTR end = line + strlen(line);
 			int index;
 			if (end > line && end[-1] == '\n') *(--end) = 0;
-			while (end > line && iswspace(end[-1])) *(--end) = 0;
+			if (deltrail) while (end > line && iswspace(end[-1])) *(--end) = 0;
 
 			//
 			// Parse the index and pass out value
@@ -184,14 +190,19 @@ PAL_ReadMessageFile(
 	{
 		struct _word_list_entry *next;
 		wchar_t *value;
+		int index;
 	} whead = { NULL, NULL }, *witem = NULL;
 	enum _message_state
 	{
 		ST_OUTSIDE,
 		ST_DIALOG,
-		ST_WORD
+		ST_WORD,
+		ST_CREDIT
 	} state = ST_OUTSIDE;
 	int idx_cnt = 0, msg_cnt = 0, word_cnt = 0, sid, eid = -1;
+#ifndef PAL_CLASSIC
+	int extra_word_cnt = 0;
+#endif
 
 	while (!feof(fp))
 	{
@@ -234,6 +245,10 @@ PAL_ReadMessageFile(
 						// First save values (converted wide string) into a linked list
 						//
 						witem = &whead;
+					}
+					else if (strncmp(buffer, "[BEGIN CREDITS]", 15) == 0 && !witem)
+					{
+						state = ST_CREDIT;
 					}
 					else
 					{
@@ -290,15 +305,82 @@ PAL_ReadMessageFile(
 				else
 				{
 					char *v;
-					int l, i = PAL_ParseLine(buffer, &v, &l);
-					if (i > 0)
+					int l, i = PAL_ParseLine(buffer, &v, &l, TRUE);
+					if (i > 0 && i <= PAL_ADDITIONAL_WORD_LAST)
 					{
 						int len = PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, NULL, 0);
 						struct _word_list_entry *val = (struct _word_list_entry *)malloc(sizeof(struct _word_list_entry));
 						val->value = (wchar_t *)malloc(len * sizeof(wchar_t));
 						PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, val->value, len);
-						val->next = NULL; witem->next = val; witem = witem->next;
-						if (word_cnt < i) word_cnt = i;
+						val->index = i; val->next = NULL;
+						witem->next = val; witem = witem->next;
+						if (i < PAL_ADDITIONAL_WORD_FIRST && word_cnt < i) word_cnt = i;
+#ifndef PAL_CLASSIC
+						if (i >= PAL_ADDITIONAL_WORD_FIRST && extra_word_cnt < i) extra_word_cnt = i;
+#endif
+					}
+				}
+				break;
+			case ST_CREDIT:
+				//
+				// Check if to end credit list
+				//
+				if (strncmp(buffer, "[END CREDITS]", 13) == 0)
+				{
+					// End credit list
+					state = ST_OUTSIDE;
+				}
+				else
+				{
+					char *v;
+					int l, i = PAL_ParseLine(buffer, &v, &l, FALSE);
+					if ((i == 1 || (i >= 6 && i <= 11)) && !g_rcCredits[i])
+					{
+						int limit = (i == 1) ? 24 * 8 : 40 * 8, w = 0, j = 0, len;
+						if (i == 6 || i == 7)
+						{
+							if (PAL_PLATFORM && PAL_CREDIT && PAL_PORTYEAR)
+							{
+								const char *templates[] = { "${platform}", "${author}", "${year}" };
+								const char *values[] = { PAL_PLATFORM, PAL_CREDIT, PAL_PORTYEAR };
+								const int matchlen[] = { 11, 9, 7 };
+								const int valuelen[] = { sizeof(PAL_PLATFORM) - 1, sizeof(PAL_CREDIT) - 1, sizeof(PAL_PORTYEAR) - 1 };
+								char *tmp = (char *)alloca(valuelen[0] + valuelen[1] + valuelen[2] + l + 1);
+								char *dst = tmp, *src = v;
+								while (*src)
+								{
+									if (*src == '$')
+									{
+										int k;
+										for (k = 0; k < 3 && strncmp(src, templates[k], matchlen[k]); k++);
+										if (k < 3)
+										{
+											strcpy(dst, values[k]);
+											dst += valuelen[k];
+											src += matchlen[k];
+											continue;
+										}
+									}
+									*dst++ = *src++;
+								}
+								*dst = 0;
+								len = PAL_MultiByteToWideCharCP(CP_UTF_8, tmp, -1, NULL, 0);
+								g_rcCredits[i] = (wchar_t *)malloc(len * sizeof(wchar_t));
+								PAL_MultiByteToWideCharCP(CP_UTF_8, tmp, -1, g_rcCredits[i], len);
+							}
+						}
+						else
+						{
+							len = PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, NULL, 0);
+							g_rcCredits[i] = (wchar_t *)malloc(len * sizeof(wchar_t));
+							PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, g_rcCredits[i], len);
+						}
+						if (g_rcCredits[i])
+						{
+							// Limit the length of texts
+							while (w < limit && j < len - 1) w += PAL_CharWidth(g_rcCredits[i][j++]);
+							if (w >= limit) g_rcCredits[i][w > limit ? j - 1 : j] = 0;
+						}
 					}
 				}
 				break;
@@ -344,20 +426,38 @@ PAL_ReadMessageFile(
 		}
 	}
 
+#ifndef PAL_CLASSIC
+	if (word_cnt > 0 && extra_word_cnt >= PAL_ADDITIONAL_WORD_FIRST && extra_word_cnt <= PAL_ADDITIONAL_WORD_LAST)
+#else
 	if (word_cnt > 0)
+#endif
 	{
 		//
 		// Move values from linked list to array
 		//
-		int index = 1;
+#ifndef PAL_CLASSIC
+		int i;
+		g_TextLib.lpExtraWordBuf = (LPWSTR *)calloc(PAL_ADDITIONAL_WORD_COUNT, sizeof(LPWSTR));
+#endif
 		g_TextLib.nWords = (word_cnt += 1);
 		g_TextLib.lpWordBuf = (LPWSTR *)calloc(word_cnt, sizeof(LPWSTR));
 		for (witem = whead.next; witem; )
 		{
 			struct _word_list_entry *temp = witem->next;
-			g_TextLib.lpWordBuf[index++] = witem->value;
+#ifndef PAL_CLASSIC
+			if (witem->index >= PAL_ADDITIONAL_WORD_FIRST)
+				g_TextLib.lpExtraWordBuf[witem->index - PAL_ADDITIONAL_WORD_FIRST] = witem->value;
+			else
+#else
+			g_TextLib.lpWordBuf[witem->index] = witem->value;
+#endif
 			free(witem); witem = temp;
 		}
+#ifndef PAL_CLASSIC
+		for (i = 1; i < PAL_ADDITIONAL_WORD_COUNT; i++)
+			if (!g_TextLib.lpExtraWordBuf[i])
+				g_TextLib.lpExtraWordBuf[i] = gc_rgszDefaultAdditionalWords[i];
+#endif
 	}
 
 	fclose(fp);
@@ -411,6 +511,11 @@ PAL_InitText(
 			   if (dwWordLength < n) dwWordLength = n;
 		   }
 		   gpGlobals->dwWordLength = dwWordLength;
+		   for (i = 0; i < 12; i++)
+		   {
+			   if (!g_rcCredits[i])
+				   g_rcCredits[i] = L"";
+		   }
 	   }
    }
    else
@@ -534,11 +639,11 @@ PAL_InitText(
 	   free(offsets);
 
 	   g_TextLib.lpIndexBuf = NULL;
-   }
 
 #ifndef PAL_CLASSIC
-   g_rgszAdditionalWords = gc_rgszAdditionalWords[gpGlobals->iCodePage];
+	   g_TextLib.lpExtraWordBuf = gc_rgszAdditionalWords[gpGlobals->iCodePage];
 #endif
+   }
 
    g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
    g_TextLib.bIcon = 0;
@@ -625,11 +730,9 @@ PAL_GetWord(
 {
 #ifndef PAL_CLASSIC
    if (wNumWord >= PAL_ADDITIONAL_WORD_FIRST)
-   {
-      return g_rgszAdditionalWords[wNumWord - PAL_ADDITIONAL_WORD_FIRST];
-   }
+      return g_TextLib.lpExtraWordBuf[wNumWord];
+   else
 #endif
-
    return (iNumWord >= g_TextLib.nWords || !g_TextLib.lpWordBuf[iNumWord]) ? L"" : g_TextLib.lpWordBuf[iNumWord];
 }
 

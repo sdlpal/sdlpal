@@ -489,7 +489,7 @@ PAL_MonsterChasePlayer(
    PAL_NPCWalkOneStep(wEventObjectID, wMonsterSpeed);
 }
 
-static VOID
+VOID
 PAL_AdditionalCredits(
    VOID
 )
@@ -511,65 +511,59 @@ PAL_AdditionalCredits(
    LPCWSTR rgszcps[][CP_MAX] = {
 	   // Traditional Chinese, Simplified Chinese, Japanese
 	   { L"", L"", L"" },
-	   { L"       (\x7D93\x5178\x7279\x5225\x7BC7", L"       (\x7ECF\x5178\x7279\x522B\x7BC7", L"(\x30AF\x30E9\x30B7\x30C3\x30AF\x7279\x5225\x7DE8" },
-	   { L"", L"", L"" },
-	   { L"", L"", L"" },
-	   { L"", L"", L"" },
-#if defined(__SYMBIAN32__) || defined(GPH) || defined(GEKKO) || defined(DINGOO) || defined(ANDROID)
-	   { L"", L"", L"" },
-#endif
-	   { L"", L"", L"" },
-	   { L"\x672C\x7A0B\x5F0F\x662F\x81EA\x7531\x8EDF\x9AD4\xFF0C\x6309\x7167 GNU General",
-	     L"\x672C\x7A0B\x5E8F\x662F\x81EA\x7531\x8F6F\x4EF6\xFF0C\x6309\x7167 GNU General",
-		 L"\x3053\x306E\x30D7\x30ED\x30B0\x30E9\x30E0\x306F\x81EA\x7531\x30BD\x30D5\x30C8\x30A6\x30A7\x30A2\x3067"
+	   { L"          \x7D93\x5178\x7279\x5225\x7BC7  ",
+	     L"          \x7ECF\x5178\x7279\x522B\x7BC7  ",
+	     L"   \x30AF\x30E9\x30B7\x30C3\x30AF\x7279\x5225\x7DE8  "
 	   },
-	   { L"Public License v3 \x767C\x4F48", L"Public License v3 \x53D1\x5E03", L"\x3059\x3001GNU General Public License v3" },
-	   { L"", L"", L"\x306E\x4E0B\x3067\x914D\x5E03\x3055\x308C\x3066\x3044\x307E\x3059\x3002" },
-	   { L"              ...\x6309 Enter \x7D50\x675F", L"              ...\x6309 Enter \x7ED3\x675F", L"...Enter\x30AD\x30FC\x3092\x62BC\x3057\x3066\x7D42\x4E86\x3057\x307E\x3059" }
+	   { L"", L"", L"" },
+	   { L"", L"", L"" },
+	   { L"", L"", L"" },
+	   { L"", L"", L"" },
+	   { L"", L"", L"" },
+	   { L"", L"", L"" },
+	   { L"   \x672C\x7A0B\x5F0F\x662F\x81EA\x7531\x8EDF\x9AD4\xFF0C\x6309\x7167 GNU General",
+	     L"   \x672C\x7A0B\x5E8F\x662F\x81EA\x7531\x8F6F\x4EF6\xFF0C\x6309\x7167 GNU General",
+		 L" \x3053\x306E\x30D7\x30ED\x30B0\x30E9\x30E0\x306F\x81EA\x7531\x30BD\x30D5\x30C8\x30A6\x30A7\x30A2\x3067\x3059\x3001"
+	   },
+	   { L"   Public License v3 \x767C\x4F48",
+	     L"   Public License v3 \x53D1\x5E03",
+	     L" GNU General Public License v3 \x306E\x4E0B\x3067"
+	   },
+	   { L"", L"", L" \x914D\x5E03\x3055\x308C\x3066\x3044\x307E\x3059\x3002" },
+	   { L"                    ...\x6309 Enter \x7D50\x675F",
+	     L"                    ...\x6309 Enter \x7ED3\x675F",
+	     L"      ...Enter\x30AD\x30FC\x3092\x62BC\x3057\x3066\x7D42\x4E86\x3057\x307E\x3059"
+	   },
    };
 
    LPCWSTR rgszStrings[] = {
-      L"SDLPAL (http://sdlpal.codeplex.com/)",
-#  ifdef PAL_CLASSIC
-	  L"  %s  " WIDETEXT(__DATE__) L")",
-#  else
-	  L"                    (" WIDETEXT(__DATE__) L")",
-#  endif
+      L"  SDLPAL (http://sdlpal.codeplex.com/)",
+#ifdef PAL_CLASSIC
+	  L"%s(" WIDETEXT(__DATE__) L")",
+#else
+	  L"                        (" WIDETEXT(__DATE__) L")",
+#endif
       L" ",
-	  L"  (c) 2009-2015, Wei Mingzhi",
-	  L"      <whistler_wmz@users.sf.net>.",
-#  ifdef __SYMBIAN32__
-	  L"  Symbian S60 \x79FB\x690D (c) 2009, netwan.",
-#  endif
-#  ifdef GPH
-	  L"  GPH Caanoo & Wiz \x79FB\x690D (c) 2011, Rikku2000.",
-#  endif
-#  ifdef GEKKO
-	  L"  Nintendo WII \x79FB\x690D (c) 2012, Rikku2000.",
-#  endif
-#  ifdef DINGOO
-	  L"  DINGOO & Dingux \x79FB\x690D (c) 2011, Rikku2000.",
-#  endif
-#  ifdef ANDROID
-	  L"  ANDROID \x79FB\x690D (c) 2013, Rikku2000.",
-#  endif
-	  L" ",
-	  L"%s",
-	  L"%s",
-	  L"%s",
-	  L"   %s",
-      NULL
+	  L"    (c) 2009-2011, Wei Mingzhi",
+	  L"        <whistler_wmz@users.sf.net>.",
+      L"    (c) 2011-2015, SDLPAL Team",
+	  L"%s",  // Porting information line 1
+	  L"%s",  // Porting information line 2
+	  L"%s",  // GNU line 1
+	  L"%s",  // GNU line 2
+	  L"%s",  // GNU line 3
+      L"%s",  // Press Enter to continue
    };
 
    int        i = 0;
 
    PAL_DrawOpeningMenuBackground();
 
-   for (i = 0; rgszStrings[i]; i++)
+   for (i = 0; i < 12; i++)
    {
-      WCHAR buffer[50];
-	  swprintf(buffer, 50, rgszStrings[i], rgszcps[i][gpGlobals->iCodePage]);
-	  PAL_DrawText(buffer, PAL_XY(25, 20 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
+      WCHAR buffer[48];
+	  swprintf(buffer, 48, rgszStrings[i], gpGlobals->pszMsgName ? g_rcCredits[i] : rgszcps[i][gpGlobals->iCodePage]);
+	  PAL_DrawText(buffer, PAL_XY(0, 2 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
    }
 
    PAL_SetPalette(0, FALSE);
