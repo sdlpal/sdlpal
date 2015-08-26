@@ -539,7 +539,7 @@ PAL_AdditionalCredits(
    LPCWSTR rgszStrings[] = {
       L"  SDLPAL (http://sdlpal.codeplex.com/)",
 #ifdef PAL_CLASSIC
-	  L"%s(" WIDETEXT(__DATE__) L")",
+	  L"%ls(" WIDETEXT(__DATE__) L")",
 #else
 	  L"                        (" WIDETEXT(__DATE__) L")",
 #endif
@@ -547,12 +547,12 @@ PAL_AdditionalCredits(
 	  L"    (c) 2009-2011, Wei Mingzhi",
 	  L"        <whistler_wmz@users.sf.net>.",
       L"    (c) 2011-2015, SDLPAL Team",
-	  L"%s",  // Porting information line 1
-	  L"%s",  // Porting information line 2
-	  L"%s",  // GNU line 1
-	  L"%s",  // GNU line 2
-	  L"%s",  // GNU line 3
-      L"%s",  // Press Enter to continue
+	  L"%ls",  // Porting information line 1
+	  L"%ls",  // Porting information line 2
+	  L"%ls",  // GNU line 1
+	  L"%ls",  // GNU line 2
+	  L"%ls",  // GNU line 3
+      L"%ls",  // Press Enter to continue
    };
 
    int        i = 0;

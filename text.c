@@ -444,12 +444,13 @@ PAL_ReadMessageFile(
 		for (witem = whead.next; witem; )
 		{
 			struct _word_list_entry *temp = witem->next;
-#ifndef PAL_CLASSIC
-			if (witem->index >= PAL_ADDITIONAL_WORD_FIRST)
-				g_TextLib.lpExtraWordBuf[witem->index - PAL_ADDITIONAL_WORD_FIRST] = witem->value;
+			if (witem->index < PAL_ADDITIONAL_WORD_FIRST)
+				g_TextLib.lpWordBuf[witem->index] = witem->value;
 			else
+#ifndef PAL_CLASSIC
+				g_TextLib.lpExtraWordBuf[witem->index - PAL_ADDITIONAL_WORD_FIRST] = witem->value;
 #else
-			g_TextLib.lpWordBuf[witem->index] = witem->value;
+				free(witem->value);
 #endif
 			free(witem); witem = temp;
 		}
@@ -505,10 +506,13 @@ PAL_InitText(
 		   int i;
 		   for (i = 1; i < g_TextLib.nWords; i++)
 		   {
-			   LPWSTR ptr = g_TextLib.lpWordBuf[i];
-			   DWORD n = 0;
-			   while (*ptr) n += PAL_CharWidth(*ptr++) >> 3;
-			   if (dwWordLength < n) dwWordLength = n;
+			   if (g_TextLib.lpWordBuf[i])
+			   {
+				   LPWSTR ptr = g_TextLib.lpWordBuf[i];
+				   DWORD n = 0;
+				   while (*ptr) n += PAL_CharWidth(*ptr++) >> 3;
+				   if (dwWordLength < n) dwWordLength = n;
+			   }
 		   }
 		   gpGlobals->dwWordLength = dwWordLength;
 		   for (i = 0; i < 12; i++)
