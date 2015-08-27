@@ -193,6 +193,14 @@ PAL_KeyboardEventFilter(
          g_InputState.dwKeyPress |= kKeyPgDn;
          break;
 
+      case SDLK_HOME:
+         g_InputState.dwKeyPress |= kKeyHome;
+         break;
+
+      case SDLK_END:
+         g_InputState.dwKeyPress |= kKeyEnd;
+         break;
+
       case SDLK_7: //7 for mobile device
       case SDLK_r:
          g_InputState.dwKeyPress |= kKeyRepeat;

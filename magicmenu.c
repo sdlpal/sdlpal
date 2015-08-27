@@ -90,6 +90,14 @@ PAL_MagicSelectionMenuUpdate(
    {
       item_delta = iItemsPerLine * iLinesPerPage;
    }
+   else if (g_InputState.dwKeyPress & kKeyHome)
+   {
+      item_delta = -g_iCurrentItem;
+   }
+   else if (g_InputState.dwKeyPress & kKeyEnd)
+   {
+      item_delta = g_iNumMagic - g_iCurrentItem - 1;
+   }
    else if (g_InputState.dwKeyPress & kKeyMenu)
    {
       return 0;
@@ -102,15 +110,8 @@ PAL_MagicSelectionMenuUpdate(
    //
    // Make sure the current menu item index is in bound
    //
-   //if (g_iCurrentItem < 0)
-   //{
-   //   g_iCurrentItem = 0;
-   //}
-   //else if (g_iCurrentItem >= g_iNumMagic)
-   //{
-   //   g_iCurrentItem = g_iNumMagic - 1;
-   //}
-   if (g_iCurrentItem + item_delta >= 0 && g_iCurrentItem + item_delta < g_iNumMagic)
+   if (g_iCurrentItem + item_delta >= 0 &&
+       g_iCurrentItem + item_delta < g_iNumMagic)
       g_iCurrentItem += item_delta;
 
    //

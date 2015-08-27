@@ -86,6 +86,14 @@ PAL_ItemSelectMenuUpdate(
    {
       item_delta = iItemsPerLine * iLinesPerPage;
    }
+   else if (g_InputState.dwKeyPress & kKeyHome)
+   {
+      item_delta = -gpGlobals->iCurInvMenuItem;
+   }
+   else if (g_InputState.dwKeyPress & kKeyEnd)
+   {
+      item_delta = g_iNumInventory - gpGlobals->iCurInvMenuItem - 1;
+   }
    else if (g_InputState.dwKeyPress & kKeyMenu)
    {
       return 0;
@@ -98,15 +106,8 @@ PAL_ItemSelectMenuUpdate(
    //
    // Make sure the current menu item index is in bound
    //
-   //if (gpGlobals->iCurInvMenuItem < 0)
-   //{
-   //   gpGlobals->iCurInvMenuItem = 0;
-   //}
-   //else if (gpGlobals->iCurInvMenuItem >= g_iNumInventory)
-   //{
-   //   gpGlobals->iCurInvMenuItem = g_iNumInventory - 1;
-   //}
-   if (gpGlobals->iCurInvMenuItem + item_delta >= 0 && gpGlobals->iCurInvMenuItem + item_delta < g_iNumInventory)
+   if (gpGlobals->iCurInvMenuItem + item_delta >= 0 &&
+       gpGlobals->iCurInvMenuItem + item_delta < g_iNumInventory)
       gpGlobals->iCurInvMenuItem += item_delta;
 
    //

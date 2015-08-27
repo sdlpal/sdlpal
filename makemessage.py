@@ -90,8 +90,9 @@ def main():
     output += "# Each line is a pattern of 'key=value', where key is an integer and value is a string.\n"
     for i in range(0, len(data_bytes) / options.wordwidth):
         temp = data_bytes[i * options.wordwidth: (i + 1) * options.wordwidth].rstrip('\x20\x00').decode(options.encoding).encode('utf-8')
-        if options.comment: output += "# Original word: %s\n" % temp
+        if options.comment: output += "# Original word: %d=%s\n" % (i, temp)
         output += "%d=%s\n" % (i, temp)
+    output += "# This is the only addtional word for ATB in SDLPAL. It is not used in classical mode.\n"
     output += "65530=Battle Speed"
     output += "[END WORDS]\n\n"
 
