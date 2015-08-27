@@ -562,7 +562,19 @@ PAL_AdditionalCredits(
    for (i = 0; i < 12; i++)
    {
       WCHAR buffer[48];
+#if defined(__ANDROID__)
+	  // The support of swprintf in Android's NDK is very very bad, so we need an alternative way.
+	  if (wcsncmp(rgszStrings[i], L"%ls", 3) == 0)
+	  {
+		  // We've limited the length of g_rcCredits[i] in text.c, so no need to double check here.
+		  wcscpy(buffer, gpGlobals->pszMsgName ? g_rcCredits[i] : rgszcps[i][gpGlobals->iCodePage]);
+		  wcscat(buffer, rgszStrings[i] + 3);
+	  }
+	  else
+		  wcscpy(buffer, rgszStrings[i]);
+#else
 	  swprintf(buffer, 48, rgszStrings[i], gpGlobals->pszMsgName ? g_rcCredits[i] : rgszcps[i][gpGlobals->iCodePage]);
+#endif
 	  PAL_DrawText(buffer, PAL_XY(0, 2 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
    }
 
