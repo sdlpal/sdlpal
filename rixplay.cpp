@@ -2,6 +2,9 @@
 //
 // Copyright (c) 2008, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // All rights reserved.
+// Modified by Lou Yihua <louyihua@21cn.com>, 2015.
+//
+// This file is part of SDLPAL.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

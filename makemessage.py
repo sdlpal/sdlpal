@@ -93,7 +93,7 @@ def main():
         if options.comment: output += "# Original word: %d=%s\n" % (i, temp)
         output += "%d=%s\n" % (i, temp)
     output += "# This is the only addtional word for ATB in SDLPAL. It is not used in classical mode.\n"
-    output += "65530=Battle Speed"
+    output += "65530=Battle Speed\n"
     output += "[END WORDS]\n\n"
 
     output += "# The following sections contain dialog/description texts used by the game.\n\n"
@@ -107,7 +107,7 @@ def main():
             if is_msg_group == 0:
                 is_msg_group = 1
                 message = "%s %d\n" % ('[BEGIN MESSAGE]', w1)
-                if options.comment: comment = "# Original message:\n"
+                if options.comment: comment = "# Original message: %d\n" % w1
 
             last_index = w1
             msg_count += 1

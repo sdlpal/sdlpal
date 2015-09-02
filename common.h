@@ -1,6 +1,7 @@
 //
 // Copyright (c) 2009, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // All rights reserved.
+// Modified by Lou Yihua <louyihua@21cn.com> with unicode support, 2015.
 //
 // This file is part of SDLPAL.
 //
@@ -16,8 +17,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
 //
 
 #ifndef _COMMON_H
@@ -404,8 +403,8 @@ typedef enum tagCODEPAGE {
 	CP_MIN = 0,
 	CP_BIG5 = 0,
 	CP_GBK = 1,
-	CP_SHIFTJIS = 2,
-	CP_MAX = 3,
+	//CP_SHIFTJIS = 2,
+	CP_MAX = CP_GBK + 1,
 	CP_UTF_8 = CP_MAX + 1
 } CODEPAGE;
 

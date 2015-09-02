@@ -43,9 +43,9 @@ BOOL      g_fUpdatedInBattle      = FALSE;
 static LPWSTR gc_rgszAdditionalWords[CP_MAX][PAL_ADDITIONAL_WORD_COUNT] = {
    { L"\x6230\x9B25\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
    { L"\x6218\x6597\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
-   { L"\x6226\x95D8\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
+   //{ L"\x6226\x95D8\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
 };
-static LPWSTR gc_rgszDefaultAdditionalWords[PAL_ADDITIONAL_WORD_COUNT] = { NULL, L"1", "2", "3", L"4", L"5" };
+static LPWSTR gc_rgszDefaultAdditionalWords[PAL_ADDITIONAL_WORD_COUNT] = { NULL, L"1", L"2", L"3", L"4", L"5" };
 #endif
 
 LPWSTR g_rcCredits[12];
@@ -1500,23 +1500,23 @@ PAL_MultiByteToWideCharCP(
 	{
 		switch (cp)
 		{
-		case CP_SHIFTJIS:
-			for (i = 0; i < mbslength && mbs[i]; i++)
-			{
-				if (state == 0)
-				{
-					if ((BYTE)mbs[i] <= 0x80 || (BYTE)mbs[i] >= 0xfd || ((BYTE)mbs[i] >= 0xa0 && (BYTE)mbs[i] <= 0xdf))
-						wlen++;
-					else
-						state = 1;
-				}
-				else
-				{
-					wlen++;
-					state = 0;
-				}
-			}
-			break;
+		//case CP_SHIFTJIS:
+		//	for (i = 0; i < mbslength && mbs[i]; i++)
+		//	{
+		//		if (state == 0)
+		//		{
+		//			if ((BYTE)mbs[i] <= 0x80 || (BYTE)mbs[i] >= 0xfd || ((BYTE)mbs[i] >= 0xa0 && (BYTE)mbs[i] <= 0xdf))
+		//				wlen++;
+		//			else
+		//				state = 1;
+		//		}
+		//		else
+		//		{
+		//			wlen++;
+		//			state = 0;
+		//		}
+		//	}
+		//	break;
 		case CP_GBK:
 		case CP_BIG5:
 			for (i = 0; i < mbslength && mbs[i]; i++)
@@ -1577,37 +1577,37 @@ PAL_MultiByteToWideCharCP(
 		WCHAR invalid_char;
 		switch (cp)
 		{
-		case CP_SHIFTJIS:
-			invalid_char = 0x30fb;
-			for (i = 0; i < mbslength && wlen < wcslength && mbs[i]; i++)
-			{
-				if (state == 0)
-				{
-					if ((BYTE)mbs[i] <= 0x80)
-						wcs[wlen++] = mbs[i];
-					else if ((BYTE)mbs[i] >= 0xa0 && (BYTE)mbs[i] <= 0xdf)
-						wcs[wlen++] = cptbl_jis_half[(BYTE)mbs[i] - 0xa0];
-					else if ((BYTE)mbs[i] == 0xfd)
-						wcs[wlen++] = 0xf8f1;
-					else if ((BYTE)mbs[i] == 0xfe)
-						wcs[wlen++] = 0xf8f2;
-					else if ((BYTE)mbs[i] == 0xff)
-						wcs[wlen++] = 0xf8f3;
-					else
-						state = 1;
-				}
-				else
-				{
-					if ((BYTE)mbs[i] < 0x40)
-						wcs[wlen++] = 0x30fb;
-					else if ((BYTE)mbs[i - 1] < 0xa0)
-						wcs[wlen++] = cptbl_jis[(BYTE)mbs[i - 1] - 0x81][(BYTE)mbs[i] - 0x40];
-					else
-						wcs[wlen++] = cptbl_jis[(BYTE)mbs[i - 1] - 0xc1][(BYTE)mbs[i] - 0x40];
-					state = 0;
-				}
-			}
-			break;
+		//case CP_SHIFTJIS:
+		//	invalid_char = 0x30fb;
+		//	for (i = 0; i < mbslength && wlen < wcslength && mbs[i]; i++)
+		//	{
+		//		if (state == 0)
+		//		{
+		//			if ((BYTE)mbs[i] <= 0x80)
+		//				wcs[wlen++] = mbs[i];
+		//			else if ((BYTE)mbs[i] >= 0xa0 && (BYTE)mbs[i] <= 0xdf)
+		//				wcs[wlen++] = cptbl_jis_half[(BYTE)mbs[i] - 0xa0];
+		//			else if ((BYTE)mbs[i] == 0xfd)
+		//				wcs[wlen++] = 0xf8f1;
+		//			else if ((BYTE)mbs[i] == 0xfe)
+		//				wcs[wlen++] = 0xf8f2;
+		//			else if ((BYTE)mbs[i] == 0xff)
+		//				wcs[wlen++] = 0xf8f3;
+		//			else
+		//				state = 1;
+		//		}
+		//		else
+		//		{
+		//			if ((BYTE)mbs[i] < 0x40)
+		//				wcs[wlen++] = 0x30fb;
+		//			else if ((BYTE)mbs[i - 1] < 0xa0)
+		//				wcs[wlen++] = cptbl_jis[(BYTE)mbs[i - 1] - 0x81][(BYTE)mbs[i] - 0x40];
+		//			else
+		//				wcs[wlen++] = cptbl_jis[(BYTE)mbs[i - 1] - 0xc1][(BYTE)mbs[i] - 0x40];
+		//			state = 0;
+		//		}
+		//	}
+		//	break;
 		case CP_GBK:
 			invalid_char = 0x3f;
 			for (i = 0; i < mbslength && wlen < wcslength && mbs[i]; i++)
@@ -1755,7 +1755,7 @@ PAL_GetInvalidChar(
    {
    case CP_BIG5:     return 0x3f;
    case CP_GBK:      return 0x3f;
-   case CP_SHIFTJIS: return 0x30fb;
+   //case CP_SHIFTJIS: return 0x30fb;
    case CP_UTF_8:    return 0x3f;
    default:          return 0;
    }

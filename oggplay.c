@@ -1,7 +1,10 @@
 /* -*- mode: c++; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
-// Copyright (c) 2015, Lou Yihua <louyihua@21cn.com>.
+// Copyright (c) 2009, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // All rights reserved.
+// Created by Lou Yihua <louyihua@21cn.com>, 2015-07-28.
+//
+// This file is part of SDLPAL.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

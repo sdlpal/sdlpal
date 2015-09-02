@@ -123,6 +123,8 @@ PAL_InitGlobals(
 				   if (SDL_strcasecmp(p, "CODEPAGE") == 0)
 				   {
 					   sscanf(ptr, "%d", &iCodePage);
+					   if (iCodePage < 0) iCodePage = 0;
+					   if (iCodePage >= CP_MAX) iCodePage = CP_MAX - 1;
 				   }
 				   else if (SDL_strcasecmp(p, "EXTRAMAGICDESCLINES") == 0)
 				   {

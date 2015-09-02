@@ -18,7 +18,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// Modified by Lou Yihua <louyihua@21cn.com> with Japanese support, 2015
+// Modified by Lou Yihua <louyihua@21cn.com> with unicode support, 2015
 //
 
 #ifndef UIGAME_H
