@@ -235,7 +235,7 @@ PAL_ReadMessageFile(
 							item = head;
 						}
 						item->value = NULL; item->index = sid;
-						item->count = 0; cur_val = NULL;
+						item->count = 0; item->next = NULL; cur_val = NULL;
 						if (idx_cnt < item->index) idx_cnt = item->index;
 					}
 					else if (strncmp(buffer, "[BEGIN WORDS]", 13) == 0 && !witem)
@@ -401,14 +401,14 @@ PAL_ReadMessageFile(
 		int idx_msg = 1;
 		g_TextLib.nIndices = (idx_cnt += 1);
 		g_TextLib.nMsgs = (msg_cnt += 1);
-		g_TextLib.lpIndexBuf = (int **)calloc(idx_cnt, sizeof(int *));
-		g_TextLib.lpMsgBuf = (LPWSTR *)calloc(msg_cnt, sizeof(LPWSTR));
+		g_TextLib.lpIndexBuf = (int **)UTIL_calloc(idx_cnt, sizeof(int *));
+		g_TextLib.lpMsgBuf = (LPWSTR *)UTIL_calloc(msg_cnt, sizeof(LPWSTR));
 		for (item = head; item; )
 		{
 			struct _msg_list_entry *temp = item->next;
 			struct _msg_entry *msg = item->value;
 			int index = 0;
-			g_TextLib.lpIndexBuf[item->index] = (int *)calloc(item->count + 1, sizeof(int));
+			g_TextLib.lpIndexBuf[item->index] = (int *)UTIL_calloc(item->count + 1, sizeof(int));
 			while (msg)
 			{
 				struct _msg_entry *tmp = msg->next;
@@ -440,7 +440,7 @@ PAL_ReadMessageFile(
 		g_TextLib.lpExtraWordBuf = (LPWSTR *)calloc(PAL_ADDITIONAL_WORD_COUNT, sizeof(LPWSTR));
 #endif
 		g_TextLib.nWords = (word_cnt += 1);
-		g_TextLib.lpWordBuf = (LPWSTR *)calloc(word_cnt, sizeof(LPWSTR));
+		g_TextLib.lpWordBuf = (LPWSTR *)UTIL_calloc(word_cnt, sizeof(LPWSTR));
 		for (witem = whead.next; witem; )
 		{
 			struct _word_list_entry *temp = witem->next;
