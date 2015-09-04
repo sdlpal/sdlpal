@@ -910,9 +910,8 @@ SOUND_PlayChannel(
 	   resampler_set_quality(gSndPlayer.resampler, SOUND_IsIntegerConversion(wavespec.freq) ? RESAMPLER_QUALITY_MIN : gpGlobals->iResampleQuality);
 	   resampler_set_rate(gSndPlayer.resampler, (double)wavespec.freq / (double)gSndPlayer.spec.freq);
 	   len = (int)ceil(wavespec.size * (double)gSndPlayer.spec.freq / (double)wavespec.freq) * (SDL_AUDIO_BITSIZE(AUDIO_S16) / SDL_AUDIO_BITSIZE(wavespec.format));
-	   if (len >= wavespec.channels * 2)
+	   if (len >= wavespec.channels * 2 && (bufdec = malloc(len)))
 	   {
-		   bufdec = malloc(len);
 		   if (wavespec.format == AUDIO_S16)
 			   SOUND_ResampleS16(bufsrc, &wavespec, bufdec, len, gSndPlayer.resampler);
 		   else

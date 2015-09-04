@@ -45,13 +45,6 @@ extern "C"
 #include "SDL.h"
 #include "SDL_endian.h"
 
-#ifdef _SDL_stdinc_h
-#define malloc       SDL_malloc
-#define calloc       SDL_calloc
-#define free         SDL_free
-#define realloc      SDL_realloc
-#endif
-
 #if SDL_VERSION_ATLEAST(2,0,0)
 
 #define SDLK_KP1     SDLK_KP_1

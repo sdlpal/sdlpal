@@ -226,12 +226,12 @@ PAL_ReadMessageFile(
 						//
 						if (head)
 						{
-							item->next = (struct _msg_list_entry *)malloc(sizeof(struct _msg_list_entry));
+							item->next = (struct _msg_list_entry *)UTIL_malloc(sizeof(struct _msg_list_entry));
 							item = item->next;
 						}
 						else
 						{
-							head = (struct _msg_list_entry *)malloc(sizeof(struct _msg_list_entry));
+							head = (struct _msg_list_entry *)UTIL_malloc(sizeof(struct _msg_list_entry));
 							item = head;
 						}
 						item->value = NULL; item->index = sid;
@@ -273,11 +273,11 @@ PAL_ReadMessageFile(
 				{
 					if (cur_val)
 					{
-						cur_val->next = (struct _msg_entry *)malloc(sizeof(struct _msg_entry));
+						cur_val->next = (struct _msg_entry *)UTIL_malloc(sizeof(struct _msg_entry));
 						cur_val = cur_val->next;
 					}
 					else
-						cur_val = (struct _msg_entry *)malloc(sizeof(struct _msg_entry));
+						cur_val = (struct _msg_entry *)UTIL_malloc(sizeof(struct _msg_entry));
 					if (strncmp(buffer, "[CLEAR MESSAGE]", 15) == 0)
 					{
 						cur_val->value = NULL;
@@ -285,7 +285,7 @@ PAL_ReadMessageFile(
 					else
 					{
 						int len = PAL_MultiByteToWideCharCP(CP_UTF_8, buffer, -1, NULL, 0);
-						cur_val->value = (wchar_t *)malloc(len * sizeof(wchar_t));
+						cur_val->value = (wchar_t *)UTIL_malloc(len * sizeof(wchar_t));
 						PAL_MultiByteToWideCharCP(CP_UTF_8, buffer, -1, cur_val->value, len);
 						msg_cnt++;
 					}
@@ -309,8 +309,8 @@ PAL_ReadMessageFile(
 					if (i > 0 && i <= PAL_ADDITIONAL_WORD_LAST)
 					{
 						int len = PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, NULL, 0);
-						struct _word_list_entry *val = (struct _word_list_entry *)malloc(sizeof(struct _word_list_entry));
-						val->value = (wchar_t *)malloc(len * sizeof(wchar_t));
+						struct _word_list_entry *val = (struct _word_list_entry *)UTIL_malloc(sizeof(struct _word_list_entry));
+						val->value = (wchar_t *)UTIL_malloc(len * sizeof(wchar_t));
 						PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, val->value, len);
 						val->index = i; val->next = NULL;
 						witem->next = val; witem = witem->next;
@@ -365,14 +365,14 @@ PAL_ReadMessageFile(
 								}
 								*dst = 0;
 								len = PAL_MultiByteToWideCharCP(CP_UTF_8, tmp, -1, NULL, 0);
-								g_rcCredits[i] = (wchar_t *)malloc(len * sizeof(wchar_t));
+								g_rcCredits[i] = (wchar_t *)UTIL_malloc(len * sizeof(wchar_t));
 								PAL_MultiByteToWideCharCP(CP_UTF_8, tmp, -1, g_rcCredits[i], len);
 							}
 						}
 						else
 						{
 							len = PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, NULL, 0);
-							g_rcCredits[i] = (wchar_t *)malloc(len * sizeof(wchar_t));
+							g_rcCredits[i] = (wchar_t *)UTIL_malloc(len * sizeof(wchar_t));
 							PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, g_rcCredits[i], len);
 						}
 						if (g_rcCredits[i])
@@ -574,7 +574,22 @@ PAL_InitText(
 		   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + base, gpGlobals->dwWordLength, NULL, 0) + 1;
 	   }
 	   g_TextLib.lpWordBuf = (LPWSTR*)malloc(g_TextLib.nWords * sizeof(LPWSTR));
+	   if (g_TextLib.lpWordBuf == NULL)
+	   {
+		   free(temp);
+		   fclose(fpWord);
+		   fclose(fpMsg);
+		   return -1;
+	   }
 	   tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
+	   if (tmp == NULL)
+	   {
+		   free(g_TextLib.lpWordBuf);
+		   free(temp);
+		   fclose(fpWord);
+		   fclose(fpMsg);
+		   return -1;
+	   }
 	   for (i = 0, wpos = 0; i < g_TextLib.nWords; i++)
 	   {
 		   int l;
@@ -630,7 +645,20 @@ PAL_InitText(
 		   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + SDL_SwapLE32(offsets[i]), SDL_SwapLE32(offsets[i + 1]) - SDL_SwapLE32(offsets[i]), NULL, 0) + 1;
 	   }
 	   g_TextLib.lpMsgBuf = (LPWSTR*)malloc(g_TextLib.nMsgs * sizeof(LPWSTR));
+	   if (g_TextLib.lpMsgBuf == NULL)
+	   {
+		   free(g_TextLib.lpWordBuf);
+		   free(offsets);
+		   return -1;
+	   }
 	   tmp = (LPWSTR)malloc(wlen * sizeof(WCHAR));
+	   if (tmp == NULL)
+	   {
+		   free(g_TextLib.lpMsgBuf);
+		   free(g_TextLib.lpWordBuf);
+		   free(offsets);
+		   return -1;
+	   }
 	   for (i = 0, wpos = 0; i < g_TextLib.nMsgs; i++)
 	   {
 		   int l;

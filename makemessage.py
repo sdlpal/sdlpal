@@ -9,21 +9,16 @@ import struct
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Generate a translatable language file that can be used by SDLPAL.')
-    parser.add_argument('gamepath', help='Game path where SSS.MKF & M.MSG & WORD.DAT are located.')
-    parser.add_argument('outputfile', help='Path of the output message file.')
-    parser.add_argument('encoding', help='Text encoding name (such as "gb2312" or "big5").')
-    parser.add_argument('-w','--width', dest='wordwidth', help='Word width in bytes')
-    parser.add_argument("-c", "--comment", action="store_true", help='Automatically generate comments')
+    parser = argparse.ArgumentParser(description = 'Generate a translatable language file that can be used by SDLPAL.')
+    parser.add_argument('gamepath', help = 'Game path where SSS.MKF & M.MSG & WORD.DAT are located.')
+    parser.add_argument('outputfile', help = 'Path of the output message file.')
+    parser.add_argument('encoding', choices = ['gbk', 'big5'], help = 'Text encoding name, should be either gbk or big5.')
+    parser.add_argument('-w', '--width', dest = 'wordwidth', default = 10, type = int, help = 'Word width in bytes, default is 10')
+    parser.add_argument("-c", "--comment", action = 'store_true', help = 'Automatically generate comments')
     options = parser.parse_args()
 
     if options.gamepath[-1] != '/' and options.gamepath[-1] != '\\':
         options.gamepath += '/'
-
-    if options.wordwidth == None:
-        options.wordwidth = 10
-    else:
-        options.wordwidth = int(options.wordwidth)
 
     script_bytes = []
     index_bytes = []
