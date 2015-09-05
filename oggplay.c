@@ -84,7 +84,7 @@ PAL_FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
 
 PAL_FORCE_INLINE void OGG_FillResample(LPOGGPLAYER player, ogg_int16_t* stream)
 {
-	if (gpGlobals->iAudioChannels == 2) {
+	if (gConfig.iAudioChannels == 2) {
 		stream[0] = SDL_SwapLE16(resampler_get_and_remove_sample(player->resampler[0]));
 		stream[1] = (player->vi.channels > 1) ? SDL_SwapLE16(resampler_get_and_remove_sample(player->resampler[1])) : stream[0];
 	}
@@ -101,7 +101,7 @@ PAL_FORCE_INLINE void OGG_FillResample(LPOGGPLAYER player, ogg_int16_t* stream)
 static void OGG_Cleanup(LPOGGPLAYER player)
 {
 	int i;
-	for (i = 0; i < gpGlobals->iAudioChannels; i++) resampler_clear(player->resampler[0]);
+	for (i = 0; i < gConfig.iAudioChannels; i++) resampler_clear(player->resampler[0]);
 	/* Do various cleanups */
 	if (player->iFlags & FLAG_VB) vorbis_block_clear(&player->vb);
 	if (player->iFlags & FLAG_VD) vorbis_dsp_clear(&player->vd);
@@ -235,11 +235,11 @@ static BOOL OGG_Rewind(LPOGGPLAYER player)
 		player->iStage = STAGE_PAGEOUT;
 		player->iFlags |= FLAG_VD | FLAG_VB;
 
-		if (player->fUseResampler = player->vi.rate != gpGlobals->iSampleRate) {
-			double factor = (double)player->vi.rate / (double)gpGlobals->iSampleRate;
+		if (player->fUseResampler = player->vi.rate != gConfig.iSampleRate) {
+			double factor = (double)player->vi.rate / (double)gConfig.iSampleRate;
 			for (i = 0; i < min(player->vi.channels, 2); i++)
 			{
-				resampler_set_quality(player->resampler[i], SOUND_IsIntegerConversion(player->vi.rate) ? RESAMPLER_QUALITY_MIN : gpGlobals->iResampleQuality);
+				resampler_set_quality(player->resampler[i], SOUND_IsIntegerConversion(player->vi.rate) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
 				resampler_set_rate(player->resampler[i], factor);
 				resampler_clear(player->resampler[i]);
 			}
@@ -263,7 +263,7 @@ OGG_FillBuffer(
 
 	if (player->fReady) {
 		ogg_packet       op; /* one raw packet of data for decode */
-		double volume = (double)gpGlobals->iVolume / (SDL_MIX_MAXVOLUME * 3 / 4);
+		double volume = (double)gConfig.iVolume / (SDL_MIX_MAXVOLUME * 3 / 4);
 		int total_bytes = 0, stage = player->iStage;
 
 		while (total_bytes < len) {
@@ -339,7 +339,7 @@ OGG_FillBuffer(
 							j = resampler_get_sample_count(player->resampler[0]);
 							while (total_bytes < len && resampler_get_sample_count(player->resampler[0]) > 0) {
 								OGG_FillResample(player, (ogg_int16_t *)(stream + total_bytes));
-								total_bytes += gpGlobals->iAudioChannels * sizeof(ogg_int16_t);
+								total_bytes += gConfig.iAudioChannels * sizeof(ogg_int16_t);
 							}
 
 							samples -= to_write; bout += to_write;
@@ -348,10 +348,10 @@ OGG_FillBuffer(
 					else {
 						int i;
 						ogg_int16_t *ptr = (ogg_int16_t *)(stream + total_bytes);
-						bout = (len - total_bytes) / gpGlobals->iAudioChannels / sizeof(ogg_int16_t);
+						bout = (len - total_bytes) / gConfig.iAudioChannels / sizeof(ogg_int16_t);
 						if (bout > samples) bout = samples;
 						for (i = 0; i < bout; i++) {
-							if (gpGlobals->iAudioChannels == 2) {
+							if (gConfig.iAudioChannels == 2) {
 								ptr[0] = SDL_SwapLE16(OGG_GetSample(pcm[0][i], volume));
 								ptr[1] = (player->vi.channels > 1) ? SDL_SwapLE16(OGG_GetSample(pcm[1][i], volume)) : ptr[0];
 							}
@@ -363,10 +363,10 @@ OGG_FillBuffer(
 									ptr[0] = SDL_SwapLE16(OGG_GetSample(pcm[0][i], volume));
 								}
 							}
-							ptr += gpGlobals->iAudioChannels;
+							ptr += gConfig.iAudioChannels;
 						}
 
-						total_bytes += bout * gpGlobals->iAudioChannels * sizeof(ogg_int16_t);
+						total_bytes += bout * gConfig.iAudioChannels * sizeof(ogg_int16_t);
 					}
 					/* tell libvorbis how many samples we actually consumed */
 					vorbis_synthesis_read(&player->vd, bout);
@@ -376,10 +376,10 @@ OGG_FillBuffer(
 				}
 				break;
 			case STAGE_REWIND:
-				if (player->vi.rate != gpGlobals->iSampleRate) { /* If there are samples in the resampler, fetch them first */
+				if (player->vi.rate != gConfig.iSampleRate) { /* If there are samples in the resampler, fetch them first */
 					while (total_bytes < len && resampler_get_sample_count(player->resampler[0]) > 0) {
 						OGG_FillResample(player, (ogg_int16_t *)(stream + total_bytes));
-						total_bytes += gpGlobals->iAudioChannels * sizeof(ogg_int16_t);
+						total_bytes += gConfig.iAudioChannels * sizeof(ogg_int16_t);
 					}
 					/* Break out if there are still samples in the resampler */
 					if (resampler_get_sample_count(player->resampler[0]) > 0) break;

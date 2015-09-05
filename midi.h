@@ -29,6 +29,7 @@ extern "C"
 {
 #endif
 
+#if PAL_HAS_NATIVEMIDI
 #include "native_midi/native_midi.h"
 
 VOID
@@ -41,6 +42,21 @@ VOID
 MIDI_CheckLoop(
    VOID
 );
+
+#else
+
+static VOID
+MIDI_Play(
+   INT       iNumRIX,
+   BOOL      fLoop
+) {}
+
+static VOID
+MIDI_CheckLoop(
+   VOID
+) {}
+
+#endif
 
 #ifdef __cplusplus
 }

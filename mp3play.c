@@ -61,7 +61,7 @@ MP3_FillBuffer(
 {
 	LPMP3PLAYER player = (LPMP3PLAYER)object;
 	if (player->pMP3) {
-		player->pMP3->volume = gpGlobals->iVolume * 3 / 4;
+		player->pMP3->volume = gConfig.iVolume * 3 / 4;
 
 		mad_getSamples(player->pMP3, stream, len);
 
@@ -116,9 +116,9 @@ MP3_Play(
 
 	if (iNum > 0)
 	{
-		if ((player->pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gpGlobals->iResampleQuality)) == NULL)
+		if ((player->pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gConfig.iResampleQuality)) == NULL)
 		{
-			player->pMP3 = mad_openFile(va("%s/MP3/%.2d.MP3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gpGlobals->iResampleQuality);
+			player->pMP3 = mad_openFile(va("%s/MP3/%.2d.MP3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gConfig.iResampleQuality);
 		}
 
 		if (player->pMP3)

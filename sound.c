@@ -25,11 +25,8 @@
 #include "players.h"
 #include "util.h"
 #include "resampler.h"
-#include <math.h>
-
-#if PAL_HAS_NATIVEMIDI
 #include "midi.h"
-#endif
+#include <math.h>
 
 #if PAL_HAS_OGG
 #include <vorbis/codec.h>
@@ -496,7 +493,7 @@ SOUND_FillAudio(
       // Mix as much data as possible
       //
       len = (len > gSndPlayer.audio_len[i]) ? gSndPlayer.audio_len[i] : len;
-      SDL_MixAudio(stream, gSndPlayer.pos[i], len, gpGlobals->iVolume);
+      SDL_MixAudio(stream, gSndPlayer.pos[i], len, gConfig.iVolume);
       gSndPlayer.pos[i] += len;
       gSndPlayer.audio_len[i] -= len;
    }
@@ -526,7 +523,7 @@ SOUND_LoadMKF(
 	FNLoadSoundData func[2];
 	int i;
 
-	if (gpGlobals->fIsWIN95)
+	if (gConfig.fIsWIN95)
 	{
 		mkfs[0] = "sounds.mkf"; func[0] = SOUND_LoadWAVEData;
 		mkfs[1] = "voc.mkf"; func[1] = SOUND_LoadVOCData;
@@ -597,10 +594,10 @@ SOUND_OpenAudio(
    //
    // Open the sound subsystem.
    //
-   gSndPlayer.spec.freq = gpGlobals->iSampleRate;
+   gSndPlayer.spec.freq = gConfig.iSampleRate;
    gSndPlayer.spec.format = AUDIO_S16;
-   gSndPlayer.spec.channels = gpGlobals->iAudioChannels;
-   gSndPlayer.spec.samples = gpGlobals->wAudioBufferSize;
+   gSndPlayer.spec.channels = gConfig.iAudioChannels;
+   gSndPlayer.spec.samples = gConfig.wAudioBufferSize;
    gSndPlayer.spec.callback = SOUND_FillAudio;
 
    if (SDL_OpenAudio(&gSndPlayer.spec, &spec) < 0)
@@ -627,7 +624,7 @@ SOUND_OpenAudio(
    //
    // Initialize the music subsystem.
    //
-   switch (gpGlobals->eMusicType)
+   switch (gConfig.eMusicType)
    {
    case MUSIC_RIX:
 	   if (!(gSndPlayer.pMusPlayer = RIX_Init(va("%s%s", PAL_PREFIX, "mus.mkf"))))
@@ -657,7 +654,7 @@ SOUND_OpenAudio(
    //
    // Initialize the CD audio.
    //
-   switch (gpGlobals->eCDType)
+   switch (gConfig.eCDType)
    {
    case MUSIC_SDLCD:
    {
@@ -728,8 +725,9 @@ SOUND_CloseAudio(
 
 --*/
 {
-   SDL_mutexP(gSndPlayer.mtx);
    SDL_CloseAudio();
+
+   SDL_mutexP(gSndPlayer.mtx);
 
    if (gSndPlayer.buf[0] != NULL)
    {
@@ -769,9 +767,7 @@ SOUND_CloseAudio(
    }
 #endif
 
-#if PAL_HAS_NATIVEMIDI
-   MIDI_Play(0, FALSE);
-#endif
+   if (gConfig.eMusicType == MUSIC_MIDI) MIDI_Play(0, FALSE);
 
    if (gSndPlayer.resampler)
    {
@@ -812,18 +808,18 @@ SOUND_AdjustVolume(
 {
    if (iDirection > 0)
    {
-      gpGlobals->iVolume += SDL_MIX_MAXVOLUME * 0.03;
-      if (gpGlobals->iVolume > SDL_MIX_MAXVOLUME)
+      gConfig.iVolume += SDL_MIX_MAXVOLUME * 0.03;
+      if (gConfig.iVolume > SDL_MIX_MAXVOLUME)
       {
-		  gpGlobals->iVolume = SDL_MIX_MAXVOLUME;
+		  gConfig.iVolume = SDL_MIX_MAXVOLUME;
       }
    }
    else
    {
-      gpGlobals->iVolume -= SDL_MIX_MAXVOLUME * 0.03;
-      if (gpGlobals->iVolume < 0)
+      gConfig.iVolume -= SDL_MIX_MAXVOLUME * 0.03;
+      if (gConfig.iVolume < 0)
       {
-		  gpGlobals->iVolume = 0;
+		  gConfig.iVolume = 0;
       }
    }
 }
@@ -907,7 +903,7 @@ SOUND_PlayChannel(
    if (wavespec.freq != gSndPlayer.spec.freq)
    {
 	   /* Resampler is needed */
-	   resampler_set_quality(gSndPlayer.resampler, SOUND_IsIntegerConversion(wavespec.freq) ? RESAMPLER_QUALITY_MIN : gpGlobals->iResampleQuality);
+	   resampler_set_quality(gSndPlayer.resampler, SOUND_IsIntegerConversion(wavespec.freq) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
 	   resampler_set_rate(gSndPlayer.resampler, (double)wavespec.freq / (double)gSndPlayer.spec.freq);
 	   len = (int)ceil(wavespec.size * (double)gSndPlayer.spec.freq / (double)wavespec.freq) * (SDL_AUDIO_BITSIZE(AUDIO_S16) / SDL_AUDIO_BITSIZE(wavespec.format));
 	   if (len >= wavespec.channels * 2 && (bufdec = malloc(len)))
@@ -981,19 +977,14 @@ SOUND_PlayMUS(
    FLOAT     flFadeTime
 )
 {
-	SDL_mutexP(gSndPlayer.mtx);
-
-#if PAL_HAS_NATIVEMIDI
-   if (gpGlobals->eMusicType == MUSIC_MIDI)
+   SDL_mutexP(gSndPlayer.mtx);
+   if (gConfig.eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(iNumRIX, fLoop);
-      return;
    }
-#endif
-
-   if (gSndPlayer.pMusPlayer)
+   else if (gSndPlayer.pMusPlayer)
    {
-	   gSndPlayer.pMusPlayer->Play(gSndPlayer.pMusPlayer, iNumRIX, fLoop, flFadeTime);
+      gSndPlayer.pMusPlayer->Play(gSndPlayer.pMusPlayer, iNumRIX, fLoop, flFadeTime);
    }
    SDL_mutexV(gSndPlayer.mtx);
 }

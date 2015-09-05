@@ -65,7 +65,7 @@ MIDI_Play(
       return;
    }
 
-   if (gpGlobals->fIsWIN95)
+   if (gConfig.fIsWIN95)
    {
       char filename[1024];
       sprintf(filename, "%s/musics/%.3d.mid", PAL_PREFIX, iNumRIX);

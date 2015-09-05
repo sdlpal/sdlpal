@@ -56,11 +56,11 @@ PAL_MagicSelectionMenuUpdate(
    int         i, j, k, line, item_delta;
    BYTE        bColor;
    WORD        wScript;
-   const int   iItemsPerLine = 32 / gpGlobals->dwWordLength;
-   const int   iItemTextWidth = 8 * gpGlobals->dwWordLength + 7;
-   const int   iLinesPerPage = 5 - gpGlobals->dwExtraMagicDescLines;
-   const int   iBoxYOffset = gpGlobals->dwExtraMagicDescLines * 16;
-   const int   iCursorXOffset = gpGlobals->dwWordLength * 5 / 2;
+   const int   iItemsPerLine = 32 / gConfig.dwWordLength;
+   const int   iItemTextWidth = 8 * gConfig.dwWordLength + 7;
+   const int   iLinesPerPage = 5 - gConfig.dwExtraMagicDescLines;
+   const int   iBoxYOffset = gConfig.dwExtraMagicDescLines * 16;
+   const int   iCursorXOffset = gConfig.dwWordLength * 5 / 2;
    const int   iPageLineOffset = iLinesPerPage / 2;
 
    //
@@ -119,7 +119,7 @@ PAL_MagicSelectionMenuUpdate(
    //
    PAL_CreateBox(PAL_XY(10, 42 + iBoxYOffset), iLinesPerPage - 1, 16, 1, FALSE);
 
-   if (!gpGlobals->fIsWIN95)
+   if (!gConfig.fIsWIN95)
    {
       if (gpGlobals->lpObjectDesc == NULL)
       {
@@ -127,7 +127,7 @@ PAL_MagicSelectionMenuUpdate(
          // Draw the cash amount.
          //
          PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
-         PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(10, 10), 0, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(10, 10), 0, FALSE, FALSE, FALSE);
          PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(49, 14), kNumColorYellow, kNumAlignRight);
 
          //
@@ -162,7 +162,7 @@ PAL_MagicSelectionMenuUpdate(
                   *next++ = '\0';
                }
 
-               PAL_DrawText(d, PAL_XY(100, k), DESCTEXT_COLOR, TRUE, FALSE);
+               PAL_DrawText(d, PAL_XY(100, k), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
                k += 16;
 
                if (next == NULL)
@@ -258,8 +258,7 @@ PAL_MagicSelectionMenuUpdate(
          //
          // Draw the text
          //
-         PAL_DrawText(PAL_GetWord(rgMagicItem[i].wMagic),
-            PAL_XY(35 + k * iItemTextWidth, 54 + j * 18 + iBoxYOffset), bColor, TRUE, FALSE);
+         PAL_DrawText(PAL_GetWord(rgMagicItem[i].wMagic), PAL_XY(35 + k * iItemTextWidth, 54 + j * 18 + iBoxYOffset), bColor, TRUE, FALSE, FALSE);
 
          //
          // Draw the cursor on the current selected item
@@ -284,8 +283,7 @@ PAL_MagicSelectionMenuUpdate(
 		 j = 35 + j * iItemTextWidth;
 		 k = 54 + k * 18 + iBoxYOffset;
 
-         PAL_DrawText(PAL_GetWord(rgMagicItem[g_iCurrentItem].wMagic), PAL_XY(j, k),
-            MENUITEM_COLOR_CONFIRMED, FALSE, TRUE);
+         PAL_DrawText(PAL_GetWord(rgMagicItem[g_iCurrentItem].wMagic), PAL_XY(j, k), MENUITEM_COLOR_CONFIRMED, FALSE, TRUE, FALSE);
 
          return rgMagicItem[g_iCurrentItem].wMagic;
       }

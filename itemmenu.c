@@ -51,13 +51,13 @@ PAL_ItemSelectMenuUpdate(
    BYTE               bColor;
    static BYTE        bufImage[2048];
    static WORD        wPrevImageIndex = 0xFFFF;
-   const int          iItemsPerLine = 34 / gpGlobals->dwWordLength;
-   const int          iItemTextWidth = 8 * gpGlobals->dwWordLength + 20;
-   const int          iLinesPerPage = 7 - gpGlobals->dwExtraItemDescLines;
-   const int          iCursorXOffset = gpGlobals->dwWordLength * 5 / 2;
-   const int          iAmountXOffset = gpGlobals->dwWordLength * 8 + 1;
+   const int          iItemsPerLine = 34 / gConfig.dwWordLength;
+   const int          iItemTextWidth = 8 * gConfig.dwWordLength + 20;
+   const int          iLinesPerPage = 7 - gConfig.dwExtraItemDescLines;
+   const int          iCursorXOffset = gConfig.dwWordLength * 5 / 2;
+   const int          iAmountXOffset = gConfig.dwWordLength * 8 + 1;
    const int          iPageLineOffset = (iLinesPerPage + 1) / 2;
-   const int          iPictureYOffset = (gpGlobals->dwExtraItemDescLines > 1) ? (gpGlobals->dwExtraItemDescLines - 1) * 16 : 0;
+   const int          iPictureYOffset = (gConfig.dwExtraItemDescLines > 1) ? (gConfig.dwExtraItemDescLines - 1) * 16 : 0;
 
    //
    // Process input
@@ -181,8 +181,7 @@ PAL_ItemSelectMenuUpdate(
          //
          // Draw the text
          //
-		 PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * iItemTextWidth, 12 + j * 18),
-            bColor, TRUE, FALSE);
+		 PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * iItemTextWidth, 12 + j * 18), bColor, TRUE, FALSE, FALSE);
 
          //
          // Draw the cursor on the current selected item
@@ -235,7 +234,7 @@ PAL_ItemSelectMenuUpdate(
    //
    // Draw the description of the selected item
    //
-   if (!gpGlobals->fIsWIN95)
+   if (!gConfig.fIsWIN95)
    {
       if (!g_fNoDesc && gpGlobals->lpObjectDesc != NULL)
 	  {
@@ -256,7 +255,7 @@ PAL_ItemSelectMenuUpdate(
                   *next++ = '\0';
                }
 
-               PAL_DrawText(d, PAL_XY(75, k), DESCTEXT_COLOR, TRUE, FALSE);
+               PAL_DrawText(d, PAL_XY(75, k), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
                k += 16;
 
                if (next == NULL)
@@ -302,8 +301,7 @@ PAL_ItemSelectMenuUpdate(
 			 j = (gpGlobals->iCurInvMenuItem < iItemsPerLine * iPageLineOffset) ? (gpGlobals->iCurInvMenuItem / iItemsPerLine) : iPageLineOffset;
 			k = gpGlobals->iCurInvMenuItem % iItemsPerLine;
 
-            PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * iItemTextWidth, 12 + j * 18),
-               MENUITEM_COLOR_CONFIRMED, FALSE, FALSE);
+            PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * iItemTextWidth, 12 + j * 18), MENUITEM_COLOR_CONFIRMED, FALSE, FALSE, FALSE);
          }
 
          return wObject;

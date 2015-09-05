@@ -25,10 +25,7 @@
 #include "util.h"
 #include "input.h"
 
-#if PAL_HAS_NATIVEMIDI
 #include "midi.h"
-#endif
-
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #include "SDL_video.h"
 #include "SDL_messagebox.h"
@@ -277,9 +274,7 @@ UTIL_Delay(
       while (PAL_PollEvent(NULL));
    }
 
-#if PAL_HAS_NATIVEMIDI
    MIDI_CheckLoop();
-#endif
 }
 
 void

@@ -88,7 +88,7 @@ extern int g_iCurrChannel;
 extern BOOL       g_fNoSound;
 extern BOOL       g_fNoMusic;
 
-#define SOUND_IsIntegerConversion(a) ((((a) % gpGlobals->iSampleRate) | (gpGlobals->iSampleRate % (a))) == 0)
+#define SOUND_IsIntegerConversion(a) ((((a) % gConfig.iSampleRate) | (gConfig.iSampleRate % (a))) == 0)
 
 #ifdef __cplusplus
 }

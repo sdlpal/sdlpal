@@ -197,7 +197,8 @@ PAL_ReadMessageFile(
 		ST_OUTSIDE,
 		ST_DIALOG,
 		ST_WORD,
-		ST_CREDIT
+		ST_CREDIT,
+		ST_LAYOUT
 	} state = ST_OUTSIDE;
 	int idx_cnt = 0, msg_cnt = 0, word_cnt = 0, sid, eid = -1;
 #ifndef PAL_CLASSIC
@@ -249,6 +250,11 @@ PAL_ReadMessageFile(
 					else if (strncmp(buffer, "[BEGIN CREDITS]", 15) == 0 && !witem)
 					{
 						state = ST_CREDIT;
+					}
+					else if (strncmp(buffer, "[BEGIN LAYOUT]", 14) == 0 && !witem)
+					{
+						state = ST_LAYOUT;
+						gConfig.fUseCustomMenuLayout = TRUE;
 					}
 					else
 					{
@@ -384,6 +390,28 @@ PAL_ReadMessageFile(
 					}
 				}
 				break;
+			case ST_LAYOUT:
+				if (strncmp(buffer, "[END LAYOUT]", 12) == 0)
+				{
+					// End layout
+					state = ST_OUTSIDE;
+				}
+				else
+				{
+					char *v;
+					int x, y, f, n, l, i = PAL_ParseLine(buffer, &v, &l, FALSE);
+					if (i >= 1 && i <= 26)
+					{
+						PAL_POS *poses = &gConfig.MenuLayout.ImageBox;
+						if ((n = sscanf(v, "%d,%d,%d", &x, &y, &f)) >= 2 &&
+							x >= 0 && y >= 0 && x < 320 && y < 200)
+						{
+							poses[i - 1] = PAL_XY(x, y);
+							if (n == 3) gConfig.MenuLayoutFlag[i - 1] = f;
+						}
+					}
+				}
+				break;
 			default:
 				TerminateOnError("PAL_ReadMessageFile(): Reached an unknown state. Something really wrong may have happened!");
 				break;
@@ -486,12 +514,12 @@ PAL_InitText(
 
 --*/
 {
-   if (gpGlobals->pszMsgName)
+   if (gConfig.pszMsgName)
    {
 	   //
 	   // Open the message, index and word data files.
 	   //
-	   FILE *fp = UTIL_OpenRequiredFileForMode(gpGlobals->pszMsgName, "r");
+	   FILE *fp = UTIL_OpenRequiredFileForMode(gConfig.pszMsgName, "r");
 
 	   //
 	   // Read the contents of the message, index and word data files.
@@ -514,7 +542,7 @@ PAL_InitText(
 				   if (dwWordLength < n) dwWordLength = n;
 			   }
 		   }
-		   gpGlobals->dwWordLength = dwWordLength;
+		   gConfig.dwWordLength = dwWordLength;
 		   for (i = 0; i < 12; i++)
 		   {
 			   if (!g_rcCredits[i])
@@ -543,9 +571,9 @@ PAL_InitText(
 	   i = ftell(fpWord);
 
 	   //
-	   // Each word has 10 or 16 bytes
+	   // Each word has 10 bytes
 	   //
-	   g_TextLib.nWords = (i + (gpGlobals->dwWordLength - 1)) / gpGlobals->dwWordLength;
+	   g_TextLib.nWords = (i + (gConfig.dwWordLength - 1)) / gConfig.dwWordLength;
 
 	   //
 	   // Read the words
@@ -568,10 +596,10 @@ PAL_InitText(
 	   // Split the words and do code page conversion
 	   for (i = 0, wlen = 0; i < g_TextLib.nWords; i++)
 	   {
-		   int base = i * gpGlobals->dwWordLength;
-		   int pos = base + gpGlobals->dwWordLength - 1;
+		   int base = i * gConfig.dwWordLength;
+		   int pos = base + gConfig.dwWordLength - 1;
 		   while (pos >= base && temp[pos] == ' ') temp[pos--] = 0;
-		   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + base, gpGlobals->dwWordLength, NULL, 0) + 1;
+		   wlen += PAL_MultiByteToWideChar((LPCSTR)temp + base, gConfig.dwWordLength, NULL, 0) + 1;
 	   }
 	   g_TextLib.lpWordBuf = (LPWSTR*)malloc(g_TextLib.nWords * sizeof(LPWSTR));
 	   if (g_TextLib.lpWordBuf == NULL)
@@ -594,7 +622,7 @@ PAL_InitText(
 	   {
 		   int l;
 		   g_TextLib.lpWordBuf[i] = tmp + wpos;
-		   l = PAL_MultiByteToWideChar((LPCSTR)temp + i * gpGlobals->dwWordLength, gpGlobals->dwWordLength, g_TextLib.lpWordBuf[i], wlen - wpos);
+		   l = PAL_MultiByteToWideChar((LPCSTR)temp + i * gConfig.dwWordLength, gConfig.dwWordLength, g_TextLib.lpWordBuf[i], wlen - wpos);
 		   if (l > 0 && g_TextLib.lpWordBuf[i][l - 1] == '1')
 			   g_TextLib.lpWordBuf[i][l - 1] = 0;
 		   g_TextLib.lpWordBuf[i][l] = 0;
@@ -714,7 +742,7 @@ PAL_FreeText(
    int i;
    if (g_TextLib.lpMsgBuf != NULL)
    {
-      if (gpGlobals->pszMsgName)
+      if (gConfig.pszMsgName)
          for(i = 0; i < g_TextLib.nMsgs; i++) free(g_TextLib.lpMsgBuf[i]);
       else
          free(g_TextLib.lpMsgBuf[0]);
@@ -723,7 +751,7 @@ PAL_FreeText(
    }
    if (g_TextLib.lpWordBuf != NULL)
    {
-      if (gpGlobals->pszMsgName)
+      if (gConfig.pszMsgName)
          for(i = 0; i < g_TextLib.nWords; i++) free(g_TextLib.lpWordBuf[i]);
       else
          free(g_TextLib.lpWordBuf[0]);
@@ -732,7 +760,7 @@ PAL_FreeText(
    }
    if (g_TextLib.lpIndexBuf != NULL)
    {
-      if (gpGlobals->pszMsgName)
+      if (gConfig.pszMsgName)
          for(i = 0; i < g_TextLib.nIndices; i++) free(g_TextLib.lpIndexBuf[i]);
       else
          free(g_TextLib.lpIndexBuf[0]);
@@ -820,7 +848,8 @@ PAL_DrawText(
    PAL_POS    pos,
    BYTE       bColor,
    BOOL       fShadow,
-   BOOL       fUpdate
+   BOOL       fUpdate,
+   BOOL       fUse8x8Font
 )
 /*++
   Purpose:
@@ -839,6 +868,8 @@ PAL_DrawText(
 
     [IN]  fUpdate - TRUE if update the screen area.
 
+	[IN]  fUse8x8Font - TRUE if use 8x8 font.
+
   Return value:
 
     None.
@@ -847,12 +878,9 @@ PAL_DrawText(
 {
    SDL_Rect   rect, urect;
 
-   rect.x = PAL_X(pos);
-   rect.y = PAL_Y(pos);
-
-   urect.x = rect.x;
-   urect.y = rect.y;
-   urect.h = gpGlobals->fUseEmbeddedFonts ? 16 : 17;
+   urect.x = rect.x = PAL_X(pos);
+   urect.y = rect.y = PAL_Y(pos);
+   urect.h = (fUse8x8Font ? 8 : PAL_FontHeight()) + (fShadow ? 1 : 0);
    urect.w = 0;
 
    while (*lpszText)
@@ -860,17 +888,15 @@ PAL_DrawText(
       //
       // Draw the character
       //
-	  int char_width = PAL_CharWidth(*lpszText);
+	  int char_width = fUse8x8Font ? 8 : PAL_CharWidth(*lpszText);
 
       if (fShadow)
       {
-		  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y + 1), 0);
-		  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y), 0);
+		  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y + 1), 0, fUse8x8Font);
+		  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y), 0, fUse8x8Font);
       }
-	  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x, rect.y), bColor);
-      lpszText++;
-	  rect.x += char_width;
-	  urect.w += char_width;
+	  PAL_DrawCharOnSurface(*lpszText++, gpScreen, PAL_XY(rect.x, rect.y), bColor, fUse8x8Font);
+	  rect.x += char_width; urect.w += char_width;
    }
 
    //
@@ -878,13 +904,10 @@ PAL_DrawText(
    //
    if (fUpdate && urect.w > 0)
    {
-      if (gpGlobals->fIsWIN95)
-	  {
-         urect.w++;
-         if (urect.x + urect.w > 320)
-         {
-            urect.w = 320 - urect.x;
-         }
+      if (fShadow) urect.w++;
+      if (urect.x + urect.w > 320)
+      {
+         urect.w = 320 - urect.x;
       }
       VIDEO_UpdateScreen(&urect);
    }
@@ -1215,7 +1238,7 @@ PAL_ShowDialogText(
          // Show the text on the screen
          //
          pos = PAL_XY(PAL_X(pos) + 8 + ((len & 1) << 2), PAL_Y(pos) + 10);
-         PAL_DrawText(lpszText, pos, 0, FALSE, FALSE);
+         PAL_DrawText(lpszText, pos, 0, FALSE, FALSE, FALSE);
          VIDEO_UpdateScreen(&rect);
 
          PAL_DialogWaitForKey();
@@ -1242,7 +1265,7 @@ PAL_ShowDialogText(
          //
          // name of character
          //
-         PAL_DrawText(lpszText, g_TextLib.posDialogTitle, FONT_COLOR_CYAN_ALT, TRUE, TRUE);
+         PAL_DrawText(lpszText, g_TextLib.posDialogTitle, FONT_COLOR_CYAN_ALT, TRUE, TRUE, FALSE);
       }
       else
       {
@@ -1349,7 +1372,7 @@ PAL_ShowDialogText(
                text[0] = *lpszText++;
 			   text[1] = 0;
 
-               PAL_DrawText(text, PAL_XY(x, y), g_TextLib.bCurrentFontColor, TRUE, TRUE);
+               PAL_DrawText(text, PAL_XY(x, y), g_TextLib.bCurrentFontColor, TRUE, TRUE, FALSE);
 			   x += PAL_CharWidth(text[0]);
 
                if (!g_TextLib.fUserSkip)
@@ -1771,7 +1794,7 @@ PAL_MultiByteToWideChar(
 
 --*/
 {
-	return PAL_MultiByteToWideCharCP(gpGlobals->iCodePage, mbs, mbslength, wcs, wcslength);
+	return PAL_MultiByteToWideCharCP(gConfig.iCodePage, mbs, mbslength, wcs, wcslength);
 }
 
 WCHAR

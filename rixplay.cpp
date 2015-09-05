@@ -82,7 +82,7 @@ RIX_FillBuffer(
 --*/
 {
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
-	const INT max_volume = gpGlobals->iVolume * 3 / 4;
+	const INT max_volume = gConfig.iVolume * 3 / 4;
 
 	if (pRixPlayer == NULL || !pRixPlayer->fReady)
 	{
@@ -133,7 +133,7 @@ RIX_FillBuffer(
 					pRixPlayer->fLoop = pRixPlayer->fNextLoop;
 					pRixPlayer->FadeType = RIXPLAYER::FADE_IN;
 					if (pRixPlayer->iCurrentMusic > 0)
-						pRixPlayer->dwStartFadeTime += pRixPlayer->iTotalFadeOutSamples * 1000 / gpGlobals->iSampleRate;
+						pRixPlayer->dwStartFadeTime += pRixPlayer->iTotalFadeOutSamples * 1000 / gConfig.iSampleRate;
 					else
 						pRixPlayer->dwStartFadeTime = SDL_GetTicks();
 					pRixPlayer->iTotalFadeOutSamples = 0;
@@ -173,7 +173,7 @@ RIX_FillBuffer(
 		//
 		// Fill the buffer with sound data
 		//
-		int buf_max_len = gpGlobals->iSampleRate / 70 * gpGlobals->iAudioChannels * sizeof(short);
+		int buf_max_len = gConfig.iSampleRate / 70 * gConfig.iAudioChannels * sizeof(short);
 		bool fContinue = true;
 		while (len > 0 && fContinue)
 		{
@@ -205,7 +205,7 @@ RIX_FillBuffer(
 						return;
 					}
 				}
-				int sample_count = gpGlobals->iSampleRate / 70;
+				int sample_count = gConfig.iSampleRate / 70;
 				if (pRixPlayer->resampler[0])
 				{
 					unsigned int samples_written = 0;
@@ -216,17 +216,17 @@ RIX_FillBuffer(
 						int to_write = resampler_get_free_count(pRixPlayer->resampler[0]);
 						if (to_write)
 						{
-							short *tempBuf = (short*)alloca(to_write * gpGlobals->iAudioChannels * sizeof(short));
+							short *tempBuf = (short*)alloca(to_write * gConfig.iAudioChannels * sizeof(short));
 							pRixPlayer->opl->update(tempBuf, to_write);
 							for (int i = 0; i < to_write; i++)
-								for (int j = 0; j < gpGlobals->iAudioChannels; j++)
-									resampler_write_sample(pRixPlayer->resampler[j], tempBuf[i * gpGlobals->iAudioChannels + j]);
+								for (int j = 0; j < gConfig.iAudioChannels; j++)
+									resampler_write_sample(pRixPlayer->resampler[j], tempBuf[i * gConfig.iAudioChannels + j]);
 						}
 
 						int to_get = resampler_get_sample_count(pRixPlayer->resampler[0]);
 						if (to_get > sample_count) to_get = sample_count;
 						for (int i = 0; i < to_get; i++)
-							for (int j = 0; j < gpGlobals->iAudioChannels; j++)
+							for (int j = 0; j < gConfig.iAudioChannels; j++)
 								finalBuf[samples_written++] = resampler_get_and_remove_sample(pRixPlayer->resampler[j]);
 						sample_count -= to_get;
 					}
@@ -295,7 +295,7 @@ RIX_Shutdown(
 	{
 		LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
 		pRixPlayer->fReady = FALSE;
-		for (int i = 0; i < gpGlobals->iAudioChannels; i++)
+		for (int i = 0; i < gConfig.iAudioChannels; i++)
 			if (pRixPlayer->resampler[i])
 				resampler_delete(pRixPlayer->resampler[i]);
 		delete pRixPlayer->rix;
@@ -363,13 +363,13 @@ RIX_Play(
 		{
 			pRixPlayer->dwStartFadeTime = SDL_GetTicks();
 		}
-		pRixPlayer->iTotalFadeOutSamples = (int)round(flFadeTime / 2.0f * gpGlobals->iSampleRate) * gpGlobals->iAudioChannels;
+		pRixPlayer->iTotalFadeOutSamples = (int)round(flFadeTime / 2.0f * gConfig.iSampleRate) * gConfig.iAudioChannels;
 		pRixPlayer->iRemainingFadeSamples = pRixPlayer->iTotalFadeOutSamples;
 		pRixPlayer->iTotalFadeInSamples = pRixPlayer->iTotalFadeOutSamples;
 	}
 	else
 	{
-		pRixPlayer->iTotalFadeInSamples = (int)round(flFadeTime / 2.0f * gpGlobals->iSampleRate) * gpGlobals->iAudioChannels;
+		pRixPlayer->iTotalFadeInSamples = (int)round(flFadeTime / 2.0f * gConfig.iSampleRate) * gConfig.iAudioChannels;
 	}
 
 	pRixPlayer->iNextMusic = iNumRIX;
@@ -412,45 +412,45 @@ RIX_Init(
 		pRixPlayer->Play = RIX_Play;
 	}
 
-	if (gpGlobals->fUseSurroundOPL)
+	if (gConfig.fUseSurroundOPL)
 	{
-		switch (gpGlobals->eOPLType)
+		switch (gConfig.eOPLType)
 		{
 		case OPL_DOSBOX_OLD:
 			pRixPlayer->opl = new CSurroundopl(
-				new CDemuopl(gpGlobals->iOPLSampleRate, true, false),
-				new CDemuopl(gpGlobals->iOPLSampleRate, true, false),
-				true, gpGlobals->iOPLSampleRate, gpGlobals->dSurroundOPLOffset);
+				new CDemuopl(gConfig.iOPLSampleRate, true, false),
+				new CDemuopl(gConfig.iOPLSampleRate, true, false),
+				true, gConfig.iOPLSampleRate, gConfig.dSurroundOPLOffset);
 			break;
 		case OPL_DOSBOX:
 			pRixPlayer->opl = new CSurroundopl(
-				new CDBemuopl(gpGlobals->iOPLSampleRate, true, false),
-				new CDBemuopl(gpGlobals->iOPLSampleRate, true, false),
-				true, gpGlobals->iOPLSampleRate, gpGlobals->dSurroundOPLOffset);
+				new CDBemuopl(gConfig.iOPLSampleRate, true, false),
+				new CDBemuopl(gConfig.iOPLSampleRate, true, false),
+				true, gConfig.iOPLSampleRate, gConfig.dSurroundOPLOffset);
 			break;
 #if PAL_HAS_MAME
 		case OPL_MAME:
 			pRixPlayer->opl = new CSurroundopl(
-				new CEmuopl(gpGlobals->iOPLSampleRate, true, false),
-				new CEmuopl(gpGlobals->iOPLSampleRate, true, false),
-				true, gpGlobals->iOPLSampleRate, gpGlobals->dSurroundOPLOffset);
+				new CEmuopl(gConfig.iOPLSampleRate, true, false),
+				new CEmuopl(gConfig.iOPLSampleRate, true, false),
+				true, gConfig.iOPLSampleRate, gConfig.dSurroundOPLOffset);
 #endif
 			break;
 		}
 	}
 	else
 	{
-		switch (gpGlobals->eOPLType)
+		switch (gConfig.eOPLType)
 		{
 		case OPL_DOSBOX_OLD:
-			pRixPlayer->opl = new CDemuopl(gpGlobals->iOPLSampleRate, true, gpGlobals->iAudioChannels == 2);
+			pRixPlayer->opl = new CDemuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
 			break;
 		case OPL_DOSBOX:
-			pRixPlayer->opl = new CDBemuopl(gpGlobals->iOPLSampleRate, true, gpGlobals->iAudioChannels == 2);
+			pRixPlayer->opl = new CDBemuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
 			break;
 #if PAL_HAS_MAME
 		case OPL_MAME:
-			pRixPlayer->opl = new CEmuopl(gpGlobals->iOPLSampleRate, true, gpGlobals->iAudioChannels == 2);
+			pRixPlayer->opl = new CEmuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
 			break;
 #endif
 		}
@@ -482,20 +482,20 @@ RIX_Init(
 		return NULL;
 	}
 
-	if (gpGlobals->iOPLSampleRate != gpGlobals->iSampleRate)
+	if (gConfig.iOPLSampleRate != gConfig.iSampleRate)
 	{
-		for (int i = 0; i < gpGlobals->iAudioChannels; i++)
+		for (int i = 0; i < gConfig.iAudioChannels; i++)
 		{
 			pRixPlayer->resampler[i] = resampler_create();
-			resampler_set_quality(pRixPlayer->resampler[i], SOUND_IsIntegerConversion(gpGlobals->iOPLSampleRate) ? RESAMPLER_QUALITY_MIN : gpGlobals->iResampleQuality);
-			resampler_set_rate(pRixPlayer->resampler[i], (double)gpGlobals->iOPLSampleRate / (double)gpGlobals->iSampleRate);
+			resampler_set_quality(pRixPlayer->resampler[i], SOUND_IsIntegerConversion(gConfig.iOPLSampleRate) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
+			resampler_set_rate(pRixPlayer->resampler[i], (double)gConfig.iOPLSampleRate / (double)gConfig.iSampleRate);
 		}
 	}
 
 #if USE_RIX_EXTRA_INIT
-	if (gpGlobals->pExtraFMRegs && gpGlobals->pExtraFMVals)
+	if (gConfig.pExtraFMRegs && gConfig.pExtraFMVals)
 	{
-		pRixPlayer->rix->set_extra_init(gpGlobals->pExtraFMRegs, gpGlobals->pExtraFMVals, gpGlobals->dwExtraLength);
+		pRixPlayer->rix->set_extra_init(gConfig.pExtraFMRegs, gConfig.pExtraFMVals, gConfig.dwExtraLength);
 	}
 #endif
 

@@ -47,12 +47,18 @@ PAL_DrawCharOnSurface(
    WORD                     wChar,
    SDL_Surface             *lpSurface,
    PAL_POS                  pos,
-   BYTE                     bColor
+   BYTE                     bColor,
+   BOOL                     fUse8x8Font
 );
 
 INT
 PAL_CharWidth(
    WORD                     wChar
+);
+
+INT
+PAL_FontHeight(
+   VOID
 );
 
 #ifdef __cplusplus

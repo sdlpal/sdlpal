@@ -643,7 +643,7 @@ PAL_SpriteGetFrame(
    //
    iFrameNum <<= 1;
    offset = ((lpSprite[iFrameNum] | (lpSprite[iFrameNum + 1] << 8)) << 1);
-   if (!gpGlobals->fIsWIN95) offset = (WORD)offset;
+   if (!gConfig.fIsWIN95) offset = (WORD)offset;
    return &lpSprite[offset];
 }
 
@@ -863,7 +863,7 @@ PAL_MKFGetDecompressedSize(
    // Read the header.
    //
    fseek(fp, uiOffset, SEEK_SET);
-   if (gpGlobals->fIsWIN95)
+   if (gConfig.fIsWIN95)
    {
       fread(buf, sizeof(DWORD), 1, fp);
       buf[0] = SDL_SwapLE32(buf[0]);

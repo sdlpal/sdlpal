@@ -105,7 +105,7 @@ extern "C"
 # if SDL_VERSION_ATLEAST(2,0,0)
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)
 # else
-#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | (gConfig.fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
 
 # define PAL_PLATFORM         "  Symbian S60 \x79FB\x690D (c) 2009, netwan."
@@ -125,7 +125,7 @@ extern "C"
 # if SDL_VERSION_ATLEAST(2,0,0)
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)
 # else
-#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | (gConfig.fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
 
 # define PAL_PLATFORM         "Nintendo WII"
@@ -239,7 +239,7 @@ extern "C"
 # if SDL_VERSION_ATLEAST(2,0,0)
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
 # else
-#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gConfig.fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
 
 # define PAL_PLATFORM         "Windows Phone"
@@ -265,7 +265,7 @@ extern "C"
 # if SDL_VERSION_ATLEAST(2,0,0)
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
 # else
-#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gpGlobals->fFullScreen ? SDL_FULLSCREEN : 0))
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gConfig.fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
 
 # define PAL_PLATFORM         NULL
@@ -321,7 +321,7 @@ extern "C"
 typedef const BYTE *LPCBYTE;
 #endif
 
-#ifndef __WINPHONE__
+#ifndef __WINRT__
 #define PAL_HAS_NATIVEMIDI  1
 #endif
 

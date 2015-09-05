@@ -70,7 +70,8 @@ PAL_DrawText(
    PAL_POS    pos,
    BYTE       bColor,
    BOOL       fShadow,
-   BOOL       fUpdate
+   BOOL       fUpdate,
+   BOOL       fUse8x8Font
 );
 
 VOID

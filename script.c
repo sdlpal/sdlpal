@@ -567,15 +567,15 @@ PAL_AdditionalCredits(
 	  if (wcsncmp(rgszStrings[i], L"%ls", 3) == 0)
 	  {
 		  // We've limited the length of g_rcCredits[i] in text.c, so no need to double check here.
-		  wcscpy(buffer, gpGlobals->pszMsgName ? g_rcCredits[i] : rgszcps[i][gpGlobals->iCodePage]);
+		  wcscpy(buffer, gConfig.pszMsgName ? g_rcCredits[i] : rgszcps[i][gpGlobals->iCodePage]);
 		  wcscat(buffer, rgszStrings[i] + 3);
 	  }
 	  else
 		  wcscpy(buffer, rgszStrings[i]);
 #else
-	  swprintf(buffer, 48, rgszStrings[i], gpGlobals->pszMsgName ? g_rcCredits[i] : rgszcps[i][gpGlobals->iCodePage]);
+	  swprintf(buffer, 48, rgszStrings[i], gConfig.pszMsgName ? g_rcCredits[i] : rgszcps[i][gConfig.iCodePage]);
 #endif
-	  PAL_DrawText(buffer, PAL_XY(0, 2 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
+	  PAL_DrawText(buffer, PAL_XY(0, 2 + i * 16), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
    }
 
    PAL_SetPalette(0, FALSE);
@@ -2146,7 +2146,7 @@ PAL_InterpretInstruction(
       //
       // Show FBP picture
       //
-      if (gpGlobals->fIsWIN95)
+      if (gConfig.fIsWIN95)
 	  {
          SDL_FillRect(gpScreen, NULL, 0);
          VIDEO_UpdateScreen(NULL);
@@ -2636,7 +2636,7 @@ PAL_InterpretInstruction(
       //
       // Show the ending animation
       //
-      if (!gpGlobals->fIsWIN95)
+      if (!gConfig.fIsWIN95)
          PAL_EndingAnimation();
       break;
 
@@ -2905,7 +2905,7 @@ PAL_InterpretInstruction(
       //
       // Quit game
       //
-      if (gpGlobals->fIsWIN95)
+      if (gConfig.fIsWIN95)
          PAL_EndingScreen();
       PAL_AdditionalCredits();
       PAL_Shutdown();
@@ -2951,7 +2951,7 @@ PAL_InterpretInstruction(
       //
       // Scroll FBP to the screen
       //
-      if (!gpGlobals->fIsWIN95)
+      if (!gConfig.fIsWIN95)
 	  {
          if (pScript->rgwOperand[0] == 68)
          {
@@ -2972,7 +2972,7 @@ PAL_InterpretInstruction(
       //
       // Show FBP picture with sprite effects
       //
-      if (!gpGlobals->fIsWIN95)
+      if (!gConfig.fIsWIN95)
 	  {
          if (pScript->rgwOperand[1] != 0xFFFF)
          {
@@ -3302,7 +3302,7 @@ PAL_RunTriggerScript(
          //
          // Print dialog text
          //
-         if (gpGlobals->pszMsgName)
+         if (gConfig.pszMsgName)
          {
             int idx = 0, iMsg;
             while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)
@@ -3468,20 +3468,20 @@ begin:
       break;
 
    case 0xFFFF:
-	   if (gpGlobals->fIsWIN95)
+	   if (gConfig.fIsWIN95)
 	   {
 		   int XBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 75 : 100;
-		   int YBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 150 - gpGlobals->dwExtraItemDescLines * 16 : 3;
+		   int YBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 150 - gConfig.dwExtraItemDescLines * 16 : 3;
 		   int iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
 
-		   if (gpGlobals->pszMsgName)
+		   if (gConfig.pszMsgName)
 		   {
 			   int idx = 0, iMsg;
 			   while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)
 			   {
 				   if (iMsg > 0)
 				   {
-					   PAL_DrawText(PAL_GetMsg(iMsg), PAL_XY(XBase, iDescLine * 16 + YBase), DESCTEXT_COLOR, TRUE, FALSE);
+					   PAL_DrawText(PAL_GetMsg(iMsg), PAL_XY(XBase, iDescLine * 16 + YBase), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
 					   iDescLine++;
 				   }
 			   }
@@ -3495,7 +3495,7 @@ begin:
 		   }
 		   else
 		   {
-			   PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(XBase, iDescLine * 16 + YBase), DESCTEXT_COLOR, TRUE, FALSE);
+			   PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(XBase, iDescLine * 16 + YBase), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
 			   wScriptEntry++;
 		   }
 	   }

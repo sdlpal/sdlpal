@@ -28,19 +28,20 @@
 #endif
 
 #if defined (NDS) && defined (GEKKO)
-#include <fat.h>
-#endif
 
-#ifdef __WINPHONE__
-#include <setjmp.h>
+# include <fat.h>
+
+#elif defined(__WINPHONE__)
+
+# include <setjmp.h>
 
 static jmp_buf g_exit_jmp_env;
 # define LONGJMP_EXIT_CODE          0xff
 
 #endif
 
-#define BITMAPNUM_SPLASH_UP         (gpGlobals->fIsWIN95 ? 0x03 : 0x26)
-#define BITMAPNUM_SPLASH_DOWN       (gpGlobals->fIsWIN95 ? 0x04 : 0x27)
+#define BITMAPNUM_SPLASH_UP         (gConfig.fIsWIN95 ? 0x03 : 0x26)
+#define BITMAPNUM_SPLASH_DOWN       (gConfig.fIsWIN95 ? 0x04 : 0x27)
 #define SPRITENUM_SPLASH_TITLE      0x47
 #define SPRITENUM_SPLASH_CRANE      0x49
 #define NUM_RIX_TITLE               0x05
@@ -113,7 +114,7 @@ PAL_Init(
 
    SDL_WM_SetCaption("Loading...", NULL);
 
-   e = PAL_InitFont(gpGlobals->fUseEmbeddedFonts);
+   e = PAL_InitFont(gConfig.fUseEmbeddedFonts);
    if (e != 0)
    {
       TerminateOnError("Could not load fonts: %d.\n", e);
@@ -135,7 +136,7 @@ PAL_Init(
    PAL_InitResources();
    SOUND_OpenAudio();
 
-   if (gpGlobals->fIsWIN95)
+   if (gConfig.fIsWIN95)
    {
 #ifdef _DEBUG
       SDL_WM_SetCaption("Pal WIN95 (Debug Build)", NULL);
@@ -187,8 +188,7 @@ PAL_Shutdown(
 #if defined(GPH)
 	chdir("/usr/gp2x");
 	execl("./gp2xmenu", "./gp2xmenu", NULL);
-#endif
-#ifdef __WINPHONE__
+#elif defined(__WINPHONE__)
 	longjmp(g_exit_jmp_env, LONGJMP_EXIT_CODE);
 #endif
 }
@@ -521,9 +521,7 @@ main(
       buf[p - argv[0]] = '\0';
       chdir(buf);
    }
-#endif
-
-#ifdef __WINPHONE__
+#elif defined(__WINPHONE__)
    //
    // In windows phone, calling exit(0) directly will cause an abnormal exit.
    // By using setjmp/longjmp to avoid this.

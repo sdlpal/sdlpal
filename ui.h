@@ -49,7 +49,7 @@ extern "C"
 
 #define DESCTEXT_COLOR                     0x2E
 
-#define MAINMENU_BACKGROUND_FBPNUM         (gpGlobals->fIsWIN95 ? 2 :60)
+#define MAINMENU_BACKGROUND_FBPNUM         (gConfig.fIsWIN95 ? 2 :60)
 
 #define RIX_NUM_OPENINGMENU                4
 #define MAINMENU_LABEL_NEWGAME             7
@@ -97,6 +97,13 @@ extern "C"
 #define STATUS_LABEL_DEXTERITY             54
 #define STATUS_LABEL_FLEERATE              55
 #define STATUS_COLOR_EQUIPMENT             0xBE
+
+#define EQUIP_LABEL_HEAD                   566
+#define EQUIP_LABEL_SHOULDER               567
+#define EQUIP_LABEL_BODY                   568
+#define EQUIP_LABEL_HAND                   569
+#define EQUIP_LABEL_FOOT                   570
+#define EQUIP_LABEL_NECK                   571
 
 #define BUYMENU_LABEL_CURRENT              35
 #define SELLMENU_LABEL_PRICE               25

@@ -250,7 +250,7 @@ PAL_PlayerInfoBox(
          {
             PAL_DrawText(PAL_GetWord(rgwStatusWord[i]),
                PAL_XY(PAL_X(pos) + rgStatusPos[i][0], PAL_Y(pos) + rgStatusPos[i][1]),
-               rgbStatusColor[i], TRUE, FALSE);
+               rgbStatusColor[i], TRUE, FALSE, FALSE);
          }
       }
    }
@@ -407,8 +407,7 @@ PAL_BattleUIDrawMiscMenu(
          }
       }
 
-      PAL_DrawText(PAL_GetWord(rgMenuItem[i].wNumWord), rgMenuItem[i].pos, bColor,
-         TRUE, FALSE);
+      PAL_DrawText(PAL_GetWord(rgMenuItem[i].wNumWord), rgMenuItem[i].pos, bColor, TRUE, FALSE, FALSE);
    }
 }
 
@@ -517,8 +516,7 @@ PAL_BattleUIMiscItemSubMenuUpdate(
          bColor = MENUITEM_COLOR_SELECTED;
       }
 
-      PAL_DrawText(PAL_GetWord(rgMenuItem[i].wNumWord), rgMenuItem[i].pos, bColor,
-         TRUE, FALSE);
+      PAL_DrawText(PAL_GetWord(rgMenuItem[i].wNumWord), rgMenuItem[i].pos, bColor, TRUE, FALSE, FALSE);
    }
 
    //
@@ -816,7 +814,7 @@ PAL_BattleUIUpdate(
       else
       {
          PAL_DrawText(PAL_GetWord(BATTLEUI_LABEL_AUTO), PAL_XY(280, 10),
-            MENUITEM_COLOR_CONFIRMED, TRUE, FALSE);
+            MENUITEM_COLOR_CONFIRMED, TRUE, FALSE, FALSE);
       }
    }
 

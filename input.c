@@ -39,7 +39,7 @@ BOOL                     g_fUseJoystick = TRUE;
 #endif
 
 #if defined(__WINPHONE__)
-unsigned int g_uiLastBackKeyTime = 0;
+static unsigned int g_uiLastBackKeyTime = 0;
 #endif
 
 static VOID
@@ -103,22 +103,6 @@ PAL_KeyboardEventFilter(
          SOUND_AdjustVolume(1);
          break;
 #endif
-
-#ifdef __WINPHONE__
-      case SDLK_AC_BACK:
-         if (g_uiLastBackKeyTime != 0 && !SDL_TICKS_PASSED(SDL_GetTicks(), g_uiLastBackKeyTime + 800))
-         {
-            PAL_Shutdown();
-            exit(0);
-         }
-		 else
-		 {
-            g_uiLastBackKeyTime = SDL_GetTicks();
-            VIDEO_UpdateScreen(NULL);
-		 }
-         break;
-#endif
-
       case SDLK_UP:
       case SDLK_KP8:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirNorth)
@@ -223,6 +207,16 @@ PAL_KeyboardEventFilter(
          g_InputState.dwKeyPress |= kKeyThrowItem;
          break;
 
+#if defined(__WINPHONE__)
+      case SDLK_AC_BACK:
+         if (!gpGlobals->fInMainGame || !SDL_TICKS_PASSED(SDL_GetTicks(), g_uiLastBackKeyTime + 800))
+         {
+            // If game not started, or user press the BACK key quickly twice, force to exit
+            PAL_Shutdown();
+            exit(0);
+		 }
+         g_uiLastBackKeyTime = SDL_GetTicks();
+#endif
       case SDLK_q:
          g_InputState.dwKeyPress |= kKeyFlee;
          break;
@@ -1151,9 +1145,7 @@ PAL_ProcessEvent(
 
 --*/
 {
-#if PAL_HAS_NATIVEMIDI
    MIDI_CheckLoop();
-#endif
    while (PAL_PollEvent(NULL));
 }
 

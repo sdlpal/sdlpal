@@ -27,6 +27,8 @@
 static GLOBALVARS _gGlobals;
 GLOBALVARS * const  gpGlobals = &_gGlobals;
 
+CONFIGURATION gConfig;
+
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 #define DO_BYTESWAP(buf, size)
 #else
@@ -87,6 +89,13 @@ PAL_InitGlobals(
    MUSICTYPE eMusicType = MUSIC_RIX;
    MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;
    OPLTYPE   eOPLType = OPL_DOSBOX;
+   MENULAYOUT layout_equip = {
+	   PAL_XY(8, 8), PAL_XY(2, 95), PAL_XY(5, 70), PAL_XY(51, 57),
+	   { PAL_XY(92, 11), PAL_XY(92, 33), PAL_XY(92, 55), PAL_XY(92, 77), PAL_XY(92, 99), PAL_XY(92, 121) },
+	   { PAL_XY(130, 11), PAL_XY(130, 33), PAL_XY(130, 55), PAL_XY(130, 77), PAL_XY(130, 99), PAL_XY(130, 121) },
+	   { PAL_XY(226, 10), PAL_XY(226, 32), PAL_XY(226, 54), PAL_XY(226, 76), PAL_XY(226, 98)  },
+	   { PAL_XY(260, 14), PAL_XY(260, 36), PAL_XY(260, 58), PAL_XY(260, 80), PAL_XY(260, 102) }
+   };
 
    if (fp = UTIL_OpenFileForMode("sdlpal.cfg", "r"))
    {
@@ -211,7 +220,7 @@ PAL_InitGlobals(
 					   int n = strlen(ptr);
 					   if (n > 0 && ptr[n - 1] == '\n') ptr[--n] = 0;
 					   if (n > 0 && ptr[n - 1] == '\r') ptr[--n] = 0;
-					   if (n > 0) gpGlobals->pszMsgName = strdup(ptr);
+					   if (n > 0) gConfig.pszMsgName = strdup(ptr);
 				   }
 #if USE_RIX_EXTRA_INIT
 				   else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)
@@ -242,9 +251,9 @@ PAL_InitGlobals(
 							   }
 							   if (v)
 							   {
-								   gpGlobals->pExtraFMRegs = regs;
-								   gpGlobals->pExtraFMVals = vals;
-								   gpGlobals->dwExtraLength = n >> 1;
+								   gConfig.pExtraFMRegs = regs;
+								   gConfig.pExtraFMVals = vals;
+								   gConfig.dwExtraLength = n >> 1;
 							   }
 							   else
 							   {
@@ -300,51 +309,52 @@ PAL_InitGlobals(
    //
    // Set configurable global options
    //
-   gpGlobals->fIsWIN95 = dwIsDOS ? FALSE : TRUE;
-   gpGlobals->fUseEmbeddedFonts = dwIsDOS && dwUseEmbeddedFonts ? TRUE : FALSE;
-   gpGlobals->fUseSurroundOPL = dwUseStereo && dwUseSurroundOPL ? TRUE : FALSE;
-   gpGlobals->iAudioChannels = dwUseStereo ? 2 : 1;
-   gpGlobals->iSampleRate = iSampleRate;
-   gpGlobals->iOPLSampleRate = iOPLSampleRate;
-   gpGlobals->iResampleQuality = iResampleQuality;
-   gpGlobals->dSurroundOPLOffset = flSurroundOPLOffset;
-   gpGlobals->eMusicType = eMusicType;
-   gpGlobals->eCDType = eCDType;
-   gpGlobals->eOPLType = eOPLType;
-   gpGlobals->iCodePage = iCodePage;
-   gpGlobals->dwWordLength = 10;	// This is the default value for Chinese version
-   gpGlobals->dwExtraMagicDescLines = dwExtraMagicDescLines;
-   gpGlobals->dwExtraItemDescLines = dwExtraItemDescLines;
-   gpGlobals->wAudioBufferSize = (WORD)iAudioBufferSize;
-   gpGlobals->iVolume = SDL_MIX_MAXVOLUME * iVolume / 100;
+   gConfig.fIsWIN95 = dwIsDOS ? FALSE : TRUE;
+   gConfig.fUseEmbeddedFonts = dwIsDOS && dwUseEmbeddedFonts ? TRUE : FALSE;
+   gConfig.fUseSurroundOPL = dwUseStereo && dwUseSurroundOPL ? TRUE : FALSE;
+   gConfig.iAudioChannels = dwUseStereo ? 2 : 1;
+   gConfig.iSampleRate = iSampleRate;
+   gConfig.iOPLSampleRate = iOPLSampleRate;
+   gConfig.iResampleQuality = iResampleQuality;
+   gConfig.dSurroundOPLOffset = flSurroundOPLOffset;
+   gConfig.eMusicType = eMusicType;
+   gConfig.eCDType = eCDType;
+   gConfig.eOPLType = eOPLType;
+   gConfig.iCodePage = iCodePage;
+   gConfig.dwWordLength = 10;	// This is the default value for Chinese version
+   gConfig.dwExtraMagicDescLines = dwExtraMagicDescLines;
+   gConfig.dwExtraItemDescLines = dwExtraItemDescLines;
+   gConfig.wAudioBufferSize = (WORD)iAudioBufferSize;
+   gConfig.iVolume = SDL_MIX_MAXVOLUME * iVolume / 100;
 #if defined(NDS) || defined(__SYMBIAN32__) || defined(GEKKO) || defined(PSP) || defined(GEKKO) || defined(GPH) || defined(DINGOO) || defined(__ANDROID__)
-   gpGlobals->dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
-   gpGlobals->dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
+   gConfig.dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
+   gConfig.dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
 #elif defined(__WINPHONE__) || defined(__IOS__)
    if (UTIL_GetScreenSize(&dwScreenWidth, &dwScreenHeight))
    {
-      gpGlobals->dwScreenWidth = dwScreenWidth;
-      gpGlobals->dwScreenHeight = dwScreenHeight;
+      gConfig.dwScreenWidth = dwScreenWidth;
+      gConfig.dwScreenHeight = dwScreenHeight;
    }
    else
    {
-      gpGlobals->dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
-      gpGlobals->dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
+      gConfig.dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
+      gConfig.dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
    }
 #else
-   gpGlobals->dwScreenWidth = dwScreenWidth ? dwScreenWidth : PAL_DEFAULT_WINDOW_WIDTH;
-   gpGlobals->dwScreenHeight = dwScreenHeight ? dwScreenHeight : (dwFullScreen ? PAL_DEFAULT_FULLSCREEN_HEIGHT : PAL_DEFAULT_WINDOW_HEIGHT);
+   gConfig.dwScreenWidth = dwScreenWidth ? dwScreenWidth : PAL_DEFAULT_WINDOW_WIDTH;
+   gConfig.dwScreenHeight = dwScreenHeight ? dwScreenHeight : (dwFullScreen ? PAL_DEFAULT_FULLSCREEN_HEIGHT : PAL_DEFAULT_WINDOW_HEIGHT);
 #endif
 #if SDL_VERSION_ATLEAST(2,0,0)
-   gpGlobals->fKeepAspectRatio = dwKeepAspectRatio ? TRUE : FALSE;
+   gConfig.fKeepAspectRatio = dwKeepAspectRatio ? TRUE : FALSE;
 #else
-   gpGlobals->fFullScreen = dwFullScreen ? TRUE : FALSE;
+   gConfig.fFullScreen = dwFullScreen ? TRUE : FALSE;
 #endif
+   gConfig.MenuLayout = layout_equip;
 
    //
    // Set decompress function
    //
-   Decompress = gpGlobals->fIsWIN95 ? YJ2_Decompress : YJ1_Decompress;
+   Decompress = gConfig.fIsWIN95 ? YJ2_Decompress : YJ1_Decompress;
 
    //
    // Open files
@@ -358,7 +368,7 @@ PAL_InitGlobals(
    gpGlobals->f.fpRGM = UTIL_OpenRequiredFile("rgm.mkf");
    gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
 
-   gpGlobals->lpObjectDesc = gpGlobals->fIsWIN95 ? NULL : PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
+   gpGlobals->lpObjectDesc = gConfig.fIsWIN95 ? NULL : PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
    gpGlobals->bCurrentSaveSlot = 1;
 
    return 0;
@@ -410,20 +420,21 @@ PAL_FreeGlobals(
    //
    // Free the object description data
    //
-   if (!gpGlobals->fIsWIN95)
+   if (!gConfig.fIsWIN95)
       PAL_FreeObjectDesc(gpGlobals->lpObjectDesc);
 
 #if USE_RIX_EXTRA_INIT
-   free(gpGlobals->pExtraFMRegs);
-   free(gpGlobals->pExtraFMVals);
-   free(gpGlobals->dwExtraLength);
+   free(gConfig.pExtraFMRegs);
+   free(gConfig.pExtraFMVals);
+   free(gConfig.dwExtraLength);
 #endif
-   free(gpGlobals->pszMsgName);
+   free(gConfig.pszMsgName);
 
    //
    // Clear the instance
    //
    memset(gpGlobals, 0, sizeof(GLOBALVARS));
+   memset(&gConfig, 0, sizeof(CONFIGURATION));
 }
 
 
@@ -565,7 +576,7 @@ PAL_LoadDefaultGame(
       0, gpGlobals->f.fpSSS);
    PAL_MKFReadChunk((LPBYTE)(p->rgScene), sizeof(p->rgScene), 1, gpGlobals->f.fpSSS);
    DO_BYTESWAP(p->rgScene, sizeof(p->rgScene));
-   if (gpGlobals->fIsWIN95)
+   if (gConfig.fIsWIN95)
    {
       PAL_MKFReadChunk((LPBYTE)(p->rgObject), sizeof(p->rgObject), 2, gpGlobals->f.fpSSS);
       DO_BYTESWAP(p->rgObject, sizeof(p->rgObject));
@@ -919,7 +930,7 @@ PAL_LoadGame(
    LPCSTR         szFileName
 )
 {
-	return gpGlobals->fIsWIN95 ? PAL_LoadGame_WIN(szFileName) : PAL_LoadGame_DOS(szFileName);
+	return gConfig.fIsWIN95 ? PAL_LoadGame_WIN(szFileName) : PAL_LoadGame_DOS(szFileName);
 }
 
 static VOID
@@ -1098,7 +1109,7 @@ PAL_SaveGame(
    WORD           wSavedTimes
 )
 {
-	if (gpGlobals->fIsWIN95)
+	if (gConfig.fIsWIN95)
 		PAL_SaveGame_WIN(szFileName, wSavedTimes);
 	else
 		PAL_SaveGame_DOS(szFileName, wSavedTimes);

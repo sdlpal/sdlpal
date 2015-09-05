@@ -65,7 +65,7 @@ PAL_InitFont(
 		{
 			return 0;
 		}
-		
+
 		//
 		// Get the size of wor16.asc file.
 		//
@@ -121,7 +121,7 @@ PAL_InitFont(
 			unicode_font[w][31] = 0;
 		}
 		free(wchar_buf);
-		
+
 		fclose(fp);
 
 		for (i = 0; i < 0x80; i++)
@@ -161,7 +161,8 @@ PAL_DrawCharOnSurface(
    WORD                     wChar,
    SDL_Surface             *lpSurface,
    PAL_POS                  pos,
-   BYTE                     bColor
+   BYTE                     bColor,
+   BOOL                     fUse8x8Font
 )
 /*++
   Purpose:
@@ -190,7 +191,8 @@ PAL_DrawCharOnSurface(
 	//
 	// Check for NULL pointer & invalid char code.
 	//
-	if (lpSurface == NULL || (wChar >= 0xd800 && wChar < unicode_upper_base) || wChar >= unicode_upper_top)
+	if (lpSurface == NULL || (wChar >= 0xd800 && wChar < unicode_upper_base) ||
+		wChar >= unicode_upper_top || (_font_height == 8 && wChar >= 0x100))
 	{
 		return;
 	}
@@ -208,35 +210,51 @@ PAL_DrawCharOnSurface(
 	//
 	LPBYTE dest = (LPBYTE)lpSurface->pixels + y * lpSurface->pitch + x;
 	LPBYTE top = (LPBYTE)lpSurface->pixels + lpSurface->h * lpSurface->pitch;
-	if (font_width[wChar] == 32)
+	if (fUse8x8Font)
 	{
-		for (i = 0; i < _font_height * 2 && dest < top; i += 2, dest += lpSurface->pitch)
+		for (i = 0; i < 8 && dest < top; i++, dest += lpSurface->pitch)
 		{
 			for (j = 0; j < 8 && x + j < lpSurface->w; j++)
 			{
-				if (unicode_font[wChar][i] & (1 << (7 - j)))
+				if (iso_font_8x8[wChar][i] & (1 << j))
 				{
 					dest[j] = bColor;
-				}
-			}
-			for (j = 0; j < 8 && x + j + 8 < lpSurface->w; j++)
-			{
-				if (unicode_font[wChar][i + 1] & (1 << (7 - j)))
-				{
-					dest[j + 8] = bColor;
 				}
 			}
 		}
 	}
 	else
 	{
-		for (i = 0; i < _font_height && dest < top; i++, dest += lpSurface->pitch)
+		if (font_width[wChar] == 32)
 		{
-			for (j = 0; j < 8 && x + j < lpSurface->w; j++)
+			for (i = 0; i < _font_height * 2 && dest < top; i += 2, dest += lpSurface->pitch)
 			{
-				if (unicode_font[wChar][i] & (1 << (7 - j)))
+				for (j = 0; j < 8 && x + j < lpSurface->w; j++)
 				{
-					dest[j] = bColor;
+					if (unicode_font[wChar][i] & (1 << (7 - j)))
+					{
+						dest[j] = bColor;
+					}
+				}
+				for (j = 0; j < 8 && x + j + 8 < lpSurface->w; j++)
+				{
+					if (unicode_font[wChar][i + 1] & (1 << (7 - j)))
+					{
+						dest[j + 8] = bColor;
+					}
+				}
+			}
+		}
+		else
+		{
+			for (i = 0; i < _font_height && dest < top; i++, dest += lpSurface->pitch)
+			{
+				for (j = 0; j < 8 && x + j < lpSurface->w; j++)
+				{
+					if (unicode_font[wChar][i] & (1 << (7 - j)))
+					{
+						dest[j] = bColor;
+					}
 				}
 			}
 		}
@@ -276,4 +294,12 @@ PAL_CharWidth(
 	}
 
 	return font_width[wChar] >> 1;
+}
+
+INT
+PAL_FontHeight(
+   VOID
+)
+{
+	return _font_height;
 }

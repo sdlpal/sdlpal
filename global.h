@@ -440,12 +440,15 @@ typedef struct tagLEVELUPMAGIC_ALL
    LEVELUPMAGIC       m[MAX_PLAYABLE_PLAYER_ROLES];
 } LEVELUPMAGIC_ALL, *LPLEVELUPMAGIC_ALL;
 
+typedef struct tagPALPOS
+{
+	WORD      x;
+	WORD      y;
+} PALPOS;
+
 typedef struct tagENEMYPOS
 {
-   struct {
-      WORD      x;
-      WORD      y;
-   } pos[MAX_ENEMIES_IN_TEAM][MAX_ENEMIES_IN_TEAM];
+	PALPOS pos[MAX_ENEMIES_IN_TEAM][MAX_ENEMIES_IN_TEAM];
 } ENEMYPOS, *LPENEMYPOS;
 
 // Exp. points needed for the next level
@@ -564,11 +567,12 @@ typedef struct tagGLOBALVARS
    FILES            f;
    GAMEDATA         g;
 
-   BYTE             bCurrentSaveSlot;    // current save slot (1-5)
    int              iCurMainMenuItem;    // current main menu item number
    int              iCurSystemMenuItem;  // current system menu item number
    int              iCurInvMenuItem;     // current inventory menu item number
    int              iCurPlayingRNG;      // current playing RNG animation
+   BYTE             bCurrentSaveSlot;    // current save slot (1-5)
+   BOOL             fInMainGame;         // TRUE if in main game
    BOOL             fGameStart;          // TRUE if the has just started
    BOOL             fEnteringScene;      // TRUE if entering a new scene
    BOOL             fNeedToFadeIn;       // TRUE if need to fade in when drawing scene
@@ -609,42 +613,69 @@ typedef struct tagGLOBALVARS
    INVENTORY        rgInventory[MAX_INVENTORY];  // inventory status
    LPOBJECTDESC     lpObjectDesc;
    DWORD            dwFrameNum;
-
-   /* Configurable options */
-   char            *pszMsgName;
-#if USE_RIX_EXTRA_INIT
-   uint32_t        *pExtraFMRegs;
-   uint8_t         *pExtraFMVals;
-   uint32_t         dwExtraLength;
-#endif
-   CODEPAGE         iCodePage;
-   DWORD            dwWordLength;
-   DWORD            dwExtraMagicDescLines;
-   DWORD            dwExtraItemDescLines;
-   DWORD            dwScreenWidth;
-   DWORD            dwScreenHeight;
-   double           dSurroundOPLOffset;
-   INT              iAudioChannels;
-   INT              iSampleRate;
-   INT              iOPLSampleRate;
-   INT              iResampleQuality;
-   INT              iVolume;
-   MUSICTYPE        eMusicType;
-   MUSICTYPE        eCDType;
-   OPLTYPE          eOPLType;
-   WORD             wAudioBufferSize;
-   BOOL             fIsWIN95;
-   BOOL             fUseEmbeddedFonts;
-   BOOL             fUseSurroundOPL;
-#if SDL_VERSION_ATLEAST(2,0,0)
-   BOOL             fKeepAspectRatio;
-#else
-   BOOL             fFullScreen;
-#endif
-   BOOL             fEnableJoyStick;
 } GLOBALVARS, *LPGLOBALVARS;
 
 extern GLOBALVARS * const gpGlobals;
+
+typedef struct tagMENULAYOUT
+{
+	PAL_POS          ImageBox;
+	PAL_POS          RoleListBox;
+	PAL_POS          ItemName;
+	PAL_POS          ItemAmount;
+	PAL_POS          EquipLabels[6];
+	PAL_POS          EquipNames[6];
+	PAL_POS          StatusLabels[5];
+	PAL_POS          StatusValues[5];
+} MENULAYOUT;
+
+typedef struct tagCONFIGURATION
+{
+	union {
+	MENULAYOUT       MenuLayout;
+	PAL_POS          MenuLayoutArray[sizeof(MENULAYOUT) / sizeof(PAL_POS)];
+	};
+	enum {
+		USE_8x8_FONT = 1,
+		DISABLE_SHADOW = 2,
+	}                MenuLayoutFlag[sizeof(MENULAYOUT) / sizeof(PAL_POS)];
+
+	/* Configurable options */
+	char            *pszMsgName;
+#if USE_RIX_EXTRA_INIT
+	uint32_t        *pExtraFMRegs;
+	uint8_t         *pExtraFMVals;
+	uint32_t         dwExtraLength;
+#endif
+	CODEPAGE         iCodePage;
+	DWORD            dwWordLength;
+	DWORD            dwExtraMagicDescLines;
+	DWORD            dwExtraItemDescLines;
+	DWORD            dwScreenWidth;
+	DWORD            dwScreenHeight;
+	double           dSurroundOPLOffset;
+	INT              iAudioChannels;
+	INT              iSampleRate;
+	INT              iOPLSampleRate;
+	INT              iResampleQuality;
+	INT              iVolume;
+	MUSICTYPE        eMusicType;
+	MUSICTYPE        eCDType;
+	OPLTYPE          eOPLType;
+	WORD             wAudioBufferSize;
+	BOOL             fIsWIN95;
+	BOOL             fUseEmbeddedFonts;
+	BOOL             fUseSurroundOPL;
+#if SDL_VERSION_ATLEAST(2,0,0)
+	BOOL             fKeepAspectRatio;
+#else
+	BOOL             fFullScreen;
+#endif
+	BOOL             fEnableJoyStick;
+	BOOL             fUseCustomMenuLayout;
+} CONFIGURATION, *LPCONFIGURATION;
+
+extern CONFIGURATION gConfig;
 
 INT
 PAL_InitGlobals(

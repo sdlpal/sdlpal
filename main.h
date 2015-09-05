@@ -48,10 +48,7 @@
 #include "fight.h"
 #include "play.h"
 #include "game.h"
-
-#if PAL_HAS_NATIVEMIDI
 #include "midi.h"
-#endif
 
 VOID
 PAL_Shutdown(

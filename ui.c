@@ -431,8 +431,7 @@ PAL_ReadMenu(
          }
       }
 
-      PAL_DrawText(PAL_GetWord(rgMenuItem[i].wNumWord), rgMenuItem[i].pos,
-         bColor, TRUE, TRUE);
+      PAL_DrawText(PAL_GetWord(rgMenuItem[i].wNumWord), rgMenuItem[i].pos, bColor, TRUE, TRUE, FALSE);
    }
 
    if (lpfnMenuItemChanged != NULL)
@@ -450,7 +449,7 @@ PAL_ReadMenu(
       if (rgMenuItem[wCurrentItem].fEnabled)
       {
          PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-            rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE);
+            rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE, FALSE);
       }
 
       PAL_ProcessEvent();
@@ -466,12 +465,12 @@ PAL_ReadMenu(
             // Dehighlight the unselected item.
             //
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          wCurrentItem++;
@@ -487,12 +486,12 @@ PAL_ReadMenu(
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          if (lpfnMenuItemChanged != NULL)
@@ -511,12 +510,12 @@ PAL_ReadMenu(
             // Dehighlight the unselected item.
             //
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          if (wCurrentItem > 0)
@@ -534,12 +533,12 @@ PAL_ReadMenu(
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          if (lpfnMenuItemChanged != NULL)
@@ -555,12 +554,12 @@ PAL_ReadMenu(
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          break;
@@ -573,7 +572,7 @@ PAL_ReadMenu(
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_CONFIRMED, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_CONFIRMED, FALSE, TRUE, FALSE);
 
             return rgMenuItem[wCurrentItem].wValue;
          }
