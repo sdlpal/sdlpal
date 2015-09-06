@@ -89,12 +89,23 @@ PAL_InitGlobals(
    MUSICTYPE eMusicType = MUSIC_RIX;
    MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;
    OPLTYPE   eOPLType = OPL_DOSBOX;
-   MENULAYOUT layout_equip = {
+   SCREENLAYOUT screen_layout = {
+	   // Equipment Screen
 	   PAL_XY(8, 8), PAL_XY(2, 95), PAL_XY(5, 70), PAL_XY(51, 57),
 	   { PAL_XY(92, 11), PAL_XY(92, 33), PAL_XY(92, 55), PAL_XY(92, 77), PAL_XY(92, 99), PAL_XY(92, 121) },
 	   { PAL_XY(130, 11), PAL_XY(130, 33), PAL_XY(130, 55), PAL_XY(130, 77), PAL_XY(130, 99), PAL_XY(130, 121) },
 	   { PAL_XY(226, 10), PAL_XY(226, 32), PAL_XY(226, 54), PAL_XY(226, 76), PAL_XY(226, 98)  },
-	   { PAL_XY(260, 14), PAL_XY(260, 36), PAL_XY(260, 58), PAL_XY(260, 80), PAL_XY(260, 102) }
+	   { PAL_XY(260, 14), PAL_XY(260, 36), PAL_XY(260, 58), PAL_XY(260, 80), PAL_XY(260, 102) },
+
+	   // Status Screen
+	   PAL_XY(110, 8), PAL_XY(110, 30), PAL_XY(6, 6),  PAL_XY(6, 32),  PAL_XY(6, 54),  PAL_XY(6, 76),
+	   { PAL_XY(6, 98),   PAL_XY(6, 118),  PAL_XY(6, 138),  PAL_XY(6, 158),  PAL_XY(6, 178) },
+	   PAL_XY(58, 6), PAL_XY(58, 15), PAL_XY(0, 0), PAL_XY(54, 35), PAL_XY(42, 56),
+	   PAL_XY(63, 61), PAL_XY(65, 58), PAL_XY(42, 78), PAL_XY(63, 83), PAL_XY(65, 80),
+	   { PAL_XY(42, 102), PAL_XY(42, 122), PAL_XY(42, 142), PAL_XY(42, 162), PAL_XY(42, 182) },
+	   { PAL_XY(189, -1), PAL_XY(247, 39), PAL_XY(251, 101), PAL_XY(201, 133), PAL_XY(141, 141), PAL_XY(81, 125) },
+	   { PAL_XY(195, 38), PAL_XY(253, 78), PAL_XY(257, 140), PAL_XY(207, 172), PAL_XY(147, 180), PAL_XY(87, 164) },
+	   { PAL_XY(185, 58), PAL_XY(185, 76), PAL_XY(185, 94), PAL_XY(185, 112), PAL_XY(185, 130), PAL_XY(185, 148), PAL_XY(185, 166), PAL_XY(185, 184), PAL_XY(185, 184), PAL_XY(185, 184) },
    };
 
    if (fp = UTIL_OpenFileForMode("sdlpal.cfg", "r"))
@@ -349,7 +360,7 @@ PAL_InitGlobals(
 #else
    gConfig.fFullScreen = dwFullScreen ? TRUE : FALSE;
 #endif
-   gConfig.MenuLayout = layout_equip;
+   gConfig.ScreenLayout = screen_layout;
 
    //
    // Set decompress function

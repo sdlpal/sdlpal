@@ -91,6 +91,8 @@ extern "C"
 #define     OBJECT_MAGIC_START           0x127
 #define     OBJECT_MAGIC_END             0x18D
 
+#define     MINIMAL_WORD_COUNT           (MAX_OBJECTS + 12)
+
 // status of characters
 typedef enum tagSTATUS
 {
@@ -617,28 +619,50 @@ typedef struct tagGLOBALVARS
 
 extern GLOBALVARS * const gpGlobals;
 
-typedef struct tagMENULAYOUT
+typedef struct tagSCREENLAYOUT
 {
-	PAL_POS          ImageBox;
-	PAL_POS          RoleListBox;
-	PAL_POS          ItemName;
-	PAL_POS          ItemAmount;
-	PAL_POS          EquipLabels[6];
-	PAL_POS          EquipNames[6];
-	PAL_POS          StatusLabels[5];
-	PAL_POS          StatusValues[5];
-} MENULAYOUT;
+	PAL_POS          EquipImageBox;
+	PAL_POS          EquipRoleListBox;
+	PAL_POS          EquipItemName;
+	PAL_POS          EquipItemAmount;
+	PAL_POS          EquipLabels[MAX_PLAYER_EQUIPMENTS];
+	PAL_POS          EquipNames[MAX_PLAYER_EQUIPMENTS];
+	PAL_POS          EquipStatusLabels[5];
+	PAL_POS          EquipStatusValues[5];
+
+	PAL_POS          RoleName;
+	PAL_POS          RoleImage;
+	PAL_POS          RoleExpLabel;
+	PAL_POS          RoleLevelLabel;
+	PAL_POS          RoleHPLabel;
+	PAL_POS          RoleMPLabel;
+	PAL_POS          RoleStatusLabels[5];
+	PAL_POS          RoleCurrExp;
+	PAL_POS          RoleNextExp;
+	PAL_POS          RoleExpSlash;
+	PAL_POS          RoleLevel;
+	PAL_POS          RoleCurHP;
+	PAL_POS          RoleMaxHP;
+	PAL_POS          RoleHPSlash;
+	PAL_POS          RoleCurMP;
+	PAL_POS          RoleMaxMP;
+	PAL_POS          RoleMPSlash;
+	PAL_POS          RoleStatusValues[5];
+	PAL_POS          RoleEquipImageBoxes[MAX_PLAYER_EQUIPMENTS];
+	PAL_POS          RoleEquipNames[MAX_PLAYER_EQUIPMENTS];
+	PAL_POS          RolePoisonNames[MAX_POISONS];
+} SCREENLAYOUT;
 
 typedef struct tagCONFIGURATION
 {
 	union {
-	MENULAYOUT       MenuLayout;
-	PAL_POS          MenuLayoutArray[sizeof(MENULAYOUT) / sizeof(PAL_POS)];
+	SCREENLAYOUT     ScreenLayout;
+	PAL_POS          ScreenLayoutArray[sizeof(SCREENLAYOUT) / sizeof(PAL_POS)];
 	};
 	enum {
 		USE_8x8_FONT = 1,
 		DISABLE_SHADOW = 2,
-	}                MenuLayoutFlag[sizeof(MENULAYOUT) / sizeof(PAL_POS)];
+	}                ScreenLayoutFlag[sizeof(SCREENLAYOUT) / sizeof(PAL_POS)];
 
 	/* Configurable options */
 	char            *pszMsgName;
@@ -672,7 +696,7 @@ typedef struct tagCONFIGURATION
 	BOOL             fFullScreen;
 #endif
 	BOOL             fEnableJoyStick;
-	BOOL             fUseCustomMenuLayout;
+	BOOL             fUseCustomScreenLayout;
 } CONFIGURATION, *LPCONFIGURATION;
 
 extern CONFIGURATION gConfig;

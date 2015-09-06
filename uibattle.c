@@ -1706,7 +1706,7 @@ end:
       // Show the text on the screen
       //
       pos = PAL_XY(PAL_X(pos) + 8 + ((len & 1) << 2), PAL_Y(pos) + 10);
-      PAL_DrawText(g_Battle.UI.szMsg, pos, 0, FALSE, FALSE);
+      PAL_DrawText(g_Battle.UI.szMsg, pos, 0, FALSE, FALSE, FALSE);
    }
    else if (g_Battle.UI.szNextMsg[0] != '\0')
    {

@@ -40,12 +40,13 @@ BOOL      g_fUpdatedInBattle      = FALSE;
 #include "codepage.h"
 
 #ifndef PAL_CLASSIC
-static LPWSTR gc_rgszAdditionalWords[CP_MAX][PAL_ADDITIONAL_WORD_COUNT] = {
+# define ATB_WORD_COUNT             6
+static LPWSTR gc_rgszAdditionalWords[CP_MAX][ATB_WORD_COUNT] = {
    { L"\x6230\x9B25\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
    { L"\x6218\x6597\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
    //{ L"\x6226\x95D8\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
 };
-static LPWSTR gc_rgszDefaultAdditionalWords[PAL_ADDITIONAL_WORD_COUNT] = { NULL, L"1", L"2", L"3", L"4", L"5" };
+static LPWSTR gc_rgszDefaultAdditionalWords[ATB_WORD_COUNT] = { NULL, L"\xFF11", L"\xFF12", L"\xFF13", L"\xFF14", L"\xFF15" };
 #endif
 
 LPWSTR g_rcCredits[12];
@@ -54,9 +55,6 @@ typedef struct tagTEXTLIB
 {
    LPWSTR         *lpWordBuf;
    LPWSTR         *lpMsgBuf;
-#ifndef PAL_CLASSIC
-   LPWSTR         *lpExtraWordBuf;
-#endif
    int           **lpIndexBuf;
 
    int             nWords;
@@ -201,9 +199,6 @@ PAL_ReadMessageFile(
 		ST_LAYOUT
 	} state = ST_OUTSIDE;
 	int idx_cnt = 0, msg_cnt = 0, word_cnt = 0, sid, eid = -1;
-#ifndef PAL_CLASSIC
-	int extra_word_cnt = 0;
-#endif
 
 	while (!feof(fp))
 	{
@@ -254,7 +249,7 @@ PAL_ReadMessageFile(
 					else if (strncmp(buffer, "[BEGIN LAYOUT]", 14) == 0 && !witem)
 					{
 						state = ST_LAYOUT;
-						gConfig.fUseCustomMenuLayout = TRUE;
+						gConfig.fUseCustomScreenLayout = TRUE;
 					}
 					else
 					{
@@ -312,7 +307,7 @@ PAL_ReadMessageFile(
 				{
 					char *v;
 					int l, i = PAL_ParseLine(buffer, &v, &l, TRUE);
-					if (i > 0 && i <= PAL_ADDITIONAL_WORD_LAST)
+					if (i > 0)
 					{
 						int len = PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, NULL, 0);
 						struct _word_list_entry *val = (struct _word_list_entry *)UTIL_malloc(sizeof(struct _word_list_entry));
@@ -320,10 +315,7 @@ PAL_ReadMessageFile(
 						PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, val->value, len);
 						val->index = i; val->next = NULL;
 						witem->next = val; witem = witem->next;
-						if (i < PAL_ADDITIONAL_WORD_FIRST && word_cnt < i) word_cnt = i;
-#ifndef PAL_CLASSIC
-						if (i >= PAL_ADDITIONAL_WORD_FIRST && extra_word_cnt < i) extra_word_cnt = i;
-#endif
+						if (word_cnt < i) word_cnt = i;
 					}
 				}
 				break;
@@ -400,14 +392,13 @@ PAL_ReadMessageFile(
 				{
 					char *v;
 					int x, y, f, n, l, i = PAL_ParseLine(buffer, &v, &l, FALSE);
-					if (i >= 1 && i <= 26)
+					if (i >= 1 && i <= 80)
 					{
-						PAL_POS *poses = &gConfig.MenuLayout.ImageBox;
-						if ((n = sscanf(v, "%d,%d,%d", &x, &y, &f)) >= 2 &&
-							x >= 0 && y >= 0 && x < 320 && y < 200)
+						PAL_POS *poses = (PAL_POS *)&gConfig.ScreenLayout;
+						if ((n = sscanf(v, "%d,%d,%d", &x, &y, &f)) >= 2 && x < 320 && y < 200)
 						{
 							poses[i - 1] = PAL_XY(x, y);
-							if (n == 3) gConfig.MenuLayoutFlag[i - 1] = f;
+							if (n == 3) gConfig.ScreenLayoutFlag[i - 1] = f;
 						}
 					}
 				}
@@ -454,38 +445,27 @@ PAL_ReadMessageFile(
 		}
 	}
 
-#ifndef PAL_CLASSIC
-	if (word_cnt > 0 && extra_word_cnt >= PAL_ADDITIONAL_WORD_FIRST && extra_word_cnt <= PAL_ADDITIONAL_WORD_LAST)
-#else
 	if (word_cnt > 0)
-#endif
 	{
 		//
 		// Move values from linked list to array
 		//
 #ifndef PAL_CLASSIC
 		int i;
-		g_TextLib.lpExtraWordBuf = (LPWSTR *)calloc(PAL_ADDITIONAL_WORD_COUNT, sizeof(LPWSTR));
 #endif
+		if (word_cnt < MINIMAL_WORD_COUNT - 1) word_cnt = MINIMAL_WORD_COUNT - 1;
 		g_TextLib.nWords = (word_cnt += 1);
 		g_TextLib.lpWordBuf = (LPWSTR *)UTIL_calloc(word_cnt, sizeof(LPWSTR));
 		for (witem = whead.next; witem; )
 		{
 			struct _word_list_entry *temp = witem->next;
-			if (witem->index < PAL_ADDITIONAL_WORD_FIRST)
-				g_TextLib.lpWordBuf[witem->index] = witem->value;
-			else
-#ifndef PAL_CLASSIC
-				g_TextLib.lpExtraWordBuf[witem->index - PAL_ADDITIONAL_WORD_FIRST] = witem->value;
-#else
-				free(witem->value);
-#endif
+			g_TextLib.lpWordBuf[witem->index] = witem->value;
 			free(witem); witem = temp;
 		}
 #ifndef PAL_CLASSIC
-		for (i = 1; i < PAL_ADDITIONAL_WORD_COUNT; i++)
-			if (!g_TextLib.lpExtraWordBuf[i])
-				g_TextLib.lpExtraWordBuf[i] = gc_rgszDefaultAdditionalWords[i];
+		for (i = 1; i < ATB_WORD_COUNT; i++)
+			if (!g_TextLib.lpWordBuf[i + SYSMENU_LABEL_BATTLEMODE])
+				g_TextLib.lpWordBuf[i + SYSMENU_LABEL_BATTLEMODE] = gc_rgszDefaultAdditionalWords[i];
 #endif
 	}
 
@@ -574,6 +554,7 @@ PAL_InitText(
 	   // Each word has 10 bytes
 	   //
 	   g_TextLib.nWords = (i + (gConfig.dwWordLength - 1)) / gConfig.dwWordLength;
+	   if (g_TextLib.nWords < MINIMAL_WORD_COUNT) g_TextLib.nWords = MINIMAL_WORD_COUNT;
 
 	   //
 	   // Read the words
@@ -701,7 +682,7 @@ PAL_InitText(
 	   g_TextLib.lpIndexBuf = NULL;
 
 #ifndef PAL_CLASSIC
-	   g_TextLib.lpExtraWordBuf = gc_rgszAdditionalWords[gpGlobals->iCodePage];
+	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_BATTLEMODE, gc_rgszAdditionalWords[gConfig.iCodePage], ATB_WORD_COUNT * sizeof(LPCWSTR));
 #endif
    }
 
@@ -788,11 +769,6 @@ PAL_GetWord(
 
 --*/
 {
-#ifndef PAL_CLASSIC
-   if (wNumWord >= PAL_ADDITIONAL_WORD_FIRST)
-      return g_TextLib.lpExtraWordBuf[wNumWord];
-   else
-#endif
    return (iNumWord >= g_TextLib.nWords || !g_TextLib.lpWordBuf[iNumWord]) ? L"" : g_TextLib.lpWordBuf[iNumWord];
 }
 

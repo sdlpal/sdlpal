@@ -380,7 +380,7 @@ PAL_DeleteBox(
 WORD
 PAL_ReadMenu(
    LPITEMCHANGED_CALLBACK    lpfnMenuItemChanged,
-   LPMENUITEM                rgMenuItem,
+   LPCMENUITEM               rgMenuItem,
    INT                       nMenuItem,
    WORD                      wDefaultItem,
    BYTE                      bLabelColor
@@ -684,7 +684,7 @@ PAL_DrawNumber(
 
 INT
 PAL_MenuTextMaxWidth(
-   LPMENUITEM     rgMenuItem,
+   LPCMENUITEM    rgMenuItem,
    INT            nMenuItem
 )
 /*++

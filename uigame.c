@@ -526,8 +526,7 @@ PAL_SystemMenu(
    //
    // Create menu items
    //
-#ifdef PAL_CLASSIC
-   MENUITEM        rgSystemMenuItem[5] =
+   const MENUITEM      rgSystemMenuItem[] =
    {
       // value  label                      enabled   pos
       { 1,      SYSMENU_LABEL_SAVE,        TRUE,     PAL_XY(53, 72) },
@@ -535,40 +534,22 @@ PAL_SystemMenu(
       { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 72 + 36) },
       { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 54) },
       { 5,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 72) },
-   };
-#else
-   MENUITEM        rgSystemMenuItem[6] =
-   {
-      // value  label                      enabled   pos
-      { 1,      SYSMENU_LABEL_SAVE,        TRUE,     PAL_XY(53, 72) },
-      { 2,      SYSMENU_LABEL_LOAD,        TRUE,     PAL_XY(53, 72 + 18) },
-      { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 72 + 36) },
-      { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 54) },
-      { 5,      SYSMENU_LABEL_BATTLEMODE,  TRUE,     PAL_XY(53, 72 + 72) },
-      { 6,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 90) },
-   };
+#if !defined(PAL_CLASSIC)
+      { 6,      SYSMENU_LABEL_BATTLEMODE,  TRUE,     PAL_XY(53, 72 + 90) },
 #endif
+   };
+   const int           nSystemMenuItem = sizeof(rgSystemMenuItem) / sizeof(MENUITEM);
 
    //
    // Create the menu box.
    //
-#ifdef PAL_CLASSIC
-   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 4, PAL_MenuTextMaxWidth(rgSystemMenuItem, 5) - 1, 0, TRUE);
-#else
-   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 5, PAL_MenuTextMaxWidth(rgSystemMenuItem, 6) - 1, 0, TRUE);
-#endif
+   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), nSystemMenuItem - 1, PAL_MenuTextMaxWidth(rgSystemMenuItem, nSystemMenuItem) - 1, 0, TRUE);
    VIDEO_UpdateScreen(&rect);
 
    //
    // Perform the menu.
    //
-#ifdef PAL_CLASSIC
-   wReturnValue = PAL_ReadMenu(PAL_SystemMenu_OnItemChange, rgSystemMenuItem, 5,
-      gpGlobals->iCurSystemMenuItem, MENUITEM_COLOR);
-#else
-   wReturnValue = PAL_ReadMenu(PAL_SystemMenu_OnItemChange, rgSystemMenuItem, 6,
-      gpGlobals->iCurSystemMenuItem, MENUITEM_COLOR);
-#endif
+   wReturnValue = PAL_ReadMenu(PAL_SystemMenu_OnItemChange, rgSystemMenuItem, nSystemMenuItem, gpGlobals->iCurSystemMenuItem, MENUITEM_COLOR);
 
    if (wReturnValue == MENUITEM_VALUE_CANCELLED)
    {
@@ -650,18 +631,7 @@ PAL_SystemMenu(
       g_fNoSound = !PAL_SwitchMenu(!g_fNoSound);
       break;
 
-#ifndef PAL_CLASSIC
    case 5:
-      //
-      // Battle Mode
-      //
-      PAL_BattleSpeedMenu();
-      break;
-
-   case 6:
-#else
-   case 5:
-#endif
       //
       // Quit
       //
@@ -673,6 +643,15 @@ PAL_SystemMenu(
          exit(0);
       }
       break;
+
+#if !defined(PAL_CLASSIC)
+   case 6:
+      //
+      // Battle Mode
+      //
+      PAL_BattleSpeedMenu();
+      break;
+#endif
    }
 
    PAL_DeleteBox(lpMenuBox);
@@ -1085,18 +1064,46 @@ PAL_PlayerStatus(
 {
    PAL_LARGE BYTE   bufBackground[320 * 200];
    PAL_LARGE BYTE   bufImage[16384];
+   PAL_LARGE BYTE   bufImageBox[50 * 49];
+   int              labels[] = {
+      STATUS_LABEL_ATTACKPOWER, STATUS_LABEL_MAGICPOWER, STATUS_LABEL_RESISTANCE,
+      STATUS_LABEL_DEXTERITY, STATUS_LABEL_FLEERATE
+   };
    int              iCurrent;
    int              iPlayerRole;
-   int              i, y;
+   int              i, j;
    WORD             w;
 
-   const int        rgEquipPos[MAX_PLAYER_EQUIPMENTS][2] = {
-      {190, 0}, {248, 40}, {252, 102}, {202, 134}, {142, 142}, {82, 126}
-   };
-
-   PAL_MKFDecompressChunk(bufBackground, 320 * 200, STATUS_BACKGROUND_FBPNUM,
-      gpGlobals->f.fpFBP);
+   PAL_MKFDecompressChunk(bufBackground, 320 * 200, STATUS_BACKGROUND_FBPNUM, gpGlobals->f.fpFBP);
    iCurrent = 0;
+
+   if (gConfig.fUseCustomScreenLayout)
+   {
+      for (i = 0; i < 49; i++)
+      {
+         memcpy(&bufImageBox[i * 50], &bufBackground[(i + 39) * 320 + 247], 50);
+      }
+      for (i = 0; i < 49; i++)
+      {
+         memcpy(&bufBackground[(i + 125) * 320 + 81], &bufBackground[(i + 125) * 320 + 81 - 50], 50);
+         memcpy(&bufBackground[(i + 141) * 320 + 141], &bufBackground[(i + 141) * 320 + 81 - 50], 50);
+         memcpy(&bufBackground[(i + 133) * 320 + 201], &bufBackground[(i + 133) * 320 + 81 - 50], 50);
+         memcpy(&bufBackground[(i + 101) * 320 + 251], &bufBackground[(i + 101) * 320 + 81 - 50], 50);
+         memcpy(&bufBackground[(i + 39) * 320 + 247], &bufBackground[(i + 39) * 320 + 189 - 50], 50);
+         if (i > 0) memcpy(&bufBackground[(i - 1) * 320 + 189], &bufBackground[(i - 1) * 320 + 189 - 50], 50);
+      }
+      for(i = 0; i < MAX_PLAYER_EQUIPMENTS; i++)
+      {
+         short x = PAL_X(gConfig.ScreenLayout.RoleEquipImageBoxes[i]);
+         short y = PAL_Y(gConfig.ScreenLayout.RoleEquipImageBoxes[i]);
+         short sx = (x < 0) ? -x : 0, sy = (y < 0) ? -y : 0, d = (x > 270) ? x - 270 : 0;
+         if (sx >= 50 || sy >= 49 || x >= 320 || y >= 200) continue;
+         for (; sy < 49 && y + sy < 200; sy++)
+         {
+            memcpy(&bufBackground[(y + sy) * 320 + x + sx], &bufImageBox[sy * 50 + sx], 50 - sx - d);
+         }
+      }
+   }
 
    while (iCurrent >= 0 && iCurrent <= gpGlobals->wMaxPartyMemberIndex)
    {
@@ -1108,60 +1115,19 @@ PAL_PlayerStatus(
       PAL_FBPBlitToSurface(bufBackground, gpScreen);
 
       //
-      // Draw the text labels
+      // Draw the image of player role
       //
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_EXP), PAL_XY(6, 6), MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_LEVEL), PAL_XY(6, 32), MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_HP), PAL_XY(6, 54), MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_MP), PAL_XY(6, 76), MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_ATTACKPOWER), PAL_XY(6, 98), MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_MAGICPOWER), PAL_XY(6, 118), MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_RESISTANCE), PAL_XY(6, 138), MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_DEXTERITY), PAL_XY(6, 158), MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_FLEERATE), PAL_XY(6, 178), MENUITEM_COLOR, TRUE, FALSE, FALSE);
-
-      PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[iPlayerRole]),
-         PAL_XY(110, 8), MENUITEM_COLOR_CONFIRMED, TRUE, FALSE, FALSE);
-
-      //
-      // Draw the stats
-      //
-      PAL_DrawNumber(gpGlobals->Exp.rgPrimaryExp[iPlayerRole].wExp, 5,
-         PAL_XY(58, 6), kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.rgLevelUpExp[gpGlobals->g.PlayerRoles.rgwLevel[iPlayerRole]],
-         5, PAL_XY(58, 15), kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwLevel[iPlayerRole], 2,
-         PAL_XY(54, 35), kNumColorYellow, kNumAlignRight);
-      PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
-         PAL_XY(65, 58));
-      PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
-         PAL_XY(65, 80));
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwHP[iPlayerRole], 4, PAL_XY(42, 56),
-         kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[iPlayerRole], 4, PAL_XY(63, 61),
-         kNumColorBlue, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[iPlayerRole], 4, PAL_XY(42, 78),
-         kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[iPlayerRole], 4, PAL_XY(63, 83),
-         kNumColorBlue, kNumAlignRight);
-
-      PAL_DrawNumber(PAL_GetPlayerAttackStrength(iPlayerRole), 4,
-         PAL_XY(42, 102), kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerMagicStrength(iPlayerRole), 4,
-         PAL_XY(42, 122), kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDefense(iPlayerRole), 4,
-         PAL_XY(42, 142), kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDexterity(iPlayerRole), 4,
-         PAL_XY(42, 162), kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerFleeRate(iPlayerRole), 4,
-         PAL_XY(42, 182), kNumColorYellow, kNumAlignRight);
+      if (PAL_MKFReadChunk(bufImage, 16384, gpGlobals->g.PlayerRoles.rgwAvatar[iPlayerRole], gpGlobals->f.fpRGM) > 0)
+      {
+         PAL_RLEBlitToSurface(bufImage, gpScreen, gConfig.ScreenLayout.RoleImage);
+      }
 
       //
       // Draw the equipments
       //
       for (i = 0; i < MAX_PLAYER_EQUIPMENTS; i++)
       {
-         int offset = 0;
+         int offset;
 
          w = gpGlobals->g.PlayerRoles.rgwEquipment[i][iPlayerRole];
 
@@ -1177,48 +1143,91 @@ PAL_PlayerStatus(
             gpGlobals->g.rgObject[w].item.wBitmap, gpGlobals->f.fpBALL) > 0)
          {
             PAL_RLEBlitToSurface(bufImage, gpScreen,
-               PAL_XY(rgEquipPos[i][0], rgEquipPos[i][1]));
+               PAL_XY_OFFSET(gConfig.ScreenLayout.RoleEquipImageBoxes[i], 1, 1));
          }
 
          //
          // Draw the text label
          //
          offset = PAL_WordWidth(w) * 16;
-         if (rgEquipPos[i][0] + offset + 5 > 320)
+         if (PAL_X(gConfig.ScreenLayout.RoleEquipNames[i]) + offset > 320)
          {
-            offset = 314 - rgEquipPos[i][0] - offset;
+            offset = 320 - PAL_X(gConfig.ScreenLayout.RoleEquipNames[i]) - offset;
          }
          else
          {
             offset = 0;
          }
-         PAL_DrawText(PAL_GetWord(w), PAL_XY(rgEquipPos[i][0] + offset + 5, rgEquipPos[i][1] + 38), STATUS_COLOR_EQUIPMENT, TRUE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(w), PAL_XY_OFFSET(gConfig.ScreenLayout.RoleEquipNames[i], offset, 0), STATUS_COLOR_EQUIPMENT, TRUE, FALSE, FALSE);
       }
 
       //
-      // Draw the image of player role
+      // Draw the text labels
       //
-      if (PAL_MKFReadChunk(bufImage, 16384,
-         gpGlobals->g.PlayerRoles.rgwAvatar[iPlayerRole], gpGlobals->f.fpRGM) > 0)
-      {
-         PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(110, 30));
+	  PAL_DrawText(PAL_GetWord(STATUS_LABEL_EXP), gConfig.ScreenLayout.RoleExpLabel, MENUITEM_COLOR, TRUE, FALSE, FALSE);
+      PAL_DrawText(PAL_GetWord(STATUS_LABEL_LEVEL), gConfig.ScreenLayout.RoleLevelLabel, MENUITEM_COLOR, TRUE, FALSE, FALSE);
+      PAL_DrawText(PAL_GetWord(STATUS_LABEL_HP), gConfig.ScreenLayout.RoleHPLabel, MENUITEM_COLOR, TRUE, FALSE, FALSE);
+      PAL_DrawText(PAL_GetWord(STATUS_LABEL_MP), gConfig.ScreenLayout.RoleMPLabel, MENUITEM_COLOR, TRUE, FALSE, FALSE);
+      for (i = 0; i < sizeof(labels) / sizeof(int); i++)
+	  {
+         PAL_DrawText(PAL_GetWord(labels[i]), gConfig.ScreenLayout.RoleStatusLabels[i], MENUITEM_COLOR, TRUE, FALSE, FALSE);
       }
+
+      PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[iPlayerRole]),
+         gConfig.ScreenLayout.RoleName, MENUITEM_COLOR_CONFIRMED, TRUE, FALSE, FALSE);
+
+      //
+      // Draw the stats
+      //
+      if (gConfig.ScreenLayout.RoleExpSlash != 0)
+	  {
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen, gConfig.ScreenLayout.RoleExpSlash);
+      }
+      if (gConfig.ScreenLayout.RoleHPSlash != 0)
+	  {
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen, gConfig.ScreenLayout.RoleHPSlash);
+      }
+      if (gConfig.ScreenLayout.RoleMPSlash != 0)
+	  {
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen, gConfig.ScreenLayout.RoleMPSlash);
+      }
+
+      PAL_DrawNumber(gpGlobals->Exp.rgPrimaryExp[iPlayerRole].wExp, 5,
+         gConfig.ScreenLayout.RoleCurrExp, kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(gpGlobals->g.rgLevelUpExp[gpGlobals->g.PlayerRoles.rgwLevel[iPlayerRole]], 5,
+         gConfig.ScreenLayout.RoleNextExp, kNumColorCyan, kNumAlignRight);
+      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwLevel[iPlayerRole], 2,
+         gConfig.ScreenLayout.RoleLevel, kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwHP[iPlayerRole], 4,
+         gConfig.ScreenLayout.RoleCurHP, kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[iPlayerRole], 4,
+         gConfig.ScreenLayout.RoleMaxHP, kNumColorBlue, kNumAlignRight);
+      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[iPlayerRole], 4,
+         gConfig.ScreenLayout.RoleCurMP, kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[iPlayerRole], 4,
+         gConfig.ScreenLayout.RoleMaxMP, kNumColorBlue, kNumAlignRight);
+
+      PAL_DrawNumber(PAL_GetPlayerAttackStrength(iPlayerRole), 4,
+         gConfig.ScreenLayout.RoleStatusValues[0], kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(PAL_GetPlayerMagicStrength(iPlayerRole), 4,
+         gConfig.ScreenLayout.RoleStatusValues[1], kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(PAL_GetPlayerDefense(iPlayerRole), 4,
+         gConfig.ScreenLayout.RoleStatusValues[2], kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(PAL_GetPlayerDexterity(iPlayerRole), 4,
+         gConfig.ScreenLayout.RoleStatusValues[3], kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(PAL_GetPlayerFleeRate(iPlayerRole), 4,
+         gConfig.ScreenLayout.RoleStatusValues[4], kNumColorYellow, kNumAlignRight);
 
       //
       // Draw all poisons
       //
-      y = 58;
-
-      for (i = 0; i < MAX_POISONS; i++)
+      for (i = j = 0; i < MAX_POISONS; i++)
       {
          w = gpGlobals->rgPoisonStatus[i][iCurrent].wPoisonID;
 
-         if (w != 0 &&
-            gpGlobals->g.rgObject[w].poison.wPoisonLevel <= 3)
+         if (w != 0 && gpGlobals->g.rgObject[w].poison.wPoisonLevel <= 3)
          {
-            PAL_DrawText(PAL_GetWord(w), PAL_XY(185, y), (BYTE)(gpGlobals->g.rgObject[w].poison.wColor + 10), TRUE, FALSE, FALSE);
-
-            y += 18;
+            PAL_DrawText(PAL_GetWord(w), gConfig.ScreenLayout.RolePoisonNames[j++], (BYTE)(gpGlobals->g.rgObject[w].poison.wColor + 10), TRUE, FALSE, FALSE);
          }
       }
 
@@ -1745,10 +1754,10 @@ PAL_EquipItemMenu(
    PAL_MKFDecompressChunk(bufBackground, 320 * 200, EQUIPMENU_BACKGROUND_FBPNUM,
       gpGlobals->f.fpFBP);
 
-   if (gConfig.fUseCustomMenuLayout)
+   if (gConfig.fUseCustomScreenLayout)
    {
-      int x = PAL_X(gConfig.MenuLayout.ImageBox);
-      int y = PAL_Y(gConfig.MenuLayout.ImageBox);
+      int x = PAL_X(gConfig.ScreenLayout.EquipImageBox);
+      int y = PAL_Y(gConfig.ScreenLayout.EquipImageBox);
       for (i = 8; i < 72; i++)
       {
          memcpy(&bufBackground[i * 320 + 92], &bufBackground[(i + 128) * 320 + 92], 32);
@@ -1792,26 +1801,26 @@ PAL_EquipItemMenu(
       if (PAL_MKFReadChunk(bufImage, 2048,
          gpGlobals->g.rgObject[wItem].item.wBitmap, gpGlobals->f.fpBALL) > 0)
       {
-         PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY_OFFSET(gConfig.MenuLayout.ImageBox, 8, 8));
+         PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY_OFFSET(gConfig.ScreenLayout.EquipImageBox, 8, 8));
       }
 
-      if (gConfig.fUseCustomMenuLayout)
+      if (gConfig.fUseCustomScreenLayout)
       {
          int labels1[] = { STATUS_LABEL_ATTACKPOWER, STATUS_LABEL_MAGICPOWER, STATUS_LABEL_RESISTANCE, STATUS_LABEL_DEXTERITY, STATUS_LABEL_FLEERATE };
          int labels2[] = { EQUIP_LABEL_HEAD, EQUIP_LABEL_SHOULDER, EQUIP_LABEL_BODY, EQUIP_LABEL_HAND, EQUIP_LABEL_FOOT, EQUIP_LABEL_NECK };
 		 for (i = 0; i < sizeof(labels1) / sizeof(int); i++)
          {
-            int index = &gConfig.MenuLayout.StatusLabels[i] - gConfig.MenuLayoutArray;
-            BOOL fShadow = (gConfig.MenuLayoutFlag[index] & DISABLE_SHADOW) ? FALSE : TRUE;
-            BOOL fUse8x8Font = (gConfig.MenuLayoutFlag[index] & USE_8x8_FONT) ? TRUE : FALSE;
-            PAL_DrawText(PAL_GetWord(labels1[i]), gConfig.MenuLayoutArray[index], MENUITEM_COLOR, fShadow, FALSE, fUse8x8Font);
+            int index = &gConfig.ScreenLayout.EquipStatusLabels[i] - gConfig.ScreenLayoutArray;
+            BOOL fShadow = (gConfig.ScreenLayoutFlag[index] & DISABLE_SHADOW) ? FALSE : TRUE;
+            BOOL fUse8x8Font = (gConfig.ScreenLayoutFlag[index] & USE_8x8_FONT) ? TRUE : FALSE;
+            PAL_DrawText(PAL_GetWord(labels1[i]), gConfig.ScreenLayoutArray[index], MENUITEM_COLOR, fShadow, FALSE, fUse8x8Font);
          }
 		 for (i = 0; i < sizeof(labels2) / sizeof(int); i++)
          {
-            int index = &gConfig.MenuLayout.EquipLabels[i] - gConfig.MenuLayoutArray;
-            BOOL fShadow = (gConfig.MenuLayoutFlag[index] & DISABLE_SHADOW) ? FALSE : TRUE;
-            BOOL fUse8x8Font = (gConfig.MenuLayoutFlag[index] & USE_8x8_FONT) ? TRUE : FALSE;
-            PAL_DrawText(PAL_GetWord(labels2[i]), gConfig.MenuLayoutArray[index], MENUITEM_COLOR, fShadow, FALSE, fUse8x8Font);
+            int index = &gConfig.ScreenLayout.EquipLabels[i] - gConfig.ScreenLayoutArray;
+            BOOL fShadow = (gConfig.ScreenLayoutFlag[index] & DISABLE_SHADOW) ? FALSE : TRUE;
+            BOOL fUse8x8Font = (gConfig.ScreenLayoutFlag[index] & USE_8x8_FONT) ? TRUE : FALSE;
+            PAL_DrawText(PAL_GetWord(labels2[i]), gConfig.ScreenLayoutArray[index], MENUITEM_COLOR, fShadow, FALSE, fUse8x8Font);
          }
       }
 
@@ -1824,23 +1833,23 @@ PAL_EquipItemMenu(
          if (gpGlobals->g.PlayerRoles.rgwEquipment[i][w] != 0)
          {
             PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwEquipment[i][w]),
-				gConfig.MenuLayout.EquipNames[i], MENUITEM_COLOR, TRUE, FALSE, FALSE);
+				gConfig.ScreenLayout.EquipNames[i], MENUITEM_COLOR, TRUE, FALSE, FALSE);
          }
       }
 
       //
       // Draw the stats of the currently selected player
       //
-      PAL_DrawNumber(PAL_GetPlayerAttackStrength(w), 4, gConfig.MenuLayout.StatusValues[0], kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerMagicStrength(w), 4, gConfig.MenuLayout.StatusValues[1], kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDefense(w), 4, gConfig.MenuLayout.StatusValues[2], kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDexterity(w), 4, gConfig.MenuLayout.StatusValues[3], kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerFleeRate(w), 4, gConfig.MenuLayout.StatusValues[4], kNumColorCyan, kNumAlignRight);
+      PAL_DrawNumber(PAL_GetPlayerAttackStrength(w), 4, gConfig.ScreenLayout.EquipStatusValues[0], kNumColorCyan, kNumAlignRight);
+      PAL_DrawNumber(PAL_GetPlayerMagicStrength(w), 4, gConfig.ScreenLayout.EquipStatusValues[1], kNumColorCyan, kNumAlignRight);
+      PAL_DrawNumber(PAL_GetPlayerDefense(w), 4, gConfig.ScreenLayout.EquipStatusValues[2], kNumColorCyan, kNumAlignRight);
+      PAL_DrawNumber(PAL_GetPlayerDexterity(w), 4, gConfig.ScreenLayout.EquipStatusValues[3], kNumColorCyan, kNumAlignRight);
+      PAL_DrawNumber(PAL_GetPlayerFleeRate(w), 4, gConfig.ScreenLayout.EquipStatusValues[4], kNumColorCyan, kNumAlignRight);
 
       //
       // Draw a box for player selection
       //
-      PAL_CreateBox(gConfig.MenuLayout.RoleListBox, gpGlobals->wMaxPartyMemberIndex, PAL_WordMaxWidth(36, 4) - 1, 0, FALSE);
+      PAL_CreateBox(gConfig.ScreenLayout.EquipRoleListBox, gpGlobals->wMaxPartyMemberIndex, PAL_WordMaxWidth(36, 4) - 1, 0, FALSE);
 
       //
       // Draw the label of players
@@ -1873,7 +1882,7 @@ PAL_EquipItemMenu(
          }
 
          PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]),
-            PAL_XY_OFFSET(gConfig.MenuLayout.RoleListBox, 13, 13 + 18 * i), bColor, TRUE, FALSE, FALSE);
+            PAL_XY_OFFSET(gConfig.ScreenLayout.EquipRoleListBox, 13, 13 + 18 * i), bColor, TRUE, FALSE, FALSE);
       }
 
       //
@@ -1881,8 +1890,8 @@ PAL_EquipItemMenu(
       //
       if (wItem != 0)
       {
-         PAL_DrawText(PAL_GetWord(wItem), gConfig.MenuLayout.ItemName, MENUITEM_COLOR_CONFIRMED, TRUE, FALSE, FALSE);
-         PAL_DrawNumber(PAL_GetItemAmount(wItem), 2, gConfig.MenuLayout.ItemAmount, kNumColorCyan, kNumAlignRight);
+         PAL_DrawText(PAL_GetWord(wItem), gConfig.ScreenLayout.EquipItemName, MENUITEM_COLOR_CONFIRMED, TRUE, FALSE, FALSE);
+         PAL_DrawNumber(PAL_GetItemAmount(wItem), 2, gConfig.ScreenLayout.EquipItemAmount, kNumColorCyan, kNumAlignRight);
       }
 
       //
@@ -1924,7 +1933,7 @@ PAL_EquipItemMenu(
             if (gpGlobals->g.rgObject[wItem].item.wFlags & (kItemFlagEquipableByPlayerRole_First << w))
             {
                PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]),
-                  PAL_XY_OFFSET(gConfig.MenuLayout.RoleListBox, 13, 13 + 18 * iCurrentPlayer), bSelectedColor, TRUE, TRUE, FALSE);
+                  PAL_XY_OFFSET(gConfig.ScreenLayout.EquipRoleListBox, 13, 13 + 18 * iCurrentPlayer), bSelectedColor, TRUE, TRUE, FALSE);
             }
          }
 

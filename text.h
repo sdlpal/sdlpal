@@ -32,10 +32,6 @@ typedef enum tagDIALOGPOSITION
    kDialogCenterWindow
 } DIALOGLOCATION;
 
-#define PAL_ADDITIONAL_WORD_FIRST           65530
-#define PAL_ADDITIONAL_WORD_LAST            65535
-#define PAL_ADDITIONAL_WORD_COUNT           (PAL_ADDITIONAL_WORD_LAST - PAL_ADDITIONAL_WORD_FIRST + 1)
-
 extern LPWSTR g_rcCredits[12];
 
 INT
