@@ -39,7 +39,6 @@ BOOL      g_fUpdatedInBattle      = FALSE;
 #define INCLUDE_CODEPAGE_H
 #include "codepage.h"
 
-#ifndef PAL_CLASSIC
 # define ATB_WORD_COUNT             6
 static LPWSTR gc_rgszAdditionalWords[CP_MAX][ATB_WORD_COUNT] = {
    { L"\x6230\x9B25\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
@@ -47,7 +46,6 @@ static LPWSTR gc_rgszAdditionalWords[CP_MAX][ATB_WORD_COUNT] = {
    //{ L"\x6226\x95D8\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
 };
 static LPWSTR gc_rgszDefaultAdditionalWords[ATB_WORD_COUNT] = { NULL, L"\xFF11", L"\xFF12", L"\xFF13", L"\xFF14", L"\xFF15" };
-#endif
 
 LPWSTR g_rcCredits[12];
 
@@ -105,7 +103,6 @@ PAL_ParseLine(
 			//
 			LPSTR end = line + strlen(line);
 			int index;
-			if (end > line && end[-1] == '\n') *(--end) = 0;
 			if (deltrail) while (end > line && iswspace(end[-1])) *(--end) = 0;
 
 			//
@@ -153,6 +150,7 @@ PAL_ReadOneLine(
 				}
 			}
 			if (tmp[n - 1] == '\n') tmp[n - 1] = 0;
+			if (tmp[n - 2] == '\r') tmp[n - 2] = 0;
 			return tmp;
 		}
 		else
@@ -164,6 +162,117 @@ PAL_ReadOneLine(
 	}
 	else
 		return NULL;
+}
+
+static void *
+PAL_ParseOneDescriptionLine(
+	char     *buffer,
+	void     *_head,
+	void     *_item
+	)
+{
+	struct _msg_entry
+	{
+		struct _msg_entry *next;
+		wchar_t *value;
+	};
+	struct _msg_list_entry
+	{
+		struct _msg_list_entry *next;
+		struct _msg_entry *value;
+		int index, count;
+	} *head = (struct _msg_list_entry *)_head, *item = (struct _msg_list_entry *)_item;
+	char *v;
+	int l, i = PAL_ParseLine(buffer, &v, &l, TRUE);
+	if (i > 0)
+	{
+		int len = PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, NULL, 0);
+		struct _msg_entry *e = (struct _msg_entry *)UTIL_malloc(sizeof(struct _msg_entry));
+		e->value = (wchar_t *)UTIL_malloc(len * sizeof(wchar_t)); e->next = NULL;
+		PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, e->value, len);
+
+		if (item && item->index != i)
+		{
+			if (head->next == NULL || head->next->index > i)
+			{
+				item = NULL;
+			}
+			else
+			{
+				if (item->index > i) item = head->next;
+				while (item->next && item->next->index < i) item = item->next;
+			}
+		}
+
+		if (item && item->index != i)
+		{
+			item->next = (struct _msg_list_entry *)UTIL_malloc(sizeof(struct _msg_list_entry));
+			item = item->next; item->next = NULL;
+			item->value = e; item->count = 1; item->index = i;
+		}
+		else if (!item)
+		{
+			item = (struct _msg_list_entry *)UTIL_malloc(sizeof(struct _msg_list_entry));
+			item->next = head->next; head->next = item; item->next = NULL;
+			item->value = e; item->count = 1; item->index = i;
+		}
+		else
+		{
+			struct _msg_entry *tmp = item->value;
+			while (tmp->next) tmp = tmp->next;
+			tmp->next = e; item->count++;
+		}
+
+		return item;
+	}
+	else
+		return _item;
+}
+
+static VOID
+PAL_ParseObjectDesc(
+	void     *_head
+	)
+{
+	struct _msg_entry
+	{
+		struct _msg_entry *next;
+		wchar_t *value;
+	};
+	struct _msg_list_entry
+	{
+		struct _msg_list_entry *next;
+		struct _msg_entry *value;
+		int index, count;
+	} *head = (struct _msg_list_entry *)_head, *item;
+	int count = 0;
+
+	for (item = head->next; item; count++)
+	{
+		struct _msg_list_entry *next = item->next;
+		struct _msg_entry *tmp = item->value;
+		if (item->index < MAX_OBJECTS)
+		{
+			int i = 0;
+			gpGlobals->rgObjectDesc[item->index] = (LPWSTR *)calloc(item->count + 1, sizeof(LPWSTR));
+			while (tmp)
+			{
+				struct _msg_entry *nxt = tmp->next;
+				gpGlobals->rgObjectDesc[item->index][i++] = tmp->value;
+				free(tmp); tmp = nxt;
+			}
+		}
+		else
+		{
+			while (tmp)
+			{
+				struct _msg_entry *nxt = tmp->next;
+				free(tmp->value); free(tmp); tmp = nxt;
+			}
+		}
+		free(item); item = next;
+	}
+	gpGlobals->rgObjectDesc[0] = (LPWSTR *)count;
 }
 
 static int
@@ -183,20 +292,21 @@ PAL_ReadMessageFile(
 		struct _msg_entry *value;
 		int index;
 		int count;
-	} *head = NULL, *item = NULL;
+	} *head = NULL, *item = NULL, dhead = { NULL }, *ditem = NULL;
 	struct _word_list_entry
 	{
 		struct _word_list_entry *next;
 		wchar_t *value;
 		int index;
-	} whead = { NULL, NULL }, *witem = NULL;
+	} whead = { NULL }, *witem = NULL;
 	enum _message_state
 	{
 		ST_OUTSIDE,
 		ST_DIALOG,
 		ST_WORD,
 		ST_CREDIT,
-		ST_LAYOUT
+		ST_LAYOUT,
+		ST_DESCRIPTION
 	} state = ST_OUTSIDE;
 	int idx_cnt = 0, msg_cnt = 0, word_cnt = 0, sid, eid = -1;
 
@@ -242,14 +352,18 @@ PAL_ReadMessageFile(
 						//
 						witem = &whead;
 					}
-					else if (strncmp(buffer, "[BEGIN CREDITS]", 15) == 0 && !witem)
+					else if (strncmp(buffer, "[BEGIN CREDITS]", 15) == 0)
 					{
 						state = ST_CREDIT;
 					}
-					else if (strncmp(buffer, "[BEGIN LAYOUT]", 14) == 0 && !witem)
+					else if (strncmp(buffer, "[BEGIN LAYOUT]", 14) == 0)
 					{
 						state = ST_LAYOUT;
 						gConfig.fUseCustomScreenLayout = TRUE;
+					}
+					else if (strncmp(buffer, "[BEGIN DESCRIPTION]", 19) == 0 && !ditem)
+					{
+						state = ST_DESCRIPTION;
 					}
 					else
 					{
@@ -317,6 +431,20 @@ PAL_ReadMessageFile(
 						witem->next = val; witem = witem->next;
 						if (word_cnt < i) word_cnt = i;
 					}
+				}
+				break;
+			case ST_DESCRIPTION:
+				//
+				// Check if to end description list
+				//
+				if (strncmp(buffer, "[END DESCRIPTION]", 17) == 0)
+				{
+					// End description list
+					state = ST_OUTSIDE;
+				}
+				else if (!gConfig.fIsWIN95)
+				{
+					item = PAL_ParseOneDescriptionLine(buffer, &dhead, item);
 				}
 				break;
 			case ST_CREDIT:
@@ -450,9 +578,7 @@ PAL_ReadMessageFile(
 		//
 		// Move values from linked list to array
 		//
-#ifndef PAL_CLASSIC
 		int i;
-#endif
 		if (word_cnt < MINIMAL_WORD_COUNT - 1) word_cnt = MINIMAL_WORD_COUNT - 1;
 		g_TextLib.nWords = (word_cnt += 1);
 		g_TextLib.lpWordBuf = (LPWSTR *)UTIL_calloc(word_cnt, sizeof(LPWSTR));
@@ -462,12 +588,15 @@ PAL_ReadMessageFile(
 			g_TextLib.lpWordBuf[witem->index] = witem->value;
 			free(witem); witem = temp;
 		}
-#ifndef PAL_CLASSIC
-		for (i = 1; i < ATB_WORD_COUNT; i++)
-			if (!g_TextLib.lpWordBuf[i + SYSMENU_LABEL_BATTLEMODE])
-				g_TextLib.lpWordBuf[i + SYSMENU_LABEL_BATTLEMODE] = gc_rgszDefaultAdditionalWords[i];
-#endif
+		if (!gConfig.fIsClassic)
+		{
+			for (i = 1; i < ATB_WORD_COUNT; i++)
+				if (!g_TextLib.lpWordBuf[i + SYSMENU_LABEL_BATTLEMODE])
+					g_TextLib.lpWordBuf[i + SYSMENU_LABEL_BATTLEMODE] = gc_rgszDefaultAdditionalWords[i];
+		}
 	}
+
+	if (dhead.next) PAL_ParseObjectDesc(&dhead);
 
 	fclose(fp);
 
@@ -681,9 +810,7 @@ PAL_InitText(
 
 	   g_TextLib.lpIndexBuf = NULL;
 
-#ifndef PAL_CLASSIC
-	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_BATTLEMODE, gc_rgszAdditionalWords[gConfig.iCodePage], ATB_WORD_COUNT * sizeof(LPCWSTR));
-#endif
+	   if (!gConfig.fIsClassic) memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_BATTLEMODE, gc_rgszAdditionalWords[gConfig.iCodePage], ATB_WORD_COUNT * sizeof(LPCWSTR));
    }
 
    g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
@@ -1185,13 +1312,11 @@ PAL_ShowDialogText(
       //
       // The text should be shown in a small window at the center of the screen
       //
-#ifndef PAL_CLASSIC
-      if (gpGlobals->fInBattle && g_Battle.BattleResult == kBattleResultOnGoing)
+      if (!gConfig.fIsClassic && gpGlobals->fInBattle && g_Battle.BattleResult == kBattleResultOnGoing)
       {
          PAL_BattleUIShowText(lpszText, 1400);
       }
       else
-#endif
       {
          PAL_POS    pos;
          LPBOX      lpBox;
@@ -1786,4 +1911,109 @@ PAL_GetInvalidChar(
    case CP_UTF_8:    return 0x3f;
    default:          return 0;
    }
+}
+
+INT
+PAL_WordMaxWidth(
+   INT            nFirstWord,
+   INT            nWordNum
+)
+/*++
+  Purpose:
+
+    Calculate the maximal text width of a specific range of words in number of full width characters.
+
+  Parameters:
+
+    [IN]  nFirstWord - First index of word.
+	[IN]  nWordNum - Number of words.
+
+  Return value:
+
+    Maximal text width.
+
+--*/
+{
+	int i, r = 0;
+	for (i = 0; i < nWordNum; i++)
+	{
+		LPCWSTR itemText = PAL_GetWord(nFirstWord + i);
+		int j = 0, l = wcslen(itemText), w = 0;
+		for (j = 0; j < l; j++)
+		{
+			w += PAL_CharWidth(itemText[j]);
+		}
+		w = (w + 8) >> 4;
+		if (r < w)
+		{
+			r = w;
+		}
+	}
+	return r;
+}
+
+INT
+PAL_WordWidth(
+   INT            nWordIndex
+)
+/*++
+  Purpose:
+
+    Calculate the text width of a specific word.
+
+  Parameters:
+
+	[IN]  nWordNum - Index of the word.
+
+  Return value:
+
+    Text width.
+
+--*/
+{
+	LPCWSTR itemText = PAL_GetWord(nWordIndex);
+	int i, l = wcslen(itemText), w = 0;
+	for (i = 0; i < l; i++)
+	{
+		w += PAL_CharWidth(itemText[i]);
+	}
+	return (w + 8) >> 4;
+}
+
+VOID
+PAL_LoadObjectDesc(
+	LPCSTR    lpszFileName
+	)
+{
+	char temp[MESSAGE_MAX_BUFFER_SIZE];
+	struct _msg_entry
+	{
+		struct _msg_entry *next;
+		wchar_t *value;
+	};
+	struct _msg_list_entry
+	{
+		struct _msg_list_entry *next;
+		struct _msg_entry *value;
+		int index, count;
+	} head = { NULL }, *item = NULL;
+	int count = 0;
+
+	FILE *fp = UTIL_OpenFileForMode(lpszFileName, "r");
+	if (!fp) return;
+
+	while (!feof(fp))
+	{
+		char *buffer;
+		if (buffer = PAL_ReadOneLine(temp, MESSAGE_MAX_BUFFER_SIZE, fp))
+		{
+			item = PAL_ParseOneDescriptionLine(buffer, &head, item);
+
+			if (buffer != temp) free(buffer);
+		}
+	}
+
+	PAL_ParseObjectDesc(&head);
+
+	fclose(fp);
 }

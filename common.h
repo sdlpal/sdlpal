@@ -22,7 +22,7 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
-#define PAL_CLASSIC        1
+//#define gConfig.fIsClassic        1
 
 #ifdef __cplusplus
 extern "C"
@@ -321,8 +321,10 @@ extern "C"
 typedef const BYTE *LPCBYTE;
 #endif
 
-#ifndef __WINRT__
-#define PAL_HAS_NATIVEMIDI  1
+#ifdef __WINRT__
+# define feof WRT_feof
+#else
+# define PAL_HAS_NATIVEMIDI  1
 #endif
 
 #else

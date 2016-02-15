@@ -20,11 +20,25 @@
 #      Non-zero for DOS-version (default), zero for WIN95-version.
 #DOS=1
 
+# Classic: Indicates whether to classic or revised version of battle system.
+#          Default to the classic version.
+#Classic=1
+
 # UseEmbeddedFonts: Indicates whether to use DOS-version's embedded fonts.
 #                   Non-zero for using DOS-version's embedded fonts (default),
 #                   zero for using SDLPAL's internal fonts.
 # Note that this value is ignored when the DOS option is zero.
 #UseEmbeddedFonts=1
+
+# DescriptionFileName: Indicates where to load external object descriptions
+#                      for DOS-version. For default, no external object
+#                      descriptions are provided. This file will have a format
+#                      like 'index=str' for each line, where 'index' is the ID
+#                      for an object, and 'str' is one line description text.
+#                      For descriptions more than one line, use same 'index' and
+#                      different 'str's in other lines.
+# Note that this value is ignored when the DOS option is zero.
+#DescriptionFileName=desc.dat
 
 # CD: Indicates which type of CD audio source to use. Valid types include 'RAW',
 #     'OGG' and 'MP3'. 'RAW' means use the SDL 1.2's CDAudio API (default when

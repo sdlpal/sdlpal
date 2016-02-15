@@ -81,17 +81,14 @@ The compiled bundle should work as a "universal" binary which works on both
 Intel and PowerPC.
 
 
-CLASSIC BUILD
-=============
+REVISED BATTLE SYSTEM
+=====================
 
-By default, SDLPAL uses a revised battle system which is more exciting yet
-somewhat harder than the original game. If you prefer the traditional
-turn-based battle system, uncomment the following line:
-
-//#define PAL_CLASSIC           1
-
-in the file common.h and recompile. This will build a "classic" build which is
-100% the same as the original game.
+By default, SDLPAL uses the turn-based battle system which is 100% compatible
+to the original game. But SDLPAL also provides a revised battle system which
+is more exciting yet somewhat harder than the original game. If you prefer
+this version of battle system, please refer to the secion 'CONFIGURE THE GAME'
+for how to enable it.
 
 
 RUNNING THE GAME

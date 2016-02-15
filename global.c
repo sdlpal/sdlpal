@@ -70,6 +70,7 @@ PAL_InitGlobals(
 {
    FILE     *fp;
    CODEPAGE  iCodePage = CP_BIG5;		// Default for BIG5
+   DWORD     dwIsClassic = 1;
    DWORD     dwExtraMagicDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwExtraItemDescLines = 0;	// Default for PAL DOS/WIN95
    DWORD     dwScreenWidth = 0;
@@ -203,6 +204,10 @@ PAL_InitGlobals(
 				   {
 					   sscanf(ptr, "%u", &dwKeepAspectRatio);
 				   }
+				   else if (SDL_strcasecmp(p, "CLASSIC") == 0)
+				   {
+					   sscanf(ptr, "%u", &dwIsClassic);
+				   }
 				   else if (SDL_strcasecmp(p, "AUDIOBUFFERSIZE") == 0)
 				   {
 					   sscanf(ptr, "%d", &iAudioBufferSize);
@@ -232,6 +237,13 @@ PAL_InitGlobals(
 					   if (n > 0 && ptr[n - 1] == '\n') ptr[--n] = 0;
 					   if (n > 0 && ptr[n - 1] == '\r') ptr[--n] = 0;
 					   if (n > 0) gConfig.pszMsgName = strdup(ptr);
+				   }
+				   else if (SDL_strcasecmp(p, "DESCRIPTIONFILENAME") == 0)
+				   {
+					   int n = strlen(ptr);
+					   if (n > 0 && ptr[n - 1] == '\n') ptr[--n] = 0;
+					   if (n > 0 && ptr[n - 1] == '\r') ptr[--n] = 0;
+					   if (n > 0) gConfig.pszDescFile = strdup(ptr);
 				   }
 #if USE_RIX_EXTRA_INIT
 				   else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)
@@ -320,6 +332,7 @@ PAL_InitGlobals(
    //
    // Set configurable global options
    //
+   gConfig.fIsClassic = dwIsClassic ? TRUE : FALSE;
    gConfig.fIsWIN95 = dwIsDOS ? FALSE : TRUE;
    gConfig.fUseEmbeddedFonts = dwIsDOS && dwUseEmbeddedFonts ? TRUE : FALSE;
    gConfig.fUseSurroundOPL = dwUseStereo && dwUseSurroundOPL ? TRUE : FALSE;
@@ -379,7 +392,7 @@ PAL_InitGlobals(
    gpGlobals->f.fpRGM = UTIL_OpenRequiredFile("rgm.mkf");
    gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
 
-   gpGlobals->lpObjectDesc = gConfig.fIsWIN95 ? NULL : PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
+   if (!gConfig.fIsWIN95 && !gConfig.pszMsgName && gConfig.pszDescFile) PAL_LoadObjectDesc(gConfig.pszDescFile);
    gpGlobals->bCurrentSaveSlot = 1;
 
    return 0;
@@ -432,7 +445,18 @@ PAL_FreeGlobals(
    // Free the object description data
    //
    if (!gConfig.fIsWIN95)
-      PAL_FreeObjectDesc(gpGlobals->lpObjectDesc);
+   {
+      int i;
+      for (i = 1; i < MAX_OBJECTS; i++)
+	  {
+         if (gpGlobals->rgObjectDesc[i])
+         {
+            LPWSTR *p = gpGlobals->rgObjectDesc[i];
+            while (*p) free(*p++);
+            free(gpGlobals->rgObjectDesc[i]);
+         }
+      }
+   }
 
 #if USE_RIX_EXTRA_INIT
    free(gConfig.pExtraFMRegs);
@@ -632,9 +656,7 @@ PAL_LoadDefaultGame(
    gpGlobals->viewport = PAL_XY(0, 0);
    gpGlobals->wLayer = 0;
    gpGlobals->wChaseRange = 1;
-#ifndef PAL_CLASSIC
    gpGlobals->bBattleSpeed = 2;
-#endif
 
    memset(gpGlobals->rgInventory, 0, sizeof(gpGlobals->rgInventory));
    memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
@@ -769,13 +791,7 @@ PAL_LoadGame_Common(
 	gpGlobals->wChasespeedChangeCycles = s->wChasespeedChangeCycles;
 	gpGlobals->nFollower = s->nFollower;
 	gpGlobals->dwCash = s->dwCash;
-#ifndef PAL_CLASSIC
-	gpGlobals->bBattleSpeed = s->wBattleSpeed;
-	if (gpGlobals->bBattleSpeed > 5 || gpGlobals->bBattleSpeed == 0)
-	{
-		gpGlobals->bBattleSpeed = 2;
-	}
-#endif
+	gpGlobals->bBattleSpeed = (!gConfig.fIsClassic && s->wBattleSpeed > 0 && s->wBattleSpeed <= 5) ? s->wBattleSpeed : 2;
 
 	memcpy(gpGlobals->rgParty, s->rgParty, sizeof(gpGlobals->rgParty));
 	memcpy(gpGlobals->rgTrail, s->rgTrail, sizeof(gpGlobals->rgTrail));
@@ -965,11 +981,7 @@ PAL_SaveGame_Common(
 	s->wChasespeedChangeCycles = gpGlobals->wChasespeedChangeCycles;
 	s->nFollower = gpGlobals->nFollower;
 	s->dwCash = gpGlobals->dwCash;
-#ifndef PAL_CLASSIC
-	s->wBattleSpeed = gpGlobals->bBattleSpeed;
-#else
-	s->wBattleSpeed = 2;
-#endif
+	s->wBattleSpeed = gConfig.fIsClassic ? 2 : gpGlobals->bBattleSpeed;
 
 	memcpy(s->rgParty, gpGlobals->rgParty, sizeof(gpGlobals->rgParty));
 	memcpy(s->rgTrail, gpGlobals->rgTrail, sizeof(gpGlobals->rgTrail));
@@ -1954,11 +1966,7 @@ PAL_GetPlayerDexterity(
 
    w = gpGlobals->g.PlayerRoles.rgwDexterity[wPlayerRole];
 
-#ifdef PAL_CLASSIC
-   for (i = 0; i <= MAX_PLAYER_EQUIPMENTS; i++)
-#else
-   for (i = 0; i <= MAX_PLAYER_EQUIPMENTS - 1; i++)
-#endif
+   for (i = 0; i <= MAX_PLAYER_EQUIPMENTS - (!gConfig.fIsClassic); i++)
    {
       w += gpGlobals->rgEquipmentEffect[i].rgwDexterity[wPlayerRole];
    }
@@ -2296,8 +2304,7 @@ PAL_SetPlayerStatus(
 
 --*/
 {
-#ifndef PAL_CLASSIC
-   if (wStatusID == kStatusSlow &&
+   if (!gConfig.fIsClassic && wStatusID == kStatusSlow &&
       gpGlobals->rgPlayerStatus[wPlayerRole][kStatusHaste] > 0)
    {
       //
@@ -2307,7 +2314,7 @@ PAL_SetPlayerStatus(
       return;
    }
 
-   if (wStatusID == kStatusHaste &&
+   if (!gConfig.fIsClassic && wStatusID == kStatusHaste &&
       gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSlow] > 0)
    {
       //
@@ -2316,18 +2323,13 @@ PAL_SetPlayerStatus(
       PAL_RemovePlayerStatus(wPlayerRole, kStatusSlow);
       return;
    }
-#endif
 
    switch (wStatusID)
    {
    case kStatusConfused:
    case kStatusSleep:
    case kStatusSilence:
-#ifdef PAL_CLASSIC
-   case kStatusParalyzed:
-#else
-   case kStatusSlow:
-#endif
+   case kStatusParalyzedOrSlow:
       //
       // for "bad" statuses, don't set the status when we already have it
       //

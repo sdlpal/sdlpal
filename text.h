@@ -130,4 +130,20 @@ PAL_GetInvalidChar(
    CODEPAGE      iCodePage
 );
 
+INT
+PAL_WordMaxWidth(
+   INT            nFirstWord,
+   INT            nWordNum
+);
+
+INT
+PAL_WordWidth(
+   INT            nWordIndex
+);
+
+VOID
+PAL_LoadObjectDesc(
+   LPCSTR    lpszFileName
+);
+
 #endif

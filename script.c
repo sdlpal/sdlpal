@@ -538,11 +538,9 @@ PAL_AdditionalCredits(
 
    LPCWSTR rgszStrings[] = {
       L"  SDLPAL (http://sdlpal.codeplex.com/)",
-#ifdef PAL_CLASSIC
-	  L"%ls(" WIDETEXT(__DATE__) L")",
-#else
+      gConfig.fIsClassic ?
+	  L"%ls(" WIDETEXT(__DATE__) L")" :
 	  L"                        (" WIDETEXT(__DATE__) L")",
-#endif
       L" ",
 	  L"    (c) 2009-2011, Wei Mingzhi",
 	  L"        <whistler_wmz@users.sf.net>.",
@@ -567,7 +565,7 @@ PAL_AdditionalCredits(
 	  if (wcsncmp(rgszStrings[i], L"%ls", 3) == 0)
 	  {
 		  // We've limited the length of g_rcCredits[i] in text.c, so no need to double check here.
-		  wcscpy(buffer, gConfig.pszMsgName ? g_rcCredits[i] : rgszcps[i][gpGlobals->iCodePage]);
+		  wcscpy(buffer, gConfig.pszMsgName ? g_rcCredits[i] : rgszcps[i][gConfig.iCodePage]);
 		  wcscat(buffer, rgszStrings[i] + 3);
 	  }
 	  else
@@ -1352,11 +1350,7 @@ PAL_InterpretInstruction(
       //
       w = g_Battle.rgEnemy[wEventObjectID].wObjectID;
 
-#ifdef PAL_CLASSIC
-      i = 9;
-#else
-      i = ((pScript->rgwOperand[0] == kStatusSlow) ? 14 : 9);
-#endif
+      i = (!gConfig.fIsClassic && (pScript->rgwOperand[0] == kStatusSlow) ? 14 : 9);
 
       if (RandomLong(0, i) >= gpGlobals->g.rgObject[w].enemy.wResistanceToSorcery &&
          g_Battle.rgEnemy[wEventObjectID].rgwStatus[pScript->rgwOperand[0]] == 0)
@@ -1430,19 +1424,11 @@ PAL_InterpretInstruction(
       {
          WCHAR s[256];
 
-#ifdef PAL_CLASSIC
-         i = RandomLong(1, gpGlobals->wCollectValue);
-         if (i > 9)
+         i = RandomLong(1, gConfig.fIsClassic ? gpGlobals->wCollectValue : 9);
+         if (i > (gConfig.fIsClassic ? 9 : gpGlobals->wCollectValue))
          {
-            i = 9;
+            i = (gConfig.fIsClassic ? 9 : gpGlobals->wCollectValue);
          }
-#else
-         i = RandomLong(1, 9);
-         if (i > gpGlobals->wCollectValue)
-         {
-            i = gpGlobals->wCollectValue;
-         }
-#endif
 
          gpGlobals->wCollectValue -= i;
          i--;

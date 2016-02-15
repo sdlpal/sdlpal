@@ -236,35 +236,14 @@ PAL_ItemSelectMenuUpdate(
    //
    if (!gConfig.fIsWIN95)
    {
-      if (!g_fNoDesc && gpGlobals->lpObjectDesc != NULL)
+      if (!g_fNoDesc && gpGlobals->rgObjectDesc[wObject] != NULL)
 	  {
-         WCHAR szDesc[512], *next;
-         const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, wObject);
-
-         if (d != NULL)
+         int y = 150 - gConfig.dwExtraItemDescLines * 16;
+         LPWSTR *p = gpGlobals->rgObjectDesc[wObject];
+         while (*p)
          {
-            k = 150;
-            wcscpy(szDesc, d);
-            d = szDesc;
-
-            while (TRUE)
-            {
-               next = wcschr(d, '*');
-               if (next != NULL)
-               {
-                  *next++ = '\0';
-               }
-
-               PAL_DrawText(d, PAL_XY(75, k), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
-               k += 16;
-
-               if (next == NULL)
-               {
-                  break;
-               }
-
-               d = next;
-            }
+            PAL_DrawText(*p++, PAL_XY(75, y), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
+            y += 16;
          }
       }
    }

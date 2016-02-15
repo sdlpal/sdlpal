@@ -97,11 +97,7 @@ extern "C"
 typedef enum tagSTATUS
 {
    kStatusConfused = 0,  // attack friends randomly
-#ifdef PAL_CLASSIC
-   kStatusParalyzed,     // paralyzed
-#else
-   kStatusSlow,          // slower
-#endif
+   kStatusParalyzedOrSlow,     // paralyzed or slower
    kStatusSleep,         // not allowed to move
    kStatusSilence,       // cannot use magic
    kStatusPuppet,        // for dead players only, continue attacking
@@ -112,9 +108,8 @@ typedef enum tagSTATUS
    kStatusAll
 } STATUS;
 
-#ifndef PAL_CLASSIC
-#define kStatusParalyzed kStatusSleep
-#endif
+#define kStatusSlow  kStatusParalyzedOrSlow
+#define kStatusParalyzed (gConfig.fIsClassic ? kStatusParalyzedOrSlow : kStatusSleep)
 
 // body parts of equipments
 typedef enum tagBODYPART
@@ -580,9 +575,7 @@ typedef struct tagGLOBALVARS
    BOOL             fNeedToFadeIn;       // TRUE if need to fade in when drawing scene
    BOOL             fInBattle;           // TRUE if in battle
    BOOL             fAutoBattle;         // TRUE if auto-battle
-#ifndef PAL_CLASSIC
    BYTE             bBattleSpeed;        // Battle Speed (1 = Fastest, 5 = Slowest)
-#endif
    WORD             wLastUnequippedItem; // last unequipped item
 
    PLAYERROLES      rgEquipmentEffect[MAX_PLAYER_EQUIPMENTS + 1]; // equipment effects
@@ -613,7 +606,7 @@ typedef struct tagGLOBALVARS
    ALLEXPERIENCE    Exp;                 // experience status
    POISONSTATUS     rgPoisonStatus[MAX_POISONS][MAX_PLAYABLE_PLAYER_ROLES]; // poison status
    INVENTORY        rgInventory[MAX_INVENTORY];  // inventory status
-   LPOBJECTDESC     lpObjectDesc;
+   LPWSTR          *rgObjectDesc[MAX_OBJECTS];
    DWORD            dwFrameNum;
 } GLOBALVARS, *LPGLOBALVARS;
 
@@ -666,6 +659,7 @@ typedef struct tagCONFIGURATION
 
 	/* Configurable options */
 	char            *pszMsgName;
+	char            *pszDescFile;
 #if USE_RIX_EXTRA_INIT
 	uint32_t        *pExtraFMRegs;
 	uint8_t         *pExtraFMVals;
@@ -697,6 +691,7 @@ typedef struct tagCONFIGURATION
 #endif
 	BOOL             fEnableJoyStick;
 	BOOL             fUseCustomScreenLayout;
+	BOOL             fIsClassic;
 } CONFIGURATION, *LPCONFIGURATION;
 
 extern CONFIGURATION gConfig;

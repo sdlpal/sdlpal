@@ -32,8 +32,6 @@ PAL_BattleSelectAutoTarget(
    VOID
 );
 
-#ifndef PAL_CLASSIC
-
 VOID
 PAL_UpdateTimeChargingUnit(
    VOID
@@ -43,8 +41,6 @@ FLOAT
 PAL_GetTimeChargingSpeed(
    WORD           wDexterity
 );
-
-#endif
 
 VOID
 PAL_BattleUpdateFighters(

@@ -225,33 +225,6 @@ PAL_MenuTextMaxWidth(
    INT            nMenuItem
 );
 
-INT
-PAL_WordMaxWidth(
-   INT            nFirstWord,
-   INT            nWordNum
-);
-
-INT
-PAL_WordWidth(
-   INT            nWordIndex
-);
-
-LPOBJECTDESC
-PAL_LoadObjectDesc(
-   LPCSTR          lpszFileName
-);
-
-VOID
-PAL_FreeObjectDesc(
-   LPOBJECTDESC    lpObjectDesc
-);
-
-LPCWSTR
-PAL_GetObjectDesc(
-   LPOBJECTDESC   lpObjectDesc,
-   WORD           wObjectID
-);
-
 extern LPSPRITE gpSpriteUI;
 
 #ifdef __cplusplus

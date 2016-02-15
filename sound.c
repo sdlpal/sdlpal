@@ -37,9 +37,7 @@ static BOOL  gSndOpened = FALSE;
 BOOL         g_fNoSound = FALSE;
 BOOL         g_fNoMusic = FALSE;
 
-#ifdef PAL_CLASSIC
 int          g_iCurrChannel = 0;
-#endif
 
 #define PAL_CDTRACK_BASE    10000
 
