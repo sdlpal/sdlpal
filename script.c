@@ -567,7 +567,7 @@ PAL_AdditionalCredits(
 	  if (wcsncmp(rgszStrings[i], L"%ls", 3) == 0)
 	  {
 		  // We've limited the length of g_rcCredits[i] in text.c, so no need to double check here.
-		  wcscpy(buffer, gConfig.pszMsgName ? g_rcCredits[i] : rgszcps[i][gpGlobals->iCodePage]);
+		  wcscpy(buffer, gConfig.pszMsgName ? g_rcCredits[i] : rgszcps[i][gConfig.iCodePage]);
 		  wcscat(buffer, rgszStrings[i] + 3);
 	  }
 	  else
