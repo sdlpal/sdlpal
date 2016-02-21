@@ -5297,7 +5297,7 @@ int PAL_OverlayBMPLength()
 	return 1024138;	// Fixed size here
 }
 
-const void * PAL_LoadOverlayBMP(int *length)
+const void * PAL_LoadOverlayBMP()
 {
 	void *bmp = malloc(PAL_OverlayBMPLength());
 	uint8_t *ptr = (uint8_t *)bmp + sizeof(bmp_header);

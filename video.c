@@ -20,6 +20,9 @@
 //
 
 #include "main.h"
+#ifdef __EMSCRIPTEN__
+#include <sys/time.h>
+#endif
 
 // Screen buffer
 SDL_Surface              *gpScreen           = NULL;

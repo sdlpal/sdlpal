@@ -29,6 +29,8 @@ BundleArtifacts/
 *.html
 *.mem
 *.js
+*.wasm
+*.wast
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -234,8 +236,8 @@ android/so
 *.keystore
 resources
 
-emscripten
 sdlpal
+data
 
 xcshareddata
 xcuserdata
