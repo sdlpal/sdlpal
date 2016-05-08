@@ -3442,10 +3442,13 @@ begin:
       //
       // jump to the specified address by the specified rate
       //
-      if (RandomLong(1, 100) >= pScript->rgwOperand[0] && pScript->rgwOperand[1] != 0)
+      if (RandomLong(1, 100) >= pScript->rgwOperand[0])
       {
-         wScriptEntry = pScript->rgwOperand[1];
-         goto begin;
+         if (pScript->rgwOperand[1] != 0)
+		 {
+            wScriptEntry = pScript->rgwOperand[1];
+            goto begin;
+		 }
       }
       else
       {
