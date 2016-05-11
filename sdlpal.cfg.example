@@ -42,9 +42,7 @@
 
 # OPL: Indicates which type of opl emulator to use. Valid types include 'DOSBOX'
 #      (default) and 'MAME'.  'DOSBOX' means use the opl emulator from dosbox
-#      project, while 'MAME' means use the opl emulator from M.A.M.E project (due
-#      to license issues, this option currently is only for testing purpose and can
-#      only be enabled when complied with a special macro definition.)
+#      project, while 'MAME' means use the opl emulator from M.A.M.E project.
 #OPL=DOSBOX
 
 # Stereo: Indicates whether to use mono audio or stereo audio. Non-zero means to use

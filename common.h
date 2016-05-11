@@ -289,7 +289,7 @@ extern "C"
 
 #define PAL_HAS_MP3           1   /* Try always enable MP3. If compilation/run failed, please change this value to 0. */
 #define PAL_HAS_OGG           1   /* Try always enable OGG. If compilation/run failed, please change this value to 0. */
-#define PAL_HAS_MAME          1   /* Should not be enabled for now, until M.A.M.E goes open source licenses */
+#define PAL_HAS_MAME          1   /* Use M.A.M.E */
 
 #ifndef SDL_INIT_CDROM
 #define SDL_INIT_CDROM        0	  /* Compatibility with SDL 1.2 */
