@@ -191,6 +191,7 @@ PAL_Shutdown(
 #elif defined(__WINPHONE__)
 	longjmp(g_exit_jmp_env, LONGJMP_EXIT_CODE);
 #endif
+	UTIL_Platform_Quit();
 }
 
 VOID
@@ -540,6 +541,14 @@ main(
 #if defined(_WIN32) && SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
    putenv("SDL_VIDEODRIVER=directx");
 #endif
+
+   PAL_LoadConfig(TRUE);
+
+   //
+   // Platform-specific initialization
+   //
+   if (UTIL_Platform_Init(argc, argv) != 0)
+	   return -1;
 
    //
    // Initialize everything

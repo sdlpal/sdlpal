@@ -48,6 +48,301 @@ CONFIGURATION gConfig;
       DO_BYTESWAP(buf, size);                                    \
    } while(0)
 
+VOID
+PAL_LoadConfig(
+   BOOL fFromFile
+)
+{
+	FILE     *fp;
+	CODEPAGE  iCodePage = CP_BIG5;		// Default for BIG5
+	DWORD     dwScreenWidth = 0;
+	DWORD     dwScreenHeight = 0;
+	DWORD     dwFullScreen = FALSE;
+	DWORD     dwKeepAspectRatio = TRUE;
+	DWORD     dwIsDOS = 1;				// Default for DOS
+	DWORD     dwUseEmbeddedFonts = 1;	// Default for using embedded fonts in DOS version
+	DWORD     dwUseSurroundOPL = 1;		// Default for using surround opl
+	DWORD     dwUseStereo = 1;			// Default for stereo audio
+#if PAL_HAS_TOUCH
+	DWORD     dwUseTouchOverlay = UTIL_TouchEnabled();
+#endif
+	float     flSurroundOPLOffset = 384.0f;// Default for 384.0
+	INT       iSampleRate = 44100;		// Default for 44100 Hz
+	INT       iOPLSampleRate = 49716;	// Default for 49716 Hz
+	INT       iResampleQuality = RESAMPLER_QUALITY_MAX;	// Default to maximum quality
+	INT       iAudioBufferSize = PAL_AUDIO_DEFAULT_BUFFER_SIZE;
+	INT       iVolume = 100;				// Default for 100%
+	MUSICTYPE eMusicType = MUSIC_RIX;
+	MUSICTYPE eCDType = MUSIC_OGG;
+	OPLTYPE   eOPLType = OPL_DOSBOX;
+	SCREENLAYOUT screen_layout = {
+		// Equipment Screen
+		PAL_XY(8, 8), PAL_XY(2, 95), PAL_XY(5, 70), PAL_XY(51, 57),
+		{ PAL_XY(92, 11), PAL_XY(92, 33), PAL_XY(92, 55), PAL_XY(92, 77), PAL_XY(92, 99), PAL_XY(92, 121) },
+		{ PAL_XY(130, 11), PAL_XY(130, 33), PAL_XY(130, 55), PAL_XY(130, 77), PAL_XY(130, 99), PAL_XY(130, 121) },
+		{ PAL_XY(226, 10), PAL_XY(226, 32), PAL_XY(226, 54), PAL_XY(226, 76), PAL_XY(226, 98) },
+		{ PAL_XY(260, 14), PAL_XY(260, 36), PAL_XY(260, 58), PAL_XY(260, 80), PAL_XY(260, 102) },
+
+		// Status Screen
+		PAL_XY(110, 8), PAL_XY(110, 30), PAL_XY(6, 6),  PAL_XY(6, 32),  PAL_XY(6, 54),  PAL_XY(6, 76),
+		{ PAL_XY(6, 98),   PAL_XY(6, 118),  PAL_XY(6, 138),  PAL_XY(6, 158),  PAL_XY(6, 178) },
+		PAL_XY(58, 6), PAL_XY(58, 15), PAL_XY(0, 0), PAL_XY(54, 35), PAL_XY(42, 56),
+		PAL_XY(63, 61), PAL_XY(65, 58), PAL_XY(42, 78), PAL_XY(63, 83), PAL_XY(65, 80),
+		{ PAL_XY(42, 102), PAL_XY(42, 122), PAL_XY(42, 142), PAL_XY(42, 162), PAL_XY(42, 182) },
+		{ PAL_XY(189, -1), PAL_XY(247, 39), PAL_XY(251, 101), PAL_XY(201, 133), PAL_XY(141, 141), PAL_XY(81, 125) },
+		{ PAL_XY(195, 38), PAL_XY(253, 78), PAL_XY(257, 140), PAL_XY(207, 172), PAL_XY(147, 180), PAL_XY(87, 164) },
+		{ PAL_XY(185, 58), PAL_XY(185, 76), PAL_XY(185, 94), PAL_XY(185, 112), PAL_XY(185, 130), PAL_XY(185, 148), PAL_XY(185, 166), PAL_XY(185, 184), PAL_XY(185, 184), PAL_XY(185, 184) },
+
+		// Extra Lines
+		PAL_XY(0, 0), PAL_XY(0, 0)
+	};
+
+	if (fFromFile && (fp = fopen(va("%ssdlpal.cfg", PAL_SAVE_PREFIX), "r")))
+	{
+		PAL_LARGE char buf[512];
+
+		//
+		// Load the configuration data
+		//
+		while (fgets(buf, 512, fp) != NULL)
+		{
+			char *p = buf;
+
+			//
+			// Skip leading spaces
+			//
+			while (*p && isspace(*p)) p++;
+
+			//
+			// Skip comments
+			//
+			if (*p && *p != '#')
+			{
+				char *ptr;
+				if (ptr = strchr(p, '='))
+				{
+					char *end = ptr - 1;
+					*ptr++ = 0;
+
+					//
+					// Skip tailing & leading spaces
+					//
+					while (isspace(*end) && end >= p) *end-- = 0;
+
+					if (SDL_strcasecmp(p, "CODEPAGE") == 0)
+					{
+						sscanf(ptr, "%d", &iCodePage);
+						if (iCodePage < 0) iCodePage = 0;
+						if (iCodePage >= CP_MAX) iCodePage = CP_MAX - 1;
+					}
+					else if (SDL_strcasecmp(p, "DOS") == 0)
+					{
+						sscanf(ptr, "%u", &dwIsDOS);
+					}
+					else if (SDL_strcasecmp(p, "USEEMBEDDEDFONTS") == 0)
+					{
+						sscanf(ptr, "%u", &dwUseEmbeddedFonts);
+					}
+					else if (SDL_strcasecmp(p, "USESURROUNDOPL") == 0)
+					{
+						sscanf(ptr, "%u", &dwUseSurroundOPL);
+					}
+					else if (SDL_strcasecmp(p, "STEREO") == 0)
+					{
+						sscanf(ptr, "%u", &dwUseStereo);
+					}
+					else if (SDL_strcasecmp(p, "SAMPLERATE") == 0)
+					{
+						sscanf(ptr, "%d", &iSampleRate);
+						if (iSampleRate > PAL_MAX_SAMPLERATE) iSampleRate = PAL_MAX_SAMPLERATE;
+					}
+					else if (SDL_strcasecmp(p, "OPLSAMPLERATE") == 0)
+					{
+						sscanf(ptr, "%d", &iOPLSampleRate);
+					}
+					else if (SDL_strcasecmp(p, "RESAMPLEQUALITY") == 0)
+					{
+						sscanf(ptr, "%d", &iResampleQuality);
+					}
+					else if (SDL_strcasecmp(p, "SURROUNDOPLOFFSET") == 0)
+					{
+						sscanf(ptr, "%f", &flSurroundOPLOffset);
+					}
+					else if (SDL_strcasecmp(p, "WINDOWWIDTH") == 0)
+					{
+						sscanf(ptr, "%u", &dwScreenWidth);
+					}
+					else if (SDL_strcasecmp(p, "WINDOWHEIGHT") == 0)
+					{
+						sscanf(ptr, "%u", &dwScreenHeight);
+					}
+					else if (SDL_strcasecmp(p, "FULLSCREEN") == 0)
+					{
+						sscanf(ptr, "%u", &dwFullScreen);
+					}
+					else if (SDL_strcasecmp(p, "KEEPASPECTRATIO") == 0)
+					{
+						sscanf(ptr, "%u", &dwKeepAspectRatio);
+					}
+#if PAL_HAS_TOUCH
+					else if (SDL_strcasecmp(p, "USETOUCHOVERLAY") == 0)
+					{
+						sscanf(ptr, "%d", &dwUseTouchOverlay);
+					}
+#endif
+					else if (SDL_strcasecmp(p, "AUDIOBUFFERSIZE") == 0)
+					{
+						sscanf(ptr, "%d", &iAudioBufferSize);
+						if (iAudioBufferSize > 32768)
+							iAudioBufferSize = 32768;
+						else if (iAudioBufferSize < 2)
+							iAudioBufferSize = 2;
+						if ((iAudioBufferSize & (iAudioBufferSize - 1)) != 0)
+						{
+							/* Make sure iAudioBufferSize is power of 2 */
+							int n = 0;
+							while (iAudioBufferSize) { iAudioBufferSize >>= 1; n++; }
+							iAudioBufferSize = 1 << (n - 1);
+						}
+					}
+					else if (SDL_strcasecmp(p, "VOLUME") == 0)
+					{
+						sscanf(ptr, "%d", &iVolume);
+						if (iVolume > 100)
+							iVolume = 100;
+						else if (iVolume < 0)
+							iVolume = 0;
+					}
+					else if (SDL_strcasecmp(p, "MESSAGEFILENAME") == 0)
+					{
+						int n = strlen(ptr);
+						if (n > 0 && ptr[n - 1] == '\n') ptr[--n] = 0;
+						if (n > 0 && ptr[n - 1] == '\r') ptr[--n] = 0;
+						if (n > 0) gConfig.pszMsgName = strdup(ptr);
+					}
+#if USE_RIX_EXTRA_INIT
+					else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)
+					{
+						int n = 1;
+						char *p;
+						for (p = ptr; *p < *end; p++)
+						{
+							if (*p == ',')
+								n++;
+						}
+						n &= ~0x1;
+
+						if (n > 0)
+						{
+							uint32_t *regs = malloc(sizeof(uint32_t) * (n >> 1));
+							uint8_t *vals = malloc(sizeof(uint8_t) * (n >> 1));
+							uint32_t d, i, v = 1;
+							if (regs && vals)
+							{
+								for (p = ptr, i = 0; *p < *end; p++, i++)
+								{
+									if (sscanf(p, "%u", &regs[i]) == 0) { v = 0; break; }
+									while (*p < *end && *p != ',') p++; p++;
+									if (sscanf(p, "%u", &d) == 0) { v = 0; break; }
+									while (*p < *end && *p != ',') p++;
+									vals[i] = (uint8_t)d;
+								}
+								if (v)
+								{
+									gConfig.pExtraFMRegs = regs;
+									gConfig.pExtraFMVals = vals;
+									gConfig.dwExtraLength = n >> 1;
+								}
+								else
+								{
+									free(regs);
+									free(vals);
+								}
+							}
+						}
+					}
+#endif
+					else if (SDL_strcasecmp(p, "CD") == 0)
+					{
+						char cd_type[32];
+						sscanf(ptr, "%31s", cd_type);
+						if (PAL_HAS_MP3 && SDL_strcasecmp(cd_type, "MP3") == 0)
+							eCDType = MUSIC_MP3;
+						else if (PAL_HAS_OGG && SDL_strcasecmp(cd_type, "OGG") == 0)
+							eCDType = MUSIC_OGG;
+						else if (PAL_HAS_SDLCD && SDL_strcasecmp(cd_type, "RAW") == 0)
+							eCDType = MUSIC_SDLCD;
+					}
+					else if (SDL_strcasecmp(p, "MUSIC") == 0)
+					{
+						char music_type[32];
+						sscanf(ptr, "%31s", music_type);
+						if (PAL_HAS_NATIVEMIDI && SDL_strcasecmp(music_type, "MIDI") == 0)
+							eMusicType = MUSIC_MIDI;
+						else if (PAL_HAS_MP3 && SDL_strcasecmp(music_type, "MP3") == 0)
+							eMusicType = MUSIC_MP3;
+						else if (PAL_HAS_OGG && SDL_strcasecmp(music_type, "OGG") == 0)
+							eMusicType = MUSIC_OGG;
+						else if (SDL_strcasecmp(music_type, "RIX") == 0)
+							eMusicType = MUSIC_RIX;
+					}
+					else if (SDL_strcasecmp(p, "OPL") == 0)
+					{
+						char opl_type[32];
+						sscanf(ptr, "%31s", opl_type);
+						if (SDL_strcasecmp(opl_type, "DOSBOX") == 0)
+							eOPLType = OPL_DOSBOX;
+						else if (SDL_strcasecmp(opl_type, "DOSBOXOLD") == 0)
+							eOPLType = OPL_DOSBOX_OLD;
+						else if (PAL_HAS_MAME && SDL_strcasecmp(opl_type, "MAME") == 0)
+							eOPLType = OPL_MAME;
+					}
+				}
+			}
+		}
+
+		UTIL_CloseFile(fp);
+	}
+
+	//
+	// Set configurable global options
+	//
+	gConfig.fIsWIN95 = dwIsDOS ? FALSE : TRUE;
+	gConfig.fUseEmbeddedFonts = dwIsDOS && dwUseEmbeddedFonts ? TRUE : FALSE;
+	gConfig.fUseSurroundOPL = dwUseStereo && dwUseSurroundOPL ? TRUE : FALSE;
+	gConfig.iAudioChannels = dwUseStereo ? 2 : 1;
+#if PAL_HAS_TOUCH
+	gConfig.fUseTouchOverlay = dwUseTouchOverlay ? TRUE : FALSE;
+#endif
+	gConfig.iSampleRate = iSampleRate;
+	gConfig.iOPLSampleRate = iOPLSampleRate;
+	gConfig.iResampleQuality = iResampleQuality;
+	gConfig.dSurroundOPLOffset = flSurroundOPLOffset;
+	gConfig.eMusicType = eMusicType;
+	gConfig.eCDType = eCDType;
+	gConfig.eOPLType = eOPLType;
+	gConfig.iCodePage = iCodePage;
+	gConfig.dwWordLength = 10;	// This is the default value for Chinese version
+	gConfig.wAudioBufferSize = (WORD)iAudioBufferSize;
+	gConfig.iVolume = SDL_MIX_MAXVOLUME * iVolume / 100;
+	if (UTIL_GetScreenSize(&dwScreenWidth, &dwScreenHeight))
+	{
+		gConfig.dwScreenWidth = dwScreenWidth;
+		gConfig.dwScreenHeight = dwScreenHeight;
+	}
+	else
+	{
+		gConfig.dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
+		gConfig.dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
+	}
+#if SDL_VERSION_ATLEAST(2,0,0)
+	gConfig.fKeepAspectRatio = dwKeepAspectRatio ? TRUE : FALSE;
+#else
+	gConfig.fFullScreen = dwFullScreen ? TRUE : FALSE;
+#endif
+	gConfig.ScreenLayout = screen_layout;
+}
+
 INT
 PAL_InitGlobals(
    VOID
@@ -68,300 +363,6 @@ PAL_InitGlobals(
 
 --*/
 {
-   FILE     *fp;
-   CODEPAGE  iCodePage = CP_BIG5;		// Default for BIG5
-   DWORD     dwExtraMagicDescLines = 0;	// Default for PAL DOS/WIN95
-   DWORD     dwExtraItemDescLines = 0;	// Default for PAL DOS/WIN95
-   DWORD     dwScreenWidth = 0;
-   DWORD     dwScreenHeight = 0;
-   DWORD     dwFullScreen = FALSE;
-   DWORD     dwKeepAspectRatio = TRUE;
-   DWORD     dwIsDOS = 1;				// Default for DOS
-   DWORD     dwUseEmbeddedFonts = 1;	// Default for using embedded fonts in DOS version
-   DWORD     dwUseSurroundOPL = 1;		// Default for using surround opl
-   DWORD     dwUseStereo = 1;			// Default for stereo audio
-   float     flSurroundOPLOffset = 384.0f;// Default for 384.0
-   INT       iSampleRate = 44100;		// Default for 44100 Hz
-   INT       iOPLSampleRate = 49716;	// Default for 49716 Hz
-   INT       iResampleQuality = RESAMPLER_QUALITY_MAX;	// Default to maximum quality
-   INT       iAudioBufferSize = PAL_AUDIO_DEFAULT_BUFFER_SIZE;
-   INT       iVolume = 100;				// Default for 100%
-   MUSICTYPE eMusicType = MUSIC_RIX;
-   MUSICTYPE eCDType = PAL_HAS_SDLCD ? MUSIC_SDLCD : MUSIC_OGG;
-   OPLTYPE   eOPLType = OPL_DOSBOX;
-   SCREENLAYOUT screen_layout = {
-	   // Equipment Screen
-	   PAL_XY(8, 8), PAL_XY(2, 95), PAL_XY(5, 70), PAL_XY(51, 57),
-	   { PAL_XY(92, 11), PAL_XY(92, 33), PAL_XY(92, 55), PAL_XY(92, 77), PAL_XY(92, 99), PAL_XY(92, 121) },
-	   { PAL_XY(130, 11), PAL_XY(130, 33), PAL_XY(130, 55), PAL_XY(130, 77), PAL_XY(130, 99), PAL_XY(130, 121) },
-	   { PAL_XY(226, 10), PAL_XY(226, 32), PAL_XY(226, 54), PAL_XY(226, 76), PAL_XY(226, 98)  },
-	   { PAL_XY(260, 14), PAL_XY(260, 36), PAL_XY(260, 58), PAL_XY(260, 80), PAL_XY(260, 102) },
-
-	   // Status Screen
-	   PAL_XY(110, 8), PAL_XY(110, 30), PAL_XY(6, 6),  PAL_XY(6, 32),  PAL_XY(6, 54),  PAL_XY(6, 76),
-	   { PAL_XY(6, 98),   PAL_XY(6, 118),  PAL_XY(6, 138),  PAL_XY(6, 158),  PAL_XY(6, 178) },
-	   PAL_XY(58, 6), PAL_XY(58, 15), PAL_XY(0, 0), PAL_XY(54, 35), PAL_XY(42, 56),
-	   PAL_XY(63, 61), PAL_XY(65, 58), PAL_XY(42, 78), PAL_XY(63, 83), PAL_XY(65, 80),
-	   { PAL_XY(42, 102), PAL_XY(42, 122), PAL_XY(42, 142), PAL_XY(42, 162), PAL_XY(42, 182) },
-	   { PAL_XY(189, -1), PAL_XY(247, 39), PAL_XY(251, 101), PAL_XY(201, 133), PAL_XY(141, 141), PAL_XY(81, 125) },
-	   { PAL_XY(195, 38), PAL_XY(253, 78), PAL_XY(257, 140), PAL_XY(207, 172), PAL_XY(147, 180), PAL_XY(87, 164) },
-	   { PAL_XY(185, 58), PAL_XY(185, 76), PAL_XY(185, 94), PAL_XY(185, 112), PAL_XY(185, 130), PAL_XY(185, 148), PAL_XY(185, 166), PAL_XY(185, 184), PAL_XY(185, 184), PAL_XY(185, 184) },
-   };
-
-   if (fp = UTIL_OpenFileForMode("sdlpal.cfg", "r"))
-   {
-	   PAL_LARGE char buf[512];
-
-	   //
-	   // Load the configuration data
-	   //
-	   while (fgets(buf, 512, fp) != NULL)
-	   {
-		   char *p = buf;
-
-		   //
-		   // Skip leading spaces
-		   //
-		   while (*p && isspace(*p)) p++;
-
-		   //
-		   // Skip comments
-		   //
-		   if (*p && *p != '#')
-		   {
-			   char *ptr;
-			   if (ptr = strchr(p, '='))
-			   {
-				   char *end = ptr - 1;
-				   *ptr++ = 0;
-
-				   //
-				   // Skip tailing & leading spaces
-				   //
-				   while (isspace(*end) && end >= p) *end-- = 0;
-
-				   if (SDL_strcasecmp(p, "CODEPAGE") == 0)
-				   {
-					   sscanf(ptr, "%d", &iCodePage);
-					   if (iCodePage < 0) iCodePage = 0;
-					   if (iCodePage >= CP_MAX) iCodePage = CP_MAX - 1;
-				   }
-				   else if (SDL_strcasecmp(p, "EXTRAMAGICDESCLINES") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwExtraMagicDescLines);
-				   }
-				   else if (SDL_strcasecmp(p, "EXTRAITEMDESCLINES") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwExtraItemDescLines);
-				   }
-				   else if (SDL_strcasecmp(p, "DOS") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwIsDOS);
-				   }
-				   else if (SDL_strcasecmp(p, "USEEMBEDDEDFONTS") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwUseEmbeddedFonts);
-				   }
-				   else if (SDL_strcasecmp(p, "USESURROUNDOPL") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwUseSurroundOPL);
-				   }
-				   else if (SDL_strcasecmp(p, "STEREO") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwUseStereo);
-				   }
-				   else if (SDL_strcasecmp(p, "SAMPLERATE") == 0)
-				   {
-					   sscanf(ptr, "%d", &iSampleRate);
-					   if (iSampleRate > PAL_MAX_SAMPLERATE) iSampleRate = PAL_MAX_SAMPLERATE;
-				   }
-				   else if (SDL_strcasecmp(p, "OPLSAMPLERATE") == 0)
-				   {
-					   sscanf(ptr, "%d", &iOPLSampleRate);
-				   }
-				   else if (SDL_strcasecmp(p, "RESAMPLEQUALITY") == 0)
-				   {
-					   sscanf(ptr, "%d", &iResampleQuality);
-				   }
-				   else if (SDL_strcasecmp(p, "SURROUNDOPLOFFSET") == 0)
-				   {
-					   sscanf(ptr, "%f", &flSurroundOPLOffset);
-				   }
-				   else if (SDL_strcasecmp(p, "WINDOWWIDTH") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwScreenWidth);
-				   }
-				   else if (SDL_strcasecmp(p, "WINDOWHEIGHT") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwScreenHeight);
-				   }
-				   else if (SDL_strcasecmp(p, "FULLSCREEN") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwFullScreen);
-				   }
-				   else if (SDL_strcasecmp(p, "KEEPASPECTRATIO") == 0)
-				   {
-					   sscanf(ptr, "%u", &dwKeepAspectRatio);
-				   }
-				   else if (SDL_strcasecmp(p, "AUDIOBUFFERSIZE") == 0)
-				   {
-					   sscanf(ptr, "%d", &iAudioBufferSize);
-					   if (iAudioBufferSize > 32768)
-						   iAudioBufferSize = 32768;
-					   else if (iAudioBufferSize < 2)
-						   iAudioBufferSize = 2;
-					   if ((iAudioBufferSize & (iAudioBufferSize - 1)) != 0)
-					   {
-						   /* Make sure iAudioBufferSize is power of 2 */
-						   int n = 0;
-						   while (iAudioBufferSize) { iAudioBufferSize >>= 1; n++; }
-						   iAudioBufferSize = 1 << (n - 1);
-					   }
-				   }
-				   else if (SDL_strcasecmp(p, "VOLUME") == 0)
-				   {
-					   sscanf(ptr, "%d", &iVolume);
-					   if (iVolume > 100)
-						   iVolume = 100;
-					   else if (iVolume < 0)
-						   iVolume = 0;
-				   }
-				   else if (SDL_strcasecmp(p, "MESSAGEFILENAME") == 0)
-				   {
-					   int n = strlen(ptr);
-					   if (n > 0 && ptr[n - 1] == '\n') ptr[--n] = 0;
-					   if (n > 0 && ptr[n - 1] == '\r') ptr[--n] = 0;
-					   if (n > 0) gConfig.pszMsgName = strdup(ptr);
-				   }
-#if USE_RIX_EXTRA_INIT
-				   else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)
-				   {
-					   int n = 1;
-					   char *p;
-					   for (p = ptr; *p < *end; p++)
-					   {
-						   if (*p == ',')
-							   n++;
-					   }
-					   n &= ~0x1;
-
-					   if (n > 0)
-					   {
-						   uint32_t *regs = malloc(sizeof(uint32_t) * (n >> 1));
-						   uint8_t *vals = malloc(sizeof(uint8_t) * (n >> 1));
-						   uint32_t d, i, v = 1;
-						   if (regs && vals)
-						   {
-							   for (p = ptr, i = 0; *p < *end; p++, i++)
-							   {
-								   if (sscanf(p, "%u", &regs[i]) == 0) { v = 0; break; }
-								   while (*p < *end && *p != ',') p++; p++;
-								   if (sscanf(p, "%u", &d) == 0) { v = 0; break; }
-								   while (*p < *end && *p != ',') p++;
-								   vals[i] = (uint8_t)d;
-							   }
-							   if (v)
-							   {
-								   gConfig.pExtraFMRegs = regs;
-								   gConfig.pExtraFMVals = vals;
-								   gConfig.dwExtraLength = n >> 1;
-							   }
-							   else
-							   {
-								   free(regs);
-								   free(vals);
-							   }
-						   }
-					   }
-				   }
-#endif
-				   else if (SDL_strcasecmp(p, "CD") == 0)
-				   {
-					   char cd_type[32];
-					   sscanf(ptr, "%31s", cd_type);
-					   if (PAL_HAS_MP3 && SDL_strcasecmp(cd_type, "MP3") == 0)
-						   eCDType = MUSIC_MP3;
-					   else if (PAL_HAS_OGG && SDL_strcasecmp(cd_type, "OGG") == 0)
-						   eCDType = MUSIC_OGG;
-					   else if (PAL_HAS_SDLCD && SDL_strcasecmp(cd_type, "RAW") == 0)
-						   eCDType = MUSIC_SDLCD;
-				   }
-				   else if (SDL_strcasecmp(p, "MUSIC") == 0)
-				   {
-					   char music_type[32];
-					   sscanf(ptr, "%31s", music_type);
-					   if (PAL_HAS_NATIVEMIDI && SDL_strcasecmp(music_type, "MIDI") == 0)
-						   eMusicType = MUSIC_MIDI;
-					   else if (PAL_HAS_MP3 && SDL_strcasecmp(music_type, "MP3") == 0)
-						   eMusicType = MUSIC_MP3;
-					   else if (PAL_HAS_OGG && SDL_strcasecmp(music_type, "OGG") == 0)
-						   eMusicType = MUSIC_OGG;
-					   else if (SDL_strcasecmp(music_type, "RIX") == 0)
-						   eMusicType = MUSIC_RIX;
-				   }
-				   else if (SDL_strcasecmp(p, "OPL") == 0)
-				   {
-					   char opl_type[32];
-					   sscanf(ptr, "%31s", opl_type);
-					   if (SDL_strcasecmp(opl_type, "DOSBOX") == 0)
-						   eOPLType = OPL_DOSBOX;
-					   else if (SDL_strcasecmp(opl_type, "DOSBOXOLD") == 0)
-						   eOPLType = OPL_DOSBOX_OLD;
-					   else if (PAL_HAS_MAME && SDL_strcasecmp(opl_type, "MAME") == 0)
-						   eOPLType = OPL_MAME;
-				   }
-			   }
-		   }
-	   }
-
-	   UTIL_CloseFile(fp);
-   }
-
-   //
-   // Set configurable global options
-   //
-   gConfig.fIsWIN95 = dwIsDOS ? FALSE : TRUE;
-   gConfig.fUseEmbeddedFonts = dwIsDOS && dwUseEmbeddedFonts ? TRUE : FALSE;
-   gConfig.fUseSurroundOPL = dwUseStereo && dwUseSurroundOPL ? TRUE : FALSE;
-   gConfig.iAudioChannels = dwUseStereo ? 2 : 1;
-   gConfig.iSampleRate = iSampleRate;
-   gConfig.iOPLSampleRate = iOPLSampleRate;
-   gConfig.iResampleQuality = iResampleQuality;
-   gConfig.dSurroundOPLOffset = flSurroundOPLOffset;
-   gConfig.eMusicType = eMusicType;
-   gConfig.eCDType = eCDType;
-   gConfig.eOPLType = eOPLType;
-   gConfig.iCodePage = iCodePage;
-   gConfig.dwWordLength = 10;	// This is the default value for Chinese version
-   gConfig.dwExtraMagicDescLines = dwExtraMagicDescLines;
-   gConfig.dwExtraItemDescLines = dwExtraItemDescLines;
-   gConfig.wAudioBufferSize = (WORD)iAudioBufferSize;
-   gConfig.iVolume = SDL_MIX_MAXVOLUME * iVolume / 100;
-#if defined(NDS) || defined(__SYMBIAN32__) || defined(GEKKO) || defined(PSP) || defined(GEKKO) || defined(GPH) || defined(DINGOO) || defined(__ANDROID__)
-   gConfig.dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
-   gConfig.dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
-#elif defined(__WINPHONE__) || defined(__IOS__)
-   if (UTIL_GetScreenSize(&dwScreenWidth, &dwScreenHeight))
-   {
-      gConfig.dwScreenWidth = dwScreenWidth;
-      gConfig.dwScreenHeight = dwScreenHeight;
-   }
-   else
-   {
-      gConfig.dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
-      gConfig.dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
-   }
-#else
-   gConfig.dwScreenWidth = dwScreenWidth ? dwScreenWidth : PAL_DEFAULT_WINDOW_WIDTH;
-   gConfig.dwScreenHeight = dwScreenHeight ? dwScreenHeight : (dwFullScreen ? PAL_DEFAULT_FULLSCREEN_HEIGHT : PAL_DEFAULT_WINDOW_HEIGHT);
-#endif
-#if SDL_VERSION_ATLEAST(2,0,0)
-   gConfig.fKeepAspectRatio = dwKeepAspectRatio ? TRUE : FALSE;
-#else
-   gConfig.fFullScreen = dwFullScreen ? TRUE : FALSE;
-#endif
-   gConfig.ScreenLayout = screen_layout;
-
    //
    // Set decompress function
    //

@@ -103,8 +103,6 @@ UTIL_CloseFile(
    FILE                *fp
 );
 
-#if defined(__WINPHONE__) || defined(__IOS__)
-
 LPCSTR
 UTIL_BasePath(
    VOID
@@ -121,7 +119,25 @@ UTIL_GetScreenSize(
    DWORD *pdwScreenHeight
 );
 
+#if PAL_HAS_TOUCH
+
+BOOL
+UTIL_TouchEnabled(
+   VOID
+);
+
 #endif
+
+INT
+UTIL_Platform_Init(
+   int argc,
+   char* argv[]
+);
+
+VOID
+UTIL_Platform_Quit(
+   VOID
+);
 
 #define _PATH_LOG           PAL_PREFIX "log.txt"
 #define LOG_EMERG           0 /* system is unusable */

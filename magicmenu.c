@@ -58,8 +58,8 @@ PAL_MagicSelectionMenuUpdate(
    WORD        wScript;
    const int   iItemsPerLine = 32 / gConfig.dwWordLength;
    const int   iItemTextWidth = 8 * gConfig.dwWordLength + 7;
-   const int   iLinesPerPage = 5 - gConfig.dwExtraMagicDescLines;
-   const int   iBoxYOffset = gConfig.dwExtraMagicDescLines * 16;
+   const int   iLinesPerPage = 5 - gConfig.ScreenLayout.ExtraMagicDescLines;
+   const int   iBoxYOffset = gConfig.ScreenLayout.ExtraMagicDescLines * 16;
    const int   iCursorXOffset = gConfig.dwWordLength * 5 / 2;
    const int   iPageLineOffset = iLinesPerPage / 2;
 

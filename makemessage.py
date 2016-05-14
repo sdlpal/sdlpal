@@ -194,6 +194,9 @@ def main():
     output += "78=185,184\n"
     output += "79=185,184\n"
     output += "80=185,184\n"
+    output += "# 81 .. 82 are extra description lines in the item (81) & magic (82) menu, where the first value specifies the lines and the second value should be zero\n"
+    output += "81=2,0"
+    output += "82=1,0"
     output += "[END LAYOUT]\n\n"
 
     output += "# This section contains the words used by the game.\n"

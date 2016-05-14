@@ -51,627 +51,639 @@
     <Filter Include="liboggvorbis\include\vorbis">
       <UniqueIdentifier>{1da4fd33-6d94-4dbe-b0cd-2a9c9041df62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{06f44698-1e02-440e-bc40-9858a46c2d8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="battle.c">
+    <ClCompile Include="..\battle.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ending.c">
+    <ClCompile Include="..\ending.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fight.c">
+    <ClCompile Include="..\fight.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="font.c">
+    <ClCompile Include="..\font.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game.c">
+    <ClCompile Include="..\game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="getopt.c">
+    <ClCompile Include="..\getopt.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="global.c">
+    <ClCompile Include="..\global.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="input.c">
+    <ClCompile Include="..\input.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="itemmenu.c">
+    <ClCompile Include="..\itemmenu.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="magicmenu.c">
+    <ClCompile Include="..\magicmenu.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.c">
+    <ClCompile Include="..\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="map.c">
+    <ClCompile Include="..\map.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="midi.c">
+    <ClCompile Include="..\midi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="palcommon.c">
+    <ClCompile Include="..\palcommon.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="palette.c">
+    <ClCompile Include="..\palette.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="play.c">
+    <ClCompile Include="..\play.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="res.c">
+    <ClCompile Include="..\res.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rixplay.cpp">
+    <ClCompile Include="..\rixplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rngplay.c">
+    <ClCompile Include="..\rngplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scene.c">
+    <ClCompile Include="..\scene.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="script.c">
+    <ClCompile Include="..\script.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sound.c">
+    <ClCompile Include="..\sound.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="text.c">
+    <ClCompile Include="..\text.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ui.c">
+    <ClCompile Include="..\ui.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="uibattle.c">
+    <ClCompile Include="..\uibattle.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="uigame.c">
+    <ClCompile Include="..\uigame.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="util.c">
+    <ClCompile Include="..\util.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="video.c">
+    <ClCompile Include="..\video.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\binfile.cpp">
+    <ClCompile Include="..\adplug\binfile.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\binio.cpp">
+    <ClCompile Include="..\adplug\binio.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\dosbox_opl.cpp">
+    <ClCompile Include="..\adplug\dosbox_opl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\emuopl.cpp">
+    <ClCompile Include="..\adplug\emuopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\fmopl.c">
+    <ClCompile Include="..\adplug\fmopl.c">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\fprovide.cpp">
+    <ClCompile Include="..\adplug\fprovide.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\player.cpp">
+    <ClCompile Include="..\adplug\player.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\rix.cpp">
+    <ClCompile Include="..\adplug\rix.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\surroundopl.cpp">
+    <ClCompile Include="..\adplug\surroundopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="native_midi\native_midi_common.c">
+    <ClCompile Include="..\native_midi\native_midi_common.c">
       <Filter>native_midi</Filter>
     </ClCompile>
-    <ClCompile Include="native_midi\native_midi_win32.c">
+    <ClCompile Include="..\native_midi\native_midi_win32.c">
       <Filter>native_midi</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\bit.c">
+    <ClCompile Include="..\libmad\bit.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\decoder.c">
+    <ClCompile Include="..\libmad\decoder.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\fixed.c">
+    <ClCompile Include="..\libmad\fixed.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\frame.c">
+    <ClCompile Include="..\libmad\frame.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\huffman.c">
+    <ClCompile Include="..\libmad\huffman.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\layer12.c">
+    <ClCompile Include="..\libmad\layer12.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\layer3.c">
+    <ClCompile Include="..\libmad\layer3.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\music_mad.c">
+    <ClCompile Include="..\libmad\music_mad.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\stream.c">
+    <ClCompile Include="..\libmad\stream.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\synth.c">
+    <ClCompile Include="..\libmad\synth.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="libmad\timer.c">
+    <ClCompile Include="..\libmad\timer.c">
       <Filter>libmad</Filter>
     </ClCompile>
-    <ClCompile Include="resampler.c">
+    <ClCompile Include="..\resampler.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\adlibemu.c">
+    <ClCompile Include="..\adplug\adlibemu.c">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\demuopl.cpp">
+    <ClCompile Include="..\adplug\demuopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="yj1.c">
+    <ClCompile Include="..\yj1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\analysis.c">
+    <ClCompile Include="..\liboggvorbis\src\analysis.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\bitrate.c">
+    <ClCompile Include="..\liboggvorbis\src\bitrate.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\bitwise.c">
+    <ClCompile Include="..\liboggvorbis\src\bitwise.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\block.c">
+    <ClCompile Include="..\liboggvorbis\src\block.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\codebook.c">
+    <ClCompile Include="..\liboggvorbis\src\codebook.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\envelope.c">
+    <ClCompile Include="..\liboggvorbis\src\envelope.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\floor0.c">
+    <ClCompile Include="..\liboggvorbis\src\floor0.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\floor1.c">
+    <ClCompile Include="..\liboggvorbis\src\floor1.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\framing.c">
+    <ClCompile Include="..\liboggvorbis\src\framing.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\info.c">
+    <ClCompile Include="..\liboggvorbis\src\info.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\lookup.c">
+    <ClCompile Include="..\liboggvorbis\src\lookup.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\lpc.c">
+    <ClCompile Include="..\liboggvorbis\src\lpc.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\lsp.c">
+    <ClCompile Include="..\liboggvorbis\src\lsp.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\mapping0.c">
+    <ClCompile Include="..\liboggvorbis\src\mapping0.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\mdct.c">
+    <ClCompile Include="..\liboggvorbis\src\mdct.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\psy.c">
+    <ClCompile Include="..\liboggvorbis\src\psy.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\registry.c">
+    <ClCompile Include="..\liboggvorbis\src\registry.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\res0.c">
+    <ClCompile Include="..\liboggvorbis\src\res0.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\sharedbook.c">
+    <ClCompile Include="..\liboggvorbis\src\sharedbook.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\smallft.c">
+    <ClCompile Include="..\liboggvorbis\src\smallft.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\synthesis.c">
+    <ClCompile Include="..\liboggvorbis\src\synthesis.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\vorbisenc.c">
+    <ClCompile Include="..\liboggvorbis\src\vorbisenc.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\vorbisfile.c">
+    <ClCompile Include="..\liboggvorbis\src\vorbisfile.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="liboggvorbis\src\window.c">
+    <ClCompile Include="..\liboggvorbis\src\window.c">
       <Filter>liboggvorbis\src</Filter>
     </ClCompile>
-    <ClCompile Include="oggplay.c">
+    <ClCompile Include="..\oggplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mp3play.c">
+    <ClCompile Include="..\mp3play.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\dbopl.cpp">
+    <ClCompile Include="..\adplug\dbopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="adplug\dbemuopl.cpp">
+    <ClCompile Include="..\adplug\dbemuopl.cpp">
       <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="win32.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\overlay.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ascii.h">
+    <ClInclude Include="..\ascii.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="battle.h">
+    <ClInclude Include="..\battle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
+    <ClInclude Include="..\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ending.h">
+    <ClInclude Include="..\ending.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fight.h">
+    <ClInclude Include="..\fight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="font.h">
+    <ClInclude Include="..\font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
+    <ClInclude Include="..\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="getopt.h">
+    <ClInclude Include="..\getopt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="global.h">
+    <ClInclude Include="..\global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="input.h">
+    <ClInclude Include="..\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="itemmenu.h">
+    <ClInclude Include="..\itemmenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="magicmenu.h">
+    <ClInclude Include="..\magicmenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="main.h">
+    <ClInclude Include="..\main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="map.h">
+    <ClInclude Include="..\map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="midi.h">
+    <ClInclude Include="..\midi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="palcommon.h">
+    <ClInclude Include="..\palcommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="palette.h">
+    <ClInclude Include="..\palette.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="play.h">
+    <ClInclude Include="..\play.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="res.h">
+    <ClInclude Include="..\res.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="rngplay.h">
+    <ClInclude Include="..\rngplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scene.h">
+    <ClInclude Include="..\scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="script.h">
+    <ClInclude Include="..\script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sound.h">
+    <ClInclude Include="..\sound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="text.h">
+    <ClInclude Include="..\text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ui.h">
+    <ClInclude Include="..\ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="uibattle.h">
+    <ClInclude Include="..\uibattle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="uigame.h">
+    <ClInclude Include="..\uigame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="util.h">
+    <ClInclude Include="..\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="video.h">
+    <ClInclude Include="..\video.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\binfile.h">
+    <ClInclude Include="..\adplug\binfile.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\binio.h">
+    <ClInclude Include="..\adplug\binio.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\demuopl.h">
+    <ClInclude Include="..\adplug\demuopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\dosbox_opl.h">
+    <ClInclude Include="..\adplug\dosbox_opl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\emuopl.h">
+    <ClInclude Include="..\adplug\emuopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\fmopl.h">
+    <ClInclude Include="..\adplug\fmopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\fprovide.h">
+    <ClInclude Include="..\adplug\fprovide.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\opl.h">
+    <ClInclude Include="..\adplug\opl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\player.h">
+    <ClInclude Include="..\adplug\player.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\rix.h">
+    <ClInclude Include="..\adplug\rix.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\surroundopl.h">
+    <ClInclude Include="..\adplug\surroundopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="native_midi\native_midi.h">
+    <ClInclude Include="..\native_midi\native_midi.h">
       <Filter>native_midi</Filter>
     </ClInclude>
-    <ClInclude Include="native_midi\native_midi_common.h">
+    <ClInclude Include="..\native_midi\native_midi_common.h">
       <Filter>native_midi</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\bit.h">
+    <ClInclude Include="..\libmad\bit.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\decoder.h">
+    <ClInclude Include="..\libmad\decoder.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\fixed.h">
+    <ClInclude Include="..\libmad\fixed.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\frame.h">
+    <ClInclude Include="..\libmad\frame.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\huffman.h">
+    <ClInclude Include="..\libmad\huffman.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\layer12.h">
+    <ClInclude Include="..\libmad\layer12.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\layer3.h">
+    <ClInclude Include="..\libmad\layer3.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\libmad_config.h">
+    <ClInclude Include="..\libmad\libmad_config.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\libmad_global.h">
+    <ClInclude Include="..\libmad\libmad_global.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\mad.h">
+    <ClInclude Include="..\libmad\mad.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\music_mad.h">
+    <ClInclude Include="..\libmad\music_mad.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\stream.h">
+    <ClInclude Include="..\libmad\stream.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\synth.h">
+    <ClInclude Include="..\libmad\synth.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="libmad\timer.h">
+    <ClInclude Include="..\libmad\timer.h">
       <Filter>libmad</Filter>
     </ClInclude>
-    <ClInclude Include="codepage.h">
+    <ClInclude Include="..\codepage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fontglyph.h">
+    <ClInclude Include="..\fontglyph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resampler.h">
+    <ClInclude Include="..\resampler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\adlibemu.h">
+    <ClInclude Include="..\adplug\adlibemu.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\kemuopl.h">
+    <ClInclude Include="..\adplug\kemuopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\floor_all.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\floor_all.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\psych_8.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\psych_8.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\psych_11.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\psych_11.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\psych_16.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\psych_16.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\psych_44.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\psych_44.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\residue_8.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_8.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\residue_16.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_16.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\residue_44.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_44.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\residue_44p51.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_44p51.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\residue_44u.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_44u.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\setup_8.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_8.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\setup_11.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_11.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\setup_16.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_16.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\setup_22.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_22.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\setup_32.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_32.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\setup_44.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_44.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\setup_44p51.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_44p51.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\setup_44u.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_44u.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\modes\setup_X.h">
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_X.h">
       <Filter>liboggvorbis\src\modes</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\books\coupled\res_books_51.h">
+    <ClInclude Include="..\liboggvorbis\src\books\coupled\res_books_51.h">
       <Filter>liboggvorbis\src\books\coupled</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\books\coupled\res_books_stereo.h">
+    <ClInclude Include="..\liboggvorbis\src\books\coupled\res_books_stereo.h">
       <Filter>liboggvorbis\src\books\coupled</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\books\floor\floor_books.h">
+    <ClInclude Include="..\liboggvorbis\src\books\floor\floor_books.h">
       <Filter>liboggvorbis\src\books\floor</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\books\uncoupled\res_books_uncoupled.h">
+    <ClInclude Include="..\liboggvorbis\src\books\uncoupled\res_books_uncoupled.h">
       <Filter>liboggvorbis\src\books\uncoupled</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\backends.h">
+    <ClInclude Include="..\liboggvorbis\src\backends.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\bitrate.h">
+    <ClInclude Include="..\liboggvorbis\src\bitrate.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\codebook.h">
+    <ClInclude Include="..\liboggvorbis\src\codebook.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\codec_internal.h">
+    <ClInclude Include="..\liboggvorbis\src\codec_internal.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\envelope.h">
+    <ClInclude Include="..\liboggvorbis\src\envelope.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\highlevel.h">
+    <ClInclude Include="..\liboggvorbis\src\highlevel.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\lookup.h">
+    <ClInclude Include="..\liboggvorbis\src\lookup.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\lookup_data.h">
+    <ClInclude Include="..\liboggvorbis\src\lookup_data.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\lpc.h">
+    <ClInclude Include="..\liboggvorbis\src\lpc.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\lsp.h">
+    <ClInclude Include="..\liboggvorbis\src\lsp.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\masking.h">
+    <ClInclude Include="..\liboggvorbis\src\masking.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\mdct.h">
+    <ClInclude Include="..\liboggvorbis\src\mdct.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\misc.h">
+    <ClInclude Include="..\liboggvorbis\src\misc.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\os.h">
+    <ClInclude Include="..\liboggvorbis\src\os.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\psy.h">
+    <ClInclude Include="..\liboggvorbis\src\psy.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\registry.h">
+    <ClInclude Include="..\liboggvorbis\src\registry.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\scales.h">
+    <ClInclude Include="..\liboggvorbis\src\scales.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\smallft.h">
+    <ClInclude Include="..\liboggvorbis\src\smallft.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\src\window.h">
+    <ClInclude Include="..\liboggvorbis\src\window.h">
       <Filter>liboggvorbis\src</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\include\vorbis\codec.h">
+    <ClInclude Include="..\liboggvorbis\include\vorbis\codec.h">
       <Filter>liboggvorbis\include\vorbis</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\include\vorbis\vorbisenc.h">
+    <ClInclude Include="..\liboggvorbis\include\vorbis\vorbisenc.h">
       <Filter>liboggvorbis\include\vorbis</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\include\vorbis\vorbisfile.h">
+    <ClInclude Include="..\liboggvorbis\include\vorbis\vorbisfile.h">
       <Filter>liboggvorbis\include\vorbis</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\include\ogg\ogg.h">
+    <ClInclude Include="..\liboggvorbis\include\ogg\ogg.h">
       <Filter>liboggvorbis\include\ogg</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\include\ogg\os_types.h">
+    <ClInclude Include="..\liboggvorbis\include\ogg\os_types.h">
       <Filter>liboggvorbis\include\ogg</Filter>
     </ClInclude>
-    <ClInclude Include="players.h">
+    <ClInclude Include="..\players.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\dbopl.h">
+    <ClInclude Include="..\adplug\dbopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="adplug\dbemuopl.h">
+    <ClInclude Include="..\adplug\dbemuopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="liboggvorbis\include\ogg\config_types.h">
+    <ClInclude Include="..\liboggvorbis\include\ogg\config_types.h">
       <Filter>liboggvorbis\include\ogg</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="sdlpal.ico">
+    <None Include="..\sdlpal.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="libmad\D.dat">
+    <None Include="..\libmad\D.dat">
       <Filter>libmad</Filter>
     </None>
-    <None Include="libmad\imdct_s.dat">
+    <None Include="..\libmad\imdct_s.dat">
       <Filter>libmad</Filter>
     </None>
-    <None Include="libmad\qc_table.dat">
+    <None Include="..\libmad\qc_table.dat">
       <Filter>libmad</Filter>
     </None>
-    <None Include="libmad\rq_table.dat">
+    <None Include="..\libmad\rq_table.dat">
       <Filter>libmad</Filter>
     </None>
-    <None Include="libmad\sf_table.dat">
+    <None Include="..\libmad\sf_table.dat">
       <Filter>libmad</Filter>
     </None>
-    <None Include="sdlpal.cfg.example">
+    <None Include="..\sdlpal.cfg.example">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\AUTHORS.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="..\README.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sdlpal.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="AUTHORS.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="README.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
   </ItemGroup>
 </Project>

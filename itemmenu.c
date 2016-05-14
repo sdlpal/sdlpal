@@ -53,11 +53,11 @@ PAL_ItemSelectMenuUpdate(
    static WORD        wPrevImageIndex = 0xFFFF;
    const int          iItemsPerLine = 34 / gConfig.dwWordLength;
    const int          iItemTextWidth = 8 * gConfig.dwWordLength + 20;
-   const int          iLinesPerPage = 7 - gConfig.dwExtraItemDescLines;
+   const int          iLinesPerPage = 7 - gConfig.ScreenLayout.ExtraItemDescLines;
    const int          iCursorXOffset = gConfig.dwWordLength * 5 / 2;
    const int          iAmountXOffset = gConfig.dwWordLength * 8 + 1;
    const int          iPageLineOffset = (iLinesPerPage + 1) / 2;
-   const int          iPictureYOffset = (gConfig.dwExtraItemDescLines > 1) ? (gConfig.dwExtraItemDescLines - 1) * 16 : 0;
+   const int          iPictureYOffset = (gConfig.ScreenLayout.ExtraItemDescLines > 1) ? (gConfig.ScreenLayout.ExtraItemDescLines - 1) * 16 : 0;
 
    //
    // Process input

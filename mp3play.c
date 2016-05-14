@@ -116,9 +116,9 @@ MP3_Play(
 
 	if (iNum > 0)
 	{
-		if ((player->pMP3 = mad_openFile(va("%s/mp3/%.2d.mp3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gConfig.iResampleQuality)) == NULL)
+		if ((player->pMP3 = mad_openFile(va("%smp3/%.2d.mp3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gConfig.iResampleQuality)) == NULL)
 		{
-			player->pMP3 = mad_openFile(va("%s/MP3/%.2d.MP3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gConfig.iResampleQuality);
+			player->pMP3 = mad_openFile(va("%sMP3/%.2d.MP3", PAL_PREFIX, iNum), SOUND_GetAudioSpec(), gConfig.iResampleQuality);
 		}
 
 		if (player->pMP3)

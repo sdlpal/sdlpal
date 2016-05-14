@@ -8,14 +8,6 @@
 #           2 for shift-jis.
 #CodePage=0
 
-# ExtraMagicDescLines: Idicates number of extra lines for magic description,
-#                      0 for chinese version (default), 1 for japanese version.
-#ExtraMagicDescLines=0
-
-# ExtraItemDescLines: Idicates number of extra lines for item description,
-#                     0 for chinese version (default), 2 for japanese version.
-#ExtraItemDescLines=0
-
 # DOS: Indicates whether to use DOS-version resources or WIN-version resources.
 #      Non-zero for DOS-version (default), zero for WIN95-version.
 #DOS=1
@@ -98,15 +90,5 @@
 #                  this value is ignored.
 #KeepAspectRatio=1
 
-# MessageFileName: Indicates whether to use external message & word files. Only need to specify
-#                  main file name, the extensions are automatically appended by SDLPAL. The
-#                  '.msg' file is the message file, the '.idx' file is the index file, and the
-#                  '.wrd' file is the word file. All files have the format '<idx>=<content>',
-#                  where the start value of <idx> are 0 for the index file and 1 for the other
-#                  two files. Note that, the <content> of the index file is a series of numbers
-#                  spearated by commas, and each number is one of the <idx>s in the message
-#                  file, while value '0' means wait for key and value '-1' means end. And the
-#                  <idx> of the index file is the value of the first 0xFFFF instruction of one
-#                  dialog in SSS.MKF. By default, this option is disabled. All such files should
-#                  be UTF-8 encoded, without leading BOM bytes.
-#MessageFileName=jm
+# MessageFileName: Indicates whether to use external message files.
+#MessageFileName=jm.msg

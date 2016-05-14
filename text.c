@@ -392,12 +392,11 @@ PAL_ReadMessageFile(
 				{
 					char *v;
 					int x, y, f, n, l, i = PAL_ParseLine(buffer, &v, &l, FALSE);
-					if (i >= 1 && i <= 80)
+					if (i >= 1 && i <= (sizeof(SCREENLAYOUT) / sizeof(PAL_POS)))
 					{
-						PAL_POS *poses = (PAL_POS *)&gConfig.ScreenLayout;
 						if ((n = sscanf(v, "%d,%d,%d", &x, &y, &f)) >= 2 && x < 320 && y < 200)
 						{
-							poses[i - 1] = PAL_XY(x, y);
+							gConfig.ScreenLayoutArray[i - 1] = PAL_XY(x, y);
 							if (n == 3) gConfig.ScreenLayoutFlag[i - 1] = f;
 						}
 					}
@@ -559,7 +558,7 @@ PAL_InitText(
 	   //
 	   // Read the words
 	   //
-	   temp = (LPBYTE)malloc(i);
+	   temp = (LPBYTE)malloc(gConfig.dwWordLength * g_TextLib.nWords);
 	   if (temp == NULL)
 	   {
 		   fclose(fpWord);
@@ -568,6 +567,7 @@ PAL_InitText(
 	   }
 	   fseek(fpWord, 0, SEEK_SET);
 	   fread(temp, i, 1, fpWord);
+	   memset(temp + i, 0, gConfig.dwWordLength * g_TextLib.nWords - i);
 
 	   //
 	   // Close the words file

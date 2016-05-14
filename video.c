@@ -78,9 +78,6 @@ VIDEO_Startup(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-# if PAL_HAS_TOUCH
-   SDL_Surface *overlay;
-# endif
    //
    // Before we can render anything, we need a window and a renderer.
    //
@@ -92,7 +89,7 @@ VIDEO_Startup(
       return -1;
    }
 
-   gpRenderer = SDL_CreateRenderer(gpWindow, -1, SDL_RENDERER_ACCELERATED);
+   gpRenderer = SDL_CreateRenderer(gpWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
    if (gpRenderer == NULL)
    {
@@ -160,13 +157,19 @@ VIDEO_Startup(
    // Create texture for overlay.
    //
 #if PAL_HAS_TOUCH
-   overlay = SDL_LoadBMP(va("%s%s", PAL_PREFIX, "overlay.bmp"));
-   if (overlay != NULL)
+   if (gConfig.fUseTouchOverlay)
    {
-      SDL_SetColorKey(overlay, SDL_RLEACCEL, SDL_MapRGB(overlay->format, 255, 0, 255));
-      gpTouchOverlay = SDL_CreateTextureFromSurface(gpRenderer, overlay);
-      SDL_SetTextureAlphaMod(gpTouchOverlay, 120);
-      SDL_FreeSurface(overlay);
+      extern const void * PAL_LoadOverlayBMP(void);
+      extern int PAL_OverlayBMPLength();
+
+      SDL_Surface *overlay = SDL_LoadBMP_RW(SDL_RWFromConstMem(PAL_LoadOverlayBMP(), PAL_OverlayBMPLength()), 1);
+      if (overlay != NULL)
+      {
+         SDL_SetColorKey(overlay, SDL_RLEACCEL, SDL_MapRGB(overlay->format, 255, 0, 255));
+         gpTouchOverlay = SDL_CreateTextureFromSurface(gpRenderer, overlay);
+         SDL_SetTextureAlphaMod(gpTouchOverlay, 120);
+         SDL_FreeSurface(overlay);
+      }
    }
 #endif
 
@@ -404,11 +407,6 @@ VIDEO_UpdateScreen(
       dstrect.h = (WORD)((DWORD)(lpRect->h) * screenRealHeight / gpScreen->h);
 
       SDL_SoftStretch(gpScreen, (SDL_Rect *)lpRect, gpScreenReal, &dstrect);
-
-      if (SDL_MUSTLOCK(gpScreenReal))
-      {
-         SDL_UnlockSurface(gpScreenReal);
-      }
    }
    else if (g_wShakeTime != 0)
    {
@@ -449,11 +447,6 @@ VIDEO_UpdateScreen(
 
       SDL_FillRect(gpScreenReal, &dstrect, 0);
 
-      if (SDL_MUSTLOCK(gpScreenReal))
-      {
-         SDL_UnlockSurface(gpScreenReal);
-      }
-
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
       dstrect.x = dstrect.y = 0;
       dstrect.w = gpScreenReal->w;
@@ -470,11 +463,6 @@ VIDEO_UpdateScreen(
 
       SDL_SoftStretch(gpScreen, NULL, gpScreenReal, &dstrect);
 
-      if (SDL_MUSTLOCK(gpScreenReal))
-      {
-         SDL_UnlockSurface(gpScreenReal);
-      }
-
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
       dstrect.x = dstrect.y = 0;
       dstrect.w = gpScreenReal->w;
@@ -487,6 +475,11 @@ VIDEO_UpdateScreen(
 #else
    SDL_UpdateRect(gpScreenReal, dstrect.x, dstrect.y, dstrect.w, dstrect.h);
 #endif
+
+   if (SDL_MUSTLOCK(gpScreenReal))
+   {
+	   SDL_UnlockSurface(gpScreenReal);
+   }
 }
 
 VOID
@@ -928,12 +921,24 @@ VIDEO_SwitchScreen(
       dstrect.w = gpScreenReal->w;
       dstrect.h = screenRealHeight;
 
+	  if (SDL_MUSTLOCK(gpScreenReal))
+	  {
+		  if (SDL_LockSurface(gpScreenReal) < 0)
+			  return;
+	  }
+
       SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       VIDEO_RenderCopy();
 #else
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 #endif
+
+	  if (SDL_MUSTLOCK(gpScreenReal))
+	  {
+		  SDL_UnlockSurface(gpScreenReal);
+	  }
+
       UTIL_Delay(wSpeed);
    }
 }

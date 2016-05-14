@@ -651,6 +651,9 @@ typedef struct tagSCREENLAYOUT
 	PAL_POS          RoleEquipImageBoxes[MAX_PLAYER_EQUIPMENTS];
 	PAL_POS          RoleEquipNames[MAX_PLAYER_EQUIPMENTS];
 	PAL_POS          RolePoisonNames[MAX_POISONS];
+
+	PAL_POS          ExtraItemDescLines;
+	PAL_POS          ExtraMagicDescLines;
 } SCREENLAYOUT;
 
 typedef struct tagCONFIGURATION
@@ -673,8 +676,6 @@ typedef struct tagCONFIGURATION
 #endif
 	CODEPAGE         iCodePage;
 	DWORD            dwWordLength;
-	DWORD            dwExtraMagicDescLines;
-	DWORD            dwExtraItemDescLines;
 	DWORD            dwScreenWidth;
 	DWORD            dwScreenHeight;
 	double           dSurroundOPLOffset;
@@ -697,9 +698,17 @@ typedef struct tagCONFIGURATION
 #endif
 	BOOL             fEnableJoyStick;
 	BOOL             fUseCustomScreenLayout;
+#if PAL_HAS_TOUCH
+	BOOL             fUseTouchOverlay;
+#endif
 } CONFIGURATION, *LPCONFIGURATION;
 
 extern CONFIGURATION gConfig;
+
+VOID
+PAL_LoadConfig(
+   BOOL fFromFile
+);
 
 INT
 PAL_InitGlobals(
