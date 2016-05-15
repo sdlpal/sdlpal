@@ -112,7 +112,7 @@ PAL_InitFont(
 {
    FILE *fp;
 
-   fp = fopen(PAL_PREFIX "word.dat", "rb");
+   fp = fopen(va("%s%s",PAL_PREFIX,"word.dat"), "rb");
    if (!fp)
    {
       return 0;
