@@ -25,6 +25,9 @@ bld/
 # Visual Studio 2015 cache/options directory
 .vs/
 
+# Visual Studio 2015 intellisense database
+*.VC.db
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
@@ -212,7 +215,5 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 # Windows Phone associated file
-winphone/SDLPal/Assets/Data/*
-!winphone/SDLPal/Assets/Data/README.txt
-winphone/SDL2/*
+winrt/SDL2/*
 !winphone/SDL2/README.txt

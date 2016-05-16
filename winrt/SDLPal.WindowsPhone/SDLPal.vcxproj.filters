@@ -23,16 +23,9 @@
     <Image Include="Assets\WideLogo.scale-240.png">
       <Filter>资产</Filter>
     </Image>
-    <Filter Include="SDL2">
-      <UniqueIdentifier>{1b4126fa-ab18-4d2a-8fc0-dff551a94158}</UniqueIdentifier>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WinPhoneUtil.cpp" />
-    <ClCompile Include="..\SDL2\src\main\winrt\SDL_winrt_main_NonXAML.cpp">
-      <Filter>SDL2</Filter>
-    </ClCompile>
+    <ClCompile Include="WinRTUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

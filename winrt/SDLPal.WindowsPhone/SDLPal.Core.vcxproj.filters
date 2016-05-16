@@ -613,6 +613,9 @@
     <ClCompile Include="..\..\resampler.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\overlay.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\libmad\D.dat">
