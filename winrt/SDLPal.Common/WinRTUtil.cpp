@@ -1,47 +1,18 @@
+#include "pch.h"
+
 #include <wrl.h>
 #include <string>
 #include <DXGI.h>
 #include <ppltasks.h>
 #include "../SDLPal.Common/AsyncHelper.h"
+#include "../SDLPal.Common/StringHelper.h"
 
 extern "C" void TerminateOnError(const char *fmt, ...);
 
 #define PAL_PATH_NAME	"SDLPAL"
 
-static std::string g_savepath, g_basepath;
-static Windows::Storage::StorageFolder ^g_basefolder, ^g_savefolder;
-
-static void ConvertString(Platform::String^ src, std::string& dst)
-{
-	int len = WideCharToMultiByte(CP_ACP, 0, src->Begin(), -1, nullptr, 0, nullptr, nullptr);
-	dst.resize(len - 1);
-	WideCharToMultiByte(CP_ACP, 0, src->Begin(), -1, (char*)dst.data(), len, nullptr, nullptr);
-}
-
-static std::string ConvertString(Platform::String^ src)
-{
-	int len = WideCharToMultiByte(CP_ACP, 0, src->Begin(), -1, nullptr, 0, nullptr, nullptr);
-	std::string dst(len - 1, ' ');
-	WideCharToMultiByte(CP_ACP, 0, src->Begin(), -1, (char*)dst.data(), len, nullptr, nullptr);
-	return dst;
-}
-
-static void ConvertString(const std::string& src, std::wstring& dst)
-{
-	int len = MultiByteToWideChar(CP_ACP, 0, src.c_str(), -1, nullptr, 0);
-	dst.resize(len - 1);
-	MultiByteToWideChar(CP_ACP, 0, src.c_str(), -1, (wchar_t*)dst.data(), len);
-}
-
-static Platform::String^ ConvertString(const std::string& src)
-{
-	int len = MultiByteToWideChar(CP_ACP, 0, src.c_str(), -1, nullptr, 0);
-	auto wc = new wchar_t[len];
-	MultiByteToWideChar(CP_ACP, 0, src.c_str(), -1, wc, len);
-	auto dst = ref new Platform::String(wc);
-	delete[] wc;
-	return dst;
-}
+static std::string g_savepath, g_basepath, g_configpath;
+static Windows::Storage::StorageFolder ^g_basefolder, ^g_savefolder, ^g_configfolder;
 
 static Windows::Storage::StorageFolder^ CheckGamePath(Windows::Storage::StorageFolder^ root, HANDLE eventHandle)
 {
@@ -85,58 +56,65 @@ static Windows::Storage::StorageFolder^ CheckGamePath(Windows::Storage::StorageF
 extern "C"
 LPCSTR UTIL_BasePath(VOID)
 {
+	//if (g_basepath.empty())
+	//{
+	//	Windows::Storage::StorageFolder^ folder = nullptr;
+	//	HANDLE eventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
+	//	auto folders = AWait(Windows::Storage::KnownFolders::RemovableDevices->GetFoldersAsync())->First();
+	//	while (folders->HasCurrent)
+	//	{
+	//		if (folder = CheckGamePath(folders->Current, eventHandle))
+	//			break;
+	//		else
+	//			folders->MoveNext();
+	//	}
+
+	//	if (!folder)
+	//	{
+	//		Windows::Storage::StorageFolder^ search_folders[] = {
+	//			Windows::Storage::KnownFolders::PicturesLibrary,
+	//			Windows::Storage::KnownFolders::SavedPictures,
+	//			//Windows::Storage::KnownFolders::MusicLibrary,
+	//			//Windows::Storage::KnownFolders::VideosLibrary,
+	//		};
+	//		for (int i = 0; i < sizeof(search_folders) / sizeof(search_folders[0]); i++)
+	//		{
+	//			if (folder = CheckGamePath(search_folders[i], eventHandle))
+	//				break;
+	//		}
+	//	}
+
+	//	CloseHandle(eventHandle);
+
+	//	if (folder)
+	//	{
+	//		/* Folder examination succeeded */
+	//		auto path = folder->Path;
+	//		if (path->End()[-1] != L'\\') path += "\\";
+	//		ConvertString(path, g_basepath);
+	//		g_basefolder = folder;
+
+	//		/* Check whether the folder is writable */
+	//		FILE* fp = fopen(ConvertString(path + "sdlpal.rpg").c_str(), "wb");
+	//		if (fp)
+	//		{
+	//			g_savepath = g_basepath;
+	//			g_savefolder = g_basefolder;
+	//			fclose(fp);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		TerminateOnError("Could not find PAL folder.\n");
+	//		//ConvertString(Windows::ApplicationModel::Package::Current->InstalledLocation->Path + "\\Assets\\Data\\", g_basepath);
+	//	}
+	//}
 	if (g_basepath.empty())
 	{
-		Windows::Storage::StorageFolder^ folder = nullptr;
-		HANDLE eventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
-		auto folders = AWait(Windows::Storage::KnownFolders::RemovableDevices->GetFoldersAsync())->First();
-		while (folders->HasCurrent)
-		{
-			if (folder = CheckGamePath(folders->Current, eventHandle))
-				break;
-			else
-				folders->MoveNext();
-		}
-
-		if (!folder)
-		{
-			Windows::Storage::StorageFolder^ search_folders[] = {
-				Windows::Storage::KnownFolders::PicturesLibrary,
-				Windows::Storage::KnownFolders::SavedPictures,
-				//Windows::Storage::KnownFolders::MusicLibrary,
-				//Windows::Storage::KnownFolders::VideosLibrary,
-			};
-			for (int i = 0; i < sizeof(search_folders) / sizeof(search_folders[0]); i++)
-			{
-				if (folder = CheckGamePath(search_folders[i], eventHandle))
-					break;
-			}
-		}
-
-		CloseHandle(eventHandle);
-
-		if (folder)
-		{
-			/* Folder examination succeeded */
-			auto path = folder->Path;
-			if (path->End()[-1] != L'\\') path += "\\";
-			ConvertString(path, g_basepath);
-			g_basefolder = folder;
-
-			/* Check whether the folder is writable */
-			FILE* fp = fopen(ConvertString(path + "sdlpal.rpg").c_str(), "wb");
-			if (fp)
-			{
-				g_savepath = g_basepath;
-				g_savefolder = g_basefolder;
-				fclose(fp);
-			}
-		}
-		else
-		{
-			TerminateOnError("Could not find PAL folder.\n");
-			//ConvertString(Windows::ApplicationModel::Package::Current->InstalledLocation->Path + "\\Assets\\Data\\", g_basepath);
-		}
+		g_basefolder = Windows::Storage::ApplicationData::Current->LocalFolder;
+		auto localfolder = g_basefolder->Path;
+		if (localfolder->End()[-1] != L'\\') localfolder += "\\";
+		ConvertString(localfolder, g_basepath);
 	}
 	return g_basepath.c_str();
 }
@@ -146,12 +124,25 @@ LPCSTR UTIL_SavePath(VOID)
 {
 	if (g_savepath.empty())
 	{
-		auto localfolder = Windows::Storage::ApplicationData::Current->LocalFolder->Path;
+		g_savefolder = Windows::Storage::ApplicationData::Current->LocalFolder;
+		auto localfolder = g_savefolder->Path;
 		if (localfolder->End()[-1] != L'\\') localfolder += "\\";
 		ConvertString(localfolder, g_savepath);
-		g_savefolder = Windows::Storage::ApplicationData::Current->LocalFolder;
 	}
 	return g_savepath.c_str();
+}
+
+extern "C"
+LPCSTR UTIL_ConfigPath(VOID)
+{
+	if (g_configpath.empty())
+	{
+		g_configfolder = Windows::Storage::ApplicationData::Current->LocalFolder;
+		auto localfolder = g_configfolder->Path;
+		if (localfolder->End()[-1] != L'\\') localfolder += "\\";
+		ConvertString(localfolder, g_configpath);
+	}
+	return g_configpath.c_str();
 }
 
 static BOOL UTIL_IsMobile(VOID)
@@ -170,7 +161,9 @@ BOOL UTIL_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
 	IDXGIOutput* pOutput = nullptr;
 	DWORD retval = FALSE;
 
+#if WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
 	if (!UTIL_IsMobile()) return FALSE;
+#endif
 
 	if (!pdwScreenWidth || !pdwScreenHeight) return FALSE;
 
@@ -231,14 +224,4 @@ extern "C"
 VOID UTIL_Platform_Quit(VOID)
 {
 	longjmp(g_exit_jmp_env, LONGJMP_EXIT_CODE);
-}
-
-int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
-{
-	if (FAILED(Windows::Foundation::Initialize(RO_INIT_MULTITHREADED))) {
-		return 1;
-	}
-
-	SDL_WinRTRunApp(SDL_main, NULL);
-	return 0;
 }

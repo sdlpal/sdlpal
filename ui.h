@@ -76,6 +76,7 @@ extern "C"
 #define SYSMENU_LABEL_SOUND                14
 #define SYSMENU_LABEL_QUIT                 15
 #define SYSMENU_LABEL_BATTLEMODE           606
+#define SYSMENU_LABEL_LAUNCHSETTING        612
 
 #define BATTLESPEEDMENU_LABEL_1            (SYSMENU_LABEL_BATTLEMODE + 1)
 #define BATTLESPEEDMENU_LABEL_2            (SYSMENU_LABEL_BATTLEMODE + 2)

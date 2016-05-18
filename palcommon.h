@@ -32,7 +32,10 @@ extern "C"
 typedef LPBYTE      LPSPRITE, LPBITMAPRLE;
 typedef LPCBYTE     LPCSPRITE, LPCBITMAPRLE;
 
+#ifndef PAL_POS_DEFINED
+#define PAL_POS_DEFINED
 typedef DWORD           PAL_POS;
+#endif
 
 #define PAL_XY(x, y)    (PAL_POS)(((((WORD)(y)) << 16) & 0xFFFF0000) | (((WORD)(x)) & 0xFFFF))
 #define PAL_X(xy)       (SHORT)((xy) & 0xFFFF)

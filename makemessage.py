@@ -220,6 +220,8 @@ def main():
     output += "609=3\n"
     output += "610=4\n"
     output += "611=5\n"
+    output += "# The following word is used to ask user whether to launch setting interface on next game start.\n"
+    output += "612=Setting\n"
     output += "[END WORDS]\n\n"
 
     output += "# The following sections contain dialog/description texts used by the game.\n\n"

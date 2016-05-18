@@ -23,6 +23,7 @@
 
 #include "main.h"
 #include "resampler.h"
+#include "palcfg.h"
 
 static GLOBALVARS _gGlobals;
 GLOBALVARS * const  gpGlobals = &_gGlobals;
@@ -54,24 +55,7 @@ PAL_LoadConfig(
 )
 {
 	FILE     *fp;
-	CODEPAGE  iCodePage = CP_BIG5;		// Default for BIG5
-	DWORD     dwScreenWidth = 0;
-	DWORD     dwScreenHeight = 0;
-	DWORD     dwFullScreen = FALSE;
-	DWORD     dwKeepAspectRatio = TRUE;
-	DWORD     dwIsDOS = 1;				// Default for DOS
-	DWORD     dwUseEmbeddedFonts = 1;	// Default for using embedded fonts in DOS version
-	DWORD     dwUseSurroundOPL = 1;		// Default for using surround opl
-	DWORD     dwUseStereo = 1;			// Default for stereo audio
-#if PAL_HAS_TOUCH
-	DWORD     dwUseTouchOverlay = UTIL_TouchEnabled();
-#endif
-	float     flSurroundOPLOffset = 384.0f;// Default for 384.0
-	INT       iSampleRate = 44100;		// Default for 44100 Hz
-	INT       iOPLSampleRate = 49716;	// Default for 49716 Hz
-	INT       iResampleQuality = RESAMPLER_QUALITY_MAX;	// Default to maximum quality
-	INT       iAudioBufferSize = PAL_AUDIO_DEFAULT_BUFFER_SIZE;
-	INT       iVolume = 100;				// Default for 100%
+	ConfigValue  values[PALCFG_ALL_MAX];
 	MUSICTYPE eMusicType = MUSIC_RIX;
 	MUSICTYPE eCDType = MUSIC_OGG;
 	OPLTYPE   eOPLType = OPL_DOSBOX;
@@ -97,7 +81,9 @@ PAL_LoadConfig(
 		PAL_XY(0, 0), PAL_XY(0, 0)
 	};
 
-	if (fFromFile && (fp = fopen(va("%ssdlpal.cfg", PAL_SAVE_PREFIX), "r")))
+	for (PALCFG_ITEM i = PALCFG_ALL_MIN; i < PALCFG_ALL_MAX; i++) values[i] = PAL_DefaultConfig(i);
+
+	if (fFromFile && (fp = fopen(va("%ssdlpal.cfg", PAL_CONFIG_PREFIX), "r")))
 	{
 		PAL_LARGE char buf[512];
 
@@ -106,197 +92,134 @@ PAL_LoadConfig(
 		//
 		while (fgets(buf, 512, fp) != NULL)
 		{
-			char *p = buf;
-
-			//
-			// Skip leading spaces
-			//
-			while (*p && isspace(*p)) p++;
-
-			//
-			// Skip comments
-			//
-			if (*p && *p != '#')
+			ConfigValue value;
+			const ConfigItem * item;
+			if (PAL_ParseConfigLine(buf, &item, &value))
 			{
-				char *ptr;
-				if (ptr = strchr(p, '='))
+				switch (item->Item)
 				{
-					char *end = ptr - 1;
-					*ptr++ = 0;
-
-					//
-					// Skip tailing & leading spaces
-					//
-					while (isspace(*end) && end >= p) *end-- = 0;
-
-					if (SDL_strcasecmp(p, "CODEPAGE") == 0)
+				case PALCFG_AUDIOBUFFERSIZE:
+					if ((value.uValue & (value.uValue - 1)) != 0)
 					{
-						sscanf(ptr, "%d", &iCodePage);
-						if (iCodePage < 0) iCodePage = 0;
-						if (iCodePage >= CP_MAX) iCodePage = CP_MAX - 1;
+						/* Make sure iAudioBufferSize is power of 2 */
+						int n = 0;
+						while (value.uValue) { value.uValue >>= 1; n++; }
+						value.uValue = 1 << (n - 1);
 					}
-					else if (SDL_strcasecmp(p, "DOS") == 0)
+					values[item->Item] = value;
+					break;
+				case PALCFG_MESSAGEFILE:
+				{
+					int n = strlen(value.sValue);
+					while (n > 0 && isspace(value.sValue[n - 1])) n--;
+					if (n > 0)
 					{
-						sscanf(ptr, "%u", &dwIsDOS);
+						gConfig.pszMsgFile = (char *)realloc(gConfig.pszMsgFile, n + 1);
+						memcpy(gConfig.pszMsgFile, value.sValue, n);
+						gConfig.pszMsgFile[n] = '\0';
 					}
-					else if (SDL_strcasecmp(p, "USEEMBEDDEDFONTS") == 0)
+					break;
+				}
+				case PALCFG_GAMEPATH:
+				{
+					int n = strlen(value.sValue);
+					while (n > 0 && isspace(value.sValue[n - 1])) n--;
+					if (n > 0)
 					{
-						sscanf(ptr, "%u", &dwUseEmbeddedFonts);
+						gConfig.pszGamePath = (char *)realloc(gConfig.pszGamePath, n + 1);
+						memcpy(gConfig.pszGamePath, value.sValue, n);
+						gConfig.pszGamePath[n] = '\0';
 					}
-					else if (SDL_strcasecmp(p, "USESURROUNDOPL") == 0)
+					break;
+				}
+				case PALCFG_SAVEPATH:
+				{
+					int n = strlen(value.sValue);
+					while (n > 0 && isspace(value.sValue[n - 1])) n--;
+					if (n > 0)
 					{
-						sscanf(ptr, "%u", &dwUseSurroundOPL);
+						gConfig.pszSavePath = (char *)realloc(gConfig.pszSavePath, n + 1);
+						memcpy(gConfig.pszSavePath, value.sValue, n);
+						gConfig.pszSavePath[n] = '\0';
 					}
-					else if (SDL_strcasecmp(p, "STEREO") == 0)
-					{
-						sscanf(ptr, "%u", &dwUseStereo);
-					}
-					else if (SDL_strcasecmp(p, "SAMPLERATE") == 0)
-					{
-						sscanf(ptr, "%d", &iSampleRate);
-						if (iSampleRate > PAL_MAX_SAMPLERATE) iSampleRate = PAL_MAX_SAMPLERATE;
-					}
-					else if (SDL_strcasecmp(p, "OPLSAMPLERATE") == 0)
-					{
-						sscanf(ptr, "%d", &iOPLSampleRate);
-					}
-					else if (SDL_strcasecmp(p, "RESAMPLEQUALITY") == 0)
-					{
-						sscanf(ptr, "%d", &iResampleQuality);
-					}
-					else if (SDL_strcasecmp(p, "SURROUNDOPLOFFSET") == 0)
-					{
-						sscanf(ptr, "%f", &flSurroundOPLOffset);
-					}
-					else if (SDL_strcasecmp(p, "WINDOWWIDTH") == 0)
-					{
-						sscanf(ptr, "%u", &dwScreenWidth);
-					}
-					else if (SDL_strcasecmp(p, "WINDOWHEIGHT") == 0)
-					{
-						sscanf(ptr, "%u", &dwScreenHeight);
-					}
-					else if (SDL_strcasecmp(p, "FULLSCREEN") == 0)
-					{
-						sscanf(ptr, "%u", &dwFullScreen);
-					}
-					else if (SDL_strcasecmp(p, "KEEPASPECTRATIO") == 0)
-					{
-						sscanf(ptr, "%u", &dwKeepAspectRatio);
-					}
-#if PAL_HAS_TOUCH
-					else if (SDL_strcasecmp(p, "USETOUCHOVERLAY") == 0)
-					{
-						sscanf(ptr, "%d", &dwUseTouchOverlay);
-					}
-#endif
-					else if (SDL_strcasecmp(p, "AUDIOBUFFERSIZE") == 0)
-					{
-						sscanf(ptr, "%d", &iAudioBufferSize);
-						if (iAudioBufferSize > 32768)
-							iAudioBufferSize = 32768;
-						else if (iAudioBufferSize < 2)
-							iAudioBufferSize = 2;
-						if ((iAudioBufferSize & (iAudioBufferSize - 1)) != 0)
-						{
-							/* Make sure iAudioBufferSize is power of 2 */
-							int n = 0;
-							while (iAudioBufferSize) { iAudioBufferSize >>= 1; n++; }
-							iAudioBufferSize = 1 << (n - 1);
-						}
-					}
-					else if (SDL_strcasecmp(p, "VOLUME") == 0)
-					{
-						sscanf(ptr, "%d", &iVolume);
-						if (iVolume > 100)
-							iVolume = 100;
-						else if (iVolume < 0)
-							iVolume = 0;
-					}
-					else if (SDL_strcasecmp(p, "MESSAGEFILENAME") == 0)
-					{
-						int n = strlen(ptr);
-						if (n > 0 && ptr[n - 1] == '\n') ptr[--n] = 0;
-						if (n > 0 && ptr[n - 1] == '\r') ptr[--n] = 0;
-						if (n > 0) gConfig.pszMsgName = strdup(ptr);
-					}
+					break;
+				}
+				case PALCFG_CD:
+				{
+					if (PAL_HAS_MP3 && SDL_strncasecmp(value.sValue, "MP3", 3) == 0)
+						eCDType = MUSIC_MP3;
+					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", 3) == 0)
+						eCDType = MUSIC_OGG;
+					else if (PAL_HAS_SDLCD && SDL_strncasecmp(value.sValue, "RAW", 3) == 0)
+						eCDType = MUSIC_SDLCD;
+					break;
+				}
+				case PALCFG_MUSIC:
+				{
+					if (PAL_HAS_NATIVEMIDI && SDL_strncasecmp(value.sValue, "MIDI", 4) == 0)
+						eMusicType = MUSIC_MIDI;
+					else if (PAL_HAS_MP3 && SDL_strncasecmp(value.sValue, "MP3", 3) == 0)
+						eMusicType = MUSIC_MP3;
+					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", 3) == 0)
+						eMusicType = MUSIC_OGG;
+					else if (SDL_strncasecmp(value.sValue, "RIX", 3) == 0)
+						eMusicType = MUSIC_RIX;
+					break;
+				}
+				case PALCFG_OPL:
+				{
+					if (SDL_strncasecmp(value.sValue, "DOSBOX", 6) == 0)
+						eOPLType = OPL_DOSBOX;
+					else if (SDL_strncasecmp(value.sValue, "MAME", 4) == 0)
+						eOPLType = OPL_MAME;
+					break;
+				}
+				case PALCFG_RIXEXTRAINIT:
+				{
 #if USE_RIX_EXTRA_INIT
-					else if (SDL_strcasecmp(p, "RIXEXTRAINIT") == 0)
+					int n = 1;
+					char *p;
+					for (p = ptr; *p < *end; p++)
 					{
-						int n = 1;
-						char *p;
-						for (p = ptr; *p < *end; p++)
-						{
-							if (*p == ',')
-								n++;
-						}
-						n &= ~0x1;
+						if (*p == ',')
+							n++;
+					}
+					n &= ~0x1;
 
-						if (n > 0)
+					if (n > 0)
+					{
+						uint32_t *regs = malloc(sizeof(uint32_t) * (n >> 1));
+						uint8_t *vals = malloc(sizeof(uint8_t) * (n >> 1));
+						uint32_t d, i, v = 1;
+						if (regs && vals)
 						{
-							uint32_t *regs = malloc(sizeof(uint32_t) * (n >> 1));
-							uint8_t *vals = malloc(sizeof(uint8_t) * (n >> 1));
-							uint32_t d, i, v = 1;
-							if (regs && vals)
+							for (p = ptr, i = 0; *p < *end; p++, i++)
 							{
-								for (p = ptr, i = 0; *p < *end; p++, i++)
-								{
-									if (sscanf(p, "%u", &regs[i]) == 0) { v = 0; break; }
-									while (*p < *end && *p != ',') p++; p++;
-									if (sscanf(p, "%u", &d) == 0) { v = 0; break; }
-									while (*p < *end && *p != ',') p++;
-									vals[i] = (uint8_t)d;
-								}
-								if (v)
-								{
-									gConfig.pExtraFMRegs = regs;
-									gConfig.pExtraFMVals = vals;
-									gConfig.dwExtraLength = n >> 1;
-								}
-								else
-								{
-									free(regs);
-									free(vals);
-								}
+								if (sscanf(p, "%u", &regs[i]) == 0) { v = 0; break; }
+								while (*p < *end && *p != ',') p++; p++;
+								if (sscanf(p, "%u", &d) == 0) { v = 0; break; }
+								while (*p < *end && *p != ',') p++;
+								vals[i] = (uint8_t)d;
+							}
+							if (v)
+							{
+								gConfig.pExtraFMRegs = regs;
+								gConfig.pExtraFMVals = vals;
+								gConfig.dwExtraLength = n >> 1;
+							}
+							else
+							{
+								free(regs);
+								free(vals);
 							}
 						}
 					}
 #endif
-					else if (SDL_strcasecmp(p, "CD") == 0)
-					{
-						char cd_type[32];
-						sscanf(ptr, "%31s", cd_type);
-						if (PAL_HAS_MP3 && SDL_strcasecmp(cd_type, "MP3") == 0)
-							eCDType = MUSIC_MP3;
-						else if (PAL_HAS_OGG && SDL_strcasecmp(cd_type, "OGG") == 0)
-							eCDType = MUSIC_OGG;
-						else if (PAL_HAS_SDLCD && SDL_strcasecmp(cd_type, "RAW") == 0)
-							eCDType = MUSIC_SDLCD;
-					}
-					else if (SDL_strcasecmp(p, "MUSIC") == 0)
-					{
-						char music_type[32];
-						sscanf(ptr, "%31s", music_type);
-						if (PAL_HAS_NATIVEMIDI && SDL_strcasecmp(music_type, "MIDI") == 0)
-							eMusicType = MUSIC_MIDI;
-						else if (PAL_HAS_MP3 && SDL_strcasecmp(music_type, "MP3") == 0)
-							eMusicType = MUSIC_MP3;
-						else if (PAL_HAS_OGG && SDL_strcasecmp(music_type, "OGG") == 0)
-							eMusicType = MUSIC_OGG;
-						else if (SDL_strcasecmp(music_type, "RIX") == 0)
-							eMusicType = MUSIC_RIX;
-					}
-					else if (SDL_strcasecmp(p, "OPL") == 0)
-					{
-						char opl_type[32];
-						sscanf(ptr, "%31s", opl_type);
-						if (SDL_strcasecmp(opl_type, "DOSBOX") == 0)
-							eOPLType = OPL_DOSBOX;
-						else if (SDL_strcasecmp(opl_type, "DOSBOXOLD") == 0)
-							eOPLType = OPL_DOSBOX_OLD;
-						else if (PAL_HAS_MAME && SDL_strcasecmp(opl_type, "MAME") == 0)
-							eOPLType = OPL_MAME;
-					}
+					break;
+				}
+				default:
+					values[item->Item] = value;
+					break;
 				}
 			}
 		}
@@ -307,40 +230,101 @@ PAL_LoadConfig(
 	//
 	// Set configurable global options
 	//
-	gConfig.fIsWIN95 = dwIsDOS ? FALSE : TRUE;
-	gConfig.fUseEmbeddedFonts = dwIsDOS && dwUseEmbeddedFonts ? TRUE : FALSE;
-	gConfig.fUseSurroundOPL = dwUseStereo && dwUseSurroundOPL ? TRUE : FALSE;
-	gConfig.iAudioChannels = dwUseStereo ? 2 : 1;
-#if PAL_HAS_TOUCH
-	gConfig.fUseTouchOverlay = dwUseTouchOverlay ? TRUE : FALSE;
-#endif
-	gConfig.iSampleRate = iSampleRate;
-	gConfig.iOPLSampleRate = iOPLSampleRate;
-	gConfig.iResampleQuality = iResampleQuality;
-	gConfig.dSurroundOPLOffset = flSurroundOPLOffset;
+	if (!gConfig.pszGamePath) gConfig.pszGamePath = strdup(PAL_PREFIX);
+	if (!gConfig.pszSavePath) gConfig.pszSavePath = strdup(PAL_SAVE_PREFIX);
 	gConfig.eMusicType = eMusicType;
 	gConfig.eCDType = eCDType;
 	gConfig.eOPLType = eOPLType;
-	gConfig.iCodePage = iCodePage;
 	gConfig.dwWordLength = 10;	// This is the default value for Chinese version
-	gConfig.wAudioBufferSize = (WORD)iAudioBufferSize;
-	gConfig.iVolume = SDL_MIX_MAXVOLUME * iVolume / 100;
-	if (UTIL_GetScreenSize(&dwScreenWidth, &dwScreenHeight))
+	gConfig.ScreenLayout = screen_layout;
+
+	gConfig.fIsWIN95 = !values[PALCFG_DOS].bValue;
+	gConfig.fUseEmbeddedFonts = values[PALCFG_DOS].bValue && values[PALCFG_USEEMBEDDEDFONTS].bValue;
+	gConfig.fUseSurroundOPL = values[PALCFG_STEREO].bValue && values[PALCFG_USESURROUNDOPL].bValue;
+	gConfig.fLaunchSetting = values[PALCFG_LAUNCHSETTING].bValue;
+#if PAL_HAS_TOUCH
+	gConfig.fUseTouchOverlay = values[PALCFG_USETOUCHOVERLAY].bValue;
+#endif
+#if SDL_VERSION_ATLEAST(2,0,0)
+	gConfig.fKeepAspectRatio = values[PALCFG_KEEPASPECTRATIO].bValue;
+#else
+	gConfig.fFullScreen = values[PALCFG_FULLSCREEN].bValue;
+#endif
+	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
+
+	gConfig.iSurroundOPLOffset = values[PALCFG_SURROUNDOPLOFFSET].iValue;
+
+	gConfig.iSampleRate = values[PALCFG_SAMPLERATE].uValue;
+	gConfig.iOPLSampleRate = values[PALCFG_OPLSAMPLERATE].uValue;
+	gConfig.iResampleQuality = values[PALCFG_RESAMPLEQUALITY].uValue;
+	gConfig.uCodePage = values[PALCFG_CODEPAGE].uValue;
+	gConfig.wAudioBufferSize = (WORD)values[PALCFG_AUDIOBUFFERSIZE].uValue;
+	gConfig.iVolume = SDL_MIX_MAXVOLUME * values[PALCFG_VOLUME].uValue / 100;
+
+	if (UTIL_GetScreenSize(&values[PALCFG_WINDOWWIDTH].uValue, &values[PALCFG_WINDOWHEIGHT].uValue))
 	{
-		gConfig.dwScreenWidth = dwScreenWidth;
-		gConfig.dwScreenHeight = dwScreenHeight;
+		gConfig.dwScreenWidth = values[PALCFG_WINDOWWIDTH].uValue;
+		gConfig.dwScreenHeight = values[PALCFG_WINDOWHEIGHT].uValue;
 	}
 	else
 	{
 		gConfig.dwScreenWidth = PAL_DEFAULT_WINDOW_WIDTH;
 		gConfig.dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
 	}
+}
+
+
+BOOL
+PAL_SaveConfig(
+	VOID
+)
+{
+	static const char *music_types[] = { "RIX", "MIDI", "MP3", "OGG", "RAW" };
+	static const char *opl_types[] = { "DOSBOX", "MAME" };
+	char buf[512];
+	FILE *fp = fopen(va("%ssdlpal.cfg", PAL_CONFIG_PREFIX), "w");
+
+	if (fp)
+	{
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_DOS), !gConfig.fIsWIN95); fputs(buf, fp);
 #if SDL_VERSION_ATLEAST(2,0,0)
-	gConfig.fKeepAspectRatio = dwKeepAspectRatio ? TRUE : FALSE;
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_KEEPASPECTRATIO), gConfig.fKeepAspectRatio); fputs(buf, fp);
 #else
-	gConfig.fFullScreen = dwFullScreen ? TRUE : FALSE;
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_FULLSCREEN), gConfig.fKeepAspectRatio); fputs(buf, fp);
 #endif
-	gConfig.ScreenLayout = screen_layout;
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_LAUNCHSETTING), gConfig.fLaunchSetting); fputs(buf, fp);
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_STEREO), gConfig.iAudioChannels == 2 ? TRUE : FALSE); fputs(buf, fp);
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_USEEMBEDDEDFONTS), gConfig.fUseEmbeddedFonts); fputs(buf, fp);
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_USESURROUNDOPL), gConfig.fUseSurroundOPL); fputs(buf, fp);
+#if PAL_HAS_TOUCH
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_USETOUCHOVERLAY), gConfig.fUseTouchOverlay); fputs(buf, fp);
+#endif
+
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_SURROUNDOPLOFFSET), gConfig.iSurroundOPLOffset); fputs(buf, fp);
+
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_AUDIOBUFFERSIZE), gConfig.wAudioBufferSize); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_CODEPAGE), gConfig.uCodePage); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_OPLSAMPLERATE), gConfig.iOPLSampleRate); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_RESAMPLEQUALITY), gConfig.iResampleQuality); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_SAMPLERATE), gConfig.iSampleRate); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_VOLUME), gConfig.iVolume); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_WINDOWHEIGHT), gConfig.dwScreenHeight); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_WINDOWWIDTH), gConfig.dwScreenWidth); fputs(buf, fp);
+
+		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CD), music_types[gConfig.eCDType]); fputs(buf, fp);
+		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MUSIC), music_types[gConfig.eMusicType]); fputs(buf, fp);
+		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_OPL), opl_types[gConfig.eOPLType]); fputs(buf, fp);
+
+		if (gConfig.pszGamePath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_GAMEPATH), gConfig.pszGamePath); fputs(buf, fp); }
+		if (gConfig.pszSavePath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
+		if (gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
+
+		fclose(fp);
+
+		return TRUE;
+	}
+	else
+		return FALSE;
 }
 
 INT
@@ -354,7 +338,7 @@ PAL_InitGlobals(
 
   Parameters:
 
-    [IN]  iCodePage - the code page for text conversion.
+    [IN]  uCodePage - the code page for text conversion.
 	[IN]  dwWordLength - the length of each word.
 
   Return value:
@@ -380,7 +364,7 @@ PAL_InitGlobals(
    gpGlobals->f.fpRGM = UTIL_OpenRequiredFile("rgm.mkf");
    gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
 
-   gpGlobals->lpObjectDesc = gConfig.fIsWIN95 ? NULL : PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
+   gpGlobals->lpObjectDesc = gConfig.fIsWIN95 ? NULL : PAL_LoadObjectDesc(va("%s%s", gConfig.pszGamePath, "desc.dat"));
    gpGlobals->bCurrentSaveSlot = 1;
 
    return 0;
@@ -440,7 +424,9 @@ PAL_FreeGlobals(
    free(gConfig.pExtraFMVals);
    free(gConfig.dwExtraLength);
 #endif
-   free(gConfig.pszMsgName);
+   free(gConfig.pszMsgFile);
+   free(gConfig.pszGamePath);
+   free(gConfig.pszSavePath);
 
    //
    // Clear the instance
@@ -1153,7 +1139,7 @@ PAL_InitGameData(
    //
    // try loading from the saved game file.
    //
-   if (iSaveSlot == 0 || PAL_LoadGame(va("%s%d%s", PAL_SAVE_PREFIX, iSaveSlot, ".rpg")) != 0)
+   if (iSaveSlot == 0 || PAL_LoadGame(va("%s%d%s", gConfig.pszSavePath, iSaveSlot, ".rpg")) != 0)
    {
       //
       // Cannot load the saved game file. Load the defaults.

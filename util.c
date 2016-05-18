@@ -24,6 +24,8 @@
 
 #include "util.h"
 #include "input.h"
+#include "global.h"
+#include "palcfg.h"
 
 #include "midi.h"
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -420,7 +422,17 @@ UTIL_OpenRequiredFileForMode(
 
    if (fp == NULL)
    {
-      TerminateOnError("File not found: %s!\n", lpszFileName);
+	   extern SDL_Window *gpWindow;
+	   SDL_MessageBoxButtonData buttons[2] = { { 0, 0, "Yes" }, { 0, 1, "No"} };
+	   SDL_MessageBoxData mbd = { SDL_MESSAGEBOX_ERROR, gpWindow, "FATAL ERROR", va("File not found: %s!\nLaunch setting dialog on next start?\n", lpszFileName), 2, buttons, NULL };
+	   int btnid;
+	   if (SDL_ShowMessageBox(&mbd, &btnid) == 0 && btnid == 0)
+	   {
+		   gConfig.fLaunchSetting = TRUE;
+		   PAL_SaveConfig();
+	   }
+	   PAL_Shutdown();
+	   exit(255);
    }
 
    return fp;
@@ -471,7 +483,7 @@ UTIL_OpenFileForMode(
 {
 	FILE         *fp;
 
-	fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), szMode);
+	fp = fopen(va("%s%s", gConfig.pszGamePath, lpszFileName), szMode);
 
 #ifndef _WIN32
 	if (fp == NULL)
@@ -480,11 +492,11 @@ UTIL_OpenFileForMode(
 		// try to find the matching file in the directory.
 		//
 		struct dirent **list;
-		int n = scandir(PAL_PREFIX, &list, 0, alphasort);
+		int n = scandir(gConfig.pszGamePath, &list, 0, alphasort);
 		while (n-- > 0)
 		{
 			if (!fp && strcasecmp(list[n]->d_name, lpszFileName) == 0)
-				fp = fopen(va("%s%s", PAL_PREFIX, list[n]->d_name), szMode);
+				fp = fopen(va("%s%s", gConfig.pszGamePath, list[n]->d_name), szMode);
 			free(list[n]);
 		}
 		free(list);
@@ -528,7 +540,7 @@ UTIL_OpenLog(
    VOID
 )
 {
-   if ((pLogFile = fopen(_PATH_LOG, "a+")) == NULL)
+   if ((pLogFile = fopen(va("%slog.txt", gConfig.pszSavePath), "a+")) == NULL)
    {
       return NULL;
    }

@@ -567,13 +567,13 @@ PAL_AdditionalCredits(
 	  if (wcsncmp(rgszStrings[i], L"%ls", 3) == 0)
 	  {
 		  // We've limited the length of g_rcCredits[i] in text.c, so no need to double check here.
-		  wcscpy(buffer, gConfig.pszMsgName ? g_rcCredits[i] : rgszcps[i][gConfig.iCodePage]);
+		  wcscpy(buffer, gConfig.pszMsgFile ? g_rcCredits[i] : rgszcps[i][gConfig.uCodePage]);
 		  wcscat(buffer, rgszStrings[i] + 3);
 	  }
 	  else
 		  wcscpy(buffer, rgszStrings[i]);
 #else
-	  swprintf(buffer, 48, rgszStrings[i], gConfig.pszMsgName ? g_rcCredits[i] : rgszcps[i][gConfig.iCodePage]);
+	  swprintf(buffer, 48, rgszStrings[i], gConfig.pszMsgFile ? g_rcCredits[i] : rgszcps[i][gConfig.uCodePage]);
 #endif
 	  PAL_DrawText(buffer, PAL_XY(0, 2 + i * 16), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
    }
@@ -3302,7 +3302,7 @@ PAL_RunTriggerScript(
          //
          // Print dialog text
          //
-         if (gConfig.pszMsgName)
+         if (gConfig.pszMsgFile)
          {
             int idx = 0, iMsg;
             while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)
@@ -3477,7 +3477,7 @@ begin:
 		   int YBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 150 - gConfig.ScreenLayout.ExtraItemDescLines * 16 : 3;
 		   int iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
 
-		   if (gConfig.pszMsgName)
+		   if (gConfig.pszMsgFile)
 		   {
 			   int idx = 0, iMsg;
 			   while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)

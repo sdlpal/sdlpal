@@ -627,9 +627,9 @@ SOUND_OpenAudio(
    switch (gConfig.eMusicType)
    {
    case MUSIC_RIX:
-	   if (!(gSndPlayer.pMusPlayer = RIX_Init(va("%s%s", PAL_PREFIX, "mus.mkf"))))
+	   if (!(gSndPlayer.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "mus.mkf"))))
 	   {
-		   gSndPlayer.pMusPlayer = RIX_Init(va("%s%s", PAL_PREFIX, "MUS.MKF"));
+		   gSndPlayer.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "MUS.MKF"));
 	   }
 	   break;
    case MUSIC_MP3:

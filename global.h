@@ -91,7 +91,9 @@ extern "C"
 #define     OBJECT_MAGIC_START           0x127
 #define     OBJECT_MAGIC_END             0x18D
 
-#define     MINIMAL_WORD_COUNT           (MAX_OBJECTS + 12)
+#define     MINIMAL_WORD_COUNT           (MAX_OBJECTS + 13)
+
+#define     PAL_MAX_SAMPLERATE           48000
 
 // status of characters
 typedef enum tagSTATUS
@@ -559,7 +561,6 @@ typedef enum tagMUSICTYPE
 
 typedef enum tagOPLTYPE
 {
-	OPL_DOSBOX_OLD,
 	OPL_DOSBOX,
 	OPL_MAME
 } OPLTYPE, *LPOPLTYPE;
@@ -668,17 +669,14 @@ typedef struct tagCONFIGURATION
 	}                ScreenLayoutFlag[sizeof(SCREENLAYOUT) / sizeof(PAL_POS)];
 
 	/* Configurable options */
-	char            *pszMsgName;
-#if USE_RIX_EXTRA_INIT
-	uint32_t        *pExtraFMRegs;
-	uint8_t         *pExtraFMVals;
-	uint32_t         dwExtraLength;
-#endif
-	CODEPAGE         iCodePage;
+	char            *pszGamePath;
+	char            *pszSavePath;
+	char            *pszMsgFile;
+	CODEPAGE         uCodePage;
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;
 	DWORD            dwScreenHeight;
-	double           dSurroundOPLOffset;
+	INT              iSurroundOPLOffset;
 	INT              iAudioChannels;
 	INT              iSampleRate;
 	INT              iOPLSampleRate;
@@ -698,8 +696,14 @@ typedef struct tagCONFIGURATION
 #endif
 	BOOL             fEnableJoyStick;
 	BOOL             fUseCustomScreenLayout;
+	BOOL             fLaunchSetting;
 #if PAL_HAS_TOUCH
 	BOOL             fUseTouchOverlay;
+#endif
+#if USE_RIX_EXTRA_INIT
+	uint32_t        *pExtraFMRegs;
+	uint8_t         *pExtraFMVals;
+	uint32_t         dwExtraLength;
 #endif
 } CONFIGURATION, *LPCONFIGURATION;
 
@@ -708,6 +712,11 @@ extern CONFIGURATION gConfig;
 VOID
 PAL_LoadConfig(
    BOOL fFromFile
+);
+
+BOOL
+PAL_SaveConfig(
+	VOID
 );
 
 INT

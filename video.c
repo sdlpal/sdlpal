@@ -776,7 +776,7 @@ VIDEO_SaveScreenshot(
    //
    for (iNumBMP = 0; iNumBMP <= 9999; iNumBMP++)
    {
-      fp = fopen(va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP), "rb");
+      fp = fopen(va("%sscrn%.4d.bmp", gConfig.pszSavePath, iNumBMP), "rb");
       if (fp == NULL)
       {
          break;
@@ -793,9 +793,9 @@ VIDEO_SaveScreenshot(
    // Save the screenshot.
    //
 #if SDL_VERSION_ATLEAST(2,0,0)
-   SDL_SaveBMP(gpScreen, va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP));
+   SDL_SaveBMP(gpScreen, va("%sscrn%.4d.bmp", gConfig.pszSavePath, iNumBMP));
 #else
-   SDL_SaveBMP(gpScreenReal, va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP));
+   SDL_SaveBMP(gpScreenReal, va("%sscrn%.4d.bmp", gConfig.pszSavePath, iNumBMP));
 #endif
 }
 

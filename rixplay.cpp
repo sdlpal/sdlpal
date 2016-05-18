@@ -27,11 +27,8 @@
 
 #include "resampler.h"
 #include "adplug/opl.h"
-#include "adplug/demuopl.h"
 #include "adplug/dbemuopl.h"
-#if PAL_HAS_MAME
 #include "adplug/emuopl.h"
-#endif
 #include "adplug/surroundopl.h"
 #include "adplug/rix.h"
 
@@ -416,25 +413,17 @@ RIX_Init(
 	{
 		switch (gConfig.eOPLType)
 		{
-		case OPL_DOSBOX_OLD:
-			pRixPlayer->opl = new CSurroundopl(
-				new CDemuopl(gConfig.iOPLSampleRate, true, false),
-				new CDemuopl(gConfig.iOPLSampleRate, true, false),
-				true, gConfig.iOPLSampleRate, gConfig.dSurroundOPLOffset);
-			break;
 		case OPL_DOSBOX:
 			pRixPlayer->opl = new CSurroundopl(
 				new CDBemuopl(gConfig.iOPLSampleRate, true, false),
 				new CDBemuopl(gConfig.iOPLSampleRate, true, false),
-				true, gConfig.iOPLSampleRate, gConfig.dSurroundOPLOffset);
+				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
 			break;
-#if PAL_HAS_MAME
 		case OPL_MAME:
 			pRixPlayer->opl = new CSurroundopl(
 				new CEmuopl(gConfig.iOPLSampleRate, true, false),
 				new CEmuopl(gConfig.iOPLSampleRate, true, false),
-				true, gConfig.iOPLSampleRate, gConfig.dSurroundOPLOffset);
-#endif
+				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
 			break;
 		}
 	}
@@ -442,17 +431,12 @@ RIX_Init(
 	{
 		switch (gConfig.eOPLType)
 		{
-		case OPL_DOSBOX_OLD:
-			pRixPlayer->opl = new CDemuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
-			break;
 		case OPL_DOSBOX:
 			pRixPlayer->opl = new CDBemuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
 			break;
-#if PAL_HAS_MAME
 		case OPL_MAME:
 			pRixPlayer->opl = new CEmuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
 			break;
-#endif
 		}
 	}
 

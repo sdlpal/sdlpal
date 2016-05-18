@@ -166,6 +166,7 @@
     <ClCompile Include="..\mp3play.c" />
     <ClCompile Include="..\oggplay.c" />
     <ClCompile Include="..\overlay.c" />
+    <ClCompile Include="..\palcfg.c" />
     <ClCompile Include="..\palcommon.c" />
     <ClCompile Include="..\palette.c" />
     <ClCompile Include="..\play.c" />
@@ -277,6 +278,7 @@
     <ClInclude Include="..\main.h" />
     <ClInclude Include="..\map.h" />
     <ClInclude Include="..\midi.h" />
+    <ClInclude Include="..\palcfg.h" />
     <ClInclude Include="..\palcommon.h" />
     <ClInclude Include="..\palette.h" />
     <ClInclude Include="..\play.h" />

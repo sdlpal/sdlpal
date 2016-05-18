@@ -23,9 +23,25 @@
     <Image Include="Assets\WideLogo.scale-240.png">
       <Filter>资产</Filter>
     </Image>
+    <Filter Include="Strings">
+      <UniqueIdentifier>{904ef133-c7fd-4fd8-b204-d06e98a03142}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\en">
+      <UniqueIdentifier>{87067f57-ef24-4cb9-8bc2-b81fb6c9a5db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\zh-hans">
+      <UniqueIdentifier>{ae0fd064-ab20-47bc-9334-a8cd7fd7153c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\zh-hant">
+      <UniqueIdentifier>{1a1bb392-d3b3-4c82-a811-f6cfabd43f9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WinRTUtil.cpp" />
+    <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp" />
+    <ClCompile Include="..\SDLPal.Common\SDLPal.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="App.xaml.cpp" />
+    <ClCompile Include="MainPage.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -67,5 +83,27 @@
     <Image Include="Assets\SplashScreen.scale-100.png">
       <Filter>资产</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="App.xaml.h" />
+    <ClInclude Include="MainPage.xaml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en\Resources.resw">
+      <Filter>Strings\en</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\zh-hans\Resources.resw">
+      <Filter>Strings\zh-hans</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\zh-hant\Resources.resw">
+      <Filter>Strings\zh-hant</Filter>
+    </PRIResource>
   </ItemGroup>
 </Project>

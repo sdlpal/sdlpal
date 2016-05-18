@@ -2,9 +2,10 @@
 #include <string>
 #include <DXGI.h>
 #include <ppltasks.h>
-#include <AsyncHelper.h>
 #include <shcore.h>
 #include <unordered_set>
+#include "AsyncHelper.h"
+#include "StringHelper.h"
 
 #pragma comment(lib, "ShCore.lib")
 
@@ -12,13 +13,6 @@
 
 static const LARGE_INTEGER liZero = { 0 };
 static const void* const _SIGNATURE = &liZero;
-
-static void ConvertString(const std::string& src, std::wstring& dst)
-{
-	int len = MultiByteToWideChar(CP_ACP, 0, src.c_str(), -1, nullptr, 0);
-	dst.resize(len - 1);
-	MultiByteToWideChar(CP_ACP, 0, src.c_str(), -1, (wchar_t*)dst.data(), len);
-}
 
 /*========================*/
 
@@ -297,13 +291,37 @@ int WRT_fputc(int _Ch, WRT_FILE * _File)
 {
 	if (!_File || _File->sig != _SIGNATURE) return fputc(_Ch, (FILE*)_File);
 
-	return EOF;
+	CriticalSection cs(_File->cs);
+	unsigned long cbWrite;
+	return _File->writable && _File->stream->Write(&_Ch, 1, &cbWrite) == S_OK ? cbWrite : EOF;
 }
 
 extern "C"
 int WRT_fputs(const char * _Str, WRT_FILE * _File)
 {
 	if (!_File || _File->sig != _SIGNATURE) return fputs(_Str, (FILE*)_File);
+	if (!_File->writable || !_Str) return EOF;
 
-	return EOF;
+	const char *start = _Str;
+	int length = strlen(_Str);
+	unsigned long cbWrite;
+	const char crlf[] = { '\r', '\n' };
+	CriticalSection cs(_File->cs);
+	while (true)
+	{
+		const char *ptr = start;
+		while (*ptr && *ptr != '\n') ptr++;
+		if (_File->stream->Write(start, ptr - start, &cbWrite) != S_OK)
+			return EOF;
+		if (*ptr == '\n')
+		{
+			if (_File->stream->Write(crlf, 2, &cbWrite) != S_OK)
+				return EOF;
+			else
+				start = ptr + 1;
+		}
+		else
+			break;
+	}
+	return length;
 }

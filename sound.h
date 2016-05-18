@@ -24,10 +24,6 @@
 
 #include "common.h"
 
-#ifndef PAL_MAX_SAMPLERATE
-#define PAL_MAX_SAMPLERATE 48000
-#endif
-
 #ifdef __cplusplus
 extern "C"
 {

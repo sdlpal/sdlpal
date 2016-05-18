@@ -127,7 +127,7 @@ PAL_MultiByteToWideCharCP(
 
 WCHAR
 PAL_GetInvalidChar(
-   CODEPAGE      iCodePage
+   CODEPAGE      uCodePage
 );
 
 #endif

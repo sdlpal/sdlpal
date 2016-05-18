@@ -49,6 +49,12 @@ static LPWSTR gc_rgszAdditionalWords[CP_MAX][ATB_WORD_COUNT] = {
 static LPWSTR gc_rgszDefaultAdditionalWords[ATB_WORD_COUNT] = { NULL, L"\xFF11", L"\xFF12", L"\xFF13", L"\xFF14", L"\xFF15" };
 #endif
 
+#define SDLPAL_EXTRA_WORD_COUNT     1
+static LPWSTR gc_rgszSDLPalWords[CP_MAX][SDLPAL_EXTRA_WORD_COUNT] = {
+	{ L"\x555F\x52D5\x8A2D\x5B9A" },
+	{ L"\x542F\x52A8\x8BBE\x7F6E" },
+};
+
 LPWSTR g_rcCredits[12];
 
 typedef struct tagTEXTLIB
@@ -157,8 +163,7 @@ PAL_ReadOneLine(
 		}
 		else
 		{
-			if (n > 0 && temp[n - 1] == '\n') temp[--n] = 0;
-			if (n > 0 && temp[n - 1] == '\r') temp[--n] = 0;
+			while (n > 0 && (temp[n - 1] == '\n' || temp[n - 1] == '\r')) temp[--n] = 0;
 			return temp;
 		}
 	}
@@ -493,12 +498,12 @@ PAL_InitText(
 
 --*/
 {
-   if (gConfig.pszMsgName)
+   if (gConfig.pszMsgFile)
    {
 	   //
 	   // Open the message, index and word data files.
 	   //
-	   FILE *fp = UTIL_OpenRequiredFileForMode(gConfig.pszMsgName, "r");
+	   FILE *fp = UTIL_OpenRequiredFileForMode(gConfig.pszMsgFile, "r");
 
 	   //
 	   // Read the contents of the message, index and word data files.
@@ -681,8 +686,10 @@ PAL_InitText(
 
 	   g_TextLib.lpIndexBuf = NULL;
 
+	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_LAUNCHSETTING, gc_rgszSDLPalWords[gConfig.uCodePage], SDLPAL_EXTRA_WORD_COUNT * sizeof(LPCWSTR));
+
 #ifndef PAL_CLASSIC
-	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_BATTLEMODE, gc_rgszAdditionalWords[gConfig.iCodePage], ATB_WORD_COUNT * sizeof(LPCWSTR));
+	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_BATTLEMODE, gc_rgszAdditionalWords[gConfig.uCodePage], ATB_WORD_COUNT * sizeof(LPCWSTR));
 #endif
    }
 
@@ -723,7 +730,7 @@ PAL_FreeText(
    int i;
    if (g_TextLib.lpMsgBuf != NULL)
    {
-      if (gConfig.pszMsgName)
+      if (gConfig.pszMsgFile)
          for(i = 0; i < g_TextLib.nMsgs; i++) free(g_TextLib.lpMsgBuf[i]);
       else
          free(g_TextLib.lpMsgBuf[0]);
@@ -732,7 +739,7 @@ PAL_FreeText(
    }
    if (g_TextLib.lpWordBuf != NULL)
    {
-      if (gConfig.pszMsgName)
+      if (gConfig.pszMsgFile)
          for(i = 0; i < g_TextLib.nWords; i++) free(g_TextLib.lpWordBuf[i]);
       else
          free(g_TextLib.lpWordBuf[0]);
@@ -741,7 +748,7 @@ PAL_FreeText(
    }
    if (g_TextLib.lpIndexBuf != NULL)
    {
-      if (gConfig.pszMsgName)
+      if (gConfig.pszMsgFile)
          for(i = 0; i < g_TextLib.nIndices; i++) free(g_TextLib.lpIndexBuf[i]);
       else
          free(g_TextLib.lpIndexBuf[0]);
@@ -1770,15 +1777,15 @@ PAL_MultiByteToWideChar(
 
 --*/
 {
-	return PAL_MultiByteToWideCharCP(gConfig.iCodePage, mbs, mbslength, wcs, wcslength);
+	return PAL_MultiByteToWideCharCP(gConfig.uCodePage, mbs, mbslength, wcs, wcslength);
 }
 
 WCHAR
 PAL_GetInvalidChar(
-   CODEPAGE      iCodePage
+   CODEPAGE      uCodePage
 )
 {
-   switch(iCodePage)
+   switch(uCodePage)
    {
    case CP_BIG5:     return 0x3f;
    case CP_GBK:      return 0x3f;

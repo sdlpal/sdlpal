@@ -308,6 +308,9 @@
     <ClCompile Include="..\overlay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\palcfg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ascii.h">
@@ -648,6 +651,9 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\palcfg.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

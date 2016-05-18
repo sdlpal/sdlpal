@@ -227,10 +227,11 @@ extern "C"
 # define PAL_CREDIT           "Rikku2000"
 # define PAL_PORTYEAR         "2013"
 
-#elif defined (__WINPHONE__)
+#elif defined (__WINPHONE__) || defined(__WINRT__)
 
 #define PAL_PREFIX            UTIL_BasePath()
 #define PAL_SAVE_PREFIX       UTIL_SavePath()
+#define PAL_CONFIG_PREFIX     UTIL_ConfigPath()
 #define PAL_HAS_TOUCH         1
 #define PAL_AUDIO_DEFAULT_BUFFER_SIZE   4096
 #define PAL_DEFAULT_WINDOW_WIDTH   320
@@ -289,7 +290,6 @@ extern "C"
 
 #define PAL_HAS_MP3           1   /* Try always enable MP3. If compilation/run failed, please change this value to 0. */
 #define PAL_HAS_OGG           1   /* Try always enable OGG. If compilation/run failed, please change this value to 0. */
-#define PAL_HAS_MAME          1   /* Use M.A.M.E */
 
 #ifndef SDL_INIT_CDROM
 #define SDL_INIT_CDROM        0	  /* Compatibility with SDL 1.2 */
@@ -297,6 +297,10 @@ extern "C"
 
 #ifndef SDL_AUDIO_BITSIZE
 # define SDL_AUDIO_BITSIZE(x)         (x & 0xFF)
+#endif
+
+#ifndef PAL_CONFIG_PREFIX
+# define PAL_CONFIG_PREFIX PAL_PREFIX
 #endif
 
 #ifdef _WIN32
@@ -392,7 +396,6 @@ typedef const WCHAR        *LPCWSTR;
    }
 
 typedef enum tagCODEPAGE {
-	CP_UNKNOWN = -1,
 	CP_MIN = 0,
 	CP_BIG5 = 0,
 	CP_GBK = 1,

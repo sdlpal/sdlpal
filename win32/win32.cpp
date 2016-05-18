@@ -5,6 +5,7 @@
 #include <tchar.h>
 #include <Windows.h>
 #include <CommCtrl.h>
+#include <ShlObj.h>
 #include <string>
 #include "resource.h"
 #include "../global.h"
@@ -30,82 +31,102 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define EnableDlgItem(hwnd, nIDControl, bEnable) \
 			EnableWindow(GetDlgItem((hwnd), (nIDControl)), (bEnable))
 
-void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
-{
-	if (fWriteFile)
-	{
-		std::string msgfile;
-		char buffer[40];
-		int len = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_MSGFILE)) + 1;
-		msgfile.assign(len, ' ');
-		GetDlgItemTextA(hwndDlg, IDC_MSGFILE, (char*)msgfile.data(), len);
+HINSTANCE g_hInstance;
+WORD g_wLanguage;
 
-		FILE *fp = UTIL_OpenFileForMode("sdlpal.cfg", "w");
-		fprintf(fp, "DOS=%d\n", IsDlgButtonChecked(hwndDlg, IDC_DOS));
-		if (IsDlgButtonChecked(hwndDlg, IDC_DOS))
-			fprintf(fp, "UseEmbeddedFonts=%d\n", IsDlgButtonChecked(hwndDlg, IDC_EMBEDFONT));
-		else if (!IsDlgButtonChecked(hwndDlg, IDC_CUSTOM))
-			fprintf(fp, "CodePage=%d\n", IsDlgButtonChecked(hwndDlg, IDC_CHS));
-		if (IsDlgButtonChecked(hwndDlg, IDC_CUSTOM))
-			fprintf(fp, "MessageFileName=%s\n", msgfile.c_str());
-		GetDlgItemTextA(hwndDlg, IDC_CD, buffer, 40); fprintf(fp, "CD=%s\n", buffer);
-		GetDlgItemTextA(hwndDlg, IDC_BGM, buffer, 40); fprintf(fp, "MUSIC=%s\n", buffer);
-		if (ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX)
-		{
-			GetDlgItemTextA(hwndDlg, IDC_OPL, buffer, 40); fprintf(fp, "OPL=%s\n", buffer);
-			fprintf(fp, "UseSurroundOPL=%d\n", IsDlgButtonChecked(hwndDlg, IDC_SURROUNDOPL));
-			fprintf(fp, "OPLSampleRate=%u\n", GetDlgItemInt(hwndDlg, IDC_OPLSR, nullptr, FALSE));
-			fprintf(fp, "SurroundOPLOffset=%d\n", GetDlgItemInt(hwndDlg, IDC_OPLOFFSET, nullptr, TRUE));
-		}
-		fprintf(fp, "Stereo=%d\n", IsDlgButtonChecked(hwndDlg, IDC_STEREO));
-		fprintf(fp, "ResampleQuality=%d\n", TrackBar_GetPos(hwndDlg, IDC_QUALITY));
-		fprintf(fp, "Volume=%d\n", TrackBar_GetPos(hwndDlg, IDC_VOLUME));
-		fprintf(fp, "AudioBufferSize=%u\n", GetDlgItemInt(hwndDlg, IDC_AUDIOBUFFER, nullptr, FALSE));
-		fprintf(fp, "SampleRate=%u\n", GetDlgItemInt(hwndDlg, IDC_SAMPLERATE, nullptr, FALSE));
-		fprintf(fp, "WindowWidth=%u\n", GetDlgItemInt(hwndDlg, IDC_WIDTH, nullptr, FALSE));
-		fprintf(fp, "WindowHeight=%u\n", GetDlgItemInt(hwndDlg, IDC_HEIGHT, nullptr, FALSE));
-		fprintf(fp, "KeepAspectRatio=%d\n", IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO));
-		fclose(fp);
+int WINAPI LoadStringEx(
+	HINSTANCE hInstance,
+	UINT      uID,
+	LANGID    wLang,
+	LPTSTR    lpBuffer,
+	int       nBufferMax
+)
+{
+	auto hrc = FindResourceEx(hInstance, RT_STRING, MAKEINTRESOURCE((uID >> 4) + 1), wLang);
+	if (nullptr == hrc) return 0;
+
+	auto begin = (LPCWSTR)LockResource(LoadResource(hInstance, hrc));
+	for (int idx = 0; idx < (int)(uID & 0xf); idx++)
+		begin += *begin + 1;
+	if (nBufferMax == 0)
+	{
+		*((LPCWSTR*)lpBuffer) = begin;
+		return sizeof(LPCWSTR);
 	}
 	else
 	{
-		PAL_LoadConfig(FALSE);
-
-		gConfig.fIsWIN95 = !IsDlgButtonChecked(hwndDlg, IDC_DOS);
-		gConfig.fUseEmbeddedFonts = !gConfig.fIsWIN95 && IsDlgButtonChecked(hwndDlg, IDC_EMBEDFONT);
-		if (!IsDlgButtonChecked(hwndDlg, IDC_CUSTOM))
+		wcsncpy(lpBuffer, begin + 1, min(nBufferMax, *begin));
+		if (nBufferMax <= *begin)
 		{
-			if (IsDlgButtonChecked(hwndDlg, IDC_CHS) && gConfig.fIsWIN95)
-				gConfig.iCodePage = CP_GBK;
-			else
-				gConfig.iCodePage = CP_BIG5;
-			free(gConfig.pszMsgName);
-			gConfig.pszMsgName = nullptr;
+			lpBuffer[nBufferMax - 1] = '\0';
+			return nBufferMax - 1;
 		}
 		else
 		{
-			int length = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_MSGFILE));
-			gConfig.pszMsgName = (char*)realloc(gConfig.pszMsgName, length + 1);
-			GetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgName, length + 1);
-		}
-		gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO);
-		gConfig.dwScreenWidth = GetDlgItemInt(hwndDlg, IDC_WIDTH, nullptr, FALSE);
-		gConfig.dwScreenHeight = GetDlgItemInt(hwndDlg, IDC_HEIGHT, nullptr, FALSE);
-		gConfig.eCDType = (MUSICTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD) + MUSIC_MP3);
-		gConfig.eMusicType = (MUSICTYPE)ComboBox_GetCurSel(hwndDlg, IDC_BGM);
-		gConfig.eOPLType = (OPLTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_OPL) + OPL_DOSBOX_OLD);
-		gConfig.iAudioChannels = IsDlgButtonChecked(hwndDlg, IDC_STEREO) ? 2 : 1;
-		gConfig.iSampleRate = GetDlgItemInt(hwndDlg, IDC_SAMPLERATE, nullptr, FALSE);
-		gConfig.wAudioBufferSize = GetDlgItemInt(hwndDlg, IDC_AUDIOBUFFER, nullptr, FALSE);
-		gConfig.iVolume = TrackBar_GetPos(hwndDlg, IDC_VOLUME);
-		gConfig.iResampleQuality = TrackBar_GetPos(hwndDlg, IDC_QUALITY);
-		if (gConfig.eMusicType == MUSIC_RIX)
-		{
-			gConfig.fUseSurroundOPL = IsDlgButtonChecked(hwndDlg, IDC_SURROUNDOPL);
-			gConfig.iOPLSampleRate = GetDlgItemInt(hwndDlg, IDC_OPLSR, nullptr, FALSE);
-			gConfig.dSurroundOPLOffset = GetDlgItemInt(hwndDlg, IDC_OPLOFFSET, nullptr, TRUE);
+			lpBuffer[*begin] = '\0';
+			return *begin;
 		}
 	}
+}
+
+void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
+{
+	int textLen;
+
+	if (IsDlgButtonChecked(hwndDlg, IDC_CHS) && gConfig.fIsWIN95)
+		gConfig.uCodePage = CP_GBK;
+	else
+		gConfig.uCodePage = CP_BIG5;
+
+	if ((textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_MSGFILE))) > 0)
+	{
+		gConfig.pszMsgFile = (char*)realloc(gConfig.pszMsgFile, textLen + 1);
+		GetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile, textLen + 1);
+	}
+	else
+	{
+		free(gConfig.pszMsgFile); gConfig.pszMsgFile = nullptr;
+	}
+	if ((textLen = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_GAMEPATH))) > 0)
+	{
+		gConfig.pszGamePath = (char*)realloc(gConfig.pszGamePath, textLen + 1);
+		GetDlgItemTextA(hwndDlg, IDC_GAMEPATH, gConfig.pszGamePath, textLen + 1);
+	}
+	else
+	{
+		free(gConfig.pszGamePath); gConfig.pszGamePath = nullptr;
+	}
+	if ((textLen = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_SAVEPATH))) > 0)
+	{
+		gConfig.pszSavePath = (char*)realloc(gConfig.pszSavePath, textLen + 1);
+		GetDlgItemTextA(hwndDlg, IDC_SAVEPATH, gConfig.pszSavePath, textLen + 1);
+	}
+	else
+	{
+		free(gConfig.pszSavePath); gConfig.pszSavePath = nullptr;
+	}
+
+	gConfig.fIsWIN95 = !IsDlgButtonChecked(hwndDlg, IDC_DOS);
+	gConfig.fUseEmbeddedFonts = !gConfig.fIsWIN95 && IsDlgButtonChecked(hwndDlg, IDC_EMBEDFONT);
+	gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO);
+	gConfig.dwScreenWidth = GetDlgItemInt(hwndDlg, IDC_WIDTH, nullptr, FALSE);
+	gConfig.dwScreenHeight = GetDlgItemInt(hwndDlg, IDC_HEIGHT, nullptr, FALSE);
+	gConfig.eCDType = (MUSICTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD) + MUSIC_MP3);
+	gConfig.eMusicType = (MUSICTYPE)ComboBox_GetCurSel(hwndDlg, IDC_BGM);
+	gConfig.eOPLType = (OPLTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_OPL));
+	gConfig.iAudioChannels = IsDlgButtonChecked(hwndDlg, IDC_STEREO) ? 2 : 1;
+	gConfig.iSampleRate = GetDlgItemInt(hwndDlg, IDC_SAMPLERATE, nullptr, FALSE);
+	gConfig.wAudioBufferSize = GetDlgItemInt(hwndDlg, IDC_AUDIOBUFFER, nullptr, FALSE);
+	gConfig.iVolume = TrackBar_GetPos(hwndDlg, IDC_VOLUME);
+	gConfig.iResampleQuality = TrackBar_GetPos(hwndDlg, IDC_QUALITY);
+	if (gConfig.eMusicType == MUSIC_RIX)
+	{
+		gConfig.fUseSurroundOPL = IsDlgButtonChecked(hwndDlg, IDC_SURROUNDOPL);
+		gConfig.iOPLSampleRate = GetDlgItemInt(hwndDlg, IDC_OPLSR, nullptr, FALSE);
+		gConfig.iSurroundOPLOffset = GetDlgItemInt(hwndDlg, IDC_OPLOFFSET, nullptr, TRUE);
+	}
+
+	if (fWriteFile) PAL_SaveConfig();
 }
 
 void ResetControls(HWND hwndDlg)
@@ -114,14 +135,14 @@ void ResetControls(HWND hwndDlg)
 
 	EnableDlgItem(hwndDlg, IDC_CHS, gConfig.fIsWIN95);
 	EnableDlgItem(hwndDlg, IDC_EMBEDFONT, !gConfig.fIsWIN95);
-	EnableDlgItem(hwndDlg, IDC_MSGFILE, gConfig.pszMsgName ? TRUE : FALSE);
+	EnableDlgItem(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile ? TRUE : FALSE);
 	EnableDlgItem(hwndDlg, IDC_OPL, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_OPLOFFSET, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_OPLSR, gConfig.eMusicType == MUSIC_RIX);
 
 	CheckRadioButton(hwndDlg, IDC_DOS, IDC_WIN95, gConfig.fIsWIN95 ? IDC_WIN95 : IDC_DOS);
-	CheckRadioButton(hwndDlg, IDC_CHT, IDC_CUSTOM, gConfig.pszMsgName ? IDC_CUSTOM : IDC_CHT + gConfig.iCodePage);
+	CheckRadioButton(hwndDlg, IDC_CHT, IDC_CHS, IDC_CHT + gConfig.uCodePage);
 
 	CheckDlgButton(hwndDlg, IDC_EMBEDFONT, gConfig.fUseEmbeddedFonts);
 	CheckDlgButton(hwndDlg, IDC_ASPECTRATIO, gConfig.fKeepAspectRatio);
@@ -136,10 +157,12 @@ void ResetControls(HWND hwndDlg)
 	SetDlgItemText(hwndDlg, IDC_HEIGHT, _ultot(gConfig.dwScreenHeight, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_SAMPLERATE, _itot(gConfig.iSampleRate, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_OPLSR, _itot(gConfig.iOPLSampleRate, buffer, 10));
-	SetDlgItemText(hwndDlg, IDC_OPLOFFSET, _itot((int)gConfig.dSurroundOPLOffset, buffer, 10));
+	SetDlgItemText(hwndDlg, IDC_OPLOFFSET, _itot((int)gConfig.iSurroundOPLOffset, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_AUDIOBUFFER, _itot(gConfig.wAudioBufferSize, buffer, 10));
 
-	SetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgName);
+	if (gConfig.pszGamePath) SetDlgItemTextA(hwndDlg, IDC_GAMEPATH, gConfig.pszGamePath);
+	if (gConfig.pszSavePath) SetDlgItemTextA(hwndDlg, IDC_SAVEPATH, gConfig.pszSavePath);
+	if (gConfig.pszMsgFile) SetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile);
 
 	TrackBar_SetRange(hwndDlg, IDC_QUALITY, 0, 4, FALSE);
 	TrackBar_SetPos(hwndDlg, IDC_QUALITY, gConfig.iResampleQuality, TRUE);
@@ -149,9 +172,6 @@ void ResetControls(HWND hwndDlg)
 
 INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 {
-	TCHAR curdir[MAX_PATH * 2];
-	GetCurrentDirectory(MAX_PATH * 2, curdir);
-
 	InitCommonControls();
 
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("MP3"));
@@ -164,8 +184,6 @@ INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("DOSBOX"));
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("MAME"));
-
-	SetDlgItemText(hwndDlg, IDC_GAMEPATH, curdir);
 
 	ResetControls(hwndDlg);
 
@@ -186,16 +204,25 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 	switch (idControl)
 	{
 	case IDOK:
-		SaveSettings(hwndDlg, FALSE);
+	{
+		TCHAR title[40], message[160];
+
+		LoadStringEx(g_hInstance, IDS_CONFIRM, g_wLanguage, title, 40);
+		LoadStringEx(g_hInstance, IDS_LAUNCHSETTING, g_wLanguage, message, 160);
+
+		if (MessageBox(hwndDlg, message, title, MB_YESNO) == IDYES)
+			gConfig.fLaunchSetting = TRUE;
+		else
+			gConfig.fLaunchSetting = FALSE;
+
+		SaveSettings(hwndDlg, TRUE);
 		EndDialog(hwndDlg, IDOK);
 		return TRUE;
+	}
 	case IDCANCEL:
 		EndDialog(hwndDlg, IDCANCEL);
 		return TRUE;
 
-	case IDC_SAVE:
-		SaveSettings(hwndDlg, TRUE);
-		return TRUE;
 	case IDC_DEFAULT:
 		PAL_LoadConfig(FALSE);
 		ResetControls(hwndDlg);
@@ -215,11 +242,22 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 		}
 		return TRUE;
 
-	case IDC_CHT:
-	case IDC_CHS:
-	case IDC_CUSTOM:
-		EnableDlgItem(hwndDlg, IDC_MSGFILE, IsDlgButtonChecked(hwndDlg, IDC_CUSTOM));
+	case IDC_BRGAME:
+	case IDC_BRSAVE:
+	{
+		TCHAR szName[MAX_PATH * 2], szTitle[200];
+		BROWSEINFO bi = { hwndDlg, nullptr, szName, szTitle, BIF_USENEWUI, nullptr, NULL, 0 };
+		LoadStringEx(g_hInstance, idControl, g_wLanguage, szTitle, 200);
+		auto pidl = SHBrowseForFolder(&bi);
+		if (pidl)
+		{
+			SHGetPathFromIDList(pidl, szName);
+			int n = _tcslen(szName);
+			if (szName[n - 1] != '\\') _tcscat(szName, L"\\");
+			SetDlgItemText(hwndDlg, idControl - IDC_BRGAME + IDC_GAMEPATH, szName);
+		}
 		return TRUE;
+	}
 
 	default: return FALSE;
 	}
@@ -264,19 +302,19 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 
 extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 {
-	auto module = GetModuleHandle(nullptr);
-	auto lang = GetThreadUILanguage();
-	if (PRIMARYLANGID(lang) == LANG_CHINESE)
+	g_hInstance = GetModuleHandle(nullptr);
+	g_wLanguage = GetThreadUILanguage();
+	if (PRIMARYLANGID(g_wLanguage) == LANG_CHINESE)
 	{
-		if (SUBLANGID(lang) == SUBLANG_CHINESE_SIMPLIFIED || SUBLANGID(lang) == SUBLANG_CHINESE_SINGAPORE)
-			lang = MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED);
+		if (SUBLANGID(g_wLanguage) == SUBLANG_CHINESE_SIMPLIFIED || SUBLANGID(g_wLanguage) == SUBLANG_CHINESE_SINGAPORE)
+			g_wLanguage = MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED);
 		else
-			lang = MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL);
+			g_wLanguage = MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL);
 	}
 	else
-		lang = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);
-	auto dlg = (LPCDLGTEMPLATE)LockResource(LoadResource(module, FindResourceEx(module, RT_DIALOG, MAKEINTRESOURCE(IDD_LAUNCHER), lang)));
-	if (DialogBoxIndirect(GetModuleHandle(nullptr), dlg, nullptr, LauncherDialogProc) != IDOK)
+		g_wLanguage = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);
+	auto dlg = (LPCDLGTEMPLATE)LockResource(LoadResource(g_hInstance, FindResourceEx(g_hInstance, RT_DIALOG, MAKEINTRESOURCE(IDD_LAUNCHER), g_wLanguage)));
+	if (gConfig.fLaunchSetting && DialogBoxIndirect(GetModuleHandle(nullptr), dlg, nullptr, LauncherDialogProc) != IDOK)
 		return -1;
 	else
 		return 0;

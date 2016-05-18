@@ -190,7 +190,7 @@ PAL_SaveSlotMenu(
    //
    for (i = 1; i <= 5; i++)
    {
-      fp = fopen(va("%s%d%s", PAL_SAVE_PREFIX, i, ".rpg"), "rb");
+      fp = fopen(va("%s%d%s", gConfig.pszSavePath, i, ".rpg"), "rb");
       if (fp == NULL)
       {
          wSavedTimes = 0;
@@ -528,14 +528,15 @@ PAL_SystemMenu(
    //
    const MENUITEM      rgSystemMenuItem[] =
    {
-      // value  label                      enabled   pos
-      { 1,      SYSMENU_LABEL_SAVE,        TRUE,     PAL_XY(53, 72) },
-      { 2,      SYSMENU_LABEL_LOAD,        TRUE,     PAL_XY(53, 72 + 18) },
-      { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 72 + 36) },
-      { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 54) },
-      { 5,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 72) },
+      // value  label                        enabled   pos
+      { 1,      SYSMENU_LABEL_SAVE,          TRUE,     PAL_XY(53, 72) },
+      { 2,      SYSMENU_LABEL_LOAD,          TRUE,     PAL_XY(53, 72 + 18) },
+      { 3,      SYSMENU_LABEL_MUSIC,         TRUE,     PAL_XY(53, 72 + 36) },
+      { 4,      SYSMENU_LABEL_SOUND,         TRUE,     PAL_XY(53, 72 + 54) },
+      { 5,      SYSMENU_LABEL_QUIT,          TRUE,     PAL_XY(53, 72 + 72) },
+	  { 6,      SYSMENU_LABEL_LAUNCHSETTING, TRUE,     PAL_XY(53, 72 + 90) },
 #if !defined(PAL_CLASSIC)
-      { 6,      SYSMENU_LABEL_BATTLEMODE,  TRUE,     PAL_XY(53, 72 + 90) },
+      { 7,      SYSMENU_LABEL_BATTLEMODE,    TRUE,     PAL_XY(53, 72 + 108) },
 #endif
    };
    const int           nSystemMenuItem = sizeof(rgSystemMenuItem) / sizeof(MENUITEM);
@@ -576,7 +577,7 @@ PAL_SystemMenu(
          iSavedTimes = 0;
          for (i = 1; i <= 5; i++)
          {
-            fp = fopen(va("%s%d%s", PAL_SAVE_PREFIX, i, ".rpg"), "rb");
+            fp = fopen(va("%s%d%s", gConfig.pszSavePath, i, ".rpg"), "rb");
             if (fp != NULL)
             {
                WORD wSavedTimes;
@@ -589,7 +590,7 @@ PAL_SystemMenu(
                }
             }
          }
-         PAL_SaveGame(va("%s%d%s", PAL_SAVE_PREFIX, iSlot, ".rpg"), iSavedTimes + 1);
+         PAL_SaveGame(va("%s%d%s", gConfig.pszSavePath, iSlot, ".rpg"), iSavedTimes + 1);
       }
       break;
 
@@ -644,8 +645,20 @@ PAL_SystemMenu(
       }
       break;
 
-#if !defined(PAL_CLASSIC)
    case 6:
+	   //
+	   // Launch setting
+	   //
+	   wReturnValue = (WORD)PAL_ConfirmMenu();
+	   if (wReturnValue != gConfig.fLaunchSetting)
+	   {
+		   gConfig.fLaunchSetting = wReturnValue;
+		   PAL_SaveConfig();
+	   }
+	   break;
+
+#if !defined(PAL_CLASSIC)
+   case 7:
       //
       // Battle Mode
       //

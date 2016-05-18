@@ -113,6 +113,11 @@ UTIL_SavePath(
    VOID
 );
 
+LPCSTR
+UTIL_ConfigPath(
+   VOID
+);
+
 BOOL
 UTIL_GetScreenSize(
    DWORD *pdwScreenWidth,
@@ -139,7 +144,6 @@ UTIL_Platform_Quit(
    VOID
 );
 
-#define _PATH_LOG           PAL_PREFIX "log.txt"
 #define LOG_EMERG           0 /* system is unusable */
 #define LOG_ALERT           1 /* action must be taken immediately */
 #define LOG_CRIT            2 /* critical conditions */
@@ -173,11 +177,7 @@ UTIL_WriteLog(
 
 #define UTIL_OpenLog()       ((void)(0))
 #define UTIL_CloseLog()      ((void)(0))
-#ifdef _MSC_VER
-__forceinline VOID UTIL_WriteLog(int i, const char *p, ...) {}
-#else
 #define UTIL_WriteLog(...)   ((void)(0))
-#endif
 
 #endif
 
