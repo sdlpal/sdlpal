@@ -132,18 +132,6 @@ PAL_LoadConfig(
 					}
 					break;
 				}
-				case PALCFG_SAVEPATH:
-				{
-					int n = strlen(value.sValue);
-					while (n > 0 && isspace(value.sValue[n - 1])) n--;
-					if (n > 0)
-					{
-						gConfig.pszSavePath = (char *)realloc(gConfig.pszSavePath, n + 1);
-						memcpy(gConfig.pszSavePath, value.sValue, n);
-						gConfig.pszSavePath[n] = '\0';
-					}
-					break;
-				}
 				case PALCFG_CD:
 				{
 					if (PAL_HAS_MP3 && SDL_strncasecmp(value.sValue, "MP3", 3) == 0)
@@ -231,7 +219,6 @@ PAL_LoadConfig(
 	// Set configurable global options
 	//
 	if (!gConfig.pszGamePath) gConfig.pszGamePath = strdup(PAL_PREFIX);
-	if (!gConfig.pszSavePath) gConfig.pszSavePath = strdup(PAL_SAVE_PREFIX);
 	gConfig.eMusicType = eMusicType;
 	gConfig.eCDType = eCDType;
 	gConfig.eOPLType = eOPLType;
@@ -316,7 +303,6 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_OPL), opl_types[gConfig.eOPLType]); fputs(buf, fp);
 
 		if (gConfig.pszGamePath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_GAMEPATH), gConfig.pszGamePath); fputs(buf, fp); }
-		if (gConfig.pszSavePath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
 		if (gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 
 		fclose(fp);
@@ -426,7 +412,6 @@ PAL_FreeGlobals(
 #endif
    free(gConfig.pszMsgFile);
    free(gConfig.pszGamePath);
-   free(gConfig.pszSavePath);
 
    //
    // Clear the instance
@@ -1139,7 +1124,7 @@ PAL_InitGameData(
    //
    // try loading from the saved game file.
    //
-   if (iSaveSlot == 0 || PAL_LoadGame(va("%s%d%s", gConfig.pszSavePath, iSaveSlot, ".rpg")) != 0)
+   if (iSaveSlot == 0 || PAL_LoadGame(va("%s%d%s", PAL_SAVE_PREFIX, iSaveSlot, ".rpg")) != 0)
    {
       //
       // Cannot load the saved game file. Load the defaults.

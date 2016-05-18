@@ -118,6 +118,11 @@ UTIL_ConfigPath(
    VOID
 );
 
+LPCSTR
+UTIL_ScreenShotPath(
+	VOID
+);
+
 BOOL
 UTIL_GetScreenSize(
    DWORD *pdwScreenWidth,

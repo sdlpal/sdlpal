@@ -31,7 +31,6 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_MUSIC,             PALCFG_STRING,   "MUSIC",              5, "RIX", NULL, NULL },
 	{ PALCFG_OPL,               PALCFG_STRING,   "OPL",                3, "DOSBOX", NULL, NULL },
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXEXTRAINIT",      12, NULL, NULL, NULL },
-	{ PALCFG_SAVEPATH,          PALCFG_STRING,   "SAVEPATH",           8, NULL, NULL, NULL },
 };
 
 

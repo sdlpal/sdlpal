@@ -96,15 +96,6 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	{
 		free(gConfig.pszGamePath); gConfig.pszGamePath = nullptr;
 	}
-	if ((textLen = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_SAVEPATH))) > 0)
-	{
-		gConfig.pszSavePath = (char*)realloc(gConfig.pszSavePath, textLen + 1);
-		GetDlgItemTextA(hwndDlg, IDC_SAVEPATH, gConfig.pszSavePath, textLen + 1);
-	}
-	else
-	{
-		free(gConfig.pszSavePath); gConfig.pszSavePath = nullptr;
-	}
 
 	gConfig.fIsWIN95 = !IsDlgButtonChecked(hwndDlg, IDC_DOS);
 	gConfig.fUseEmbeddedFonts = !gConfig.fIsWIN95 && IsDlgButtonChecked(hwndDlg, IDC_EMBEDFONT);
@@ -161,7 +152,6 @@ void ResetControls(HWND hwndDlg)
 	SetDlgItemText(hwndDlg, IDC_AUDIOBUFFER, _itot(gConfig.wAudioBufferSize, buffer, 10));
 
 	if (gConfig.pszGamePath) SetDlgItemTextA(hwndDlg, IDC_GAMEPATH, gConfig.pszGamePath);
-	if (gConfig.pszSavePath) SetDlgItemTextA(hwndDlg, IDC_SAVEPATH, gConfig.pszSavePath);
 	if (gConfig.pszMsgFile) SetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile);
 
 	TrackBar_SetRange(hwndDlg, IDC_QUALITY, 0, 4, FALSE);
@@ -243,7 +233,6 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 		return TRUE;
 
 	case IDC_BRGAME:
-	case IDC_BRSAVE:
 	{
 		TCHAR szName[MAX_PATH * 2], szTitle[200];
 		BROWSEINFO bi = { hwndDlg, nullptr, szName, szTitle, BIF_USENEWUI, nullptr, NULL, 0 };
@@ -254,7 +243,7 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 			SHGetPathFromIDList(pidl, szName);
 			int n = _tcslen(szName);
 			if (szName[n - 1] != '\\') _tcscat(szName, L"\\");
-			SetDlgItemText(hwndDlg, idControl - IDC_BRGAME + IDC_GAMEPATH, szName);
+			SetDlgItemText(hwndDlg, IDC_GAMEPATH, szName);
 		}
 		return TRUE;
 	}

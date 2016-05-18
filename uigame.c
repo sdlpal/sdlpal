@@ -190,7 +190,7 @@ PAL_SaveSlotMenu(
    //
    for (i = 1; i <= 5; i++)
    {
-      fp = fopen(va("%s%d%s", gConfig.pszSavePath, i, ".rpg"), "rb");
+      fp = fopen(va("%s%d%s", PAL_SAVE_PREFIX, i, ".rpg"), "rb");
       if (fp == NULL)
       {
          wSavedTimes = 0;
@@ -577,7 +577,7 @@ PAL_SystemMenu(
          iSavedTimes = 0;
          for (i = 1; i <= 5; i++)
          {
-            fp = fopen(va("%s%d%s", gConfig.pszSavePath, i, ".rpg"), "rb");
+            fp = fopen(va("%s%d%s", PAL_SAVE_PREFIX, i, ".rpg"), "rb");
             if (fp != NULL)
             {
                WORD wSavedTimes;
@@ -590,7 +590,7 @@ PAL_SystemMenu(
                }
             }
          }
-         PAL_SaveGame(va("%s%d%s", gConfig.pszSavePath, iSlot, ".rpg"), iSavedTimes + 1);
+         PAL_SaveGame(va("%s%d%s", PAL_SAVE_PREFIX, iSlot, ".rpg"), iSavedTimes + 1);
       }
       break;
 

@@ -540,7 +540,7 @@ UTIL_OpenLog(
    VOID
 )
 {
-   if ((pLogFile = fopen(va("%slog.txt", gConfig.pszSavePath), "a+")) == NULL)
+   if ((pLogFile = fopen(va("%slog.txt", PAL_SAVE_PREFIX), "a+")) == NULL)
    {
       return NULL;
    }

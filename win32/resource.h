@@ -7,7 +7,6 @@
 #define IDS_LAUNCHSETTING               102
 #define IDS_CONFIRM                     103
 #define IDC_GAMEPATH                    1000
-#define IDC_SAVEPATH                    1001
 #define IDC_DOS                         1002
 #define IDC_WIN95                       1003
 #define IDC_CHT                         1005
@@ -31,14 +30,13 @@
 #define IDC_OPLOFFSET                   1031
 #define IDC_AUDIOBUFFER                 1032
 #define IDC_BRGAME                      1033
-#define IDC_BRSAVE                      1034
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        105
+#define _APS_NEXT_RESOURCE_VALUE        104
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1035
 #define _APS_NEXT_SYMED_VALUE           101

@@ -11,104 +11,14 @@ extern "C" void TerminateOnError(const char *fmt, ...);
 
 #define PAL_PATH_NAME	"SDLPAL"
 
-static std::string g_savepath, g_basepath, g_configpath;
-static Windows::Storage::StorageFolder ^g_basefolder, ^g_savefolder, ^g_configfolder;
+static std::string g_savepath, g_basepath, g_configpath, g_screenshotpath;
+static Windows::Storage::StorageFolder ^g_basefolder, ^g_savefolder, ^g_configfolder, ^g_screenshotfolder;
 
-static Windows::Storage::StorageFolder^ CheckGamePath(Windows::Storage::StorageFolder^ root, HANDLE eventHandle)
-{
-	Platform::String^ required_files[] = {
-		L"ABC.MKF", L"BALL.MKF", L"DATA.MKF", L"F.MKF", L"FBP.MKF",
-		L"FIRE.MKF", L"GOP.MKF", L"MAP.MKF", L"MGO.MKF", L"PAT.MKF",
-		L"RGM.MKF", L"RNG.MKF", L"SSS.MKF"
-	};
-	Platform::String^ optional_required_files[] = {
-		L"VOC.MKF", L"SOUNDS.MKF"
-	};
-	/* The words.dat & m.msg may be configurable in the future, so not check here */
-
-	try
-	{
-		/* Try to get the path */
-		auto folder = AWait(root->GetFolderAsync(PAL_PATH_NAME), eventHandle);
-
-		/* Check the access right of necessary files */
-		for (int i = 0; i < 13; i++)
-		{
-			if (!AWait(AWait(folder->GetFileAsync(required_files[i]), eventHandle)->OpenReadAsync(), eventHandle)->CanRead)
-				return nullptr;
-		}
-
-		for (int i = 0; i < 2; i++)
-		{
-			try {
-				if (AWait(AWait(folder->GetFileAsync(optional_required_files[i]), eventHandle)->OpenReadAsync(), eventHandle)->CanRead)
-					return folder;
-			}
-			catch (Platform::Exception^) {}
-		}
-	}
-	catch (Platform::Exception^)
-	{ /* Accessing SD card failed, or required file is missing, or access is denied */
-	}
-	return nullptr;
-}
+extern HANDLE g_eventHandle;
 
 extern "C"
 LPCSTR UTIL_BasePath(VOID)
 {
-	//if (g_basepath.empty())
-	//{
-	//	Windows::Storage::StorageFolder^ folder = nullptr;
-	//	HANDLE eventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
-	//	auto folders = AWait(Windows::Storage::KnownFolders::RemovableDevices->GetFoldersAsync())->First();
-	//	while (folders->HasCurrent)
-	//	{
-	//		if (folder = CheckGamePath(folders->Current, eventHandle))
-	//			break;
-	//		else
-	//			folders->MoveNext();
-	//	}
-
-	//	if (!folder)
-	//	{
-	//		Windows::Storage::StorageFolder^ search_folders[] = {
-	//			Windows::Storage::KnownFolders::PicturesLibrary,
-	//			Windows::Storage::KnownFolders::SavedPictures,
-	//			//Windows::Storage::KnownFolders::MusicLibrary,
-	//			//Windows::Storage::KnownFolders::VideosLibrary,
-	//		};
-	//		for (int i = 0; i < sizeof(search_folders) / sizeof(search_folders[0]); i++)
-	//		{
-	//			if (folder = CheckGamePath(search_folders[i], eventHandle))
-	//				break;
-	//		}
-	//	}
-
-	//	CloseHandle(eventHandle);
-
-	//	if (folder)
-	//	{
-	//		/* Folder examination succeeded */
-	//		auto path = folder->Path;
-	//		if (path->End()[-1] != L'\\') path += "\\";
-	//		ConvertString(path, g_basepath);
-	//		g_basefolder = folder;
-
-	//		/* Check whether the folder is writable */
-	//		FILE* fp = fopen(ConvertString(path + "sdlpal.rpg").c_str(), "wb");
-	//		if (fp)
-	//		{
-	//			g_savepath = g_basepath;
-	//			g_savefolder = g_basefolder;
-	//			fclose(fp);
-	//		}
-	//	}
-	//	else
-	//	{
-	//		TerminateOnError("Could not find PAL folder.\n");
-	//		//ConvertString(Windows::ApplicationModel::Package::Current->InstalledLocation->Path + "\\Assets\\Data\\", g_basepath);
-	//	}
-	//}
 	if (g_basepath.empty())
 	{
 		g_basefolder = Windows::Storage::ApplicationData::Current->LocalFolder;
@@ -143,6 +53,36 @@ LPCSTR UTIL_ConfigPath(VOID)
 		ConvertString(localfolder, g_configpath);
 	}
 	return g_configpath.c_str();
+}
+
+extern "C"
+LPCSTR UTIL_ScreenShotPath(VOID)
+{
+	if (g_screenshotpath.empty())
+	{
+		Windows::Storage::StorageFolder^ folder = nullptr;
+
+		try { folder = AWait(Windows::Storage::KnownFolders::PicturesLibrary->GetFolderAsync("SDLPAL"), g_eventHandle); }
+		catch (Platform::Exception^) {}
+		if (folder == nullptr)
+		{
+			try { folder = AWait(Windows::Storage::KnownFolders::PicturesLibrary->CreateFolderAsync("SDLPAL"), g_eventHandle); }
+			catch (Platform::Exception^) {}
+		}
+		if (folder)
+		{
+			g_screenshotfolder = folder;
+			auto localfolder = g_screenshotfolder->Path;
+			if (localfolder->End()[-1] != L'\\') localfolder += "\\";
+			ConvertString(localfolder, g_screenshotpath);
+		}
+		else
+		{
+			g_screenshotpath = UTIL_SavePath();
+			g_screenshotfolder = g_savefolder;
+		}
+	}
+	return g_screenshotpath.c_str();
 }
 
 static BOOL UTIL_IsMobile(VOID)

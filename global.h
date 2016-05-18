@@ -670,7 +670,6 @@ typedef struct tagCONFIGURATION
 
 	/* Configurable options */
 	char            *pszGamePath;
-	char            *pszSavePath;
 	char            *pszMsgFile;
 	CODEPAGE         uCodePage;
 	DWORD            dwWordLength;
