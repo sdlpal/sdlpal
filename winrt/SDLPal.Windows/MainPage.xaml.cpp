@@ -22,18 +22,13 @@ using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 
+// “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
 
 MainPage::MainPage()
 {
 	InitializeComponent();
 	static_cast<App^>(Application::Current)->SetMainPage(this);
 	LoadControlContents();
-}
-
-void SDLPal::MainPage::SetPath(Windows::Storage::StorageFolder^ folder)
-{
-	Windows::Storage::AccessCache::StorageApplicationPermissions::MostRecentlyUsedList->Add(folder, folder->Path);
-	tbGamePath->Text = folder->Path;
 }
 
 void SDLPal::MainPage::LoadControlContents()
@@ -122,7 +117,11 @@ void SDLPal::MainPage::SaveControlContents()
 void SDLPal::MainPage::btnBrowse_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	auto picker = ref new Windows::Storage::Pickers::FolderPicker();
-	picker->PickFolderAndContinue();
+	picker->FileTypeFilter->Append("*");
+	concurrency::create_task(picker->PickSingleFolderAsync()).then([this](Windows::Storage::StorageFolder^ folder) {
+		Windows::Storage::AccessCache::StorageApplicationPermissions::MostRecentlyUsedList->Add(folder, folder->Path);
+		tbGamePath->Text = folder->Path;
+	});
 }
 
 void SDLPal::MainPage::tsIsDOS_Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -179,5 +178,7 @@ void SDLPal::MainPage::CloseUICommandHandler(Windows::UI::Popups::IUICommand^ co
 {
 	gConfig.fLaunchSetting = ((int)command->Id == 0);
 	PAL_SaveConfig();
+	for (int i = 0; i < 5; i++) m_buttons[i] = nullptr;
 	Application::Current->Exit();
 }
+

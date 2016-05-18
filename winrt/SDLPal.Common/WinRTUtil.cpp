@@ -12,7 +12,6 @@ extern "C" void TerminateOnError(const char *fmt, ...);
 #define PAL_PATH_NAME	"SDLPAL"
 
 static std::string g_savepath, g_basepath, g_configpath, g_screenshotpath;
-static Windows::Storage::StorageFolder ^g_basefolder, ^g_savefolder, ^g_configfolder, ^g_screenshotfolder;
 
 extern HANDLE g_eventHandle;
 
@@ -21,10 +20,13 @@ LPCSTR UTIL_BasePath(VOID)
 {
 	if (g_basepath.empty())
 	{
-		g_basefolder = Windows::Storage::ApplicationData::Current->LocalFolder;
-		auto localfolder = g_basefolder->Path;
-		if (localfolder->End()[-1] != L'\\') localfolder += "\\";
-		ConvertString(localfolder, g_basepath);
+		auto mru_list = Windows::Storage::AccessCache::StorageApplicationPermissions::MostRecentlyUsedList;
+		if (mru_list->Entries->Size > 0)
+		{
+			auto localfolder = mru_list->Entries->First()->Current.Metadata;
+			if (localfolder->End()[-1] != L'\\') localfolder += "\\";
+			ConvertString(localfolder, g_basepath);
+		}
 	}
 	return g_basepath.c_str();
 }
@@ -32,14 +34,7 @@ LPCSTR UTIL_BasePath(VOID)
 extern "C"
 LPCSTR UTIL_SavePath(VOID)
 {
-	if (g_savepath.empty())
-	{
-		g_savefolder = Windows::Storage::ApplicationData::Current->LocalFolder;
-		auto localfolder = g_savefolder->Path;
-		if (localfolder->End()[-1] != L'\\') localfolder += "\\";
-		ConvertString(localfolder, g_savepath);
-	}
-	return g_savepath.c_str();
+	return UTIL_BasePath();
 }
 
 extern "C"
@@ -47,8 +42,7 @@ LPCSTR UTIL_ConfigPath(VOID)
 {
 	if (g_configpath.empty())
 	{
-		g_configfolder = Windows::Storage::ApplicationData::Current->LocalFolder;
-		auto localfolder = g_configfolder->Path;
+		auto localfolder = Windows::Storage::ApplicationData::Current->LocalFolder->Path;
 		if (localfolder->End()[-1] != L'\\') localfolder += "\\";
 		ConvertString(localfolder, g_configpath);
 	}
@@ -58,31 +52,7 @@ LPCSTR UTIL_ConfigPath(VOID)
 extern "C"
 LPCSTR UTIL_ScreenShotPath(VOID)
 {
-	if (g_screenshotpath.empty())
-	{
-		Windows::Storage::StorageFolder^ folder = nullptr;
-
-		try { folder = AWait(Windows::Storage::KnownFolders::PicturesLibrary->GetFolderAsync("SDLPAL"), g_eventHandle); }
-		catch (Platform::Exception^) {}
-		if (folder == nullptr)
-		{
-			try { folder = AWait(Windows::Storage::KnownFolders::PicturesLibrary->CreateFolderAsync("SDLPAL"), g_eventHandle); }
-			catch (Platform::Exception^) {}
-		}
-		if (folder)
-		{
-			g_screenshotfolder = folder;
-			auto localfolder = g_screenshotfolder->Path;
-			if (localfolder->End()[-1] != L'\\') localfolder += "\\";
-			ConvertString(localfolder, g_screenshotpath);
-		}
-		else
-		{
-			g_screenshotpath = UTIL_SavePath();
-			g_screenshotfolder = g_savefolder;
-		}
-	}
-	return g_screenshotpath.c_str();
+	return UTIL_BasePath();
 }
 
 static BOOL UTIL_IsMobile(VOID)
@@ -100,8 +70,8 @@ BOOL UTIL_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
 	IDXGIAdapter1* pAdapter = nullptr;
 	IDXGIOutput* pOutput = nullptr;
 	DWORD retval = FALSE;
-
-#if WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
+	
+#if (_WIN32_WINNT >= 0x0A00) && (WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP)
 	if (!UTIL_IsMobile()) return FALSE;
 #endif
 
@@ -115,8 +85,13 @@ BOOL UTIL_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
 
 	if (SUCCEEDED(pOutput->GetDesc(&desc)))
 	{
+#if (_WIN32_WINNT < 0x0A00) && (WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP)
+		*pdwScreenWidth = (desc.DesktopCoordinates.right - desc.DesktopCoordinates.left);
+		*pdwScreenHeight = (desc.DesktopCoordinates.bottom - desc.DesktopCoordinates.top);
+#else
 		*pdwScreenWidth = (desc.DesktopCoordinates.bottom - desc.DesktopCoordinates.top);
 		*pdwScreenHeight = (desc.DesktopCoordinates.right - desc.DesktopCoordinates.left);
+#endif
 		retval = TRUE;
 	}
 
@@ -136,10 +111,15 @@ BOOL UTIL_TouchEnabled(VOID)
 
 #include "SDL.h"
 #include "SDL_endian.h"
+#include <setjmp.h>
+
+jmp_buf exit_jmp_buf;
 
 extern "C"
 INT UTIL_Platform_Init(int argc, char* argv[])
 {
+	if (setjmp(exit_jmp_buf) == 1) return -1;
+
 	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
 	SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
 
@@ -149,5 +129,6 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 extern "C"
 VOID UTIL_Platform_Quit(VOID)
 {
-	Windows::ApplicationModel::Core::CoreApplication::Exit();
+	//throw ref new Platform::Exception(0);
+	longjmp(exit_jmp_buf, 1);
 }

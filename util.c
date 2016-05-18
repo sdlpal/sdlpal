@@ -424,7 +424,7 @@ UTIL_OpenRequiredFileForMode(
    {
 	   extern SDL_Window *gpWindow;
 	   SDL_MessageBoxButtonData buttons[2] = { { 0, 0, "Yes" }, { 0, 1, "No"} };
-	   SDL_MessageBoxData mbd = { SDL_MESSAGEBOX_ERROR, gpWindow, "FATAL ERROR", va("File not found: %s!\nLaunch setting dialog on next start?\n", lpszFileName), 2, buttons, NULL };
+	   SDL_MessageBoxData mbd = { SDL_MESSAGEBOX_ERROR, gpWindow, "FATAL ERROR", va("File open error(%d): %s%s!\nLaunch setting dialog on next start?\n", errno, gConfig.pszGamePath, lpszFileName), 2, buttons, NULL };
 	   int btnid;
 	   if (SDL_ShowMessageBox(&mbd, &btnid) == 0 && btnid == 0)
 	   {

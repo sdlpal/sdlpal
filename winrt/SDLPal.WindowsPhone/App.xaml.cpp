@@ -128,29 +128,10 @@ void App::RootFrame_FirstNavigated(Object^ sender, NavigationEventArgs^ e)
 
 void SDLPal::App::OnActivated(Windows::ApplicationModel::Activation::IActivatedEventArgs ^ args)
 {
-	auto main_page = static_cast<MainPage^>(_main_page);
-	switch (args->Kind)
-	{
-	case ActivationKind::PickFolderContinuation:
+	if (args->Kind == ActivationKind::PickFolderContinuation)
 	{
 		auto folder = safe_cast<IFolderPickerContinuationEventArgs^>(args)->Folder;
-		if (folder) main_page->SetPath(folder);
-		break;
-	}
-	case ActivationKind::PickSaveFileContinuation:
-	{
-		auto save_args = safe_cast<IFileSavePickerContinuationEventArgs^>(args);
-		if (save_args->File && save_args->ContinuationData->HasKey("Slot"))
-			main_page->Export(save_args->File, safe_cast<Platform::String^>(save_args->ContinuationData->Lookup("Slot")));
-		break;
-	}
-	case ActivationKind::PickFileContinuation:
-	{
-		auto open_args = safe_cast<IFileOpenPickerContinuationEventArgs^>(args);
-		if (open_args->Files->Size > 0 && open_args->ContinuationData->HasKey("Slot"))
-			main_page->Import(open_args->Files->First()->Current, safe_cast<Platform::String^>(open_args->ContinuationData->Lookup("Slot")));
-		break;
-	}
+		if (folder) static_cast<MainPage^>(_main_page)->SetPath(folder);
 	}
 	Application::OnActivated(args);
 }

@@ -12,7 +12,7 @@
             <StackPanel VerticalAlignment="Top" Margin="10,0,10,0">
                 <TextBox x:Name="tbGamePath" x:Uid="GamePath" TextWrapping="Wrap" VerticalAlignment="Top" Header="游戏资源文件夹" IsReadOnly="True" PlaceholderText="游戏资源文件夹"/>
                 <Grid VerticalAlignment="Top">
-                    <Button x:Name="btnBrowseGame" x:Uid="ButtonBrowse" Content="浏览文件夹" HorizontalAlignment="Right" VerticalAlignment="Top" Click="btnBrowse_Click" />
+                    <Button x:Name="btnBrowseGame" x:Uid="ButtonBrowse" Content="浏览文件夹" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btnBrowse_Click" />
                 </Grid>
                 <ToggleSwitch x:Name="tsIsDOS" x:Uid="DOS" Header="游戏资源版本" OffContent="WIN95" OnContent="DOS" Toggled="tsIsDOS_Toggled" />
                 <ToggleSwitch x:Name="tsUseEmbedFont" x:Uid="EmbeddedFont" Header="游戏内嵌字体" OffContent="否" OnContent="是" />

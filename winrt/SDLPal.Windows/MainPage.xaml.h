@@ -17,13 +17,13 @@ namespace SDLPal
 	public:
 		MainPage();
 
-		void SetPath(Windows::Storage::StorageFolder^ folder);
-
 	protected:
 		void LoadControlContents();
 		void SaveControlContents();
 
 	private:
+		Windows::UI::Xaml::Controls::Button^ m_buttons[5];
+
 		void CloseUICommandHandler(Windows::UI::Popups::IUICommand^ command);
 
 		void btnBrowse_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

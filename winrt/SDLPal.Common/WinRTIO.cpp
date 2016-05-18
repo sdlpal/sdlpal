@@ -49,12 +49,23 @@ private:
 	CRITICAL_SECTION& m_cs;
 };
 
+class Event
+{
+public:
+	Event() : _eventHandle(CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS)) {}
+	~Event() { CloseHandle(_eventHandle); }
+
+	operator HANDLE() { return _eventHandle; }
+
+private:
+	HANDLE _eventHandle;
+};
+
 extern "C"
 errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mode)
 {
 	if (nullptr == _Filename || nullptr == _Mode || nullptr == pFile) return EINVAL;
 
-	HANDLE eventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
 	std::wstring path;
 	Platform::String^ filename;
 	ConvertString(_Filename, path);
@@ -66,36 +77,15 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 	while ((offset = path.find(L'/', offset)) != std::wstring::npos)
 		path[offset++] = L'\\';
 
-	Windows::Storage::StorageFolder^ folder;
+	Windows::Storage::StorageFolder^ folder = nullptr;
+	Event eventHandle;
 	try
 	{
 		folder = AWait(Windows::Storage::StorageFolder::GetFolderFromPathAsync(ref new Platform::String(path.c_str())), eventHandle);
 	}
 	catch (Platform::AccessDeniedException^)
 	{
-		//int index = path.length() - 1;
-		//if (_wcsnicmp(g_basefolder->Path->Begin(), path.c_str(), g_basefolder->Path->Length()) == 0)
-		//	folder = g_basefolder;
-		//else if (_wcsnicmp(g_savefolder->Path->Begin(), path.c_str(), g_savefolder->Path->Length()) == 0)
-		//	folder = g_savefolder;
-		//else
-			return EACCES;
-
-		if (path.length() > folder->Path->Length())
-		{
-			auto folder_length = folder->Path->Length();
-			if (path[folder_length] == L'\\') folder_length++;
-			try
-			{
-				for (auto next = path.find(L'\\', folder_length); next != std::wstring::npos; next = path.find(L'\\', (folder_length = next + 1)))
-					folder = AWait(folder->GetFolderAsync(ref new Platform::String(path.substr(folder_length, next - folder_length).c_str())), eventHandle);
-				folder = AWait(folder->GetFolderAsync(ref new Platform::String(path.substr(folder_length).c_str())), eventHandle);
-			}
-			catch (Platform::Exception^)
-			{
-				return EIO;
-			}
-		}
+		return EACCES;
 	}
 	catch (Platform::Exception^)
 	{
@@ -129,7 +119,6 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 			}
 			ret = new WRT_FILE(AWait(file->OpenAsync(w ? Windows::Storage::FileAccessMode::ReadWrite : Windows::Storage::FileAccessMode::Read), eventHandle), r, w, b);
 		}
-		CloseHandle(eventHandle);
 	}
 	catch (Platform::Exception^)
 	{
