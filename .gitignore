@@ -216,6 +216,6 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
-# Windows Phone associated file
-winrt/SDL2/*
-!winphone/SDL2/README.txt
+# SDL2 associated file
+SDL2/*
+!SDL2/README.txt

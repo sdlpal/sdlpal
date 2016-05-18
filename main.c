@@ -31,13 +31,6 @@
 
 # include <fat.h>
 
-#elif defined(__WINPHONE__)
-
-# include <setjmp.h>
-
-static jmp_buf g_exit_jmp_env;
-# define LONGJMP_EXIT_CODE          0xff
-
 #endif
 
 #define BITMAPNUM_SPLASH_UP         (gConfig.fIsWIN95 ? 0x03 : 0x26)
@@ -77,7 +70,7 @@ PAL_Init(
    //
 #if defined(DINGOO)
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) == -1)
-#elif defined (__WINPHONE__)
+#elif defined (__WINRT__)
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == -1)
 #else
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
@@ -188,8 +181,6 @@ PAL_Shutdown(
 #if defined(GPH)
 	chdir("/usr/gp2x");
 	execl("./gp2xmenu", "./gp2xmenu", NULL);
-#elif defined(__WINPHONE__)
-	longjmp(g_exit_jmp_env, LONGJMP_EXIT_CODE);
 #endif
 	UTIL_Platform_Quit();
 }
@@ -522,18 +513,6 @@ main(
       buf[p - argv[0]] = '\0';
       chdir(buf);
    }
-#elif defined(__WINPHONE__)
-   //
-   // In windows phone, calling exit(0) directly will cause an abnormal exit.
-   // By using setjmp/longjmp to avoid this.
-   //
-   if (setjmp(g_exit_jmp_env) == LONGJMP_EXIT_CODE) return 0;
-
-   // We should first check the SD card before running actual codes
-   UTIL_BasePath();
-
-   SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
-   SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
 #endif
 
    UTIL_OpenLog();

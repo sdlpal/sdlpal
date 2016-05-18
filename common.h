@@ -227,7 +227,7 @@ extern "C"
 # define PAL_CREDIT           "Rikku2000"
 # define PAL_PORTYEAR         "2013"
 
-#elif defined (__WINPHONE__) || defined(__WINRT__)
+#elif defined(__WINRT__)
 
 #define PAL_PREFIX            UTIL_BasePath()
 #define PAL_SAVE_PREFIX       UTIL_SavePath()

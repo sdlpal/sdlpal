@@ -1,1 +1,0 @@
-Download SDL2 source code from http://libsdl.org/ and extract here.

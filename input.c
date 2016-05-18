@@ -38,10 +38,6 @@ BOOL                     g_fUseJoystick = TRUE;
 #define MAX_DEADZONE 16384
 #endif
 
-#if defined(__WINPHONE__)
-static unsigned int g_uiLastBackKeyTime = 0;
-#endif
-
 static VOID
 PAL_KeyboardEventFilter(
    const SDL_Event       *lpEvent
@@ -207,15 +203,11 @@ PAL_KeyboardEventFilter(
          g_InputState.dwKeyPress |= kKeyThrowItem;
          break;
 
-#if defined(__WINPHONE__)
+#if defined(__WINRT__)
       case SDLK_AC_BACK:
-         if (!gpGlobals->fInMainGame || !SDL_TICKS_PASSED(SDL_GetTicks(), g_uiLastBackKeyTime + 800))
-         {
-            // If game not started, or user press the BACK key quickly twice, force to exit
+         // If game not started, exit directly
+         if (!gpGlobals->fInMainGame)
             PAL_Shutdown();
-            exit(0);
-		 }
-         g_uiLastBackKeyTime = SDL_GetTicks();
 #endif
       case SDLK_q:
          g_InputState.dwKeyPress |= kKeyFlee;

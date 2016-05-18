@@ -137,23 +137,9 @@ BOOL UTIL_TouchEnabled(VOID)
 #include "SDL.h"
 #include "SDL_endian.h"
 
-# include <setjmp.h>
-
-static jmp_buf g_exit_jmp_env;
-# define LONGJMP_EXIT_CODE          0xff
-
 extern "C"
 INT UTIL_Platform_Init(int argc, char* argv[])
 {
-	//
-	// In windows phone, calling exit(0) directly will cause an abnormal exit.
-	// By using setjmp/longjmp to avoid this.
-	//
-	if (setjmp(g_exit_jmp_env) == LONGJMP_EXIT_CODE) return -1;
-
-	// We should first check the SD card before running actual codes
-	UTIL_BasePath();
-
 	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
 	SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
 
@@ -163,5 +149,5 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 extern "C"
 VOID UTIL_Platform_Quit(VOID)
 {
-	longjmp(g_exit_jmp_env, LONGJMP_EXIT_CODE);
+	Windows::ApplicationModel::Core::CoreApplication::Exit();
 }
