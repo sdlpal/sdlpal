@@ -17,10 +17,8 @@ namespace SDLPal
 	public:
 		MainPage();
 
-#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 		void SetPath(Windows::Storage::StorageFolder^ folder);
 		void SetFile(Windows::Storage::StorageFile^ file);
-#endif
 
 	protected:
 		void LoadControlContents();

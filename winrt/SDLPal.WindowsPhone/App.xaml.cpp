@@ -132,14 +132,13 @@ void SDLPal::App::OnActivated(Windows::ApplicationModel::Activation::IActivatedE
 	{
 	case ActivationKind::PickFolderContinuation:
 	{
-		auto folder = safe_cast<IFolderPickerContinuationEventArgs^>(args)->Folder;
-		if (folder) static_cast<MainPage^>(_main_page)->SetPath(folder);
+		static_cast<SDLPal::MainPage^>(Page)->SetPath(safe_cast<IFolderPickerContinuationEventArgs^>(args)->Folder);
 		break;
 	}
 	case ActivationKind::PickFileContinuation:
 	{
-		auto file = safe_cast<IFileOpenPickerContinuationEventArgs^>(args)->Files->First()->Current;
-		if (file) static_cast<MainPage^>(_main_page)->SetFile(file);
+		auto files = safe_cast<IFileOpenPickerContinuationEventArgs^>(args)->Files;
+		if (files->Size > 0) static_cast<SDLPal::MainPage^>(Page)->SetFile(files->GetAt(0));
 		break;
 	}
 	}

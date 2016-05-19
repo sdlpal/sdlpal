@@ -14,20 +14,19 @@ namespace SDLPal
 	/// </summary>
 	ref class App sealed
 	{
-	public:
+	internal:
 		App();
 
-		virtual void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ e) override;
-
-		void SetMainPage(Windows::UI::Xaml::Controls::Page^ page) { _main_page = page; }
+		property Windows::UI::Xaml::Controls::Page^ Page;
+		property bool LastCrashed;
 
 	protected:
+		virtual void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ e) override;
 		virtual void OnActivated(Windows::ApplicationModel::Activation::IActivatedEventArgs^ args) override;
 
 	private:
 		Windows::UI::Xaml::Media::Animation::TransitionCollection^ _transitions;
 		Windows::Foundation::EventRegistrationToken _firstNavigatedToken;
-		Windows::UI::Xaml::Controls::Page^ _main_page;
 
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);
 		void RootFrame_FirstNavigated(Platform::Object^ sender, Windows::UI::Xaml::Navigation::NavigationEventArgs^ e);

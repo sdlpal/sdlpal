@@ -192,6 +192,9 @@
   <data name="Language.OnContent" xml:space="preserve">
     <value>简体中文</value>
   </data>
+  <data name="MBCrashContent" xml:space="preserve">
+    <value>上次程序异常退出，已显示设置页供您检查设置是否正确。</value>
+  </data>
   <data name="MBEmptyContent" xml:space="preserve">
     <value>必须指定游戏资源文件夹！</value>
   </data>

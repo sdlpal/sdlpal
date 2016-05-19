@@ -6,7 +6,7 @@
 #include "../../global.h"
 #include "App.xaml.h"
 
-HANDLE g_eventHandle;
+HANDLE g_eventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
 
 int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -14,27 +14,28 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		return 1;
 	}
 
-	g_eventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
-
 	PAL_LoadConfig(TRUE);
+
+	bool last_crashed = false;
 
 	try
 	{
 		// Check the 'running' file to determine whether the program is abnormally terminated last time.
 		// If so, force to launch the setting page.
-		auto file = AWait(Windows::Storage::ApplicationData::Current->LocalCacheFolder->GetFileAsync("running"), g_eventHandle);
-		gConfig.fLaunchSetting = TRUE;
+		auto file = AWait(Windows::Storage::ApplicationData::Current->LocalFolder->GetFileAsync("running"), g_eventHandle);
+		gConfig.fLaunchSetting = TRUE; last_crashed = true;
 		AWait(file->DeleteAsync(), g_eventHandle);
 	}
 	catch(Platform::Exception^)
 	{ }
 
-	if (gConfig.fLaunchSetting)
+	if (gConfig.fLaunchSetting || last_crashed)
 	{
 		Windows::UI::Xaml::Application::Start(
 			ref new Windows::UI::Xaml::ApplicationInitializationCallback(
-				[](Windows::UI::Xaml::ApplicationInitializationCallbackParams^ p) {
+				[last_crashed](Windows::UI::Xaml::ApplicationInitializationCallbackParams^ p) {
 					auto app = ref new SDLPal::App();
+					app->LastCrashed = last_crashed;
 				}
 			)
 		);

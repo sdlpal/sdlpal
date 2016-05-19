@@ -20,11 +20,9 @@ namespace SDLPal
 	internal:
 		App();
 
-		void SetMainPage(Windows::UI::Xaml::Controls::Page^ page) { _main_page = page; }
+		property bool LastCrashed;
 
 	private:
-		Windows::UI::Xaml::Controls::Page^ _main_page;
-
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);
 		void OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs ^e);
 	};

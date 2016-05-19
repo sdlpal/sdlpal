@@ -117,7 +117,7 @@ extern "C"
 INT UTIL_Platform_Init(int argc, char* argv[])
 {
 	// Create the 'running' file for crash detection.
-	try { g_running_file = AWait(Windows::Storage::ApplicationData::Current->LocalCacheFolder->CreateFileAsync("running", Windows::Storage::CreationCollisionOption::OpenIfExists), g_eventHandle); }
+	try { g_running_file = AWait(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync("running", Windows::Storage::CreationCollisionOption::OpenIfExists), g_eventHandle); }
 	catch (Platform::Exception^) {}
 
 	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");

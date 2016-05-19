@@ -192,6 +192,9 @@
   <data name="Language.OnContent" xml:space="preserve">
     <value>簡體中文</value>
   </data>
+  <data name="MBCrashContent" xml:space="preserve">
+    <value>上次程式異常退出，已顯示設定頁供您檢查設定是否正確。</value>
+  </data>
   <data name="MBEmptyContent" xml:space="preserve">
     <value>必須指定遊戲資源檔夾！</value>
   </data>

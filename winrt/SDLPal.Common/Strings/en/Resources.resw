@@ -192,6 +192,9 @@
   <data name="Language.OnContent" xml:space="preserve">
     <value>Simplified Chinese</value>
   </data>
+  <data name="MBCrashContent" xml:space="preserve">
+    <value>The program is abnormally terminated last time. The setting page has been launched for you. Please check if there are any incorrect settings.</value>
+  </data>
   <data name="MBEmptyContent" xml:space="preserve">
     <value>The game resource folder must be specified!</value>
   </data>

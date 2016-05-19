@@ -25,8 +25,14 @@ using namespace Windows::UI::Xaml::Navigation;
 MainPage::MainPage()
 {
 	InitializeComponent();
-	static_cast<App^>(Application::Current)->SetMainPage(this);
 	LoadControlContents();
+
+	auto app = static_cast<App^>(Application::Current);
+#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+	app->Page = this;
+#endif
+	if (app->LastCrashed)
+		(ref new Windows::UI::Popups::MessageDialog((ref new Windows::ApplicationModel::Resources::ResourceLoader())->GetString("MBCrashContent")))->ShowAsync();
 }
 
 void SDLPal::MainPage::LoadControlContents()
@@ -177,43 +183,42 @@ void SDLPal::MainPage::btnClearFile_Click(Platform::Object^ sender, Windows::UI:
 	tbMsgFile->Tag = nullptr;
 }
 
-#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 void SDLPal::MainPage::SetPath(Windows::Storage::StorageFolder^ folder)
 {
-	tbGamePath->Text = folder->Path;
-	tbGamePath->Tag = folder;
+	if (folder)
+	{
+		tbGamePath->Text = folder->Path;
+		tbGamePath->Tag = folder;
+	}
 }
 
 void SDLPal::MainPage::SetFile(Windows::Storage::StorageFile^ file)
 {
-	tbMsgFile->Text = file->Path;
-	tbMsgFile->Tag = file;
+	if (file)
+	{
+		tbMsgFile->Text = file->Path;
+		tbMsgFile->Tag = file;
+	}
 }
 
 void SDLPal::MainPage::btnBrowse_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	auto picker = ref new Windows::Storage::Pickers::FolderPicker();
 	picker->FileTypeFilter->Append("*");
+#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 	picker->PickFolderAndContinue();
+#else
+	concurrency::create_task(picker->PickSingleFolderAsync()).then([this](Windows::Storage::StorageFolder^ folder) { SetPath(folder); });
+#endif
 }
 
 void SDLPal::MainPage::btnBrowseFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	auto picker = ref new Windows::Storage::Pickers::FileOpenPicker();
 	picker->FileTypeFilter->Append("*");
+#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 	picker->PickSingleFileAndContinue();
-}
-
 #else
-
-void SDLPal::MainPage::btnBrowse_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	auto picker = ref new Windows::Storage::Pickers::FolderPicker();
-	picker->FileTypeFilter->Append("*");
-	concurrency::create_task(picker->PickSingleFolderAsync()).then([this](Windows::Storage::StorageFolder^ folder) {
-		tbGamePath->Text = folder->Path;
-		tbGamePath->Tag = folder;
-	});
-}
-
+	concurrency::create_task(picker->PickSingleFileAsync()).then([this](Windows::Storage::StorageFile^ file) { SetFile(file); });
 #endif
+}
