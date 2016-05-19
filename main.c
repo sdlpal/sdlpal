@@ -33,6 +33,13 @@
 
 #endif
 
+#if defined(LONGJMP_EXIT)
+#include <setjmp.h>
+
+static jmp_buf g_exit_jmp_buf;
+#endif
+
+
 #define BITMAPNUM_SPLASH_UP         (gConfig.fIsWIN95 ? 0x03 : 0x26)
 #define BITMAPNUM_SPLASH_DOWN       (gConfig.fIsWIN95 ? 0x04 : 0x27)
 #define SPRITENUM_SPLASH_TITLE      0x47
@@ -149,7 +156,7 @@ PAL_Init(
 
 VOID
 PAL_Shutdown(
-   VOID
+   int exit_code
 )
 /*++
   Purpose:
@@ -158,7 +165,7 @@ PAL_Shutdown(
 
   Parameters:
 
-    None.
+    exit_code -  The exit code return to OS.
 
   Return value:
 
@@ -183,6 +190,15 @@ PAL_Shutdown(
 	execl("./gp2xmenu", "./gp2xmenu", NULL);
 #endif
 	UTIL_Platform_Quit();
+#if defined(LONGJMP_EXIT)
+	longjmp(g_exit_jmp_buf, exit_code);
+#else
+# if defined (NDS)
+	while (1);
+# else
+	exit(exit_code);
+# endif
+#endif
 }
 
 VOID
@@ -503,6 +519,12 @@ main(
 
 --*/
 {
+#if defined(LONGJMP_EXIT)
+	int exit_code;
+	if (exit_code = setjmp(g_exit_jmp_buf))
+		return exit_code != 1 ? exit_code : 0;
+#endif
+
 #if defined(__APPLE__) && !defined(__IOS__)
    char *p = strstr(argv[0], "/Pal.app/");
 

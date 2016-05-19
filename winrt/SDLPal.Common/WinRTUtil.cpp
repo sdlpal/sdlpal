@@ -7,11 +7,10 @@
 #include "../SDLPal.Common/AsyncHelper.h"
 #include "../SDLPal.Common/StringHelper.h"
 
-extern "C" void TerminateOnError(const char *fmt, ...);
+#include "SDL.h"
+#include "SDL_endian.h"
 
-#define PAL_PATH_NAME	"SDLPAL"
-
-static std::string g_savepath, g_basepath, g_configpath, g_screenshotpath;
+static std::string g_basepath, g_configpath;
 
 extern HANDLE g_eventHandle;
 
@@ -112,16 +111,14 @@ BOOL UTIL_TouchEnabled(VOID)
 	return (ref new Windows::Devices::Input::TouchCapabilities())->TouchPresent;
 }
 
-#include "SDL.h"
-#include "SDL_endian.h"
-#include <setjmp.h>
-
-jmp_buf exit_jmp_buf;
+static Windows::Storage::StorageFile^ g_running_file = nullptr;
 
 extern "C"
 INT UTIL_Platform_Init(int argc, char* argv[])
 {
-	if (setjmp(exit_jmp_buf) == 1) return -1;
+	// Create the 'running' file for crash detection.
+	try { g_running_file = AWait(Windows::Storage::ApplicationData::Current->LocalCacheFolder->CreateFileAsync("running", Windows::Storage::CreationCollisionOption::OpenIfExists), g_eventHandle); }
+	catch (Platform::Exception^) {}
 
 	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
 	SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
@@ -132,6 +129,7 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 extern "C"
 VOID UTIL_Platform_Quit(VOID)
 {
-	//throw ref new Platform::Exception(0);
-	longjmp(exit_jmp_buf, 1);
+	// Delete the 'running' file on normal exit.
+	try { if (g_running_file) AWait(g_running_file->DeleteAsync()); g_running_file = nullptr; }
+	catch (Platform::Exception^) {}
 }

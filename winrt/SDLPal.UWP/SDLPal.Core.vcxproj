@@ -133,7 +133,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LONGJMP_EXIT;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LONGJMP_EXIT;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,7 +161,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LONGJMP_EXIT;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -175,7 +175,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LONGJMP_EXIT;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -189,7 +189,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LONGJMP_EXIT;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -203,7 +203,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LONGJMP_EXIT;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

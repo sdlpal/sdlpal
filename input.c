@@ -78,8 +78,7 @@ PAL_KeyboardEventFilter(
             //
             // Pressed Alt+F4 (Exit program)...
             //
-            PAL_Shutdown();
-            exit(0);
+            PAL_Shutdown(0);
          }
       }
 
@@ -207,7 +206,7 @@ PAL_KeyboardEventFilter(
       case SDLK_AC_BACK:
          // If game not started, exit directly
          if (!gpGlobals->fInMainGame)
-            PAL_Shutdown();
+            PAL_Shutdown(0);
 #endif
       case SDLK_q:
          g_InputState.dwKeyPress |= kKeyFlee;
@@ -990,8 +989,7 @@ PAL_EventFilter(
       //
       // clicked on the close button of the window. Quit immediately.
       //
-      PAL_Shutdown();
-      exit(0);
+      PAL_Shutdown(0);
    }
 
    PAL_KeyboardEventFilter(lpEvent);

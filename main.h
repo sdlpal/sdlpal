@@ -52,7 +52,7 @@
 
 VOID
 PAL_Shutdown(
-   VOID
+   int exit_code
 );
 
 #endif

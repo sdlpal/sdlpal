@@ -2908,8 +2908,7 @@ PAL_InterpretInstruction(
       if (gConfig.fIsWIN95)
          PAL_EndingScreen();
       PAL_AdditionalCredits();
-      PAL_Shutdown();
-      exit(0);
+      PAL_Shutdown(0);
       break;
 
    case 0x00A1:

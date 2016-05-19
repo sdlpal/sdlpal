@@ -640,8 +640,7 @@ PAL_SystemMenu(
       {
          SOUND_PlayMUS(0, FALSE, 2);
          PAL_FadeOut(2);
-         PAL_Shutdown();
-         exit(0);
+         PAL_Shutdown(0);
       }
       break;
 

@@ -18,6 +18,17 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	PAL_LoadConfig(TRUE);
 
+	try
+	{
+		// Check the 'running' file to determine whether the program is abnormally terminated last time.
+		// If so, force to launch the setting page.
+		auto file = AWait(Windows::Storage::ApplicationData::Current->LocalCacheFolder->GetFileAsync("running"), g_eventHandle);
+		gConfig.fLaunchSetting = TRUE;
+		AWait(file->DeleteAsync(), g_eventHandle);
+	}
+	catch(Platform::Exception^)
+	{ }
+
 	if (gConfig.fLaunchSetting)
 	{
 		Windows::UI::Xaml::Application::Start(
