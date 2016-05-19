@@ -55,13 +55,6 @@ LPCSTR UTIL_ScreenShotPath(VOID)
 	return UTIL_BasePath();
 }
 
-static BOOL UTIL_IsMobile(VOID)
-{
-	auto rc = Windows::ApplicationModel::Resources::Core::ResourceContext::GetForCurrentView();
-	auto qv = rc->QualifierValues;
-	return qv->HasKey("DeviceFamily") && qv->Lookup("DeviceFamily") == "Mobile";
-}
-
 extern "C"
 BOOL UTIL_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
 {
@@ -70,9 +63,9 @@ BOOL UTIL_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
 	IDXGIAdapter1* pAdapter = nullptr;
 	IDXGIOutput* pOutput = nullptr;
 	DWORD retval = FALSE;
-	
-#if (_WIN32_WINNT >= 0x0A00) && (WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP)
-	if (!UTIL_IsMobile()) return FALSE;
+
+#if _WIN32_WINNT >= 0x0A00
+	if (Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily != L"Windows.Mobile") return FALSE;
 #endif
 
 	if (!pdwScreenWidth || !pdwScreenHeight) return FALSE;
@@ -101,6 +94,16 @@ UTIL_WP_GetScreenSize_exit:
 	if (pFactory) pFactory->Release();
 
 	return retval;
+}
+
+extern "C"
+BOOL UTIL_IsAbsolutePath(LPCSTR  lpszFileName)
+{
+	char szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFname[_MAX_FNAME], szExt[_MAX_EXT];
+	if (_splitpath_s(lpszFileName, szDrive, szDir, szFname, szExt) == 0)
+		return (strlen(szDrive) > 0 && (szDir[0] == '\\' || szDir[0] == '/'));
+	else
+		return FALSE;
 }
 
 extern "C"

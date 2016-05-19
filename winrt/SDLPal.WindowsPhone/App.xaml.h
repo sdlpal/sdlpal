@@ -19,7 +19,7 @@ namespace SDLPal
 
 		virtual void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ e) override;
 
-		void SetMainPage(Windows::UI::Xaml::Controls::Page^ page);
+		void SetMainPage(Windows::UI::Xaml::Controls::Page^ page) { _main_page = page; }
 
 	protected:
 		virtual void OnActivated(Windows::ApplicationModel::Activation::IActivatedEventArgs^ args) override;

@@ -40,8 +40,4 @@
       </Extensions>
     </Application>
   </Applications>
-  <Capabilities>
-    <Capability Name="removableStorage" />
-    <Capability Name="picturesLibrary" />
-  </Capabilities>
 </Package>

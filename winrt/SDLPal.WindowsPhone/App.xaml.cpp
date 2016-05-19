@@ -128,10 +128,20 @@ void App::RootFrame_FirstNavigated(Object^ sender, NavigationEventArgs^ e)
 
 void SDLPal::App::OnActivated(Windows::ApplicationModel::Activation::IActivatedEventArgs ^ args)
 {
-	if (args->Kind == ActivationKind::PickFolderContinuation)
+	switch (args->Kind)
+	{
+	case ActivationKind::PickFolderContinuation:
 	{
 		auto folder = safe_cast<IFolderPickerContinuationEventArgs^>(args)->Folder;
 		if (folder) static_cast<MainPage^>(_main_page)->SetPath(folder);
+		break;
+	}
+	case ActivationKind::PickFileContinuation:
+	{
+		auto file = safe_cast<IFileOpenPickerContinuationEventArgs^>(args)->Files->First()->Current;
+		if (file) static_cast<MainPage^>(_main_page)->SetFile(file);
+		break;
+	}
 	}
 	Application::OnActivated(args);
 }
@@ -147,9 +157,4 @@ void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
 	(void) e;		// 未使用的参数
 
 	// TODO: 保存应用程序状态并停止任何后台活动
-}
-
-void App::SetMainPage(Windows::UI::Xaml::Controls::Page^ page)
-{
-	_main_page = page;
 }

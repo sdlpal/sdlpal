@@ -129,6 +129,11 @@ UTIL_GetScreenSize(
    DWORD *pdwScreenHeight
 );
 
+BOOL
+UTIL_IsAbsolutePath(
+	LPCSTR  lpszFileName
+);
+
 #if PAL_HAS_TOUCH
 
 BOOL

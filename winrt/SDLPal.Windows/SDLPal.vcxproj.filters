@@ -23,15 +23,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.xaml.cpp" />
-    <ClCompile Include="MainPage.xaml.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="..\SDLPal.Common\SDLPal.cpp" />
     <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp" />
+    <ClCompile Include="..\SDLPal.Common\MainPage.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h" />
-    <ClInclude Include="MainPage.xaml.h" />
+    <ClInclude Include="..\SDLPal.Common\MainPage.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Logo.scale-100.png">
@@ -120,17 +120,17 @@
     <None Include="SDLPal_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainPage.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\en\Resources.resw">
+    <PRIResource Include="..\SDLPal.Common\Strings\en\Resources.resw">
       <Filter>Strings\en</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\zh-hant\Resources.resw">
-      <Filter>Strings\zh-hant</Filter>
-    </PRIResource>
-    <PRIResource Include="Strings\zh-hans\Resources.resw">
+    <PRIResource Include="..\SDLPal.Common\Strings\zh-hans\Resources.resw">
       <Filter>Strings\zh-hans</Filter>
     </PRIResource>
+    <PRIResource Include="..\SDLPal.Common\Strings\zh-hant\Resources.resw">
+      <Filter>Strings\zh-hant</Filter>
+    </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="..\SDLPal.Common\MainPage.xaml" />
   </ItemGroup>
 </Project>

@@ -483,7 +483,10 @@ UTIL_OpenFileForMode(
 {
 	FILE         *fp;
 
-	fp = fopen(va("%s%s", gConfig.pszGamePath, lpszFileName), szMode);
+	if (UTIL_IsAbsolutePath(lpszFileName))
+		fp = fopen(lpszFileName, szMode);
+	else
+		fp = fopen(va("%s%s", gConfig.pszGamePath, lpszFileName), szMode);
 
 #ifndef _WIN32
 	if (fp == NULL)
@@ -530,6 +533,43 @@ UTIL_CloseFile(
       fclose(fp);
    }
 }
+
+#if !defined(PAL_HAS_PLATFORM_SPECIFIC_UTILS)
+
+BOOL
+UTIL_GetScreenSize(
+   DWORD *pdwScreenWidth,
+   DWORD *pdwScreenHeight
+)
+{
+   return FALSE;
+}
+
+BOOL
+UTIL_IsAbsolutePath(
+	LPCSTR  lpszFileName
+)
+{
+	return FALSE;
+}
+
+INT
+UTIL_Platform_Init(
+   int argc,
+   char* argv[]
+)
+{
+   return 0;
+}
+
+VOID
+UTIL_Platform_Quit(
+   VOID
+)
+{
+}
+
+#endif
 
 #ifdef ENABLE_LOG
 

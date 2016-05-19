@@ -176,7 +176,6 @@ VIDEO_Startup(
    //
    // Check whether to keep the aspect ratio
    //
-   gpRenderRect = NULL;
    if (gConfig.fKeepAspectRatio)
    {
 	   float ax = (float)gConfig.dwScreenWidth / 320.0f;
@@ -186,8 +185,8 @@ VIDEO_Startup(
 		   float ratio = (ax > ay) ? ay : ax;
 		   WORD w = (WORD)(ratio * 320.0f);
 		   WORD h = (WORD)(ratio * 200.0f);
-		   if (w % 4 != 0) w += 4 - (w % 4);
-		   if (h % 4 != 0) h += 4 - (h % 4);
+		   if (w % 4 != 0) w &= ~0x3;
+		   if (h % 4 != 0) h &= ~0x3;
 		   gRenderRect.x = (gConfig.dwScreenWidth - w) / 2;
 		   gRenderRect.y = (gConfig.dwScreenHeight - h) / 2;
 		   gRenderRect.w = w;
@@ -198,6 +197,8 @@ VIDEO_Startup(
 # endif
 	   }
    }
+   else
+	   gpRenderRect = NULL;
 #else
 
    //

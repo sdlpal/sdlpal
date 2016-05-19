@@ -76,6 +76,14 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 	size_t offset = 0;
 	while ((offset = path.find(L'/', offset)) != std::wstring::npos)
 		path[offset++] = L'\\';
+	if (path.size() > 0)
+	{
+		if (path.back() == L':') path.append(L"\\");
+	}
+	else
+	{
+		path.assign(Windows::Storage::ApplicationData::Current->LocalFolder->Path->Data());
+	}
 
 	Windows::Storage::StorageFolder^ folder = nullptr;
 	Event eventHandle;

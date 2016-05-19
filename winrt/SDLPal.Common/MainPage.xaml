@@ -1,0 +1,65 @@
+﻿<Page
+    x:Class="SDLPal.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SDLPal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ScrollViewer HorizontalScrollMode="Disabled">
+            <StackPanel VerticalAlignment="Top" Margin="10,0,10,0">
+                <TextBox x:Name="tbGamePath" x:Uid="GamePath" TextWrapping="Wrap" VerticalAlignment="Top" Header="游戏资源文件夹" IsReadOnly="True" PlaceholderText="游戏资源文件夹"/>
+                <Button x:Name="btnBrowseGame" x:Uid="ButtonBrowse" Content="浏览文件夹" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btnBrowse_Click" />
+                <ToggleSwitch x:Name="tsIsDOS" x:Uid="DOS" Header="游戏资源版本" OffContent="WIN95" OnContent="DOS" Toggled="tsIsDOS_Toggled" />
+                <ToggleSwitch x:Name="tsUseEmbedFont" x:Uid="EmbeddedFont" Header="游戏内嵌字体" OffContent="否" OnContent="是" />
+                <ToggleSwitch x:Name="tsLanguage" x:Uid="Language" Header="游戏资源语言" OffContent="繁体中文" OnContent="简体中文" />
+                <TextBox x:Name="tbMsgFile" x:Uid="MessageFile" Header="自定义语言文件名" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="自定义语言文件名" IsReadOnly="True"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="btnBrowseMsgFile" x:Uid="ButtonBrowseFile" Content="选择语言文件" Click="btnBrowseFile_Click" />
+                    <Button x:Name="btnClearMsgFile" x:Uid="ButtonClearFile" Content="清除语言文件" Margin="20,0,0,0" Click="btnClearFile_Click" />
+                </StackPanel>
+                <ToggleSwitch x:Name="tsTouchOverlay" x:Uid="TouchOverlay" Header="启用触屏辅助" OffContent="否" OnContent="是" />
+                <ToggleSwitch x:Name="tsKeepAspect" x:Uid="AspectRatio" Header="保持纵横比" OffContent="否" OnContent="是" />
+                <ToggleSwitch x:Name="tsStereo" x:Uid="Stereo" Header="立体声" OffContent="否" OnContent="是" />
+                <Slider x:Name="slVolume" x:Uid="Volume" Header="音量" TickPlacement="Inline" TickFrequency="10" />
+                <Slider x:Name="slQuality" x:Uid="Quality" Header="音频质量" Maximum="4" LargeChange="1" TickFrequency="1" />
+                <ComboBox x:Name="cbSampleRate" x:Uid="Samplerate" Header="音频输出采样率" PlaceholderText="音频输出采样率">
+                    <ComboBoxItem Content="11025"/>
+                    <ComboBoxItem Content="22050"/>
+                    <ComboBoxItem Content="44100"/>
+                </ComboBox>
+                <ComboBox x:Name="cbAudioBuffer" x:Uid="AudioBuffer" Header="音频缓冲区大小" PlaceholderText="音频缓冲区大小">
+                    <ComboBoxItem Content="512"/>
+                    <ComboBoxItem Content="1024"/>
+                    <ComboBoxItem Content="2048"/>
+                    <ComboBoxItem Content="4096"/>
+                </ComboBox>
+                <ComboBox x:Name="cbCD" x:Uid="CD" Header="CD 音轨格式" PlaceholderText="CD 音轨格式">
+                    <ComboBoxItem Content="MP3"/>
+                    <ComboBoxItem Content="OGG"/>
+                </ComboBox>
+                <ComboBox x:Name="cbBGM" x:Uid="BGM" Header="背景音乐格式" PlaceholderText="背景音乐格式" SelectionChanged="cbBGM_SelectionChanged">
+                    <ComboBoxItem Content="RIX"/>
+                    <ComboBoxItem Content="MP3"/>
+                    <ComboBoxItem Content="OGG"/>
+                </ComboBox>
+                <ComboBox x:Name="cbOPL" x:Uid="OPL" Header="OPL 模拟器" PlaceholderText="OPL 模拟器">
+                    <ComboBoxItem Content="DOSBOX"/>
+                    <ComboBoxItem Content="MAME"/>
+                </ComboBox>
+                <ComboBox x:Name="cbOPLSR" x:Uid="OPLSR" Header="OPL 模拟器采样率" PlaceholderText="OPL 模拟器采样率">
+                    <ComboBoxItem Content="12429"/>
+                    <ComboBoxItem Content="24858"/>
+                    <ComboBoxItem Content="49716"/>
+                </ComboBox>
+                <ToggleSwitch x:Name="tsSurroundOPL" x:Uid="SurroundOPL" Header="环绕声 OPL" OffContent="否" OnContent="是" />
+                <Grid VerticalAlignment="Top">
+                    <Button x:Name="btnReset" x:Uid="ButtonDefault" Content="默认设置" HorizontalAlignment="Left" Click="btnReset_Click" />
+                    <Button x:Name="btnFinish" x:Uid="ButtonFinish" Content="完成设置" HorizontalAlignment="Right" Click="btnFinish_Click" />
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

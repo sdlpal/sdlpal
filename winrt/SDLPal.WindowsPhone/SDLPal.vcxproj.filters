@@ -35,13 +35,20 @@
     <Filter Include="Strings\zh-hant">
       <UniqueIdentifier>{1a1bb392-d3b3-4c82-a811-f6cfabd43f9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{d9849604-02e7-4f89-8f18-2d7bc9281159}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp" />
-    <ClCompile Include="..\SDLPal.Common\SDLPal.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="App.xaml.cpp" />
-    <ClCompile Include="MainPage.xaml.cpp" />
+    <ClCompile Include="..\SDLPal.Common\SDLPal.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDLPal.Common\MainPage.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -85,25 +92,31 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainPage.xaml" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h" />
-    <ClInclude Include="MainPage.xaml.h" />
+    <ClInclude Include="..\SDLPal.Common\AsyncHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDLPal.Common\StringHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDLPal.Common\MainPage.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="Strings\en\Resources.resw">
+    <PRIResource Include="..\SDLPal.Common\Strings\en\Resources.resw">
       <Filter>Strings\en</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\zh-hans\Resources.resw">
+    <PRIResource Include="..\SDLPal.Common\Strings\zh-hans\Resources.resw">
       <Filter>Strings\zh-hans</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\zh-hant\Resources.resw">
+    <PRIResource Include="..\SDLPal.Common\Strings\zh-hant\Resources.resw">
       <Filter>Strings\zh-hant</Filter>
     </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="..\SDLPal.Common\MainPage.xaml" />
   </ItemGroup>
 </Project>

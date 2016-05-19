@@ -319,3 +319,13 @@ UTIL_GetScreenSize(
 {
 	return (pdwScreenWidth && pdwScreenHeight && *pdwScreenWidth && *pdwScreenHeight);
 }
+
+extern "C"
+BOOL UTIL_IsAbsolutePath(LPCSTR  lpszFileName)
+{
+	char szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFname[_MAX_FNAME], szExt[_MAX_EXT];
+	if (_splitpath_s(lpszFileName, szDrive, szDir, szFname, szExt) == 0)
+		return (strlen(szDrive) > 0 && (szDir[0] == '\\' || szDir[0] == '/'));
+	else
+		return FALSE;
+}
