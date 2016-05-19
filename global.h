@@ -562,7 +562,8 @@ typedef enum tagMUSICTYPE
 typedef enum tagOPLTYPE
 {
 	OPL_DOSBOX,
-	OPL_MAME
+	OPL_MAME,
+	OPL_DOSBOX_NEW,
 } OPLTYPE, *LPOPLTYPE;
 
 typedef struct tagGLOBALVARS

@@ -27,6 +27,7 @@
 
 #include "resampler.h"
 #include "adplug/opl.h"
+#include "adplug/demuopl.h"
 #include "adplug/dbemuopl.h"
 #include "adplug/emuopl.h"
 #include "adplug/surroundopl.h"
@@ -415,6 +416,12 @@ RIX_Init(
 		{
 		case OPL_DOSBOX:
 			pRixPlayer->opl = new CSurroundopl(
+				new CDemuopl(gConfig.iOPLSampleRate, true, false),
+				new CDemuopl(gConfig.iOPLSampleRate, true, false),
+				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
+			break;
+		case OPL_DOSBOX_NEW:
+			pRixPlayer->opl = new CSurroundopl(
 				new CDBemuopl(gConfig.iOPLSampleRate, true, false),
 				new CDBemuopl(gConfig.iOPLSampleRate, true, false),
 				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
@@ -432,6 +439,9 @@ RIX_Init(
 		switch (gConfig.eOPLType)
 		{
 		case OPL_DOSBOX:
+			pRixPlayer->opl = new CDemuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
+			break;
+		case OPL_DOSBOX_NEW:
 			pRixPlayer->opl = new CDBemuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
 			break;
 		case OPL_MAME:

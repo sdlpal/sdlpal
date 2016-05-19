@@ -32,9 +32,10 @@
 #        'MP3' means use files named as 'xx.mp3' inside the 'mp3' directory.
 #MUSIC=RIX
 
-# OPL: Indicates which type of opl emulator to use. Valid types include 'DOSBOX'
-#      (default) and 'MAME'.  'DOSBOX' means use the opl emulator from dosbox
-#      project, while 'MAME' means use the opl emulator from M.A.M.E project.
+# OPL: Indicates which type of OPL emulator to use. Valid types include 'DOSBOX'
+#      (default), 'MAME' and 'DOSBOXNEW'. 'DOSBOXNEW' is the recommended OPL simulator
+#      on high-performance devices like PC or tablet. However, for lower-end phones,
+#      'DOSBOX' is the best choice for performance-quality balance.
 #OPL=DOSBOX
 
 # Stereo: Indicates whether to use mono audio or stereo audio. Non-zero means to use

@@ -145,7 +145,7 @@
     <value>Select</value>
   </data>
   <data name="ButtonClearFile.Content" xml:space="preserve">
-    <value>Clear</value>
+    <value>Disable</value>
   </data>
   <data name="ButtonDefault.Content" xml:space="preserve">
     <value>Default setting</value>

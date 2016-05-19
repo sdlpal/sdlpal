@@ -145,7 +145,7 @@
     <value>選擇語言檔</value>
   </data>
   <data name="ButtonClearFile.Content" xml:space="preserve">
-    <value>清除語言檔</value>
+    <value>禁用語言檔</value>
   </data>
   <data name="ButtonDefault.Content" xml:space="preserve">
     <value>默認設定</value>

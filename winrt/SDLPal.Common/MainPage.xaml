@@ -18,7 +18,7 @@
                 <TextBox x:Name="tbMsgFile" x:Uid="MessageFile" Header="自定义语言文件名" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="自定义语言文件名" IsReadOnly="True"/>
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="btnBrowseMsgFile" x:Uid="ButtonBrowseFile" Content="选择语言文件" Click="btnBrowseFile_Click" />
-                    <Button x:Name="btnClearMsgFile" x:Uid="ButtonClearFile" Content="清除语言文件" Margin="20,0,0,0" Click="btnClearFile_Click" />
+                    <Button x:Name="btnClearMsgFile" x:Uid="ButtonClearFile" Content="禁用语言文件" Margin="20,0,0,0" Click="btnClearFile_Click" />
                 </StackPanel>
                 <ToggleSwitch x:Name="tsTouchOverlay" x:Uid="TouchOverlay" Header="启用触屏辅助" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsKeepAspect" x:Uid="AspectRatio" Header="保持纵横比" OffContent="否" OnContent="是" />
@@ -35,6 +35,7 @@
                     <ComboBoxItem Content="1024"/>
                     <ComboBoxItem Content="2048"/>
                     <ComboBoxItem Content="4096"/>
+                    <ComboBoxItem Content="8192"/>
                 </ComboBox>
                 <ComboBox x:Name="cbCD" x:Uid="CD" Header="CD 音轨格式" PlaceholderText="CD 音轨格式">
                     <ComboBoxItem Content="MP3"/>
@@ -48,6 +49,7 @@
                 <ComboBox x:Name="cbOPL" x:Uid="OPL" Header="OPL 模拟器" PlaceholderText="OPL 模拟器">
                     <ComboBoxItem Content="DOSBOX"/>
                     <ComboBoxItem Content="MAME"/>
+                    <ComboBoxItem Content="DOSBOXNEW"/>
                 </ComboBox>
                 <ComboBox x:Name="cbOPLSR" x:Uid="OPLSR" Header="OPL 模拟器采样率" PlaceholderText="OPL 模拟器采样率">
                     <ComboBoxItem Content="12429"/>

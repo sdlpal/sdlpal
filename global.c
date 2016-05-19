@@ -156,7 +156,9 @@ PAL_LoadConfig(
 				}
 				case PALCFG_OPL:
 				{
-					if (SDL_strncasecmp(value.sValue, "DOSBOX", 6) == 0)
+					if (SDL_strncasecmp(value.sValue, "DOSBOXNEW", 9) == 0)
+						eOPLType = OPL_DOSBOX_NEW;
+					else if (SDL_strncasecmp(value.sValue, "DOSBOX", 6) == 0)
 						eOPLType = OPL_DOSBOX;
 					else if (SDL_strncasecmp(value.sValue, "MAME", 4) == 0)
 						eOPLType = OPL_MAME;
