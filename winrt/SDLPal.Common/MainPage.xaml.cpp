@@ -67,14 +67,13 @@ void SDLPal::MainPage::LoadControlContents()
 	else
 		cbSampleRate->SelectedIndex = 2;
 
-	if (gConfig.wAudioBufferSize <= 512)
-		cbAudioBuffer->SelectedIndex = 0;
-	else if (gConfig.wAudioBufferSize == 1024)
-		cbAudioBuffer->SelectedIndex = 1;
-	else if (gConfig.wAudioBufferSize == 2048)
-		cbAudioBuffer->SelectedIndex = 2;
+	auto wValue = gConfig.wAudioBufferSize >> 10;
+	unsigned int index = 0;
+	while (wValue) { index++; wValue >>= 1; }
+	if (index >= cbAudioBuffer->Items->Size)
+		cbAudioBuffer->SelectedIndex = cbAudioBuffer->Items->Size - 1;
 	else
-		cbAudioBuffer->SelectedIndex = 3;
+		cbAudioBuffer->SelectedIndex = index;
 
 	if (gConfig.iOPLSampleRate <= 12429)
 		cbOPLSR->SelectedIndex = 0;
@@ -110,7 +109,7 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.uCodePage = tsLanguage->IsOn ? CP_GBK : CP_BIG5;
 
 	gConfig.eCDType = (MUSICTYPE)(MUSIC_MP3 + cbCD->SelectedIndex);
-	gConfig.eMusicType = (cbBGM->SelectedIndex >= 1) ? (MUSICTYPE)(MUSIC_MP3 + cbBGM->SelectedIndex) : MUSIC_RIX;
+	gConfig.eMusicType = (cbBGM->SelectedIndex >= 1) ? (MUSICTYPE)(MUSIC_MIDI + cbBGM->SelectedIndex) : MUSIC_RIX;
 	gConfig.eOPLType = (OPLTYPE)cbOPL->SelectedIndex;
 
 	gConfig.iSampleRate = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbSampleRate->SelectedItem)->Content)->Data(), nullptr, 10);
