@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{b1809b68-0d9a-4e0e-addb-272ca1c9fa38}</ProjectGuid>
     <RootNamespace>SDLPal</RootNamespace>
-    <DefaultLanguage>zh-CN</DefaultLanguage>
+    <DefaultLanguage>en</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>

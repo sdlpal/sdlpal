@@ -3,8 +3,8 @@
   <Identity Name="67d7840d-5e23-4312-8484-b33ffe3d5f36" Publisher="CN=louyihua" Version="2.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="67d7840d-5e23-4312-8484-b33ffe3d5f36" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>SDLPal</DisplayName>
-    <PublisherDisplayName>SDLPal Team</PublisherDisplayName>
+    <DisplayName>SDL PAL</DisplayName>
+    <PublisherDisplayName>ms-resource:Publisher</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="SDLPal.App">
-      <uap:VisualElements DisplayName="SDLPal" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="SDL-based reimplementation of classic Chinese RPG &quot;Xian Jian Qi Xia Zhuan&quot;." BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="SDLPal" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="ms-resource:AppDescription" BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square71x71Logo="Assets\Square71x71Logo.png" Square310x310Logo="Assets\Square310x310Logo.png">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square310x310Logo" />
@@ -23,23 +23,6 @@
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="black" />
       </uap:VisualElements>
-      <Extensions>
-        <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="pal">
-            <uap:SupportedFileTypes>
-              <uap:FileType>.mkf</uap:FileType>
-              <uap:FileType>.dat</uap:FileType>
-              <uap:FileType>.msg</uap:FileType>
-              <uap:FileType>.cfg</uap:FileType>
-              <uap:FileType>.asc</uap:FileType>
-              <uap:FileType>.mp3</uap:FileType>
-              <uap:FileType>.ogg</uap:FileType>
-              <uap:FileType>.rpg</uap:FileType>
-              <uap:FileType>.bmp</uap:FileType>
-            </uap:SupportedFileTypes>
-          </uap:FileTypeAssociation>
-        </uap:Extension>
-      </Extensions>
     </Application>
   </Applications>
 </Package>

@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppDescription" xml:space="preserve">
+    <value>基于 SDL 重制的经典 RPG 游戏《仙剑奇侠传》。</value>
+  </data>
   <data name="AspectRatio.Header" xml:space="preserve">
     <value>保持纵横比</value>
   </data>
@@ -225,6 +228,9 @@
   </data>
   <data name="OPLSR.PlaceholderText" xml:space="preserve">
     <value>OPL 模拟器采样率</value>
+  </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>SDLPAL 开发组</value>
   </data>
   <data name="Quality.Header" xml:space="preserve">
     <value>音频质量</value>

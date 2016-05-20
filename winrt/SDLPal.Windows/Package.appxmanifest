@@ -2,8 +2,8 @@
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
   <Identity Name="c84165f3-7148-4381-affb-84265925b7e8" Publisher="CN=LouYihua" Version="2.0.0.0" />
   <Properties>
-    <DisplayName>SDLPal</DisplayName>
-    <PublisherDisplayName>SDLPal Team</PublisherDisplayName>
+    <DisplayName>SDL PAL</DisplayName>
+    <PublisherDisplayName>ms-resource:Publisher</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Prerequisites>
@@ -15,28 +15,11 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="SDLPal.App">
-      <m2:VisualElements DisplayName="SDLPal" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="SDL-based reimplementation of classic Chinese RPG &quot;Xian Jian Qi Xia Zhuan&quot;." ForegroundText="light" BackgroundColor="blue">
+      <m2:VisualElements DisplayName="SDLPal" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="ms-resource:AppDescription" ForegroundText="light" BackgroundColor="blue">
         <m2:DefaultTile Square70x70Logo="Assets\Square70x70Logo.png" Wide310x150Logo="Assets\WideLogo.png" Square310x310Logo="Assets\Square310x310Logo.png">
         </m2:DefaultTile>
         <m2:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="black" />
       </m2:VisualElements>
-      <Extensions>
-        <Extension Category="windows.fileTypeAssociation">
-          <FileTypeAssociation Name="pal">
-            <SupportedFileTypes>
-              <FileType>.mkf</FileType>
-              <FileType>.dat</FileType>
-              <FileType>.msg</FileType>
-              <FileType>.cfg</FileType>
-              <FileType>.asc</FileType>
-              <FileType>.mp3</FileType>
-              <FileType>.ogg</FileType>
-              <FileType>.rpg</FileType>
-              <FileType>.bmp</FileType>
-            </SupportedFileTypes>
-          </FileTypeAssociation>
-        </Extension>
-      </Extensions>
     </Application>
   </Applications>
 </Package>
