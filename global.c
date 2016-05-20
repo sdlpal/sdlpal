@@ -464,6 +464,15 @@ PAL_ReadGlobalGameData(
    PAL_MKFReadChunk((LPBYTE)(p->rgLevelUpExp), sizeof(p->rgLevelUpExp),
       14, gpGlobals->f.fpDATA);
    DO_BYTESWAP(p->rgLevelUpExp, sizeof(p->rgLevelUpExp));
+
+   // FIX: Enemy magic sound may be negative
+   for (int i = 0; i < p->nEnemy; i++)
+   {
+	   if (p->lprgEnemy[i].wMagicSound >= 32768)
+	   {
+		   p->lprgEnemy[i].wMagicSound = -(short)p->lprgEnemy[i].wMagicSound;
+	   }
+   }
 }
 
 static VOID

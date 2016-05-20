@@ -213,6 +213,7 @@ void SDLPal::MainPage::btnBrowseFile_Click(Platform::Object^ sender, Windows::UI
 {
 	auto picker = ref new Windows::Storage::Pickers::FileOpenPicker();
 	picker->FileTypeFilter->Append("*");
+	picker->ViewMode = Windows::Storage::Pickers::PickerViewMode::List;
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 	picker->PickSingleFileAndContinue();
 #else
