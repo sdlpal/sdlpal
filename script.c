@@ -2881,6 +2881,7 @@ PAL_InterpretInstruction(
 
          g_Battle.rgEnemy[wEventObjectID].iColorShift = 0;
 
+                SOUND_Play(47);
          PAL_BattleBackupScene();
          PAL_LoadBattleSprites();
          PAL_BattleMakeScene();
