@@ -9,13 +9,15 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer HorizontalScrollMode="Disabled">
-            <StackPanel VerticalAlignment="Top" Margin="10,0,10,0">
-                <TextBox x:Name="tbGamePath" x:Uid="GamePath" TextWrapping="Wrap" VerticalAlignment="Top" Header="游戏资源文件夹" IsReadOnly="True" PlaceholderText="游戏资源文件夹"/>
+            <StackPanel VerticalAlignment="Top" Margin="15,0,15,0">
+                <TextBlock Text="SDLPAL" FontSize="48" />
+                <TextBlock x:Uid="Title" Text="设置模式" FontSize="28" VerticalAlignment="Center" />
+                <TextBox x:Name="tbGamePath" x:Uid="GamePath" TextWrapping="Wrap" VerticalAlignment="Top" Header="游戏资源文件夹" IsReadOnly="True" PlaceholderText="未选择游戏资源文件夹"/>
                 <Button x:Name="btnBrowseGame" x:Uid="ButtonBrowse" Content="浏览文件夹" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btnBrowse_Click" />
                 <ToggleSwitch x:Name="tsIsDOS" x:Uid="DOS" Header="游戏资源版本" OffContent="WIN95" OnContent="DOS" Toggled="tsIsDOS_Toggled" />
-                <ToggleSwitch x:Name="tsUseEmbedFont" x:Uid="EmbeddedFont" Header="游戏内嵌字体" OffContent="否" OnContent="是" />
+                <ToggleSwitch x:Name="tsUseEmbedFont" x:Uid="EmbeddedFont" Header="使用游戏资源内置字体" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsLanguage" x:Uid="Language" Header="游戏资源语言" OffContent="繁体中文" OnContent="简体中文" />
-                <TextBox x:Name="tbMsgFile" x:Uid="MessageFile" Header="自定义语言文件名" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="自定义语言文件名" IsReadOnly="True"/>
+                <TextBox x:Name="tbMsgFile" x:Uid="MessageFile" Header="自定义语言文件" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="无自定义语言文件" IsReadOnly="True"/>
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="btnBrowseMsgFile" x:Uid="ButtonBrowseFile" Content="选择语言文件" Click="btnBrowseFile_Click" />
                     <Button x:Name="btnClearMsgFile" x:Uid="ButtonClearFile" Content="禁用语言文件" Margin="20,0,0,0" Click="btnClearFile_Click" />

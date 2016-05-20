@@ -142,7 +142,7 @@ void ResetControls(HWND hwndDlg)
 
 	ComboBox_SetCurSel(hwndDlg, IDC_CD, gConfig.eCDType - MUSIC_MP3);
 	ComboBox_SetCurSel(hwndDlg, IDC_BGM, gConfig.eMusicType);
-	ComboBox_SetCurSel(hwndDlg, IDC_OPL, gConfig.eOPLType - OPL_DOSBOX);
+	ComboBox_SetCurSel(hwndDlg, IDC_OPL, gConfig.eOPLType);
 
 	SetDlgItemText(hwndDlg, IDC_WIDTH, _ultot(gConfig.dwScreenWidth, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_HEIGHT, _ultot(gConfig.dwScreenHeight, buffer, 10));
@@ -174,6 +174,7 @@ INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("DOSBOX"));
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("MAME"));
+	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("DOSBOXNEW"));
 
 	ResetControls(hwndDlg);
 

@@ -154,27 +154,24 @@ void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xa
 	auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
 	if (tbGamePath->Text->Length() > 0)
 	{
-		SaveControlContents();
 		auto mru_list = Windows::Storage::AccessCache::StorageApplicationPermissions::MostRecentlyUsedList;
 		if (tbGamePath->Tag) mru_list->Add(safe_cast<Windows::Storage::StorageFolder^>(tbGamePath->Tag), tbGamePath->Text);
 		if (tbMsgFile->Tag) mru_list->Add(safe_cast<Windows::Storage::StorageFile^>(tbMsgFile->Tag), tbMsgFile->Text);
-		auto handler = ref new Windows::UI::Popups::UICommandInvokedHandler(this, &MainPage::CloseUICommandHandler);
+
+		SaveControlContents();
+		gConfig.fLaunchSetting = FALSE;
+		PAL_SaveConfig();
+
 		auto dlg = ref new Windows::UI::Popups::MessageDialog(loader->GetString("MBExitContent"));
-		dlg->Commands->Append(ref new Windows::UI::Popups::UICommand(loader->GetString("MBYes"), handler, safe_cast<Platform::Object^>(0)));
-		dlg->Commands->Append(ref new Windows::UI::Popups::UICommand(loader->GetString("MBNo"), handler, safe_cast<Platform::Object^>(1)));
-		dlg->ShowAsync();
+		dlg->Title = loader->GetString("MBExitTitle");
+		concurrency::create_task(dlg->ShowAsync()).then([] (Windows::UI::Popups::IUICommand^ command) {
+			Application::Current->Exit();
+		});
 	}
 	else
 	{
 		(ref new Windows::UI::Popups::MessageDialog(loader->GetString("MBEmptyContent")))->ShowAsync();
 	}
-}
-
-void SDLPal::MainPage::CloseUICommandHandler(Windows::UI::Popups::IUICommand^ command)
-{
-	gConfig.fLaunchSetting = ((int)command->Id == 0);
-	PAL_SaveConfig();
-	Application::Current->Exit();
 }
 
 void SDLPal::MainPage::btnClearFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)

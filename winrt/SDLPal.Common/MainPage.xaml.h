@@ -25,8 +25,6 @@ namespace SDLPal
 		void SaveControlContents();
 
 	private:
-		void CloseUICommandHandler(Windows::UI::Popups::IUICommand^ command);
-
 		void btnBrowse_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void tsIsDOS_Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void cbBGM_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);

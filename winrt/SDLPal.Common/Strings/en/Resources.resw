@@ -172,7 +172,7 @@
     <value>DOS</value>
   </data>
   <data name="EmbeddedFont.Header" xml:space="preserve">
-    <value>Use the font within game resource</value>
+    <value>Use the font embedded in game resource</value>
   </data>
   <data name="EmbeddedFont.OffContent" xml:space="preserve">
     <value>No</value>
@@ -184,7 +184,7 @@
     <value>Folder of game resource</value>
   </data>
   <data name="GamePath.PlaceholderText" xml:space="preserve">
-    <value>Folder of game resource</value>
+    <value>No folder selected</value>
   </data>
   <data name="Language.Header" xml:space="preserve">
     <value>Game resource language</value>
@@ -202,20 +202,17 @@
     <value>The game resource folder must be specified!</value>
   </data>
   <data name="MBExitContent" xml:space="preserve">
-    <value>Settings saved for next launch.
-Choose the behavior of next launch:</value>
+    <value>Settings have been saved and the game will be started on next launch.
+You can use the "return setting" menu option inside the game to return to this page.</value>
   </data>
-  <data name="MBNo" xml:space="preserve">
-    <value>Start game</value>
-  </data>
-  <data name="MBYes" xml:space="preserve">
-    <value>Enter setting</value>
+  <data name="MBExitTitle" xml:space="preserve">
+    <value>Setting finished</value>
   </data>
   <data name="MessageFile.Header" xml:space="preserve">
     <value>Customized message file</value>
   </data>
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
-    <value>Customized message file</value>
+    <value>No customized message file</value>
   </data>
   <data name="OPL.Header" xml:space="preserve">
     <value>Type of OPL simulator</value>
@@ -258,6 +255,9 @@ Choose the behavior of next launch:</value>
   </data>
   <data name="SurroundOPL.OnContent" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="Title.Text" xml:space="preserve">
+    <value>Setting mode</value>
   </data>
   <data name="TouchOverlay.Header" xml:space="preserve">
     <value>Use touch overlay</value>

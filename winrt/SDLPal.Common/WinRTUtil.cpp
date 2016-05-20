@@ -6,6 +6,7 @@
 #include <ppltasks.h>
 #include "../SDLPal.Common/AsyncHelper.h"
 #include "../SDLPal.Common/StringHelper.h"
+#include "../../global.h"
 
 #include "SDL.h"
 #include "SDL_endian.h"
@@ -20,11 +21,15 @@ LPCSTR UTIL_BasePath(VOID)
 	if (g_basepath.empty())
 	{
 		auto mru_list = Windows::Storage::AccessCache::StorageApplicationPermissions::MostRecentlyUsedList;
-		if (mru_list->Entries->Size > 0)
+		for each (auto entry in mru_list->Entries)
 		{
-			auto localfolder = mru_list->Entries->First()->Current.Metadata;
-			if (localfolder->End()[-1] != L'\\') localfolder += "\\";
-			ConvertString(localfolder, g_basepath);
+			if (dynamic_cast<Windows::Storage::StorageFolder^>(AWait(mru_list->GetItemAsync(entry.Token), g_eventHandle)) != nullptr)
+			{
+				auto localfolder = entry.Metadata;
+				if (localfolder->End()[-1] != L'\\') localfolder += "\\";
+				ConvertString(localfolder, g_basepath);
+				break;
+			}
 		}
 	}
 	return g_basepath.c_str();
@@ -51,7 +56,7 @@ LPCSTR UTIL_ConfigPath(VOID)
 extern "C"
 LPCSTR UTIL_ScreenShotPath(VOID)
 {
-	return UTIL_BasePath();
+	return gConfig.pszGamePath;
 }
 
 extern "C"

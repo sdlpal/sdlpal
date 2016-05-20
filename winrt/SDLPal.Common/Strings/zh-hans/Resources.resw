@@ -184,7 +184,7 @@
     <value>游戏资源文件夹</value>
   </data>
   <data name="GamePath.PlaceholderText" xml:space="preserve">
-    <value>游戏资源文件夹</value>
+    <value>未选择文件夹</value>
   </data>
   <data name="Language.Header" xml:space="preserve">
     <value>游戏资源语言</value>
@@ -202,20 +202,17 @@
     <value>必须指定游戏资源文件夹！</value>
   </data>
   <data name="MBExitContent" xml:space="preserve">
-    <value>设置已保存，下次启动程序时生效。
-请选择下次启动程序时的行为：</value>
+    <value>您的设置已保存，下次启动时将直接开始游戏。
+在游戏中，您可以通过游戏系统菜单的“返回设置”选项返回本设置页面。</value>
   </data>
-  <data name="MBNo" xml:space="preserve">
-    <value>启动游戏</value>
-  </data>
-  <data name="MBYes" xml:space="preserve">
-    <value>进入设置</value>
+  <data name="MBExitTitle" xml:space="preserve">
+    <value>设置已完成</value>
   </data>
   <data name="MessageFile.Header" xml:space="preserve">
     <value>自定义语言文件</value>
   </data>
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
-    <value>自定义语言文件</value>
+    <value>无自定义语言文件</value>
   </data>
   <data name="OPL.Header" xml:space="preserve">
     <value>OPL 模拟器</value>
@@ -258,6 +255,9 @@
   </data>
   <data name="SurroundOPL.OnContent" xml:space="preserve">
     <value>是</value>
+  </data>
+  <data name="Title.Text" xml:space="preserve">
+    <value>设置模式</value>
   </data>
   <data name="TouchOverlay.Header" xml:space="preserve">
     <value>启用触屏辅助</value>

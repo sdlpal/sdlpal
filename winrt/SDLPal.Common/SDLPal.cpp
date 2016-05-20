@@ -23,7 +23,12 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// Check the 'running' file to determine whether the program is abnormally terminated last time.
 		// If so, force to launch the setting page.
 		auto file = AWait(Windows::Storage::ApplicationData::Current->LocalFolder->GetFileAsync("running"), g_eventHandle);
-		gConfig.fLaunchSetting = TRUE; last_crashed = true;
+		// When there is a debugger, ignore the last crash state, as it can be recovered by the debugger.
+		if (!IsDebuggerPresent())
+		{
+			gConfig.fLaunchSetting = TRUE;
+			last_crashed = true;
+		}
 		AWait(file->DeleteAsync(), g_eventHandle);
 	}
 	catch(Platform::Exception^)
