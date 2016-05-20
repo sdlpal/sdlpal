@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="SDLPal.App">
-      <m2:VisualElements DisplayName="SDLPal" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="SDL-based reimplementation of classic Chinese RPG &quot;Xian Jian Qi Xia Zhuan&quot;." ForegroundText="light" BackgroundColor="transparent">
+      <m2:VisualElements DisplayName="SDLPal" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="SDL-based reimplementation of classic Chinese RPG &quot;Xian Jian Qi Xia Zhuan&quot;." ForegroundText="light" BackgroundColor="blue">
         <m2:DefaultTile Square70x70Logo="Assets\Square70x70Logo.png" Wide310x150Logo="Assets\WideLogo.png" Square310x310Logo="Assets\Square310x310Logo.png">
         </m2:DefaultTile>
         <m2:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="black" />

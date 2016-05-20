@@ -290,7 +290,7 @@ TerminateOnError(
 {
    va_list argptr;
    char string[256];
-   extern VOID PAL_Shutdown(VOID);
+   extern VOID PAL_Shutdown(int);
 
    // concatenate all the arguments in one string
    va_start(argptr, fmt);
@@ -301,8 +301,18 @@ TerminateOnError(
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    {
-      extern SDL_Window *gpWindow;
-      SDL_ShowSimpleMessageBox(0, "FATAL ERROR", string, gpWindow);
+	  extern SDL_Window *gpWindow;
+	  char buffer[300];
+	  SDL_MessageBoxButtonData buttons[2] = { { 0, 0, "Yes" },{ 0, 1, "No" } };
+	  SDL_MessageBoxData mbd = { SDL_MESSAGEBOX_ERROR, gpWindow, "FATAL ERROR", buffer, 2, buttons, NULL };
+	  int btnid;
+	  sprintf(buffer, "%sLaunch setting dialog on next start?\n", string);
+	  if (SDL_ShowMessageBox(&mbd, &btnid) == 0 && btnid == 0)
+	  {
+		  gConfig.fLaunchSetting = TRUE;
+		  PAL_SaveConfig();
+	  }
+	  PAL_Shutdown(255);
    }
 #else
 
@@ -416,16 +426,7 @@ UTIL_OpenRequiredFileForMode(
 
    if (fp == NULL)
    {
-	   extern SDL_Window *gpWindow;
-	   SDL_MessageBoxButtonData buttons[2] = { { 0, 0, "Yes" }, { 0, 1, "No"} };
-	   SDL_MessageBoxData mbd = { SDL_MESSAGEBOX_ERROR, gpWindow, "FATAL ERROR", va("File open error(%d): %s!\nLaunch setting dialog on next start?\n", errno, lpszFileName), 2, buttons, NULL };
-	   int btnid;
-	   if (SDL_ShowMessageBox(&mbd, &btnid) == 0 && btnid == 0)
-	   {
-		   gConfig.fLaunchSetting = TRUE;
-		   PAL_SaveConfig();
-	   }
-	   PAL_Shutdown(255);
+	   TerminateOnError("File open error(%d): %s!\n", errno, lpszFileName);
    }
 
    return fp;

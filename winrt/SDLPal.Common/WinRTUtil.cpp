@@ -113,15 +113,45 @@ BOOL UTIL_TouchEnabled(VOID)
 
 static Windows::Storage::StorageFile^ g_running_file = nullptr;
 
-extern "C"
-INT UTIL_Platform_Init(int argc, char* argv[])
+static void CreateRunningFile()
 {
 	// Create the 'running' file for crash detection.
 	try { g_running_file = AWait(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync("running", Windows::Storage::CreationCollisionOption::OpenIfExists), g_eventHandle); }
 	catch (Platform::Exception^) {}
+}
+
+static void DeleteRunningFile()
+{
+	// Delete the 'running' file on normal exit.
+	try { if (g_running_file) AWait(g_running_file->DeleteAsync()); g_running_file = nullptr; }
+	catch (Platform::Exception^) {}
+}
+
+static int SDLCALL WinRT_EventFilter(void *userdata, SDL_Event * event)
+{
+	switch (event->type)
+	{
+	case SDL_APP_DIDENTERFOREGROUND:
+		CreateRunningFile();
+		break;
+	case SDL_APP_DIDENTERBACKGROUND:
+	case SDL_APP_TERMINATING:
+		// Enter background or exiting, treat as normal exit
+		DeleteRunningFile();
+		break;
+	}
+	return 0;
+}
+
+extern "C"
+INT UTIL_Platform_Init(int argc, char* argv[])
+{
+	CreateRunningFile();
 
 	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
 	SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
+
+	SDL_AddEventWatch(WinRT_EventFilter, nullptr);
 
 	return 0;
 }
@@ -129,7 +159,5 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 extern "C"
 VOID UTIL_Platform_Quit(VOID)
 {
-	// Delete the 'running' file on normal exit.
-	try { if (g_running_file) AWait(g_running_file->DeleteAsync()); g_running_file = nullptr; }
-	catch (Platform::Exception^) {}
+	DeleteRunningFile();
 }

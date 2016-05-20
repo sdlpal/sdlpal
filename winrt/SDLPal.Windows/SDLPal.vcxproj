@@ -206,6 +206,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\SDLPal.Common\AsyncHelper.h" />
+    <ClInclude Include="..\SDLPal.Common\StringHelper.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>

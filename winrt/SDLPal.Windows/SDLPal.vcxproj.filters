@@ -17,6 +17,9 @@
     <Filter Include="Strings\zh-hant">
       <UniqueIdentifier>{a19db27b-07fb-4370-b502-068e5ab9ec1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{9981d43f-5af9-4f40-8df2-97916c5cc66a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -24,14 +27,24 @@
   <ItemGroup>
     <ClCompile Include="App.xaml.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="..\SDLPal.Common\SDLPal.cpp" />
-    <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp" />
     <ClCompile Include="..\SDLPal.Common\MainPage.xaml.cpp" />
+    <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDLPal.Common\SDLPal.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h" />
     <ClInclude Include="..\SDLPal.Common\MainPage.xaml.h" />
+    <ClInclude Include="..\SDLPal.Common\AsyncHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDLPal.Common\StringHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Logo.scale-100.png">

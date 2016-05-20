@@ -34,8 +34,8 @@ static SDL_Texture       *gpTexture          = NULL;
 # if PAL_HAS_TOUCH
 static SDL_Texture       *gpTouchOverlay     = NULL;
 # endif
-static SDL_Rect          *gpRenderRect       = NULL;
-static SDL_Rect           gRenderRect;
+static SDL_Rect           gOverlayRect;
+static SDL_Rect           gTextureRect;
 #endif
 
 // The real screen surface
@@ -56,6 +56,58 @@ static WORD               g_wShakeLevel      = 0;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #define SDL_SoftStretch SDL_UpperBlit
 #endif
+
+static SDL_Texture *VIDEO_CreateTexture(int width, int height)
+{
+	int texture_width, texture_height;
+	float ratio = (float)width / (float)height;
+	//
+	// Check whether to keep the aspect ratio
+	//
+	if (gConfig.fKeepAspectRatio && ratio != 1.6f)
+	{
+		if (ratio > 1.6f)
+		{
+			texture_height = 200;
+			texture_width = (int)(200 * ratio) & ~0x3;
+			ratio = (float)height / 200.0f;
+		}
+		else
+		{
+			texture_width = 320;
+			texture_height = (int)(320 / ratio) & ~0x3;
+			ratio = (float)width / 320.0f;
+		}
+
+		WORD w = (WORD)(ratio * 320.0f) & ~0x3;
+		WORD h = (WORD)(ratio * 200.0f) & ~0x3;
+		gOverlayRect.x = (width - w) / 2;
+		gOverlayRect.y = (height - h) / 2;
+		gOverlayRect.w = w;
+		gOverlayRect.h = h;
+		gTextureRect.x = (texture_width - 320) / 2;
+		gTextureRect.y = (texture_height - 200) / 2;
+		gTextureRect.w = 320; gTextureRect.h = 200;
+# if PAL_HAS_TOUCH
+		PAL_SetTouchBounds(width, height, gOverlayRect);
+# endif
+	}
+	else
+	{
+		texture_width = 320;
+		texture_height = 200;
+		gOverlayRect.x = gOverlayRect.y = 0;
+		gOverlayRect.w = width;
+		gOverlayRect.h = height;
+		gTextureRect.x = gTextureRect.y = 0;
+		gTextureRect.w = 320; gTextureRect.h = 200;
+	}
+
+	//
+	// Create texture for screen.
+	//
+	return SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
+}
 
 INT
 VIDEO_Startup(
@@ -112,8 +164,7 @@ VIDEO_Startup(
    //
    // Create texture for screen.
    //
-   gpTexture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888,
-							  SDL_TEXTUREACCESS_STREAMING, 320, 200);
+   gpTexture = VIDEO_CreateTexture(gConfig.dwScreenWidth, gConfig.dwScreenHeight);
 
    //
    // Failed?
@@ -176,29 +227,29 @@ VIDEO_Startup(
    //
    // Check whether to keep the aspect ratio
    //
-   if (gConfig.fKeepAspectRatio)
-   {
-	   float ax = (float)gConfig.dwScreenWidth / 320.0f;
-	   float ay = (float)gConfig.dwScreenHeight / 200.0f;
-	   if (ax != ay)
-	   {
-		   float ratio = (ax > ay) ? ay : ax;
-		   WORD w = (WORD)(ratio * 320.0f);
-		   WORD h = (WORD)(ratio * 200.0f);
-		   if (w % 4 != 0) w &= ~0x3;
-		   if (h % 4 != 0) h &= ~0x3;
-		   gRenderRect.x = (gConfig.dwScreenWidth - w) / 2;
-		   gRenderRect.y = (gConfig.dwScreenHeight - h) / 2;
-		   gRenderRect.w = w;
-		   gRenderRect.h = h;
-		   gpRenderRect = &gRenderRect;
-# if PAL_HAS_TOUCH
-		   PAL_SetTouchBounds(gConfig.dwScreenWidth, gConfig.dwScreenHeight, gRenderRect);
-# endif
-	   }
-   }
-   else
-	   gpRenderRect = NULL;
+//   if (gConfig.fKeepAspectRatio)
+//   {
+//	   float ax = (float)gConfig.dwScreenWidth / 320.0f;
+//	   float ay = (float)gConfig.dwScreenHeight / 200.0f;
+//	   if (ax != ay)
+//	   {
+//		   float ratio = (ax > ay) ? ay : ax;
+//		   WORD w = (WORD)(ratio * 320.0f);
+//		   WORD h = (WORD)(ratio * 200.0f);
+//		   if (w % 4 != 0) w &= ~0x3;
+//		   if (h % 4 != 0) h &= ~0x3;
+//		   gOverlayRect.x = (gConfig.dwScreenWidth - w) / 2;
+//		   gOverlayRect.y = (gConfig.dwScreenHeight - h) / 2;
+//		   gOverlayRect.w = w;
+//		   gOverlayRect.h = h;
+//		   gpRenderRect = &gOverlayRect;
+//# if PAL_HAS_TOUCH
+//		   PAL_SetTouchBounds(gConfig.dwScreenWidth, gConfig.dwScreenHeight, gOverlayRect);
+//# endif
+//	   }
+//   }
+//   else
+//	   gpRenderRect = NULL;
 #else
 
    //
@@ -342,15 +393,33 @@ VIDEO_RenderCopy(
    VOID
 )
 {
-   SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
-   SDL_RenderCopy(gpRenderer, gpTexture, NULL, gpRenderRect);
+	void *texture_pixels;
+	int texture_pitch;
+	SDL_LockTexture(gpTexture, NULL, &texture_pixels, &texture_pitch);
+
+	memset(texture_pixels, 0, gTextureRect.y * texture_pitch);
+	uint8_t *pixels = (uint8_t *)texture_pixels + gTextureRect.y * texture_pitch;
+	uint8_t *src = (uint8_t *)gpScreenReal->pixels;
+	int left_pitch = gTextureRect.x << 2;
+	int right_pitch = texture_pitch - ((gTextureRect.x + gTextureRect.w) << 2);
+	for (int y = 0; y < gTextureRect.h; y++, src += gpScreenReal->pitch)
+	{
+		memset(pixels, 0, left_pitch); pixels += left_pitch;
+		memcpy(pixels, src, 320 << 2); pixels += 320 << 2;
+		memset(pixels, 0, right_pitch); pixels += right_pitch;
+	}
+	memset(pixels, 0, gTextureRect.y * texture_pitch);
+	//SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
+	SDL_UnlockTexture(gpTexture);
+
+	SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
 #if PAL_HAS_TOUCH
-   if (gpTouchOverlay)
-   {
-      SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, gpRenderRect);
-   }
+	if (gpTouchOverlay)
+	{
+		SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, &gOverlayRect);
+	}
 #endif
-   SDL_RenderPresent(gpRenderer);
+	   SDL_RenderPresent(gpRenderer);
 }
 #endif
 
@@ -568,7 +637,10 @@ VIDEO_Resize(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   // TODO
+	if (gpTexture) SDL_DestroyTexture(gpTexture);
+	gpTexture = VIDEO_CreateTexture(w, h);
+	if (gpTexture == NULL)
+		TerminateOnError("Re-creating texture failed on window resize!\n");
 #else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
