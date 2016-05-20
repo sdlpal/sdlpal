@@ -129,13 +129,13 @@
 /* Define to `int' if <sys/types.h> does not define. */
 /* #undef pid_t */
 
-#if defined(_M_IX86) || defined(__i386__) || defined(__x86_64__)
-#  define FPM_INTEL   1
-#elif defined(_M_X64)
-#  define FPM_64BIT   1
+//#if defined(_M_IX86) || defined(__i386__) || defined(__x86_64__)
+//#  define FPM_INTEL   1
+//#elif defined(_M_X64)
+//#  define FPM_64BIT   1
 //#elif defined(__arm__)
 //#  define FPM_ARM     1
-#elif defined(__mips__)
+#if defined(__mips__)
 #  define FPM_MIPS    1
 #elif defined(__sparc__)
 #  define FPM_SPARC   1

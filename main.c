@@ -533,7 +533,7 @@ main(
 		return exit_code != 1 ? exit_code : 0;
 #endif
 
-#if defined(__APPLE__) && !defined(__IOS__)
+#if defined(__APPLE__) && !defined(__IOS__) && !defined(DEBUG) //for ease of debugging(specify resource dir in xcode scheme)
    char *p = strstr(argv[0], "/Pal.app/");
 
    if (p != NULL)

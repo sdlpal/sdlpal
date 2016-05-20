@@ -1,6 +1,8 @@
+dist: trusty
 language: c
 script: make
 compiler: clang
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq libsdl1.2-dev
+ - sudo apt-get install -qq libsdl2-dev libfltk1.3-dev
+ - cd unix

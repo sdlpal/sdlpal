@@ -20,6 +20,7 @@
 //
 
 #include "main.h"
+#include <sys/time.h>
 
 // Screen buffer
 SDL_Surface              *gpScreen           = NULL;

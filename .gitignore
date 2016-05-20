@@ -23,6 +23,12 @@ bld/
 [Oo]bj/
 Generated Files/
 BundleArtifacts/
+*.o
+*.bc
+*.data
+*.html
+*.mem
+*.js
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -218,5 +224,18 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 # SDL2 associated file
-SDL2/*
+SDL2
 !SDL2/README.txt
+
+android/gen
+android/libs
+android/so
+*.properties
+*.keystore
+resources
+
+emscripten
+sdlpal
+
+xcshareddata
+xcuserdata

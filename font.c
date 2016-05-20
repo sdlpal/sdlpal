@@ -131,11 +131,11 @@ PAL_InitEmbeddedFont(
 
 	fclose(fp);
 
-		for (i = 0; i < 0x80; i++)
-		{
-            int j=-1;while(j++<16)unicode_font[i][j]=reverseBits(iso_font[i*15+j]);
-			unicode_font[i][15] = 0;
-		}
+	for (i = 0; i < 0x80; i++)
+	{
+		int j=-1;while(j++<16)unicode_font[i][j]=reverseBits(iso_font[i*15+j]);
+		unicode_font[i][15] = 0;
+	}
 	_font_height = 15;
 
 	return 0;

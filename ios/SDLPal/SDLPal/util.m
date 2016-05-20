@@ -45,18 +45,3 @@ UTIL_SavePath(
 
    return buf;
 }
-
-BOOL
-UTIL_GetScreenSize(
-   DWORD *pdwScreenWidth,
-   DWORD *pdwScreenHeight
-)
-{
-   if (!pdwScreenWidth || !pdwScreenHeight) return FALSE;
-    
-   CGRect rect = [UIScreen mainScreen].nativeBounds;
-   *pdwScreenWidth = rect.size.height;
-   *pdwScreenHeight = rect.size.width;
-    
-   return TRUE;
-}
