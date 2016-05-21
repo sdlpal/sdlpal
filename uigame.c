@@ -229,6 +229,110 @@ PAL_SaveSlotMenu(
    return wItemSelected;
 }
 
+static
+WORD
+PAL_SelectionMenu(
+	int   nWords,
+	int   nDefault,
+	WORD  wItems[]
+)
+/*++
+  Purpose:
+
+    Show a common selection box.
+
+  Parameters:
+
+    [IN]  nWords - number of emnu items.
+	[IN]  nDefault - index of default item.
+	[IN]  wItems - item word array.
+
+  Return value:
+
+    User-selected index.
+
+--*/
+{
+	LPBOX           rgpBox[4];
+	MENUITEM        rgMenuItem[4];
+	int             w[4] = {
+		(nWords >= 1 && wItems[0]) ? PAL_WordWidth(wItems[0]) : 1,
+		(nWords >= 2 && wItems[1]) ? PAL_WordWidth(wItems[1]) : 1,
+		(nWords >= 3 && wItems[2]) ? PAL_WordWidth(wItems[2]) : 1,
+		(nWords >= 4 && wItems[3]) ? PAL_WordWidth(wItems[3]) : 1 };
+	int             dx[4] = { (w[0] - 1) * 16, (w[1] - 1) * 16, (w[2] - 1) * 16, (w[3] - 1) * 16 }, i;
+	PAL_POS         pos[4] = { PAL_XY(145, 110), PAL_XY(220 + dx[0], 110), PAL_XY(145, 150), PAL_XY(220 + dx[2], 150) };
+	WORD            wReturnValue;
+
+	const SDL_Rect  rect = { 130, 100, 125 + max(dx[0] + dx[1], dx[2] + dx[3]), 100 };
+
+	for (i = 0; i < nWords; i++)
+		if (nWords > i && !wItems[i])
+			return MENUITEM_VALUE_CANCELLED;
+
+	//
+	// Create menu items
+	//
+	for (i = 0; i < nWords; i++)
+	{
+		rgMenuItem[i].fEnabled = TRUE;
+		rgMenuItem[i].pos = pos[i];
+		rgMenuItem[i].wValue = i;
+		rgMenuItem[i].wNumWord = wItems[i];
+	}
+
+	//
+	// Create the boxes
+	//
+	dx[1] = dx[0]; dx[3] = dx[2]; dx[0] = dx[2] = 0;
+	for (i = 0; i < nWords; i++)
+	{
+		rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * (i % 2), 100 + 40 * (i / 2)), w[i] + 1, TRUE);
+	}
+
+	VIDEO_UpdateScreen(&rect);
+
+	//
+	// Activate the menu
+	//
+	wReturnValue = PAL_ReadMenu(NULL, rgMenuItem, nWords, nDefault, MENUITEM_COLOR);
+
+	//
+	// Delete the boxes
+	//
+	for (i = 0; i < nWords; i++)
+	{
+		PAL_DeleteBox(rgpBox[i]);
+	}
+
+	VIDEO_UpdateScreen(&rect);
+
+	return wReturnValue;
+}
+
+WORD
+PAL_TripleMenu(
+   WORD  wThirdWord
+)
+/*++
+  Purpose:
+
+    Show a triple-selection box.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    User-selected index.
+
+--*/
+{
+   WORD wItems[3] = { CONFIRMMENU_LABEL_NO, CONFIRMMENU_LABEL_YES, wThirdWord };
+   return PAL_SelectionMenu(3, 0, wItems);
+}
+
 BOOL
 PAL_ConfirmMenu(
    VOID
@@ -248,53 +352,8 @@ PAL_ConfirmMenu(
 
 --*/
 {
-   LPBOX           rgpBox[2];
-   MENUITEM        rgMenuItem[2];
-   int             i;
-   int             w[2] = { PAL_WordWidth(CONFIRMMENU_LABEL_NO), PAL_WordWidth(CONFIRMMENU_LABEL_YES) };
-   int             dx[2] = { (w[0] - 1) * 16, (w[1] - 1) * 16 };
-   WORD            wReturnValue;
-
-   const SDL_Rect  rect = { 130, 100, 125 + dx[0] + dx[1], 50 };
-
-   //
-   // Create menu items
-   //
-   rgMenuItem[0].fEnabled = TRUE;
-   rgMenuItem[0].pos = PAL_XY(145, 110);
-   rgMenuItem[0].wValue = 0;
-   rgMenuItem[0].wNumWord = CONFIRMMENU_LABEL_NO;
-
-   rgMenuItem[1].fEnabled = TRUE;
-   rgMenuItem[1].pos = PAL_XY(220 + dx[0], 110);
-   rgMenuItem[1].wValue = 1;
-   rgMenuItem[1].wNumWord = CONFIRMMENU_LABEL_YES;
-
-   //
-   // Create the boxes
-   //
-   dx[1] = dx[0]; dx[0] = 0;
-   for (i = 0; i < 2; i++)
-   {
-      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * i + dx[i], 100), 2 + (w[i] - 1), TRUE);
-   }
-
-   VIDEO_UpdateScreen(&rect);
-
-   //
-   // Activate the menu
-   //
-   wReturnValue = PAL_ReadMenu(NULL, rgMenuItem, 2, 0, MENUITEM_COLOR);
-
-   //
-   // Delete the boxes
-   //
-   for (i = 0; i < 2; i++)
-   {
-      PAL_DeleteBox(rgpBox[i]);
-   }
-
-   VIDEO_UpdateScreen(&rect);
+   WORD wItems[2] = { CONFIRMMENU_LABEL_NO, CONFIRMMENU_LABEL_YES };
+   WORD wReturnValue = PAL_SelectionMenu(2, 0, wItems);
 
    return (wReturnValue == MENUITEM_VALUE_CANCELLED || wReturnValue == 0) ? FALSE : TRUE;
 }
@@ -318,59 +377,9 @@ PAL_SwitchMenu(
 
 --*/
 {
-   LPBOX           rgpBox[2];
-   MENUITEM        rgMenuItem[2];
-   int             i;
-   int             w[2] = { PAL_WordWidth(SWITCHMENU_LABEL_DISABLE), PAL_WordWidth(SWITCHMENU_LABEL_ENABLE) };
-   int             dx[2] = { (w[0] - 1) * 16, (w[1] - 1) * 16 };
-   WORD            wReturnValue;
-   const SDL_Rect  rect = { 130, 100, 125 + dx[0] + dx[1], 50 };
-
-   //
-   // Create menu items
-   //
-   rgMenuItem[0].fEnabled = TRUE;
-   rgMenuItem[0].pos = PAL_XY(145, 110);
-   rgMenuItem[0].wValue = 0;
-   rgMenuItem[0].wNumWord = SWITCHMENU_LABEL_DISABLE;
-
-   rgMenuItem[1].fEnabled = TRUE;
-   rgMenuItem[1].pos = PAL_XY(220 + dx[0], 110);
-   rgMenuItem[1].wValue = 1;
-   rgMenuItem[1].wNumWord = SWITCHMENU_LABEL_ENABLE;
-
-   //
-   // Create the boxes
-   //
-   dx[1] = dx[0]; dx[0] = 0;
-   for (i = 0; i < 2; i++)
-   {
-      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * i + dx[i], 100), 2 + (w[i] - 1), TRUE);
-   }
-
-   VIDEO_UpdateScreen(&rect);
-
-   //
-   // Activate the menu
-   //
-   wReturnValue = PAL_ReadMenu(NULL, rgMenuItem, 2, fEnabled ? 1 : 0, MENUITEM_COLOR);
-
-   //
-   // Delete the boxes
-   //
-   for (i = 0; i < 2; i++)
-   {
-      PAL_DeleteBox(rgpBox[i]);
-   }
-
-   VIDEO_UpdateScreen(&rect);
-
-   if (wReturnValue == MENUITEM_VALUE_CANCELLED)
-   {
-      return fEnabled;
-   }
-
-   return (wReturnValue == 0) ? FALSE : TRUE;
+   WORD wItems[2] = { SWITCHMENU_LABEL_DISABLE, SWITCHMENU_LABEL_ENABLE };
+   WORD wReturnValue = PAL_SelectionMenu(2, fEnabled ? 1 : 0, wItems);
+   return (wReturnValue == MENUITEM_VALUE_CANCELLED) ? fEnabled : ((wReturnValue == 0) ? FALSE : TRUE);
 }
 
 #ifndef PAL_CLASSIC
@@ -534,9 +543,8 @@ PAL_SystemMenu(
       { 3,      SYSMENU_LABEL_MUSIC,         TRUE,     PAL_XY(53, 72 + 36) },
       { 4,      SYSMENU_LABEL_SOUND,         TRUE,     PAL_XY(53, 72 + 54) },
       { 5,      SYSMENU_LABEL_QUIT,          TRUE,     PAL_XY(53, 72 + 72) },
-	  { 6,      SYSMENU_LABEL_LAUNCHSETTING, TRUE,     PAL_XY(53, 72 + 90) },
 #if !defined(PAL_CLASSIC)
-      { 7,      SYSMENU_LABEL_BATTLEMODE,    TRUE,     PAL_XY(53, 72 + 108) },
+      { 6,      SYSMENU_LABEL_BATTLEMODE,    TRUE,     PAL_XY(53, 72 + 90) },
 #endif
    };
    const int           nSystemMenuItem = sizeof(rgSystemMenuItem) / sizeof(MENUITEM);
@@ -633,17 +641,17 @@ PAL_SystemMenu(
       break;
 
    case 5:
-   case 6:
 	   //
       // Quit
       //
-      if (PAL_ConfirmMenu())
+      wReturnValue = PAL_TripleMenu(SYSMENU_LABEL_LAUNCHSETTING);
+	  if (wReturnValue == 2)
+	  {
+		  gConfig.fLaunchSetting = TRUE;
+		  PAL_SaveConfig();
+	  }
+	  if (wReturnValue == 1 || wReturnValue == 2)
       {
-         if (wReturnValue == 6)
-         {
-            gConfig.fLaunchSetting = TRUE;
-            PAL_SaveConfig();
-         }
          SOUND_PlayMUS(0, FALSE, 2);
          PAL_FadeOut(2);
          PAL_Shutdown(0);
@@ -651,7 +659,7 @@ PAL_SystemMenu(
       break;
 
 #if !defined(PAL_CLASSIC)
-   case 7:
+   case 6:
       //
       // Battle Mode
       //

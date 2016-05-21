@@ -574,7 +574,13 @@ PAL_StartFrame(
       //
       // Quit Game
       //
-      if (PAL_ConfirmMenu())
+      WORD wReturnValue = PAL_TripleMenu(SYSMENU_LABEL_LAUNCHSETTING);
+	  if (wReturnValue == 2)
+	  {
+		  gConfig.fLaunchSetting = TRUE;
+		  PAL_SaveConfig();
+	  }
+      if (wReturnValue == 1 || wReturnValue == 2)
       {
          SOUND_PlayMUS(0, FALSE, 2);
          PAL_FadeOut(2);
