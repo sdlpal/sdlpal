@@ -9,7 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer HorizontalScrollMode="Disabled">
-            <StackPanel VerticalAlignment="Top" Margin="15,0,15,0">
+            <StackPanel VerticalAlignment="Top" Margin="10,0,20,10">
                 <TextBlock Text="SDLPAL" FontSize="48" />
                 <TextBlock x:Uid="Title" Text="设置模式" FontSize="28" VerticalAlignment="Center" />
                 <TextBox x:Name="tbGamePath" x:Uid="GamePath" TextWrapping="Wrap" VerticalAlignment="Top" Header="游戏资源文件夹" IsReadOnly="True" PlaceholderText="未选择游戏资源文件夹"/>
@@ -27,33 +27,33 @@
                 <ToggleSwitch x:Name="tsStereo" x:Uid="Stereo" Header="立体声" OffContent="否" OnContent="是" />
                 <Slider x:Name="slVolume" x:Uid="Volume" Header="音量" TickPlacement="Inline" TickFrequency="10" />
                 <Slider x:Name="slQuality" x:Uid="Quality" Header="音频质量" Maximum="4" LargeChange="1" TickFrequency="1" />
-                <ComboBox x:Name="cbSampleRate" x:Uid="Samplerate" Header="音频输出采样率" PlaceholderText="音频输出采样率">
+                <ComboBox x:Name="cbSampleRate" x:Uid="Samplerate" HorizontalAlignment="Stretch" Header="音频输出采样率" PlaceholderText="音频输出采样率">
                     <ComboBoxItem Content="11025"/>
                     <ComboBoxItem Content="22050"/>
                     <ComboBoxItem Content="44100"/>
                 </ComboBox>
-                <ComboBox x:Name="cbAudioBuffer" x:Uid="AudioBuffer" Header="音频缓冲区大小" PlaceholderText="音频缓冲区大小">
+                <ComboBox x:Name="cbAudioBuffer" x:Uid="AudioBuffer" HorizontalAlignment="Stretch" Header="音频缓冲区大小" PlaceholderText="音频缓冲区大小">
                     <ComboBoxItem Content="512"/>
                     <ComboBoxItem Content="1024"/>
                     <ComboBoxItem Content="2048"/>
                     <ComboBoxItem Content="4096"/>
                     <ComboBoxItem Content="8192"/>
                 </ComboBox>
-                <ComboBox x:Name="cbCD" x:Uid="CD" Header="CD 音轨格式" PlaceholderText="CD 音轨格式">
+                <ComboBox x:Name="cbCD" x:Uid="CD" HorizontalAlignment="Stretch" Header="CD 音轨格式" PlaceholderText="CD 音轨格式">
                     <ComboBoxItem Content="MP3"/>
                     <ComboBoxItem Content="OGG"/>
                 </ComboBox>
-                <ComboBox x:Name="cbBGM" x:Uid="BGM" Header="背景音乐格式" PlaceholderText="背景音乐格式" SelectionChanged="cbBGM_SelectionChanged">
+                <ComboBox x:Name="cbBGM" x:Uid="BGM" HorizontalAlignment="Stretch" Header="背景音乐格式" PlaceholderText="背景音乐格式" SelectionChanged="cbBGM_SelectionChanged">
                     <ComboBoxItem Content="RIX"/>
                     <ComboBoxItem Content="MP3"/>
                     <ComboBoxItem Content="OGG"/>
                 </ComboBox>
-                <ComboBox x:Name="cbOPL" x:Uid="OPL" Header="OPL 模拟器" PlaceholderText="OPL 模拟器">
+                <ComboBox x:Name="cbOPL" x:Uid="OPL" HorizontalAlignment="Stretch" Header="OPL 模拟器" PlaceholderText="OPL 模拟器">
                     <ComboBoxItem Content="DOSBOX"/>
                     <ComboBoxItem Content="MAME"/>
                     <ComboBoxItem Content="DOSBOXNEW"/>
                 </ComboBox>
-                <ComboBox x:Name="cbOPLSR" x:Uid="OPLSR" Header="OPL 模拟器采样率" PlaceholderText="OPL 模拟器采样率">
+                <ComboBox x:Name="cbOPLSR" x:Uid="OPLSR" HorizontalAlignment="Stretch" Header="OPL 模拟器采样率" PlaceholderText="OPL 模拟器采样率">
                     <ComboBoxItem Content="12429"/>
                     <ComboBoxItem Content="24858"/>
                     <ComboBoxItem Content="49716"/>

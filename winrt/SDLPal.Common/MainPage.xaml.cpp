@@ -8,6 +8,7 @@
 #include "StringHelper.h"
 #include "AsyncHelper.h"
 #include "../../global.h"
+#include "../../palcfg.h"
 
 using namespace SDLPal;
 

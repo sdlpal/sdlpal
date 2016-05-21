@@ -4,6 +4,7 @@
 #include <windows.h>
 #include "../SDLPal.Common/AsyncHelper.h"
 #include "../../global.h"
+#include "../../palcfg.h"
 #include "App.xaml.h"
 
 HANDLE g_eventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);

@@ -27,6 +27,10 @@ extern "C"
 {
 # endif
 
+#include "palcommon.h"
+
+#define     PAL_MAX_SAMPLERATE           48000
+
 typedef enum tagPALCFG_ITEM
 {
 	PALCFG_ALL_MIN = 0,
@@ -103,6 +107,104 @@ typedef struct tagConfigItem
 	const ConfigValue  MinValue;
 	const ConfigValue  MaxValue;
 } ConfigItem;
+
+typedef struct tagSCREENLAYOUT
+{
+	PAL_POS          EquipImageBox;
+	PAL_POS          EquipRoleListBox;
+	PAL_POS          EquipItemName;
+	PAL_POS          EquipItemAmount;
+	PAL_POS          EquipLabels[MAX_PLAYER_EQUIPMENTS];
+	PAL_POS          EquipNames[MAX_PLAYER_EQUIPMENTS];
+	PAL_POS          EquipStatusLabels[5];
+	PAL_POS          EquipStatusValues[5];
+
+	PAL_POS          RoleName;
+	PAL_POS          RoleImage;
+	PAL_POS          RoleExpLabel;
+	PAL_POS          RoleLevelLabel;
+	PAL_POS          RoleHPLabel;
+	PAL_POS          RoleMPLabel;
+	PAL_POS          RoleStatusLabels[5];
+	PAL_POS          RoleCurrExp;
+	PAL_POS          RoleNextExp;
+	PAL_POS          RoleExpSlash;
+	PAL_POS          RoleLevel;
+	PAL_POS          RoleCurHP;
+	PAL_POS          RoleMaxHP;
+	PAL_POS          RoleHPSlash;
+	PAL_POS          RoleCurMP;
+	PAL_POS          RoleMaxMP;
+	PAL_POS          RoleMPSlash;
+	PAL_POS          RoleStatusValues[5];
+	PAL_POS          RoleEquipImageBoxes[MAX_PLAYER_EQUIPMENTS];
+	PAL_POS          RoleEquipNames[MAX_PLAYER_EQUIPMENTS];
+	PAL_POS          RolePoisonNames[MAX_POISONS];
+
+	PAL_POS          ExtraItemDescLines;
+	PAL_POS          ExtraMagicDescLines;
+} SCREENLAYOUT;
+
+typedef struct tagCONFIGURATION
+{
+	union {
+		SCREENLAYOUT     ScreenLayout;
+		PAL_POS          ScreenLayoutArray[sizeof(SCREENLAYOUT) / sizeof(PAL_POS)];
+	};
+	enum {
+		USE_8x8_FONT = 1,
+		DISABLE_SHADOW = 2,
+	}                ScreenLayoutFlag[sizeof(SCREENLAYOUT) / sizeof(PAL_POS)];
+
+	/* Configurable options */
+	char            *pszGamePath;
+	char            *pszMsgFile;
+	CODEPAGE         uCodePage;
+	DWORD            dwWordLength;
+	DWORD            dwScreenWidth;
+	DWORD            dwScreenHeight;
+	INT              iSurroundOPLOffset;
+	INT              iAudioChannels;
+	INT              iSampleRate;
+	INT              iOPLSampleRate;
+	INT              iResampleQuality;
+	INT              iVolume;
+	MUSICTYPE        eMusicType;
+	MUSICTYPE        eCDType;
+	OPLTYPE          eOPLType;
+	WORD             wAudioBufferSize;
+	BOOL             fIsWIN95;
+	BOOL             fUseEmbeddedFonts;
+	BOOL             fUseSurroundOPL;
+#if SDL_VERSION_ATLEAST(2,0,0)
+	BOOL             fKeepAspectRatio;
+#else
+	BOOL             fFullScreen;
+#endif
+	BOOL             fEnableJoyStick;
+	BOOL             fUseCustomScreenLayout;
+	BOOL             fLaunchSetting;
+#if PAL_HAS_TOUCH
+	BOOL             fUseTouchOverlay;
+#endif
+#if USE_RIX_EXTRA_INIT
+	uint32_t        *pExtraFMRegs;
+	uint8_t         *pExtraFMVals;
+	uint32_t         dwExtraLength;
+#endif
+} CONFIGURATION, *LPCONFIGURATION;
+
+extern CONFIGURATION gConfig;
+
+VOID
+PAL_LoadConfig(
+	BOOL fFromFile
+);
+
+BOOL
+PAL_SaveConfig(
+	VOID
+);
 
 BOOL
 PAL_ParseConfigLine(

@@ -203,7 +203,7 @@
   </data>
   <data name="MBExitContent" xml:space="preserve">
     <value>您的設定已保存，下次啟動時將直接開始遊戲。
-在遊戲中，您可以通過遊戲系統功能表的“返回設定”選項返回本設定頁面。</value>
+在遊戲中，您可以通過遊戲系統功能表的返回設定選項回到本設定頁面。</value>
   </data>
   <data name="MBExitTitle" xml:space="preserve">
     <value>設定已完成</value>

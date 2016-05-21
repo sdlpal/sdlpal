@@ -27,6 +27,7 @@
 #include "palcommon.h"
 #include "font.h"
 #include "global.h"
+#include "palcfg.h"
 #include "map.h"
 #include "res.h"
 #include "scene.h"

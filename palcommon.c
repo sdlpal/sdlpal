@@ -23,6 +23,7 @@
 
 #include "palcommon.h"
 #include "global.h"
+#include "palcfg.h"
 
 INT
 PAL_RLEBlitToSurface(

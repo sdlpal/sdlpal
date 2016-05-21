@@ -21,6 +21,7 @@
 
 #include "palcommon.h"
 #include "global.h"
+#include "palcfg.h"
 #include "sound.h"
 #include "players.h"
 #include "util.h"

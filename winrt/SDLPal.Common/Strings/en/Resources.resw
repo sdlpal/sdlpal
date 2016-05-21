@@ -203,7 +203,7 @@
   </data>
   <data name="MBExitContent" xml:space="preserve">
     <value>Settings have been saved and the game will be started on next launch.
-You can use the "return setting" menu option inside the game to return to this page.</value>
+You can use the main menu option inside the game to return to this page.</value>
   </data>
   <data name="MBExitTitle" xml:space="preserve">
     <value>Setting finished</value>

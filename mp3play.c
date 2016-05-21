@@ -22,6 +22,7 @@
 
 #include "util.h"
 #include "global.h"
+#include "palcfg.h"
 
 #if PAL_HAS_MP3
 

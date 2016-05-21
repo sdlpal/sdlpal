@@ -24,6 +24,7 @@
 
 #include "util.h"
 #include "global.h"
+#include "palcfg.h"
 #include "players.h"
 #include "sound.h"
 #include <math.h>
