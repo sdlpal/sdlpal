@@ -326,8 +326,7 @@ PAL_InitGlobals(
 
   Parameters:
 
-    [IN]  uCodePage - the code page for text conversion.
-	[IN]  dwWordLength - the length of each word.
+    None.
 
   Return value:
 

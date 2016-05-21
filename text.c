@@ -51,8 +51,8 @@ static LPWSTR gc_rgszDefaultAdditionalWords[ATB_WORD_COUNT] = { NULL, L"\xFF11",
 
 #define SDLPAL_EXTRA_WORD_COUNT     1
 static LPWSTR gc_rgszSDLPalWords[CP_MAX][SDLPAL_EXTRA_WORD_COUNT] = {
-	{ L"\x555F\x52D5\x8A2D\x5B9A" },
-	{ L"\x542F\x52A8\x8BBE\x7F6E" },
+	{ L"\x8FD4\x56DE\x8A2D\x5B9A" },
+	{ L"\x8FD4\x56DE\x8BBE\x7F6E" },
 };
 
 LPWSTR g_rcCredits[12];

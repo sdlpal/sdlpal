@@ -633,28 +633,22 @@ PAL_SystemMenu(
       break;
 
    case 5:
-      //
+   case 6:
+	   //
       // Quit
       //
       if (PAL_ConfirmMenu())
       {
+         if (wReturnValue == 6)
+         {
+            gConfig.fLaunchSetting = TRUE;
+            PAL_SaveConfig();
+         }
          SOUND_PlayMUS(0, FALSE, 2);
          PAL_FadeOut(2);
          PAL_Shutdown(0);
       }
       break;
-
-   case 6:
-	   //
-	   // Launch setting
-	   //
-	   wReturnValue = (WORD)PAL_ConfirmMenu();
-	   if (wReturnValue != gConfig.fLaunchSetting)
-	   {
-		   gConfig.fLaunchSetting = wReturnValue;
-		   PAL_SaveConfig();
-	   }
-	   break;
 
 #if !defined(PAL_CLASSIC)
    case 7:

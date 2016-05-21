@@ -68,7 +68,7 @@ BOOL UTIL_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
 	IDXGIOutput* pOutput = nullptr;
 	DWORD retval = FALSE;
 
-#if _WIN32_WINNT >= 0x0A00
+#if NTDDI_VERSION >= NTDDI_WIN10
 	if (Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily != L"Windows.Mobile") return FALSE;
 #endif
 
@@ -82,7 +82,7 @@ BOOL UTIL_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
 
 	if (SUCCEEDED(pOutput->GetDesc(&desc)))
 	{
-#if (_WIN32_WINNT < 0x0A00) && (WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP)
+#if (NTDDI_VERSION < NTDDI_WIN10) && (WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP)
 		*pdwScreenWidth = (desc.DesktopCoordinates.right - desc.DesktopCoordinates.left);
 		*pdwScreenHeight = (desc.DesktopCoordinates.bottom - desc.DesktopCoordinates.top);
 #else

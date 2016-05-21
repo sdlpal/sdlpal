@@ -23,10 +23,6 @@
 
 #include "main.h"
 
-#ifdef PSP
-#include "main_PSP.h"
-#endif
-
 #if defined (NDS) && defined (GEKKO)
 
 # include <fat.h>
@@ -552,11 +548,16 @@ main(
 	   return -1;
 
    //
+   // Should launch setting
+   // However, it may arrive here through the activatation event on WinRT platform
+   // So close the current process so that the new process can go to setting
+   //
+   if (gConfig.fLaunchSetting)
+	   return 0;
+
+   //
    // Initialize everything
    //
-#ifdef PSP
-   sdlpal_psp_init();
-#endif
    PAL_Init();
 
    //
