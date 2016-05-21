@@ -10,6 +10,7 @@
 #include "resource.h"
 #include "../global.h"
 #include "../util.h"
+#include "../palcfg.h"
 
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(linker,"\"/manifestdependency:type='win32' \

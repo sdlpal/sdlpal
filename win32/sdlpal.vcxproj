@@ -43,12 +43,12 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\SDL2-2.0.3\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\SDL2\lib\x86;..\SDL2\VisualC\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\SDL2-2.0.3\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\SDL2\lib\x86;..\SDL2\VisualC\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>

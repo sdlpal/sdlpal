@@ -287,7 +287,7 @@ PAL_SelectionMenu(
 	dx[1] = dx[0]; dx[3] = dx[2]; dx[0] = dx[2] = 0;
 	for (i = 0; i < nWords; i++)
 	{
-		rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * (i % 2), 100 + 40 * (i / 2)), w[i] + 1, TRUE);
+		rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * (i % 2) + dx[i], 100 + 40 * (i / 2)), w[i] + 1, TRUE);
 	}
 
 	VIDEO_UpdateScreen(&rect);
