@@ -319,11 +319,11 @@ typedef struct tagENEMY
    WORD        wIdleAnimSpeed;      // speed of the animation when idle
    WORD        wActWaitFrames;      // FIXME: ???
    WORD        wYPosOffset;
-   WORD        wAttackSound;        // sound played when this enemy uses normal attack
-   WORD        wActionSound;        // FIXME: ???
-   WORD        wMagicSound;         // sound played when this enemy uses magic
-   WORD        wDeathSound;         // sound played when this enemy dies
-   WORD        wCallSound;          // sound played when entering the battle
+   SHORT       wAttackSound;        // sound played when this enemy uses normal attack
+   SHORT       wActionSound;        // FIXME: ???
+   SHORT       wMagicSound;         // sound played when this enemy uses magic
+   SHORT       wDeathSound;         // sound played when this enemy dies
+   SHORT       wCallSound;          // sound played when entering the battle
    WORD        wHealth;             // total HP of the enemy
    WORD        wExp;                // How many EXPs we'll get for beating this enemy
    WORD        wCash;               // how many cashes we'll get for beating this enemy
@@ -333,7 +333,7 @@ typedef struct tagENEMY
    WORD        wAttackEquivItem;    // equivalence item of this enemy's normal attack
    WORD        wAttackEquivItemRate;// chance for equivalence item
    WORD        wStealItem;          // which item we'll get when stealing from this enemy
-   USHORT      nStealItem;          // total amount of the items which can be stolen
+   WORD        nStealItem;          // total amount of the items which can be stolen
    WORD        wAttackStrength;     // normal attack strength
    WORD        wMagicStrength;      // magical attack strength
    WORD        wDefense;            // resistance to all kinds of attacking

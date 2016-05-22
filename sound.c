@@ -833,11 +833,11 @@ SOUND_PlayChannel(
 /*++
   Purpose:
 
-    Play a sound in voc.mkf file.
+    Play a sound in voc.mkf/sounds.mkf file.
 
   Parameters:
 
-    [IN]  iSoundNum - number of the sound.
+    [IN]  iSoundNum - number of the sound; the absolute value is used.
 
     [IN]  iChannel - the number of channel (0 or 1).
 
@@ -871,7 +871,7 @@ SOUND_PlayChannel(
 
    if (iSoundNum < 0)
    {
-      return;
+      iSoundNum = -iSoundNum;
    }
 
    //

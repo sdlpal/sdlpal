@@ -1079,7 +1079,7 @@ PAL_BattleStartFrame(
       // All enemies are cleared. Won the battle.
       //
       g_Battle.BattleResult = kBattleResultWon;
-      SOUND_Play(-1);
+      SOUND_Play(0);
       return;
    }
    else
