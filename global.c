@@ -49,6 +49,67 @@ CONFIGURATION gConfig;
       DO_BYTESWAP(buf, size);                                    \
    } while(0)
 
+BOOL
+PAL_IsWINVersion(
+	BOOL *pfIsWIN95
+)
+{
+	FILE *fps[] = { UTIL_OpenRequiredFile("abc.mkf"), UTIL_OpenRequiredFile("map.mkf"), gpGlobals->f.fpF, gpGlobals->f.fpFBP, gpGlobals->f.fpFIRE, gpGlobals->f.fpMGO };
+	char *data = NULL;
+	int data_size = 0, dos_score = 0, win_score = 0;
+	BOOL result = FALSE;
+
+	for (int i = 0; i < sizeof(fps) / sizeof(FILE *); i++)
+	{
+		//
+		// Find the first non-empty sub-file
+		//
+		int count = PAL_MKFGetChunkCount(fps[i]), j = 0, size;
+		while (j < count && (size = PAL_MKFGetChunkSize(j, fps[i])) < 4) j++;
+		if (j >= count) goto PAL_IsWINVersion_Exit;
+
+		//
+		// Read the content and check the compression signature
+		// Note that this check is not 100% correct, however in incorrect situations,
+		// the sub-file will be over 784MB if uncompressed, which is highly unlikely.
+		//
+		if (data_size < size) data = (char *)realloc(data, data_size = size);
+		PAL_MKFReadChunk(data, data_size, j, fps[i]);
+		if (data[0] == 'Y' && data[1] == 'J' && data[2] == '_' && data[3] == '1')
+		{
+			if (win_score > 0)
+				goto PAL_IsWINVersion_Exit;
+			else
+				dos_score++;
+		}
+		else
+		{
+			if (dos_score > 0)
+				goto PAL_IsWINVersion_Exit;
+			else
+				win_score++;
+		}
+	}
+
+	//
+	// Finally check the size of object definition
+	//
+	data_size = PAL_MKFGetChunkSize(2, gpGlobals->f.fpSSS);
+	if (data_size % sizeof(OBJECT) == 0 && data_size % sizeof(OBJECT_DOS) != 0 && dos_score > 0) goto PAL_IsWINVersion_Exit;
+	if (data_size % sizeof(OBJECT_DOS) == 0 && data_size % sizeof(OBJECT) != 0 && win_score > 0) goto PAL_IsWINVersion_Exit;
+
+	if (pfIsWIN95) *pfIsWIN95 = (win_score == sizeof(fps) / sizeof(FILE *)) ? TRUE : FALSE;
+
+	result = TRUE;
+
+PAL_IsWINVersion_Exit:
+	free(data);
+	fclose(fps[1]);
+	fclose(fps[0]);
+
+	return result;
+}
+
 INT
 PAL_InitGlobals(
    VOID
@@ -69,11 +130,6 @@ PAL_InitGlobals(
 --*/
 {
    //
-   // Set decompress function
-   //
-   Decompress = gConfig.fIsWIN95 ? YJ2_Decompress : YJ1_Decompress;
-
-   //
    // Open files
    //
    gpGlobals->f.fpFBP = UTIL_OpenRequiredFile("fbp.mkf");
@@ -84,6 +140,16 @@ PAL_InitGlobals(
    gpGlobals->f.fpFIRE = UTIL_OpenRequiredFile("fire.mkf");
    gpGlobals->f.fpRGM = UTIL_OpenRequiredFile("rgm.mkf");
    gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
+
+   //
+   // Retrieve game resource version & language
+   //
+   if (!PAL_IsWINVersion(&gConfig.fIsWIN95)) return -1;
+
+   //
+   // Set decompress function
+   //
+   Decompress = gConfig.fIsWIN95 ? YJ2_Decompress : YJ1_Decompress;
 
    gpGlobals->lpObjectDesc = gConfig.fIsWIN95 ? NULL : PAL_LoadObjectDesc(va("%s%s", gConfig.pszGamePath, "desc.dat"));
    gpGlobals->bCurrentSaveSlot = 1;

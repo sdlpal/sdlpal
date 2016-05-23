@@ -2906,6 +2906,14 @@ PAL_BattleShowPlayerSummonMagicAnim(
    assert(wEffectMagicID < MAX_OBJECTS);
 
    //
+   // Sound should be played before magic begins
+   //
+   if (gConfig.fIsWIN95)
+   {
+	   SOUND_Play(gpGlobals->g.lprgMagic[wMagicNum].wSound);
+   }
+
+   //
    // Brighten the players
    //
    for (i = 1; i <= 10; i++)
@@ -2919,11 +2927,6 @@ PAL_BattleShowPlayerSummonMagicAnim(
    }
 
    PAL_BattleBackupScene();
-
-   if (gConfig.fIsWIN95)
-   {
-      SOUND_Play(gpGlobals->g.lprgMagic[wMagicNum].wSound);
-   }
 
    //
    // Load the sprite of the summoned god
@@ -3556,6 +3559,11 @@ PAL_BattlePlayerPerformAction(
       }
       else
       {
+         //
+         // Sound should be played before action begins
+         //
+         SOUND_Play(29);
+
          for (i = 1; i <= 6; i++)
          {
             //
@@ -3615,7 +3623,6 @@ PAL_BattlePlayerPerformAction(
 
          g_Battle.rgPlayer[wPlayerIndex].iColorShift = 6;
          g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 5;
-         SOUND_Play(29);
          PAL_BattleDelay(5, 0, TRUE);
 
          g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;

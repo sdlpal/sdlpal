@@ -74,7 +74,7 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 {
 	int textLen;
 
-	if (IsDlgButtonChecked(hwndDlg, IDC_CHS) && gConfig.fIsWIN95)
+	if (IsDlgButtonChecked(hwndDlg, IDC_CHS))
 		gConfig.uCodePage = CP_GBK;
 	else
 		gConfig.uCodePage = CP_BIG5;
@@ -98,8 +98,9 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 		free(gConfig.pszGamePath); gConfig.pszGamePath = nullptr;
 	}
 
-	gConfig.fIsWIN95 = !IsDlgButtonChecked(hwndDlg, IDC_DOS);
-	gConfig.fUseEmbeddedFonts = !gConfig.fIsWIN95 && IsDlgButtonChecked(hwndDlg, IDC_EMBEDFONT);
+	gConfig.fFullScreen = IsDlgButtonChecked(hwndDlg, IDC_FULLSCREEN);
+	gConfig.fUseTouchOverlay = IsDlgButtonChecked(hwndDlg, IDC_TOUCHOVERLAY);
+	gConfig.fUseEmbeddedFonts = IsDlgButtonChecked(hwndDlg, IDC_EMBEDFONT);
 	gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO);
 	gConfig.dwScreenWidth = GetDlgItemInt(hwndDlg, IDC_WIDTH, nullptr, FALSE);
 	gConfig.dwScreenHeight = GetDlgItemInt(hwndDlg, IDC_HEIGHT, nullptr, FALSE);
@@ -125,17 +126,16 @@ void ResetControls(HWND hwndDlg)
 {
 	TCHAR buffer[100];
 
-	EnableDlgItem(hwndDlg, IDC_CHS, gConfig.fIsWIN95);
-	EnableDlgItem(hwndDlg, IDC_EMBEDFONT, !gConfig.fIsWIN95);
 	EnableDlgItem(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile ? TRUE : FALSE);
 	EnableDlgItem(hwndDlg, IDC_OPL, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_OPLOFFSET, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_OPLSR, gConfig.eMusicType == MUSIC_RIX);
 
-	CheckRadioButton(hwndDlg, IDC_DOS, IDC_WIN95, gConfig.fIsWIN95 ? IDC_WIN95 : IDC_DOS);
 	CheckRadioButton(hwndDlg, IDC_CHT, IDC_CHS, IDC_CHT + gConfig.uCodePage);
 
+	CheckDlgButton(hwndDlg, IDC_FULLSCREEN, gConfig.fFullScreen);
+	CheckDlgButton(hwndDlg, IDC_TOUCHOVERLAY, gConfig.fUseTouchOverlay);
 	CheckDlgButton(hwndDlg, IDC_EMBEDFONT, gConfig.fUseEmbeddedFonts);
 	CheckDlgButton(hwndDlg, IDC_ASPECTRATIO, gConfig.fKeepAspectRatio);
 	CheckDlgButton(hwndDlg, IDC_SURROUNDOPL, gConfig.fUseSurroundOPL);
@@ -196,21 +196,11 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 	switch (idControl)
 	{
 	case IDOK:
-	{
-		TCHAR title[40], message[160];
-
-		LoadStringEx(g_hInstance, IDS_CONFIRM, g_wLanguage, title, 40);
-		LoadStringEx(g_hInstance, IDS_LAUNCHSETTING, g_wLanguage, message, 160);
-
-		if (MessageBox(hwndDlg, message, title, MB_YESNO) == IDYES)
-			gConfig.fLaunchSetting = TRUE;
-		else
-			gConfig.fLaunchSetting = FALSE;
-
+		gConfig.fLaunchSetting = FALSE;
 		SaveSettings(hwndDlg, TRUE);
 		EndDialog(hwndDlg, IDOK);
 		return TRUE;
-	}
+
 	case IDCANCEL:
 		EndDialog(hwndDlg, IDCANCEL);
 		return TRUE;
@@ -218,20 +208,6 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 	case IDC_DEFAULT:
 		PAL_LoadConfig(FALSE);
 		ResetControls(hwndDlg);
-		return TRUE;
-
-	case IDC_DOS:
-	case IDC_WIN95:
-		if (IsDlgButtonChecked(hwndDlg, IDC_DOS))
-		{
-			EnableDlgItem(hwndDlg, IDC_EMBEDFONT, TRUE);
-			EnableDlgItem(hwndDlg, IDC_CHS, FALSE);
-		}
-		else
-		{
-			EnableDlgItem(hwndDlg, IDC_EMBEDFONT, FALSE);
-			EnableDlgItem(hwndDlg, IDC_CHS, TRUE);
-		}
 		return TRUE;
 
 	case IDC_BRGAME:

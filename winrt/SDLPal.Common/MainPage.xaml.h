@@ -25,12 +25,14 @@ namespace SDLPal
 		void SaveControlContents();
 
 	private:
+		Windows::ApplicationModel::Resources::ResourceLoader^ m_resLdr;
+
 		void btnBrowse_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void tsIsDOS_Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void cbBGM_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
 		void btnReset_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void btnFinish_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void btnBrowseFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void btnClearFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

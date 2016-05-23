@@ -5,15 +5,18 @@
 #include "resampler.h"
 #include <stdint.h>
 
+#if !defined(PAL_HAS_TOUCH)
+#define PAL_HAS_TOUCH     0
+#endif
+
 static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
-	{ PALCFG_DOS,               PALCFG_BOOLEAN,  "DOS",                3, TRUE,  FALSE, TRUE },								// Default for DOS
 	{ PALCFG_FULLSCREEN,        PALCFG_BOOLEAN,  "FULLSCREEN",        10, FALSE, FALSE, TRUE },
 	{ PALCFG_KEEPASPECTRATIO,   PALCFG_BOOLEAN,  "KEEPASPECTRATIO",   15, TRUE,  FALSE, TRUE },
 	{ PALCFG_LAUNCHSETTING,     PALCFG_BOOLEAN,  "LAUNCHSETTING",     13, TRUE,  FALSE, TRUE },
 	{ PALCFG_STEREO,            PALCFG_BOOLEAN,  "STEREO",             6, TRUE,  FALSE, TRUE },								// Default for stereo audio
 	{ PALCFG_USEEMBEDDEDFONTS,  PALCFG_BOOLEAN,  "USEEMBEDDEDFONTS",  16, TRUE,  FALSE, TRUE },								// Default for using embedded fonts in DOS version
 	{ PALCFG_USESURROUNDOPL,    PALCFG_BOOLEAN,  "USESURROUNDOPL",    14, TRUE,  FALSE, TRUE },								// Default for using surround opl
-	{ PALCFG_USETOUCHOVERLAY,   PALCFG_BOOLEAN,  "USETOUCHOVERLAY",   15, TRUE,  FALSE, TRUE },
+	{ PALCFG_USETOUCHOVERLAY,   PALCFG_BOOLEAN,  "USETOUCHOVERLAY",   15, PAL_HAS_TOUCH, FALSE, TRUE },
 
 	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SURROUNDOPLOFFSET", 17, 384,   INT32_MIN, INT32_MAX },
 
@@ -356,18 +359,15 @@ PAL_LoadConfig(
 	gConfig.dwWordLength = 10;	// This is the default value for Chinese version
 	gConfig.ScreenLayout = screen_layout;
 
-	gConfig.fIsWIN95 = !values[PALCFG_DOS].bValue;
-	gConfig.fUseEmbeddedFonts = values[PALCFG_DOS].bValue && values[PALCFG_USEEMBEDDEDFONTS].bValue;
+	gConfig.fIsWIN95 = FALSE;	// Default for DOS version
+	gConfig.fUseEmbeddedFonts = values[PALCFG_USEEMBEDDEDFONTS].bValue;
 	gConfig.fUseSurroundOPL = values[PALCFG_STEREO].bValue && values[PALCFG_USESURROUNDOPL].bValue;
 	gConfig.fLaunchSetting = values[PALCFG_LAUNCHSETTING].bValue;
-#if PAL_HAS_TOUCH
 	gConfig.fUseTouchOverlay = values[PALCFG_USETOUCHOVERLAY].bValue;
-#endif
 #if SDL_VERSION_ATLEAST(2,0,0)
 	gConfig.fKeepAspectRatio = values[PALCFG_KEEPASPECTRATIO].bValue;
-#else
-	gConfig.fFullScreen = values[PALCFG_FULLSCREEN].bValue;
 #endif
+	gConfig.fFullScreen = values[PALCFG_FULLSCREEN].bValue;
 	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
 
 	gConfig.iSurroundOPLOffset = values[PALCFG_SURROUNDOPLOFFSET].iValue;
@@ -398,25 +398,21 @@ PAL_SaveConfig(
 )
 {
 	static const char *music_types[] = { "RIX", "MIDI", "MP3", "OGG", "RAW" };
-	static const char *opl_types[] = { "DOSBOX", "MAME" };
+	static const char *opl_types[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
 	char buf[512];
 	FILE *fp = fopen(va("%ssdlpal.cfg", PAL_CONFIG_PREFIX), "w");
 
 	if (fp)
 	{
-		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_DOS), !gConfig.fIsWIN95); fputs(buf, fp);
 #if SDL_VERSION_ATLEAST(2,0,0)
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_KEEPASPECTRATIO), gConfig.fKeepAspectRatio); fputs(buf, fp);
-#else
-		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_FULLSCREEN), gConfig.fKeepAspectRatio); fputs(buf, fp);
 #endif
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_FULLSCREEN), gConfig.fFullScreen); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_LAUNCHSETTING), gConfig.fLaunchSetting); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_STEREO), gConfig.iAudioChannels == 2 ? TRUE : FALSE); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_USEEMBEDDEDFONTS), gConfig.fUseEmbeddedFonts); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_USESURROUNDOPL), gConfig.fUseSurroundOPL); fputs(buf, fp);
-#if PAL_HAS_TOUCH
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_USETOUCHOVERLAY), gConfig.fUseTouchOverlay); fputs(buf, fp);
-#endif
 
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_SURROUNDOPLOFFSET), gConfig.iSurroundOPLOffset); fputs(buf, fp);
 

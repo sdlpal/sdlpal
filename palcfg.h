@@ -37,8 +37,7 @@ typedef enum tagPALCFG_ITEM
 
 	PALCFG_BOOLEAN_MIN = PALCFG_ALL_MIN,
 	/* Booleans */
-	PALCFG_DOS = PALCFG_BOOLEAN_MIN,
-	PALCFG_FULLSCREEN,
+	PALCFG_FULLSCREEN = PALCFG_BOOLEAN_MIN,
 	PALCFG_KEEPASPECTRATIO,
 	PALCFG_LAUNCHSETTING,
 	PALCFG_STEREO,
@@ -178,15 +177,12 @@ typedef struct tagCONFIGURATION
 	BOOL             fUseSurroundOPL;
 #if SDL_VERSION_ATLEAST(2,0,0)
 	BOOL             fKeepAspectRatio;
-#else
-	BOOL             fFullScreen;
 #endif
+	BOOL             fFullScreen;
 	BOOL             fEnableJoyStick;
 	BOOL             fUseCustomScreenLayout;
 	BOOL             fLaunchSetting;
-#if PAL_HAS_TOUCH
 	BOOL             fUseTouchOverlay;
-#endif
 #if USE_RIX_EXTRA_INIT
 	uint32_t        *pExtraFMRegs;
 	uint8_t         *pExtraFMVals;

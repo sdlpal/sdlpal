@@ -4,13 +4,8 @@
 # Lines started with '#' is treated as comments.    #
 #####################################################
 
-# CodePage: Indicates the codepage to use, 0 for big5 (default), 1 for gbk,
-#           2 for shift-jis.
+# CodePage: Indicates the codepage to use, 0 for big5 (default), 1 for gbk.
 #CodePage=0
-
-# DOS: Indicates whether to use DOS-version resources or WIN-version resources.
-#      Non-zero for DOS-version (default), zero for WIN95-version.
-#DOS=1
 
 # UseEmbeddedFonts: Indicates whether to use DOS-version's embedded fonts.
 #                   Non-zero for using DOS-version's embedded fonts (default),
@@ -75,13 +70,11 @@
 #WindowWidth=640
 
 # WindowHeight: Indicates the height of game window. Default value varies on different
-#               platforms. On desktop, the default value is 400 for non-fullsceen mode,
-#               and 480 for full-screen mode.
+#               platforms. On desktop, the default value is 400.
 #WindowHeight=400
 
 # FullScreen: Indicates whether the game should started fullscreen or not, default is not.
-#             Currently only valid when the game is built with SDL 1.2 builds. If the game
-#             is built with SDL 2.0 or higher, this value is ignored.
+#             On some platforms, such as mobile OS or WinRT, this option is ignored.
 #FullScreen=0
 
 # KeepAspectRatio: Indicates whether the content in game window should keep its original

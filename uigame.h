@@ -96,6 +96,11 @@ PAL_EquipItemMenu(
    WORD           wItem
 );
 
+VOID
+PAL_QuitGame(
+   VOID
+);
+
 #ifdef __cplusplus
 }
 #endif

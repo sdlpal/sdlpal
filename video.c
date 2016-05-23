@@ -31,9 +31,7 @@ SDL_Surface              *gpScreenBak        = NULL;
 SDL_Window               *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
 static SDL_Texture       *gpTexture          = NULL;
-# if PAL_HAS_TOUCH
 static SDL_Texture       *gpTouchOverlay     = NULL;
-# endif
 static SDL_Rect           gOverlayRect;
 static SDL_Rect           gTextureRect;
 #endif
@@ -88,9 +86,7 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 		gTextureRect.x = (texture_width - 320) / 2;
 		gTextureRect.y = (texture_height - 200) / 2;
 		gTextureRect.w = 320; gTextureRect.h = 200;
-# if PAL_HAS_TOUCH
 		PAL_SetTouchBounds(width, height, gOverlayRect);
-# endif
 	}
 	else
 	{
@@ -207,7 +203,6 @@ VIDEO_Startup(
    //
    // Create texture for overlay.
    //
-#if PAL_HAS_TOUCH
    if (gConfig.fUseTouchOverlay)
    {
       extern const void * PAL_LoadOverlayBMP(void);
@@ -222,34 +217,6 @@ VIDEO_Startup(
          SDL_FreeSurface(overlay);
       }
    }
-#endif
-
-   //
-   // Check whether to keep the aspect ratio
-   //
-//   if (gConfig.fKeepAspectRatio)
-//   {
-//	   float ax = (float)gConfig.dwScreenWidth / 320.0f;
-//	   float ay = (float)gConfig.dwScreenHeight / 200.0f;
-//	   if (ax != ay)
-//	   {
-//		   float ratio = (ax > ay) ? ay : ax;
-//		   WORD w = (WORD)(ratio * 320.0f);
-//		   WORD h = (WORD)(ratio * 200.0f);
-//		   if (w % 4 != 0) w &= ~0x3;
-//		   if (h % 4 != 0) h &= ~0x3;
-//		   gOverlayRect.x = (gConfig.dwScreenWidth - w) / 2;
-//		   gOverlayRect.y = (gConfig.dwScreenHeight - h) / 2;
-//		   gOverlayRect.w = w;
-//		   gOverlayRect.h = h;
-//		   gpRenderRect = &gOverlayRect;
-//# if PAL_HAS_TOUCH
-//		   PAL_SetTouchBounds(gConfig.dwScreenWidth, gConfig.dwScreenHeight, gOverlayRect);
-//# endif
-//	   }
-//   }
-//   else
-//	   gpRenderRect = NULL;
 #else
 
    //
@@ -351,13 +318,11 @@ VIDEO_Shutdown(
 
 #if SDL_VERSION_ATLEAST(2,0,0)
 
-# if PAL_HAS_TOUCH
    if (gpTouchOverlay)
    {
       SDL_DestroyTexture(gpTouchOverlay);
    }
    gpTouchOverlay = NULL;
-# endif
 
    if (gpTexture)
    {
@@ -395,8 +360,8 @@ VIDEO_RenderCopy(
 {
 	void *texture_pixels;
 	int texture_pitch;
-	SDL_LockTexture(gpTexture, NULL, &texture_pixels, &texture_pitch);
 
+	SDL_LockTexture(gpTexture, NULL, &texture_pixels, &texture_pitch);
 	memset(texture_pixels, 0, gTextureRect.y * texture_pitch);
 	uint8_t *pixels = (uint8_t *)texture_pixels + gTextureRect.y * texture_pitch;
 	uint8_t *src = (uint8_t *)gpScreenReal->pixels;
@@ -409,17 +374,14 @@ VIDEO_RenderCopy(
 		memset(pixels, 0, right_pitch); pixels += right_pitch;
 	}
 	memset(pixels, 0, gTextureRect.y * texture_pitch);
-	//SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
 	SDL_UnlockTexture(gpTexture);
 
 	SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-#if PAL_HAS_TOUCH
 	if (gpTouchOverlay)
 	{
 		SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, &gOverlayRect);
 	}
-#endif
-	   SDL_RenderPresent(gpRenderer);
+	SDL_RenderPresent(gpRenderer);
 }
 #endif
 
@@ -755,7 +717,16 @@ VIDEO_ToggleFullscreen(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   // TODO
+	if (gConfig.fFullScreen)
+	{
+		SDL_SetWindowFullscreen(gpWindow, 0);
+		gConfig.fFullScreen = FALSE;
+	}
+	else
+	{
+		SDL_SetWindowFullscreen(gpWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		gConfig.fFullScreen = TRUE;
+	}
 #else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
@@ -841,34 +812,26 @@ VIDEO_SaveScreenshot(
 
 --*/
 {
-   int      iNumBMP = 0;
-   FILE    *fp;
-
-   //
-   // Find a usable BMP filename.
-   //
-   for (iNumBMP = 0; iNumBMP <= 9999; iNumBMP++)
-   {
-      fp = fopen(va("%sscrn%.4d.bmp", PAL_SCREENSHOT_PREFIX, iNumBMP), "rb");
-      if (fp == NULL)
-      {
-         break;
-      }
-      fclose(fp);
-   }
-
-   if (iNumBMP > 9999)
-   {
-      return;
-   }
-
-   //
-   // Save the screenshot.
-   //
-#if SDL_VERSION_ATLEAST(2,0,0)
-   SDL_SaveBMP(gpScreen, va("%sscrn%.4d.bmp", PAL_SCREENSHOT_PREFIX, iNumBMP));
+	char filename[1024];
+#ifdef _WIN32
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+	sprintf(filename, "%s%04d%02d%02d%02d%02d%02d%03d.bmp", PAL_SCREENSHOT_PREFIX, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
 #else
-   SDL_SaveBMP(gpScreenReal, va("%sscrn%.4d.bmp", PAL_SCREENSHOT_PREFIX, iNumBMP));
+	struct timeval tv;
+	struct tm *ptm;
+	gettimeofday(&tv, NULL);
+	ptm = localtime(&tv.tv_sec);
+	sprintf(filename, "%s%04d%02d%02d%02d%02d%02d%03d.bmp", PAL_SCREENSHOT_PREFIX, ptm->tm_year + 1900, ptm->tm_mon, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, tv.tv_usec / 1000);
+#endif
+	
+	//
+	// Save the screenshot.
+	//
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_SaveBMP(gpScreen, filename);
+#else
+	SDL_SaveBMP(gpScreenReal, filename);
 #endif
 }
 

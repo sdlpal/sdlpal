@@ -110,7 +110,7 @@ PAL_Init(
 
    SDL_WM_SetCaption("Loading...", NULL);
 
-   e = PAL_InitFont(gConfig.fUseEmbeddedFonts);
+   e = PAL_InitFont(!gConfig.fIsWIN95 && gConfig.fUseEmbeddedFonts);
    if (e != 0)
    {
       TerminateOnError("Could not load fonts: %d.\n", e);

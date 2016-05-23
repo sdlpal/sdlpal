@@ -261,7 +261,7 @@ PAL_SelectionMenu(
 		(nWords >= 3 && wItems[2]) ? PAL_WordWidth(wItems[2]) : 1,
 		(nWords >= 4 && wItems[3]) ? PAL_WordWidth(wItems[3]) : 1 };
 	int             dx[4] = { (w[0] - 1) * 16, (w[1] - 1) * 16, (w[2] - 1) * 16, (w[3] - 1) * 16 }, i;
-	PAL_POS         pos[4] = { PAL_XY(145, 110), PAL_XY(220 + dx[0], 110), PAL_XY(145, 150), PAL_XY(220 + dx[2], 150) };
+	PAL_POS         pos[4] = { PAL_XY(145, 110), PAL_XY(220 + dx[0], 110), PAL_XY(145, 160), PAL_XY(220 + dx[2], 160) };
 	WORD            wReturnValue;
 
 	const SDL_Rect  rect = { 130, 100, 125 + max(dx[0] + dx[1], dx[2] + dx[3]), 100 };
@@ -287,7 +287,7 @@ PAL_SelectionMenu(
 	dx[1] = dx[0]; dx[3] = dx[2]; dx[0] = dx[2] = 0;
 	for (i = 0; i < nWords; i++)
 	{
-		rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * (i % 2) + dx[i], 100 + 40 * (i / 2)), w[i] + 1, TRUE);
+		rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(130 + 75 * (i % 2) + dx[i], 100 + 50 * (i / 2)), w[i] + 1, TRUE);
 	}
 
 	VIDEO_UpdateScreen(&rect);
@@ -641,21 +641,10 @@ PAL_SystemMenu(
       break;
 
    case 5:
-	   //
+      //
       // Quit
       //
-      wReturnValue = PAL_TripleMenu(SYSMENU_LABEL_LAUNCHSETTING);
-	  if (wReturnValue == 2)
-	  {
-		  gConfig.fLaunchSetting = TRUE;
-		  PAL_SaveConfig();
-	  }
-	  if (wReturnValue == 1 || wReturnValue == 2)
-      {
-         SOUND_PlayMUS(0, FALSE, 2);
-         PAL_FadeOut(2);
-         PAL_Shutdown(0);
-      }
+      PAL_QuitGame();
       break;
 
 #if !defined(PAL_CLASSIC)
@@ -1999,4 +1988,20 @@ PAL_EquipItemMenu(
          }
       }
    }
+}
+
+VOID
+PAL_QuitGame(
+   VOID
+)
+{
+	WORD wReturnValue = PAL_TripleMenu(SYSMENU_LABEL_LAUNCHSETTING);
+	if (wReturnValue == 1 || wReturnValue == 2)
+	{
+		if (wReturnValue == 2) gConfig.fLaunchSetting = TRUE;
+		PAL_SaveConfig();		// Keep the fullscreen state
+		SOUND_PlayMUS(0, FALSE, 2);
+		PAL_FadeOut(2);
+		PAL_Shutdown(0);
+	}
 }

@@ -28,12 +28,13 @@ MainPage::MainPage()
 	InitializeComponent();
 	LoadControlContents();
 
+	m_resLdr = Windows::ApplicationModel::Resources::ResourceLoader::GetForCurrentView();
 	auto app = static_cast<App^>(Application::Current);
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 	app->Page = this;
 #endif
 	if (app->LastCrashed)
-		(ref new Windows::UI::Popups::MessageDialog((ref new Windows::ApplicationModel::Resources::ResourceLoader())->GetString("MBCrashContent")))->ShowAsync();
+		(ref new Windows::UI::Popups::MessageDialog(m_resLdr->GetString("MBCrashContent")))->ShowAsync();
 }
 
 void SDLPal::MainPage::LoadControlContents()
@@ -42,7 +43,6 @@ void SDLPal::MainPage::LoadControlContents()
 	if (gConfig.pszMsgFile) tbMsgFile->Text = ConvertString(gConfig.pszMsgFile);
 
 	tsLanguage->IsOn = (gConfig.uCodePage == CP_GBK);
-	tsIsDOS->IsOn = (gConfig.fIsWIN95 == FALSE);
 	tsUseEmbedFont->IsOn = (gConfig.fUseEmbeddedFonts == TRUE);
 	tsKeepAspect->IsOn = (gConfig.fKeepAspectRatio == TRUE);
 	tsStereo->IsOn = (gConfig.iAudioChannels == 2);
@@ -82,8 +82,6 @@ void SDLPal::MainPage::LoadControlContents()
 		cbOPLSR->SelectedIndex = 1;
 	else
 		cbOPLSR->SelectedIndex = 2;
-
-	tsUseEmbedFont->Visibility = tsIsDOS->IsOn ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 void SDLPal::MainPage::SaveControlContents()
@@ -98,7 +96,6 @@ void SDLPal::MainPage::SaveControlContents()
 	if (gConfig.pszMsgFile) { free(gConfig.pszMsgFile); gConfig.pszMsgFile = NULL; }
 	gConfig.pszMsgFile = (tbMsgFile->Text->Length() > 0) ? strdup(ConvertString(tbMsgFile->Text).c_str()) : nullptr;
 
-	gConfig.fIsWIN95 = tsIsDOS->IsOn ? FALSE : TRUE;
 	gConfig.fUseEmbeddedFonts = tsUseEmbedFont->IsOn ? TRUE : FALSE;
 	gConfig.fKeepAspectRatio = tsKeepAspect->IsOn ? TRUE : FALSE;
 	gConfig.iAudioChannels = tsStereo->IsOn ? 2 : 1;
@@ -118,22 +115,6 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.wAudioBufferSize = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbAudioBuffer->SelectedItem)->Content)->Data(), nullptr, 10);
 }
 
-void SDLPal::MainPage::tsIsDOS_Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	if (tsIsDOS->IsOn)
-	{
-		tsLanguage->IsOn = false;
-		tsLanguage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-		tsUseEmbedFont->Visibility = Windows::UI::Xaml::Visibility::Visible;
-	}
-	else
-	{
-		tsLanguage->IsOn = (gConfig.uCodePage == CP_GBK);
-		tsLanguage->Visibility = Windows::UI::Xaml::Visibility::Visible;
-		tsUseEmbedFont->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-	}
-}
-
 void SDLPal::MainPage::cbBGM_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
 	auto visibility = (cbBGM->SelectedIndex == 0) ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
@@ -151,7 +132,6 @@ void SDLPal::MainPage::btnReset_Click(Platform::Object^ sender, Windows::UI::Xam
 
 void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
 	if (tbGamePath->Text->Length() > 0)
 	{
 		auto mru_list = Windows::Storage::AccessCache::StorageApplicationPermissions::MostRecentlyUsedList;
@@ -162,15 +142,15 @@ void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xa
 		gConfig.fLaunchSetting = FALSE;
 		PAL_SaveConfig();
 
-		auto dlg = ref new Windows::UI::Popups::MessageDialog(loader->GetString("MBExitContent"));
-		dlg->Title = loader->GetString("MBExitTitle");
+		auto dlg = ref new Windows::UI::Popups::MessageDialog(m_resLdr->GetString("MBExitContent"));
+		dlg->Title = m_resLdr->GetString("MBExitTitle");
 		concurrency::create_task(dlg->ShowAsync()).then([] (Windows::UI::Popups::IUICommand^ command) {
 			Application::Current->Exit();
 		});
 	}
 	else
 	{
-		(ref new Windows::UI::Popups::MessageDialog(loader->GetString("MBEmptyContent")))->ShowAsync();
+		(ref new Windows::UI::Popups::MessageDialog(m_resLdr->GetString("MBEmptyContent")))->ShowAsync();
 	}
 }
 
@@ -213,10 +193,20 @@ void SDLPal::MainPage::btnBrowseFile_Click(Platform::Object^ sender, Windows::UI
 {
 	auto picker = ref new Windows::Storage::Pickers::FileOpenPicker();
 	picker->FileTypeFilter->Append("*");
-	picker->ViewMode = Windows::Storage::Pickers::PickerViewMode::List;
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 	picker->PickSingleFileAndContinue();
 #else
 	concurrency::create_task(picker->PickSingleFileAsync()).then([this](Windows::Storage::StorageFile^ file) { SetFile(file); });
+#endif
+}
+
+void SDLPal::MainPage::Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+#if NTDDI_VERSION >= NTDDI_WIN10
+	if (!Windows::Foundation::Metadata::ApiInformation::IsTypePresent("Windows.UI.ViewManagement.StatusBar")) return;
+#endif
+#if NTDDI_VERSION >= NTDDI_WIN10 || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+	auto statusBar = Windows::UI::ViewManagement::StatusBar::GetForCurrentView();
+	concurrency::create_task(statusBar->ShowAsync()).then([statusBar]() { statusBar->BackgroundOpacity = 1.0; });
 #endif
 }

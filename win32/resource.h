@@ -4,11 +4,8 @@
 //
 #define IDI_SDLPAL                      101
 #define IDD_LAUNCHER                    101
-#define IDS_LAUNCHSETTING               102
 #define IDS_CONFIRM                     103
 #define IDC_GAMEPATH                    1000
-#define IDC_DOS                         1002
-#define IDC_WIN95                       1003
 #define IDC_CHT                         1005
 #define IDC_CHS                         1006
 #define IDC_EMBEDFONT                   1009
@@ -16,6 +13,8 @@
 #define IDC_HEIGHT                      1013
 #define IDC_ASPECTRATIO                 1014
 #define IDC_FULLSCREEN                  1015
+#define IDC_FULLSCREEN2                 1016
+#define IDC_TOUCHOVERLAY                1016
 #define IDC_MSGFILE                     1017
 #define IDC_CD                          1019
 #define IDC_BGM                         1020

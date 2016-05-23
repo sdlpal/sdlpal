@@ -421,7 +421,7 @@ typedef struct tagMAGIC
    WORD               wCostMP;               // MP cost
    WORD               wBaseDamage;           // base damage
    WORD               wElemental;            // elemental (0 = No Elemental, last = poison)
-   WORD               wSound;                // sound played when using this magic
+   SHORT              wSound;                // sound played when using this magic
 } MAGIC, *LPMAGIC;
 
 typedef struct tagBATTLEFIELD
@@ -618,6 +618,11 @@ typedef struct tagGLOBALVARS
 } GLOBALVARS, *LPGLOBALVARS;
 
 extern GLOBALVARS * const gpGlobals;
+
+BOOL
+PAL_IsWINVersion(
+   BOOL *pfIsWIN95
+);
 
 INT
 PAL_InitGlobals(
