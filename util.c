@@ -26,12 +26,25 @@
 #include "input.h"
 #include "global.h"
 #include "palcfg.h"
+#include <errno.h>
 
 #include "midi.h"
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #include "SDL_video.h"
 #include "SDL_messagebox.h"
 #endif
+
+long
+flength(
+   FILE *fp
+)
+{
+   long old_pos = ftell(fp), length;
+   if (old_pos == -1) return -1;
+   if (fseek(fp, 0, SEEK_END) == -1) return -1;
+   length = ftell(fp); fseek(fp, old_pos, SEEK_SET);
+   return length;
+}
 
 void
 trim(
@@ -553,6 +566,7 @@ UTIL_Platform_Init(
    char* argv[]
 )
 {
+   gConfig.fLaunchSetting = FALSE;
    return 0;
 }
 

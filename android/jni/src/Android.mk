@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := main
 
-SDL_PATH := ../SDL2
+SDL_PATH := ../../../SDL2
 OGG_PATH := ../../../liboggvorbis
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include $(LOCAL_PATH)/$(OGG_PATH)/include $(LOCAL_PATH)/$(OGG_PATH)/src
@@ -15,7 +15,6 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	../../../fight.c \
 	../../../font.c \
 	../../../game.c \
-	../../../getopt.c \
 	../../../global.c \
 	../../../input.c \
 	../../../itemmenu.c \
@@ -24,7 +23,9 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 	../../../map.c \
 	../../../mp3play.c \
 	../../../oggplay.c \
+	../../../overlay.c \
 	../../../palcommon.c \
+	../../../palcfg.c \
 	../../../palette.c \
 	../../../play.c \
 	../../../resampler.c \

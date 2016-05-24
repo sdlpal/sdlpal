@@ -227,7 +227,7 @@ You can use the main menu option inside the game to return to this page.</value>
     <value>Sample rate of OPL simulator</value>
   </data>
   <data name="Publisher" xml:space="preserve">
-    <value>SDLPAL developing team</value>
+    <value>SDLPAL development team</value>
   </data>
   <data name="Quality.Header" xml:space="preserve">
     <value>Audio quality</value>

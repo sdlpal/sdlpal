@@ -550,8 +550,8 @@ typedef struct tagPOISONSTATUS
 
 typedef enum tagMUSICTYPE
 {
-	MUSIC_RIX,
 	MUSIC_MIDI,
+	MUSIC_RIX,
 	MUSIC_MP3,
 	MUSIC_OGG,
 	MUSIC_SDLCD

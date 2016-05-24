@@ -45,16 +45,8 @@ MIDI_CheckLoop(
 
 #else
 
-static VOID
-MIDI_Play(
-   INT       iNumRIX,
-   BOOL      fLoop
-) {}
-
-static VOID
-MIDI_CheckLoop(
-   VOID
-) {}
+# define MIDI_Play(iNumRIX, fLoop)
+# define MIDI_CheckLoop()
 
 #endif
 

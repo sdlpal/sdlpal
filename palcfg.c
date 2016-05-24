@@ -397,7 +397,7 @@ PAL_SaveConfig(
 	VOID
 )
 {
-	static const char *music_types[] = { "RIX", "MIDI", "MP3", "OGG", "RAW" };
+	static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
 	static const char *opl_types[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
 	char buf[512];
 	FILE *fp = fopen(va("%ssdlpal.cfg", PAL_CONFIG_PREFIX), "w");
@@ -421,7 +421,7 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_OPLSAMPLERATE), gConfig.iOPLSampleRate); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_RESAMPLEQUALITY), gConfig.iResampleQuality); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_SAMPLERATE), gConfig.iSampleRate); fputs(buf, fp);
-		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_VOLUME), gConfig.iVolume); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_VOLUME), gConfig.iVolume * 100 / SDL_MIX_MAXVOLUME); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_WINDOWHEIGHT), gConfig.dwScreenHeight); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_WINDOWWIDTH), gConfig.dwScreenWidth); fputs(buf, fp);
 

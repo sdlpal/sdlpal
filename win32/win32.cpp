@@ -110,7 +110,7 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	gConfig.iAudioChannels = IsDlgButtonChecked(hwndDlg, IDC_STEREO) ? 2 : 1;
 	gConfig.iSampleRate = GetDlgItemInt(hwndDlg, IDC_SAMPLERATE, nullptr, FALSE);
 	gConfig.wAudioBufferSize = GetDlgItemInt(hwndDlg, IDC_AUDIOBUFFER, nullptr, FALSE);
-	gConfig.iVolume = TrackBar_GetPos(hwndDlg, IDC_VOLUME);
+	gConfig.iVolume = TrackBar_GetPos(hwndDlg, IDC_VOLUME) * SDL_MIX_MAXVOLUME / 100;
 	gConfig.iResampleQuality = TrackBar_GetPos(hwndDlg, IDC_QUALITY);
 	if (gConfig.eMusicType == MUSIC_RIX)
 	{
@@ -158,7 +158,7 @@ void ResetControls(HWND hwndDlg)
 	TrackBar_SetRange(hwndDlg, IDC_QUALITY, 0, 4, FALSE);
 	TrackBar_SetPos(hwndDlg, IDC_QUALITY, gConfig.iResampleQuality, TRUE);
 	TrackBar_SetRange(hwndDlg, IDC_VOLUME, 0, 100, FALSE);
-	TrackBar_SetPos(hwndDlg, IDC_VOLUME, gConfig.iVolume, TRUE);
+	TrackBar_SetPos(hwndDlg, IDC_VOLUME, gConfig.iVolume * 100 / SDL_MIX_MAXVOLUME, TRUE);
 }
 
 INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
@@ -168,8 +168,8 @@ INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("MP3"));
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("OGG"));
 
-	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("RIX"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("MIDI"));
+	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("RIX"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("MP3"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("OGG"));
 

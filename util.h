@@ -32,6 +32,11 @@ extern "C"
 {
 #endif
 
+long
+flength(
+   FILE *fp
+);
+
 void
 trim(
    char *str
@@ -134,14 +139,10 @@ UTIL_IsAbsolutePath(
 	LPCSTR  lpszFileName
 );
 
-#if PAL_HAS_TOUCH
-
 BOOL
 UTIL_TouchEnabled(
    VOID
 );
-
-#endif
 
 INT
 UTIL_Platform_Init(

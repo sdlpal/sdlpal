@@ -49,16 +49,11 @@ void SDLPal::MainPage::LoadControlContents()
 	tsSurroundOPL->IsOn = (gConfig.fUseSurroundOPL == TRUE);
 	tsTouchOverlay->IsOn = (gConfig.fUseTouchOverlay == TRUE);
 
-	slVolume->Value = gConfig.iVolume;
+	slVolume->Value = gConfig.iVolume * 100 / SDL_MIX_MAXVOLUME;
 	slQuality->Value = gConfig.iResampleQuality;
 
 	cbCD->SelectedIndex = (gConfig.eCDType == MUSIC_MP3) ? 0 : 1;
-	if (gConfig.eMusicType == MUSIC_OGG)
-		cbBGM->SelectedIndex = 2;
-	else if (gConfig.eMusicType == MUSIC_MP3)
-		cbBGM->SelectedIndex = 1;
-	else
-		cbBGM->SelectedIndex = 0;
+	cbBGM->SelectedIndex = (gConfig.eMusicType >= MUSIC_RIX && gConfig.eMusicType <= MUSIC_OGG) ? (gConfig.eMusicType - MUSIC_RIX) : 0;
 	cbOPL->SelectedIndex = (int)gConfig.eOPLType;
 
 	if (gConfig.iSampleRate <= 11025)
@@ -102,12 +97,12 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.fUseSurroundOPL = tsSurroundOPL->IsOn ? TRUE : FALSE;
 	gConfig.fUseTouchOverlay = tsTouchOverlay->IsOn ? TRUE : FALSE;
 
-	gConfig.iVolume = (int)slVolume->Value;
+	gConfig.iVolume = (int)slVolume->Value * SDL_MIX_MAXVOLUME / 100;
 	gConfig.iResampleQuality = (int)slQuality->Value;
 	gConfig.uCodePage = tsLanguage->IsOn ? CP_GBK : CP_BIG5;
 
 	gConfig.eCDType = (MUSICTYPE)(MUSIC_MP3 + cbCD->SelectedIndex);
-	gConfig.eMusicType = (cbBGM->SelectedIndex >= 1) ? (MUSICTYPE)(MUSIC_MIDI + cbBGM->SelectedIndex) : MUSIC_RIX;
+	gConfig.eMusicType = (MUSICTYPE)(MUSIC_RIX + cbBGM->SelectedIndex);
 	gConfig.eOPLType = (OPLTYPE)cbOPL->SelectedIndex;
 
 	gConfig.iSampleRate = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbSampleRate->SelectedItem)->Content)->Data(), nullptr, 10);

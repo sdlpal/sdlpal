@@ -10,7 +10,7 @@ LICENSE
 
 SDLPAL is originally created by Wei Mingzhi from 2009.
 Copyright (c) 2009-2011 Wei Mingzhi <whistler_wmz@users.sf.net>.
-Copyright (c) 2011-2015 SDLPAL development team.
+Copyright (c) 2011-2016 SDLPAL development team.
 All rights reserved.
 
 SDLPAL is distributed under the terms of GNU General Public License, version 3
@@ -20,8 +20,6 @@ gpl.txt for details.
 Many of the ideas of this program are based on documents from PAL
 Research Project (https://github.com/palxex/palresearch), and portions of the
 code are based on the work done by Baldur and louyihua.
-
-The getopt.c file is based on source code in OpenBSD.
 
 The resampler code is based on the code in Kode54's foo_input_adplug project
 (https://github.com/kode54/foo_input_adplug).
@@ -33,9 +31,10 @@ Adplug (http://adplug.sourceforge.net/)
 SDL_mixer (http://www.libsdl.org/projects/SDL_mixer/)
 libmad (http://www.underbit.com/products/mad/)
 libogg & libvorbis (http://www.vorbis.com/)
+FLTK (http://www.fltk.org)
 
 And some of the OPL simulation cores this program used are from the DOSBOX
-project (http://www.dosbox.com).
+project (http://www.dosbox.com) and MAME project (http://mamedev.org/).
 
 Please see authors.txt for additional authors.
 
@@ -43,42 +42,67 @@ This program does NOT include any code or data files of the original game,
 which is proprietary and copyrighted by SoftStar Inc.
 
 
-COMPILE UNDER WINDOWS
-=====================
+COMPILE FOR WINDOWS
+===================
 
-The following compilers/IDEs are supported under Windows:
+The Microsoft Visual Studio 2013 or higher is supported under Windows.
 
-1) Microsoft Visual Studio 2013 or higher (official)
-2) Dev-C++ 4.9.9.2 (unofficial)
-3) Open Watcom 1.7 (unofficial)
+To compile the WIN32 desktop version, open the Visual Studio project file 
+'sdlpal.sln' under the 'win32' directory.
 
-To compile, open the respective project file (sdlpal.sln, sdlpal.dev, or
-sdlpal.wpj). You need to have SDL 2.0 development files installed.
+To comiple the WinRT version, open one of the project files (SDLPal.UWP.sln,
+SDLPal.Windows.sln, SDLPal.WindowsPhone.sln) under the 'winrt' directory.
+Please note that, to compile the UWP version, Visual Studio 2015 or higher
+is required.
+
+For all situations, you need to have SDL 2.0 development or source files 
+installed at the SDL2 directory under the source tree.
 
 
-COMPILE UNDER GNU/LINUX
-=======================
+COMPILE FOR GNU/LINUX OR UNIX
+=============================
 
 To compile, type:
 
+cd unix
 make
 
 You need to have SDL 2.0 development files installed. The compiled executable
-should be generated with the filename 'sdlpal' at the top directory of source
-files.
+should be generated with the filename 'sdlpal' at the current directory. By
+default, SDLPAL uses the FLTK library to provide setting GUI at launch. If you
+do not want to use the library, please define the macro 'PAL_NO_LAUNCH_UI' in
+the makefile.
 
 SDLPAL should also be able to compile and run under other UNIX-like systems, 
 however it's not tested.
 
 
-COMPILE UNDER MAC OS X
-======================
+COMPILE FOR MAC OS X
+====================
 
 To compile, open the project Pal.xcodeproj with Xcode, and click Build. You
 need to have SDL framework installed at /Library/Frameworks.
 
 The compiled bundle should work as a "universal" binary which works on both
 Intel and PowerPC.
+
+
+COMPILE FOR IOS
+===============
+
+To be written.
+
+
+COMPILE FOR ANDROID
+===================
+
+To be written.
+
+
+COMPILE FOR OTHER PLATFORMS
+===========================
+
+To be written.
 
 
 CLASSIC BUILD

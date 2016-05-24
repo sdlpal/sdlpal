@@ -220,7 +220,6 @@
     <ClInclude Include="..\..\font.h" />
     <ClInclude Include="..\..\fontglyph.h" />
     <ClInclude Include="..\..\game.h" />
-    <ClInclude Include="..\..\getopt.h" />
     <ClInclude Include="..\..\global.h" />
     <ClInclude Include="..\..\input.h" />
     <ClInclude Include="..\..\itemmenu.h" />
@@ -327,7 +326,6 @@
     <ClCompile Include="..\..\fight.c" />
     <ClCompile Include="..\..\font.c" />
     <ClCompile Include="..\..\game.c" />
-    <ClCompile Include="..\..\getopt.c" />
     <ClCompile Include="..\..\global.c" />
     <ClCompile Include="..\..\input.c" />
     <ClCompile Include="..\..\itemmenu.c" />
