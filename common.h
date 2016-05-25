@@ -244,7 +244,7 @@ extern "C"
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gConfig.fFullScreen ? SDL_FULLSCREEN : 0))
 # endif
 
-# define PAL_PLATFORM         "Windows Phone"
+# define PAL_PLATFORM         "Windows Runtime"
 # define PAL_CREDIT           "(Unknown)"
 # define PAL_PORTYEAR         "2015"
 
