@@ -22,7 +22,9 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
-#define PAL_CLASSIC        1
+#ifndef ENABLE_REVISIED_BATTLE
+# define PAL_CLASSIC        1
+#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -250,19 +252,21 @@ extern "C"
 
 #else
 
-#define PAL_HAS_JOYSTICKS     1
+# ifndef PAL_HAS_JOYSTICKS
+#  define PAL_HAS_JOYSTICKS    1
+# endif
 
 #if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
 # define PAL_ALLOW_KEYREPEAT   1
 # define PAL_HAS_SDLCD         1
 #endif
 
-#define PAL_PREFIX            "./"
-#define PAL_SAVE_PREFIX       "./"
+# define PAL_PREFIX            "./"
+# define PAL_SAVE_PREFIX       "./"
 
-#define PAL_DEFAULT_WINDOW_WIDTH   640
-#define PAL_DEFAULT_WINDOW_HEIGHT  400
-#define PAL_DEFAULT_FULLSCREEN_HEIGHT 480
+# define PAL_DEFAULT_WINDOW_WIDTH   640
+# define PAL_DEFAULT_WINDOW_HEIGHT  400
+# define PAL_DEFAULT_FULLSCREEN_HEIGHT 480
 
 # if SDL_VERSION_ATLEAST(2,0,0)
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | (gConfig.fFullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0))
@@ -282,18 +286,22 @@ extern "C"
 
 /* Default for 1024 samples */
 #ifndef PAL_AUDIO_DEFAULT_BUFFER_SIZE
-#define PAL_AUDIO_DEFAULT_BUFFER_SIZE   1024
+# define PAL_AUDIO_DEFAULT_BUFFER_SIZE   1024
 #endif
 
 #ifndef PAL_HAS_SDLCD
-#define PAL_HAS_SDLCD         0
+# define PAL_HAS_SDLCD        0
 #endif
 
-#define PAL_HAS_MP3           1   /* Try always enable MP3. If compilation/run failed, please change this value to 0. */
-#define PAL_HAS_OGG           1   /* Try always enable OGG. If compilation/run failed, please change this value to 0. */
+#ifndef PAL_HAS_MP3
+# define PAL_HAS_MP3          1   /* Try always enable MP3. If compilation/run failed, please change this value to 0. */
+#endif
+#ifndef PAL_HAS_OGG
+# define PAL_HAS_OGG          1   /* Try always enable OGG. If compilation/run failed, please change this value to 0. */
+#endif
 
 #ifndef SDL_INIT_CDROM
-#define SDL_INIT_CDROM        0	  /* Compatibility with SDL 1.2 */
+# define SDL_INIT_CDROM       0	  /* Compatibility with SDL 1.2 */
 #endif
 
 #ifndef SDL_AUDIO_BITSIZE
@@ -311,10 +319,7 @@ extern "C"
 #ifdef _WIN32
 
 #include <windows.h>
-
-#if !defined(__BORLANDC__)
 #include <io.h>
-#endif
 
 #if defined(_MSC_VER)
 # if _MSC_VER < 1900
@@ -326,12 +331,12 @@ extern "C"
 #endif
 
 #ifndef _LPCBYTE_DEFINED
-#define _LPCBYTE_DEFINED
+# define _LPCBYTE_DEFINED
 typedef const BYTE *LPCBYTE;
 #endif
 
 #ifndef __WINRT__
-#define PAL_HAS_NATIVEMIDI  1
+# define PAL_HAS_NATIVEMIDI  1
 #endif
 
 #else
@@ -391,14 +396,6 @@ typedef const WCHAR        *LPCWSTR;
 #ifndef SDL_TICKS_PASSED
 #define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)
 #endif
-
-#define PAL_DelayUntil(t) \
-   PAL_ProcessEvent(); \
-   while (!SDL_TICKS_PASSED(SDL_GetTicks(), (t))) \
-   { \
-      PAL_ProcessEvent(); \
-      SDL_Delay(1); \
-   }
 
 typedef enum tagCODEPAGE {
 	CP_MIN = 0,

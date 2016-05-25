@@ -126,7 +126,6 @@ void ResetControls(HWND hwndDlg)
 {
 	TCHAR buffer[100];
 
-	EnableDlgItem(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile ? TRUE : FALSE);
 	EnableDlgItem(hwndDlg, IDC_OPL, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_OPLOFFSET, gConfig.eMusicType == MUSIC_RIX);

@@ -157,6 +157,14 @@ YJ2_Decompress(
    INT          DestSize
 );
 
+#define PAL_DelayUntil(t) \
+   PAL_ProcessEvent(); \
+   while (!SDL_TICKS_PASSED(SDL_GetTicks(), (t))) \
+   { \
+      PAL_ProcessEvent(); \
+      SDL_Delay(1); \
+   }
+
 #ifdef __cplusplus
 }
 #endif
