@@ -8,16 +8,16 @@
 
 #ifndef PAL_NO_LAUNCH_UI
 
-#include <Fl/Fl.h>
-#include <Fl/Fl_Window.h>
-#include <Fl/Fl_Box.h>
-#include <Fl/Fl_Button.h>
-#include <Fl/Fl_Check_Button.h>
-#include <Fl/Fl_Radio_Round_Button.h>
-#include <Fl/Fl_Hor_Value_Slider.h>
-#include <Fl/Fl_Input.h>
-#include <Fl/Fl_Int_Input.h>
-#include <Fl/Fl_Choice.h>
+#include <Fl/Fl.H>
+#include <Fl/Fl_Window.H>
+#include <Fl/Fl_Box.H>
+#include <Fl/Fl_Button.H>
+#include <Fl/Fl_Check_Button.H>
+#include <Fl/Fl_Radio_Round_Button.H>
+#include <Fl/Fl_Hor_Value_Slider.H>
+#include <Fl/Fl_Input.H>
+#include <Fl/Fl_Int_Input.H>
+#include <Fl/Fl_Choice.H>
 
 struct {
    Fl_Input* gamepath;

@@ -5,7 +5,7 @@ TARGET = sdlpal
 HOST =
 
 CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c)
-CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp)
+CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
 OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 
 CCFLAGS = `sdl2-config --cflags` -g -Wall -O2 -fno-strict-aliasing -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_CLASSIC -DPAL_HAS_PLATFORM_SPECIFIC_UTILS
