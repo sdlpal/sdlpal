@@ -311,7 +311,7 @@ PAL_ReadMessageFile(
 				else
 				{
 					char *v;
-					int l, i = PAL_ParseLine(buffer, &v, &l, TRUE);
+					int l, i = PAL_ParseLine(buffer, &v, &l, FALSE);
 					if (i > 0)
 					{
 						int len = PAL_MultiByteToWideCharCP(CP_UTF_8, v, -1, NULL, 0);
