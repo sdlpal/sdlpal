@@ -37,7 +37,8 @@ struct {
    Fl_Check_Button* surround;
    Fl_Int_Input* buffer;
    Fl_Hor_Value_Slider* quality;
-   Fl_Hor_Value_Slider* volume;
+   Fl_Hor_Value_Slider* music;
+   Fl_Hor_Value_Slider* sound;
 } gWidgets;
 
 struct {
@@ -62,7 +63,8 @@ struct {
    const char* surround;
    const char* buffer;
    const char* quality;
-   const char* volume;
+   const char* musvol;
+   const char* sndvol;
    const char* exit;
    const char* launch;
    const char* def;
@@ -71,17 +73,17 @@ struct {
      "&Traditional Chinese", "&Simplified Chinese", "Message file:", "Use &embedded font",
      "Use touc&h overlay", "&Keep aspect ratio", "&Full screen", "&CD type:", "&BGM type:",
      "&OPL type:", "Sample rate:", "Ste&reo", "OPL rate:", "Surround O&PL", "Buffer:",
-     "Quality:", "Volume:", "E&xit", "&Launch game", "&Default" },
+     "Quality:", "Music volume:", "Sound volume:", "E&xit", "&Launch game", "&Default" },
    { "SDLPAL 启动器", "游戏语言设置", "显示设置", "音频设置", "游戏资源目录：",
      "繁体中文(&T)", "简体中文(&S)", "语言文件：", "使用游戏资源内嵌字体(&E)",
      "启用触屏辅助(&H)", "保持纵横比(&K)", "全屏模式(&F)", "&CD 音源：", "&BGM 音源：",
      "&OPL 类型：", "采样率：", "立体声(&R)", "OPL 采样率：", "环绕声 O&PL", "缓冲区：",
-     "质量：", "音量：", "退出(&X)", "启动游戏(&L)", "默认设置(&D)" },
+     "质量：", "音乐音量：", "音效音量：", "退出(&X)", "启动游戏(&L)", "默认设置(&D)" },
    { "SDLPAL 啟動器", "遊戲語言設置", "顯示設定", "音訊設定", "遊戲資源目錄：",
      "繁體中文(&T)", "簡體中文(&S)", "語言檔：", "使用遊戲資源內嵌字體(&E)",
      "啟用觸屏輔助(&H)", "保持縱橫比(&K)", "全屏模式(&F)", "&CD 音源：", "&BGM 音源：",
      "&OPL 類型：", "取樣速率：", "立體聲(&R)", "OPL 取樣速率：", "環繞聲 O&PL", "緩衝區：",
-     "品質：", "音量：", "退出(&X)", "啟動遊戲(&L)", "默認設定(&D)" },
+     "品質：", "音樂音量：", "音效音量：", "退出(&X)", "啟動遊戲(&L)", "默認設定(&D)" },
 };
 
 void InitControls()
@@ -104,7 +106,8 @@ void InitControls()
    gWidgets.surround->value(gConfig.fUseSurroundOPL ? 1 : 0);
    sprintf(buffer, "%d", gConfig.wAudioBufferSize); gWidgets.buffer->value(buffer);
    gWidgets.quality->value(gConfig.iResampleQuality);
-   gWidgets.volume->value(gConfig.iVolume * 100 / SDL_MIX_MAXVOLUME);
+   gWidgets.music->value(gConfig.iMusicVolume);
+   gWidgets.sound->value(gConfig.iSoundVolume);
 }
 
 void SaveControls()
@@ -127,7 +130,8 @@ void SaveControls()
    gConfig.fUseSurroundOPL = gWidgets.surround->value();
    gConfig.wAudioBufferSize = atoi(gWidgets.buffer->value());
    gConfig.iResampleQuality = (int)gWidgets.quality->value();
-   gConfig.iVolume = (int)gWidgets.volume->value() * SDL_MIX_MAXVOLUME / 100;
+   gConfig.iMusicVolume = (int)gWidgets.music->value();
+   gConfig.iSoundVolume = (int)gWidgets.sound->value();
    gConfig.fLaunchSetting = FALSE;
 }
 
@@ -164,7 +168,7 @@ Fl_Window* InitWindow()
    gWidgets.aspect = new Fl_Check_Button(330, 140, 160, 20, gLabels[lang].aspect);
    gWidgets.fullscreen = new Fl_Check_Button(520, 140, 120, 20, gLabels[lang].fullscreen);
 
-   (new Fl_Box(FL_BORDER_BOX, 5, 210, 630, 110, gLabels[lang].audio))->align(FL_ALIGN_TOP);
+   (new Fl_Box(FL_BORDER_BOX, 5, 210, 630, 130, gLabels[lang].audio))->align(FL_ALIGN_TOP);
    (gWidgets.cd = new Fl_Choice(84, 219, lang ? 100 : 120, 22, gLabels[lang].cd))->add("MP3|OGG");
    (gWidgets.bgm = new Fl_Choice(285, 219, 60, 22, gLabels[lang].bgm))->add("RIX|MP3|OGG");
    gWidgets.stereo = new Fl_Check_Button(365, 220, 60, 20, gLabels[lang].stereo);
@@ -174,15 +178,20 @@ Fl_Window* InitWindow()
    gWidgets.surround = new Fl_Check_Button(365, 250, 60, 20, gLabels[lang].surround);
    gWidgets.buffer = new Fl_Int_Input(570, 249, 60, 22, gLabels[lang].buffer);
 
-   gWidgets.quality = new Fl_Hor_Value_Slider(72, 289, 230, 22, gLabels[lang].quality);
+   gWidgets.quality = new Fl_Hor_Value_Slider(72, 279, 180, 22, gLabels[lang].quality);
    gWidgets.quality->align(FL_ALIGN_LEFT);
    gWidgets.quality->bounds(0, 4);
    gWidgets.quality->precision(0);
 
-   gWidgets.volume = new Fl_Hor_Value_Slider(400, 289, 230, 22, gLabels[lang].volume);
-   gWidgets.volume->align(FL_ALIGN_LEFT);
-   gWidgets.volume->bounds(0, 100);
-   gWidgets.volume->precision(0);
+   gWidgets.music = new Fl_Hor_Value_Slider(380, 279, 250, 22, gLabels[lang].musvol);
+   gWidgets.music->align(FL_ALIGN_LEFT);
+   gWidgets.music->bounds(0, 100);
+   gWidgets.music->precision(0);
+
+   gWidgets.sound = new Fl_Hor_Value_Slider(380, 309, 250, 22, gLabels[lang].sndvol);
+   gWidgets.sound->align(FL_ALIGN_LEFT);
+   gWidgets.sound->bounds(0, 100);
+   gWidgets.sound->precision(0);
 
    (new Fl_Button(5, 370, 120, 24, gLabels[lang].exit))->callback([](Fl_Widget* ctrl, void* window) {
       if (ctrl->when() == FL_WHEN_RELEASE)

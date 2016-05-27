@@ -33,36 +33,143 @@
 #include <vorbis/codec.h>
 #endif
 
-static BOOL  gSndOpened = FALSE;
-
-BOOL         g_fNoSound = FALSE;
-BOOL         g_fNoMusic = FALSE;
-
-#ifdef PAL_CLASSIC
-int          g_iCurrChannel = 0;
-#endif
-
 #define PAL_CDTRACK_BASE    10000
 
 typedef LPCBYTE(*FNLoadSoundData)(LPCBYTE, DWORD, SDL_AudioSpec *);
+
+typedef struct tagWAVEPLAYER
+{
+	FNLoadSoundData           LoadSoundData;
+	void                     *resampler;
+	short                    *buf;
+	int                       buf_len, pos, len;
+} WAVEPLAYER;
 
 typedef struct tagSNDPLAYER
 {
    FILE                     *mkf;
    SDL_AudioSpec             spec;
+   SDL_AudioCVT              cvt;
    SDL_mutex                *mtx;
-   LPBYTE                    buf[2], pos[2];
-   INT                       audio_len[2];
-   void                     *resampler;
    MUSICPLAYER              *pMusPlayer;
    MUSICPLAYER              *pCDPlayer;
 #if PAL_HAS_SDLCD
    SDL_CD                   *pCD;
 #endif
-   FNLoadSoundData           LoadSoundData;
+   WAVEPLAYER                wavePlayer;
+   BOOL                      fOpened;
+   BOOL                      fMusicEnabled;
+   BOOL                      fSoundEnabled;
 } SNDPLAYER;
 
 static SNDPLAYER gSndPlayer;
+
+PAL_FORCE_INLINE
+void
+AUDIO_MixNative(
+	short     *dst,
+	short     *src,
+	int        samples
+)
+{
+	while (samples > 0)
+	{
+		int val = *src++ + *dst;
+		if (val > SHRT_MAX)
+			*dst++ = SHRT_MAX;
+		else if (val < SHRT_MIN)
+			*dst++ = SHRT_MIN;
+		else
+			*dst++ = (short)val;
+		samples--;
+	}
+}
+
+PAL_FORCE_INLINE
+void
+AUDIO_MixNativeVolume(
+	short     *dst,
+	int        iDstVolume,
+	short     *src,
+	int        iSrcVolume,
+	int        samples
+)
+{
+	while (samples > 0)
+	{
+		int val = ((*src++) * iSrcVolume + *dst * iDstVolume) / PAL_MAX_VOLUME;
+		if (val > SHRT_MAX)
+			*dst++ = SHRT_MAX;
+		else if (val < SHRT_MIN)
+			*dst++ = SHRT_MIN;
+		else
+			*dst++ = (short)val;
+		samples--;
+	}
+}
+
+PAL_FORCE_INLINE
+void
+AUDIO_AdjustNativeVolume(
+	short     *srcdst,
+	int        iVolume,
+	int        samples
+)
+{
+	while (samples > 0)
+	{
+		*srcdst = *srcdst * iVolume / PAL_MAX_VOLUME;
+		samples--; srcdst++;
+	}
+}
+
+#if (defined(_M_IX86) || defined(__i386__) || defined(_M_X64) || defined(__amd64__))
+
+PAL_FORCE_INLINE
+void
+AUDIO_MixNative_SSE2(
+	short     *dst,
+	short     *src,
+	int        samples
+)
+{
+	while (samples > 0)
+	{
+		int val = *src++ + *dst;
+		if (val > SHRT_MAX)
+			*dst++ = SHRT_MAX;
+		else if (val < SHRT_MIN)
+			*dst++ = SHRT_MIN;
+		else
+			*dst++ = (short)val;
+		samples--;
+	}
+}
+
+PAL_FORCE_INLINE
+void
+AUDIO_MixNativeVolume_SSE2(
+	short     *dst,
+	int        iDstVolume,
+	short     *src,
+	int        iSrcVolume,
+	int        samples
+)
+{
+	while (samples > 0)
+	{
+		int val = ((*src++) * iSrcVolume + *dst * iDstVolume) / PAL_MAX_VOLUME;
+		if (val > SHRT_MAX)
+			*dst++ = SHRT_MAX;
+		else if (val < SHRT_MIN)
+			*dst++ = SHRT_MIN;
+		else
+			*dst++ = (short)val;
+		samples--;
+	}
+}
+
+#endif
 
 typedef struct tagRIFFHEADER
 {
@@ -318,7 +425,7 @@ SOUND_ResampleU8(
 			src_samples -= to_write;
 			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
 			{
-				*dst = SDL_SwapLE16(resampler_get_and_remove_sample(resampler));
+				*dst = resampler_get_and_remove_sample(resampler);
 				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
 			}
 		}
@@ -330,7 +437,7 @@ SOUND_ResampleU8(
 				resampler_write_sample(resampler, (src[-lpSpec->channels] ^ 0x80) << 8);
 			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
 			{
-				*dst = SDL_SwapLE16(resampler_get_and_remove_sample(resampler));
+				*dst = resampler_get_and_remove_sample(resampler);
 				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
 			}
 		}
@@ -391,7 +498,7 @@ SOUND_ResampleS16(
 			src_samples -= to_write;
 			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
 			{
-				*dst = SDL_SwapLE16(resampler_get_and_remove_sample(resampler));
+				*dst = resampler_get_and_remove_sample(resampler);
 				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
 			}
 		}
@@ -404,7 +511,7 @@ SOUND_ResampleS16(
 				resampler_write_sample(resampler, val);
 			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
 			{
-				*dst = SDL_SwapLE16(resampler_get_and_remove_sample(resampler));
+				*dst = resampler_get_and_remove_sample(resampler);
 				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
 			}
 		}
@@ -412,7 +519,7 @@ SOUND_ResampleS16(
 }
 
 static VOID SDLCALL
-SOUND_FillAudio(
+AUDIO_FillBuffer(
    LPVOID          udata,
    LPBYTE          stream,
    INT             len
@@ -436,18 +543,20 @@ SOUND_FillAudio(
 
 --*/
 {
-   int        i;
-
 #if SDL_VERSION_ATLEAST(2,0,0)
    memset(stream, 0, len);
 #endif
 
+   SDL_mutexP(gSndPlayer.mtx);
+
+   gSndPlayer.cvt.buf = stream;
+   gSndPlayer.cvt.len = len;
+
    //
    // Play music
    //
-   if (!g_fNoMusic)
+   if (gSndPlayer.fMusicEnabled)
    {
-	   SDL_mutexP(gSndPlayer.mtx);
 	   if (gSndPlayer.pMusPlayer)
 	   {
 		   gSndPlayer.pMusPlayer->FillBuffer(gSndPlayer.pMusPlayer, stream, len);
@@ -457,47 +566,43 @@ SOUND_FillAudio(
 	   {
 		   gSndPlayer.pCDPlayer->FillBuffer(gSndPlayer.pCDPlayer, stream, len);
 	   }
-	   SDL_mutexV(gSndPlayer.mtx);
    }
 
    //
-   // No current playing sound
+   // Play sound
    //
-   if (g_fNoSound)
-   {
-      return;
-   }
-
-   SDL_mutexP(gSndPlayer.mtx);
-
-   for (i = 0; i < 2; i++)
+   if (gSndPlayer.fSoundEnabled && gSndPlayer.wavePlayer.len > 0)
    {
       //
-      // Only play if we have data left
+      // Mix as much sound data as possible
       //
-      if (gSndPlayer.buf[i] == NULL)
+      WAVEPLAYER *player = &gSndPlayer.wavePlayer;
+      int mixlen = min(player->len, len >> 1);
+      if (player->pos + mixlen > player->buf_len)
       {
-         continue;
+         AUDIO_MixNativeVolume((short *)stream, gConfig.iMusicVolume, player->buf + player->pos, gConfig.iSoundVolume, player->buf_len - player->pos);
+         stream += (player->buf_len - player->pos) << 1; memset(player->buf + player->pos, 0, (player->buf_len - player->pos) << 1);
+		 AUDIO_MixNativeVolume((short *)stream, gConfig.iMusicVolume, player->buf, gConfig.iSoundVolume, player->pos + mixlen - player->buf_len);
+         stream += (player->pos + mixlen - player->buf_len) << 1; memset(player->buf, 0, (player->pos + mixlen - player->buf_len) << 1);
       }
-
-      if (gSndPlayer.audio_len[i] == 0)
+      else
       {
-         //
-         // Delete the audio buffer from memory
-         //
-         free(gSndPlayer.buf[i]);
-         gSndPlayer.buf[i] = NULL;
-         continue;
+         AUDIO_MixNativeVolume((short *)stream, gConfig.iMusicVolume, player->buf + player->pos, gConfig.iSoundVolume, mixlen);
+         stream += mixlen << 1; memset(player->buf + player->pos, 0, mixlen << 1);
       }
-
-      //
-      // Mix as much data as possible
-      //
-      len = (len > gSndPlayer.audio_len[i]) ? gSndPlayer.audio_len[i] : len;
-      SDL_MixAudio(stream, gSndPlayer.pos[i], len, gConfig.iVolume);
-      gSndPlayer.pos[i] += len;
-      gSndPlayer.audio_len[i] -= len;
+      player->pos = (player->pos + mixlen) % player->buf_len; player->len -= mixlen; len -= (mixlen << 1);
    }
+
+   //
+   // Adjust volume in the remaing buffer
+   //
+   AUDIO_AdjustNativeVolume((short *)stream, gConfig.iMusicVolume, len >> 1);
+
+   //
+   // Convert audio from native byte-order to actual byte-order
+   //
+   SDL_ConvertAudio(&gSndPlayer.cvt);
+
    SDL_mutexV(gSndPlayer.mtx);
 }
 
@@ -540,14 +645,14 @@ SOUND_LoadMKF(
 		gSndPlayer.mkf = UTIL_OpenFile(mkfs[i]);
 		if (gSndPlayer.mkf)
 		{
-			gSndPlayer.LoadSoundData = func[i];
+			gSndPlayer.wavePlayer.LoadSoundData = func[i];
 			break;
 		}
 	}
 }
 
 INT
-SOUND_OpenAudio(
+AUDIO_OpenDevice(
    VOID
 )
 /*++
@@ -567,7 +672,7 @@ SOUND_OpenAudio(
 {
    SDL_AudioSpec spec;
 
-   if (gSndOpened)
+   if (gSndPlayer.fOpened)
    {
       //
       // Already opened
@@ -575,7 +680,9 @@ SOUND_OpenAudio(
       return -1;
    }
 
-   gSndOpened = FALSE;
+   gSndPlayer.fOpened = FALSE;
+   gSndPlayer.fMusicEnabled = TRUE;
+   gSndPlayer.fSoundEnabled = TRUE;
 
    //
    // Load the MKF file.
@@ -590,7 +697,7 @@ SOUND_OpenAudio(
    // Initialize the resampler
    //
    resampler_init();
-   gSndPlayer.resampler = resampler_create();
+   gSndPlayer.wavePlayer.resampler = resampler_create();
 
    //
    // Open the sound subsystem.
@@ -599,7 +706,7 @@ SOUND_OpenAudio(
    gSndPlayer.spec.format = AUDIO_S16;
    gSndPlayer.spec.channels = gConfig.iAudioChannels;
    gSndPlayer.spec.samples = gConfig.wAudioBufferSize;
-   gSndPlayer.spec.callback = SOUND_FillAudio;
+   gSndPlayer.spec.callback = AUDIO_FillBuffer;
 
    if (SDL_OpenAudio(&gSndPlayer.spec, &spec) < 0)
    {
@@ -608,19 +715,18 @@ SOUND_OpenAudio(
       //
       return -3;
    }
+   else
+      gSndPlayer.spec = spec;
 
-   memcpy(&gSndPlayer.spec, &spec, sizeof(SDL_AudioSpec));
+   SDL_BuildAudioCVT(&gSndPlayer.cvt, AUDIO_S16SYS, spec.channels, spec.freq, spec.format, spec.channels, spec.freq);
 
-   gSndPlayer.buf[0] = NULL;
-   gSndPlayer.pos[0] = NULL;
-   gSndPlayer.audio_len[0] = 0;
-
-   gSndPlayer.buf[1] = NULL;
-   gSndPlayer.pos[1] = NULL;
-   gSndPlayer.audio_len[1] = 0;
+   gSndPlayer.wavePlayer.buf = NULL;
+   gSndPlayer.wavePlayer.buf_len = 0;
+   gSndPlayer.wavePlayer.pos = 0;
+   gSndPlayer.wavePlayer.len = 0;
 
    gSndPlayer.mtx = SDL_CreateMutex();
-   gSndOpened = TRUE;
+   gSndPlayer.fOpened = TRUE;
 
    //
    // Initialize the music subsystem.
@@ -708,7 +814,7 @@ SOUND_OpenAudio(
 }
 
 VOID
-SOUND_CloseAudio(
+AUDIO_CloseDevice(
    VOID
 )
 /*++
@@ -730,16 +836,13 @@ SOUND_CloseAudio(
 
    SDL_mutexP(gSndPlayer.mtx);
 
-   if (gSndPlayer.buf[0] != NULL)
+   if (gSndPlayer.wavePlayer.buf != NULL)
    {
-      free(gSndPlayer.buf[0]);
-      gSndPlayer.buf[0] = NULL;
-   }
-
-   if (gSndPlayer.buf[1] != NULL)
-   {
-      free(gSndPlayer.buf[1]);
-      gSndPlayer.buf[1] = NULL;
+      free(gSndPlayer.wavePlayer.buf);
+      gSndPlayer.wavePlayer.buf = NULL;
+	  gSndPlayer.wavePlayer.buf_len = 0;
+	  gSndPlayer.wavePlayer.pos = 0;
+	  gSndPlayer.wavePlayer.len = 0;
    }
 
    if (gSndPlayer.mkf != NULL)
@@ -763,17 +866,17 @@ SOUND_CloseAudio(
 #if PAL_HAS_SDLCD
    if (gSndPlayer.pCD != NULL)
    {
-      SOUND_PlayCDA(-1);
+      AUDIO_PlayCDTrack(-1);
       SDL_CDClose(gSndPlayer.pCD);
    }
 #endif
 
    if (gConfig.eMusicType == MUSIC_MIDI) MIDI_Play(0, FALSE);
 
-   if (gSndPlayer.resampler)
+   if (gSndPlayer.wavePlayer.resampler)
    {
-      resampler_delete(gSndPlayer.resampler);
-	  gSndPlayer.resampler = NULL;
+      resampler_delete(gSndPlayer.wavePlayer.resampler);
+	  gSndPlayer.wavePlayer.resampler = NULL;
    }
 
    SDL_mutexV(gSndPlayer.mtx);
@@ -781,15 +884,29 @@ SOUND_CloseAudio(
 }
 
 SDL_AudioSpec*
-SOUND_GetAudioSpec(
+AUDIO_GetDeviceSpec(
 	VOID
 )
 {
 	return &gSndPlayer.spec;
 }
 
+static INT
+AUDIO_AdjustVolumeByValue(
+   INT   *iVolume,
+   INT    iValue
+)
+{
+   *iVolume += iValue;
+   if (*iVolume > PAL_MAX_VOLUME)
+      *iVolume = PAL_MAX_VOLUME;
+   else if (*iVolume < 0)
+      *iVolume = 0;
+   return *iVolume;
+}
+
 VOID
-SOUND_AdjustVolume(
+AUDIO_AdjustVolume(
    INT    iDirection
 )
 /*++
@@ -807,28 +924,13 @@ SOUND_AdjustVolume(
 
 --*/
 {
-   if (iDirection > 0)
-   {
-      gConfig.iVolume += SDL_MIX_MAXVOLUME * 0.03;
-      if (gConfig.iVolume > SDL_MIX_MAXVOLUME)
-      {
-		  gConfig.iVolume = SDL_MIX_MAXVOLUME;
-      }
-   }
-   else
-   {
-      gConfig.iVolume -= SDL_MIX_MAXVOLUME * 0.03;
-      if (gConfig.iVolume < 0)
-      {
-		  gConfig.iVolume = 0;
-      }
-   }
+   AUDIO_AdjustVolumeByValue(&gConfig.iMusicVolume, (iDirection > 0) ? 3 : -3);
+   AUDIO_AdjustVolumeByValue(&gConfig.iSoundVolume, (iDirection > 0) ? 3 : -3);
 }
 
 VOID
-SOUND_PlayChannel(
-   INT    iSoundNum,
-   INT    iChannel
+AUDIO_PlaySound(
+   INT    iSoundNum
 )
 /*++
   Purpose:
@@ -838,8 +940,6 @@ SOUND_PlayChannel(
   Parameters:
 
     [IN]  iSoundNum - number of the sound; the absolute value is used.
-
-    [IN]  iChannel - the number of channel (0 or 1).
 
   Return value:
 
@@ -853,21 +953,10 @@ SOUND_PlayChannel(
    LPCBYTE         bufsrc;
    int             len;
 
-   if (!gSndOpened || g_fNoSound)
+   if (!gSndPlayer.fOpened || !gSndPlayer.fSoundEnabled)
    {
       return;
    }
-
-   //
-   // Stop playing current sound.
-   //
-   SDL_mutexP(gSndPlayer.mtx);
-   if (gSndPlayer.buf[iChannel] != NULL)
-   {
-      free(gSndPlayer.buf[iChannel]);
-      gSndPlayer.buf[iChannel] = NULL;
-   }
-   SDL_mutexV(gSndPlayer.mtx);
 
    if (iSoundNum < 0)
    {
@@ -894,7 +983,7 @@ SOUND_PlayChannel(
    //
    PAL_MKFReadChunk(buf, len, iSoundNum, gSndPlayer.mkf);
 
-   bufsrc = gSndPlayer.LoadSoundData(buf, len, &wavespec);
+   bufsrc = gSndPlayer.wavePlayer.LoadSoundData(buf, len, &wavespec);
    if (bufsrc == NULL)
    {
 	   free(buf);
@@ -904,18 +993,18 @@ SOUND_PlayChannel(
    if (wavespec.freq != gSndPlayer.spec.freq)
    {
 	   /* Resampler is needed */
-	   resampler_set_quality(gSndPlayer.resampler, SOUND_IsIntegerConversion(wavespec.freq) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
-	   resampler_set_rate(gSndPlayer.resampler, (double)wavespec.freq / (double)gSndPlayer.spec.freq);
-	   len = (int)ceil(wavespec.size * (double)gSndPlayer.spec.freq / (double)wavespec.freq) * (SDL_AUDIO_BITSIZE(AUDIO_S16) / SDL_AUDIO_BITSIZE(wavespec.format));
+	   resampler_set_quality(gSndPlayer.wavePlayer.resampler, AUDIO_IsIntegerConversion(wavespec.freq) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
+	   resampler_set_rate(gSndPlayer.wavePlayer.resampler, (double)wavespec.freq / (double)gSndPlayer.spec.freq);
+	   len = (int)ceil(wavespec.size * (double)gSndPlayer.spec.freq / (double)wavespec.freq) * (SDL_AUDIO_BITSIZE(AUDIO_S16SYS) / SDL_AUDIO_BITSIZE(wavespec.format));
 	   if (len >= wavespec.channels * 2 && (bufdec = malloc(len)))
 	   {
 		   if (wavespec.format == AUDIO_S16)
-			   SOUND_ResampleS16(bufsrc, &wavespec, bufdec, len, gSndPlayer.resampler);
+			   SOUND_ResampleS16(bufsrc, &wavespec, bufdec, len, gSndPlayer.wavePlayer.resampler);
 		   else
-			   SOUND_ResampleU8(bufsrc, &wavespec, bufdec, len, gSndPlayer.resampler);
+			   SOUND_ResampleU8(bufsrc, &wavespec, bufdec, len, gSndPlayer.wavePlayer.resampler);
 		   /* Free the original buffer and reset the pointer for simpler later operations */
 		   free(buf); buf = bufdec;
-		   wavespec.format = AUDIO_S16;
+		   wavespec.format = AUDIO_S16SYS;
 		   wavespec.freq = gSndPlayer.spec.freq;
 	   }
 	   else
@@ -934,7 +1023,7 @@ SOUND_PlayChannel(
    // Build the audio converter and create conversion buffers
    //
    if (SDL_BuildAudioCVT(&wavecvt, wavespec.format, wavespec.channels, wavespec.freq,
-      gSndPlayer.spec.format, gSndPlayer.spec.channels, gSndPlayer.spec.freq) < 0)
+	   AUDIO_S16SYS, gSndPlayer.spec.channels, gSndPlayer.spec.freq) < 0)
    {
       free(buf);
       return;
@@ -953,26 +1042,52 @@ SOUND_PlayChannel(
    //
    // Run the audio converter
    //
-   if (SDL_ConvertAudio(&wavecvt) < 0)
+   if (SDL_ConvertAudio(&wavecvt) == 0)
    {
-      free(wavecvt.buf);
-      return;
+      WAVEPLAYER *player = &gSndPlayer.wavePlayer;
+
+      wavecvt.len = (int)(wavecvt.len * wavecvt.len_ratio) >> 1;
+
+      SDL_mutexP(gSndPlayer.mtx);
+
+      //
+      // Check if the current sound buffer is large enough
+      //
+      if (gSndPlayer.wavePlayer.buf_len < wavecvt.len)
+      {
+         if (player->pos + player->len > player->buf_len)
+         {
+            short *old_buf = player->buf;
+            player->buf = (short *)malloc(wavecvt.len << 1);
+            memcpy(player->buf, old_buf + player->pos, (player->buf_len - player->pos) << 1);
+            memcpy(player->buf + player->buf_len - player->pos, old_buf, (player->pos + player->len - player->buf_len) << 1);
+            player->pos = 0; free(old_buf);
+         }
+         else
+            player->buf = (short *)realloc(player->buf, wavecvt.len << 1);
+         memset(player->buf + player->pos + player->len, 0, ((player->buf_len = wavecvt.len) - player->pos - player->len) << 1);
+      }
+
+      //
+      // Mix the current sound buffer with newly played sound and adjust the length of valid data
+      //
+      if (player->pos + wavecvt.len > player->buf_len)
+      {
+         AUDIO_MixNative(player->buf + player->pos, (short *)wavecvt.buf, player->buf_len - player->pos);
+         AUDIO_MixNative(player->buf, (short *)wavecvt.buf + player->buf_len - player->pos, player->pos + wavecvt.len - player->buf_len);
+      }
+      else
+         AUDIO_MixNative(player->buf + player->pos, (short *)wavecvt.buf, wavecvt.len);
+      player->len = max(player->len, wavecvt.len);
+
+      SDL_mutexV(gSndPlayer.mtx);
    }
 
-   SDL_mutexP(gSndPlayer.mtx);
-   if (gSndPlayer.buf[iChannel] != NULL)
-   {
-	   free(gSndPlayer.buf[iChannel]);
-	   gSndPlayer.buf[iChannel] = NULL;
-   }
-   gSndPlayer.buf[iChannel] = wavecvt.buf;
-   gSndPlayer.audio_len[iChannel] = wavecvt.len * wavecvt.len_mult;
-   gSndPlayer.pos[iChannel] = wavecvt.buf;
-   SDL_mutexV(gSndPlayer.mtx);
+   free(wavecvt.buf);
 }
 
 VOID
-SOUND_PlayMUS(
+AUDIO_PlayMusic(
    INT       iNumRIX,
    BOOL      fLoop,
    FLOAT     flFadeTime
@@ -991,7 +1106,7 @@ SOUND_PlayMUS(
 }
 
 BOOL
-SOUND_PlayCDA(
+AUDIO_PlayCDTrack(
    INT    iNumTrack
 )
 /*++
@@ -1019,7 +1134,7 @@ SOUND_PlayCDA(
 
          if (iNumTrack != -1)
          {
-            SOUND_PlayMUS(-1, FALSE, 0);
+            AUDIO_PlayMusic(-1, FALSE, 0);
 
             if (SDL_CDPlayTracks(gSndPlayer.pCD, iNumTrack - 1, 0, 1, 0) == 0)
             {
@@ -1034,7 +1149,7 @@ SOUND_PlayCDA(
    {
 	   if (iNumTrack != -1)
 	   {
-		   SOUND_PlayMUS(-1, FALSE, 0);
+		   AUDIO_PlayMusic(-1, FALSE, 0);
 		   ret = gSndPlayer.pCDPlayer->Play(gSndPlayer.pCDPlayer, PAL_CDTRACK_BASE + iNumTrack, TRUE, 0);
 	   }
 	   else
@@ -1045,6 +1160,38 @@ SOUND_PlayCDA(
    SDL_mutexV(gSndPlayer.mtx);
 
    return ret;
+}
+
+VOID
+AUDIO_EnableMusic(
+   BOOL   fEnable
+)
+{
+   gSndPlayer.fMusicEnabled = fEnable;
+}
+
+BOOL
+AUDIO_MusicEnabled(
+   VOID
+)
+{
+   return gSndPlayer.fMusicEnabled;
+}
+
+VOID
+AUDIO_EnableSound(
+   BOOL   fEnable
+)
+{
+	gSndPlayer.fSoundEnabled = fEnable;
+}
+
+BOOL
+AUDIO_SoundEnabled(
+   VOID
+)
+{
+   return gSndPlayer.fSoundEnabled;
 }
 
 #ifdef PSP

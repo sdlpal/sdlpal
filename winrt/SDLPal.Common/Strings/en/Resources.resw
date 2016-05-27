@@ -214,6 +214,9 @@ You can use the main menu option inside the game to return to this page.</value>
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
     <value>No customized message file</value>
   </data>
+  <data name="MusicVolume.Header" xml:space="preserve">
+    <value>Music volume</value>
+  </data>
   <data name="OPL.Header" xml:space="preserve">
     <value>Type of OPL simulator</value>
   </data>
@@ -237,6 +240,9 @@ You can use the main menu option inside the game to return to this page.</value>
   </data>
   <data name="Samplerate.PlaceholderText" xml:space="preserve">
     <value>Sample rate of audio output</value>
+  </data>
+  <data name="SoundVolume.Header" xml:space="preserve">
+    <value>Sound volume</value>
   </data>
   <data name="Stereo.Header" xml:space="preserve">
     <value>Stereo</value>
@@ -267,8 +273,5 @@ You can use the main menu option inside the game to return to this page.</value>
   </data>
   <data name="TouchOverlay.OnContent" xml:space="preserve">
     <value>Yes</value>
-  </data>
-  <data name="Volume.Header" xml:space="preserve">
-    <value>Volume</value>
   </data>
 </root>

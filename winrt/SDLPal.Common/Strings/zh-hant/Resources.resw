@@ -214,6 +214,9 @@
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
     <value>無自訂語言檔案</value>
   </data>
+  <data name="MusicVolume.Header" xml:space="preserve">
+    <value>音樂音量</value>
+  </data>
   <data name="OPL.Header" xml:space="preserve">
     <value>OPL 模擬器</value>
   </data>
@@ -237,6 +240,9 @@
   </data>
   <data name="Samplerate.PlaceholderText" xml:space="preserve">
     <value>音訊輸出取樣速率</value>
+  </data>
+  <data name="SoundVolume.Header" xml:space="preserve">
+    <value>音效音量</value>
   </data>
   <data name="Stereo.Header" xml:space="preserve">
     <value>立體聲</value>
@@ -267,8 +273,5 @@
   </data>
   <data name="TouchOverlay.OnContent" xml:space="preserve">
     <value>是</value>
-  </data>
-  <data name="Volume.Header" xml:space="preserve">
-    <value>音量</value>
   </data>
 </root>

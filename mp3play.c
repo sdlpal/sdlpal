@@ -33,7 +33,7 @@
 
 typedef struct tagMP3PLAYER
 {
-	MUSICPLAYER_FUNCTIONS;
+	MUSICPLAYER_COMMONS;
 
 	mad_data           *pMP3;
 	INT                 iMusic;
@@ -62,17 +62,14 @@ MP3_FillBuffer(
 {
 	LPMP3PLAYER player = (LPMP3PLAYER)object;
 	if (player->pMP3) {
-		player->pMP3->volume = gConfig.iVolume * 3 / 4;
-
-		mad_getSamples(player->pMP3, stream, len);
-
 		if (!mad_isPlaying(player->pMP3) && player->fLoop)
 		{
 			mad_seek(player->pMP3, 0);
 			mad_start(player->pMP3);
-
-			mad_getSamples(player->pMP3, stream, len);
 		}
+
+		if (mad_isPlaying(player->pMP3))
+			mad_getSamples(player->pMP3, stream, len);
 	}
 }
 
@@ -117,9 +114,9 @@ MP3_Play(
 
 	if (iNum > 0)
 	{
-		if ((player->pMP3 = mad_openFile(va("%smp3/%.2d.mp3", gConfig.pszGamePath, iNum), SOUND_GetAudioSpec(), gConfig.iResampleQuality)) == NULL)
+		if ((player->pMP3 = mad_openFile(va("%smp3/%.2d.mp3", gConfig.pszGamePath, iNum), AUDIO_GetDeviceSpec(), gConfig.iResampleQuality)) == NULL)
 		{
-			player->pMP3 = mad_openFile(va("%sMP3/%.2d.MP3", gConfig.pszGamePath, iNum), SOUND_GetAudioSpec(), gConfig.iResampleQuality);
+			player->pMP3 = mad_openFile(va("%sMP3/%.2d.MP3", gConfig.pszGamePath, iNum), AUDIO_GetDeviceSpec(), gConfig.iResampleQuality);
 		}
 
 		if (player->pMP3)

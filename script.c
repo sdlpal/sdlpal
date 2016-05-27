@@ -1587,7 +1587,7 @@ PAL_InterpretInstruction(
       // Set background music
       //
       gpGlobals->wNumMusic = pScript->rgwOperand[0];
-      SOUND_PlayMUS(pScript->rgwOperand[0], (pScript->rgwOperand[0] != 0x3D), pScript->rgwOperand[1]);
+      AUDIO_PlayMusic(pScript->rgwOperand[0], (pScript->rgwOperand[0] != 0x3D), pScript->rgwOperand[1]);
       break;
 
    case 0x0044:
@@ -1648,7 +1648,7 @@ PAL_InterpretInstruction(
       //
       // Play sound effect
       //
-      SOUND_Play(pScript->rgwOperand[0]);
+      AUDIO_PlaySound(pScript->rgwOperand[0]);
       break;
 
    case 0x0049:
@@ -2162,7 +2162,7 @@ PAL_InterpretInstruction(
       //
       // Stop current playing music
       //
-      SOUND_PlayMUS(0, FALSE,
+      AUDIO_PlayMusic(0, FALSE,
          (pScript->rgwOperand[0] == 0) ? 2.0f : (FLOAT)(pScript->rgwOperand[0]) * 2);
       gpGlobals->wNumMusic = 0;
       break;
@@ -2854,7 +2854,7 @@ PAL_InterpretInstruction(
          PAL_BattleBackupScene();
          PAL_LoadBattleSprites();
          PAL_BattleMakeScene();
-         SOUND_Play(212);
+         AUDIO_PlaySound(212);
          PAL_BattleFadeScene();
 
          for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
@@ -2894,7 +2894,7 @@ PAL_InterpretInstruction(
 
          g_Battle.rgEnemy[wEventObjectID].iColorShift = 0;
 
-		 SOUND_Play(47);
+		 AUDIO_PlaySound(47);
          PAL_BattleBackupScene();
          PAL_LoadBattleSprites();
          PAL_BattleMakeScene();
@@ -2941,9 +2941,9 @@ PAL_InterpretInstruction(
       //
       // Play CD music. Use the RIX music for fallback.
       //
-      if (!SOUND_PlayCDA(pScript->rgwOperand[0]))
+      if (!AUDIO_PlayCDTrack(pScript->rgwOperand[0]))
       {
-         SOUND_PlayMUS(pScript->rgwOperand[1], TRUE, 0);
+         AUDIO_PlayMusic(pScript->rgwOperand[1], TRUE, 0);
       }
       break;
 

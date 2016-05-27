@@ -92,10 +92,10 @@ PAL_KeyboardEventFilter(
          VIDEO_ToggleScaleScreen();
          break;
       case SDLK_1:
-         SOUND_AdjustVolume(0);
+         AUDIO_AdjustVolume(0);
          break;
       case SDLK_3:
-         SOUND_AdjustVolume(1);
+         AUDIO_AdjustVolume(1);
          break;
 #endif
       case SDLK_UP:
@@ -415,14 +415,14 @@ PAL_MouseEventFilter(
       case 2:
         if( isLeftMouseDBClick )
        {
-          SOUND_AdjustVolume(1);
+          AUDIO_AdjustVolume(1);
           break;
        }
       case 6:
       case 0:
         if( isLeftMouseDBClick )
        {
-          SOUND_AdjustVolume(0);
+          AUDIO_AdjustVolume(0);
           break;
        }
       case 7:

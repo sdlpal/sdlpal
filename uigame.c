@@ -96,7 +96,7 @@ PAL_OpeningMenu(
    //
    // Play the background music
    //
-   SOUND_PlayMUS(RIX_NUM_OPENINGMENU, TRUE, 1);
+   AUDIO_PlayMusic(RIX_NUM_OPENINGMENU, TRUE, 1);
 
    //
    // Draw the background
@@ -136,7 +136,7 @@ PAL_OpeningMenu(
    //
    // Fade out the screen and the music
    //
-   SOUND_PlayMUS(0, FALSE, 1);
+   AUDIO_PlayMusic(0, FALSE, 1);
    PAL_FadeOut(1);
 
    return (INT)wItemSelected;
@@ -609,7 +609,7 @@ PAL_SystemMenu(
       iSlot = PAL_SaveSlotMenu(gpGlobals->bCurrentSaveSlot);
       if (iSlot != MENUITEM_VALUE_CANCELLED)
       {
-         SOUND_PlayMUS(0, FALSE, 1);
+         AUDIO_PlayMusic(0, FALSE, 1);
          PAL_FadeOut(1);
          PAL_InitGameData(iSlot);
       }
@@ -619,17 +619,10 @@ PAL_SystemMenu(
       //
       // Music
       //
-      g_fNoMusic = !PAL_SwitchMenu(!g_fNoMusic);
+      AUDIO_EnableMusic(PAL_SwitchMenu(AUDIO_MusicEnabled()));
       if (gConfig.eMusicType == MUSIC_MIDI)
       {
-         if (g_fNoMusic)
-         {
-            SOUND_PlayMUS(0, FALSE, 0);
-         }
-         else
-         {
-            SOUND_PlayMUS(gpGlobals->wNumMusic, TRUE, 0);
-         }
+         AUDIO_PlayMusic(AUDIO_MusicEnabled() ? gpGlobals->wNumMusic : 0, AUDIO_MusicEnabled(), 0);
       }
       break;
 
@@ -637,7 +630,7 @@ PAL_SystemMenu(
       //
       // Sound
       //
-      g_fNoSound = !PAL_SwitchMenu(!g_fNoSound);
+      AUDIO_EnableSound(PAL_SwitchMenu(AUDIO_SoundEnabled()));
       break;
 
    case 5:
@@ -2000,7 +1993,7 @@ PAL_QuitGame(
 	{
 		if (wReturnValue == 2) gConfig.fLaunchSetting = TRUE;
 		PAL_SaveConfig();		// Keep the fullscreen state
-		SOUND_PlayMUS(0, FALSE, 2);
+		AUDIO_PlayMusic(0, FALSE, 2);
 		PAL_FadeOut(2);
 		PAL_Shutdown(0);
 	}

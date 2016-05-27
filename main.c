@@ -130,7 +130,7 @@ PAL_Init(
 
    PAL_InitInput();
    PAL_InitResources();
-   SOUND_OpenAudio();
+   AUDIO_OpenDevice();
 
    if (gConfig.fIsWIN95)
    {
@@ -169,7 +169,7 @@ PAL_Shutdown(
 
 --*/
 {
-   SOUND_CloseAudio();
+   AUDIO_CloseDevice();
    PAL_FreeFont();
    PAL_FreeResources();
    PAL_FreeGlobals();
@@ -315,10 +315,10 @@ PAL_SplashScreen(
    //
    // Play the title music
    //
-   if (!SOUND_PlayCDA(7))
+   if (!AUDIO_PlayCDTrack(7))
    {
       fUseCD = FALSE;
-      SOUND_PlayMUS(NUM_RIX_TITLE, TRUE, 2);
+      AUDIO_PlayMusic(NUM_RIX_TITLE, TRUE, 2);
    }
 
    //
@@ -487,7 +487,7 @@ PAL_SplashScreen(
 
    if (!fUseCD)
    {
-      SOUND_PlayMUS(0, FALSE, 1);
+      AUDIO_PlayMusic(0, FALSE, 1);
    }
 
    PAL_FadeOut(1);

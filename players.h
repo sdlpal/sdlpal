@@ -20,8 +20,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef RIX_PLAY_H
-#define RIX_PLAY_H
+#ifndef PLAYERS_H
+#define PLAYERS_H
 
 #include "common.h"
 
@@ -33,12 +33,12 @@ extern "C"
 
 typedef struct tagMUSICPLAYER
 {
-#define MUSICPLAYER_FUNCTIONS \
+#define MUSICPLAYER_COMMONS \
 	VOID (*Shutdown)(VOID*); \
 	BOOL (*Play)(VOID*, INT, BOOL, FLOAT); \
 	VOID (*FillBuffer)(VOID*, LPBYTE, INT)
 
-	MUSICPLAYER_FUNCTIONS;
+	MUSICPLAYER_COMMONS;
 } MUSICPLAYER, *LPMUSICPLAYER;
 
 /* RIX */

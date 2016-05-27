@@ -30,41 +30,60 @@ extern "C"
 #endif
 
 INT
-SOUND_OpenAudio(
+AUDIO_OpenDevice(
    VOID
 );
 
 VOID
-SOUND_CloseAudio(
+AUDIO_CloseDevice(
    VOID
 );
 
 VOID
-SOUND_PlayChannel(
-   INT    iSoundNum,
-   INT    iChannel
+AUDIO_PlaySound(
+   INT    iSoundNum
 );
 
 SDL_AudioSpec*
-SOUND_GetAudioSpec(
+AUDIO_GetDeviceSpec(
    VOID
 );
 
 VOID
-SOUND_AdjustVolume(
-   INT    iDirectory
+AUDIO_AdjustVolume(
+   INT    iDirection
 );
 
 VOID
-SOUND_PlayMUS(
+AUDIO_PlayMusic(
    INT       iNumRIX,
    BOOL      fLoop,
    FLOAT     flFadeTime
 );
 
 BOOL
-SOUND_PlayCDA(
+AUDIO_PlayCDTrack(
    INT    iNumTrack
+);
+
+VOID
+AUDIO_EnableMusic(
+   BOOL   fEnable
+);
+
+BOOL
+AUDIO_MusicEnabled(
+   VOID
+);
+
+VOID
+AUDIO_EnableSound(
+   BOOL   fEnable
+);
+
+BOOL
+AUDIO_SoundEnabled(
+   VOID
 );
 
 #ifdef PSP
@@ -74,17 +93,7 @@ SOUND_Reload(
 );
 #endif
 
-#ifdef PAL_CLASSIC
-extern int g_iCurrChannel;
-#define SOUND_Play(i) SOUND_PlayChannel((i), (g_iCurrChannel ^= 1))
-#else
-#define SOUND_Play(i) SOUND_PlayChannel((i), 0)
-#endif
-
-extern BOOL       g_fNoSound;
-extern BOOL       g_fNoMusic;
-
-#define SOUND_IsIntegerConversion(a) ((((a) % gConfig.iSampleRate) | (gConfig.iSampleRate % (a))) == 0)
+#define AUDIO_IsIntegerConversion(a) ((((a) % gConfig.iSampleRate) | (gConfig.iSampleRate % (a))) == 0)
 
 #ifdef __cplusplus
 }

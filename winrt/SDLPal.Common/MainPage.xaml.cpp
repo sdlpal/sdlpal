@@ -49,7 +49,8 @@ void SDLPal::MainPage::LoadControlContents()
 	tsSurroundOPL->IsOn = (gConfig.fUseSurroundOPL == TRUE);
 	tsTouchOverlay->IsOn = (gConfig.fUseTouchOverlay == TRUE);
 
-	slVolume->Value = gConfig.iVolume * 100 / SDL_MIX_MAXVOLUME;
+	slMusicVolume->Value = gConfig.iMusicVolume;
+	slSoundVolume->Value = gConfig.iSoundVolume;
 	slQuality->Value = gConfig.iResampleQuality;
 
 	cbCD->SelectedIndex = (gConfig.eCDType == MUSIC_MP3) ? 0 : 1;
@@ -97,7 +98,8 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.fUseSurroundOPL = tsSurroundOPL->IsOn ? TRUE : FALSE;
 	gConfig.fUseTouchOverlay = tsTouchOverlay->IsOn ? TRUE : FALSE;
 
-	gConfig.iVolume = (int)slVolume->Value * SDL_MIX_MAXVOLUME / 100;
+	gConfig.iMusicVolume = (int)slMusicVolume->Value;
+	gConfig.iSoundVolume = (int)slSoundVolume->Value;
 	gConfig.iResampleQuality = (int)slQuality->Value;
 	gConfig.uCodePage = tsLanguage->IsOn ? CP_GBK : CP_BIG5;
 

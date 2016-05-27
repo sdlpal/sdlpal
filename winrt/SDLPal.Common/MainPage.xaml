@@ -24,7 +24,8 @@
                 <ToggleSwitch x:Name="tsTouchOverlay" x:Uid="TouchOverlay" Header="启用触屏辅助" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsKeepAspect" x:Uid="AspectRatio" Header="保持纵横比" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsStereo" x:Uid="Stereo" Header="立体声" OffContent="否" OnContent="是" />
-                <Slider x:Name="slVolume" x:Uid="Volume" Header="音量" TickPlacement="Inline" TickFrequency="10" />
+                <Slider x:Name="slMusicVolume" x:Uid="MusicVolume" Header="音乐音量" TickPlacement="Inline" TickFrequency="10" />
+                <Slider x:Name="slSoundVolume" x:Uid="SoundVolume" Header="音效音量" TickPlacement="Inline" TickFrequency="10" />
                 <Slider x:Name="slQuality" x:Uid="Quality" Header="音频质量" Maximum="4" LargeChange="1" TickFrequency="1" />
                 <ComboBox x:Name="cbSampleRate" x:Uid="Samplerate" HorizontalAlignment="Stretch" Header="音频输出采样率" PlaceholderText="音频输出采样率">
                     <ComboBoxItem Content="11025"/>

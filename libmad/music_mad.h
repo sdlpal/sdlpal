@@ -46,13 +46,12 @@ typedef struct {
   struct mad_synth synth;
   int frames_read;
   mad_timer_t next_frame_start;
-  int volume;
   int status;
   int output_begin, output_end;
   int upsample; /* SDLPAL: Is upsample or downsample */
   int resampler_quality; /* SDLPAL:resampler quality */
   SDL_AudioSpec mixer;
-  SDL_AudioCVT cvt;
+  void (*converter)(signed short *, int);
 
   unsigned char input_buffer[MAD_INPUT_BUFFER_SIZE + MAD_BUFFER_GUARD];
   unsigned char output_buffer[MAD_OUTPUT_BUFFER_SIZE];
@@ -68,4 +67,3 @@ int mad_isPlaying(mad_data *mp3_mad);
 
 void mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len);
 void mad_seek(mad_data *mp3_mad, double position);
-void mad_setVolume(mad_data *mp3_mad, int volume);

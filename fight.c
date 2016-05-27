@@ -717,7 +717,7 @@ PAL_BattlePostActionCheck(
          g_Battle.iExpGained += g_Battle.rgEnemy[i].e.wExp;
          g_Battle.iCashGained += g_Battle.rgEnemy[i].e.wCash;
 
-         SOUND_Play(g_Battle.rgEnemy[i].e.wDeathSound);
+         AUDIO_PlaySound(g_Battle.rgEnemy[i].e.wDeathSound);
          g_Battle.rgEnemy[i].wObjectID = 0;
          fFade = TRUE;
 
@@ -808,7 +808,7 @@ PAL_BattlePostActionCheck(
 
                wName = gpGlobals->g.PlayerRoles.rgwName[w];
 
-               SOUND_Play(gpGlobals->g.PlayerRoles.rgwDyingSound[w]);
+               AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwDyingSound[w]);
 
                for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
                {
@@ -1079,7 +1079,7 @@ PAL_BattleStartFrame(
       // All enemies are cleared. Won the battle.
       //
       g_Battle.BattleResult = kBattleResultWon;
-      SOUND_Play(0);
+      AUDIO_PlaySound(0);
       return;
    }
    else
@@ -1952,11 +1952,11 @@ PAL_BattleShowPlayerAttackAnim(
    {
       if (!fCritical)
       {
-         SOUND_Play(gpGlobals->g.PlayerRoles.rgwAttackSound[wPlayerRole]);
+         AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwAttackSound[wPlayerRole]);
       }
       else
       {
-         SOUND_Play(gpGlobals->g.PlayerRoles.rgwCriticalSound[wPlayerRole]);
+         AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwCriticalSound[wPlayerRole]);
       }
    }
 
@@ -1981,7 +1981,7 @@ PAL_BattleShowPlayerAttackAnim(
    x -= 16;
    y -= 4;
 
-   SOUND_Play(gpGlobals->g.PlayerRoles.rgwWeaponSound[wPlayerRole]);
+   AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwWeaponSound[wPlayerRole]);
 
    x = enemy_x;
    y = enemy_y - enemy_h / 3 + 10;
@@ -2141,7 +2141,7 @@ PAL_BattleShowPlayerUseItemAnim(
 
    g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 5;
 
-   SOUND_Play(28);
+   AUDIO_PlaySound(28);
 
    for (i = 0; i <= 6; i++)
    {
@@ -2218,7 +2218,7 @@ PAL_BattleShowPlayerPreMagicAnim(
    g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 5;
    if (!gConfig.fIsWIN95)
    {
-      SOUND_Play(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
+      AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
    }
 
    if (!fSummon)
@@ -2233,7 +2233,7 @@ PAL_BattleShowPlayerPreMagicAnim(
       index += 15;
 	  if (gConfig.fIsWIN95)
 	  {
-		  SOUND_Play(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
+		  AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
 	  }
 	  for (i = 0; i < 10; i++)
       {
@@ -2341,7 +2341,7 @@ PAL_BattleShowPlayerDefMagicAnim(
 
       if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay)
       {
-         SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+         AUDIO_PlaySound(gpGlobals->g.lprgMagic[iMagicNum].wSound);
       }
 
       //
@@ -2515,7 +2515,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 
    if (gConfig.fIsWIN95 && !fSummon && gpGlobals->g.lprgMagic[iMagicNum].wSound != 0)
    {
-      SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+      AUDIO_PlaySound(gpGlobals->g.lprgMagic[iMagicNum].wSound);
    }
 
    for (i = 0; i < l; i++)
@@ -2557,7 +2557,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 
 		 if (!gConfig.fIsWIN95 && (i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0)
          {
-            SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+            AUDIO_PlaySound(gpGlobals->g.lprgMagic[iMagicNum].wSound);
          }
       }
       else
@@ -2752,7 +2752,7 @@ PAL_BattleShowEnemyMagicAnim(
 
          if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay)
          {
-            SOUND_Play(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+            AUDIO_PlaySound(gpGlobals->g.lprgMagic[iMagicNum].wSound);
          }
       }
       else
@@ -2910,7 +2910,7 @@ PAL_BattleShowPlayerSummonMagicAnim(
    //
    if (gConfig.fIsWIN95)
    {
-	   SOUND_Play(gpGlobals->g.lprgMagic[wMagicNum].wSound);
+	   AUDIO_PlaySound(gpGlobals->g.lprgMagic[wMagicNum].wSound);
    }
 
    //
@@ -3502,7 +3502,7 @@ PAL_BattlePlayerPerformAction(
          PAL_BattleDelay(5, 0, TRUE);
 
          g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 9;
-         SOUND_Play(gpGlobals->g.PlayerRoles.rgwWeaponSound[wPlayerRole]);
+         AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwWeaponSound[wPlayerRole]);
 
          str = PAL_GetPlayerAttackStrength(wPlayerRole);
          def = PAL_GetPlayerDefense(gpGlobals->rgParty[sTarget].wPlayerRole);
@@ -3562,7 +3562,7 @@ PAL_BattlePlayerPerformAction(
          //
          // Sound should be played before action begins
          //
-         SOUND_Play(29);
+         AUDIO_PlaySound(29);
 
          for (i = 1; i <= 6; i++)
          {
@@ -3994,7 +3994,7 @@ PAL_BattlePlayerPerformAction(
       PAL_BattleDelay(2, wObject, TRUE);
 
       g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 5;
-      SOUND_Play(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
+      AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwMagicSound[wPlayerRole]);
 
       PAL_BattleDelay(8, wObject, TRUE);
 
@@ -4254,7 +4254,7 @@ PAL_BattleEnemyPerformAction(
       g_Battle.rgEnemy[wEnemyIndex].pos = PAL_XY(ex, ey);
       PAL_BattleDelay(1, 0, FALSE);
 
-      SOUND_Play(g_Battle.rgEnemy[wEnemyIndex].e.wMagicSound);
+      AUDIO_PlaySound(g_Battle.rgEnemy[wEnemyIndex].e.wMagicSound);
 
       for (i = 0; i < g_Battle.rgEnemy[wEnemyIndex].e.wMagicFrames; i++)
       {
@@ -4375,7 +4375,7 @@ PAL_BattleEnemyPerformAction(
 
                if (gpGlobals->g.PlayerRoles.rgwHP[w] == 0)
                {
-                  SOUND_Play(gpGlobals->g.PlayerRoles.rgwDeathSound[w]);
+                  AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwDeathSound[w]);
                }
             }
          }
@@ -4410,7 +4410,7 @@ PAL_BattleEnemyPerformAction(
 
             if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0)
             {
-               SOUND_Play(gpGlobals->g.PlayerRoles.rgwDeathSound[wPlayerRole]);
+               AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwDeathSound[wPlayerRole]);
             }
          }
       }
@@ -4490,7 +4490,7 @@ PAL_BattleEnemyPerformAction(
          def *= 2;
       }
 
-      SOUND_Play(g_Battle.rgEnemy[wEnemyIndex].e.wAttackSound);
+      AUDIO_PlaySound(g_Battle.rgEnemy[wEnemyIndex].e.wAttackSound);
 
       iCoverIndex = -1;
 
@@ -4559,7 +4559,7 @@ PAL_BattleEnemyPerformAction(
       }
 	  if (!gConfig.fIsWIN95 || g_Battle.rgEnemy[wEnemyIndex].e.wActionSound != 0)
       {
-         SOUND_Play(g_Battle.rgEnemy[wEnemyIndex].e.wActionSound);
+         AUDIO_PlaySound(g_Battle.rgEnemy[wEnemyIndex].e.wActionSound);
       }
       PAL_BattleDelay(1, 0, FALSE);
 
@@ -4640,7 +4640,7 @@ PAL_BattleEnemyPerformAction(
       }
 	  if (!gConfig.fIsWIN95 || iSound != 0)
       {
-         SOUND_Play(iSound);
+         AUDIO_PlaySound(iSound);
       }
       PAL_BattleDelay(1, 0, FALSE);
 
@@ -4666,7 +4666,7 @@ PAL_BattleEnemyPerformAction(
 
       if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0)
       {
-         SOUND_Play(gpGlobals->g.PlayerRoles.rgwDeathSound[wPlayerRole]);
+         AUDIO_PlaySound(gpGlobals->g.PlayerRoles.rgwDeathSound[wPlayerRole]);
          wFrameBak = 2;
       }
       else if (PAL_IsPlayerDying(wPlayerRole))

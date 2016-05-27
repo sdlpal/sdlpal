@@ -25,7 +25,8 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_OPLSAMPLERATE,     PALCFG_UNSIGNED, "OPLSAMPLERATE",     13, 49716,   0, UINT32_MAX },
 	{ PALCFG_RESAMPLEQUALITY,   PALCFG_UNSIGNED, "RESAMPLEQUALITY",   15, RESAMPLER_QUALITY_MAX, RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX },	// Default for best quality
 	{ PALCFG_SAMPLERATE,        PALCFG_UNSIGNED, "SAMPLERATE",        10, 44100,   0, PAL_MAX_SAMPLERATE },
-	{ PALCFG_VOLUME,            PALCFG_UNSIGNED, "VOLUME",             6, 100,     0, 100 },														// Default for maximum volume
+	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MUSICVOLUME",       11, PAL_MAX_VOLUME, 0, PAL_MAX_VOLUME },										// Default for maximum volume
+	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SOUNDVOLUME",       11, PAL_MAX_VOLUME, 0, PAL_MAX_VOLUME },										// Default for maximum volume
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WINDOWHEIGHT",      12, PAL_DEFAULT_WINDOW_HEIGHT, 0, UINT32_MAX },
 	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WINDOWWIDTH",       11, PAL_DEFAULT_WINDOW_WIDTH,  0, UINT32_MAX },
 
@@ -377,7 +378,8 @@ PAL_LoadConfig(
 	gConfig.iResampleQuality = values[PALCFG_RESAMPLEQUALITY].uValue;
 	gConfig.uCodePage = values[PALCFG_CODEPAGE].uValue;
 	gConfig.wAudioBufferSize = (WORD)values[PALCFG_AUDIOBUFFERSIZE].uValue;
-	gConfig.iVolume = SDL_MIX_MAXVOLUME * values[PALCFG_VOLUME].uValue / 100;
+	gConfig.iMusicVolume = values[PALCFG_MUSICVOLUME].uValue;
+	gConfig.iSoundVolume = values[PALCFG_SOUNDVOLUME].uValue;
 
 	if (UTIL_GetScreenSize(&values[PALCFG_WINDOWWIDTH].uValue, &values[PALCFG_WINDOWHEIGHT].uValue))
 	{
@@ -421,7 +423,8 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_OPLSAMPLERATE), gConfig.iOPLSampleRate); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_RESAMPLEQUALITY), gConfig.iResampleQuality); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_SAMPLERATE), gConfig.iSampleRate); fputs(buf, fp);
-		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_VOLUME), gConfig.iVolume * 100 / SDL_MIX_MAXVOLUME); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_MUSICVOLUME), gConfig.iMusicVolume); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_SOUNDVOLUME), gConfig.iSoundVolume); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_WINDOWHEIGHT), gConfig.dwScreenHeight); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_WINDOWWIDTH), gConfig.dwScreenWidth); fputs(buf, fp);
 

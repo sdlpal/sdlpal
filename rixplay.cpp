@@ -34,8 +34,6 @@
 #include "adplug/surroundopl.h"
 #include "adplug/rix.h"
 
-extern "C" BOOL g_fNoMusic;
-
 typedef struct tagRIXPLAYER :
 	public MUSICPLAYER
 {
@@ -81,7 +79,7 @@ RIX_FillBuffer(
 --*/
 {
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
-	const INT max_volume = gConfig.iVolume * 3 / 4;
+	static const int max_volume = PAL_MAX_VOLUME;
 
 	if (pRixPlayer == NULL || !pRixPlayer->fReady)
 	{
@@ -116,7 +114,7 @@ RIX_FillBuffer(
 			if (pRixPlayer->iTotalFadeOutSamples == pRixPlayer->iRemainingFadeSamples && pRixPlayer->iTotalFadeOutSamples > 0)
 			{
 				UINT  now = SDL_GetTicks();
-				INT   passed_samples = ((INT)(now - pRixPlayer->dwStartFadeTime) > 0) ? (INT)((now - pRixPlayer->dwStartFadeTime) * SOUND_GetAudioSpec()->freq / 1000) : 0;
+				INT   passed_samples = ((INT)(now - pRixPlayer->dwStartFadeTime) > 0) ? (INT)((now - pRixPlayer->dwStartFadeTime) * AUDIO_GetDeviceSpec()->freq / 1000) : 0;
 				pRixPlayer->iRemainingFadeSamples -= passed_samples;
 			}
 			if (pRixPlayer->iCurrentMusic == -1 || pRixPlayer->iRemainingFadeSamples <= 0)
@@ -216,17 +214,16 @@ RIX_FillBuffer(
 						if (to_write)
 						{
 							short *tempBuf = (short*)alloca(to_write * gConfig.iAudioChannels * sizeof(short));
+							int temp_buf_read = 0;
 							pRixPlayer->opl->update(tempBuf, to_write);
-							for (int i = 0; i < to_write; i++)
-								for (int j = 0; j < gConfig.iAudioChannels; j++)
-									resampler_write_sample(pRixPlayer->resampler[j], tempBuf[i * gConfig.iAudioChannels + j]);
+							for (int i = 0; i < to_write * gConfig.iAudioChannels; i++)
+								resampler_write_sample(pRixPlayer->resampler[i % gConfig.iAudioChannels], tempBuf[temp_buf_read++]);
 						}
 
 						int to_get = resampler_get_sample_count(pRixPlayer->resampler[0]);
 						if (to_get > sample_count) to_get = sample_count;
-						for (int i = 0; i < to_get; i++)
-							for (int j = 0; j < gConfig.iAudioChannels; j++)
-								finalBuf[samples_written++] = resampler_get_and_remove_sample(pRixPlayer->resampler[j]);
+						for (int i = 0; i < to_get * gConfig.iAudioChannels; i++)
+							finalBuf[samples_written++] = resampler_get_and_remove_sample(pRixPlayer->resampler[i % gConfig.iAudioChannels]);
 						sample_count -= to_get;
 					}
 				}
@@ -241,14 +238,13 @@ RIX_FillBuffer(
 
 			//
 			// Put audio data into buffer and adjust volume
-			// WARNING: for signed 16-bit little-endian only
 			//
 			SHORT* ptr = (SHORT*)stream;
 			if (pRixPlayer->FadeType == RIXPLAYER::NONE)
 			{
 				for (int i = 0; i < l; i++)
 				{
-					*ptr++ = SDL_SwapLE16((short)((int)(*(SHORT *)(pRixPlayer->pos)) * volume / SDL_MIX_MAXVOLUME));
+					*ptr++ = *(SHORT *)pRixPlayer->pos * volume / max_volume;
 					pRixPlayer->pos += sizeof(SHORT);
 				}
 			}
@@ -256,12 +252,13 @@ RIX_FillBuffer(
 			{
 				for (int i = 0; i < l && pRixPlayer->iRemainingFadeSamples > 0; volume += vol_delta)
 				{
-					for (int j = 0; i < l && j < delta_samples; i++, j++)
+					int j = 0;
+					for (j = 0; i < l && j < delta_samples; i++, j++)
 					{
-						*ptr++ = SDL_SwapLE16((short)((int)(*(SHORT *)(pRixPlayer->pos)) * volume / SDL_MIX_MAXVOLUME));
+						*ptr++ = *(SHORT *)pRixPlayer->pos * volume / max_volume;
 						pRixPlayer->pos += sizeof(SHORT);
 					}
-					pRixPlayer->iRemainingFadeSamples -= delta_samples;
+					pRixPlayer->iRemainingFadeSamples -= j;
 				}
 				fContinue = (pRixPlayer->iRemainingFadeSamples > 0);
 			}
@@ -342,7 +339,7 @@ RIX_Play(
 	//
 	// Stop the current CD music.
 	//
-	SOUND_PlayCDA(-1);
+	AUDIO_PlayCDTrack(-1);
 
 	if (iNumRIX == pRixPlayer->iCurrentMusic && pRixPlayer->iNextMusic == -1)
 	{
@@ -482,7 +479,7 @@ RIX_Init(
 		for (int i = 0; i < gConfig.iAudioChannels; i++)
 		{
 			pRixPlayer->resampler[i] = resampler_create();
-			resampler_set_quality(pRixPlayer->resampler[i], SOUND_IsIntegerConversion(gConfig.iOPLSampleRate) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
+			resampler_set_quality(pRixPlayer->resampler[i], AUDIO_IsIntegerConversion(gConfig.iOPLSampleRate) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
 			resampler_set_rate(pRixPlayer->resampler[i], (double)gConfig.iOPLSampleRate / (double)gConfig.iSampleRate);
 		}
 	}

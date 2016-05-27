@@ -434,13 +434,13 @@ PAL_EndingScreen(
    VOID
 )
 {
-	SOUND_PlayMUS(0x1a, TRUE, 0);
+	AUDIO_PlayMusic(0x1a, TRUE, 0);
 	PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 110, 150, 7);
 	PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 151, 999, 9);
 
 	PAL_FadeOut(2);
 
-	SOUND_PlayMUS(0x19, TRUE, 0);
+	AUDIO_PlayMusic(0x19, TRUE, 0);
 
 	PAL_ShowFBP(75, 0);
 	PAL_FadeIn(5, FALSE, 1);
@@ -453,12 +453,12 @@ PAL_EndingScreen(
 	gpGlobals->fNeedToFadeIn = TRUE;
 	PAL_EndingAnimation();
 
-	SOUND_PlayMUS(0, FALSE, 2);
+	AUDIO_PlayMusic(0, FALSE, 2);
 	PAL_ColorFade(7, 15, FALSE);
 
-	if (!SOUND_PlayCDA(2))
+	if (!AUDIO_PlayCDTrack(2))
 	{
-		SOUND_PlayMUS(0x11, TRUE, 0);
+		AUDIO_PlayMusic(0x11, TRUE, 0);
 	}
 
 	SDL_FillRect(gpScreen, NULL, 0);
@@ -491,12 +491,12 @@ PAL_EndingScreen(
 	PAL_ShowFBP(68, 6);
 
 	PAL_WaitForKey(0);
-	SOUND_PlayMUS(0, FALSE, 1);
+	AUDIO_PlayMusic(0, FALSE, 1);
 	UTIL_Delay(500);
 
-	if (!SOUND_PlayCDA(13))
+	if (!AUDIO_PlayCDTrack(13))
 	{
-		SOUND_PlayMUS(9, TRUE, 0);
+		AUDIO_PlayMusic(9, TRUE, 0);
 	}
 
 	PAL_ScrollFBP(67, 0xf, TRUE);
@@ -509,7 +509,7 @@ PAL_EndingScreen(
 	PAL_ScrollFBP(60, 0xf, TRUE);
 	PAL_ScrollFBP(59, 0xf, TRUE);
 
-	SOUND_PlayMUS(0, FALSE, 6);
+	AUDIO_PlayMusic(0, FALSE, 6);
 	PAL_FadeOut(3);
 }
 

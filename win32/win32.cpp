@@ -11,6 +11,7 @@
 #include "../global.h"
 #include "../util.h"
 #include "../palcfg.h"
+#include "../resampler.h"
 
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
@@ -102,21 +103,19 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	gConfig.fUseTouchOverlay = IsDlgButtonChecked(hwndDlg, IDC_TOUCHOVERLAY);
 	gConfig.fUseEmbeddedFonts = IsDlgButtonChecked(hwndDlg, IDC_EMBEDFONT);
 	gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO);
-	gConfig.dwScreenWidth = GetDlgItemInt(hwndDlg, IDC_WIDTH, nullptr, FALSE);
-	gConfig.dwScreenHeight = GetDlgItemInt(hwndDlg, IDC_HEIGHT, nullptr, FALSE);
 	gConfig.eCDType = (MUSICTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD) + MUSIC_MP3);
 	gConfig.eMusicType = (MUSICTYPE)ComboBox_GetCurSel(hwndDlg, IDC_BGM);
 	gConfig.eOPLType = (OPLTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_OPL));
 	gConfig.iAudioChannels = IsDlgButtonChecked(hwndDlg, IDC_STEREO) ? 2 : 1;
 	gConfig.iSampleRate = GetDlgItemInt(hwndDlg, IDC_SAMPLERATE, nullptr, FALSE);
 	gConfig.wAudioBufferSize = GetDlgItemInt(hwndDlg, IDC_AUDIOBUFFER, nullptr, FALSE);
-	gConfig.iVolume = TrackBar_GetPos(hwndDlg, IDC_VOLUME) * SDL_MIX_MAXVOLUME / 100;
+	gConfig.iMusicVolume = TrackBar_GetPos(hwndDlg, IDC_MUSICVOLUME);
+	gConfig.iSoundVolume = TrackBar_GetPos(hwndDlg, IDC_SOUNDVOLUME);
 	gConfig.iResampleQuality = TrackBar_GetPos(hwndDlg, IDC_QUALITY);
 	if (gConfig.eMusicType == MUSIC_RIX)
 	{
 		gConfig.fUseSurroundOPL = IsDlgButtonChecked(hwndDlg, IDC_SURROUNDOPL);
 		gConfig.iOPLSampleRate = GetDlgItemInt(hwndDlg, IDC_OPLSR, nullptr, FALSE);
-		gConfig.iSurroundOPLOffset = GetDlgItemInt(hwndDlg, IDC_OPLOFFSET, nullptr, TRUE);
 	}
 
 	if (fWriteFile) PAL_SaveConfig();
@@ -128,7 +127,6 @@ void ResetControls(HWND hwndDlg)
 
 	EnableDlgItem(hwndDlg, IDC_OPL, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, gConfig.eMusicType == MUSIC_RIX);
-	EnableDlgItem(hwndDlg, IDC_OPLOFFSET, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_OPLSR, gConfig.eMusicType == MUSIC_RIX);
 
 	CheckRadioButton(hwndDlg, IDC_CHT, IDC_CHS, IDC_CHT + gConfig.uCodePage);
@@ -144,20 +142,16 @@ void ResetControls(HWND hwndDlg)
 	ComboBox_SetCurSel(hwndDlg, IDC_BGM, gConfig.eMusicType);
 	ComboBox_SetCurSel(hwndDlg, IDC_OPL, gConfig.eOPLType);
 
-	SetDlgItemText(hwndDlg, IDC_WIDTH, _ultot(gConfig.dwScreenWidth, buffer, 10));
-	SetDlgItemText(hwndDlg, IDC_HEIGHT, _ultot(gConfig.dwScreenHeight, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_SAMPLERATE, _itot(gConfig.iSampleRate, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_OPLSR, _itot(gConfig.iOPLSampleRate, buffer, 10));
-	SetDlgItemText(hwndDlg, IDC_OPLOFFSET, _itot((int)gConfig.iSurroundOPLOffset, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_AUDIOBUFFER, _itot(gConfig.wAudioBufferSize, buffer, 10));
 
 	if (gConfig.pszGamePath) SetDlgItemTextA(hwndDlg, IDC_GAMEPATH, gConfig.pszGamePath);
 	if (gConfig.pszMsgFile) SetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile);
 
-	TrackBar_SetRange(hwndDlg, IDC_QUALITY, 0, 4, FALSE);
 	TrackBar_SetPos(hwndDlg, IDC_QUALITY, gConfig.iResampleQuality, TRUE);
-	TrackBar_SetRange(hwndDlg, IDC_VOLUME, 0, 100, FALSE);
-	TrackBar_SetPos(hwndDlg, IDC_VOLUME, gConfig.iVolume * 100 / SDL_MIX_MAXVOLUME, TRUE);
+	TrackBar_SetPos(hwndDlg, IDC_MUSICVOLUME, gConfig.iMusicVolume, TRUE);
+	TrackBar_SetPos(hwndDlg, IDC_SOUNDVOLUME, gConfig.iSoundVolume, TRUE);
 }
 
 INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
@@ -175,6 +169,10 @@ INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("DOSBOX"));
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("MAME"));
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("DOSBOXNEW"));
+
+	TrackBar_SetRange(hwndDlg, IDC_QUALITY, RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX, FALSE);
+	TrackBar_SetRange(hwndDlg, IDC_MUSICVOLUME, 0, PAL_MAX_VOLUME, FALSE);
+	TrackBar_SetRange(hwndDlg, IDC_SOUNDVOLUME, 0, PAL_MAX_VOLUME, FALSE);
 
 	ResetControls(hwndDlg);
 
@@ -236,7 +234,6 @@ INT_PTR ComboBoxProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 	case IDC_BGM:
 		EnableDlgItem(hwndDlg, IDC_OPL, ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX);
 		EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX);
-		EnableDlgItem(hwndDlg, IDC_OPLOFFSET, ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX);
 		EnableDlgItem(hwndDlg, IDC_OPLSR, ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX);
 		return TRUE;
 

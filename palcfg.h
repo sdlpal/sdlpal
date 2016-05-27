@@ -30,6 +30,7 @@ extern "C"
 #include "palcommon.h"
 
 #define     PAL_MAX_SAMPLERATE           48000
+#define     PAL_MAX_VOLUME               100
 
 typedef enum tagPALCFG_ITEM
 {
@@ -60,7 +61,8 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_OPLSAMPLERATE,
 	PALCFG_RESAMPLEQUALITY,
 	PALCFG_SAMPLERATE,
-	PALCFG_VOLUME,
+	PALCFG_MUSICVOLUME,
+	PALCFG_SOUNDVOLUME,
 	PALCFG_WINDOWHEIGHT,
 	PALCFG_WINDOWWIDTH,
 	/* Unsigneds */
@@ -167,7 +169,8 @@ typedef struct tagCONFIGURATION
 	INT              iSampleRate;
 	INT              iOPLSampleRate;
 	INT              iResampleQuality;
-	INT              iVolume;
+	INT              iMusicVolume;
+	INT              iSoundVolume;
 	MUSICTYPE        eMusicType;
 	MUSICTYPE        eCDType;
 	OPLTYPE          eOPLType;

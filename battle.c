@@ -326,7 +326,7 @@ PAL_BattleMain(
    //
    // Fade out the music and delay for a while
    //
-   SOUND_PlayMUS(0, FALSE, 1);
+   AUDIO_PlayMusic(0, FALSE, 1);
    UTIL_Delay(200);
 
    //
@@ -337,7 +337,7 @@ PAL_BattleMain(
    //
    // Play the battle music
    //
-   SOUND_PlayMUS(gpGlobals->wNumBattleMusic, TRUE, 0);
+   AUDIO_PlayMusic(gpGlobals->wNumBattleMusic, TRUE, 0);
 
    //
    // Fade in the screen when needed
@@ -646,7 +646,7 @@ PAL_BattleWon(
       //
       // Play the "battle win" music
       //
-      SOUND_PlayMUS(g_Battle.fIsBoss ? 2 : 3, FALSE, 0);
+      AUDIO_PlayMusic(g_Battle.fIsBoss ? 2 : 3, FALSE, 0);
 
       //
       // Show the message about the total number of exp. and cash gained
@@ -973,7 +973,7 @@ PAL_BattleEnemyEscape(
    int j, x, y, w;
    BOOL f = TRUE;
 
-   SOUND_Play(45);
+   AUDIO_PlaySound(45);
 
    //
    // Show the animation
@@ -1035,7 +1035,7 @@ PAL_BattlePlayerEscape(
    int         i, j;
    WORD        wPlayerRole;
 
-   SOUND_Play(45);
+   AUDIO_PlaySound(45);
 
    PAL_BattleUpdateFighters();
 
@@ -1441,7 +1441,7 @@ PAL_StartBattle(
 
    gpGlobals->fInBattle = FALSE;
 
-   SOUND_PlayMUS(gpGlobals->wNumMusic, TRUE, 1);
+   AUDIO_PlayMusic(gpGlobals->wNumMusic, TRUE, 1);
 
    //
    // Restore the screen waving effects

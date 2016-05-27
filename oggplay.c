@@ -49,7 +49,7 @@
 
 typedef struct tagOGGPLAYER
 {
-	MUSICPLAYER_FUNCTIONS;
+	MUSICPLAYER_COMMONS;
 
 	ogg_sync_state   oy; /* sync and verify incoming physical bitstream */
 	ogg_stream_state os; /* take physical pages, weld into a logical stream of packets */
@@ -70,9 +70,9 @@ typedef struct tagOGGPLAYER
 	BOOL             fUseResampler;
 } OGGPLAYER, *LPOGGPLAYER;
 
-PAL_FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
+PAL_FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm)
 {
-	int val = (int)(floor(pcm * 32767.f + .5f) * volume);
+	int val = (int)(floor(pcm * 32767.f + .5f));
 	/* might as well guard against clipping */
 	if (val > 32767) {
 		val = 32767;
@@ -86,15 +86,15 @@ PAL_FORCE_INLINE ogg_int16_t OGG_GetSample(float pcm, double volume)
 PAL_FORCE_INLINE void OGG_FillResample(LPOGGPLAYER player, ogg_int16_t* stream)
 {
 	if (gConfig.iAudioChannels == 2) {
-		stream[0] = SDL_SwapLE16(resampler_get_and_remove_sample(player->resampler[0]));
-		stream[1] = (player->vi.channels > 1) ? SDL_SwapLE16(resampler_get_and_remove_sample(player->resampler[1])) : stream[0];
+		stream[0] = resampler_get_and_remove_sample(player->resampler[0]);
+		stream[1] = (player->vi.channels > 1) ? resampler_get_and_remove_sample(player->resampler[1]) : stream[0];
 	}
 	else {
 		if (player->vi.channels > 1) {
-			*stream = SDL_SwapLE16((short)((int)(resampler_get_and_remove_sample(player->resampler[0]) + resampler_get_and_remove_sample(player->resampler[1])) >> 1));
+			*stream = (short)((int)(resampler_get_and_remove_sample(player->resampler[0]) + resampler_get_and_remove_sample(player->resampler[1])) >> 1);
 		}
 		else {
-			*stream = SDL_SwapLE16(resampler_get_and_remove_sample(player->resampler[0]));
+			*stream = resampler_get_and_remove_sample(player->resampler[0]);
 		}
 	}
 }
@@ -240,7 +240,7 @@ static BOOL OGG_Rewind(LPOGGPLAYER player)
 			double factor = (double)player->vi.rate / (double)gConfig.iSampleRate;
 			for (i = 0; i < min(player->vi.channels, 2); i++)
 			{
-				resampler_set_quality(player->resampler[i], SOUND_IsIntegerConversion(player->vi.rate) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
+				resampler_set_quality(player->resampler[i], AUDIO_IsIntegerConversion(player->vi.rate) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
 				resampler_set_rate(player->resampler[i], factor);
 				resampler_clear(player->resampler[i]);
 			}
@@ -264,7 +264,6 @@ OGG_FillBuffer(
 
 	if (player->fReady) {
 		ogg_packet       op; /* one raw packet of data for decode */
-		double volume = (double)gConfig.iVolume / (SDL_MIX_MAXVOLUME * 3 / 4);
 		int total_bytes = 0, stage = player->iStage;
 
 		while (total_bytes < len) {
@@ -331,7 +330,7 @@ OGG_FillBuffer(
 								for (i = 0; i < min(player->vi.channels, 2); i++) {
 									float *mono = pcm[i] + bout;
 									for (j = 0; j < to_write; j++) {
-										resampler_write_sample(player->resampler[i], OGG_GetSample(mono[j], volume));
+										resampler_write_sample(player->resampler[i], OGG_GetSample(mono[j]));
 									}
 								}
 							}
@@ -353,15 +352,15 @@ OGG_FillBuffer(
 						if (bout > samples) bout = samples;
 						for (i = 0; i < bout; i++) {
 							if (gConfig.iAudioChannels == 2) {
-								ptr[0] = SDL_SwapLE16(OGG_GetSample(pcm[0][i], volume));
-								ptr[1] = (player->vi.channels > 1) ? SDL_SwapLE16(OGG_GetSample(pcm[1][i], volume)) : ptr[0];
+								ptr[0] = OGG_GetSample(pcm[0][i]);
+								ptr[1] = (player->vi.channels > 1) ? OGG_GetSample(pcm[1][i]) : ptr[0];
 							}
 							else {
 								if (player->vi.channels > 1) {
-									ptr[0] = SDL_SwapLE16((short)((int)(OGG_GetSample(pcm[0][i], volume) + OGG_GetSample(pcm[1][i], volume)) >> 1));
+									ptr[0] = (short)((int)(OGG_GetSample(pcm[0][i]) + OGG_GetSample(pcm[1][i])) >> 1);
 								}
 								else {
-									ptr[0] = SDL_SwapLE16(OGG_GetSample(pcm[0][i], volume));
+									ptr[0] = OGG_GetSample(pcm[0][i]);
 								}
 							}
 							ptr += gConfig.iAudioChannels;
