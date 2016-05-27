@@ -123,54 +123,6 @@ AUDIO_AdjustNativeVolume(
 	}
 }
 
-#if (defined(_M_IX86) || defined(__i386__) || defined(_M_X64) || defined(__amd64__))
-
-PAL_FORCE_INLINE
-void
-AUDIO_MixNative_SSE2(
-	short     *dst,
-	short     *src,
-	int        samples
-)
-{
-	while (samples > 0)
-	{
-		int val = *src++ + *dst;
-		if (val > SHRT_MAX)
-			*dst++ = SHRT_MAX;
-		else if (val < SHRT_MIN)
-			*dst++ = SHRT_MIN;
-		else
-			*dst++ = (short)val;
-		samples--;
-	}
-}
-
-PAL_FORCE_INLINE
-void
-AUDIO_MixNativeVolume_SSE2(
-	short     *dst,
-	int        iDstVolume,
-	short     *src,
-	int        iSrcVolume,
-	int        samples
-)
-{
-	while (samples > 0)
-	{
-		int val = ((*src++) * iSrcVolume + *dst * iDstVolume) / PAL_MAX_VOLUME;
-		if (val > SHRT_MAX)
-			*dst++ = SHRT_MAX;
-		else if (val < SHRT_MIN)
-			*dst++ = SHRT_MIN;
-		else
-			*dst++ = (short)val;
-		samples--;
-	}
-}
-
-#endif
-
 typedef struct tagRIFFHEADER
 {
 	DWORD   riff_sig;	/* 'RIFF' */
