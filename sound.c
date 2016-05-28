@@ -314,7 +314,7 @@ SOUND_ResampleU8(
 /*++
 	Purpose:
 
-	Resample 8-bit unsigned PCM data into 16-bit signed (little-endian) PCM data.
+	Resample 8-bit unsigned PCM data into 16-bit signed (native-endian) PCM data.
 
 	Parameters:
 
@@ -358,7 +358,7 @@ SOUND_ResampleU8(
 			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
 			{
 				*dst = resampler_get_and_remove_sample(resampler);
-				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
+				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16SYS) >> 3);
 			}
 		}
 		/* Flush resampler's output buffer */
@@ -370,7 +370,7 @@ SOUND_ResampleU8(
 			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
 			{
 				*dst = resampler_get_and_remove_sample(resampler);
-				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
+				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16SYS) >> 3);
 			}
 		}
 	}
@@ -387,7 +387,7 @@ SOUND_ResampleS16(
 /*++
 	Purpose:
 
-	Resample 16-bit signed (little-endian) PCM data into 16-bit signed (little-endian) PCM data.
+	Resample 16-bit signed (little-endian) PCM data into 16-bit signed (native-endian) PCM data.
 
 	Parameters:
 
@@ -431,7 +431,7 @@ SOUND_ResampleS16(
 			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
 			{
 				*dst = resampler_get_and_remove_sample(resampler);
-				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
+				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16SYS) >> 3);
 			}
 		}
 		/* Flush resampler's output buffer */
@@ -444,7 +444,7 @@ SOUND_ResampleS16(
 			while (total_bytes < channel_len && resampler_get_sample_count(resampler) > 0)
 			{
 				*dst = resampler_get_and_remove_sample(resampler);
-				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16) >> 3);
+				dst += lpSpec->channels; total_bytes += (SDL_AUDIO_BITSIZE(AUDIO_S16SYS) >> 3);
 			}
 		}
 	}

@@ -79,7 +79,6 @@ RIX_FillBuffer(
 --*/
 {
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
-	static const int max_volume = SDL_MIX_MAXVOLUME;
 
 	if (pRixPlayer == NULL || !pRixPlayer->fReady)
 	{
@@ -102,12 +101,12 @@ RIX_FillBuffer(
 			if (pRixPlayer->iRemainingFadeSamples <= 0)
 			{
 				pRixPlayer->FadeType = RIXPLAYER::NONE;
-				volume = max_volume;
+				volume = SDL_MIX_MAXVOLUME;
 			}
 			else
 			{
-				volume = (INT)(max_volume * (1.0 - (double)pRixPlayer->iRemainingFadeSamples / pRixPlayer->iTotalFadeInSamples));
-				delta_samples = pRixPlayer->iTotalFadeInSamples / max_volume; vol_delta = 1;
+				volume = (INT)(SDL_MIX_MAXVOLUME * (1.0 - (double)pRixPlayer->iRemainingFadeSamples / pRixPlayer->iTotalFadeInSamples));
+				delta_samples = pRixPlayer->iTotalFadeInSamples / SDL_MIX_MAXVOLUME; vol_delta = 1;
 			}
 			break;
 		case RIXPLAYER::FADE_OUT:
@@ -149,8 +148,8 @@ RIX_FillBuffer(
 			}
 			else
 			{
-				volume = (INT)(max_volume * ((double)pRixPlayer->iRemainingFadeSamples / pRixPlayer->iTotalFadeOutSamples));
-				delta_samples = pRixPlayer->iTotalFadeOutSamples / max_volume; vol_delta = -1;
+				volume = (INT)(SDL_MIX_MAXVOLUME * ((double)pRixPlayer->iRemainingFadeSamples / pRixPlayer->iTotalFadeOutSamples));
+				delta_samples = pRixPlayer->iTotalFadeOutSamples / SDL_MIX_MAXVOLUME; vol_delta = -1;
 			}
 			break;
 		default:
@@ -163,7 +162,7 @@ RIX_FillBuffer(
 			}
 			else
 			{
-				volume = max_volume;
+				volume = SDL_MIX_MAXVOLUME;
 			}
 		}
 
@@ -239,31 +238,29 @@ RIX_FillBuffer(
 			//
 			// Put audio data into buffer and adjust volume
 			//
-			SHORT* ptr = (SHORT*)stream;
-			if (pRixPlayer->FadeType == RIXPLAYER::NONE)
+			if (pRixPlayer->FadeType != RIXPLAYER::NONE)
 			{
-				for (int i = 0; i < l; i++)
-				{
-					*ptr++ = *(SHORT *)pRixPlayer->pos * volume / max_volume;
-					pRixPlayer->pos += sizeof(SHORT);
-				}
-			}
-			else
-			{
+				short* ptr = (short*)stream;
 				for (int i = 0; i < l && pRixPlayer->iRemainingFadeSamples > 0; volume += vol_delta)
 				{
 					int j = 0;
 					for (j = 0; i < l && j < delta_samples; i++, j++)
 					{
-						*ptr++ = *(SHORT *)pRixPlayer->pos * volume / max_volume;
-						pRixPlayer->pos += sizeof(SHORT);
+						*ptr++ = *(short*)pRixPlayer->pos * volume / SDL_MIX_MAXVOLUME;
+						pRixPlayer->pos += sizeof(short);
 					}
 					pRixPlayer->iRemainingFadeSamples -= j;
 				}
 				fContinue = (pRixPlayer->iRemainingFadeSamples > 0);
+				len -= (LPBYTE)ptr - stream; stream = (LPBYTE)ptr;
 			}
-			len -= (LPBYTE)ptr - stream;
-			stream = (LPBYTE)ptr;
+			else
+			{
+				memcpy(stream, pRixPlayer->pos, l * sizeof(short));
+				pRixPlayer->pos += l * sizeof(short);
+				stream += l * sizeof(short);
+				len -= l * sizeof(short);
+			}
 		}
 	}
 }
