@@ -98,7 +98,7 @@ SOUND_Reload(
 );
 #endif
 
-#define AUDIO_IsIntegerConversion(a) ((((a) % gConfig.iSampleRate) | (gConfig.iSampleRate % (a))) == 0)
+#define AUDIO_IsIntegerConversion(a) (((a) % gConfig.iSampleRate) == 0 || (gConfig.iSampleRate % (a)) == 0)
 
 #ifdef __cplusplus
 }

@@ -956,8 +956,8 @@ AUDIO_PlaySound(
    if (wavespec.freq != gSndPlayer.spec.freq)
    {
 	   /* Resampler is needed */
-	   if (AUDIO_IsIntegerConversion(wavespec.freq))
-	   {
+	   //if (!AUDIO_IsIntegerConversion(wavespec.freq))
+	   //{
 		   resampler_set_quality(gSndPlayer.WavePlayer.resampler, AUDIO_IsIntegerConversion(wavespec.freq) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
 		   resampler_set_rate(gSndPlayer.WavePlayer.resampler, (double)wavespec.freq / (double)gSndPlayer.spec.freq);
 		   len = (int)ceil(wavespec.size * (double)gSndPlayer.spec.freq / (double)wavespec.freq) * (SDL_AUDIO_BITSIZE(AUDIO_S16SYS) / SDL_AUDIO_BITSIZE(wavespec.format));
@@ -977,28 +977,28 @@ AUDIO_PlaySound(
 			   free(buf);
 			   return;
 		   }
-	   }
-	   else
-	   {
-		   SDL_BuildAudioCVT(&wavecvt, wavespec.format, wavespec.channels, wavespec.freq, wavespec.format, wavespec.channels, gSndPlayer.spec.freq);
-		   if (wavecvt.len_mult > 1)
-		   {
-			   wavecvt.buf = (LPBYTE)malloc(wavespec.size * wavecvt.len_mult);
-			   memcpy(wavecvt.buf, bufsrc, wavespec.size);
-		   }
-		   else
-			   wavecvt.buf = bufsrc;
-		   wavecvt.len = wavespec.size;
-		   SDL_ConvertAudio(&wavecvt);
-		   if (wavecvt.len_mult > 1)
-		   {
-			   free(buf);
-			   buf = wavecvt.buf;
-		   }
-		   bufdec = wavecvt.buf;
-		   len = (int)(wavespec.size * wavecvt.len_ratio);
-		   wavespec.freq = gSndPlayer.spec.freq;
-	   }
+	   //}
+	   //else
+	   //{
+		  // SDL_BuildAudioCVT(&wavecvt, wavespec.format, wavespec.channels, wavespec.freq, wavespec.format, wavespec.channels, gSndPlayer.spec.freq);
+		  // if (wavecvt.len_mult > 1)
+		  // {
+			 //  wavecvt.buf = (LPBYTE)malloc(wavespec.size * wavecvt.len_mult);
+			 //  memcpy(wavecvt.buf, bufsrc, wavespec.size);
+		  // }
+		  // else
+			 //  wavecvt.buf = bufsrc;
+		  // wavecvt.len = wavespec.size;
+		  // SDL_ConvertAudio(&wavecvt);
+		  // if (wavecvt.len_mult > 1)
+		  // {
+			 //  free(buf);
+			 //  buf = wavecvt.buf;
+		  // }
+		  // bufdec = wavecvt.buf;
+		  // len = (int)(wavespec.size * wavecvt.len_ratio);
+		  // wavespec.freq = gSndPlayer.spec.freq;
+	   //}
    }
    else
    {
