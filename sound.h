@@ -50,8 +50,13 @@ AUDIO_GetDeviceSpec(
 );
 
 VOID
-AUDIO_AdjustVolume(
-   INT    iDirection
+AUDIO_IncreaseVolume(
+   VOID
+);
+
+VOID
+AUDIO_DecreaseVolume(
+   VOID
 );
 
 VOID

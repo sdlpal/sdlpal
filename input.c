@@ -92,10 +92,10 @@ PAL_KeyboardEventFilter(
          VIDEO_ToggleScaleScreen();
          break;
       case SDLK_1:
-         AUDIO_AdjustVolume(0);
+         AUDIO_DecreaseVolume();
          break;
       case SDLK_3:
-         AUDIO_AdjustVolume(1);
+         AUDIO_IncreaseVolume();
          break;
 #endif
       case SDLK_UP:
@@ -300,7 +300,7 @@ PAL_MouseEventFilter(
 
 --*/
 {
-#ifdef PAL_HAS_MOUSE
+#if PAL_HAS_MOUSE
    static short hitTest = 0; // Double click detect;   
    const SDL_VideoInfo *vi;
 
@@ -415,14 +415,14 @@ PAL_MouseEventFilter(
       case 2:
         if( isLeftMouseDBClick )
        {
-          AUDIO_AdjustVolume(1);
+          AUDIO_IncreaseVolume();
           break;
        }
       case 6:
       case 0:
         if( isLeftMouseDBClick )
        {
-          AUDIO_AdjustVolume(0);
+          AUDIO_DecreaseVolume();
           break;
        }
       case 7:

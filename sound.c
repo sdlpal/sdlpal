@@ -57,6 +57,7 @@ typedef struct tagSNDPLAYER
    SDL_CD                   *pCD;
 #endif
    WAVEPLAYER                wavePlayer;
+   INT                       iMusicVolume, iSoundVolume;
    BOOL                      fOpened;
    BOOL                      fMusicEnabled;
    BOOL                      fSoundEnabled;
@@ -87,38 +88,17 @@ AUDIO_MixNative(
 
 PAL_FORCE_INLINE
 void
-AUDIO_MixNativeVolume(
-	short     *dst,
-	int        iDstVolume,
-	short     *src,
-	int        iSrcVolume,
-	int        samples
-)
-{
-	while (samples > 0)
-	{
-		int val = ((*src++) * iSrcVolume + *dst * iDstVolume) / PAL_MAX_VOLUME;
-		if (val > SHRT_MAX)
-			*dst++ = SHRT_MAX;
-		else if (val < SHRT_MIN)
-			*dst++ = SHRT_MIN;
-		else
-			*dst++ = (short)val;
-		samples--;
-	}
-}
-
-PAL_FORCE_INLINE
-void
-AUDIO_AdjustNativeVolume(
+AUDIO_AdjustVolume(
 	short     *srcdst,
 	int        iVolume,
 	int        samples
 )
 {
+	if (iVolume == SDL_MIX_MAXVOLUME) return;
+	if (iVolume == 0) { memset(srcdst, 0, samples << 1); return; }
 	while (samples > 0)
 	{
-		*srcdst = *srcdst * iVolume / PAL_MAX_VOLUME;
+		*srcdst = *srcdst * iVolume / SDL_MIX_MAXVOLUME;
 		samples--; srcdst++;
 	}
 }
@@ -507,23 +487,28 @@ AUDIO_FillBuffer(
    //
    // Play music
    //
-   if (gSndPlayer.fMusicEnabled)
+   if (gSndPlayer.fMusicEnabled && gSndPlayer.iMusicVolume > 0)
    {
-	   if (gSndPlayer.pMusPlayer)
-	   {
-		   gSndPlayer.pMusPlayer->FillBuffer(gSndPlayer.pMusPlayer, stream, len);
-	   }
+      if (gSndPlayer.pMusPlayer)
+      {
+         gSndPlayer.pMusPlayer->FillBuffer(gSndPlayer.pMusPlayer, stream, len);
+      }
 
-	   if (gSndPlayer.pCDPlayer)
-	   {
-		   gSndPlayer.pCDPlayer->FillBuffer(gSndPlayer.pCDPlayer, stream, len);
-	   }
+      if (gSndPlayer.pCDPlayer)
+      {
+         gSndPlayer.pCDPlayer->FillBuffer(gSndPlayer.pCDPlayer, stream, len);
+      }
+
+      //
+      // Adjust volume for music
+      //
+      AUDIO_AdjustVolume((short *)stream, gSndPlayer.iMusicVolume, len >> 1);
    }
 
    //
    // Play sound
    //
-   if (gSndPlayer.fSoundEnabled && gSndPlayer.wavePlayer.len > 0)
+   if (gSndPlayer.fSoundEnabled && gSndPlayer.wavePlayer.len > 0 && gSndPlayer.iSoundVolume > 0)
    {
       //
       // Mix as much sound data as possible
@@ -532,23 +517,18 @@ AUDIO_FillBuffer(
       int mixlen = min(player->len, len >> 1);
       if (player->pos + mixlen > player->buf_len)
       {
-         AUDIO_MixNativeVolume((short *)stream, gConfig.iMusicVolume, player->buf + player->pos, gConfig.iSoundVolume, player->buf_len - player->pos);
+         AUDIO_MixNative((short *)stream, player->buf + player->pos, player->buf_len - player->pos);
          stream += (player->buf_len - player->pos) << 1; memset(player->buf + player->pos, 0, (player->buf_len - player->pos) << 1);
-		 AUDIO_MixNativeVolume((short *)stream, gConfig.iMusicVolume, player->buf, gConfig.iSoundVolume, player->pos + mixlen - player->buf_len);
+		 AUDIO_MixNative((short *)stream, player->buf, player->pos + mixlen - player->buf_len);
          stream += (player->pos + mixlen - player->buf_len) << 1; memset(player->buf, 0, (player->pos + mixlen - player->buf_len) << 1);
       }
       else
       {
-         AUDIO_MixNativeVolume((short *)stream, gConfig.iMusicVolume, player->buf + player->pos, gConfig.iSoundVolume, mixlen);
+         AUDIO_MixNative((short *)stream, player->buf + player->pos, mixlen);
          stream += mixlen << 1; memset(player->buf + player->pos, 0, mixlen << 1);
       }
       player->pos = (player->pos + mixlen) % player->buf_len; player->len -= mixlen; len -= (mixlen << 1);
    }
-
-   //
-   // Adjust volume in the remaing buffer
-   //
-   AUDIO_AdjustNativeVolume((short *)stream, gConfig.iMusicVolume, len >> 1);
 
    //
    // Convert audio from native byte-order to actual byte-order
@@ -635,6 +615,8 @@ AUDIO_OpenDevice(
    gSndPlayer.fOpened = FALSE;
    gSndPlayer.fMusicEnabled = TRUE;
    gSndPlayer.fSoundEnabled = TRUE;
+   gSndPlayer.iMusicVolume = gConfig.iMusicVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+   gSndPlayer.iSoundVolume = gConfig.iSoundVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
 
    //
    // Load the MKF file.
@@ -844,7 +826,7 @@ AUDIO_GetDeviceSpec(
 }
 
 static INT
-AUDIO_AdjustVolumeByValue(
+AUDIO_ChangeVolumeByValue(
    INT   *iVolume,
    INT    iValue
 )
@@ -858,17 +840,17 @@ AUDIO_AdjustVolumeByValue(
 }
 
 VOID
-AUDIO_AdjustVolume(
-   INT    iDirection
+AUDIO_IncreaseVolume(
+   VOID
 )
 /*++
   Purpose:
 
-    SDL sound volume adjust function.
+    Increase global volume by 3%.
 
   Parameters:
 
-    [IN]  iDirection - value, Increase (>0) or decrease (<=0) 3% volume.
+    None.
 
   Return value:
 
@@ -876,8 +858,35 @@ AUDIO_AdjustVolume(
 
 --*/
 {
-   AUDIO_AdjustVolumeByValue(&gConfig.iMusicVolume, (iDirection > 0) ? 3 : -3);
-   AUDIO_AdjustVolumeByValue(&gConfig.iSoundVolume, (iDirection > 0) ? 3 : -3);
+   AUDIO_ChangeVolumeByValue(&gConfig.iMusicVolume, 3);
+   AUDIO_ChangeVolumeByValue(&gConfig.iSoundVolume, 3);
+   gSndPlayer.iMusicVolume = gConfig.iMusicVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+   gSndPlayer.iSoundVolume = gConfig.iSoundVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+}
+
+VOID
+AUDIO_DecreaseVolume(
+   VOID
+)
+/*++
+  Purpose:
+
+    Decrease global volume by 3%.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   AUDIO_ChangeVolumeByValue(&gConfig.iMusicVolume, -3);
+   AUDIO_ChangeVolumeByValue(&gConfig.iSoundVolume, -3);
+   gSndPlayer.iMusicVolume = gConfig.iMusicVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+   gSndPlayer.iSoundVolume = gConfig.iSoundVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
 }
 
 VOID
@@ -999,6 +1008,8 @@ AUDIO_PlaySound(
       WAVEPLAYER *player = &gSndPlayer.wavePlayer;
 
       wavecvt.len = (int)(wavecvt.len * wavecvt.len_ratio) >> 1;
+
+      AUDIO_AdjustVolume((short *)wavecvt.buf, gSndPlayer.iSoundVolume, wavecvt.len);
 
       SDL_mutexP(gSndPlayer.mtx);
 

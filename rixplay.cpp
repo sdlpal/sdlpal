@@ -79,7 +79,7 @@ RIX_FillBuffer(
 --*/
 {
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
-	static const int max_volume = PAL_MAX_VOLUME;
+	static const int max_volume = SDL_MIX_MAXVOLUME;
 
 	if (pRixPlayer == NULL || !pRixPlayer->fReady)
 	{
