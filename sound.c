@@ -35,32 +35,35 @@
 
 #define PAL_CDTRACK_BASE    10000
 
-typedef LPCBYTE(*FNLoadSoundData)(LPCBYTE, DWORD, SDL_AudioSpec *);
+typedef LPCBYTE(*LoaderFunction)(LPCBYTE, DWORD, SDL_AudioSpec *);
 
 typedef struct tagWAVEPLAYER
 {
-	FNLoadSoundData           LoadSoundData;
-	void                     *resampler;
-	short                    *buf;
-	int                       buf_len, pos, len;
+	LoaderFunction           LoadSound;	/* The function pointer for load WAVE/VOC data */
+	void                    *resampler;	/* The resampler used for sound data */
+	short                   *buf;		/* Base address of the ring buffer */
+	int                      buf_len;	/* Length of the ring buffer in samples */
+	int                      pos;		/* Position in samples of the 'read' pointer */
+	int                      len;		/* Number of vaild samples from the 'read' pointer */
 } WAVEPLAYER;
 
 typedef struct tagSNDPLAYER
 {
-   FILE                     *mkf;
-   SDL_AudioSpec             spec;
-   SDL_AudioCVT              cvt;
-   SDL_mutex                *mtx;
+   FILE                     *mkf;		/* File pointer to the MKF file */
+   SDL_AudioSpec             spec;		/* Actual-used sound specification */
+   SDL_AudioCVT              cvt;		/* Audio format conversion parameter */
+   SDL_mutex                *mtx;		/* Mutex for preventing using destroyed objects */
    MUSICPLAYER              *pMusPlayer;
    MUSICPLAYER              *pCDPlayer;
 #if PAL_HAS_SDLCD
    SDL_CD                   *pCD;
 #endif
-   WAVEPLAYER                wavePlayer;
-   INT                       iMusicVolume, iSoundVolume;
-   BOOL                      fOpened;
-   BOOL                      fMusicEnabled;
-   BOOL                      fSoundEnabled;
+   WAVEPLAYER                WavePlayer;
+   INT                       iMusicVolume;	/* The BGM volume ranged in [0, 128] for better performance */
+   INT                       iSoundVolume;	/* The sound effect volume ranged in [0, 128] for better performance */
+   BOOL                      fOpened;       /* Is the audio device opened? */
+   BOOL                      fMusicEnabled; /* Is BGM enabled? */
+   BOOL                      fSoundEnabled; /* Is sound effect enabled? */
 } SNDPLAYER;
 
 static SNDPLAYER gSndPlayer;
@@ -134,26 +137,25 @@ SOUND_LoadWAVEData(
 	LPCBYTE                lpData,
 	DWORD                  dwLen,
 	SDL_AudioSpec         *lpSpec
-	)
-	/*++
-		Purpose:
+)
+/*++
+  Purpose:
 
-		Return the WAVE data pointer inside the input buffer.
+    Return the WAVE data pointer inside the input buffer.
 
-		Parameters:
+  Parameters:
 
-		[IN]  lpData - pointer to the buffer of the WAVE file.
+    [IN]  lpData - pointer to the buffer of the WAVE file.
 
-		[IN]  dwLen - length of the buffer of the WAVE file.
+    [IN]  dwLen - length of the buffer of the WAVE file.
 
-		[OUT] lpSpec - pointer to the SDL_AudioSpec structure, which contains
-                       some basic information about the WAVE file.
+    [OUT] lpSpec - pointer to the SDL_AudioSpec structure, which contains
+                    some basic information about the WAVE file.
 
-		Return value:
+  Return value:
 
-		Pointer to the WAVE data inside the input buffer, NULL if failed.
-
-	--*/
+    Pointer to the WAVE data inside the input buffer, NULL if failed.
+--*/
 {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #	define RIFF		'RIFF'
@@ -236,26 +238,26 @@ SOUND_LoadVOCData(
 	LPCBYTE                lpData,
 	DWORD                  dwLen,
 	SDL_AudioSpec         *lpSpec
-	)
+)
 /*++
-	Purpose:
+  Purpose:
 
-	Return the VOC data pointer inside the input buffer. Currently supports type 01 block only.
+    Return the VOC data pointer inside the input buffer. Currently supports type 01 block only.
 
-	Parameters:
+  Parameters:
 
-	[IN]  lpData - pointer to the buffer of the VOC file.
+    [IN]  lpData - pointer to the buffer of the VOC file.
 
-	[IN]  dwLen - length of the buffer of the VOC file.
+    [IN]  dwLen - length of the buffer of the VOC file.
 
-	[OUT] lpSpec - pointer to the SDL_AudioSpec structure, which contains
+    [OUT] lpSpec - pointer to the SDL_AudioSpec structure, which contains
                    some basic information about the VOC file.
 
-	Return value:
+  Return value:
 
-	Pointer to the WAVE data inside the input buffer, NULL if failed.
+    Pointer to the WAVE data inside the input buffer, NULL if failed.
 
-	Reference: http://sox.sourceforge.net/AudioFormats-11.html
+    Reference: http://sox.sourceforge.net/AudioFormats-11.html
 --*/
 {
 	LPCVOCHEADER lpVOC = (LPCVOCHEADER)lpData;
@@ -310,29 +312,29 @@ SOUND_ResampleU8(
 	LPBYTE                 lpBuffer,
 	DWORD                  dwLen,
 	void                  *resampler
-	)
+)
 /*++
-	Purpose:
+  Purpose:
 
-	Resample 8-bit unsigned PCM data into 16-bit signed (native-endian) PCM data.
+    Resample 8-bit unsigned PCM data into 16-bit signed (native-endian) PCM data.
 
-	Parameters:
+  Parameters:
 
-	[IN]  lpData - pointer to the buffer of the input PCM data.
+    [IN]  lpData - pointer to the buffer of the input PCM data.
 
-	[IN]  lpSpec - pointer to the SDL_AudioSpec structure, which contains
+    [IN]  lpSpec - pointer to the SDL_AudioSpec structure, which contains
                    some basic information about the input PCM data.
 
-	[IN]  lpBuffer - pointer of the buffer of the output PCM data.
+    [IN]  lpBuffer - pointer of the buffer of the output PCM data.
 
-	[IN]  dwLen - length of the buffer of the output PCM data, should be exactly
+    [IN]  dwLen - length of the buffer of the output PCM data, should be exactly
                   the number of bytes needed of the resampled data.
 
-	[IN]  resampler - pointer of the resampler instance.
+    [IN]  resampler - pointer of the resampler instance.
 
-	Return value:
+  Return value:
 
-	None.
+    None.
 --*/
 {
 	int src_samples = lpSpec->size / lpSpec->channels, i;
@@ -383,29 +385,29 @@ SOUND_ResampleS16(
 	LPBYTE                 lpBuffer,
 	DWORD                  dwLen,
 	void                  *resampler
-	)
+)
 /*++
-	Purpose:
+  Purpose:
 
-	Resample 16-bit signed (little-endian) PCM data into 16-bit signed (native-endian) PCM data.
+    Resample 16-bit signed (little-endian) PCM data into 16-bit signed (native-endian) PCM data.
 
-	Parameters:
+  Parameters:
 
-	[IN]  lpData - pointer to the buffer of the input PCM data.
+    [IN]  lpData - pointer to the buffer of the input PCM data.
 
-	[IN]  lpSpec - pointer to the SDL_AudioSpec structure, which contains
+    [IN]  lpSpec - pointer to the SDL_AudioSpec structure, which contains
                    some basic information about the input PCM data.
 
-	[IN]  lpBuffer - pointer of the buffer of the output PCM data.
+    [IN]  lpBuffer - pointer of the buffer of the output PCM data.
 
-	[IN]  dwLen - length of the buffer of the output PCM data, should be exactly
+    [IN]  dwLen - length of the buffer of the output PCM data, should be exactly
                   the number of bytes needed of the resampled data.
 
-	[IN]  resampler - pointer of the resampler instance.
+    [IN]  resampler - pointer of the resampler instance.
 
-	Return value:
+  Return value:
 
-	None.
+    None.
 --*/
 {
 	int src_samples = lpSpec->size / lpSpec->channels / 2, i;
@@ -508,12 +510,12 @@ AUDIO_FillBuffer(
    //
    // Play sound
    //
-   if (gSndPlayer.fSoundEnabled && gSndPlayer.wavePlayer.len > 0 && gSndPlayer.iSoundVolume > 0)
+   if (gSndPlayer.fSoundEnabled && gSndPlayer.WavePlayer.len > 0 && gSndPlayer.iSoundVolume > 0)
    {
       //
       // Mix as much sound data as possible
       //
-      WAVEPLAYER *player = &gSndPlayer.wavePlayer;
+      WAVEPLAYER *player = &gSndPlayer.WavePlayer;
       int mixlen = min(player->len, len >> 1);
       if (player->pos + mixlen > player->buf_len)
       {
@@ -558,7 +560,7 @@ SOUND_LoadMKF(
 --*/
 {
 	char *mkfs[2];
-	FNLoadSoundData func[2];
+	LoaderFunction func[2];
 	int i;
 
 	if (gConfig.fIsWIN95)
@@ -577,7 +579,7 @@ SOUND_LoadMKF(
 		gSndPlayer.mkf = UTIL_OpenFile(mkfs[i]);
 		if (gSndPlayer.mkf)
 		{
-			gSndPlayer.wavePlayer.LoadSoundData = func[i];
+			gSndPlayer.WavePlayer.LoadSound = func[i];
 			break;
 		}
 	}
@@ -631,7 +633,7 @@ AUDIO_OpenDevice(
    // Initialize the resampler
    //
    resampler_init();
-   gSndPlayer.wavePlayer.resampler = resampler_create();
+   gSndPlayer.WavePlayer.resampler = resampler_create();
 
    //
    // Open the sound subsystem.
@@ -654,10 +656,10 @@ AUDIO_OpenDevice(
 
    SDL_BuildAudioCVT(&gSndPlayer.cvt, AUDIO_S16SYS, spec.channels, spec.freq, spec.format, spec.channels, spec.freq);
 
-   gSndPlayer.wavePlayer.buf = NULL;
-   gSndPlayer.wavePlayer.buf_len = 0;
-   gSndPlayer.wavePlayer.pos = 0;
-   gSndPlayer.wavePlayer.len = 0;
+   gSndPlayer.WavePlayer.buf = NULL;
+   gSndPlayer.WavePlayer.buf_len = 0;
+   gSndPlayer.WavePlayer.pos = 0;
+   gSndPlayer.WavePlayer.len = 0;
 
    gSndPlayer.mtx = SDL_CreateMutex();
    gSndPlayer.fOpened = TRUE;
@@ -770,13 +772,13 @@ AUDIO_CloseDevice(
 
    SDL_mutexP(gSndPlayer.mtx);
 
-   if (gSndPlayer.wavePlayer.buf != NULL)
+   if (gSndPlayer.WavePlayer.buf != NULL)
    {
-      free(gSndPlayer.wavePlayer.buf);
-      gSndPlayer.wavePlayer.buf = NULL;
-	  gSndPlayer.wavePlayer.buf_len = 0;
-	  gSndPlayer.wavePlayer.pos = 0;
-	  gSndPlayer.wavePlayer.len = 0;
+      free(gSndPlayer.WavePlayer.buf);
+      gSndPlayer.WavePlayer.buf = NULL;
+	  gSndPlayer.WavePlayer.buf_len = 0;
+	  gSndPlayer.WavePlayer.pos = 0;
+	  gSndPlayer.WavePlayer.len = 0;
    }
 
    if (gSndPlayer.mkf != NULL)
@@ -807,10 +809,10 @@ AUDIO_CloseDevice(
 
    if (gConfig.eMusicType == MUSIC_MIDI) MIDI_Play(0, FALSE);
 
-   if (gSndPlayer.wavePlayer.resampler)
+   if (gSndPlayer.WavePlayer.resampler)
    {
-      resampler_delete(gSndPlayer.wavePlayer.resampler);
-	  gSndPlayer.wavePlayer.resampler = NULL;
+      resampler_delete(gSndPlayer.WavePlayer.resampler);
+	  gSndPlayer.WavePlayer.resampler = NULL;
    }
 
    SDL_mutexV(gSndPlayer.mtx);
@@ -944,7 +946,7 @@ AUDIO_PlaySound(
    //
    PAL_MKFReadChunk(buf, len, iSoundNum, gSndPlayer.mkf);
 
-   bufsrc = gSndPlayer.wavePlayer.LoadSoundData(buf, len, &wavespec);
+   bufsrc = gSndPlayer.WavePlayer.LoadSound(buf, len, &wavespec);
    if (bufsrc == NULL)
    {
 	   free(buf);
@@ -954,15 +956,15 @@ AUDIO_PlaySound(
    if (wavespec.freq != gSndPlayer.spec.freq)
    {
 	   /* Resampler is needed */
-	   resampler_set_quality(gSndPlayer.wavePlayer.resampler, AUDIO_IsIntegerConversion(wavespec.freq) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
-	   resampler_set_rate(gSndPlayer.wavePlayer.resampler, (double)wavespec.freq / (double)gSndPlayer.spec.freq);
+	   resampler_set_quality(gSndPlayer.WavePlayer.resampler, AUDIO_IsIntegerConversion(wavespec.freq) ? RESAMPLER_QUALITY_MIN : gConfig.iResampleQuality);
+	   resampler_set_rate(gSndPlayer.WavePlayer.resampler, (double)wavespec.freq / (double)gSndPlayer.spec.freq);
 	   len = (int)ceil(wavespec.size * (double)gSndPlayer.spec.freq / (double)wavespec.freq) * (SDL_AUDIO_BITSIZE(AUDIO_S16SYS) / SDL_AUDIO_BITSIZE(wavespec.format));
 	   if (len >= wavespec.channels * 2 && (bufdec = malloc(len)))
 	   {
 		   if (wavespec.format == AUDIO_S16)
-			   SOUND_ResampleS16(bufsrc, &wavespec, bufdec, len, gSndPlayer.wavePlayer.resampler);
+			   SOUND_ResampleS16(bufsrc, &wavespec, bufdec, len, gSndPlayer.WavePlayer.resampler);
 		   else
-			   SOUND_ResampleU8(bufsrc, &wavespec, bufdec, len, gSndPlayer.wavePlayer.resampler);
+			   SOUND_ResampleU8(bufsrc, &wavespec, bufdec, len, gSndPlayer.WavePlayer.resampler);
 		   /* Free the original buffer and reset the pointer for simpler later operations */
 		   free(buf); buf = bufdec;
 		   wavespec.format = AUDIO_S16SYS;
@@ -1005,7 +1007,7 @@ AUDIO_PlaySound(
    //
    if (SDL_ConvertAudio(&wavecvt) == 0)
    {
-      WAVEPLAYER *player = &gSndPlayer.wavePlayer;
+      WAVEPLAYER *player = &gSndPlayer.WavePlayer;
 
       wavecvt.len = (int)(wavecvt.len * wavecvt.len_ratio) >> 1;
 
@@ -1016,7 +1018,7 @@ AUDIO_PlaySound(
       //
       // Check if the current sound buffer is large enough
       //
-      if (gSndPlayer.wavePlayer.buf_len < wavecvt.len)
+      if (gSndPlayer.WavePlayer.buf_len < wavecvt.len)
       {
          if (player->pos + player->len > player->buf_len)
          {
