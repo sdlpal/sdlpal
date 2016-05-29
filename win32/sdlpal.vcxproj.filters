@@ -308,6 +308,9 @@
     <ClCompile Include="..\palcfg.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\audio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ascii.h">
@@ -371,9 +374,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\script.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\text.h">
@@ -647,6 +647,9 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\palcfg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -26,14 +26,14 @@
 
 #if PAL_HAS_MP3
 
-#include "sound.h"
+#include "audio.h"
 #include "players.h"
 #include "resampler.h"
 #include "libmad/music_mad.h"
 
 typedef struct tagMP3PLAYER
 {
-	MUSICPLAYER_COMMONS;
+	AUDIOPLAYER_COMMONS;
 
 	mad_data           *pMP3;
 	INT                 iMusic;
@@ -136,7 +136,7 @@ MP3_Play(
 	}
 }
 
-LPMUSICPLAYER
+LPAUDIOPLAYER
 MP3_Init(
 	LPCSTR szFileName
 	)
@@ -151,7 +151,7 @@ MP3_Init(
 		player->pMP3 = NULL;
 		player->iMusic = -1;
 		player->fLoop = FALSE;
-		return (LPMUSICPLAYER)player;
+		return (LPAUDIOPLAYER)player;
 	}
 	else
 	{

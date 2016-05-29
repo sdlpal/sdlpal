@@ -925,10 +925,10 @@ void resampler_remove_sample(void *_r)
     }
 }
 
-/* Get a 16-bit sample without overflow */
+/* Get a 16-bit sample with saturation */
 short resampler_get_and_remove_sample(void *_r)
 {
-	int sample = (int)round(resampler_get_sample(_r) / 256.0);
+	int sample = resampler_get_sample(_r) >> 8;
 	resampler_remove_sample(_r);
 	if (sample > 32767)
 		return 32767;

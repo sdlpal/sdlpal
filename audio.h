@@ -19,8 +19,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef AUDIO_H
+#define AUDIO_H
 
 #include "common.h"
 
@@ -37,11 +37,6 @@ AUDIO_OpenDevice(
 VOID
 AUDIO_CloseDevice(
    VOID
-);
-
-VOID
-AUDIO_PlaySound(
-   INT    iSoundNum
 );
 
 SDL_AudioSpec*
@@ -69,6 +64,11 @@ AUDIO_PlayMusic(
 BOOL
 AUDIO_PlayCDTrack(
    INT    iNumTrack
+);
+
+VOID
+AUDIO_PlaySound(
+   INT    iSoundNum
 );
 
 VOID

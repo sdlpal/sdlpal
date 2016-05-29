@@ -24,7 +24,7 @@
 #include "global.h"
 #include "palcfg.h"
 #include "players.h"
-#include "sound.h"
+#include "audio.h"
 
 #include "resampler.h"
 #include "adplug/opl.h"
@@ -35,7 +35,7 @@
 #include "adplug/rix.h"
 
 typedef struct tagRIXPLAYER :
-	public MUSICPLAYER
+	public AUDIOPLAYER
 {
    Copl                      *opl;
    CrixPlayer                *rix;
@@ -64,7 +64,7 @@ RIX_FillBuffer(
 	Purpose:
 
 	Fill the background music into the sound buffer. Called by the SDL sound
-	callback function only (sound.c: SOUND_FillAudio).
+	callback function only (audio.c: AUDIO_FillBuffer).
 
 	Parameters:
 
@@ -373,7 +373,7 @@ RIX_Play(
 	return TRUE;
 }
 
-LPMUSICPLAYER
+LPAUDIOPLAYER
 RIX_Init(
 	LPCSTR     szFileName
 	)

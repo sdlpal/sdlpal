@@ -26,7 +26,7 @@
 #include "global.h"
 #include "palcfg.h"
 #include "players.h"
-#include "sound.h"
+#include "audio.h"
 #include <math.h>
 #if PAL_HAS_OGG
 #include <vorbis/vorbisfile.h>
@@ -49,7 +49,7 @@
 
 typedef struct tagOGGPLAYER
 {
-	MUSICPLAYER_COMMONS;
+	AUDIOPLAYER_COMMONS;
 
 	ogg_sync_state   oy; /* sync and verify incoming physical bitstream */
 	ogg_stream_state os; /* take physical pages, weld into a logical stream of packets */
@@ -470,7 +470,7 @@ OGG_Shutdown(
 	}
 }
 
-LPMUSICPLAYER
+LPAUDIOPLAYER
 OGG_Init(
 	LPCSTR szFileName
 	)
@@ -503,7 +503,7 @@ OGG_Init(
 			}
 		}
 
-		return (LPMUSICPLAYER)player;
+		return (LPAUDIOPLAYER)player;
 	}
 	else
 	{

@@ -613,7 +613,7 @@ PAL_BattleUIPlayerReady(
       gpGlobals->rgPlayerStatus[w][kStatusConfused] == 0 &&
       !g_Battle.UI.fAutoAttack && !gpGlobals->fAutoBattle)
    {
-      SOUND_PlayChannel(78, 1);
+      AUDIO_PlaySound(78);
    }
 #endif
 }

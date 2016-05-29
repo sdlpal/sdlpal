@@ -32,7 +32,7 @@
 #include "res.h"
 #include "scene.h"
 #include "players.h"
-#include "sound.h"
+#include "audio.h"
 #include "video.h"
 #include "input.h"
 #include "text.h"

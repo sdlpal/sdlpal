@@ -31,19 +31,19 @@ extern "C"
 {
 #endif
 
-typedef struct tagMUSICPLAYER
+typedef struct tagAUDIOPLAYER
 {
-#define MUSICPLAYER_COMMONS \
+#define AUDIOPLAYER_COMMONS \
 	VOID (*Shutdown)(VOID*); \
 	BOOL (*Play)(VOID*, INT, BOOL, FLOAT); \
 	VOID (*FillBuffer)(VOID*, LPBYTE, INT)
 
-	MUSICPLAYER_COMMONS;
-} MUSICPLAYER, *LPMUSICPLAYER;
+	AUDIOPLAYER_COMMONS;
+} AUDIOPLAYER, *LPAUDIOPLAYER;
 
 /* RIX */
 
-LPMUSICPLAYER
+LPAUDIOPLAYER
 RIX_Init(
    LPCSTR     szFileName
 );
@@ -51,7 +51,7 @@ RIX_Init(
 /* OGG */
 #if PAL_HAS_OGG
 
-LPMUSICPLAYER
+LPAUDIOPLAYER
 OGG_Init(
 	LPCSTR    szFileName
 );
@@ -61,12 +61,17 @@ OGG_Init(
 /* MP3 */
 #if PAL_HAS_MP3
 
-LPMUSICPLAYER
+LPAUDIOPLAYER
 MP3_Init(
 	LPCSTR    szFileName
 );
 
 #endif
+
+LPAUDIOPLAYER
+SOUND_Init(
+	VOID
+);
 
 #ifdef __cplusplus
 }
