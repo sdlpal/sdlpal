@@ -492,7 +492,7 @@ AUDIO_PlaySound(
    SDL_mutexP(gAudioDevice.mtx);
    if (gAudioDevice.pSoundPlayer)
    {
-      gAudioDevice.pSoundPlayer->Play(gAudioDevice.pSoundPlayer, iSoundNum, FALSE, 0.0f);
+      gAudioDevice.pSoundPlayer->Play(gAudioDevice.pSoundPlayer, abs(iSoundNum), FALSE, 0.0f);
    }
    SDL_mutexV(gAudioDevice.mtx);
 }

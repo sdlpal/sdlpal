@@ -342,7 +342,7 @@ mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len) {
               }
 			  src_samples -= to_write;
               while (resampler_get_sample_count(mp3_mad->resampler[i]) > 0) {
-                *dst = SDL_SwapLE16(resampler_get_and_remove_sample(mp3_mad->resampler[i]));
+                *dst = resampler_get_and_remove_sample(mp3_mad->resampler[i]);
 				dst += mp3_mad->mixer.channels; dst_samples++;
               }
             }
