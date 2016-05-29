@@ -244,7 +244,7 @@
     <ClInclude Include="..\..\rngplay.h" />
     <ClInclude Include="..\..\scene.h" />
     <ClInclude Include="..\..\script.h" />
-    <ClInclude Include="..\..\sound.h" />
+    <ClInclude Include="..\..\audio.h" />
     <ClInclude Include="..\..\text.h" />
     <ClInclude Include="..\..\ui.h" />
     <ClInclude Include="..\..\uibattle.h" />
@@ -266,6 +266,7 @@
     <ClCompile Include="..\..\adplug\player.cpp" />
     <ClCompile Include="..\..\adplug\rix.cpp" />
     <ClCompile Include="..\..\adplug\surroundopl.cpp" />
+    <ClCompile Include="..\..\audio.c" />
     <ClCompile Include="..\..\battle.c" />
     <ClCompile Include="..\..\ending.c" />
     <ClCompile Include="..\..\fight.c" />

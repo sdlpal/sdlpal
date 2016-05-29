@@ -341,7 +341,7 @@
     <ClInclude Include="..\..\script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\sound.h">
+    <ClInclude Include="..\..\audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\text.h">
@@ -414,6 +414,9 @@
     </ClCompile>
     <ClCompile Include="..\..\adplug\demuopl.cpp">
       <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\audio.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\liboggvorbis\src\analysis.c">
       <Filter>liboggvorbis\src</Filter>

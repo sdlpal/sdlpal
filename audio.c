@@ -395,6 +395,7 @@ AUDIO_CloseDevice(
 
    SDL_mutexV(gAudioDevice.mtx);
    SDL_DestroyMutex(gAudioDevice.mtx);
+   gAudioDevice.mtx = NULL;
 }
 
 SDL_AudioSpec*
