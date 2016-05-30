@@ -472,7 +472,7 @@ OGG_Shutdown(
 
 LPAUDIOPLAYER
 OGG_Init(
-	SDL_mutex *mutex
+	VOID
 )
 {
 	LPOGGPLAYER player;
@@ -483,7 +483,6 @@ OGG_Init(
 		player->FillBuffer = OGG_FillBuffer;
 		player->Play = OGG_Play;
 		player->Shutdown = OGG_Shutdown;
-		player->mutex = mutex;
 
 		player->fp = NULL;
 		player->iMusic = -1;

@@ -41,7 +41,6 @@ typedef struct tagAUDIODEVICE
 {
    SDL_AudioSpec             spec;		/* Actual-used sound specification */
    SDL_AudioCVT              cvt;		/* Audio format conversion parameter */
-   SDL_mutex                *mtx;		/* Mutex for preventing using destroyed objects */
    AUDIOPLAYER              *pMusPlayer;
    AUDIOPLAYER              *pCDPlayer;
 #if PAL_HAS_SDLCD
@@ -125,8 +124,6 @@ AUDIO_FillBuffer(
    memset(stream, 0, len);
 #endif
 
-   SDL_mutexP(gAudioDevice.mtx);
-
    gAudioDevice.cvt.buf = stream;
    gAudioDevice.cvt.len = len;
 
@@ -175,8 +172,6 @@ AUDIO_FillBuffer(
    // Convert audio from native byte-order to actual byte-order
    //
    SDL_ConvertAudio(&gAudioDevice.cvt);
-
-   SDL_mutexV(gAudioDevice.mtx);
 }
 
 INT
@@ -243,13 +238,12 @@ AUDIO_OpenDevice(
 
    SDL_BuildAudioCVT(&gAudioDevice.cvt, AUDIO_S16SYS, spec.channels, spec.freq, spec.format, spec.channels, spec.freq);
 
-   gAudioDevice.mtx = SDL_CreateMutex();
    gAudioDevice.fOpened = TRUE;
 
    //
    // Initialize the sound subsystem.
    //
-   gAudioDevice.pSoundPlayer = SOUND_Init(gAudioDevice.mtx);
+   gAudioDevice.pSoundPlayer = SOUND_Init();
 
    //
    // Initialize the music subsystem.
@@ -257,21 +251,21 @@ AUDIO_OpenDevice(
    switch (gConfig.eMusicType)
    {
    case MUSIC_RIX:
-	   if (!(gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "mus.mkf"), gAudioDevice.mtx)))
+	   if (!(gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "mus.mkf"))))
 	   {
-		   gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "MUS.MKF"), gAudioDevice.mtx);
+		   gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "MUS.MKF"));
 	   }
 	   break;
    case MUSIC_MP3:
 #if PAL_HAS_MP3
-	   gAudioDevice.pMusPlayer = MP3_Init(gAudioDevice.mtx);
+	   gAudioDevice.pMusPlayer = MP3_Init();
 #else
 	   gAudioDevice.pMusPlayer = NULL;
 #endif
 	   break;
    case MUSIC_OGG:
 #if PAL_HAS_OGG
-	   gAudioDevice.pMusPlayer = OGG_Init(gAudioDevice.mtx);
+	   gAudioDevice.pMusPlayer = OGG_Init();
 #else
 	   gAudioDevice.pMusPlayer = NULL;
 #endif
@@ -314,14 +308,14 @@ AUDIO_OpenDevice(
    }
    case MUSIC_MP3:
 #if PAL_HAS_MP3
-	   gAudioDevice.pCDPlayer = MP3_Init(gAudioDevice.mtx);
+	   gAudioDevice.pCDPlayer = MP3_Init();
 #else
 	   gAudioDevice.pCDPlayer = NULL;
 #endif
 	   break;
    case MUSIC_OGG:
 #if PAL_HAS_OGG
-	   gAudioDevice.pCDPlayer = OGG_Init(gAudioDevice.mtx);
+	   gAudioDevice.pCDPlayer = OGG_Init();
 #else
 	   gAudioDevice.pCDPlayer = NULL;
 #endif
@@ -356,8 +350,6 @@ AUDIO_CloseDevice(
 --*/
 {
    SDL_CloseAudio();
-
-   SDL_mutexP(gAudioDevice.mtx);
 
    if (gAudioDevice.pSoundPlayer != NULL)
    {
@@ -394,10 +386,6 @@ AUDIO_CloseDevice(
 #if PAL_HAS_NATIVEMIDI
    if (gConfig.eMusicType == MUSIC_MIDI) MIDI_Play(0, FALSE);
 #endif
-
-   SDL_mutexV(gAudioDevice.mtx);
-   SDL_DestroyMutex(gAudioDevice.mtx);
-   gAudioDevice.mtx = NULL;
 }
 
 SDL_AudioSpec*
@@ -515,12 +503,12 @@ AUDIO_PlayMusic(
       return;
    }
 #endif
-   SDL_mutexP(gAudioDevice.mtx);
+   SDL_LockAudio();
    if (gAudioDevice.pMusPlayer)
    {
       gAudioDevice.pMusPlayer->Play(gAudioDevice.pMusPlayer, iNumRIX, fLoop, flFadeTime);
    }
-   SDL_mutexV(gAudioDevice.mtx);
+   SDL_UnlockAudio();
 }
 
 BOOL
@@ -562,7 +550,7 @@ AUDIO_PlayCDTrack(
       }
    }
 #endif
-   SDL_mutexP(gAudioDevice.mtx);
+   SDL_LockAudio();
    if (gAudioDevice.pCDPlayer)
    {
 	   if (iNumTrack != -1)
@@ -575,7 +563,7 @@ AUDIO_PlayCDTrack(
 		   ret = gAudioDevice.pCDPlayer->Play(gAudioDevice.pCDPlayer, -1, FALSE, 0);
 	   }
    }
-   SDL_mutexV(gAudioDevice.mtx);
+   SDL_UnlockAudio();
 
    return ret;
 }

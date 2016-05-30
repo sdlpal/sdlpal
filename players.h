@@ -36,8 +36,7 @@ extern "C"
 #define AUDIOPLAYER_COMMONS \
 	VOID (*Shutdown)(VOID*); \
 	BOOL (*Play)(VOID*, INT, BOOL, FLOAT); \
-	VOID (*FillBuffer)(VOID*, LPBYTE, INT); \
-	SDL_mutex *mutex
+	VOID (*FillBuffer)(VOID*, LPBYTE, INT)
 
 	AUDIOPLAYER_COMMONS;
 } AUDIOPLAYER, *LPAUDIOPLAYER;
@@ -46,8 +45,7 @@ extern "C"
 
 LPAUDIOPLAYER
 RIX_Init(
-   LPCSTR     szFileName,
-   SDL_mutex *mutex
+   LPCSTR     szFileName
 );
 
 /* OGG */
@@ -55,7 +53,7 @@ RIX_Init(
 
 LPAUDIOPLAYER
 OGG_Init(
-	SDL_mutex *mutex
+	VOID
 );
 
 #endif
@@ -65,14 +63,14 @@ OGG_Init(
 
 LPAUDIOPLAYER
 MP3_Init(
-	SDL_mutex *mutex
+	VOID
 );
 
 #endif
 
 LPAUDIOPLAYER
 SOUND_Init(
-	SDL_mutex *mutex
+	VOID
 );
 
 #ifdef __cplusplus

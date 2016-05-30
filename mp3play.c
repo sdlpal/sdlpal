@@ -138,7 +138,7 @@ MP3_Play(
 
 LPAUDIOPLAYER
 MP3_Init(
-	SDL_mutex *mutex
+	VOID
 )
 {
 	LPMP3PLAYER player;
@@ -147,7 +147,6 @@ MP3_Init(
 		player->FillBuffer = MP3_FillBuffer;
 		player->Play = MP3_Play;
 		player->Shutdown = MP3_Shutdown;
-		player->mutex = mutex;
 
 		player->pMP3 = NULL;
 		player->iMusic = -1;

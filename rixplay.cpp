@@ -375,8 +375,7 @@ RIX_Play(
 
 LPAUDIOPLAYER
 RIX_Init(
-	LPCSTR     szFileName,
-	SDL_mutex *mutex
+	LPCSTR     szFileName
 )
 /*++
   Purpose:
@@ -403,7 +402,6 @@ RIX_Init(
 		pRixPlayer->FillBuffer = RIX_FillBuffer;
 		pRixPlayer->Shutdown = RIX_Shutdown;
 		pRixPlayer->Play = RIX_Play;
-		pRixPlayer->mutex = mutex;
 	}
 
 	if (gConfig.fUseSurroundOPL)
