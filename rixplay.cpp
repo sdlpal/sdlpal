@@ -375,22 +375,22 @@ RIX_Play(
 
 LPAUDIOPLAYER
 RIX_Init(
-	LPCSTR     szFileName
-	)
-	/*++
-	Purpose:
+	LPCSTR     szFileName,
+	SDL_mutex *mutex
+)
+/*++
+  Purpose:
 
-	Initialize the RIX player subsystem.
+    Initialize the RIX player subsystem.
 
-	Parameters:
+  Parameters:
 
-	[IN]  szFileName - Filename of the mus.mkf file.
+    [IN]  szFileName - Filename of the mus.mkf file.
 
-	Return value:
+  Return value:
 
-	0 if success, -1 if cannot allocate memory, -2 if file not found.
-
-	--*/
+    0 if success, -1 if cannot allocate memory, -2 if file not found.
+--*/
 {
 	LPRIXPLAYER pRixPlayer = new RIXPLAYER;
 	if (pRixPlayer == NULL)
@@ -403,6 +403,7 @@ RIX_Init(
 		pRixPlayer->FillBuffer = RIX_FillBuffer;
 		pRixPlayer->Shutdown = RIX_Shutdown;
 		pRixPlayer->Play = RIX_Play;
+		pRixPlayer->mutex = mutex;
 	}
 
 	if (gConfig.fUseSurroundOPL)

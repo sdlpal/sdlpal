@@ -138,8 +138,8 @@ MP3_Play(
 
 LPAUDIOPLAYER
 MP3_Init(
-	LPCSTR szFileName
-	)
+	SDL_mutex *mutex
+)
 {
 	LPMP3PLAYER player;
 	if (player = (LPMP3PLAYER)malloc(sizeof(MP3PLAYER)))
@@ -147,6 +147,7 @@ MP3_Init(
 		player->FillBuffer = MP3_FillBuffer;
 		player->Play = MP3_Play;
 		player->Shutdown = MP3_Shutdown;
+		player->mutex = mutex;
 
 		player->pMP3 = NULL;
 		player->iMusic = -1;

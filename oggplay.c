@@ -472,8 +472,8 @@ OGG_Shutdown(
 
 LPAUDIOPLAYER
 OGG_Init(
-	LPCSTR szFileName
-	)
+	SDL_mutex *mutex
+)
 {
 	LPOGGPLAYER player;
 	if (player = (LPOGGPLAYER)malloc(sizeof(OGGPLAYER)))
@@ -483,6 +483,7 @@ OGG_Init(
 		player->FillBuffer = OGG_FillBuffer;
 		player->Play = OGG_Play;
 		player->Shutdown = OGG_Shutdown;
+		player->mutex = mutex;
 
 		player->fp = NULL;
 		player->iMusic = -1;

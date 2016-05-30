@@ -840,6 +840,8 @@ SOUND_Play(
 		return FALSE;
 	}
 
+	SDL_mutexP(player->mutex);
+
 	cursnd = &player->soundlist;
 	while (cursnd->next && cursnd->base)
 		cursnd = cursnd->next;
@@ -867,6 +869,8 @@ SOUND_Play(
 	cursnd->spec = wavespec;
 	cursnd->ResampleMix = mixer;
 	player->cursounds++;
+
+	SDL_mutexV(player->mutex);
 
 	return TRUE;
 }
@@ -961,7 +965,7 @@ SOUND_FillBuffer(
 
 LPAUDIOPLAYER
 SOUND_Init(
-	VOID
+	SDL_mutex *mutex
 )
 /*++
   Purpose:
@@ -1003,6 +1007,8 @@ SOUND_Init(
 			player->Play = SOUND_Play;
 			player->FillBuffer = SOUND_FillBuffer;
 			player->Shutdown = SOUND_Shutdown;
+			player->mutex = mutex;
+
 			player->LoadSound = func[i];
 			player->mkf = mkf;
 			player->soundlist.resampler[0] = resampler_create();

@@ -31,12 +31,13 @@ extern "C"
 {
 #endif
 
-typedef struct tagAUDIOPLAYER
-{
+	typedef struct tagAUDIOPLAYER
+	{
 #define AUDIOPLAYER_COMMONS \
 	VOID (*Shutdown)(VOID*); \
 	BOOL (*Play)(VOID*, INT, BOOL, FLOAT); \
-	VOID (*FillBuffer)(VOID*, LPBYTE, INT)
+	VOID (*FillBuffer)(VOID*, LPBYTE, INT); \
+	SDL_mutex *mutex
 
 	AUDIOPLAYER_COMMONS;
 } AUDIOPLAYER, *LPAUDIOPLAYER;
@@ -45,7 +46,8 @@ typedef struct tagAUDIOPLAYER
 
 LPAUDIOPLAYER
 RIX_Init(
-   LPCSTR     szFileName
+   LPCSTR     szFileName,
+   SDL_mutex *mutex
 );
 
 /* OGG */
@@ -53,7 +55,7 @@ RIX_Init(
 
 LPAUDIOPLAYER
 OGG_Init(
-	LPCSTR    szFileName
+	SDL_mutex *mutex
 );
 
 #endif
@@ -63,14 +65,14 @@ OGG_Init(
 
 LPAUDIOPLAYER
 MP3_Init(
-	LPCSTR    szFileName
+	SDL_mutex *mutex
 );
 
 #endif
 
 LPAUDIOPLAYER
 SOUND_Init(
-	VOID
+	SDL_mutex *mutex
 );
 
 #ifdef __cplusplus

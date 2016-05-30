@@ -249,7 +249,7 @@ AUDIO_OpenDevice(
    //
    // Initialize the sound subsystem.
    //
-   gAudioDevice.pSoundPlayer = SOUND_Init();
+   gAudioDevice.pSoundPlayer = SOUND_Init(gAudioDevice.mtx);
 
    //
    // Initialize the music subsystem.
@@ -257,21 +257,21 @@ AUDIO_OpenDevice(
    switch (gConfig.eMusicType)
    {
    case MUSIC_RIX:
-	   if (!(gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "mus.mkf"))))
+	   if (!(gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "mus.mkf"), gAudioDevice.mtx)))
 	   {
-		   gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "MUS.MKF"));
+		   gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "MUS.MKF"), gAudioDevice.mtx);
 	   }
 	   break;
    case MUSIC_MP3:
 #if PAL_HAS_MP3
-	   gAudioDevice.pMusPlayer = MP3_Init(NULL);
+	   gAudioDevice.pMusPlayer = MP3_Init(gAudioDevice.mtx);
 #else
 	   gAudioDevice.pMusPlayer = NULL;
 #endif
 	   break;
    case MUSIC_OGG:
 #if PAL_HAS_OGG
-	   gAudioDevice.pMusPlayer = OGG_Init(NULL);
+	   gAudioDevice.pMusPlayer = OGG_Init(gAudioDevice.mtx);
 #else
 	   gAudioDevice.pMusPlayer = NULL;
 #endif
@@ -314,14 +314,14 @@ AUDIO_OpenDevice(
    }
    case MUSIC_MP3:
 #if PAL_HAS_MP3
-	   gAudioDevice.pCDPlayer = MP3_Init(NULL);
+	   gAudioDevice.pCDPlayer = MP3_Init(gAudioDevice.mtx);
 #else
 	   gAudioDevice.pCDPlayer = NULL;
 #endif
 	   break;
    case MUSIC_OGG:
 #if PAL_HAS_OGG
-	   gAudioDevice.pCDPlayer = OGG_Init(NULL);
+	   gAudioDevice.pCDPlayer = OGG_Init(gAudioDevice.mtx);
 #else
 	   gAudioDevice.pCDPlayer = NULL;
 #endif
@@ -489,12 +489,10 @@ AUDIO_PlaySound(
 
 --*/
 {
-   SDL_mutexP(gAudioDevice.mtx);
    if (gAudioDevice.pSoundPlayer)
    {
       gAudioDevice.pSoundPlayer->Play(gAudioDevice.pSoundPlayer, abs(iSoundNum), FALSE, 0.0f);
    }
-   SDL_mutexV(gAudioDevice.mtx);
 }
 
 VOID
