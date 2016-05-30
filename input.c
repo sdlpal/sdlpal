@@ -1131,7 +1131,9 @@ PAL_ProcessEvent(
 
 --*/
 {
+#if PAL_HAS_NATIVEMIDI
    MIDI_CheckLoop();
+#endif
    while (PAL_PollEvent(NULL));
 }
 

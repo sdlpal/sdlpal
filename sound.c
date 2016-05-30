@@ -800,6 +800,14 @@ SOUND_Play(
 	int              len, i;
 
 	//
+	// Check for NULL pointer.
+	//
+	if (player == NULL)
+	{
+		return FALSE;
+	}
+
+	//
 	// Get the length of the sound file.
 	//
 	len = PAL_MKFGetChunkSize(iSoundNum, player->mkf);

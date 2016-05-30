@@ -391,7 +391,9 @@ AUDIO_CloseDevice(
 	  gAudioDevice.pSoundBuffer = NULL;
    }
 
+#if PAL_HAS_NATIVEMIDI
    if (gConfig.eMusicType == MUSIC_MIDI) MIDI_Play(0, FALSE);
+#endif
 
    SDL_mutexV(gAudioDevice.mtx);
    SDL_DestroyMutex(gAudioDevice.mtx);
@@ -489,6 +491,10 @@ AUDIO_PlaySound(
 
 --*/
 {
+   // Unlike musics that use the 'load as required' strategy, sound player
+   // load the entire sound file at once, which may cause about 0.5s or longer
+   // latency for large sound files. To prevent this latency affects audio playing,
+   // the mutex lock is obtained inside the SOUND_Play function rather than here.
    if (gAudioDevice.pSoundPlayer)
    {
       gAudioDevice.pSoundPlayer->Play(gAudioDevice.pSoundPlayer, abs(iSoundNum), FALSE, 0.0f);
@@ -502,12 +508,15 @@ AUDIO_PlayMusic(
    FLOAT     flFadeTime
 )
 {
-   SDL_mutexP(gAudioDevice.mtx);
+#if PAL_HAS_NATIVEMIDI
    if (gConfig.eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(iNumRIX, fLoop);
+      return;
    }
-   else if (gAudioDevice.pMusPlayer)
+#endif
+   SDL_mutexP(gAudioDevice.mtx);
+   if (gAudioDevice.pMusPlayer)
    {
       gAudioDevice.pMusPlayer->Play(gAudioDevice.pMusPlayer, iNumRIX, fLoop, flFadeTime);
    }

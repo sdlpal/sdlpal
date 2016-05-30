@@ -43,11 +43,6 @@ MIDI_CheckLoop(
    VOID
 );
 
-#else
-
-# define MIDI_Play(iNumRIX, fLoop)
-# define MIDI_CheckLoop()
-
 #endif
 
 #ifdef __cplusplus

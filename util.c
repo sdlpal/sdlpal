@@ -289,7 +289,9 @@ UTIL_Delay(
       while (PAL_PollEvent(NULL));
    }
 
+#if PAL_HAS_NATIVEMIDI
    MIDI_CheckLoop();
+#endif
 }
 
 void
