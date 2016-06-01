@@ -126,6 +126,8 @@ VIDEO_Startup(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+   int render_w, render_h;
+
    //
    // Before we can render anything, we need a window and a renderer.
    //
@@ -160,7 +162,8 @@ VIDEO_Startup(
    //
    // Create texture for screen.
    //
-   gpTexture = VIDEO_CreateTexture(gConfig.dwScreenWidth, gConfig.dwScreenHeight);
+   SDL_GetRendererOutputSize(gpRenderer, &render_w, &render_h);
+   gpTexture = VIDEO_CreateTexture(render_w, render_h);
 
    //
    // Failed?
