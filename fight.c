@@ -2339,7 +2339,7 @@ PAL_BattleShowPlayerDefMagicAnim(
    {
       LPCBITMAPRLE b = PAL_SpriteGetFrame(lpSpriteEffect, i);
 
-      if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay)
+      if (i == (gConfig.fIsWIN95 ? 0 : gpGlobals->g.lprgMagic[iMagicNum].wFireDelay))
       {
          AUDIO_PlaySound(gpGlobals->g.lprgMagic[iMagicNum].wSound);
       }
@@ -2353,7 +2353,7 @@ PAL_BattleShowPlayerDefMagicAnim(
       // Set the time of the next frame.
       //
       dwTime = SDL_GetTicks() +
-         ((SHORT)(gpGlobals->g.lprgMagic[iMagicNum].wSpeed) + 5) * 10;
+         (gpGlobals->g.lprgMagic[iMagicNum].wSpeed + 5) * 10;
 
       PAL_BattleMakeScene();
       SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
@@ -2505,7 +2505,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 
    PAL_BattleDelay(1, 0, TRUE);
 
-   l = n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+   l = n - gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
    l *= (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wEffectTimes;
    l += n;
    l += gpGlobals->g.lprgMagic[iMagicNum].wShake;
@@ -2521,7 +2521,7 @@ PAL_BattleShowPlayerOffMagicAnim(
    for (i = 0; i < l; i++)
    {
       LPCBITMAPRLE b;
-	  if (!gConfig.fIsWIN95 && i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay && wPlayerIndex != (WORD)-1)
+	  if (!gConfig.fIsWIN95 && i == gpGlobals->g.lprgMagic[iMagicNum].wFireDelay && wPlayerIndex != (WORD)-1)
       {
          g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
       }
@@ -2548,14 +2548,14 @@ PAL_BattleShowPlayerOffMagicAnim(
          }
          else
          {
-            k = i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
-            k %= n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
-            k += gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+            k = i - gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
+            k %= n - gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
+            k += gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
          }
 
          b = PAL_SpriteGetFrame(lpSpriteEffect, k);
 
-		 if (!gConfig.fIsWIN95 && (i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay) % n == 0)
+		 if (!gConfig.fIsWIN95 && (i - gpGlobals->g.lprgMagic[iMagicNum].wFireDelay) % n == 0)
          {
             AUDIO_PlaySound(gpGlobals->g.lprgMagic[iMagicNum].wSound);
          }
@@ -2575,7 +2575,7 @@ PAL_BattleShowPlayerOffMagicAnim(
       // Set the time of the next frame.
       //
       dwTime = SDL_GetTicks() +
-         ((SHORT)(gpGlobals->g.lprgMagic[iMagicNum].wSpeed) + 5) * 10;
+         (gpGlobals->g.lprgMagic[iMagicNum].wSpeed + 5) * 10;
 
       PAL_BattleMakeScene();
       SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
@@ -2674,6 +2674,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 
 static VOID
 PAL_BattleShowEnemyMagicAnim(
+   WORD         wEnemyIndex,
    WORD         wObjectID,
    SHORT        sTarget
 )
@@ -2713,7 +2714,7 @@ PAL_BattleShowEnemyMagicAnim(
 
    n = PAL_SpriteGetNumFrames(lpSpriteEffect);
 
-   l = n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+   l = n - gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
    l *= (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wEffectTimes;
    l += n;
    l += gpGlobals->g.lprgMagic[iMagicNum].wShake;
@@ -2743,16 +2744,24 @@ PAL_BattleShowEnemyMagicAnim(
          }
          else
          {
-            k = i - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
-            k %= n - gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
-            k += gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay;
+            k = i - gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
+            k %= n - gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
+            k += gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
          }
 
          b = PAL_SpriteGetFrame(lpSpriteEffect, k);
 
-         if (i == gpGlobals->g.lprgMagic[iMagicNum].wSoundDelay)
+         if (i == (gConfig.fIsWIN95 ? 0 : gpGlobals->g.lprgMagic[iMagicNum].wFireDelay))
          {
             AUDIO_PlaySound(gpGlobals->g.lprgMagic[iMagicNum].wSound);
+         }
+
+         if (gpGlobals->g.lprgMagic[iMagicNum].wFireDelay > 0 &&
+             i >= gpGlobals->g.lprgMagic[iMagicNum].wFireDelay &&
+             i < gpGlobals->g.lprgMagic[iMagicNum].wFireDelay + g_Battle.rgEnemy[wEnemyIndex].e.wAttackFrames)
+         {
+             g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame =
+                i - gpGlobals->g.lprgMagic[iMagicNum].wFireDelay + g_Battle.rgEnemy[wEnemyIndex].e.wIdleFrames + g_Battle.rgEnemy[wEnemyIndex].e.wMagicFrames;
          }
       }
       else
@@ -2770,7 +2779,7 @@ PAL_BattleShowEnemyMagicAnim(
       // Set the time of the next frame.
       //
       dwTime = SDL_GetTicks() +
-         ((SHORT)(gpGlobals->g.lprgMagic[iMagicNum].wSpeed) + 5) * 10;
+         (gpGlobals->g.lprgMagic[iMagicNum].wSpeed + 5) * 10;
 
       PAL_BattleMakeScene();
       SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
@@ -2964,7 +2973,7 @@ PAL_BattleShowPlayerSummonMagicAnim(
       // Set the time of the next frame.
       //
       dwTime = SDL_GetTicks() +
-         ((SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wSpeed) + 5) * 10;
+         (gpGlobals->g.lprgMagic[wMagicNum].wSpeed + 5) * 10;
 
       PAL_BattleMakeScene();
       SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
@@ -4268,7 +4277,7 @@ PAL_BattleEnemyPerformAction(
          PAL_BattleDelay(1, 0, FALSE);
       }
 
-      if (gpGlobals->g.lprgMagic[wMagicNum].wSoundDelay == 0)
+      if (gpGlobals->g.lprgMagic[wMagicNum].wFireDelay == 0)
       {
          for (i = 0; i <= g_Battle.rgEnemy[wEnemyIndex].e.wAttackFrames; i++)
          {
@@ -4325,7 +4334,7 @@ PAL_BattleEnemyPerformAction(
 
       if (g_fScriptSuccess)
       {
-         PAL_BattleShowEnemyMagicAnim(wMagic, sTarget);
+         PAL_BattleShowEnemyMagicAnim(wEnemyIndex, wMagic, sTarget);
 
          gpGlobals->g.rgObject[wMagic].magic.wScriptOnSuccess =
             PAL_RunTriggerScript(gpGlobals->g.rgObject[wMagic].magic.wScriptOnSuccess, wPlayerRole);
