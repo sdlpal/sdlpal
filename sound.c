@@ -179,7 +179,7 @@ SOUND_LoadWAVEData(
 	lpSpec->format = (lpFormat->wBitsPerSample == 16) ? AUDIO_S16 : AUDIO_U8;
 	lpSpec->freq = lpFormat->nSamplesPerSec;
 	lpSpec->size = len;
-	lpSpec->align = lpFormat->nChannels * lpFormat->wBitsPerSample >> 1;
+	lpSpec->align = lpFormat->nChannels * lpFormat->wBitsPerSample >> 3;
 
 	return lpWaveData;
 
