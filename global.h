@@ -411,9 +411,9 @@ typedef struct tagMAGIC
    WORD               wXOffset;
    WORD               wYOffset;
    WORD               wSummonEffect;         // summon effect sprite (in F.MKF)
-   WORD               wSpeed;                // speed of the effect
+   SHORT              wSpeed;                // speed of the effect
    WORD               wKeepEffect;           // FIXME: ???
-   WORD               wSoundDelay;           // delay of the SFX
+   WORD               wFireDelay;            // start frame of the magic fire stage
    WORD               wEffectTimes;          // total times of effect
    WORD               wShake;                // shake screen
    WORD               wWave;                 // wave screen
