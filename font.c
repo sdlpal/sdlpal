@@ -33,8 +33,8 @@
 static int _font_height = 16;
 
 INT
-PAL_InitFont(
-   BOOL      fUseEmbeddedFonts
+PAL_InitEmbeddedFont(
+   VOID
 )
 /*++
   Purpose:
@@ -51,88 +51,188 @@ PAL_InitFont(
 
 --*/
 {
-	if (fUseEmbeddedFonts)
+	FILE *fp;
+	char *char_buf;
+	wchar_t *wchar_buf;
+	int nBytes, nChars, i;
+
+	//
+	// Load the wor16.asc file.
+	//
+	if (NULL == (fp = UTIL_OpenFile("wor16.asc")))
 	{
-		FILE *fp;
-		char *char_buf;
-		wchar_t *wchar_buf;
-		int nBytes, nChars, i;
-
-		//
-		// Load the wor16.asc file.
-		//
-		if (NULL == (fp = UTIL_OpenFile("wor16.asc")))
-		{
-			return 0;
-		}
-
-		//
-		// Get the size of wor16.asc file.
-		//
-		fseek(fp, 0, SEEK_END);
-		nBytes = ftell(fp);
-
-		//
-		// Allocate buffer & read all the character codes.
-		//
-		if (NULL == (char_buf = (char *)malloc(nBytes)))
-		{
-			fclose(fp);
-			return 0;
-		}
-		fseek(fp, 0, SEEK_SET);
-		fread(char_buf, 1, nBytes, fp);
-
-		//
-		// Close wor16.asc file.
-		//
-		fclose(fp);
-
-		//
-		// Convert characters into unicode
-		//
-		nChars = PAL_MultiByteToWideChar(char_buf, nBytes, NULL, 0);
-		if (NULL == (wchar_buf = (wchar_t *)malloc(nChars * sizeof(wchar_t))))
-		{
-			free(char_buf);
-			return 0;
-		}
-		PAL_MultiByteToWideChar(char_buf, nBytes, wchar_buf, nChars);
-		free(char_buf);
-
-		//
-		// Read bitmaps from wor16.fon file.
-		//
-		fp = UTIL_OpenFile("wor16.fon");
-
-		//
-		// The font glyph data begins at offset 0x682 in wor16.fon.
-		//
-		fseek(fp, 0x682, SEEK_SET);
-
-		//
-		// Replace the original fonts
-		//
-		for (i = 0; i < nChars; i++)
-		{
-			wchar_t w = (wchar_buf[i] >= unicode_upper_base) ? (wchar_buf[i] - unicode_upper_base + 0xd800) : wchar_buf[i];
-			fread(unicode_font[w], 30, 1, fp);
-			unicode_font[w][30] = 0;
-			unicode_font[w][31] = 0;
-		}
-		free(wchar_buf);
-
-		fclose(fp);
-
-		for (i = 0; i < 0x80; i++)
-		{
-			memcpy(unicode_font[i], &iso_font[i * 15], 15);
-			unicode_font[i][15] = 0;
-		}
-		_font_height = 15;
+		return 0;
 	}
 
+	//
+	// Get the size of wor16.asc file.
+	//
+	fseek(fp, 0, SEEK_END);
+	nBytes = ftell(fp);
+
+	//
+	// Allocate buffer & read all the character codes.
+	//
+	if (NULL == (char_buf = (char *)malloc(nBytes)))
+	{
+		fclose(fp);
+		return 0;
+	}
+	fseek(fp, 0, SEEK_SET);
+	fread(char_buf, 1, nBytes, fp);
+
+	//
+	// Close wor16.asc file.
+	//
+	fclose(fp);
+
+	//
+	// Convert characters into unicode
+	//
+	nChars = PAL_MultiByteToWideChar(char_buf, nBytes, NULL, 0);
+	if (NULL == (wchar_buf = (wchar_t *)malloc(nChars * sizeof(wchar_t))))
+	{
+		free(char_buf);
+		return 0;
+	}
+	PAL_MultiByteToWideChar(char_buf, nBytes, wchar_buf, nChars);
+	free(char_buf);
+
+	//
+	// Read bitmaps from wor16.fon file.
+	//
+	fp = UTIL_OpenFile("wor16.fon");
+
+	//
+	// The font glyph data begins at offset 0x682 in wor16.fon.
+	//
+	fseek(fp, 0x682, SEEK_SET);
+
+	//
+	// Replace the original fonts
+	//
+	for (i = 0; i < nChars; i++)
+	{
+		wchar_t w = (wchar_buf[i] >= unicode_upper_base) ? (wchar_buf[i] - unicode_upper_base + 0xd800) : wchar_buf[i];
+		fread(unicode_font[w], 30, 1, fp);
+		unicode_font[w][30] = 0;
+		unicode_font[w][31] = 0;
+	}
+	free(wchar_buf);
+
+	fclose(fp);
+
+	for (i = 0; i < 0x80; i++)
+	{
+		memcpy(unicode_font[i], &iso_font[i * 15], 15);
+		unicode_font[i][15] = 0;
+	}
+	_font_height = 15;
+
 	return 0;
+}
+
+INT
+PAL_LoadBdfFont(
+   LPCSTR      pszBdfFileName
+)
+/*++
+  Purpose:
+
+    Loads a BDF bitmap font file.
+
+  Parameters:
+
+    [IN]  pszBdfFileName - Name of BDF bitmap font file..
+
+  Return value:
+
+    0 = success, -1 = failure.
+
+--*/
+{
+   char buf[4096];
+   int state = 0;
+   int codepage = -1;
+
+   DWORD dwEncoding = 0;
+   BYTE bFontGlyph[32] = {0};
+   int iCurHeight = 0;
+
+   FILE *fp = UTIL_OpenFileForMode(pszBdfFileName, "r");
+
+   if (fp == NULL)
+   {
+      return -1;
+   }
+
+   while (fgets(buf, 4096, fp) != NULL)
+   {
+      if (state == 0)
+      {
+         if (strncmp(buf, "CHARSET_REGISTRY", 16) == 0)
+         {
+            if (strstr(buf, "Big5") != NULL)
+            {
+               codepage = CP_BIG5;
+            }
+            else if (strstr(buf, "BIG5") != NULL)
+            {
+               codepage = CP_BIG5;
+            }
+            //else if (strstr(buf, "JISX0208") != NULL)
+            //
+            //  codepage = CP_JISX0208;
+            //}
+         }
+         else if (strncmp(buf, "ENCODING", 8) == 0)
+         {
+            dwEncoding = atoi(buf + 8);
+         }
+         else if (strncmp(buf, "BITMAP", 6) == 0)
+         {
+            state = 1;
+            iCurHeight = 0;
+            memset(bFontGlyph, 0, sizeof(bFontGlyph));
+         }
+      }
+      else if (state == 1)
+      {
+         if (strncmp(buf, "ENDCHAR", 7) == 0)
+         {
+            //
+            // Replace the original fonts
+            //
+            BYTE szCp[3];
+            szCp[0] = (dwEncoding >> 8) & 0xFF;
+            szCp[1] = dwEncoding & 0xFF;
+            szCp[2] = 0;
+            wchar_t wc[2] = { 0 };
+            PAL_MultiByteToWideCharCP(codepage, (LPCSTR)szCp, 2, wc, 1);
+            if (wc[0] != 0)
+            {
+               wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + 0xd800) : wc[0];
+               memcpy(unicode_font[w], bFontGlyph, sizeof(bFontGlyph));
+            }
+
+            state = 0;
+         }
+         else
+         {
+            if (iCurHeight < 16)
+            {
+               WORD wCode = strtoul(buf, NULL, 16);
+               bFontGlyph[iCurHeight * 2] = (wCode >> 8);
+               bFontGlyph[iCurHeight * 2 + 1] = (wCode & 0xFF);
+               iCurHeight++;
+            }
+         }
+      }
+   }
+
+   _font_height = 16;
+   fclose(fp);
+   return 0;
 }
 
 VOID

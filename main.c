@@ -110,10 +110,22 @@ PAL_Init(
 
    SDL_WM_SetCaption("Loading...", NULL);
 
-   e = PAL_InitFont(!gConfig.fIsWIN95 && gConfig.fUseEmbeddedFonts);
-   if (e != 0)
+   if (!gConfig.fIsWIN95 && gConfig.fUseEmbeddedFonts)
    {
-      TerminateOnError("Could not load fonts: %d.\n", e);
+      e = PAL_InitEmbeddedFont();
+      if (e != 0)
+      {
+         TerminateOnError("Could not load fonts: %d.\n", e);
+      }
+   }
+
+   if (gConfig.pszBdfFile != NULL)
+   {
+	  e = PAL_LoadBdfFont(gConfig.pszBdfFile);
+      if (e != 0)
+      {
+         TerminateOnError("Could not load BDF fonts: %d.\n", e);
+      }
    }
 
    e = PAL_InitUI();

@@ -212,6 +212,7 @@ PAL_FreeGlobals(
    free(gConfig.dwExtraLength);
 #endif
    free(gConfig.pszMsgFile);
+   free(gConfig.pszBdfFile);
    free(gConfig.pszGamePath);
 
    //

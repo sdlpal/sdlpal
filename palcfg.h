@@ -73,6 +73,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_CD = PALCFG_STRING_MIN,
 	PALCFG_GAMEPATH,
 	PALCFG_MESSAGEFILE,
+	PALCFG_BDFFILE,
 	PALCFG_MUSIC,
 	PALCFG_OPL,
 	PALCFG_RIXEXTRAINIT,
@@ -160,6 +161,7 @@ typedef struct tagCONFIGURATION
 	/* Configurable options */
 	char            *pszGamePath;
 	char            *pszMsgFile;
+	char            *pszBdfFile;
 	CODEPAGE         uCodePage;
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;

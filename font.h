@@ -33,8 +33,13 @@ extern "C"
 #endif
 
 INT
-PAL_InitFont(
-   BOOL      fUseEmbeddedFonts
+PAL_InitEmbeddedFont(
+   VOID
+);
+
+INT
+PAL_LoadBdfFont(
+   LPCSTR      pszBdfFileName
 );
 
 VOID

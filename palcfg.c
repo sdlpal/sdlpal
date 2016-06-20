@@ -33,6 +33,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, "OGG", NULL, NULL },
 	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GAMEPATH",           8, NULL, NULL, NULL },
 	{ PALCFG_MESSAGEFILE,       PALCFG_STRING,   "MESSAGEFILENAME",   15, NULL, NULL, NULL },
+	{ PALCFG_BDFFILE,           PALCFG_STRING,   "BDFFILENAME",       11, NULL, NULL, NULL },
 	{ PALCFG_MUSIC,             PALCFG_STRING,   "MUSIC",              5, "RIX", NULL, NULL },
 	{ PALCFG_OPL,               PALCFG_STRING,   "OPL",                3, "DOSBOX", NULL, NULL },
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXEXTRAINIT",      12, NULL, NULL, NULL },
@@ -253,6 +254,18 @@ PAL_LoadConfig(
 					}
 					break;
 				}
+				case PALCFG_BDFFILE:
+				{
+					int n = strlen(value.sValue);
+					while (n > 0 && isspace(value.sValue[n - 1])) n--;
+					if (n > 0)
+					{
+						gConfig.pszBdfFile = (char *)realloc(gConfig.pszBdfFile, n + 1);
+						memcpy(gConfig.pszBdfFile, value.sValue, n);
+						gConfig.pszBdfFile[n] = '\0';
+					}
+					break;
+				}
 				case PALCFG_GAMEPATH:
 				{
 					int n = strlen(value.sValue);
@@ -434,6 +447,7 @@ PAL_SaveConfig(
 
 		if (gConfig.pszGamePath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_GAMEPATH), gConfig.pszGamePath); fputs(buf, fp); }
 		if (gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
+		if (gConfig.pszBdfFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_BDFFILE), gConfig.pszBdfFile); fputs(buf, fp); }
 
 		fclose(fp);
 

@@ -401,7 +401,8 @@ typedef enum tagCODEPAGE {
 	CP_MIN = 0,
 	CP_BIG5 = 0,
 	CP_GBK = 1,
-	//CP_SHIFTJIS = 2,
+	CP_SHIFTJIS = 2,
+	CP_JISX0208 = 3,
 	CP_MAX = CP_GBK + 1,
 	CP_UTF_8 = CP_MAX + 1
 } CODEPAGE;
