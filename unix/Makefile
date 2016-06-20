@@ -23,4 +23,4 @@ $(TARGET): $(OBJFILES)
 	$(HOST)gcc $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET)
+	-rm -f $(TARGET) *.o ../*.o ../adplug/*.o ../libmad/*.o ../liboggvorbis/src/*.o
