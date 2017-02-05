@@ -825,7 +825,7 @@ PAL_LoadObjectDesc(
    //
    while (fgets(buf, 512, fp) != NULL)
    {
-      int wlen;
+      int wlen,strip_count=2;
       p = strchr(buf, '=');
       if (p == NULL)
       {
@@ -833,6 +833,10 @@ PAL_LoadObjectDesc(
       }
 
       *p++ = '\0';
+      while(strip_count--){
+         if(p[strlen(p)-1]=='\r') p[strlen(p)-1]='\0';
+         if(p[strlen(p)-1]=='\n') p[strlen(p)-1]='\0';
+      }
 	  wlen = PAL_MultiByteToWideChar(p, -1, NULL, 0);
 
       pNew = UTIL_calloc(1, sizeof(OBJECTDESC));
