@@ -122,11 +122,6 @@ PAL_InitEmbeddedFont(
 
 	fclose(fp);
 
-	for (i = 0; i < 0x80; i++)
-	{
-		memcpy(unicode_font[i], &iso_font[i * 15], 15);
-		unicode_font[i][15] = 0;
-	}
 	_font_height = 15;
 
 	return 0;
