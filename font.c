@@ -32,6 +32,15 @@
 
 static int _font_height = 16;
 
+uint8_t reverseBits(uint8_t x) {
+    uint8_t y = 0;
+    for(int i = 0 ; i < 8; i++){
+        y <<= 1;
+        y |= (x & 1);
+        x >>= 1;
+    }
+    return y;
+}
 INT
 PAL_InitEmbeddedFont(
    VOID
@@ -122,6 +131,15 @@ PAL_InitEmbeddedFont(
 
 	fclose(fp);
 
+        assert(reverseBits(0x63)==0xc6);
+        assert(reverseBits(0x7f)==0xfe);
+        assert(reverseBits(0x03)==0xc0);
+        assert(reverseBits(0x3f)==0xfc);
+		for (i = 0; i < 0x80; i++)
+		{
+            int j=-1;while(j++<16)unicode_font[i][j]=reverseBits(iso_font[i*15+j]);
+			unicode_font[i][15] = 0;
+		}
 	_font_height = 15;
 
 	return 0;
