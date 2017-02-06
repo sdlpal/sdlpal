@@ -131,10 +131,6 @@ PAL_InitEmbeddedFont(
 
 	fclose(fp);
 
-        assert(reverseBits(0x63)==0xc6);
-        assert(reverseBits(0x7f)==0xfe);
-        assert(reverseBits(0x03)==0xc0);
-        assert(reverseBits(0x3f)==0xfc);
 		for (i = 0; i < 0x80; i++)
 		{
             int j=-1;while(j++<16)unicode_font[i][j]=reverseBits(iso_font[i*15+j]);
