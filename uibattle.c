@@ -386,7 +386,7 @@ PAL_BattleUIDrawMiscMenu(
    //
    // Draw the box
    //
-   PAL_CreateBox(PAL_XY(2, 20), 4, 1, 0, FALSE);
+   PAL_CreateBox(PAL_XY(2, 20), 4, PAL_MenuTextMaxWidth(rgMenuItem, sizeof(rgMenuItem)/sizeof(MENUITEM)) - 1, 0, FALSE);
 
    //
    // Draw the menu items
