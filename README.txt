@@ -83,20 +83,22 @@ COMPILE FOR MAC OS X
 To compile, open the project Pal.xcodeproj with Xcode, and click Build. You
 need to have SDL framework installed at /Library/Frameworks.
 
-The compiled bundle should work as a "universal" binary which works on both
-Intel and PowerPC.
-
-
 COMPILE FOR IOS
 ===============
 
-To be written.
+You need to have SDL2 source extracted in the SDL2 folder.To compile, 
+open the project iOS/SDLPAL/SDLPal.xcodeproj with Xcode, and click Build. 
 
 
 COMPILE FOR ANDROID
 ===================
 
-To be written.
+You need to have SDL2 source extracted in the SDL2 folder.
+To compile, type:
+cd android/jni
+ndk-build
+cd ..
+ant debug
 
 
 COMPILE FOR OTHER PLATFORMS
