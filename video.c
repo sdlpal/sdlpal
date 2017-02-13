@@ -20,7 +20,7 @@
 //
 
 #include "main.h"
-#ifdef __EMSCRIPTEN__
+#ifndef __WIN32__
 #include <sys/time.h>
 #endif
 
