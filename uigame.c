@@ -713,7 +713,7 @@ PAL_InGameMagicMenu(
    //
    // Draw the box
    //
-   PAL_CreateBox(PAL_XY(35, 62), gpGlobals->wMaxPartyMemberIndex, 2, 0, FALSE);
+   PAL_CreateBox(PAL_XY(35, 62), gpGlobals->wMaxPartyMemberIndex, PAL_MenuTextMaxWidth(rgMenuItem, sizeof(rgMenuItem)/sizeof(MENUITEM)) - 1, 0, FALSE);
    VIDEO_UpdateScreen(&rect);
 
    w = PAL_ReadMenu(NULL, rgMenuItem, gpGlobals->wMaxPartyMemberIndex + 1, w, MENUITEM_COLOR);
@@ -896,7 +896,7 @@ PAL_InventoryMenu(
       { 2,      INVMENU_LABEL_EQUIP,      TRUE,     PAL_XY(43, 73 + 18) },
    };
 
-   PAL_CreateBox(PAL_XY(30, 60), 1, 1, 0, FALSE);
+   PAL_CreateBox(PAL_XY(30, 60), 1, PAL_MenuTextMaxWidth(rgMenuItem, sizeof(rgMenuItem)/sizeof(MENUITEM)) - 1, 0, FALSE);
    VIDEO_UpdateScreen(&rect);
 
    w = PAL_ReadMenu(NULL, rgMenuItem, 2, w - 1, MENUITEM_COLOR);

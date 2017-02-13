@@ -219,6 +219,11 @@ PAL_DrawNumber(
    NUMCOLOR        color,
    NUMALIGN        align
 );
+    
+INT
+PAL_TextWidth(
+   LPCWSTR        lpszItemText
+);
 
 INT
 PAL_MenuTextMaxWidth(

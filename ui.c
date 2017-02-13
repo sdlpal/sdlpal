@@ -683,6 +683,34 @@ PAL_DrawNumber(
 }
 
 INT
+PAL_TextWidth(
+LPCWSTR lpszItemText
+)
+/*++
+ Purpose:
+ 
+ Calculate the text width of the given text.
+ 
+ Parameters:
+ 
+ [IN]  itemText - Pointer to the text.
+ 
+ Return value:
+ 
+ text width.
+ 
+ --*/
+{
+    size_t l = wcslen(lpszItemText);
+    int j = 0, w = 0;
+    for (j = 0; j < l; j++)
+    {
+        w += PAL_CharWidth(lpszItemText[j]);
+    }
+    return w;
+}
+
+INT
 PAL_MenuTextMaxWidth(
    LPCMENUITEM    rgMenuItem,
    INT            nMenuItem
@@ -707,12 +735,7 @@ PAL_MenuTextMaxWidth(
 	for (i = 0; i < nMenuItem; i++)
 	{
 		LPCWSTR itemText = PAL_GetWord(rgMenuItem[i].wNumWord);
-		int j = 0, l = wcslen(itemText), w = 0;
-		for (j = 0; j < l; j++)
-		{
-			w += PAL_CharWidth(itemText[j]);
-		}
-		w = (w + 8) >> 4;
+		int w = (PAL_TextWidth(itemText) + 8) >> 4;
 		if (r < w)
 		{
 			r = w;

@@ -813,7 +813,8 @@ PAL_BattleUIUpdate(
       }
       else
       {
-         PAL_DrawText(PAL_GetWord(BATTLEUI_LABEL_AUTO), PAL_XY(280, 10),
+         LPCWSTR itemText = PAL_GetWord(BATTLEUI_LABEL_AUTO);
+         PAL_DrawText(itemText, PAL_XY(312-PAL_TextWidth(itemText), 10),
             MENUITEM_COLOR_CONFIRMED, TRUE, FALSE, FALSE);
       }
    }
