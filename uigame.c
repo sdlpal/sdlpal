@@ -530,7 +530,7 @@ PAL_SystemMenu(
    WORD                wReturnValue;
    int                 iSlot, i, iSavedTimes;
    FILE               *fp;
-   const SDL_Rect      rect = {40, 60, 120, 135};
+   const SDL_Rect      rect = {40, 60, 280, 135};
 
    //
    // Create menu items
@@ -677,7 +677,7 @@ PAL_InGameMagicMenu(
    int              i, y;
    static WORD      w;
    WORD             wMagic;
-   const SDL_Rect   rect = {35, 62, 95, 90};
+   const SDL_Rect   rect = {35, 62, 320, 90};
 
    //
    // Draw the player info boxes
@@ -887,7 +887,7 @@ PAL_InventoryMenu(
 --*/
 {
    static WORD      w = 0;
-   const SDL_Rect   rect = {30, 60, 75, 60};
+   const SDL_Rect   rect = {30, 60, 320, 60};
 
    MENUITEM        rgMenuItem[2] =
    {
@@ -956,7 +956,7 @@ PAL_InGameMenu(
 {
    LPBOX                lpCashBox, lpMenuBox;
    WORD                 wReturnValue;
-   const SDL_Rect       rect = {0, 0, 150, 185};
+   const SDL_Rect       rect = {0, 0, 320, 185};
 
    //
    // Create menu items
@@ -1490,7 +1490,7 @@ PAL_BuyMenu_OnItemChange(
 
 --*/
 {
-   const SDL_Rect      rect = {20, 8, 128, 175};
+   const SDL_Rect      rect = {20, 8, 300, 175};
    int                 i, n;
    PAL_LARGE BYTE      bufImage[2048];
 
