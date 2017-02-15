@@ -92,6 +92,10 @@ extern "C"
 #define STATUS_LABEL_LEVEL                 48
 #define STATUS_LABEL_HP                    49
 #define STATUS_LABEL_MP                    50
+#define STATUS_LABEL_EXP_LAYOUT            29
+#define STATUS_LABEL_LEVEL_LAYOUT          30
+#define STATUS_LABEL_HP_LAYOUT             31
+#define STATUS_LABEL_MP_LAYOUT             32
 #define STATUS_LABEL_ATTACKPOWER           51
 #define STATUS_LABEL_MAGICPOWER            52
 #define STATUS_LABEL_RESISTANCE            53
@@ -125,7 +129,7 @@ extern "C"
 #define BATTLEWIN_DOLLAR_LABEL             10
 #define BATTLEWIN_LEVELUP_LABEL            32
 #define BATTLEWIN_ADDMAGIC_LABEL           33
-#define BATTLEWIN_LEVELUP_LABEL_COLOR      0x39
+#define BATTLEWIN_LEVELUP_LABEL_COLOR      0xBB
 #define SPRITENUM_ARROW                    47
 
 #define BATTLE_LABEL_ESCAPEFAIL            31

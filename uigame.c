@@ -1061,6 +1061,14 @@ PAL_PlayerStatus(
    PAL_LARGE BYTE   bufBackground[320 * 200];
    PAL_LARGE BYTE   bufImage[16384];
    PAL_LARGE BYTE   bufImageBox[50 * 49];
+   int              labels0[] = {
+      STATUS_LABEL_EXP, STATUS_LABEL_LEVEL, STATUS_LABEL_HP,
+      STATUS_LABEL_MP
+   };
+   int              labels1[] = {
+      STATUS_LABEL_EXP_LAYOUT, STATUS_LABEL_LEVEL_LAYOUT, STATUS_LABEL_HP_LAYOUT,
+      STATUS_LABEL_MP_LAYOUT
+   };
    int              labels[] = {
       STATUS_LABEL_ATTACKPOWER, STATUS_LABEL_MAGICPOWER, STATUS_LABEL_RESISTANCE,
       STATUS_LABEL_DEXTERITY, STATUS_LABEL_FLEERATE
@@ -1154,19 +1162,28 @@ PAL_PlayerStatus(
          {
             offset = 0;
          }
-         PAL_DrawText(PAL_GetWord(w), PAL_XY_OFFSET(gConfig.ScreenLayout.RoleEquipNames[i], offset, 0), STATUS_COLOR_EQUIPMENT, TRUE, FALSE, FALSE);
+         int index = &gConfig.ScreenLayout.RoleEquipNames[i] - gConfig.ScreenLayoutArray;
+         BOOL fShadow = (gConfig.ScreenLayoutFlag[index] & DISABLE_SHADOW) ? FALSE : TRUE;
+         BOOL fUse8x8Font = (gConfig.ScreenLayoutFlag[index] & USE_8x8_FONT) ? TRUE : FALSE;
+         PAL_DrawText(PAL_GetWord(w), PAL_XY_OFFSET(gConfig.ScreenLayout.RoleEquipNames[i], offset, 0), STATUS_COLOR_EQUIPMENT, fShadow, FALSE, fUse8x8Font);
       }
 
       //
       // Draw the text labels
       //
-	  PAL_DrawText(PAL_GetWord(STATUS_LABEL_EXP), gConfig.ScreenLayout.RoleExpLabel, MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_LEVEL), gConfig.ScreenLayout.RoleLevelLabel, MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_HP), gConfig.ScreenLayout.RoleHPLabel, MENUITEM_COLOR, TRUE, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(STATUS_LABEL_MP), gConfig.ScreenLayout.RoleMPLabel, MENUITEM_COLOR, TRUE, FALSE, FALSE);
+      for (i = 0; i < sizeof(labels0) / sizeof(int); i++)
+      {
+         int index = labels1[i];
+         BOOL fShadow = (gConfig.ScreenLayoutFlag[index] & DISABLE_SHADOW) ? FALSE : TRUE;
+         BOOL fUse8x8Font = (gConfig.ScreenLayoutFlag[index] & USE_8x8_FONT) ? TRUE : FALSE;
+         PAL_DrawText(PAL_GetWord(labels0[i]), *(&gConfig.ScreenLayout.RoleExpLabel+i), MENUITEM_COLOR, fShadow, FALSE, fUse8x8Font);
+      }
       for (i = 0; i < sizeof(labels) / sizeof(int); i++)
-	  {
-         PAL_DrawText(PAL_GetWord(labels[i]), gConfig.ScreenLayout.RoleStatusLabels[i], MENUITEM_COLOR, TRUE, FALSE, FALSE);
+      {
+         int index = &gConfig.ScreenLayout.RoleStatusLabels[i] - gConfig.ScreenLayoutArray;
+         BOOL fShadow = (gConfig.ScreenLayoutFlag[index] & DISABLE_SHADOW) ? FALSE : TRUE;
+         BOOL fUse8x8Font = (gConfig.ScreenLayoutFlag[index] & USE_8x8_FONT) ? TRUE : FALSE;
+         PAL_DrawText(PAL_GetWord(labels[i]), gConfig.ScreenLayout.RoleStatusLabels[i], MENUITEM_COLOR, fShadow, FALSE, fUse8x8Font);
       }
 
       PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[iPlayerRole]),
