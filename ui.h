@@ -189,6 +189,16 @@ PAL_CreateBox(
    INT            iStyle,
    BOOL           fSaveScreen
 );
+    
+LPBOX
+PAL_CreateBoxWithShadow(
+   PAL_POS        pos,
+   INT            nRows,
+   INT            nColumns,
+   INT            iStyle,
+   BOOL           fSaveScreen,
+   INT            nShadowOffset
+);
 
 LPBOX
 PAL_CreateSingleLineBox(
@@ -196,7 +206,15 @@ PAL_CreateSingleLineBox(
    INT            nLen,
    BOOL           fSaveScreen
 );
-
+    
+LPBOX
+PAL_CreateSingleLineBoxWithShadow(
+   PAL_POS        pos,
+   INT            nLen,
+   BOOL           fSaveScreen,
+   INT            nShadowOffset
+);
+    
 VOID
 PAL_DeleteBox(
    LPBOX          lpBox

@@ -100,6 +100,19 @@ PAL_CreateBox(
    INT            iStyle,
    BOOL           fSaveScreen
 )
+{
+    return PAL_CreateBoxWithShadow( pos, nRows, nColumns, iStyle, fSaveScreen, 6 );
+}
+
+LPBOX
+PAL_CreateBoxWithShadow(
+   PAL_POS        pos,
+   INT            nRows,
+   INT            nColumns,
+   INT            iStyle,
+   BOOL           fSaveScreen,
+   INT            nShadowOffset
+)
 /*++
   Purpose:
 
@@ -214,6 +227,7 @@ PAL_CreateBox(
       for (j = 0; j < nColumns; j++)
       {
          n = (j == 0) ? 0 : ((j == nColumns - 1) ? 2 : 1);
+         PAL_RLEBlitToSurfaceWithShadow(rglpBorderBitmap[m][n], gpScreen, PAL_XY(x+nShadowOffset, rect.y+nShadowOffset),TRUE);
          PAL_RLEBlitToSurface(rglpBorderBitmap[m][n], gpScreen, PAL_XY(x, rect.y));
          x += PAL_RLEGetWidth(rglpBorderBitmap[m][n]);
       }
@@ -229,6 +243,17 @@ PAL_CreateSingleLineBox(
    PAL_POS        pos,
    INT            nLen,
    BOOL           fSaveScreen
+)
+{
+    return PAL_CreateSingleLineBoxWithShadow(pos, nLen, fSaveScreen, 6);
+}
+
+LPBOX
+PAL_CreateSingleLineBoxWithShadow(
+   PAL_POS        pos,
+   INT            nLen,
+   BOOL           fSaveScreen,
+   INT            nShadowOffset
 )
 /*++
   Purpose:
@@ -261,6 +286,7 @@ PAL_CreateSingleLineBox(
    SDL_Rect              rect;
    LPBOX                 lpBox = NULL;
    int                   i;
+   int                   xSaved;
 
    //
    // Get the bitmaps
@@ -312,7 +338,24 @@ PAL_CreateSingleLineBox(
       lpBox->wHeight = (WORD)rect.w;
       lpBox->wWidth = (WORD)rect.h;
    }
+   xSaved = rect.x;
 
+   //
+   // Draw the shadow
+   //
+   PAL_RLEBlitToSurfaceWithShadow(lpBitmapLeft, gpScreen, PAL_XY(rect.x+nShadowOffset, rect.y+nShadowOffset), TRUE);
+
+   rect.x += PAL_RLEGetWidth(lpBitmapLeft);
+
+   for (i = 0; i < nLen; i++)
+   {
+      PAL_RLEBlitToSurfaceWithShadow(lpBitmapMid, gpScreen, PAL_XY(rect.x+nShadowOffset, rect.y+nShadowOffset), TRUE);
+      rect.x += PAL_RLEGetWidth(lpBitmapMid);
+   }
+
+   PAL_RLEBlitToSurfaceWithShadow(lpBitmapRight, gpScreen, PAL_XY(rect.x+nShadowOffset, rect.y+nShadowOffset), TRUE);
+
+   rect.x = xSaved;
    //
    // Draw the box
    //

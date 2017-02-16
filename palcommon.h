@@ -50,12 +50,20 @@ typedef enum tagPALDIRECTION
    kDirEast,
    kDirUnknown
 } PALDIRECTION, *LPPALDIRECTION;
-
+    
 INT
 PAL_RLEBlitToSurface(
    LPCBITMAPRLE      lpBitmapRLE,
    SDL_Surface      *lpDstSurface,
    PAL_POS           pos
+);
+
+INT
+PAL_RLEBlitToSurfaceWithShadow(
+   LPCBITMAPRLE      lpBitmapRLE,
+   SDL_Surface      *lpDstSurface,
+   PAL_POS           pos,
+   BOOL              bShadow
 );
 
 INT

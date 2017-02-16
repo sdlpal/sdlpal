@@ -25,11 +25,30 @@
 #include "global.h"
 #include "palcfg.h"
 
+BYTE
+PAL_CalcShadowColor(
+   BYTE bSourceColor
+)
+{
+    return ((bSourceColor&0xF0)|((bSourceColor&0x0F)>>1));
+}
+
 INT
 PAL_RLEBlitToSurface(
    LPCBITMAPRLE      lpBitmapRLE,
    SDL_Surface      *lpDstSurface,
    PAL_POS           pos
+)
+{
+    return PAL_RLEBlitToSurfaceWithShadow ( lpBitmapRLE, lpDstSurface, pos, FALSE );
+}
+
+INT
+PAL_RLEBlitToSurfaceWithShadow(
+   LPCBITMAPRLE      lpBitmapRLE,
+   SDL_Surface      *lpDstSurface,
+   PAL_POS           pos,
+   BOOL              bShadow
 )
 /*++
   Purpose:
@@ -44,6 +63,8 @@ PAL_RLEBlitToSurface(
     [OUT] lpDstSurface - pointer to the destination SDL surface.
 
     [IN]  pos - position of the destination area.
+
+    [IN]  bShadow - flag to mention whether blit source color or just shadow.
 
   Return value:
 
@@ -138,7 +159,10 @@ PAL_RLEBlitToSurface(
             //
             // Put the pixel onto the surface (FIXME: inefficient).
             //
-            ((LPBYTE)lpDstSurface->pixels)[y * lpDstSurface->pitch + x] = lpBitmapRLE[j];
+            if(bShadow)
+               ((LPBYTE)lpDstSurface->pixels)[y * lpDstSurface->pitch + x] = PAL_CalcShadowColor(((LPBYTE)lpDstSurface->pixels)[y * lpDstSurface->pitch + x]);
+            else
+               ((LPBYTE)lpDstSurface->pixels)[y * lpDstSurface->pitch + x] = lpBitmapRLE[j];
          }
          lpBitmapRLE += T;
          i += T;
