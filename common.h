@@ -64,14 +64,12 @@ extern "C"
 
 #endif
 
-#if !defined(__cplusplus)
 #ifndef max
-#define max(a, b)    (((a) > (b)) ? (a) : (b))
+#define max fmax
 #endif
 
 #ifndef min
-#define min(a, b)    (((a) < (b)) ? (a) : (b))
-#endif
+#define min fmin
 #endif
 
 /* This is need when compiled with SDL 1.2 */
