@@ -56,7 +56,6 @@ static WORD               g_wShakeLevel      = 0;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #define SDL_SoftStretch SDL_UpperBlit
-#endif
 
 static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 {
@@ -107,6 +106,7 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 	//
 	return SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
 }
+#endif
 
 INT
 VIDEO_Startup(

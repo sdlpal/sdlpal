@@ -31,13 +31,13 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	sdlpal
 BUILD		:=	build
-SOURCES		:=	. adplug libmad
+SOURCES		:=	.. ../adplug ../libmad
 
 APP_TITLE	:=	SDLPAL
 APP_DESCRIPTION :=	Pal DOS for 3DS
 APP_AUTHOR	:=	Ported by ZephRay
 
-ICON		:=	3ds/icon.png
+ICON		:=	icon.png
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -144,7 +144,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).3dsx $(OUTPUT).smdh $(TARGET).elf
+	@rm -fr $(BUILD) $(TARGET).3dsx $(OUTPUT).smdh $(TARGET).elf $(TARGET).cia $(TARGET)-strip.elf
 
 #---------------------------------------------------------------------------------
 $(TARGET)-strip.elf: $(BUILD)
@@ -155,7 +155,7 @@ cci: $(TARGET)-strip.elf
 	@echo "built ... 3ds"
 #---------------------------------------------------------------------------------
 cia: $(TARGET)-strip.elf
-	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf 3ds/$(TARGET).rsf -icon 3ds/icon.bin -banner 3ds/banner.bin -exefslogo -target t
+	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf $(TARGET).rsf -icon icon.bin -banner banner.bin -exefslogo -target t
 	@echo "built ... cia"
 #---------------------------------------------------------------------------------
 else

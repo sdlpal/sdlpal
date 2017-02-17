@@ -567,10 +567,6 @@ main(
    if (gConfig.fLaunchSetting)
 	   return 0;
 
-#ifdef __N3DS__
-   fFullScreen = TRUE;
-#endif
-
    //
    // Initialize everything
    //

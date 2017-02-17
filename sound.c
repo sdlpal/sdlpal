@@ -39,7 +39,11 @@ typedef struct tagWAVESPEC
 {
 	int                 size;
 	int                 freq;
+#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_AudioFormat     format;
+#else
+	uint16_t            format;
+#endif
 	uint8_t             channels;
 	uint8_t             align;
 } WAVESPEC;

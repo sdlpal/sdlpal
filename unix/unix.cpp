@@ -95,7 +95,9 @@ void InitControls()
    gWidgets.msgfile->value(gConfig.pszMsgFile);
    gWidgets.font->value(gConfig.fUseEmbeddedFonts ? 1 : 0);
    gWidgets.touch->value(gConfig.fUseTouchOverlay ? 1 : 0);
+#if SDL_VERSION_ATLEAST(2,0,0)
    gWidgets.aspect->value(gConfig.fKeepAspectRatio ? 1 : 0);
+#endif
    gWidgets.fullscreen->value(gConfig.fFullScreen ? 1 : 0);
    gWidgets.cd->value(gConfig.eCDType - MUSIC_MP3);
    gWidgets.bgm->value(gConfig.eMusicType - MUSIC_RIX);
@@ -119,7 +121,9 @@ void SaveControls()
    gConfig.uCodePage = (gWidgets.cht->value() ? CP_BIG5 : CP_GBK);
    gConfig.fUseEmbeddedFonts = gWidgets.font->value();
    gConfig.fUseTouchOverlay = gWidgets.touch->value();
+#if SDL_VERSION_ATLEAST(2,0,0)
    gConfig.fKeepAspectRatio = gWidgets.aspect->value();
+#endif
    gConfig.fFullScreen = gWidgets.fullscreen->value();
    gConfig.eCDType = (MUSICTYPE)(gWidgets.cd->value() + MUSIC_MP3);
    gConfig.eMusicType = (MUSICTYPE)(gWidgets.bgm->value() + MUSIC_RIX);
