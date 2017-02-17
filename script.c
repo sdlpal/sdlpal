@@ -562,7 +562,7 @@ PAL_AdditionalCredits(
    for (i = 0; i < 12; i++)
    {
       WCHAR buffer[48];
-#if defined(__ANDROID__)
+#ifndef __WIN32__ // Seems iOS/OSX have same problem. Avoid swprintf.
 	  // The support of swprintf in Android's NDK is very very bad, so we need an alternative way.
 	  if (wcsncmp(rgszStrings[i], L"%ls", 3) == 0)
 	  {

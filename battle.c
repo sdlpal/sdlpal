@@ -639,6 +639,8 @@ PAL_BattleWon(
    //
    OrigPlayerRoles = gpGlobals->g.PlayerRoles;
 
+   VIDEO_BackupScreen();
+
    if (g_Battle.iExpGained > 0)
    {
       int w1 = PAL_WordWidth(BATTLEWIN_GETEXP_LABEL) + 3;
@@ -670,6 +672,35 @@ PAL_BattleWon(
    //
    gpGlobals->dwCash += g_Battle.iCashGained;
 
+    
+    const MENUITEM      rgFakeMenuItem[] =
+    {
+        // value  label                        enabled   pos
+        { 1,      gpGlobals->g.PlayerRoles.rgwName[0],    TRUE,     PAL_XY(0, 0) },
+        { 2,      gpGlobals->g.PlayerRoles.rgwName[1],    TRUE,     PAL_XY(0, 0) },
+        { 3,      gpGlobals->g.PlayerRoles.rgwName[2],    TRUE,     PAL_XY(0, 0) },
+        { 4,      gpGlobals->g.PlayerRoles.rgwName[3],    TRUE,     PAL_XY(0, 0) },
+        { 5,      gpGlobals->g.PlayerRoles.rgwName[4],    TRUE,     PAL_XY(0, 0) },
+        { 6,      gpGlobals->g.PlayerRoles.rgwName[5],    TRUE,     PAL_XY(0, 0) },
+    };
+    int maxNameWidth = PAL_MenuTextMaxWidth(rgFakeMenuItem, sizeof(rgFakeMenuItem) / sizeof(MENUITEM)) - 1;
+    const MENUITEM      rgFakeMenuItem2[] =
+    {
+        // value  label                        enabled   pos
+        { 1,      STATUS_LABEL_LEVEL,          TRUE,     PAL_XY(0, 0) },
+        { 2,      STATUS_LABEL_HP,             TRUE,     PAL_XY(0, 0) },
+        { 3,      STATUS_LABEL_MP,             TRUE,     PAL_XY(0, 0) },
+        { 4,      STATUS_LABEL_ATTACKPOWER,    TRUE,     PAL_XY(0, 0) },
+        { 5,      STATUS_LABEL_MAGICPOWER,     TRUE,     PAL_XY(0, 0) },
+        { 6,      STATUS_LABEL_RESISTANCE,     TRUE,     PAL_XY(0, 0) },
+        { 7,      STATUS_LABEL_DEXTERITY,      TRUE,     PAL_XY(0, 0) },
+        { 8,      STATUS_LABEL_FLEERATE,       TRUE,     PAL_XY(0, 0) },
+    };
+    int maxPropertyWidth = PAL_MenuTextMaxWidth(rgFakeMenuItem2, sizeof(rgFakeMenuItem2) / sizeof(MENUITEM)) - 1;
+    int propertyLength = maxPropertyWidth - 1;
+    int offsetX = -8*propertyLength;
+    rect1.x += offsetX;
+    rect1.w -= 2*offsetX;
    //
    // Add the experience points for each players
    //
@@ -707,34 +738,24 @@ PAL_BattleWon(
 
       gpGlobals->Exp.rgPrimaryExp[w].wExp = (WORD)dwExp;
 
-      const MENUITEM      rgFakeMenuItem[] =
-      {
-         // value  label                        enabled   pos
-         { 1,      STATUS_LABEL_LEVEL,          TRUE,     PAL_XY(0, 0) },
-         { 2,      STATUS_LABEL_HP,             TRUE,     PAL_XY(0, 0) },
-         { 3,      STATUS_LABEL_MP,             TRUE,     PAL_XY(0, 0) },
-         { 4,      STATUS_LABEL_ATTACKPOWER,    TRUE,     PAL_XY(0, 0) },
-         { 5,      STATUS_LABEL_MAGICPOWER,     TRUE,     PAL_XY(0, 0) },
-         { 6,      STATUS_LABEL_RESISTANCE,     TRUE,     PAL_XY(0, 0) },
-         { 7,      STATUS_LABEL_DEXTERITY,      TRUE,     PAL_XY(0, 0) },
-         { 8,      STATUS_LABEL_FLEERATE,       TRUE,     PAL_XY(0, 0) },
-      };
-      int maxTextWidth = PAL_MenuTextMaxWidth(rgFakeMenuItem, sizeof(rgFakeMenuItem) / sizeof(MENUITEM)) - 1;
-      int chars = maxTextWidth - 1;
-      int offsetX = -8*chars;
-      rect1.x += offsetX;
-      rect1.w -= 2*offsetX;
       if (fLevelUp)
       {
+         VIDEO_RestoreScreen();
          //
          // Player has gained a level. Show the message
          //
-         PAL_CreateSingleLineBox(PAL_XY(offsetX+80, 0), chars+10, FALSE);
-         PAL_CreateBox(PAL_XY(offsetX+82, 32), 7, chars+8, 1, FALSE);
+         PAL_CreateSingleLineBox(PAL_XY(offsetX+80, 0), propertyLength+10, FALSE);
+         PAL_CreateBox(PAL_XY(offsetX+82, 32), 7, propertyLength+8, 1, FALSE);
 
-         PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(110, 10), 0, FALSE, FALSE, FALSE);
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_LEVEL), PAL_XY(110+PAL_TextWidth(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w])), 10), 0, FALSE, FALSE, FALSE);
-         PAL_DrawText(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL), PAL_XY(110+PAL_TextWidth(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]))+PAL_TextWidth(PAL_GetWord(STATUS_LABEL_LEVEL)), 10), 0, FALSE, FALSE, FALSE);
+         WCHAR buffer[256] = L"";
+#ifndef __WIN32__
+          wcscpy(buffer, PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]));
+          wcscat(buffer, PAL_GetWord(STATUS_LABEL_LEVEL));
+          wcscat(buffer, PAL_GetWord(BATTLEWIN_LEVELUP_LABEL));
+#else
+          swprintf(buffer, 256, L"%ls%ls%ls", PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_GetWord(STATUS_LABEL_LEVEL), PAL_GetWord(BATTLEWIN_LEVELUP_LABEL));
+#endif
+         PAL_DrawText(buffer, PAL_XY(110, 10), 0, FALSE, FALSE, FALSE);
 
          for (j = 0; j < 8; j++)
          {
@@ -867,11 +888,13 @@ PAL_BattleWon(
                                                             \
    if (gpGlobals->g.PlayerRoles.statname[w] != OrigPlayerRoles.statname[w]) \
    {                                                        \
-      PAL_CreateSingleLineBox(PAL_XY(83, 60), 8, FALSE);    \
-      PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(95, 70),  0, FALSE, FALSE, FALSE); \
-      PAL_DrawText(PAL_GetWord(label), PAL_XY(143, 70), 0, FALSE, FALSE, FALSE); \
-      PAL_DrawText(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL), PAL_XY(175, 70), 0, FALSE, FALSE, FALSE); \
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.statname[w] - OrigPlayerRoles.statname[w], 5, PAL_XY(188, 74), kNumColorYellow, kNumAlignRight); \
+      WCHAR buffer[256] = L""; \
+      wcscpy(buffer, PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w])); \
+      wcscat(buffer, PAL_GetWord(label)); \
+      wcscat(buffer, PAL_GetWord(BATTLEWIN_LEVELUP_LABEL)); \
+      PAL_CreateSingleLineBox(PAL_XY(offsetX+78, 60), maxNameWidth+maxPropertyWidth+PAL_TextWidth(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL))/32+4, FALSE);    \
+      PAL_DrawText(buffer, PAL_XY(offsetX+90, 70),  0, FALSE, FALSE, FALSE); \
+      PAL_DrawNumber(gpGlobals->g.PlayerRoles.statname[w] - OrigPlayerRoles.statname[w], 5, PAL_XY(183+(maxNameWidth+maxPropertyWidth-3)*4, 74), kNumColorYellow, kNumAlignRight); \
       VIDEO_UpdateScreen(&rect);                            \
       PAL_WaitForKey(3000);                                 \
    }                                                        \
