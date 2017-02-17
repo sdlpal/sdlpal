@@ -88,7 +88,9 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 		gTextureRect.x = (texture_width - 320) / 2;
 		gTextureRect.y = (texture_height - 200) / 2;
 		gTextureRect.w = 320; gTextureRect.h = 200;
+#if PAL_HAS_TOUCH
 		PAL_SetTouchBounds(width, height, gOverlayRect);
+#endif
 	}
 	else
 	{
