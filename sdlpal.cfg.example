@@ -1,0 +1,88 @@
+#####################################################
+# Configuration file for SDLPAL                     #
+#                                                   #
+# Lines started with '#' is treated as comments.    #
+#####################################################
+
+# CodePage: Indicates the codepage to use, 0 for big5 (default), 1 for gbk.
+#CodePage=0
+
+# UseEmbeddedFonts: Indicates whether to use DOS-version's embedded fonts.
+#                   Non-zero for using DOS-version's embedded fonts (default),
+#                   zero for using SDLPAL's internal fonts.
+# Note that this value is ignored when the DOS option is zero.
+#UseEmbeddedFonts=1
+
+# CD: Indicates which type of CD audio source to use. Valid types include 'RAW',
+#     'OGG' and 'MP3'. 'RAW' means use the SDL 1.2's CDAudio API (default when
+#     compiled with SDL 1.2), 'OGG' means use files named as '100xx.ogg' inside
+#     the 'ogg' directory (default when compiled with SDL 2.0), while 'MP3'
+#     means use files named as '100xx.mp3' inside the 'mp3' directory.
+#CD=OGG
+
+# MUSIC: Indicates which type of music source to use. Valid types include 
+#        'RIX', 'MIDI', 'OGG' and 'MP3'. 'RIX' means use the RIX music (default),
+#        'MIDI' means midi (either in 'mus.mkf' or inside 'musics' directory),
+#        'OGG' means use files named as 'xx.ogg' inside the 'ogg' directory, while
+#        'MP3' means use files named as 'xx.mp3' inside the 'mp3' directory.
+#MUSIC=RIX
+
+# OPL: Indicates which type of OPL emulator to use. Valid types include 'DOSBOX'
+#      (default), 'MAME' and 'DOSBOXNEW'. 'DOSBOXNEW' is the recommended OPL simulator
+#      on high-performance devices like PC or tablet. However, for lower-end phones,
+#      'DOSBOX' is the best choice for performance-quality balance.
+#OPL=DOSBOX
+
+# Stereo: Indicates whether to use mono audio or stereo audio. Non-zero means to use
+#         stereo audio (default), while zero means only use mono audio.
+#Stereo=1
+
+# UseSurroundOPL: Indicates whether to use surround opl emulator or not. Non-zero
+#                 means to using (default), while zero means not to use. Only
+#                 valid when Stereo is set to non-zero.
+#UseSurroundOPL=1
+
+# SampleRate: Indicates which sample rate to use, valid values include 44100 (default),
+#             and 22050. Other values (<=48000) are supported but not recommended.
+#SampleRate=44100
+
+# OPLSampleRate: Indicates which sample rate to use for opl emulator. Suggested value
+#                is 49716, but other values may also be used.
+#OPLSampleRate=49716
+
+# SurroundOPLOffset: Indicates the frequency offset of surround opl. The default and
+#                    recommended value is 384.0, but other values may also be used.
+#SurroundOPLOffset=384.0
+
+# ResampleQuality: Indicates the resample quality, valid values from 0 to 4 (default).
+#                  Larger value indicates higher quality and higher hardware requirement.
+#ResampleQuality=4
+
+# AudioBufferSize: Indicates the size of audio buffer in samples. Valid values are in 
+#                  range 2 - 32768, but should be power of 2. Default value is 1024.
+#AudioBufferSize=1024
+
+# Volume: Indicates the global volume. Valid values are from 0 to 100, default is 100.
+#Volume=100
+
+# WindowWidth: Indicates the width of game window. Default value varies on different
+#              platforms. On desktop, the default value is 640.
+#WindowWidth=640
+
+# WindowHeight: Indicates the height of game window. Default value varies on different
+#               platforms. On desktop, the default value is 400.
+#WindowHeight=400
+
+# FullScreen: Indicates whether the game should started fullscreen or not, default is not.
+#             On some platforms, such as mobile OS or WinRT, this option is ignored.
+#FullScreen=0
+
+# KeepAspectRatio: Indicates whether the content in game window should keep its original
+#                  aspect ratio (default) or not. When aspect ratio is kept, there may be
+#                  left/right or top/bottom black edges in the game window. Currently this
+#                  value is only valid if the game is built with SDL 2.0 or higher, otherwise
+#                  this value is ignored.
+#KeepAspectRatio=1
+
+# MessageFileName: Indicates whether to use external message files.
+#MessageFileName=jm.msg

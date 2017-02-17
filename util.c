@@ -24,15 +24,27 @@
 
 #include "util.h"
 #include "input.h"
+#include "global.h"
+#include "palcfg.h"
+#include <errno.h>
 
-#ifdef PAL_HAS_NATIVEMIDI
 #include "midi.h"
-#endif
-
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #include "SDL_video.h"
 #include "SDL_messagebox.h"
 #endif
+
+long
+flength(
+   FILE *fp
+)
+{
+   long old_pos = ftell(fp), length;
+   if (old_pos == -1) return -1;
+   if (fseek(fp, 0, SEEK_END) == -1) return -1;
+   length = ftell(fp); fseek(fp, old_pos, SEEK_SET);
+   return length;
+}
 
 void
 trim(
@@ -271,13 +283,13 @@ UTIL_Delay(
 
    while (PAL_PollEvent(NULL));
 
-   while (SDL_GetTicks() < t)
+   while (!SDL_TICKS_PASSED(SDL_GetTicks(), t))
    {
       SDL_Delay(1);
       while (PAL_PollEvent(NULL));
    }
 
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
    MIDI_CheckLoop();
 #endif
 }
@@ -293,7 +305,7 @@ TerminateOnError(
 {
    va_list argptr;
    char string[256];
-   extern VOID PAL_Shutdown(VOID);
+   extern VOID PAL_Shutdown(int);
 
    // concatenate all the arguments in one string
    va_start(argptr, fmt);
@@ -304,23 +316,29 @@ TerminateOnError(
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    {
-      extern SDL_Window *gpWindow;
-      SDL_ShowSimpleMessageBox(0, "FATAL ERROR", string, gpWindow);
+	  extern SDL_Window *gpWindow;
+	  char buffer[300];
+	  SDL_MessageBoxButtonData buttons[2] = { { 0, 0, "Yes" },{ 0, 1, "No" } };
+	  SDL_MessageBoxData mbd = { SDL_MESSAGEBOX_ERROR, gpWindow, "FATAL ERROR", buffer, 2, buttons, NULL };
+	  int btnid;
+	  sprintf(buffer, "%sLaunch setting dialog on next start?\n", string);
+	  if (SDL_ShowMessageBox(&mbd, &btnid) == 0 && btnid == 0)
+	  {
+		  gConfig.fLaunchSetting = TRUE;
+		  PAL_SaveConfig();
+	  }
+	  PAL_Shutdown(255);
    }
 #else
 
-#ifdef _WIN32
+# if defined(_WIN32)
    MessageBoxA(0, string, "FATAL ERROR", MB_ICONERROR);
-#endif
-
-#ifdef __linux__
+# elif defined(__linux__)
    system(va("beep; xmessage -center \"FATAL ERROR: %s\"", string));
-#endif
-
-#if defined(__SYMBIAN32__)
+# elif defined(__SYMBIAN32__)
    UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)TerminateOnError,"TerminateOnError",__FILE__, string);
    SDL_Delay(3000);
-#endif
+# endif
 
 #endif
 
@@ -328,14 +346,7 @@ TerminateOnError(
    assert(!"TerminateOnError()"); // allows jumping to debugger
 #endif
 
-
-PAL_Shutdown();
-
-#if defined (NDS)
-   while (1);
-#else
-   exit(255);
-#endif
+   PAL_Shutdown(255);
 }
 
 void *
@@ -402,35 +413,35 @@ UTIL_OpenRequiredFile(
 
 --*/
 {
-   FILE         *fp;
+   return UTIL_OpenRequiredFileForMode(lpszFileName, "rb");
+}
 
-   fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
+FILE *
+UTIL_OpenRequiredFileForMode(
+   LPCSTR            lpszFileName,
+   LPCSTR            szMode
+)
+/*++
+  Purpose:
 
-#ifndef _WIN32
+    Open a required file. If fails, quit the program.
+
+  Parameters:
+
+    [IN]  lpszFileName - file name to open.
+    [IN]  szMode - file open mode.
+
+  Return value:
+
+    Pointer to the file.
+
+--*/
+{
+   FILE *fp = UTIL_OpenFileForMode(lpszFileName, szMode);
+
    if (fp == NULL)
    {
-	  //
-	  // try converting the filename to upper-case.
-	  //
-	  char *pBuf = strdup(lpszFileName);
-	  char *p = pBuf;
-	  while (*p)
-	  {
-		 if (*p >= 'a' && *p <= 'z')
-		 {
-			*p -= 'a' - 'A';
-		 }
-		 p++;
-	  }
-
-	  fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
-	  free(pBuf);
-   }
-#endif
-
-   if (fp == NULL)
-   {
-      TerminateOnError("File not found: %s!\n", lpszFileName);
+	   TerminateOnError("File open error(%d): %s!\n", errno, lpszFileName);
    }
 
    return fp;
@@ -455,33 +466,56 @@ UTIL_OpenFile(
 
 --*/
 {
-   FILE         *fp;
+   return UTIL_OpenFileForMode(lpszFileName, "rb");
+}
 
-   fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
+FILE *
+UTIL_OpenFileForMode(
+   LPCSTR            lpszFileName,
+   LPCSTR            szMode
+)
+/*++
+  Purpose:
+
+    Open a file. If fails, return NULL.
+
+  Parameters:
+
+    [IN]  lpszFileName - file name to open.
+    [IN]  szMode - file open mode.
+
+  Return value:
+
+    Pointer to the file.
+
+--*/
+{
+	FILE         *fp;
+
+	if (UTIL_IsAbsolutePath(lpszFileName))
+		fp = fopen(lpszFileName, szMode);
+	else
+		fp = fopen(va("%s%s", gConfig.pszGamePath, lpszFileName), szMode);
 
 #ifndef _WIN32
-   if (fp == NULL)
-   {
-	  //
-	  // try converting the filename to upper-case.
-	  //
-	  char *pBuf = strdup(lpszFileName);
-	  char *p = pBuf;
-	  while (*p)
-	  {
-		 if (*p >= 'a' && *p <= 'z')
-		 {
-			*p -= 'a' - 'A';
-		 }
-		 p++;
-	  }
-
-	  fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
-	  free(pBuf);
-   }
+	if (fp == NULL)
+	{
+		//
+		// try to find the matching file in the directory.
+		//
+		struct dirent **list;
+		int n = scandir(gConfig.pszGamePath, &list, 0, alphasort);
+		while (n-- > 0)
+		{
+			if (!fp && strcasecmp(list[n]->d_name, lpszFileName) == 0)
+				fp = fopen(va("%s%s", gConfig.pszGamePath, list[n]->d_name), szMode);
+			free(list[n]);
+		}
+		free(list);
+	}
 #endif
 
-   return fp;
+	return fp;
 }
 
 VOID
@@ -509,6 +543,44 @@ UTIL_CloseFile(
    }
 }
 
+#if !defined(PAL_HAS_PLATFORM_SPECIFIC_UTILS)
+
+BOOL
+UTIL_GetScreenSize(
+   DWORD *pdwScreenWidth,
+   DWORD *pdwScreenHeight
+)
+{
+   return FALSE;
+}
+
+BOOL
+UTIL_IsAbsolutePath(
+	LPCSTR  lpszFileName
+)
+{
+	return FALSE;
+}
+
+INT
+UTIL_Platform_Init(
+   int argc,
+   char* argv[]
+)
+{
+   gConfig.fLaunchSetting = FALSE;
+   return 0;
+}
+
+VOID
+UTIL_Platform_Quit(
+   VOID
+)
+{
+}
+
+#endif
+
 #ifdef ENABLE_LOG
 
 static FILE *pLogFile = NULL;
@@ -518,7 +590,7 @@ UTIL_OpenLog(
    VOID
 )
 {
-   if ((pLogFile = fopen(_PATH_LOG, "a+")) == NULL)
+   if ((pLogFile = fopen(va("%slog.txt", PAL_SAVE_PREFIX), "a+")) == NULL)
    {
       return NULL;
    }

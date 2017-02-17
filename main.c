@@ -18,36 +18,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
-#include "getopt.h"
-
-#ifdef PSP
-#include "main_PSP.h"
-#endif
 
 #if defined (NDS) && defined (GEKKO)
-#include <fat.h>
+
+# include <fat.h>
+
 #endif
 
-#ifdef PAL_WIN95
-#define BITMAPNUM_SPLASH_UP         3
-#define BITMAPNUM_SPLASH_DOWN       4
-#define SPRITENUM_SPLASH_TITLE      0x47
-#define SPRITENUM_SPLASH_CRANE      0x49
-#define NUM_RIX_TITLE               0x5
-#else
-#define BITMAPNUM_SPLASH_UP         0x26
-#define BITMAPNUM_SPLASH_DOWN       0x27
-#define SPRITENUM_SPLASH_TITLE      0x47
-#define SPRITENUM_SPLASH_CRANE      0x49
-#define NUM_RIX_TITLE               0x5
+#if defined(LONGJMP_EXIT)
+#include <setjmp.h>
+
+static jmp_buf g_exit_jmp_buf;
 #endif
+
+
+#define BITMAPNUM_SPLASH_UP         (gConfig.fIsWIN95 ? 0x03 : 0x26)
+#define BITMAPNUM_SPLASH_DOWN       (gConfig.fIsWIN95 ? 0x04 : 0x27)
+#define SPRITENUM_SPLASH_TITLE      0x47
+#define SPRITENUM_SPLASH_CRANE      0x49
+#define NUM_RIX_TITLE               0x05
+
+
 static VOID
 PAL_Init(
-   WORD             wScreenWidth,
-   WORD             wScreenHeight,
-   BOOL             fFullScreen
+   VOID
 )
 /*++
   Purpose:
@@ -56,11 +54,7 @@ PAL_Init(
 
   Parameters:
 
-    [IN]  wScreenWidth - width of the screen.
-
-    [IN]  wScreenHeight - height of the screen.
-
-    [IN]  fFullScreen - TRUE to use full screen mode, FALSE to use windowed mode.
+    None.
 
   Return value:
 
@@ -79,7 +73,7 @@ PAL_Init(
    //
 #if defined(DINGOO)
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) == -1)
-#elif defined (__WINPHONE__) || defined (__N3DS__)
+#elif defined (__WINRT__) || defined (__N3DS__)
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == -1)
 #else
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
@@ -102,11 +96,13 @@ PAL_Init(
    //
    // Initialize subsystems.
    //
-#ifdef GEKKO
-   e = VIDEO_Init_GEKKO(wScreenWidth, wScreenHeight, fFullScreen);
-#else
-   e = VIDEO_Init(wScreenWidth, wScreenHeight, fFullScreen);
-#endif
+   e = PAL_InitGlobals();
+   if (e != 0)
+   {
+	   TerminateOnError("Could not initialize global data: %d.\n", e);
+   }
+
+   e = VIDEO_Startup();
    if (e != 0)
    {
       TerminateOnError("Could not initialize Video: %d.\n", e);
@@ -114,16 +110,22 @@ PAL_Init(
 
    SDL_WM_SetCaption("Loading...", NULL);
 
-   e = PAL_InitGlobals();
-   if (e != 0)
+   if (!gConfig.fIsWIN95 && gConfig.fUseEmbeddedFonts)
    {
-      TerminateOnError("Could not initialize global data: %d.\n", e);
+      e = PAL_InitEmbeddedFont();
+      if (e != 0)
+      {
+         TerminateOnError("Could not load fonts: %d.\n", e);
+      }
    }
 
-   e = PAL_InitFont();
-   if (e != 0)
+   if (gConfig.pszBdfFile != NULL)
    {
-      TerminateOnError("Could not load fonts: %d.\n", e);
+	  e = PAL_LoadBdfFont(gConfig.pszBdfFile);
+      if (e != 0)
+      {
+         TerminateOnError("Could not load BDF fonts: %d.\n", e);
+      }
    }
 
    e = PAL_InitUI();
@@ -140,26 +142,29 @@ PAL_Init(
 
    PAL_InitInput();
    PAL_InitResources();
-   SOUND_OpenAudio();
+   AUDIO_OpenDevice();
 
-#ifdef PAL_WIN95
+   if (gConfig.fIsWIN95)
+   {
 #ifdef _DEBUG
-   SDL_WM_SetCaption("Pal WIN95 (Debug Build)", NULL);
+      SDL_WM_SetCaption("Pal WIN95 (Debug Build)", NULL);
 #else
-   SDL_WM_SetCaption("Pal WIN95", NULL);
+      SDL_WM_SetCaption("Pal WIN95", NULL);
 #endif
-#else
+   }
+   else
+   {
 #ifdef _DEBUG
-   SDL_WM_SetCaption("Pal (Debug Build)", NULL);
+      SDL_WM_SetCaption("Pal (Debug Build)", NULL);
 #else
-   SDL_WM_SetCaption("Pal", NULL);
+      SDL_WM_SetCaption("Pal", NULL);
 #endif
-#endif
+   }
 }
 
 VOID
 PAL_Shutdown(
-   VOID
+   int exit_code
 )
 /*++
   Purpose:
@@ -168,7 +173,7 @@ PAL_Shutdown(
 
   Parameters:
 
-    None.
+    exit_code -  The exit code return to OS.
 
   Return value:
 
@@ -176,7 +181,7 @@ PAL_Shutdown(
 
 --*/
 {
-   SOUND_CloseAudio();
+   AUDIO_CloseDevice();
    PAL_FreeFont();
    PAL_FreeResources();
    PAL_FreeGlobals();
@@ -191,6 +196,16 @@ PAL_Shutdown(
 #if defined(GPH)
 	chdir("/usr/gp2x");
 	execl("./gp2xmenu", "./gp2xmenu", NULL);
+#endif
+	UTIL_Platform_Quit();
+#if defined(LONGJMP_EXIT)
+	longjmp(g_exit_jmp_buf, exit_code);
+#else
+# if defined (NDS)
+	while (1);
+# else
+	exit(exit_code);
+# endif
 #endif
 }
 
@@ -312,10 +327,10 @@ PAL_SplashScreen(
    //
    // Play the title music
    //
-   if (!SOUND_PlayCDA(7))
+   if (!AUDIO_PlayCDTrack(7))
    {
       fUseCD = FALSE;
-      PAL_PlayMUS(NUM_RIX_TITLE, TRUE, 2);
+      AUDIO_PlayMusic(NUM_RIX_TITLE, TRUE, 2);
    }
 
    //
@@ -484,7 +499,7 @@ PAL_SplashScreen(
 
    if (!fUseCD)
    {
-      PAL_PlayMUS(0, FALSE, 1);
+      AUDIO_PlayMusic(0, FALSE, 1);
    }
 
    PAL_FadeOut(1);
@@ -512,11 +527,13 @@ main(
 
 --*/
 {
-   WORD          wScreenWidth = 0, wScreenHeight = 0;
-   int           c;
-   BOOL          fFullScreen = FALSE;
+#if defined(LONGJMP_EXIT)
+	int exit_code;
+	if (exit_code = setjmp(g_exit_jmp_buf))
+		return exit_code != 1 ? exit_code : 0;
+#endif
 
-#if defined(__APPLE__) && !defined(__IOS__)
+#if defined(__APPLE__) && !defined(__IOS__) && !defined(DEBUG) //for ease of debugging(specify resource dir in xcode scheme)
    char *p = strstr(argv[0], "/Pal.app/");
 
    if (p != NULL)
@@ -528,101 +545,27 @@ main(
    }
 #endif
 
-#ifdef __WINPHONE__
-   SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
-   SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
-#endif
-
    UTIL_OpenLog();
 
-#ifdef _WIN32
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+#if defined(_WIN32) && SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
    putenv("SDL_VIDEODRIVER=directx");
 #endif
-#endif
 
-#ifndef __SYMBIAN32__
-   //
-   // Parse parameters.
-   //
-   while ((c = getopt(argc, argv, "w:h:fjm")) != -1)
-   {
-      switch (c)
-      {
-      case 'w':
-         //
-         // Set the width of the screen
-         //
-         wScreenWidth = atoi(optarg);
-         if (wScreenHeight == 0)
-         {
-            wScreenHeight = wScreenWidth * 200 / 320;
-         }
-         break;
-
-      case 'h':
-         //
-         // Set the height of the screen
-         //
-         wScreenHeight = atoi(optarg);
-         if (wScreenWidth == 0)
-         {
-            wScreenWidth = wScreenHeight * 320 / 200;
-         }
-         break;
-
-      case 'f':
-         //
-         // Fullscreen Mode
-         //
-         fFullScreen = TRUE;
-         break;
-
-      case 'j':
-         //
-         // Disable joystick
-         //
-         g_fUseJoystick = FALSE;
-         break;
-
-#ifdef PAL_HAS_NATIVEMIDI
-      case 'm':
-         //
-         // Use MIDI music
-         //
-         g_fUseMidi = TRUE;
-         break;
-#endif
-      }
-   }
-#endif
+   PAL_LoadConfig(TRUE);
 
    //
-   // Default resolution is 640x400 (windowed) or 640x480 (fullscreen).
+   // Platform-specific initialization
    //
-   if (wScreenWidth == 0)
-   {
-#ifdef __SYMBIAN32__
-#ifdef __S60_5X__
-      wScreenWidth = 640;
-      wScreenHeight = 360;
-#else
-      wScreenWidth = 320;
-      wScreenHeight = 240;
-#endif
-#else
-#if defined(GPH) || defined(DINGOO) || defined (__N3DS__)
-      wScreenWidth = 320;
-      wScreenHeight = 240;
-#elif defined (__IOS__) || defined (__ANDROID__)
-      wScreenWidth = 320;
-      wScreenHeight = 200;
-#else
-      wScreenWidth = 640;
-      wScreenHeight = fFullScreen ? 480 : 400;
-#endif
-#endif
-   }
+   if (UTIL_Platform_Init(argc, argv) != 0)
+	   return -1;
+
+   //
+   // Should launch setting
+   // However, it may arrive here through the activatation event on WinRT platform
+   // So close the current process so that the new process can go to setting
+   //
+   if (gConfig.fLaunchSetting)
+	   return 0;
 
 #ifdef __N3DS__
    fFullScreen = TRUE;
@@ -631,10 +574,7 @@ main(
    //
    // Initialize everything
    //
-#ifdef PSP
-   sdlpal_psp_init();
-#endif
-   PAL_Init(wScreenWidth, wScreenHeight, fFullScreen);
+   PAL_Init();
 
    //
    // Show the trademark screen and splash screen

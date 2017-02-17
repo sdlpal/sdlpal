@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #ifndef _TEXT_H
 #define _TEXT_H
@@ -30,7 +32,7 @@ typedef enum tagDIALOGPOSITION
    kDialogCenterWindow
 } DIALOGLOCATION;
 
-#define PAL_ADDITIONAL_WORD_FIRST           10000
+extern LPWSTR g_rcCredits[12];
 
 INT
 PAL_InitText(
@@ -42,23 +44,30 @@ PAL_FreeText(
    VOID
 );
 
-LPCSTR
+LPCWSTR
 PAL_GetWord(
-   WORD       wNumWord
+   int        iNumWord
 );
 
-LPCSTR
+LPCWSTR
 PAL_GetMsg(
-   WORD       wNumMsg
+   int        iNumMsg
+);
+
+int
+PAL_GetMsgNum(
+   int        iIndex,
+   int        iOrder
 );
 
 VOID
 PAL_DrawText(
-   LPCSTR     lpszText,
+   LPCWSTR    lpszText,
    PAL_POS    pos,
    BYTE       bColor,
    BOOL       fShadow,
-   BOOL       fUpdate
+   BOOL       fUpdate,
+   BOOL       fUse8x8Font
 );
 
 VOID
@@ -76,7 +85,7 @@ PAL_StartDialog(
 
 VOID
 PAL_ShowDialogText(
-   LPCSTR       szText
+   LPCWSTR    lpszText
 );
 
 VOID
@@ -97,6 +106,28 @@ PAL_IsInDialog(
 BOOL
 PAL_DialogIsPlayingRNG(
    VOID
+);
+
+INT
+PAL_MultiByteToWideChar(
+   LPCSTR        mbs,
+   int           mbslength,
+   LPWSTR        wcs,
+   int           wcslength
+);
+
+INT
+PAL_MultiByteToWideCharCP(
+	CODEPAGE      cp,
+	LPCSTR        mbs,
+	int           mbslength,
+	LPWSTR        wcs,
+	int           wcslength
+	);
+
+WCHAR
+PAL_GetInvalidChar(
+   CODEPAGE      uCodePage
 );
 
 #endif

@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #ifndef FONT_H
 #define FONT_H
@@ -31,8 +33,13 @@ extern "C"
 #endif
 
 INT
-PAL_InitFont(
+PAL_InitEmbeddedFont(
    VOID
+);
+
+INT
+PAL_LoadBdfFont(
+   LPCSTR      pszBdfFileName
 );
 
 VOID
@@ -45,15 +52,18 @@ PAL_DrawCharOnSurface(
    WORD                     wChar,
    SDL_Surface             *lpSurface,
    PAL_POS                  pos,
-   BYTE                     bColor
+   BYTE                     bColor,
+   BOOL                     fUse8x8Font
 );
 
-VOID
-PAL_DrawASCIICharOnSurface(
-   BYTE                     bChar,
-   SDL_Surface             *lpSurface,
-   PAL_POS                  pos,
-   BYTE                     bColor
+INT
+PAL_CharWidth(
+   WORD                     wChar
+);
+
+INT
+PAL_FontHeight(
+   VOID
 );
 
 #ifdef __cplusplus

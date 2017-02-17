@@ -26,7 +26,7 @@
 /* #undef HAVE_FORK */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#define HAVE_INTTYPES_H 1
+/*#define HAVE_INTTYPES_H 1*/
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -50,7 +50,7 @@
 #define HAVE_STDLIB_H 1
 
 /* Define to 1 if you have the <strings.h> header file. */
-#define HAVE_STRINGS_H 1
+/*#define HAVE_STRINGS_H 1*/
 
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
@@ -129,11 +129,27 @@
 /* Define to `int' if <sys/types.h> does not define. */
 /* #undef pid_t */
 
-#define FPM_DEFAULT 1
+//#if defined(_M_IX86) || defined(__i386__) || defined(__x86_64__)
+//#  define FPM_INTEL   1
+//#elif defined(_M_X64)
+//#  define FPM_64BIT   1
+//#elif defined(__arm__)
+//#  define FPM_ARM     1
+#if defined(__mips__)
+#  define FPM_MIPS    1
+#elif defined(__sparc__)
+#  define FPM_SPARC   1
+#elif defined(__ppc__)
+#  define FPM_PPC     1
+#else
+#  define FPM_DEFAULT 1
+#endif
 
-#ifdef _MSC_VER
-#pragma warning (disable:4018)
-#pragma warning (disable:4146)
-#pragma warning (disable:4244)
-#pragma warning (disable:4996)
+#if defined(_MSC_VER)
+#  pragma warning(disable: 4018)
+#  pragma warning(disable: 4146)
+#  pragma warning(disable: 4244)
+#  ifndef _CRT_SECURE_NO_WARNINGS
+#    define _CRT_SECURE_NO_WARNINGS
+#  endif
 #endif

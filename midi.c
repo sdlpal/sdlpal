@@ -21,7 +21,7 @@
 
 #include "main.h"
 
-#if !defined (CYGWIN) && !defined (DINGOO) &&  !defined (GEKKO) && !defined (GPH) && !defined(__N3DS__)
+#if PAL_HAS_NATIVEMIDI
 
 static INT iMidCurrent = -1;
 static BOOL fMidLoop = FALSE;
@@ -50,79 +50,80 @@ MIDI_Play(
 
 --*/
 {
-   FILE            *fp;
-   unsigned char   *buf;
-   int              size;
-   SDL_RWops       *rw;
-#ifdef PAL_WIN95
-   char             filename[1024];
-#endif
-
    if (g_pMid != NULL && iNumRIX == iMidCurrent && native_midi_active())
    {
       return;
    }
 
-   SOUND_PlayCDA(-1);
+   AUDIO_PlayCDTrack(-1);
    native_midi_freesong(g_pMid);
    g_pMid = NULL;
    iMidCurrent = -1;
 
-   if (g_fNoMusic || iNumRIX <= 0)
+   if (!AUDIO_MusicEnabled() || iNumRIX <= 0)
    {
       return;
    }
 
-#ifdef PAL_WIN95
-   sprintf(filename, "%s/musics/%.3d.mid", PAL_PREFIX, iNumRIX);
-
-   g_pMid = native_midi_loadsong(filename);
-   if (g_pMid != NULL)
+   if (gConfig.fIsWIN95)
    {
-      native_midi_start(g_pMid);
+      char filename[1024];
+      sprintf(filename, "%s/musics/%.3d.mid", PAL_PREFIX, iNumRIX);
 
-      iMidCurrent = iNumRIX;
-      fMidLoop = fLoop;
-   }
-#else
-   fp = UTIL_OpenFile("midi.mkf");
-   if (fp == NULL)
-   {
-      return;
+      g_pMid = native_midi_loadsong(filename);
+      if (g_pMid != NULL)
+      {
+         native_midi_start(g_pMid);
+
+         iMidCurrent = iNumRIX;
+         fMidLoop = fLoop;
+      }
    }
 
-   if (iNumRIX > PAL_MKFGetChunkCount(fp))
+   if (!g_pMid)
    {
+      unsigned char   *buf;
+      int              size;
+      SDL_RWops       *rw;
+      FILE            *fp = UTIL_OpenFile("midi.mkf");
+
+      if (fp == NULL)
+      {
+         return;
+      }
+
+      if (iNumRIX > PAL_MKFGetChunkCount(fp))
+      {
+         fclose(fp);
+         return;
+      }
+
+      size = PAL_MKFGetChunkSize(iNumRIX, fp);
+      if (size <= 0)
+      {
+         fclose(fp);
+         return;
+      }
+
+      buf = (unsigned char *)UTIL_malloc(size);
+
+      PAL_MKFReadChunk((LPBYTE)buf, size, iNumRIX, fp);
       fclose(fp);
-      return;
+
+      rw = SDL_RWFromConstMem((const void *)buf, size);
+
+      g_pMid = native_midi_loadsong_RW(rw);
+      if (g_pMid != NULL)
+      {
+         native_midi_start(g_pMid);
+
+         iMidCurrent = iNumRIX;
+         fMidLoop = fLoop;
+      }
+
+      SDL_RWclose(rw);
+      free(buf);
    }
-
-   size = PAL_MKFGetChunkSize(iNumRIX, fp);
-   if (size <= 0)
-   {
-      fclose(fp);
-      return;
-   }
-
-   buf = (unsigned char *)UTIL_malloc(size);
-
-   PAL_MKFReadChunk((LPBYTE)buf, size, iNumRIX, fp);
-   fclose(fp);
-
-   rw = SDL_RWFromConstMem((const void *)buf, size);
-
-   g_pMid = native_midi_loadsong_RW(rw);
-   if (g_pMid != NULL)
-   {
-      native_midi_start(g_pMid);
-
-      iMidCurrent = iNumRIX;
-      fMidLoop = fLoop;
-   }
-
-   SDL_RWclose(rw);
-   free(buf);
-#endif
 }
 
 VOID

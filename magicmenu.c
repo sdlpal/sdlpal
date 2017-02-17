@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 
@@ -51,116 +53,153 @@ PAL_MagicSelectionMenuUpdate(
 
 --*/
 {
-#ifndef PAL_WIN95
-   int         i, j, k;
-   BYTE        bColor;
-#else
-   int         i, j, k, line;
+   int         i, j, k, line, item_delta;
    BYTE        bColor;
    WORD        wScript;
-#endif
+   const int   iItemsPerLine = 32 / gConfig.dwWordLength;
+   const int   iItemTextWidth = 8 * gConfig.dwWordLength + 7;
+   const int   iLinesPerPage = 5 - gConfig.ScreenLayout.ExtraMagicDescLines;
+   const int   iBoxYOffset = gConfig.ScreenLayout.ExtraMagicDescLines * 16;
+   const int   iCursorXOffset = gConfig.dwWordLength * 5 / 2;
+   const int   iPageLineOffset = iLinesPerPage / 2;
 
    //
    // Check for inputs
    //
    if (g_InputState.dwKeyPress & kKeyUp)
    {
-      g_iCurrentItem -= 3;
+      item_delta = -iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyDown)
    {
-      g_iCurrentItem += 3;
+      item_delta = iItemsPerLine;
    }
    else if (g_InputState.dwKeyPress & kKeyLeft)
    {
-      g_iCurrentItem--;
+      item_delta = -1;
    }
    else if (g_InputState.dwKeyPress & kKeyRight)
    {
-      g_iCurrentItem++;
+      item_delta = 1;
    }
    else if (g_InputState.dwKeyPress & kKeyPgUp)
    {
-      g_iCurrentItem -= 3 * 5;
+      item_delta = -(iItemsPerLine * iLinesPerPage);
    }
    else if (g_InputState.dwKeyPress & kKeyPgDn)
    {
-      g_iCurrentItem += 3 * 5;
+      item_delta = iItemsPerLine * iLinesPerPage;
+   }
+   else if (g_InputState.dwKeyPress & kKeyHome)
+   {
+      item_delta = -g_iCurrentItem;
+   }
+   else if (g_InputState.dwKeyPress & kKeyEnd)
+   {
+      item_delta = g_iNumMagic - g_iCurrentItem - 1;
    }
    else if (g_InputState.dwKeyPress & kKeyMenu)
    {
       return 0;
    }
+   else
+   {
+      item_delta = 0;
+   }
 
    //
    // Make sure the current menu item index is in bound
    //
-   if (g_iCurrentItem < 0)
-   {
-      g_iCurrentItem = 0;
-   }
-   else if (g_iCurrentItem >= g_iNumMagic)
-   {
-      g_iCurrentItem = g_iNumMagic - 1;
-   }
+   if (g_iCurrentItem + item_delta >= 0 &&
+       g_iCurrentItem + item_delta < g_iNumMagic)
+      g_iCurrentItem += item_delta;
 
    //
    // Create the box.
    //
-   PAL_CreateBox(PAL_XY(10, 42), 4, 16, 1, FALSE);
+   PAL_CreateBox(PAL_XY(10, 42 + iBoxYOffset), iLinesPerPage - 1, 16, 1, FALSE);
 
-#ifndef PAL_WIN95
-   if (gpGlobals->lpObjectDesc == NULL)
+   if (!gConfig.fIsWIN95)
    {
-      //
-      // Draw the cash amount.
-      //
-      PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
-      PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(10, 10), 0, FALSE, FALSE);
-      PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(49, 14), kNumColorYellow, kNumAlignRight);
+      if (gpGlobals->lpObjectDesc == NULL)
+      {
+         //
+         // Draw the cash amount.
+         //
+         PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
+         PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(10, 10), 0, FALSE, FALSE, FALSE);
+         PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(49, 14), kNumColorYellow, kNumAlignRight);
 
-      //
-      // Draw the MP of the selected magic.
-      //
-      PAL_CreateSingleLineBox(PAL_XY(215, 0), 5, FALSE);
-      PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
-         gpScreen, PAL_XY(260, 14));
-      PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(230, 14),
-         kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(265, 14), kNumColorCyan, kNumAlignRight);
+         //
+         // Draw the MP of the selected magic.
+         //
+         PAL_CreateSingleLineBox(PAL_XY(215, 0), 5, FALSE);
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
+            gpScreen, PAL_XY(260, 14));
+         PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(230, 14),
+            kNumColorYellow, kNumAlignRight);
+         PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(265, 14), kNumColorCyan, kNumAlignRight);
+      }
+      else
+      {
+         WCHAR szDesc[512], *next;
+         const WCHAR *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
+
+         //
+         // Draw the magic description.
+         //
+         if (d != NULL)
+         {
+            k = 3;
+		    wcscpy(szDesc, d);
+            d = szDesc;
+
+            while (TRUE)
+            {
+               next = wcschr(d, '*');
+               if (next != NULL)
+               {
+                  *next++ = '\0';
+               }
+
+               PAL_DrawText(d, PAL_XY(100, k), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
+               k += 16;
+
+               if (next == NULL)
+               {
+                  break;
+               }
+
+               d = next;
+            }
+         }
+
+         //
+         // Draw the MP of the selected magic.
+         //
+         PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
+            gpScreen, PAL_XY(45, 14));
+         PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),
+            kNumColorYellow, kNumAlignRight);
+         PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
+      }
    }
    else
    {
-      char szDesc[512], *next;
-      const char *d = PAL_GetObjectDesc(gpGlobals->lpObjectDesc, rgMagicItem[g_iCurrentItem].wMagic);
-
-      //
-      // Draw the magic description.
-      //
-      if (d != NULL)
+      wScript = gpGlobals->g.rgObject[rgMagicItem[g_iCurrentItem].wMagic].item.wScriptDesc;
+      line = 0;
+      while (wScript && gpGlobals->g.lprgScriptEntry[wScript].wOperation != 0)
       {
-         k = 3;
-         strcpy(szDesc, d);
-         d = szDesc;
-
-         while (TRUE)
+         if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
          {
-            next = strchr(d, '*');
-            if (next != NULL)
-            {
-               *next = '\0';
-               next++;
-            }
-
-            PAL_DrawText(d, PAL_XY(100, k), DESCTEXT_COLOR, TRUE, FALSE);
-            k += 16;
-
-            if (next == NULL)
-            {
-               break;
-            }
-
-            d = next;
+            int line_incr = (gpGlobals->g.lprgScriptEntry[wScript].rgwOperand[1] != 1) ? 1 : 0;
+            wScript = PAL_RunAutoScript(wScript, line);
+            line += line_incr;
+	     }
+         else
+         {
+            wScript = PAL_RunAutoScript(wScript, 0);
          }
       }
 
@@ -174,46 +213,20 @@ PAL_MagicSelectionMenuUpdate(
          kNumColorYellow, kNumAlignRight);
       PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
    }
-#else
-   wScript = gpGlobals->g.rgObject[rgMagicItem[g_iCurrentItem].wMagic].item.wScriptDesc;
-   line = 0;
-   while (wScript && gpGlobals->g.lprgScriptEntry[wScript].wOperation != 0)
-   {
-      if (gpGlobals->g.lprgScriptEntry[wScript].wOperation == 0xFFFF)
-      {
-         wScript = PAL_RunAutoScript(wScript, line);
-         line++;
-      }
-      else
-      {
-         wScript = PAL_RunAutoScript(wScript, 0);
-      }
-   }
-
-   //
-   // Draw the MP of the selected magic.
-   //
-   PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
-   PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
-      gpScreen, PAL_XY(45, 14));
-   PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),
-      kNumColorYellow, kNumAlignRight);
-   PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
-#endif
 
 
    //
    // Draw the texts of the current page
    //
-   i = g_iCurrentItem / 3 * 3 - 3 * 2;
+   i = g_iCurrentItem / iItemsPerLine * iItemsPerLine - iItemsPerLine * iPageLineOffset;
    if (i < 0)
    {
       i = 0;
    }
 
-   for (j = 0; j < 5; j++)
+   for (j = 0; j < iLinesPerPage; j++)
    {
-      for (k = 0; k < 3; k++)
+      for (k = 0; k < iItemsPerLine; k++)
       {
          bColor = MENUITEM_COLOR;
 
@@ -222,7 +235,7 @@ PAL_MagicSelectionMenuUpdate(
             //
             // End of the list reached
             //
-            j = 5;
+            j = iLinesPerPage;
             break;
          }
 
@@ -245,8 +258,7 @@ PAL_MagicSelectionMenuUpdate(
          //
          // Draw the text
          //
-         PAL_DrawText(PAL_GetWord(rgMagicItem[i].wMagic),
-            PAL_XY(35 + k * 87, 54 + j * 18), bColor, TRUE, FALSE);
+         PAL_DrawText(PAL_GetWord(rgMagicItem[i].wMagic), PAL_XY(35 + k * iItemTextWidth, 54 + j * 18 + iBoxYOffset), bColor, TRUE, FALSE, FALSE);
 
          //
          // Draw the cursor on the current selected item
@@ -254,7 +266,7 @@ PAL_MagicSelectionMenuUpdate(
          if (i == g_iCurrentItem)
          {
             PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_CURSOR),
-               gpScreen, PAL_XY(60 + k * 87, 64 + j * 18));
+               gpScreen, PAL_XY(35 + iCursorXOffset + k * iItemTextWidth, 64 + j * 18 + iBoxYOffset));
          }
 
          i++;
@@ -265,14 +277,13 @@ PAL_MagicSelectionMenuUpdate(
    {
       if (rgMagicItem[g_iCurrentItem].fEnabled)
       {
-         j = g_iCurrentItem % 3;
-         k = (g_iCurrentItem < 3 * 2) ? (g_iCurrentItem / 3) : 2;
+         j = g_iCurrentItem % iItemsPerLine;
+		 k = (g_iCurrentItem < iItemsPerLine * iPageLineOffset) ? (g_iCurrentItem / iItemsPerLine) : iPageLineOffset;
 
-         j = 35 + j * 87;
-         k = 54 + k * 18;
+		 j = 35 + j * iItemTextWidth;
+		 k = 54 + k * 18 + iBoxYOffset;
 
-         PAL_DrawText(PAL_GetWord(rgMagicItem[g_iCurrentItem].wMagic), PAL_XY(j, k),
-            MENUITEM_COLOR_CONFIRMED, FALSE, TRUE);
+         PAL_DrawText(PAL_GetWord(rgMagicItem[g_iCurrentItem].wMagic), PAL_XY(j, k), MENUITEM_COLOR_CONFIRMED, FALSE, TRUE, FALSE);
 
          return rgMagicItem[g_iCurrentItem].wMagic;
       }
@@ -450,7 +461,7 @@ PAL_MagicSelectionMenu(
       }
 
       PAL_ProcessEvent();
-      while (SDL_GetTicks() < dwTime)
+      while (!SDL_TICKS_PASSED(SDL_GetTicks(), dwTime))
       {
          PAL_ProcessEvent();
          if (g_InputState.dwKeyPress != 0)

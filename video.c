@@ -20,6 +20,9 @@
 //
 
 #include "main.h"
+#ifndef __WIN32__
+#include <sys/time.h>
+#endif
 
 // Screen buffer
 SDL_Surface              *gpScreen           = NULL;
@@ -32,9 +35,8 @@ SDL_Window               *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
 static SDL_Texture       *gpTexture          = NULL;
 static SDL_Texture       *gpTouchOverlay     = NULL;
-#ifdef __WINPHONE__
-static SDL_Texture       *gpBackKeyMessage   = NULL;
-#endif
+static SDL_Rect           gOverlayRect;
+static SDL_Rect           gTextureRect;
 #endif
 
 // The real screen surface
@@ -48,10 +50,6 @@ volatile BOOL g_bRenderPaused = FALSE;
    static BOOL bScaleScreen = TRUE;
 #endif
 
-// Initial screen size
-static WORD               g_wInitialWidth    = 640;
-static WORD               g_wInitialHeight   = 400;
-
 // Shake times and level
 static WORD               g_wShakeTime       = 0;
 static WORD               g_wShakeLevel      = 0;
@@ -60,15 +58,59 @@ static WORD               g_wShakeLevel      = 0;
 #define SDL_SoftStretch SDL_UpperBlit
 #endif
 
+static SDL_Texture *VIDEO_CreateTexture(int width, int height)
+{
+	int texture_width, texture_height;
+	float ratio = (float)width / (float)height;
+	//
+	// Check whether to keep the aspect ratio
+	//
+	if (gConfig.fKeepAspectRatio && ratio != 1.6f)
+	{
+		if (ratio > 1.6f)
+		{
+			texture_height = 200;
+			texture_width = (int)(200 * ratio) & ~0x3;
+			ratio = (float)height / 200.0f;
+		}
+		else
+		{
+			texture_width = 320;
+			texture_height = (int)(320 / ratio) & ~0x3;
+			ratio = (float)width / 320.0f;
+		}
+
+		WORD w = (WORD)(ratio * 320.0f) & ~0x3;
+		WORD h = (WORD)(ratio * 200.0f) & ~0x3;
+		gOverlayRect.x = (width - w) / 2;
+		gOverlayRect.y = (height - h) / 2;
+		gOverlayRect.w = w;
+		gOverlayRect.h = h;
+		gTextureRect.x = (texture_width - 320) / 2;
+		gTextureRect.y = (texture_height - 200) / 2;
+		gTextureRect.w = 320; gTextureRect.h = 200;
+		PAL_SetTouchBounds(width, height, gOverlayRect);
+	}
+	else
+	{
+		texture_width = 320;
+		texture_height = 200;
+		gOverlayRect.x = gOverlayRect.y = 0;
+		gOverlayRect.w = width;
+		gOverlayRect.h = height;
+		gTextureRect.x = gTextureRect.y = 0;
+		gTextureRect.w = 320; gTextureRect.h = 200;
+	}
+
+	//
+	// Create texture for screen.
+	//
+	return SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
+}
+
 INT
-#ifdef GEKKO // Rikku2000: Crash on compile, allready define on WIISDK
-VIDEO_Init_GEKKO(
-#else
-VIDEO_Init(
-#endif
-   WORD             wScreenWidth,
-   WORD             wScreenHeight,
-   BOOL             fFullScreen
+VIDEO_Startup(
+   VOID
 )
 /*++
   Purpose:
@@ -77,11 +119,7 @@ VIDEO_Init(
 
   Parameters:
 
-    [IN]  wScreenWidth - width of the screen.
-
-    [IN]  wScreenHeight - height of the screen.
-
-    [IN]  fFullScreen - TRUE to use full screen mode, FALSE to use windowed mode.
+    None.
 
   Return value:
 
@@ -91,32 +129,20 @@ VIDEO_Init(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   SDL_Surface *overlay;
-#endif
+   int render_w, render_h;
 
-   g_wInitialWidth = wScreenWidth;
-   g_wInitialHeight = wScreenHeight;
-
-#if SDL_VERSION_ATLEAST(2,0,0)
    //
    // Before we can render anything, we need a window and a renderer.
    //
-#if defined (__IOS__) || defined (__ANDROID__) || defined (__WINPHONE__)
-   gpWindow = SDL_CreateWindow("Pal",
-      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, wScreenWidth, wScreenHeight,
-      SDL_WINDOW_SHOWN);
-#else
-   gpWindow = SDL_CreateWindow("Pal",
-      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, wScreenWidth, wScreenHeight,
-      SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-#endif
+   gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+	   gConfig.dwScreenWidth, gConfig.dwScreenHeight, PAL_VIDEO_INIT_FLAGS);
 
    if (gpWindow == NULL)
    {
       return -1;
    }
 
-   gpRenderer = SDL_CreateRenderer(gpWindow, -1, SDL_RENDERER_ACCELERATED);
+   gpRenderer = SDL_CreateRenderer(gpWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
    if (gpRenderer == NULL)
    {
@@ -139,8 +165,8 @@ VIDEO_Init(
    //
    // Create texture for screen.
    //
-   gpTexture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888,
-							  SDL_TEXTUREACCESS_STREAMING, 320, 200);
+   SDL_GetRendererOutputSize(gpRenderer, &render_w, &render_h);
+   gpTexture = VIDEO_CreateTexture(render_w, render_h);
 
    //
    // Failed?
@@ -183,72 +209,26 @@ VIDEO_Init(
    //
    // Create texture for overlay.
    //
-   overlay = SDL_LoadBMP(va("%s%s", PAL_PREFIX, "overlay.bmp"));
-   if (overlay != NULL)
+   if (gConfig.fUseTouchOverlay)
    {
-      SDL_SetColorKey(overlay, SDL_RLEACCEL, SDL_MapRGB(overlay->format, 255, 0, 255));
-      gpTouchOverlay = SDL_CreateTextureFromSurface(gpRenderer, overlay);
-      SDL_SetTextureAlphaMod(gpTouchOverlay, 120);
-      SDL_FreeSurface(overlay);
-   }
+      extern const void * PAL_LoadOverlayBMP(void);
+      extern int PAL_OverlayBMPLength();
 
-#ifdef __WINPHONE__
-   {
-      //
-      // Totally ugly hack to satisfy M$'s silly requirements.
-      // No need to understand this crap.
-      //
-#ifdef PAL_WIN95
-      extern BOOL fIsBig5;
-#endif
-      SDL_Color palette[256] = { 0 };
-      SDL_Surface *p;
-#ifdef PAL_WIN95
-      fIsBig5 = TRUE;
-#endif
-      palette[0].r = palette[0].g = palette[0].b = palette[0].a = 0;
-      palette[1].r = palette[1].g = palette[1].b = palette[1].a = 255;
-      SDL_FillRect(gpScreenBak, NULL, 0);
-      VIDEO_SetPalette(palette);
-      p = gpScreen;
-      gpScreen = gpScreenBak;
-      PAL_DrawText("\xA6\x41\xA6\xB8\xAB\xF6 Back \xB5\xB2\xA7\xF4", PAL_XY(30, 30), 1, FALSE, FALSE);
-      gpScreen = p;
-      gpBackKeyMessage = SDL_CreateTextureFromSurface(gpRenderer, gpScreenBak);
-      SDL_FillRect(gpScreenBak, NULL, 0);
-#ifdef PAL_WIN95
-      fIsBig5 = FALSE;
-#endif
+      SDL_Surface *overlay = SDL_LoadBMP_RW(SDL_RWFromConstMem(PAL_LoadOverlayBMP(), PAL_OverlayBMPLength()), 1);
+      if (overlay != NULL)
+      {
+         SDL_SetColorKey(overlay, SDL_RLEACCEL, SDL_MapRGB(overlay->format, 255, 0, 255));
+         gpTouchOverlay = SDL_CreateTextureFromSurface(gpRenderer, overlay);
+         SDL_SetTextureAlphaMod(gpTouchOverlay, 120);
+         SDL_FreeSurface(overlay);
+      }
    }
-#endif
-
 #else
 
    //
    // Create the screen surface.
    //
-#if defined (NDS)
-   gpScreenReal = SDL_SetVideoMode(293, 196, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
-#elif defined (__SYMBIAN32__)
-#ifdef __S60_5X__
-   gpScreenReal = SDL_SetVideoMode(640, 360, 8,
-      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#else
-   gpScreenReal = SDL_SetVideoMode(320, 240, 8,
-      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#endif
-#elif defined (GEKKO)
-   gpScreenReal = SDL_SetVideoMode(640, 480, 8,
-      SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#elif defined (PSP)
-   gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
-#elif defined (__N3DS__)
-   gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE | SDL_TOPSCR | 
-            SDL_CONSOLEBOTTOM);
-#else
-   gpScreenReal = SDL_SetVideoMode(wScreenWidth, wScreenHeight, 8,
-      SDL_HWSURFACE | SDL_RESIZABLE | (fFullScreen ? SDL_FULLSCREEN : 0));
-#endif
+   gpScreenReal = SDL_SetVideoMode(gConfig.dwScreenWidth, gConfig.dwScreenHeight, 8, PAL_VIDEO_INIT_FLAGS);
 
    if (gpScreenReal == NULL)
    {
@@ -256,7 +236,7 @@ VIDEO_Init(
       // Fall back to 640x480 software mode.
       //
       gpScreenReal = SDL_SetVideoMode(640, 480, 8,
-         SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
+         SDL_SWSURFACE | (gConfig.fFullScreen ? SDL_FULLSCREEN : 0));
    }
 
    //
@@ -301,12 +281,12 @@ VIDEO_Init(
       return -2;
    }
 
-#endif
-
-   if (fFullScreen)
+   if (gConfig.fFullScreen)
    {
       SDL_ShowCursor(FALSE);
    }
+
+#endif
 
    return 0;
 }
@@ -350,14 +330,6 @@ VIDEO_Shutdown(
    }
    gpTouchOverlay = NULL;
 
-#ifdef __WINPHONE__
-   if (gpBackKeyMessage)
-   {
-      SDL_DestroyTexture(gpBackKeyMessage);
-   }
-   gpBackKeyMessage = NULL;
-#endif
-
    if (gpTexture)
    {
 	  SDL_DestroyTexture(gpTexture);
@@ -384,6 +356,40 @@ VIDEO_Shutdown(
    }
    gpScreenReal = NULL;
 }
+
+#if SDL_VERSION_ATLEAST(2,0,0)
+PAL_FORCE_INLINE
+VOID
+VIDEO_RenderCopy(
+   VOID
+)
+{
+	void *texture_pixels;
+	int texture_pitch;
+
+	SDL_LockTexture(gpTexture, NULL, &texture_pixels, &texture_pitch);
+	memset(texture_pixels, 0, gTextureRect.y * texture_pitch);
+	uint8_t *pixels = (uint8_t *)texture_pixels + gTextureRect.y * texture_pitch;
+	uint8_t *src = (uint8_t *)gpScreenReal->pixels;
+	int left_pitch = gTextureRect.x << 2;
+	int right_pitch = texture_pitch - ((gTextureRect.x + gTextureRect.w) << 2);
+	for (int y = 0; y < gTextureRect.h; y++, src += gpScreenReal->pitch)
+	{
+		memset(pixels, 0, left_pitch); pixels += left_pitch;
+		memcpy(pixels, src, 320 << 2); pixels += 320 << 2;
+		memset(pixels, 0, right_pitch); pixels += right_pitch;
+	}
+	memset(pixels, 0, gTextureRect.y * texture_pitch);
+	SDL_UnlockTexture(gpTexture);
+
+	SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+	if (gpTouchOverlay)
+	{
+		SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, &gOverlayRect);
+	}
+	SDL_RenderPresent(gpRenderer);
+}
+#endif
 
 VOID
 VIDEO_UpdateScreen(
@@ -439,33 +445,6 @@ VIDEO_UpdateScreen(
       dstrect.h = (WORD)((DWORD)(lpRect->h) * screenRealHeight / gpScreen->h);
 
       SDL_SoftStretch(gpScreen, (SDL_Rect *)lpRect, gpScreenReal, &dstrect);
-
-      if (SDL_MUSTLOCK(gpScreenReal))
-      {
-         SDL_UnlockSurface(gpScreenReal);
-      }
-
-#if SDL_VERSION_ATLEAST(2,0,0)
-      SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
-      SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-      if (gpTouchOverlay)
-      {
-         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-      }
-#ifdef __WINPHONE__
-      if (gpBackKeyMessage)
-      {
-         extern unsigned int g_uiLastBackKeyTime;
-         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
-         {
-           SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
-         }
-      }
-#endif
-      SDL_RenderPresent(gpRenderer);
-#else
-      SDL_UpdateRect(gpScreenReal, dstrect.x, dstrect.y, dstrect.w, dstrect.h);
-#endif
    }
    else if (g_wShakeTime != 0)
    {
@@ -506,31 +485,10 @@ VIDEO_UpdateScreen(
 
       SDL_FillRect(gpScreenReal, &dstrect, 0);
 
-      if (SDL_MUSTLOCK(gpScreenReal))
-      {
-         SDL_UnlockSurface(gpScreenReal);
-      }
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-      SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
-      SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-      if (gpTouchOverlay)
-      {
-         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-      }
-#ifdef __WINPHONE__
-      if (gpBackKeyMessage)
-      {
-         extern unsigned int g_uiLastBackKeyTime;
-         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
-         {
-           SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
-         }
-      }
-#endif
-      SDL_RenderPresent(gpRenderer);
-#else
-      SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+      dstrect.x = dstrect.y = 0;
+      dstrect.w = gpScreenReal->w;
+      dstrect.h = gpScreenReal->h;
 #endif
       g_wShakeTime--;
    }
@@ -543,32 +501,22 @@ VIDEO_UpdateScreen(
 
       SDL_SoftStretch(gpScreen, NULL, gpScreenReal, &dstrect);
 
-      if (SDL_MUSTLOCK(gpScreenReal))
-      {
-         SDL_UnlockSurface(gpScreenReal);
-      }
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+      dstrect.x = dstrect.y = 0;
+      dstrect.w = gpScreenReal->w;
+      dstrect.h = gpScreenReal->h;
+#endif
+   }
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-      SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
-      SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-      if (gpTouchOverlay)
-      {
-         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-      }
-#ifdef __WINPHONE__
-      if (gpBackKeyMessage)
-      {
-         extern unsigned int g_uiLastBackKeyTime;
-         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
-         {
-           SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
-         }
-      }
-#endif
-      SDL_RenderPresent(gpRenderer);
+#if SDL_VERSION_ATLEAST(2,0,0)
+   VIDEO_RenderCopy();
 #else
-      SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+   SDL_UpdateRect(gpScreenReal, dstrect.x, dstrect.y, dstrect.w, dstrect.h);
 #endif
+
+   if (SDL_MUSTLOCK(gpScreenReal))
+   {
+	   SDL_UnlockSurface(gpScreenReal);
    }
 }
 
@@ -592,7 +540,6 @@ VIDEO_SetPalette(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   int            i;
    SDL_Palette   *palette = SDL_AllocPalette(256);
 
    if (palette == NULL)
@@ -600,10 +547,7 @@ VIDEO_SetPalette(
       return;
    }
 
-   for (i = 0; i < 256; i++)
-   {
-      palette->colors[i] = rgPalette[i];
-   }
+   SDL_SetPaletteColors(palette, rgPalette, 0, 256);
 
    SDL_SetSurfacePalette(gpScreen, palette);
    SDL_SetSurfacePalette(gpScreenBak, palette);
@@ -661,7 +605,10 @@ VIDEO_Resize(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   // TODO
+	if (gpTexture) SDL_DestroyTexture(gpTexture);
+	gpTexture = VIDEO_CreateTexture(w, h);
+	if (gpTexture == NULL)
+		TerminateOnError("Re-creating texture failed on window resize!\n");
 #else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
@@ -776,7 +723,16 @@ VIDEO_ToggleFullscreen(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   // TODO
+	if (gConfig.fFullScreen)
+	{
+		SDL_SetWindowFullscreen(gpWindow, 0);
+		gConfig.fFullScreen = FALSE;
+	}
+	else
+	{
+		SDL_SetWindowFullscreen(gpWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		gConfig.fFullScreen = TRUE;
+	}
 #else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
@@ -821,17 +777,17 @@ VIDEO_ToggleFullscreen(
    //
    // ... and create a new one
    //
-   if (g_wInitialWidth == 640 && g_wInitialHeight == 400 && (flags & SDL_FULLSCREEN))
+   if (gConfig.dwScreenWidth == 640 && gConfig.dwScreenHeight == 400 && (flags & SDL_FULLSCREEN))
    {
       gpScreenReal = SDL_SetVideoMode(640, 480, 8, flags);
    }
-   else if (g_wInitialWidth == 640 && g_wInitialHeight == 480 && !(flags & SDL_FULLSCREEN))
+   else if (gConfig.dwScreenWidth == 640 && gConfig.dwScreenHeight == 480 && !(flags & SDL_FULLSCREEN))
    {
       gpScreenReal = SDL_SetVideoMode(640, 400, 8, flags);
    }
    else
    {
-      gpScreenReal = SDL_SetVideoMode(g_wInitialWidth, g_wInitialHeight, 8, flags);
+      gpScreenReal = SDL_SetVideoMode(gConfig.dwScreenWidth, gConfig.dwScreenHeight, 8, flags);
    }
 
    VIDEO_SetPalette(palette);
@@ -862,34 +818,26 @@ VIDEO_SaveScreenshot(
 
 --*/
 {
-   int      iNumBMP = 0;
-   FILE    *fp;
-
-   //
-   // Find a usable BMP filename.
-   //
-   for (iNumBMP = 0; iNumBMP <= 9999; iNumBMP++)
-   {
-      fp = fopen(va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP), "rb");
-      if (fp == NULL)
-      {
-         break;
-      }
-      fclose(fp);
-   }
-
-   if (iNumBMP > 9999)
-   {
-      return;
-   }
-
-   //
-   // Save the screenshot.
-   //
-#if SDL_VERSION_ATLEAST(2,0,0)
-   SDL_SaveBMP(gpScreen, va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP));
+	char filename[1024];
+#ifdef _WIN32
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+	sprintf(filename, "%s%04d%02d%02d%02d%02d%02d%03d.bmp", PAL_SCREENSHOT_PREFIX, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
 #else
-   SDL_SaveBMP(gpScreenReal, va("%sscrn%.4d.bmp", PAL_PREFIX, iNumBMP));
+	struct timeval tv;
+	struct tm *ptm;
+	gettimeofday(&tv, NULL);
+	ptm = localtime(&tv.tv_sec);
+	sprintf(filename, "%s%04d%02d%02d%02d%02d%02d%03d.bmp", PAL_SCREENSHOT_PREFIX, ptm->tm_year + 1900, ptm->tm_mon, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, (int)(tv.tv_usec / 1000));
+#endif
+	
+	//
+	// Save the screenshot.
+	//
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_SaveBMP(gpScreen, filename);
+#else
+	SDL_SaveBMP(gpScreenReal, filename);
 #endif
 }
 
@@ -1015,28 +963,24 @@ VIDEO_SwitchScreen(
       dstrect.w = gpScreenReal->w;
       dstrect.h = screenRealHeight;
 
+	  if (SDL_MUSTLOCK(gpScreenReal))
+	  {
+		  if (SDL_LockSurface(gpScreenReal) < 0)
+			  return;
+	  }
+
       SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-      SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
-      SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-      if (gpTouchOverlay)
-      {
-         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-      }
-#ifdef __WINPHONE__
-      if (gpBackKeyMessage)
-      {
-         extern unsigned int g_uiLastBackKeyTime;
-         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
-         {
-           SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
-         }
-      }
-#endif
-      SDL_RenderPresent(gpRenderer);
+      VIDEO_RenderCopy();
 #else
       SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 #endif
+
+	  if (SDL_MUSTLOCK(gpScreenReal))
+	  {
+		  SDL_UnlockSurface(gpScreenReal);
+	  }
+
       UTIL_Delay(wSpeed);
    }
 }
@@ -1095,7 +1039,7 @@ VIDEO_FadeScreen(
       for (j = 0; j < 6; j++)
       {
          PAL_ProcessEvent();
-         while (SDL_GetTicks() <= time)
+         while (!SDL_TICKS_PASSED(SDL_GetTicks(), time))
          {
             PAL_ProcessEvent();
             SDL_Delay(5);
@@ -1170,23 +1114,7 @@ VIDEO_FadeScreen(
 
             SDL_FillRect(gpScreenReal, &dstrect, 0);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-            SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
-            SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-            if (gpTouchOverlay)
-            {
-               SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-            }
-#ifdef __WINPHONE__
-            if (gpBackKeyMessage)
-            {
-               extern unsigned int g_uiLastBackKeyTime;
-               if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
-               {
-                  SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
-               }
-            }
-#endif
-			SDL_RenderPresent(gpRenderer);
+            VIDEO_RenderCopy();
 #else
 			SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 #endif
@@ -1201,23 +1129,7 @@ VIDEO_FadeScreen(
 
             SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-            SDL_UpdateTexture(gpTexture, NULL, gpScreenReal->pixels, gpScreenReal->pitch);
-            SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-            if (gpTouchOverlay)
-            {
-               SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, NULL);
-            }
-#ifdef __WINPHONE__
-            if (gpBackKeyMessage)
-            {
-               extern unsigned int g_uiLastBackKeyTime;
-               if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
-               {
-                  SDL_RenderCopy(gpRenderer, gpBackKeyMessage, NULL, NULL);
-               }
-            }
-#endif
-            SDL_RenderPresent(gpRenderer);
+            VIDEO_RenderCopy();
 #else
             SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 #endif

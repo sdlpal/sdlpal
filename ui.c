@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 
@@ -97,6 +99,19 @@ PAL_CreateBox(
    INT            nColumns,
    INT            iStyle,
    BOOL           fSaveScreen
+)
+{
+    return PAL_CreateBoxWithShadow( pos, nRows, nColumns, iStyle, fSaveScreen, 6 );
+}
+
+LPBOX
+PAL_CreateBoxWithShadow(
+   PAL_POS        pos,
+   INT            nRows,
+   INT            nColumns,
+   INT            iStyle,
+   BOOL           fSaveScreen,
+   INT            nShadowOffset
 )
 /*++
   Purpose:
@@ -212,6 +227,7 @@ PAL_CreateBox(
       for (j = 0; j < nColumns; j++)
       {
          n = (j == 0) ? 0 : ((j == nColumns - 1) ? 2 : 1);
+         PAL_RLEBlitToSurfaceWithShadow(rglpBorderBitmap[m][n], gpScreen, PAL_XY(x+nShadowOffset, rect.y+nShadowOffset),TRUE);
          PAL_RLEBlitToSurface(rglpBorderBitmap[m][n], gpScreen, PAL_XY(x, rect.y));
          x += PAL_RLEGetWidth(rglpBorderBitmap[m][n]);
       }
@@ -227,6 +243,17 @@ PAL_CreateSingleLineBox(
    PAL_POS        pos,
    INT            nLen,
    BOOL           fSaveScreen
+)
+{
+    return PAL_CreateSingleLineBoxWithShadow(pos, nLen, fSaveScreen, 6);
+}
+
+LPBOX
+PAL_CreateSingleLineBoxWithShadow(
+   PAL_POS        pos,
+   INT            nLen,
+   BOOL           fSaveScreen,
+   INT            nShadowOffset
 )
 /*++
   Purpose:
@@ -259,6 +286,7 @@ PAL_CreateSingleLineBox(
    SDL_Rect              rect;
    LPBOX                 lpBox = NULL;
    int                   i;
+   int                   xSaved;
 
    //
    // Get the bitmaps
@@ -310,7 +338,24 @@ PAL_CreateSingleLineBox(
       lpBox->wHeight = (WORD)rect.w;
       lpBox->wWidth = (WORD)rect.h;
    }
+   xSaved = rect.x;
 
+   //
+   // Draw the shadow
+   //
+   PAL_RLEBlitToSurfaceWithShadow(lpBitmapLeft, gpScreen, PAL_XY(rect.x+nShadowOffset, rect.y+nShadowOffset), TRUE);
+
+   rect.x += PAL_RLEGetWidth(lpBitmapLeft);
+
+   for (i = 0; i < nLen; i++)
+   {
+      PAL_RLEBlitToSurfaceWithShadow(lpBitmapMid, gpScreen, PAL_XY(rect.x+nShadowOffset, rect.y+nShadowOffset), TRUE);
+      rect.x += PAL_RLEGetWidth(lpBitmapMid);
+   }
+
+   PAL_RLEBlitToSurfaceWithShadow(lpBitmapRight, gpScreen, PAL_XY(rect.x+nShadowOffset, rect.y+nShadowOffset), TRUE);
+
+   rect.x = xSaved;
    //
    // Draw the box
    //
@@ -378,7 +423,7 @@ PAL_DeleteBox(
 WORD
 PAL_ReadMenu(
    LPITEMCHANGED_CALLBACK    lpfnMenuItemChanged,
-   LPMENUITEM                rgMenuItem,
+   LPCMENUITEM               rgMenuItem,
    INT                       nMenuItem,
    WORD                      wDefaultItem,
    BYTE                      bLabelColor
@@ -429,8 +474,7 @@ PAL_ReadMenu(
          }
       }
 
-      PAL_DrawText(PAL_GetWord(rgMenuItem[i].wNumWord), rgMenuItem[i].pos,
-         bColor, TRUE, TRUE);
+      PAL_DrawText(PAL_GetWord(rgMenuItem[i].wNumWord), rgMenuItem[i].pos, bColor, TRUE, TRUE, FALSE);
    }
 
    if (lpfnMenuItemChanged != NULL)
@@ -448,7 +492,7 @@ PAL_ReadMenu(
       if (rgMenuItem[wCurrentItem].fEnabled)
       {
          PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-            rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE);
+            rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE, FALSE);
       }
 
       PAL_ProcessEvent();
@@ -464,12 +508,12 @@ PAL_ReadMenu(
             // Dehighlight the unselected item.
             //
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          wCurrentItem++;
@@ -485,12 +529,12 @@ PAL_ReadMenu(
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          if (lpfnMenuItemChanged != NULL)
@@ -509,12 +553,12 @@ PAL_ReadMenu(
             // Dehighlight the unselected item.
             //
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          if (wCurrentItem > 0)
@@ -532,12 +576,12 @@ PAL_ReadMenu(
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_SELECTED_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          if (lpfnMenuItemChanged != NULL)
@@ -553,12 +597,12 @@ PAL_ReadMenu(
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, bLabelColor, FALSE, TRUE, FALSE);
          }
          else
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_INACTIVE, FALSE, TRUE, FALSE);
          }
 
          break;
@@ -571,7 +615,7 @@ PAL_ReadMenu(
          if (rgMenuItem[wCurrentItem].fEnabled)
          {
             PAL_DrawText(PAL_GetWord(rgMenuItem[wCurrentItem].wNumWord),
-               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_CONFIRMED, FALSE, TRUE);
+               rgMenuItem[wCurrentItem].pos, MENUITEM_COLOR_CONFIRMED, FALSE, TRUE, FALSE);
 
             return rgMenuItem[wCurrentItem].wValue;
          }
@@ -681,7 +725,134 @@ PAL_DrawNumber(
    }
 }
 
-#ifndef PAL_WIN95
+INT
+PAL_TextWidth(
+LPCWSTR lpszItemText
+)
+/*++
+ Purpose:
+ 
+ Calculate the text width of the given text.
+ 
+ Parameters:
+ 
+ [IN]  itemText - Pointer to the text.
+ 
+ Return value:
+ 
+ text width.
+ 
+ --*/
+{
+    size_t l = wcslen(lpszItemText);
+    int j = 0, w = 0;
+    for (j = 0; j < l; j++)
+    {
+        w += PAL_CharWidth(lpszItemText[j]);
+    }
+    return w;
+}
+
+INT
+PAL_MenuTextMaxWidth(
+   LPCMENUITEM    rgMenuItem,
+   INT            nMenuItem
+)
+/*++
+  Purpose:
+
+    Calculate the maximal text width of all the menu items in number of full width characters.
+
+  Parameters:
+
+    [IN]  rgMenuItem - Pointer to the menu item array.
+	[IN]  nMenuItem - Number of menu items.
+
+  Return value:
+
+    Maximal text width.
+
+--*/
+{
+	int i, r = 0;
+	for (i = 0; i < nMenuItem; i++)
+	{
+		LPCWSTR itemText = PAL_GetWord(rgMenuItem[i].wNumWord);
+		int w = (PAL_TextWidth(itemText) + 8) >> 4;
+		if (r < w)
+		{
+			r = w;
+		}
+	}
+	return r;
+}
+
+INT
+PAL_WordMaxWidth(
+   INT            nFirstWord,
+   INT            nWordNum
+)
+/*++
+  Purpose:
+
+    Calculate the maximal text width of a specific range of words in number of full width characters.
+
+  Parameters:
+
+    [IN]  nFirstWord - First index of word.
+	[IN]  nWordNum - Number of words.
+
+  Return value:
+
+    Maximal text width.
+
+--*/
+{
+	int i, r = 0;
+	for (i = 0; i < nWordNum; i++)
+	{
+		LPCWSTR itemText = PAL_GetWord(nFirstWord + i);
+		int j = 0, l = wcslen(itemText), w = 0;
+		for (j = 0; j < l; j++)
+		{
+			w += PAL_CharWidth(itemText[j]);
+		}
+		w = (w + 8) >> 4;
+		if (r < w)
+		{
+			r = w;
+		}
+	}
+	return r;
+}
+
+INT
+PAL_WordWidth(
+   INT            nWordIndex
+)
+/*++
+  Purpose:
+
+    Calculate the text width of a specific word.
+
+  Parameters:
+
+	[IN]  nWordNum - Index of the word.
+
+  Return value:
+
+    Text width.
+
+--*/
+{
+	LPCWSTR itemText = PAL_GetWord(nWordIndex);
+	int i, l = wcslen(itemText), w = 0;
+	for (i = 0; i < l; i++)
+	{
+		w += PAL_CharWidth(itemText[i]);
+	}
+	return (w + 8) >> 4;
+}
 
 LPOBJECTDESC
 PAL_LoadObjectDesc(
@@ -720,20 +891,26 @@ PAL_LoadObjectDesc(
    //
    while (fgets(buf, 512, fp) != NULL)
    {
+      int wlen,strip_count=2;
       p = strchr(buf, '=');
       if (p == NULL)
       {
          continue;
       }
 
-      *p = '\0';
-      p++;
+      *p++ = '\0';
+      while(strip_count--){
+         if(p[strlen(p)-1]=='\r') p[strlen(p)-1]='\0';
+         if(p[strlen(p)-1]=='\n') p[strlen(p)-1]='\0';
+      }
+	  wlen = PAL_MultiByteToWideChar(p, -1, NULL, 0);
 
       pNew = UTIL_calloc(1, sizeof(OBJECTDESC));
 
       sscanf(buf, "%x", &i);
       pNew->wObjectID = i;
-      pNew->lpDesc = strdup(p);
+	  pNew->lpDesc = (LPWSTR)UTIL_malloc(wlen * sizeof(WCHAR));
+	  PAL_MultiByteToWideChar(p, -1, pNew->lpDesc, wlen);
 
       pNew->next = lpDesc;
       lpDesc = pNew;
@@ -773,7 +950,7 @@ PAL_FreeObjectDesc(
    }
 }
 
-LPCSTR
+LPCWSTR
 PAL_GetObjectDesc(
    LPOBJECTDESC   lpObjectDesc,
    WORD           wObjectID
@@ -808,5 +985,3 @@ PAL_GetObjectDesc(
 
    return NULL;
 }
-
-#endif

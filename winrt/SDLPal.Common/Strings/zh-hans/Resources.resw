@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDescription" xml:space="preserve">
+    <value>基于 SDL 重制的经典 RPG 游戏《仙剑奇侠传》。</value>
+  </data>
+  <data name="AspectRatio.Header" xml:space="preserve">
+    <value>保持纵横比</value>
+  </data>
+  <data name="AspectRatio.OffContent" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="AspectRatio.OnContent" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="AudioBuffer.Header" xml:space="preserve">
+    <value>音频缓冲区大小</value>
+  </data>
+  <data name="AudioBuffer.PlaceholderText" xml:space="preserve">
+    <value>音频缓冲区大小</value>
+  </data>
+  <data name="BGM.Header" xml:space="preserve">
+    <value>背景音乐格式</value>
+  </data>
+  <data name="BGM.PlaceholderText" xml:space="preserve">
+    <value>背景音乐格式</value>
+  </data>
+  <data name="ButtonBrowse.Content" xml:space="preserve">
+    <value>浏览文件夹</value>
+  </data>
+  <data name="ButtonBrowseFile.Content" xml:space="preserve">
+    <value>选择语言文件</value>
+  </data>
+  <data name="ButtonClearFile.Content" xml:space="preserve">
+    <value>禁用语言文件</value>
+  </data>
+  <data name="ButtonDefault.Content" xml:space="preserve">
+    <value>默认设置</value>
+  </data>
+  <data name="ButtonFinish.Content" xml:space="preserve">
+    <value>完成设置</value>
+  </data>
+  <data name="CD.Header" xml:space="preserve">
+    <value>CD 音轨格式</value>
+  </data>
+  <data name="CD.PlaceholderText" xml:space="preserve">
+    <value>CD 音轨格式</value>
+  </data>
+  <data name="DOS.Header" xml:space="preserve">
+    <value>游戏资源版本</value>
+  </data>
+  <data name="DOS.OffContent" xml:space="preserve">
+    <value>WIN95</value>
+  </data>
+  <data name="DOS.OnContent" xml:space="preserve">
+    <value>DOS</value>
+  </data>
+  <data name="EmbeddedFont.Header" xml:space="preserve">
+    <value>使用游戏资源内置字体</value>
+  </data>
+  <data name="EmbeddedFont.OffContent" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="EmbeddedFont.OnContent" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="GamePath.Header" xml:space="preserve">
+    <value>游戏资源文件夹</value>
+  </data>
+  <data name="GamePath.PlaceholderText" xml:space="preserve">
+    <value>未选择文件夹</value>
+  </data>
+  <data name="Language.Header" xml:space="preserve">
+    <value>游戏资源语言</value>
+  </data>
+  <data name="Language.OffContent" xml:space="preserve">
+    <value>繁体中文</value>
+  </data>
+  <data name="Language.OnContent" xml:space="preserve">
+    <value>简体中文</value>
+  </data>
+  <data name="MBCrashContent" xml:space="preserve">
+    <value>上次程序异常退出，已显示设置页供您检查设置是否正确。</value>
+  </data>
+  <data name="MBEmptyContent" xml:space="preserve">
+    <value>必须指定游戏资源文件夹！</value>
+  </data>
+  <data name="MBExitContent" xml:space="preserve">
+    <value>您的设置已保存，下次启动时将直接开始游戏。
+在游戏中，您可以通过游戏系统菜单中的返回设置选项回到本设置页面。</value>
+  </data>
+  <data name="MBExitTitle" xml:space="preserve">
+    <value>设置已完成</value>
+  </data>
+  <data name="MessageFile.Header" xml:space="preserve">
+    <value>自定义语言文件</value>
+  </data>
+  <data name="MessageFile.PlaceholderText" xml:space="preserve">
+    <value>无自定义语言文件</value>
+  </data>
+  <data name="MusicVolume.Header" xml:space="preserve">
+    <value>音乐音量</value>
+  </data>
+  <data name="OPL.Header" xml:space="preserve">
+    <value>OPL 模拟器</value>
+  </data>
+  <data name="OPL.PlaceholderText" xml:space="preserve">
+    <value>OPL 模拟器</value>
+  </data>
+  <data name="OPLSR.Header" xml:space="preserve">
+    <value>OPL 模拟器采样率</value>
+  </data>
+  <data name="OPLSR.PlaceholderText" xml:space="preserve">
+    <value>OPL 模拟器采样率</value>
+  </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>SDLPAL 开发组</value>
+  </data>
+  <data name="Quality.Header" xml:space="preserve">
+    <value>音频质量</value>
+  </data>
+  <data name="Samplerate.Header" xml:space="preserve">
+    <value>音频输出采样率</value>
+  </data>
+  <data name="Samplerate.PlaceholderText" xml:space="preserve">
+    <value>音频输出采样率</value>
+  </data>
+  <data name="SoundVolume.Header" xml:space="preserve">
+    <value>音效音量</value>
+  </data>
+  <data name="Stereo.Header" xml:space="preserve">
+    <value>立体声</value>
+  </data>
+  <data name="Stereo.OffContent" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="Stereo.OnContent" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="SurroundOPL.Header" xml:space="preserve">
+    <value>环绕声 OPL</value>
+  </data>
+  <data name="SurroundOPL.OffContent" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="SurroundOPL.OnContent" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="Title.Text" xml:space="preserve">
+    <value>设置模式</value>
+  </data>
+  <data name="TouchOverlay.Header" xml:space="preserve">
+    <value>启用触屏辅助</value>
+  </data>
+  <data name="TouchOverlay.OffContent" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="TouchOverlay.OnContent" xml:space="preserve">
+    <value>是</value>
+  </data>
+</root>

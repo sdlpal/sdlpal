@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with unicode support, 2015
+//
 
 #ifndef UIGAME_H
 #define UIGAME_H
@@ -42,6 +44,11 @@ PAL_OpeningMenu(
 INT
 PAL_SaveSlotMenu(
    WORD        wDefaultSlot
+);
+
+WORD
+PAL_TripleMenu(
+   WORD  wThirdWord
 );
 
 BOOL
@@ -87,6 +94,11 @@ PAL_SellMenu(
 VOID
 PAL_EquipItemMenu(
    WORD           wItem
+);
+
+VOID
+PAL_QuitGame(
+   VOID
 );
 
 #ifdef __cplusplus

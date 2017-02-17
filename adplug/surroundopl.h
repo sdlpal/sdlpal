@@ -32,7 +32,9 @@
 // The right-channel is increased in frequency by itself divided by this amount.
 // The right value should not noticeably change the pitch, but it should provide
 // a nice stereo harmonic effect.
-#define FREQ_OFFSET 128.0//96.0
+// This value should be well tuned to get best sound quality.
+// Currently, 384.0 is the best choice. (**sdlpal_tune, not used now**)
+#define FREQ_OFFSET 384.0//128.0//96.0
 
 // Number of FNums away from the upper/lower limit before switching to the next
 // block (octave.)  By rights it should be zero, but for some reason this seems
@@ -45,18 +47,19 @@
 class CSurroundopl: public Copl
 {
 	private:
-		bool use16bit;
-		short bufsize;
-		short *lbuf, *rbuf;
 		Copl *a, *b;
+		short *lbuf, *rbuf;
+		double freq_offset, opl_freq;
 		unsigned char iFMReg[256];
 		unsigned char iTweakedFMReg[256];
 		unsigned char iCurrentTweakedBlock[9]; // Current value of the Block in the tweaked OPL chip
 		unsigned char iCurrentFNum[9];         // Current value of the FNum in the tweaked OPL chip
+		short bufsize;
+		bool use16bit;
 
 	public:
 
-		CSurroundopl(Copl *a, Copl *b, bool use16bit);
+		CSurroundopl(Copl *a, Copl *b, bool use16bit, double opl_freq, double freq_offset);
 		~CSurroundopl();
 
 		void update(short *buf, int samples);

@@ -1,9 +1,10 @@
 #include <Foundation/Foundation.h>
+#include <UIKit/UIKit.h>
 #include "common.h"
 #include "SDL_filesystem.h"
 
 LPCSTR
-UTIL_IOS_BasePath(
+UTIL_BasePath(
    VOID
 )
 {
@@ -29,7 +30,7 @@ UTIL_IOS_BasePath(
 }
 
 LPCSTR
-UTIL_IOS_SavePath(
+UTIL_SavePath(
    VOID
 )
 {

@@ -56,6 +56,8 @@ enum PALKEY
    kKeyFlee        = (1 << 13),
    kKeyStatus      = (1 << 14),
    kKeyForce       = (1 << 15),
+   kKeyHome        = (1 << 16),
+   kKeyEnd         = (1 << 17),
 };
 
 VOID
@@ -83,6 +85,12 @@ PAL_PollEvent(
    SDL_Event *event
 );
 
+VOID
+PAL_SetTouchBounds(
+   DWORD dwScreenWidth,
+   DWORD dwScreenHeight,
+   SDL_Rect renderRect
+);
 
 extern BOOL g_fUseJoystick;
 

@@ -18,87 +18,37 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "font.h"
-#include "ascii.h"
 #include "util.h"
+#include "text.h"
 
-#ifdef PAL_WIN95
+#define _FONT_C
 
-/*
- * Portions based on:
- *
- * YH - Console Chinese Environment -
- * Copyright (C) 1999 Red Flag Linux (office@sonata.iscas.ac.cn)
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY RED FLAG LINUX ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE TERRENCE R. LAMBERT BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- */
+#include "fontglyph.h"
+#include "ascii.h"
 
-/*
- * Portions based on:
- *
- * KON2 - Kanji ON Console -
- * Copyright (C) 1992-1996 Takashi MANABE (manabe@papilio.tutics.tut.ac.jp)
- *
- * CCE - Console Chinese Environment -
- * Copyright (C) 1998-1999 Rui He (herui@cs.duke.edu)
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY TAKASHI MANABE ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE TERRENCE R. LAMBERT BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * 
- */
+static int _font_height = 16;
 
-#include "gbfont.h"
-#include "big5font.h"
-
-BOOL fIsBig5 = FALSE;
-
+uint8_t reverseBits(uint8_t x) {
+    uint8_t y = 0;
+    for(int i = 0 ; i < 8; i++){
+        y <<= 1;
+        y |= (x & 1);
+        x >>= 1;
+    }
+    return y;
+}
 INT
-PAL_InitFont(
+PAL_InitEmbeddedFont(
    VOID
 )
 /*++
   Purpose:
 
-    Load the font files.
+    None.
 
   Parameters:
 
@@ -106,24 +56,190 @@ PAL_InitFont(
 
   Return value:
 
-    0 if succeed, -1 if cannot allocate memory, -2 if cannot load files.
+    Always return 0.
 
 --*/
 {
-   FILE *fp;
+	FILE *fp;
+	char *char_buf;
+	wchar_t *wchar_buf;
+	int nBytes, nChars, i;
 
-   fp = fopen(va("%s%s",PAL_PREFIX,"word.dat"), "rb");
-   if (!fp)
+	//
+	// Load the wor16.asc file.
+	//
+	if (NULL == (fp = UTIL_OpenFile("wor16.asc")))
+	{
+		return 0;
+	}
+
+	//
+	// Get the size of wor16.asc file.
+	//
+	fseek(fp, 0, SEEK_END);
+	nBytes = ftell(fp);
+
+	//
+	// Allocate buffer & read all the character codes.
+	//
+	if (NULL == (char_buf = (char *)malloc(nBytes)))
+	{
+		fclose(fp);
+		return 0;
+	}
+	fseek(fp, 0, SEEK_SET);
+	fread(char_buf, 1, nBytes, fp);
+
+	//
+	// Close wor16.asc file.
+	//
+	fclose(fp);
+
+	//
+	// Convert characters into unicode
+	//
+	nChars = PAL_MultiByteToWideChar(char_buf, nBytes, NULL, 0);
+	if (NULL == (wchar_buf = (wchar_t *)malloc(nChars * sizeof(wchar_t))))
+	{
+		free(char_buf);
+		return 0;
+	}
+	PAL_MultiByteToWideChar(char_buf, nBytes, wchar_buf, nChars);
+	free(char_buf);
+
+	//
+	// Read bitmaps from wor16.fon file.
+	//
+	fp = UTIL_OpenFile("wor16.fon");
+
+	//
+	// The font glyph data begins at offset 0x682 in wor16.fon.
+	//
+	fseek(fp, 0x682, SEEK_SET);
+
+	//
+	// Replace the original fonts
+	//
+	for (i = 0; i < nChars; i++)
+	{
+		wchar_t w = (wchar_buf[i] >= unicode_upper_base) ? (wchar_buf[i] - unicode_upper_base + 0xd800) : wchar_buf[i];
+		fread(unicode_font[w], 30, 1, fp);
+		unicode_font[w][30] = 0;
+		unicode_font[w][31] = 0;
+	}
+	free(wchar_buf);
+
+	fclose(fp);
+
+	for (i = 0; i < 0x80; i++)
+	{
+		int j=-1;while(j++<16)unicode_font[i][j]=reverseBits(iso_font[i*15+j]);
+		unicode_font[i][15] = 0;
+	}
+	_font_height = 15;
+
+	return 0;
+}
+
+INT
+PAL_LoadBdfFont(
+   LPCSTR      pszBdfFileName
+)
+/*++
+  Purpose:
+
+    Loads a BDF bitmap font file.
+
+  Parameters:
+
+    [IN]  pszBdfFileName - Name of BDF bitmap font file..
+
+  Return value:
+
+    0 = success, -1 = failure.
+
+--*/
+{
+   char buf[4096];
+   int state = 0;
+   int codepage = -1;
+
+   DWORD dwEncoding = 0;
+   BYTE bFontGlyph[32] = {0};
+   int iCurHeight = 0;
+
+   FILE *fp = UTIL_OpenFileForMode(pszBdfFileName, "r");
+
+   if (fp == NULL)
    {
-      return 0;
+      return -1;
    }
 
-   fseek(fp, 0x1E, SEEK_SET);
-   if (fgetc(fp) == 0xAA)
+   while (fgets(buf, 4096, fp) != NULL)
    {
-      fIsBig5 = TRUE;
+      if (state == 0)
+      {
+         if (strncmp(buf, "CHARSET_REGISTRY", 16) == 0)
+         {
+            if (strstr(buf, "Big5") != NULL)
+            {
+               codepage = CP_BIG5;
+            }
+            else if (strstr(buf, "BIG5") != NULL)
+            {
+               codepage = CP_BIG5;
+            }
+            //else if (strstr(buf, "JISX0208") != NULL)
+            //
+            //  codepage = CP_JISX0208;
+            //}
+         }
+         else if (strncmp(buf, "ENCODING", 8) == 0)
+         {
+            dwEncoding = atoi(buf + 8);
+         }
+         else if (strncmp(buf, "BITMAP", 6) == 0)
+         {
+            state = 1;
+            iCurHeight = 0;
+            memset(bFontGlyph, 0, sizeof(bFontGlyph));
+         }
+      }
+      else if (state == 1)
+      {
+         if (strncmp(buf, "ENDCHAR", 7) == 0)
+         {
+            //
+            // Replace the original fonts
+            //
+            BYTE szCp[3];
+            szCp[0] = (dwEncoding >> 8) & 0xFF;
+            szCp[1] = dwEncoding & 0xFF;
+            szCp[2] = 0;
+            wchar_t wc[2] = { 0 };
+            PAL_MultiByteToWideCharCP(codepage, (LPCSTR)szCp, 2, wc, 1);
+            if (wc[0] != 0)
+            {
+               wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + 0xd800) : wc[0];
+               memcpy(unicode_font[w], bFontGlyph, sizeof(bFontGlyph));
+            }
+
+            state = 0;
+         }
+         else
+         {
+            if (iCurHeight < 16)
+            {
+               WORD wCode = strtoul(buf, NULL, 16);
+               bFontGlyph[iCurHeight * 2] = (wCode >> 8);
+               bFontGlyph[iCurHeight * 2 + 1] = (wCode & 0xFF);
+               iCurHeight++;
+            }
+         }
+      }
    }
 
+   _font_height = 16;
    fclose(fp);
    return 0;
 }
@@ -135,7 +251,7 @@ PAL_FreeFont(
 /*++
   Purpose:
 
-    Free the memory used for fonts.
+    None.
 
   Parameters:
 
@@ -147,15 +263,6 @@ PAL_FreeFont(
 
 --*/
 {
-}
-
-static BOOL is_gb(unsigned char b1, unsigned char b2)
-{
-   if (b1 < 0xa1 || b1 > 0xfe)
-      return FALSE;
-   if (b2 < 0xa1 || b2 > 0xfe)
-      return FALSE;
-   return TRUE;
 }
 
 VOID
@@ -163,16 +270,17 @@ PAL_DrawCharOnSurface(
    WORD                     wChar,
    SDL_Surface             *lpSurface,
    PAL_POS                  pos,
-   BYTE                     bColor
+   BYTE                     bColor,
+   BOOL                     fUse8x8Font
 )
 /*++
   Purpose:
 
-    Draw a BIG-5 Chinese character on a surface.
+    Draw a Unicode character on a surface.
 
   Parameters:
 
-    [IN]  wChar - the character to be drawn (in GB2312/BIG5).
+    [IN]  wChar - the unicode character to be drawn.
 
     [OUT] lpSurface - the destination surface.
 
@@ -186,416 +294,121 @@ PAL_DrawCharOnSurface(
 
 --*/
 {
-   int       i, j, dx;
-   int       x = PAL_X(pos), y = PAL_Y(pos);
-   LPBYTE    pChar;
-   BYTE      ch1, ch2;
+	int       i, j;
+	int       x = PAL_X(pos), y = PAL_Y(pos);
 
-   //
-   // Check for NULL pointer.
-   //
-   if (lpSurface == NULL)
-   {
-      return;
-   }
+	//
+	// Check for NULL pointer & invalid char code.
+	//
+	if (lpSurface == NULL || (wChar >= 0xd800 && wChar < unicode_upper_base) ||
+		wChar >= unicode_upper_top || (_font_height == 8 && wChar >= 0x100))
+	{
+		return;
+	}
 
-   //
-   // Locate for this character in the font lib.
-   //
-   ch1 = wChar & 0xff;
-   ch2 = wChar >> 8;
+	//
+	// Locate for this character in the font lib.
+	//
+	if (wChar >= unicode_upper_base)
+	{
+		wChar -= (unicode_upper_base - 0xd800);
+	}
 
-   if (fIsBig5)
-   {
-      if (ch2 < 0xa1)
-         pChar = &big5font[((ch1 - 0xA1) * 157 + ch2 - 0x40) << 5] + 8;
-      else
-         pChar = &big5font[((ch1 - 0xA1) * 157 + 63 + ch2 - 0xA1) << 5] + 8;
-   }
-   else
-   {
-      if (!is_gb(ch1, ch2))
-      {
-         return;
-      }
-      pChar = &gbfont[((ch1 - 0xa1) * 94 + (ch2 - 0xa1)) * 32];
-   }
-
-   if (pChar == NULL) return;
-
-   //
-   // Draw the character to the surface.
-   //
-   if (y >= lpSurface->h) return;
-
-   y *= lpSurface->pitch;
-   for (i = 0; i < 32; i++)
-   {
-      dx = x + ((i & 1) << 3);
-      for (j = 0; j < 8; j++)
-      {
-         if (pChar[i] & (1 << (7 - j)))
-         {
-            if (dx < lpSurface->w)
-            {
-               ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
-            }
-            else
-            {
-               break;
-            }
-         }
-         dx++;
-      }
-      y += (i & 1) * lpSurface->pitch;
-      if (y / lpSurface->pitch >= lpSurface->h)
-      {
-         break;
-      }
-   }
+	//
+	// Draw the character to the surface.
+	//
+	LPBYTE dest = (LPBYTE)lpSurface->pixels + y * lpSurface->pitch + x;
+	LPBYTE top = (LPBYTE)lpSurface->pixels + lpSurface->h * lpSurface->pitch;
+	if (fUse8x8Font)
+	{
+		for (i = 0; i < 8 && dest < top; i++, dest += lpSurface->pitch)
+		{
+			for (j = 0; j < 8 && x + j < lpSurface->w; j++)
+			{
+				if (iso_font_8x8[wChar][i] & (1 << j))
+				{
+					dest[j] = bColor;
+				}
+			}
+		}
+	}
+	else
+	{
+		if (font_width[wChar] == 32)
+		{
+			for (i = 0; i < _font_height * 2 && dest < top; i += 2, dest += lpSurface->pitch)
+			{
+				for (j = 0; j < 8 && x + j < lpSurface->w; j++)
+				{
+					if (unicode_font[wChar][i] & (1 << (7 - j)))
+					{
+						dest[j] = bColor;
+					}
+				}
+				for (j = 0; j < 8 && x + j + 8 < lpSurface->w; j++)
+				{
+					if (unicode_font[wChar][i + 1] & (1 << (7 - j)))
+					{
+						dest[j + 8] = bColor;
+					}
+				}
+			}
+		}
+		else
+		{
+			for (i = 0; i < _font_height && dest < top; i++, dest += lpSurface->pitch)
+			{
+				for (j = 0; j < 8 && x + j < lpSurface->w; j++)
+				{
+					if (unicode_font[wChar][i] & (1 << (7 - j)))
+					{
+						dest[j] = bColor;
+					}
+				}
+			}
+		}
+	}
 }
-
-VOID
-PAL_DrawASCIICharOnSurface(
-   BYTE                     bChar,
-   SDL_Surface             *lpSurface,
-   PAL_POS                  pos,
-   BYTE                     bColor
-)
-/*++
-  Purpose:
-
-    Draw a ASCII character on a surface.
-
-  Parameters:
-
-    [IN]  bChar - the character to be drawn.
-
-    [OUT] lpSurface - the destination surface.
-
-    [IN]  pos - the destination location of the surface.
-
-    [IN]  bColor - the color of the character.
-
-  Return value:
-
-    None.
-
---*/
-{
-   int i, j, dx;
-   int x = PAL_X(pos), y = PAL_Y(pos);
-   LPBYTE pChar;
-
-   pChar = &iso_font[(int)(bChar & ~128) * 15];
-
-   //
-   // Check for NULL pointer.
-   //
-   if (lpSurface == NULL)
-   {
-      return;
-   }
-
-   //
-   // Draw the character to the surface.
-   //
-   if (y >= lpSurface->h) return;
-
-   y *= lpSurface->pitch;
-   for (i = 0; i < 15; i++)
-   {
-      dx = x;
-      for (j = 0; j < 8; j++)
-      {
-         if (pChar[i] & (1 << j))
-         {
-            if (dx < lpSurface->w)
-            {
-               ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
-            }
-            else
-            {
-               break;
-            }
-         }
-         dx++;
-      }
-      y += lpSurface->pitch;
-      if (y / lpSurface->pitch >= lpSurface->h)
-      {
-         break;
-      }
-   }
-}
-
-#else
-
-typedef struct tagFont
-{
-   LPWORD           lpBufChar;
-   LPBYTE           lpBufGlyph;
-   INT              nChar;
-} FONT, *LPFONT;
-
-static LPFONT gpFont = NULL;
 
 INT
-PAL_InitFont(
+PAL_CharWidth(
+   WORD                     wChar
+)
+/*++
+  Purpose:
+
+    Get the text width of a character.
+
+  Parameters:
+
+    [IN]  wChar - the unicode character for width calculation.
+
+  Return value:
+
+    The width of the character, 16 for full-width char and 8 for half-width char.
+
+--*/
+{
+	if ((wChar >= 0xd800 && wChar < unicode_upper_base) || wChar >= unicode_upper_top)
+	{
+		return 0;
+	}
+
+	//
+	// Locate for this character in the font lib.
+	//
+	if (wChar >= unicode_upper_base)
+	{
+		wChar -= (unicode_upper_base - 0xd800);
+	}
+
+	return font_width[wChar] >> 1;
+}
+
+INT
+PAL_FontHeight(
    VOID
 )
-/*++
-  Purpose:
-
-    Load the font files.
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    0 if succeed, -1 if cannot allocate memory, -2 if cannot load files.
-
---*/
 {
-   FILE *fp;
-
-   if (gpFont != NULL)
-   {
-      //
-      // Already initialized
-      //
-      return 0;
-   }
-
-   gpFont = (LPFONT)calloc(1, sizeof(FONT));
-   if (gpFont == NULL)
-   {
-      return -1;
-   }
-
-   //
-   // Load the wor16.asc file.
-   //
-   fp = UTIL_OpenRequiredFile("wor16.asc");
-
-   //
-   // Get the size of wor16.asc file.
-   //
-   fseek(fp, 0, SEEK_END);
-   gpFont->nChar = ftell(fp);
-   gpFont->nChar /= 2;
-
-   //
-   // Read all the character codes.
-   //
-   gpFont->lpBufChar = (LPWORD)calloc(gpFont->nChar, sizeof(WORD));
-   if (gpFont->lpBufChar == NULL)
-   {
-      free(gpFont);
-      gpFont = NULL;
-      return -1;
-   }
-
-   fseek(fp, 0, SEEK_SET);
-   fread(gpFont->lpBufChar, sizeof(WORD), gpFont->nChar, fp);
-
-   //
-   // Close wor16.asc file.
-   //
-   fclose(fp);
-
-   //
-   // Read all bitmaps from wor16.fon file.
-   //
-   fp = UTIL_OpenRequiredFile("wor16.fon");
-
-   gpFont->lpBufGlyph = (LPBYTE)calloc(gpFont->nChar, 30);
-   if (gpFont->lpBufGlyph == NULL)
-   {
-      free(gpFont->lpBufChar);
-      free(gpFont);
-      gpFont = NULL;
-      return -1;
-   }
-
-   //
-   // The font glyph data begins at offset 0x682 in wor16.fon.
-   //
-   fseek(fp, 0x682, SEEK_SET);
-   fread(gpFont->lpBufGlyph, 30, gpFont->nChar, fp);
-   fclose(fp);
-
-   return 0;
+	return _font_height;
 }
-
-VOID
-PAL_FreeFont(
-   VOID
-)
-/*++
-  Purpose:
-
-    Free the memory used for fonts.
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    None.
-
---*/
-{
-   if (gpFont != NULL)
-   {
-      free(gpFont->lpBufChar);
-      free(gpFont->lpBufGlyph);
-      free(gpFont);
-   }
-
-   gpFont = NULL;
-}
-
-VOID
-PAL_DrawCharOnSurface(
-   WORD                     wChar,
-   SDL_Surface             *lpSurface,
-   PAL_POS                  pos,
-   BYTE                     bColor
-)
-/*++
-  Purpose:
-
-    Draw a BIG-5 Chinese character on a surface.
-
-  Parameters:
-
-    [IN]  wChar - the character to be drawn (in BIG-5).
-
-    [OUT] lpSurface - the destination surface.
-
-    [IN]  pos - the destination location of the surface.
-
-    [IN]  bColor - the color of the character.
-
-  Return value:
-
-    None.
-
---*/
-{
-   int       i, j, dx;
-   int       x = PAL_X(pos), y = PAL_Y(pos);
-   LPBYTE    pChar;
-
-   //
-   // Check for NULL pointer.
-   //
-   if (lpSurface == NULL || gpFont == NULL)
-   {
-      return;
-   }
-
-   //
-   // Locate for this character in the font lib.
-   //
-   for (i = 0; i < gpFont->nChar; i++)
-   {
-      if (gpFont->lpBufChar[i] == wChar)
-      {
-         break;
-      }
-   }
-
-   if (i >= gpFont->nChar)
-   {
-      //
-      // This character does not exist in the font lib.
-      //
-      return;
-   }
-
-   pChar = gpFont->lpBufGlyph + i * 30;
-
-   //
-   // Draw the character to the surface.
-   //
-   y *= lpSurface->pitch;
-   for (i = 0; i < 30; i++)
-   {
-      dx = x + ((i & 1) << 3);
-      for (j = 0; j < 8; j++)
-      {
-         if (pChar[i] & (1 << (7 - j)))
-         {
-            ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
-         }
-         dx++;
-      }
-      y += (i & 1) * lpSurface->pitch;
-   }
-}
-
-VOID
-PAL_DrawASCIICharOnSurface(
-   BYTE                     bChar,
-   SDL_Surface             *lpSurface,
-   PAL_POS                  pos,
-   BYTE                     bColor
-)
-/*++
-  Purpose:
-
-    Draw a ASCII character on a surface.
-
-  Parameters:
-
-    [IN]  bChar - the character to be drawn.
-
-    [OUT] lpSurface - the destination surface.
-
-    [IN]  pos - the destination location of the surface.
-
-    [IN]  bColor - the color of the character.
-
-  Return value:
-
-    None.
-
---*/
-{
-   int i, j, dx;
-   int x = PAL_X(pos), y = PAL_Y(pos);
-   LPBYTE pChar = &iso_font[(int)(bChar & ~128) * 15];
-
-   //
-   // Check for NULL pointer.
-   //
-   if (lpSurface == NULL)
-   {
-      return;
-   }
-
-   //
-   // Draw the character to the surface.
-   //
-   y *= lpSurface->pitch;
-   for (i = 0; i < 15; i++)
-   {
-      dx = x;
-      for (j = 0; j < 8; j++)
-      {
-         if (pChar[i] & (1 << j))
-         {
-            ((LPBYTE)(lpSurface->pixels))[y + dx] = bColor;
-         }
-         dx++;
-      }
-      y += lpSurface->pitch;
-   }
-}
-
-#endif

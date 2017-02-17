@@ -236,12 +236,7 @@ PAL_BattleFadeScene(
    {
       for (j = 0; j < 6; j++)
       {
-         PAL_ProcessEvent();
-         while (SDL_GetTicks() <= time)
-         {
-            PAL_ProcessEvent();
-            SDL_Delay(1);
-         }
+         PAL_DelayUntil(time);
          time = SDL_GetTicks() + 16;
 
          //
@@ -320,7 +315,7 @@ PAL_BattleMain(
    //
    // Fade out the music and delay for a while
    //
-   PAL_PlayMUS(0, FALSE, 1);
+   AUDIO_PlayMusic(0, FALSE, 1);
    UTIL_Delay(200);
 
    //
@@ -331,7 +326,7 @@ PAL_BattleMain(
    //
    // Play the battle music
    //
-   PAL_PlayMUS(gpGlobals->wNumBattleMusic, TRUE, 0);
+   AUDIO_PlayMusic(gpGlobals->wNumBattleMusic, TRUE, 0);
 
    //
    // Fade in the screen when needed
@@ -385,12 +380,7 @@ PAL_BattleMain(
       //
       // Wait for the time of one frame. Accept input here.
       //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= dwTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(dwTime);
 
       //
       // Set the time of the next frame.
@@ -624,8 +614,8 @@ PAL_BattleWon(
 
 --*/
 {
-   const SDL_Rect   rect = {65, 60, 200, 100};
-   const SDL_Rect   rect1 = {80, 0, 180, 200};
+   const SDL_Rect   rect = {0, 60, 320, 100};
+   SDL_Rect   rect1 = {80, 0, 180, 200};
 
    int              i, j, iTotalCount;
    DWORD            dwExp;
@@ -640,22 +630,24 @@ PAL_BattleWon(
 
    if (g_Battle.iExpGained > 0)
    {
+      int w1 = PAL_WordWidth(BATTLEWIN_GETEXP_LABEL) + 3;
+	  int ww1 = (w1 - 8) << 3;
       //
       // Play the "battle win" music
       //
-      PAL_PlayMUS(g_Battle.fIsBoss ? 2 : 3, FALSE, 0);
+      AUDIO_PlayMusic(g_Battle.fIsBoss ? 2 : 3, FALSE, 0);
 
       //
       // Show the message about the total number of exp. and cash gained
       //
-      PAL_CreateSingleLineBox(PAL_XY(83, 60), 8, FALSE);
-      PAL_CreateSingleLineBox(PAL_XY(65, 105), 10, FALSE);
+	  PAL_CreateSingleLineBox(PAL_XY(83 - ww1, 60), w1, FALSE);
+	  PAL_CreateSingleLineBox(PAL_XY(65, 105), 10, FALSE);
 
-      PAL_DrawText(PAL_GetWord(BATTLEWIN_GETEXP_LABEL), PAL_XY(95, 70), 0, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(BATTLEWIN_BEATENEMY_LABEL), PAL_XY(77, 115), 0, FALSE, FALSE);
-      PAL_DrawText(PAL_GetWord(BATTLEWIN_DOLLAR_LABEL), PAL_XY(197, 115), 0, FALSE, FALSE);
+	  PAL_DrawText(PAL_GetWord(BATTLEWIN_GETEXP_LABEL), PAL_XY(95 - ww1, 70), 0, FALSE, FALSE, FALSE);
+	  PAL_DrawText(PAL_GetWord(BATTLEWIN_BEATENEMY_LABEL), PAL_XY(77, 115), 0, FALSE, FALSE, FALSE);
+	  PAL_DrawText(PAL_GetWord(BATTLEWIN_DOLLAR_LABEL), PAL_XY(197, 115), 0, FALSE, FALSE, FALSE);
 
-      PAL_DrawNumber(g_Battle.iExpGained, 5, PAL_XY(182, 74), kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(g_Battle.iExpGained, 5, PAL_XY(182 + ww1, 74), kNumColorYellow, kNumAlignRight);
       PAL_DrawNumber(g_Battle.iCashGained, 5, PAL_XY(162, 119), kNumColorYellow, kNumAlignMid);
 
       VIDEO_UpdateScreen(&rect);
@@ -704,104 +696,112 @@ PAL_BattleWon(
 
       gpGlobals->Exp.rgPrimaryExp[w].wExp = (WORD)dwExp;
 
+      const MENUITEM      rgFakeMenuItem[] =
+      {
+         // value  label                        enabled   pos
+         { 1,      STATUS_LABEL_LEVEL,          TRUE,     PAL_XY(0, 0) },
+         { 2,      STATUS_LABEL_HP,             TRUE,     PAL_XY(0, 0) },
+         { 3,      STATUS_LABEL_MP,             TRUE,     PAL_XY(0, 0) },
+         { 4,      STATUS_LABEL_ATTACKPOWER,    TRUE,     PAL_XY(0, 0) },
+         { 5,      STATUS_LABEL_MAGICPOWER,     TRUE,     PAL_XY(0, 0) },
+         { 6,      STATUS_LABEL_RESISTANCE,     TRUE,     PAL_XY(0, 0) },
+         { 7,      STATUS_LABEL_DEXTERITY,      TRUE,     PAL_XY(0, 0) },
+         { 8,      STATUS_LABEL_FLEERATE,       TRUE,     PAL_XY(0, 0) },
+      };
+      int maxTextWidth = PAL_MenuTextMaxWidth(rgFakeMenuItem, sizeof(rgFakeMenuItem) / sizeof(MENUITEM)) - 1;
+      int chars = maxTextWidth - 1;
+      int offsetX = -8*chars;
+      rect1.x += offsetX;
+      rect1.w -= 2*offsetX;
       if (fLevelUp)
       {
          //
          // Player has gained a level. Show the message
          //
-         PAL_CreateSingleLineBox(PAL_XY(80, 0), 10, FALSE);
-         PAL_CreateBox(PAL_XY(82, 32), 7, 8, 1, FALSE);
+         PAL_CreateSingleLineBox(PAL_XY(offsetX+80, 0), chars+10, FALSE);
+         PAL_CreateBox(PAL_XY(offsetX+82, 32), 7, chars+8, 1, FALSE);
 
-         PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(110, 10), 0,
-            FALSE, FALSE);
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_LEVEL), PAL_XY(110 + 16 * 3, 10), 0, FALSE, FALSE);
-         PAL_DrawText(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL), PAL_XY(110 + 16 * 5, 10), 0, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(110, 10), 0, FALSE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(STATUS_LABEL_LEVEL), PAL_XY(110+PAL_TextWidth(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w])), 10), 0, FALSE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL), PAL_XY(110+PAL_TextWidth(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]))+PAL_TextWidth(PAL_GetWord(STATUS_LABEL_LEVEL)), 10), 0, FALSE, FALSE, FALSE);
 
          for (j = 0; j < 8; j++)
          {
             PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ARROW),
-               gpScreen, PAL_XY(183, 48 + 18 * j));
+               gpScreen, PAL_XY(-offsetX+180, 48 + 18 * j));
          }
 
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_LEVEL), PAL_XY(100, 44), BATTLEWIN_LEVELUP_LABEL_COLOR,
-            TRUE, FALSE);
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_HP), PAL_XY(100, 62), BATTLEWIN_LEVELUP_LABEL_COLOR,
-            TRUE, FALSE);
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_MP), PAL_XY(100, 80), BATTLEWIN_LEVELUP_LABEL_COLOR,
-            TRUE, FALSE);
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_ATTACKPOWER), PAL_XY(100, 98), BATTLEWIN_LEVELUP_LABEL_COLOR,
-            TRUE, FALSE);
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_MAGICPOWER), PAL_XY(100, 116), BATTLEWIN_LEVELUP_LABEL_COLOR,
-            TRUE, FALSE);
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_RESISTANCE), PAL_XY(100, 134), BATTLEWIN_LEVELUP_LABEL_COLOR,
-            TRUE, FALSE);
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_DEXTERITY), PAL_XY(100, 152), BATTLEWIN_LEVELUP_LABEL_COLOR,
-            TRUE, FALSE);
-         PAL_DrawText(PAL_GetWord(STATUS_LABEL_FLEERATE), PAL_XY(100, 170), BATTLEWIN_LEVELUP_LABEL_COLOR,
-            TRUE, FALSE);
+         PAL_DrawText(PAL_GetWord(STATUS_LABEL_LEVEL), PAL_XY(offsetX+100, 44), BATTLEWIN_LEVELUP_LABEL_COLOR, TRUE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(STATUS_LABEL_HP), PAL_XY(offsetX+100, 62), BATTLEWIN_LEVELUP_LABEL_COLOR, TRUE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(STATUS_LABEL_MP), PAL_XY(offsetX+100, 80), BATTLEWIN_LEVELUP_LABEL_COLOR, TRUE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(STATUS_LABEL_ATTACKPOWER), PAL_XY(offsetX+100, 98), BATTLEWIN_LEVELUP_LABEL_COLOR, TRUE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(STATUS_LABEL_MAGICPOWER), PAL_XY(offsetX+100, 116), BATTLEWIN_LEVELUP_LABEL_COLOR, TRUE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(STATUS_LABEL_RESISTANCE), PAL_XY(offsetX+100, 134), BATTLEWIN_LEVELUP_LABEL_COLOR, TRUE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(STATUS_LABEL_DEXTERITY), PAL_XY(offsetX+100, 152), BATTLEWIN_LEVELUP_LABEL_COLOR, TRUE, FALSE, FALSE);
+         PAL_DrawText(PAL_GetWord(STATUS_LABEL_FLEERATE), PAL_XY(offsetX+100, 170), BATTLEWIN_LEVELUP_LABEL_COLOR, TRUE, FALSE, FALSE);
 
          //
          // Draw the original stats and stats after level up
          //
-         PAL_DrawNumber(OrigPlayerRoles.rgwLevel[w], 4, PAL_XY(133, 47),
+         PAL_DrawNumber(OrigPlayerRoles.rgwLevel[w], 4, PAL_XY(-offsetX+133, 47),
             kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwLevel[w], 4, PAL_XY(195, 47),
+         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwLevel[w], 4, PAL_XY(-offsetX+195, 47),
             kNumColorYellow, kNumAlignRight);
 
-         PAL_DrawNumber(OrigPlayerRoles.rgwHP[w], 4, PAL_XY(133, 64),
+         PAL_DrawNumber(OrigPlayerRoles.rgwHP[w], 4, PAL_XY(-offsetX+133, 64),
             kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(OrigPlayerRoles.rgwMaxHP[w], 4, PAL_XY(154, 68),
+         PAL_DrawNumber(OrigPlayerRoles.rgwMaxHP[w], 4, PAL_XY(-offsetX+154, 68),
             kNumColorBlue, kNumAlignRight);
          PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
-            PAL_XY(156, 66));
-         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwHP[w], 4, PAL_XY(195, 64),
+            PAL_XY(-offsetX+156, 66));
+         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwHP[w], 4, PAL_XY(-offsetX+195, 64),
             kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[w], 4, PAL_XY(216, 68),
+         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[w], 4, PAL_XY(-offsetX+216, 68),
             kNumColorBlue, kNumAlignRight);
          PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
-            PAL_XY(218, 66));
+            PAL_XY(-offsetX+218, 66));
 
-         PAL_DrawNumber(OrigPlayerRoles.rgwMP[w], 4, PAL_XY(133, 82),
+         PAL_DrawNumber(OrigPlayerRoles.rgwMP[w], 4, PAL_XY(-offsetX+133, 82),
             kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(OrigPlayerRoles.rgwMaxMP[w], 4, PAL_XY(154, 86),
+         PAL_DrawNumber(OrigPlayerRoles.rgwMaxMP[w], 4, PAL_XY(-offsetX+154, 86),
             kNumColorBlue, kNumAlignRight);
          PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
-            PAL_XY(156, 84));
-         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[w], 4, PAL_XY(195, 82),
+            PAL_XY(-offsetX+156, 84));
+         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[w], 4, PAL_XY(-offsetX+195, 82),
             kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[w], 4, PAL_XY(216, 86),
+         PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[w], 4, PAL_XY(-offsetX+216, 86),
             kNumColorBlue, kNumAlignRight);
          PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
-            PAL_XY(218, 84));
+            PAL_XY(-offsetX+218, 84));
 
          PAL_DrawNumber(OrigPlayerRoles.rgwAttackStrength[w] + PAL_GetPlayerAttackStrength(w) -
             gpGlobals->g.PlayerRoles.rgwAttackStrength[w],
-            4, PAL_XY(133, 101), kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(PAL_GetPlayerAttackStrength(w), 4, PAL_XY(195, 101),
+            4, PAL_XY(-offsetX+133, 101), kNumColorYellow, kNumAlignRight);
+         PAL_DrawNumber(PAL_GetPlayerAttackStrength(w), 4, PAL_XY(-offsetX+195, 101),
             kNumColorYellow, kNumAlignRight);
 
          PAL_DrawNumber(OrigPlayerRoles.rgwMagicStrength[w] + PAL_GetPlayerMagicStrength(w) -
             gpGlobals->g.PlayerRoles.rgwMagicStrength[w],
-            4, PAL_XY(133, 119), kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(PAL_GetPlayerMagicStrength(w), 4, PAL_XY(195, 119),
+            4, PAL_XY(-offsetX+133, 119), kNumColorYellow, kNumAlignRight);
+         PAL_DrawNumber(PAL_GetPlayerMagicStrength(w), 4, PAL_XY(-offsetX+195, 119),
             kNumColorYellow, kNumAlignRight);
 
          PAL_DrawNumber(OrigPlayerRoles.rgwDefense[w] + PAL_GetPlayerDefense(w) -
             gpGlobals->g.PlayerRoles.rgwDefense[w],
-            4, PAL_XY(133, 137), kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(PAL_GetPlayerDefense(w), 4, PAL_XY(195, 137),
+            4, PAL_XY(-offsetX+133, 137), kNumColorYellow, kNumAlignRight);
+         PAL_DrawNumber(PAL_GetPlayerDefense(w), 4, PAL_XY(-offsetX+195, 137),
             kNumColorYellow, kNumAlignRight);
 
          PAL_DrawNumber(OrigPlayerRoles.rgwDexterity[w] + PAL_GetPlayerDexterity(w) -
             gpGlobals->g.PlayerRoles.rgwDexterity[w],
-            4, PAL_XY(133, 155), kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(PAL_GetPlayerDexterity(w), 4, PAL_XY(195, 155),
+            4, PAL_XY(-offsetX+133, 155), kNumColorYellow, kNumAlignRight);
+         PAL_DrawNumber(PAL_GetPlayerDexterity(w), 4, PAL_XY(-offsetX+195, 155),
             kNumColorYellow, kNumAlignRight);
 
          PAL_DrawNumber(OrigPlayerRoles.rgwFleeRate[w] + PAL_GetPlayerFleeRate(w) -
             gpGlobals->g.PlayerRoles.rgwFleeRate[w],
-            4, PAL_XY(133, 173), kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(PAL_GetPlayerFleeRate(w), 4, PAL_XY(195, 173),
+            4, PAL_XY(-offsetX+133, 173), kNumColorYellow, kNumAlignRight);
+         PAL_DrawNumber(PAL_GetPlayerFleeRate(w), 4, PAL_XY(-offsetX+195, 173),
             kNumColorYellow, kNumAlignRight);
 
          //
@@ -854,19 +854,13 @@ PAL_BattleWon(
                                                             \
    gpGlobals->Exp.expname[w].wExp = (WORD)dwExp;            \
                                                             \
-   if (gpGlobals->g.PlayerRoles.statname[w] !=              \
-      OrigPlayerRoles.statname[w])                          \
+   if (gpGlobals->g.PlayerRoles.statname[w] != OrigPlayerRoles.statname[w]) \
    {                                                        \
       PAL_CreateSingleLineBox(PAL_XY(83, 60), 8, FALSE);    \
-      PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(95, 70), \
-         0, FALSE, FALSE);                                  \
-      PAL_DrawText(PAL_GetWord(label), PAL_XY(143, 70),     \
-         0, FALSE, FALSE);                                  \
-      PAL_DrawText(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL), PAL_XY(175, 70),  \
-         0, FALSE, FALSE);                                  \
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.statname[w] - \
-         OrigPlayerRoles.statname[w],                       \
-         5, PAL_XY(188, 74), kNumColorYellow, kNumAlignRight); \
+      PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(95, 70),  0, FALSE, FALSE, FALSE); \
+      PAL_DrawText(PAL_GetWord(label), PAL_XY(143, 70), 0, FALSE, FALSE, FALSE); \
+      PAL_DrawText(PAL_GetWord(BATTLEWIN_LEVELUP_LABEL), PAL_XY(175, 70), 0, FALSE, FALSE, FALSE); \
+      PAL_DrawNumber(gpGlobals->g.PlayerRoles.statname[w] - OrigPlayerRoles.statname[w], 5, PAL_XY(188, 74), kNumColorYellow, kNumAlignRight); \
       VIDEO_UpdateScreen(&rect);                            \
       PAL_WaitForKey(3000);                                 \
    }                                                        \
@@ -899,14 +893,17 @@ PAL_BattleWon(
 
          if (PAL_AddMagic(w, gpGlobals->g.lprgLevelUpMagic[j].m[w].wMagic))
          {
-            PAL_CreateSingleLineBox(PAL_XY(65, 105), 10, FALSE);
+            int ww;
+            int w1 = (ww = PAL_WordWidth(gpGlobals->g.PlayerRoles.rgwName[w])) > 3 ? ww : 3;
+			int w2 = (ww = PAL_WordWidth(BATTLEWIN_ADDMAGIC_LABEL)) > 2 ? ww : 2;
+			int w3 = (ww = PAL_WordWidth(gpGlobals->g.lprgLevelUpMagic[j].m[w].wMagic)) > 5 ? ww : 5;
+			ww = (w1 + w2 + w3 - 10) << 3;
 
-            PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]),
-               PAL_XY(75, 115), 0, FALSE, FALSE);
-            PAL_DrawText(PAL_GetWord(BATTLEWIN_ADDMAGIC_LABEL), PAL_XY(75 + 16 * 3, 115),
-               0, FALSE, FALSE);
-            PAL_DrawText(PAL_GetWord(gpGlobals->g.lprgLevelUpMagic[j].m[w].wMagic),
-               PAL_XY(75 + 16 * 5, 115), 0x1B, FALSE, FALSE);
+            PAL_CreateSingleLineBox(PAL_XY(65 - ww, 105), w1 + w2 + w3, FALSE);
+
+            PAL_DrawText(PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_XY(75 - ww, 115), 0, FALSE, FALSE, FALSE);
+            PAL_DrawText(PAL_GetWord(BATTLEWIN_ADDMAGIC_LABEL), PAL_XY(75 + 16 * w1 - ww, 115), 0, FALSE, FALSE, FALSE);
+            PAL_DrawText(PAL_GetWord(gpGlobals->g.lprgLevelUpMagic[j].m[w].wMagic), PAL_XY(75 + 16 * (w1 + w2) - ww, 115), 0x1B, FALSE, FALSE, FALSE);
 
             VIDEO_UpdateScreen(&rect);
             PAL_WaitForKey(3000);
@@ -982,7 +979,7 @@ PAL_BattleEnemyEscape(
    int j, x, y, w;
    BOOL f = TRUE;
 
-   SOUND_Play(45);
+   AUDIO_PlaySound(45);
 
    //
    // Show the animation
@@ -1044,7 +1041,7 @@ PAL_BattlePlayerEscape(
    int         i, j;
    WORD        wPlayerRole;
 
-   SOUND_Play(45);
+   AUDIO_PlaySound(45);
 
    PAL_BattleUpdateFighters();
 
@@ -1450,7 +1447,7 @@ PAL_StartBattle(
 
    gpGlobals->fInBattle = FALSE;
 
-   PAL_PlayMUS(gpGlobals->wNumMusic, TRUE, 1);
+   AUDIO_PlayMusic(gpGlobals->wNumMusic, TRUE, 1);
 
    //
    // Restore the screen waving effects

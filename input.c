@@ -29,16 +29,17 @@
 #endif
 
 volatile PALINPUTSTATE   g_InputState;
+#if PAL_HAS_JOYSTICKS
 static SDL_Joystick     *g_pJoy = NULL;
+#endif
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+#define SDL_JoystickNameForIndex SDL_JoystickName
+#endif
 BOOL                     g_fUseJoystick = TRUE;
 
 #if defined(GPH)
 #define MIN_DEADZONE -16384
 #define MAX_DEADZONE 16384
-#endif
-
-#if defined(__WINPHONE__)
-unsigned int g_uiLastBackKeyTime = 0;
 #endif
 
 static VOID
@@ -81,8 +82,7 @@ PAL_KeyboardEventFilter(
             //
             // Pressed Alt+F4 (Exit program)...
             //
-            PAL_Shutdown();
-            exit(0);
+            PAL_Shutdown(0);
          }
       }
 
@@ -96,25 +96,12 @@ PAL_KeyboardEventFilter(
          VIDEO_ToggleScaleScreen();
          break;
       case SDLK_1:
-         SOUND_AdjustVolume(0);
+         AUDIO_DecreaseVolume();
          break;
       case SDLK_3:
-         SOUND_AdjustVolume(1);
+         AUDIO_IncreaseVolume();
          break;
 #endif
-
-#ifdef __WINPHONE__
-      case SDLK_AC_BACK:
-         if (g_uiLastBackKeyTime != 0 && SDL_GetTicks() - g_uiLastBackKeyTime < 800)
-         {
-            PAL_Shutdown();
-            exit(0);
-         }
-         g_uiLastBackKeyTime = SDL_GetTicks();
-         VIDEO_UpdateScreen(NULL);
-         break;
-#endif
-
       case SDLK_UP:
       case SDLK_KP8:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirNorth)
@@ -189,6 +176,14 @@ PAL_KeyboardEventFilter(
          g_InputState.dwKeyPress |= kKeyPgDn;
          break;
 
+      case SDLK_HOME:
+         g_InputState.dwKeyPress |= kKeyHome;
+         break;
+
+      case SDLK_END:
+         g_InputState.dwKeyPress |= kKeyEnd;
+         break;
+
       case SDLK_7: //7 for mobile device
       case SDLK_r:
          g_InputState.dwKeyPress |= kKeyRepeat;
@@ -211,6 +206,12 @@ PAL_KeyboardEventFilter(
          g_InputState.dwKeyPress |= kKeyThrowItem;
          break;
 
+#if defined(__WINRT__)
+      case SDLK_AC_BACK:
+         // If game not started, exit directly
+         if (!gpGlobals->fInMainGame)
+            PAL_Shutdown(0);
+#endif
       case SDLK_q:
          g_InputState.dwKeyPress |= kKeyFlee;
          break;
@@ -303,7 +304,7 @@ PAL_MouseEventFilter(
 
 --*/
 {
-#ifdef PAL_HAS_MOUSE
+#if PAL_HAS_MOUSE
    static short hitTest = 0; // Double click detect;   
    const SDL_VideoInfo *vi;
 
@@ -418,14 +419,14 @@ PAL_MouseEventFilter(
       case 2:
         if( isLeftMouseDBClick )
        {
-          SOUND_AdjustVolume(1);
+          AUDIO_IncreaseVolume();
           break;
        }
       case 6:
       case 0:
         if( isLeftMouseDBClick )
        {
-          SOUND_AdjustVolume(0);
+          AUDIO_DecreaseVolume();
           break;
        }
       case 7:
@@ -492,7 +493,7 @@ PAL_JoystickEventFilter(
 
 --*/
 {
-#ifdef PAL_HAS_JOYSTICKS
+#if PAL_HAS_JOYSTICKS
    switch (lpEvent->type)
    {
 #if defined (GEKKO)
@@ -679,7 +680,6 @@ PAL_JoystickEventFilter(
 #endif
 }
 
-#ifdef PAL_HAS_TOUCH
 
 #define  TOUCH_NONE     0
 #define    TOUCH_UP      1
@@ -691,30 +691,54 @@ PAL_JoystickEventFilter(
 #define  TOUCH_BUTTON3  7
 #define  TOUCH_BUTTON4  8
 
+static float gfTouchXMin = 0.0f;
+static float gfTouchXMax = 1.0f;
+static float gfTouchYMin = 0.0f;
+static float gfTouchYMax = 1.0f;
+
+VOID
+PAL_SetTouchBounds(
+   DWORD dwScreenWidth,
+   DWORD dwScreenHeight,
+   SDL_Rect renderRect
+)
+{
+   gfTouchXMin = (float)renderRect.x / dwScreenWidth;
+   gfTouchXMax = (float)(renderRect.x + renderRect.w) / dwScreenWidth;
+   gfTouchYMin = (float)renderRect.y / dwScreenHeight;
+   gfTouchYMax = (float)(renderRect.y + renderRect.h) / dwScreenHeight;
+}
+
 static int
 PAL_GetTouchArea(
    float X,
    float Y
 )
 {
-   if (Y < 0.5)
+   if (X < gfTouchXMin || X > gfTouchXMax || Y < 0.5f || Y > gfTouchYMax)
    {
       //
-      // Upper area
+      // Upper area or cropped area
       //
       return TOUCH_NONE;
    }
-   else if (X < 1.0 / 3)
+   else
    {
-      if (Y - 0.5 < (1.0 / 6 - fabs(X - 1.0 / 3 / 2)) * (0.5 / (1.0 / 3)))
+      X = (X - gfTouchXMin) / (gfTouchXMax - gfTouchXMin);
+	  Y = (Y - gfTouchYMin) / (gfTouchYMax - gfTouchYMin);
+   }
+
+   if (X < 1.0f / 3)
+   {
+      if (Y - 0.5f < (1.0f / 6 - fabsf(X - 1.0f / 3 / 2)) * (0.5f / (1.0f / 3)))
       {
          return TOUCH_UP;
       }
-      else if (Y - 0.75 > fabs(X - 1.0 / 3 / 2) * (0.5 / (1.0 / 3)))
+      else if (Y - 0.75f > fabsf(X - 1.0f / 3 / 2) * (0.5f / (1.0f / 3)))
       {
          return TOUCH_DOWN;
       }
-      else if (X < 1.0 / 3 / 2 && fabs(Y - 0.75) < 0.25 - X * (0.5 / (1.0 / 3)))
+      else if (X < 1.0f / 3 / 2 && fabsf(Y - 0.75f) < 0.25f - X * (0.5f / (1.0f / 3)))
       {
          return TOUCH_LEFT;
       }
@@ -723,11 +747,11 @@ PAL_GetTouchArea(
          return TOUCH_RIGHT;
       }
    }
-   else if (X > 1.0 - 1.0 / 3)
+   else if (X > 1.0f - 1.0f / 3)
    {
-      if (X < 1.0 - (1.0 / 3 / 2))
+      if (X < 1.0f - (1.0f / 3 / 2))
       {
-         if (Y < 0.75)
+         if (Y < 0.75f)
          {
             return TOUCH_BUTTON1;
          }
@@ -738,7 +762,7 @@ PAL_GetTouchArea(
       }
       else
       {
-         if (Y < 0.75)
+         if (Y < 0.75f)
          {
             return TOUCH_BUTTON2;
          }
@@ -748,8 +772,10 @@ PAL_GetTouchArea(
          }
       }
    }
-
-   return TOUCH_NONE;
+   else 
+   {
+      return TOUCH_NONE;
+   }
 }
 
 static VOID
@@ -819,7 +845,6 @@ PAL_UnsetTouchAction(
       break;
    }
 }
-#endif
 
 static VOID
 PAL_TouchEventFilter(
@@ -840,7 +865,6 @@ PAL_TouchEventFilter(
 
 --*/
 {
-#ifdef PAL_HAS_TOUCH
    static SDL_TouchID finger1 = -1, finger2 = -1;
    static int prev_touch1 = TOUCH_NONE;
    static int prev_touch2 = TOUCH_NONE;
@@ -904,7 +928,6 @@ PAL_TouchEventFilter(
       }
       break;
    }
-#endif
 }
 
 static int SDLCALL
@@ -966,8 +989,7 @@ PAL_EventFilter(
       //
       // clicked on the close button of the window. Quit immediately.
       //
-      PAL_Shutdown();
-      exit(0);
+      PAL_Shutdown(0);
    }
 
    PAL_KeyboardEventFilter(lpEvent);
@@ -1029,25 +1051,19 @@ PAL_InitInput(
    //
    // Check for joystick
    //
-#ifdef PAL_HAS_JOYSTICKS
+#if PAL_HAS_JOYSTICKS
    if (SDL_NumJoysticks() > 0 && g_fUseJoystick)
    {
-      g_pJoy = SDL_JoystickOpen(0);
-
-      //
-      // HACKHACK: applesmc and Android Accelerometer shouldn't be considered as real joysticks
-      //
-      if (strcmp(SDL_JoystickName(g_pJoy), "applesmc") == 0 || strcmp(SDL_JoystickName(g_pJoy), "Android Accelerometer") == 0)
+      int i;
+	  for (i = 0; i < SDL_NumJoysticks(); i++)
       {
-         SDL_JoystickClose(g_pJoy);
-
-         if (SDL_NumJoysticks() > 1)
+         //
+         // HACKHACK: applesmc and Android Accelerometer shouldn't be considered as real joysticks
+         //
+         if (strcmp(SDL_JoystickNameForIndex(i), "applesmc") != 0 && strcmp(SDL_JoystickNameForIndex(i), "Android Accelerometer") != 0)
          {
-            g_pJoy = SDL_JoystickOpen(1);
-         }
-         else
-         {
-            g_pJoy = NULL;
+            g_pJoy = SDL_JoystickOpen(i);
+            break;
          }
       }
 
@@ -1091,7 +1107,7 @@ PAL_ShutdownInput(
 
 --*/
 {
-#ifdef PAL_HAS_JOYSTICKS
+#if PAL_HAS_JOYSTICKS
 #if SDL_VERSION_ATLEAST(2,0,0)
    if (g_pJoy != NULL)
    {
@@ -1128,7 +1144,7 @@ PAL_ProcessEvent(
 
 --*/
 {
-#ifdef PAL_HAS_NATIVEMIDI
+#if PAL_HAS_NATIVEMIDI
    MIDI_CheckLoop();
 #endif
    while (PAL_PollEvent(NULL));

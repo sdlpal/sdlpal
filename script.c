@@ -21,6 +21,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Modified by Lou Yihua <louyihua@21cn.com> with Unicode support, 2015
+//
 
 #include "main.h"
 
@@ -137,12 +139,7 @@ PAL_PartyWalkTo(
 
    while (xOffset != 0 || yOffset != 0)
    {
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= t)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(t);
 
       t = SDL_GetTicks() + FRAME_TIME;
 
@@ -250,12 +247,7 @@ PAL_PartyRideEventObject(
 
    while (xOffset != 0 || yOffset != 0)
    {
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= t)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
+      PAL_DelayUntil(t);
 
       t = SDL_GetTicks() + FRAME_TIME;
 
@@ -497,7 +489,7 @@ PAL_MonsterChasePlayer(
    PAL_NPCWalkOneStep(wEventObjectID, wMonsterSpeed);
 }
 
-static VOID
+VOID
 PAL_AdditionalCredits(
    VOID
 )
@@ -516,50 +508,74 @@ PAL_AdditionalCredits(
 
 --*/
 {
-   LPCSTR rgszStrings[] = {
-      "SDLPAL (http://sdlpal.codeplex.com/)",
+   LPCWSTR rgszcps[][CP_MAX] = {
+	   // Traditional Chinese, Simplified Chinese
+	   { L"", L"", /*L""*/ },
+	   { L"         \x7D93\x5178\x7279\x5225\x7BC7   ",
+	     L"         \x7ECF\x5178\x7279\x522B\x7BC7   ",
+	     //L"   \x30AF\x30E9\x30B7\x30C3\x30AF\x7279\x5225\x7DE8  "
+	   },
+	   { L"", L"", /*L""*/ },
+	   { L"", L"", /*L""*/ },
+	   { L"", L"", /*L""*/ },
+	   { L"", L"", /*L""*/ },
+	   { L"", L"", /*L""*/ },
+	   { L"", L"", /*L""*/ },
+	   { L"   \x672C\x7A0B\x5F0F\x662F\x81EA\x7531\x8EDF\x9AD4\xFF0C\x6309\x7167 GNU General",
+	     L"   \x672C\x7A0B\x5E8F\x662F\x81EA\x7531\x8F6F\x4EF6\xFF0C\x6309\x7167 GNU General",
+		 //L" \x3053\x306E\x30D7\x30ED\x30B0\x30E9\x30E0\x306F\x81EA\x7531\x30BD\x30D5\x30C8\x30A6\x30A7\x30A2\x3067\x3059\x3001"
+	   },
+	   { L"   Public License v3 \x6216\x66F4\x9AD8\x7248\x672C\x767C\x4F48",
+	     L"   Public License v3 \x6216\x66F4\x9AD8\x7248\x672C\x53D1\x5E03",
+	     //L" GNU General Public License v3 \x306E\x4E0B\x3067"
+	   },
+	   { L"", L"", /*L" \x914D\x5E03\x3055\x308C\x3066\x3044\x307E\x3059\x3002"*/ },
+	   { L"                    ...\x6309 Enter \x7D50\x675F",
+	     L"                    ...\x6309 Enter \x7ED3\x675F",
+	     //L"      ...Enter\x30AD\x30FC\x3092\x62BC\x3057\x3066\x7D42\x4E86\x3057\x307E\x3059"
+	   },
+   };
+
+   LPCWSTR rgszStrings[] = {
+      L"  SDLPAL (http://sdlpal.codeplex.com/)",
 #ifdef PAL_CLASSIC
-      "         (\xB8\x67\xA8\xE5\xAF\x53\xA7\x4F\xBD\x67  " __DATE__ ")",
+	  L"%ls(" WIDETEXT(__DATE__) L")",
 #else
-      "                    (" __DATE__ ")",
+	  L"                        (" WIDETEXT(__DATE__) L")",
 #endif
-      " ",
-      "  (c) 2009-2014, Wei Mingzhi",
-      "      <whistler_wmz@users.sf.net>.",
-#ifdef __SYMBIAN32__
-      "  Symbian S60 \xB2\xBE\xB4\xD3 (c) 2009, netwan.",
-#endif
-#ifdef GPH
-      "  GPH Caanoo & Wiz \xB2\xBE\xB4\xD3 (c) 2011, Rikku2000.",
-#endif
-#ifdef GEKKO
-      "  Nintendo WII \xB2\xBE\xB4\xD3 (c) 2012, Rikku2000.",
-#endif
-#ifdef DINGOO
-      "  DINGOO & Dingux \xB2\xBE\xB4\xD3 (c) 2011, Rikku2000.",
-#endif
-      " ",
-      "\xA5\xBB\xB5\x7B\xA6\xA1\xAC\x4F\xA6\xDB\xA5\xD1\xB3\x6E\xC5\xE9\xA1\x41\xAB\xF6\xB7\xD3"
-      " GNU General",
-      "Public License (GPLv3) \xB5\x6F\xA7\x47",
-      " ",
-      "                 ...\xAB\xF6 Enter \xB5\xB2\xA7\xF4",
-      ""
+      L" ",
+	  L"    (c) 2009-2011, Wei Mingzhi",
+	  L"        <whistler_wmz@users.sf.net>.",
+      L"    (c) 2011-2015, SDLPAL Team",
+	  L"%ls",  // Porting information line 1
+	  L"%ls",  // Porting information line 2
+	  L"%ls",  // GNU line 1
+	  L"%ls",  // GNU line 2
+	  L"%ls",  // GNU line 3
+      L"%ls",  // Press Enter to continue
    };
 
    int        i = 0;
 
-#ifdef PAL_WIN95
-   extern BOOL fIsBig5;
-   fIsBig5 = TRUE;
-#endif
-
    PAL_DrawOpeningMenuBackground();
 
-   while (rgszStrings[i][0] != '\0')
+   for (i = 0; i < 12; i++)
    {
-      PAL_DrawText(rgszStrings[i], PAL_XY(25, 20 + i * 16), DESCTEXT_COLOR, TRUE, FALSE);
-      i++;
+      WCHAR buffer[48];
+#if defined(__ANDROID__)
+	  // The support of swprintf in Android's NDK is very very bad, so we need an alternative way.
+	  if (wcsncmp(rgszStrings[i], L"%ls", 3) == 0)
+	  {
+		  // We've limited the length of g_rcCredits[i] in text.c, so no need to double check here.
+		  wcscpy(buffer, gConfig.pszMsgFile ? g_rcCredits[i] : rgszcps[i][gConfig.uCodePage]);
+		  wcscat(buffer, rgszStrings[i] + 3);
+	  }
+	  else
+		  wcscpy(buffer, rgszStrings[i]);
+#else
+	  swprintf(buffer, 48, rgszStrings[i], gConfig.pszMsgFile ? g_rcCredits[i] : rgszcps[i][gConfig.uCodePage]);
+#endif
+	  PAL_DrawText(buffer, PAL_XY(0, 2 + i * 16), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
    }
 
    PAL_SetPalette(0, FALSE);
@@ -1412,7 +1428,7 @@ PAL_InterpretInstruction(
       //
       if (gpGlobals->wCollectValue > 0)
       {
-         char s[256];
+         WCHAR s[256];
 
 #ifdef PAL_CLASSIC
          i = RandomLong(1, gpGlobals->wCollectValue);
@@ -1434,8 +1450,8 @@ PAL_InterpretInstruction(
          PAL_AddItemToInventory(gpGlobals->g.lprgStore[0].rgwItems[i], 1);
 
          PAL_StartDialog(kDialogCenterWindow, 0, 0, FALSE);
-         strcpy(s, PAL_GetWord(42));
-         strcat(s, PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
+		 wcscpy(s, PAL_GetWord(42));
+		 wcscat(s, PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
          PAL_ShowDialogText(s);
       }
       else
@@ -1571,7 +1587,7 @@ PAL_InterpretInstruction(
       // Set background music
       //
       gpGlobals->wNumMusic = pScript->rgwOperand[0];
-      PAL_PlayMUS(pScript->rgwOperand[0], (pScript->rgwOperand[0] != 0x3D), pScript->rgwOperand[1]);
+      AUDIO_PlayMusic(pScript->rgwOperand[0], (pScript->rgwOperand[0] != 0x3D), pScript->rgwOperand[1]);
       break;
 
    case 0x0044:
@@ -1632,7 +1648,7 @@ PAL_InterpretInstruction(
       //
       // Play sound effect
       //
-      SOUND_Play(pScript->rgwOperand[0]);
+      AUDIO_PlaySound(pScript->rgwOperand[0]);
       break;
 
    case 0x0049:
@@ -2130,20 +2146,23 @@ PAL_InterpretInstruction(
       //
       // Show FBP picture
       //
-#ifdef PAL_WIN95
-      SDL_FillRect(gpScreen, NULL, 0);
-      VIDEO_UpdateScreen(NULL);
-#else
-      PAL_EndingSetEffectSprite(0);
-      PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[1]);
-#endif
+      if (gConfig.fIsWIN95)
+	  {
+         SDL_FillRect(gpScreen, NULL, 0);
+         VIDEO_UpdateScreen(NULL);
+      }
+      else
+	  {
+         PAL_EndingSetEffectSprite(0);
+         PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[1]);
+      }
       break;
 
    case 0x0077:
       //
       // Stop current playing music
       //
-      PAL_PlayMUS(0, FALSE,
+      AUDIO_PlayMusic(0, FALSE,
          (pScript->rgwOperand[0] == 0) ? 2.0f : (FLOAT)(pScript->rgwOperand[0]) * 2);
       gpGlobals->wNumMusic = 0;
       break;
@@ -2299,12 +2318,7 @@ PAL_InterpretInstruction(
             //
             // Delay for one frame
             //
-            PAL_ProcessEvent();
-            while (SDL_GetTicks() < time)
-            {
-               PAL_ProcessEvent();
-               SDL_Delay(1);
-            }
+			PAL_DelayUntil(time);
             time = SDL_GetTicks() + FRAME_TIME;
          } while (++i < (SHORT)(pScript->rgwOperand[2]));
       }
@@ -2622,9 +2636,8 @@ PAL_InterpretInstruction(
       //
       // Show the ending animation
       //
-#ifndef PAL_WIN95
-      PAL_EndingAnimation();
-#endif
+      if (!gConfig.fIsWIN95)
+         PAL_EndingAnimation();
       break;
 
    case 0x0097:
@@ -2841,7 +2854,7 @@ PAL_InterpretInstruction(
          PAL_BattleBackupScene();
          PAL_LoadBattleSprites();
          PAL_BattleMakeScene();
-         SOUND_Play(212);
+         AUDIO_PlaySound(212);
          PAL_BattleFadeScene();
 
          for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
@@ -2881,7 +2894,7 @@ PAL_InterpretInstruction(
 
          g_Battle.rgEnemy[wEventObjectID].iColorShift = 0;
 
-                SOUND_Play(47);
+		 AUDIO_PlaySound(47);
          PAL_BattleBackupScene();
          PAL_LoadBattleSprites();
          PAL_BattleMakeScene();
@@ -2893,12 +2906,10 @@ PAL_InterpretInstruction(
       //
       // Quit game
       //
-#ifdef PAL_WIN95
-      PAL_EndingScreen();
-#endif
+      if (gConfig.fIsWIN95)
+         PAL_EndingScreen();
       PAL_AdditionalCredits();
-      PAL_Shutdown();
-      exit(0);
+      PAL_Shutdown(0);
       break;
 
    case 0x00A1:
@@ -2930,9 +2941,9 @@ PAL_InterpretInstruction(
       //
       // Play CD music. Use the RIX music for fallback.
       //
-      if (!SOUND_PlayCDA(pScript->rgwOperand[0]))
+      if (!AUDIO_PlayCDTrack(pScript->rgwOperand[0]))
       {
-         PAL_PlayMUS(pScript->rgwOperand[1], TRUE, 0);
+         AUDIO_PlayMusic(pScript->rgwOperand[1], TRUE, 0);
       }
       break;
 
@@ -2940,33 +2951,35 @@ PAL_InterpretInstruction(
       //
       // Scroll FBP to the screen
       //
-#ifndef PAL_WIN95
-      if (pScript->rgwOperand[0] == 68)
-      {
-         //
-         // HACKHACK: to make the ending picture show correctly
-         //
-         PAL_ShowFBP(69, 0);
-         PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], TRUE);
+      if (!gConfig.fIsWIN95)
+	  {
+         if (pScript->rgwOperand[0] == 68)
+         {
+            //
+            // HACKHACK: to make the ending picture show correctly
+            //
+            PAL_ShowFBP(69, 0);
+            PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], TRUE);
+         }
+         else
+         {
+            PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], pScript->rgwOperand[1]);
+         }
       }
-      else
-      {
-         PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], pScript->rgwOperand[1]);
-      }
-#endif
       break;
 
    case 0x00A5:
       //
       // Show FBP picture with sprite effects
       //
-#ifndef PAL_WIN95
-      if (pScript->rgwOperand[1] != 0xFFFF)
-      {
-         PAL_EndingSetEffectSprite(pScript->rgwOperand[1]);
+      if (!gConfig.fIsWIN95)
+	  {
+         if (pScript->rgwOperand[1] != 0xFFFF)
+         {
+            PAL_EndingSetEffectSprite(pScript->rgwOperand[1]);
+         }
+         PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[2]);
       }
-      PAL_ShowFBP(pScript->rgwOperand[0], pScript->rgwOperand[2]);
-#endif
       break;
 
    case 0x00A6:
@@ -3203,12 +3216,7 @@ PAL_RunTriggerScript(
 
             for (i = 0; i < (pScript->rgwOperand[0] ? pScript->rgwOperand[0] : 1); i++)
             {
-               PAL_ProcessEvent();
-               while (SDL_GetTicks() < time)
-               {
-                  PAL_ProcessEvent();
-                  SDL_Delay(1);
-               }
+               PAL_DelayUntil(time);
 
                time = SDL_GetTicks() + FRAME_TIME;
 
@@ -3294,8 +3302,37 @@ PAL_RunTriggerScript(
          //
          // Print dialog text
          //
-         PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
-         wScriptEntry++;
+         if (gConfig.pszMsgFile)
+         {
+            int idx = 0, iMsg;
+            while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)
+			{
+               if (iMsg == 0)
+               {
+                  //
+                  // Restore the screen
+                  //
+                  PAL_ClearDialog(TRUE);
+                  VIDEO_RestoreScreen();
+                  VIDEO_UpdateScreen(NULL);
+               }
+			   else
+                  PAL_ShowDialogText(PAL_GetMsg(iMsg));
+            }
+            while (gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF
+                || gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0x008E)
+            {
+               //
+               // Skip all following continuous 0xFFFF & 0x008E instructions
+               //
+               wScriptEntry++;
+            }
+         }
+		 else
+         {
+            PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
+            wScriptEntry++;
+         }
          break;
 
       default:
@@ -3335,9 +3372,6 @@ PAL_RunAutoScript(
 {
    LPSCRIPTENTRY          pScript;
    LPEVENTOBJECT          pEvtObj;
-#ifdef PAL_WIN95
-   int                    iDescLine = 0;
-#endif
 
 begin:
    pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
@@ -3408,12 +3442,13 @@ begin:
       //
       // jump to the specified address by the specified rate
       //
-      if (RandomLong(1, 100) >= pScript->rgwOperand[0] )
+      if (RandomLong(1, 100) >= pScript->rgwOperand[0])
       {
-          if( pScript->rgwOperand[1] != 0 ) {
-              wScriptEntry = pScript->rgwOperand[1];
-              goto begin;
-          }
+         if (pScript->rgwOperand[1] != 0)
+		 {
+            wScriptEntry = pScript->rgwOperand[1];
+            goto begin;
+		 }
       }
       else
       {
@@ -3436,26 +3471,46 @@ begin:
       break;
 
    case 0xFFFF:
-#ifdef PAL_WIN95
-      iDescLine = (wEventObjectID & ~(1 << 15));
-      if (wEventObjectID & (1 << 15))
-      {
-         PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(75, iDescLine * 16 + 150), DESCTEXT_COLOR, TRUE, FALSE);
-      }
-      else
-      {
-         PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(100, iDescLine * 16 + 3), DESCTEXT_COLOR, TRUE, FALSE);
-      }
-      iDescLine++;
-#endif
-	  wScriptEntry++;
+	   if (gConfig.fIsWIN95)
+	   {
+		   int XBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 75 : 100;
+		   int YBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 150 - gConfig.ScreenLayout.ExtraItemDescLines * 16 : 3;
+		   int iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
+
+		   if (gConfig.pszMsgFile)
+		   {
+			   int idx = 0, iMsg;
+			   while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)
+			   {
+				   if (iMsg > 0)
+				   {
+					   PAL_DrawText(PAL_GetMsg(iMsg), PAL_XY(XBase, iDescLine * 16 + YBase), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
+					   iDescLine++;
+				   }
+			   }
+			   while (gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF)
+			   {
+				   //
+				   // Skip all following continuous 0xFFFF instructions
+				   //
+				   wScriptEntry++;
+			   }
+		   }
+		   else
+		   {
+			   PAL_DrawText(PAL_GetMsg(pScript->rgwOperand[0]), PAL_XY(XBase, iDescLine * 16 + YBase), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
+			   wScriptEntry++;
+		   }
+	   }
+	   else
+	   {
+		   wScriptEntry++;
+	   }
 	  break;
 
-#ifdef PAL_WIN95
    case 0x00A7:
 	  wScriptEntry++;
       break;
-#endif
 
    default:
       //

@@ -217,7 +217,7 @@ mad_fixed_t mad_f_mul_inline(mad_fixed_t x, mad_fixed_t y)
        asm ("shrl %3,%1\n\t"  \
 	    "shll %4,%2\n\t"  \
 	    "orl %2,%1"  \
-	    : "=rm" (__result)  \
+	    : "=rm" (__result),  \
 	    : "0" (lo), "r" (hi),  \
 	      "I" (MAD_F_SCALEBITS), "I" (32 - MAD_F_SCALEBITS)  \
 	    : "cc");  \
@@ -227,7 +227,7 @@ mad_fixed_t mad_f_mul_inline(mad_fixed_t x, mad_fixed_t y)
 #    define mad_f_scale64(hi, lo)  \
     ({ mad_fixed_t __result;  \
        asm ("shrdl %3,%2,%1"  \
-	    : "=rm" (__result)  \
+	    : "=rm" (__result),  \
 	    : "0" (lo), "r" (hi), "I" (MAD_F_SCALEBITS)  \
 	    : "cc");  \
        __result;  \
