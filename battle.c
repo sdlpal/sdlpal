@@ -52,18 +52,29 @@ PAL_BattleMakeScene(
    int          i;
    PAL_POS      pos;
    LPBYTE       pSrc, pDst;
-   BYTE         shifttable[256];
+   BYTE         b;
 
    //
    // Draw the background
    //
    pSrc = g_Battle.lpBackground->pixels;
    pDst = g_Battle.lpSceneBuf->pixels;
-   PAL_MakeColorShiftTable(shifttable, g_Battle.sBackgroundColorShift);
 
    for (i = 0; i < g_Battle.lpSceneBuf->pitch * g_Battle.lpSceneBuf->h; i++)
    {
-      *pDst = shifttable[*pSrc];
+      b = (*pSrc & 0x0F);
+      b += g_Battle.sBackgroundColorShift;
+
+      if (b & 0x80)
+      {
+         b = 0;
+      }
+      else if (b & 0x70)
+      {
+         b = 0x0F;
+      }
+
+      *pDst = (b | (*pSrc & 0xF0));
 
       ++pSrc;
       ++pDst;

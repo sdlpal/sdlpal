@@ -722,14 +722,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C678432D1CE82DB80083CE42 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				C67843321CE82DB80083CE42 /* libSDL2.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -977,7 +969,6 @@
 		7165507B195BB372006E1227 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -1002,7 +993,6 @@
 		7165507C195BB372006E1227 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;

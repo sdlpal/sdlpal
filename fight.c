@@ -3632,7 +3632,6 @@ PAL_BattlePlayerPerformAction(
 
          g_Battle.rgPlayer[wPlayerIndex].iColorShift = 6;
          g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 5;
-
          PAL_BattleDelay(5, 0, TRUE);
 
          g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
