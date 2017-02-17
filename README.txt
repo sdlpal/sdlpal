@@ -100,6 +100,18 @@ ndk-build
 cd ..
 ant debug
 
+COMPILE FOR NINTENDO 3DS
+========================
+
+To compile, type:
+
+cd 3ds
+make
+make cia
+
+You need to have DevkitPro ARM and SDL 1.2 for 3DS portlib installed. The 
+compiled executable should be generated with the filename 'sdlpal' at the
+current directory.
 
 COMPILE FOR OTHER PLATFORMS
 ===========================
