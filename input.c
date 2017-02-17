@@ -24,6 +24,10 @@
 #include "main.h"
 #include <math.h>
 
+#ifdef __N3DS__
+#include <3ds.h>
+#endif
+
 volatile PALINPUTSTATE   g_InputState;
 #if PAL_HAS_JOYSTICKS
 static SDL_Joystick     *g_pJoy = NULL;
@@ -676,6 +680,7 @@ PAL_JoystickEventFilter(
 #endif
 }
 
+#if PAL_HAS_TOUCH
 
 #define  TOUCH_NONE     0
 #define    TOUCH_UP      1
@@ -842,6 +847,8 @@ PAL_UnsetTouchAction(
    }
 }
 
+#endif
+
 static VOID
 PAL_TouchEventFilter(
    const SDL_Event *lpEvent
@@ -861,6 +868,7 @@ PAL_TouchEventFilter(
 
 --*/
 {
+#if PAL_HAS_TOUCH
    static SDL_TouchID finger1 = -1, finger2 = -1;
    static int prev_touch1 = TOUCH_NONE;
    static int prev_touch2 = TOUCH_NONE;
@@ -924,6 +932,7 @@ PAL_TouchEventFilter(
       }
       break;
    }
+#endif
 }
 
 static int SDLCALL
@@ -1072,6 +1081,15 @@ PAL_InitInput(
 
 #ifdef PAL_ALLOW_KEYREPEAT
    SDL_EnableKeyRepeat(0, 0);
+#endif
+
+#ifdef __N3DS__
+   SDL_N3DSKeyBind(KEY_A, SDLK_RETURN);
+   SDL_N3DSKeyBind(KEY_B, SDLK_ESCAPE);
+   SDL_N3DSKeyBind(KEY_CPAD_UP, SDLK_UP);
+   SDL_N3DSKeyBind(KEY_CPAD_DOWN, SDLK_DOWN);
+   SDL_N3DSKeyBind(KEY_CPAD_LEFT, SDLK_LEFT);
+   SDL_N3DSKeyBind(KEY_CPAD_RIGHT, SDLK_RIGHT);
 #endif
 }
 

@@ -677,7 +677,7 @@ PAL_InGameMagicMenu(
    int              i, y;
    static WORD      w;
    WORD             wMagic;
-   const SDL_Rect   rect = {35, 62, 320, 90};
+   const SDL_Rect   rect = {35, 62, 285, 90};
 
    //
    // Draw the player info boxes
@@ -887,7 +887,7 @@ PAL_InventoryMenu(
 --*/
 {
    static WORD      w = 0;
-   const SDL_Rect   rect = {30, 60, 320, 60};
+   const SDL_Rect   rect = {30, 60, 290, 60};
 
    MENUITEM        rgMenuItem[2] =
    {
@@ -2005,7 +2005,11 @@ PAL_QuitGame(
    VOID
 )
 {
+#ifndef __N3DS__
 	WORD wReturnValue = PAL_TripleMenu(SYSMENU_LABEL_LAUNCHSETTING);
+#else
+	WORD wReturnValue = PAL_ConfirmMenu(); // No config menu available
+#endif
 	if (wReturnValue == 1 || wReturnValue == 2)
 	{
 		if (wReturnValue == 2) gConfig.fLaunchSetting = TRUE;

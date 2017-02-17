@@ -44,7 +44,7 @@ static SDL_Surface       *gpScreenReal       = NULL;
 
 volatile BOOL g_bRenderPaused = FALSE;
 
-#if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO)
+#if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO) || defined(__N3DS__)
    static BOOL bScaleScreen = FALSE;
 #else
    static BOOL bScaleScreen = TRUE;
@@ -56,7 +56,6 @@ static WORD               g_wShakeLevel      = 0;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #define SDL_SoftStretch SDL_UpperBlit
-#endif
 
 static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 {
@@ -89,7 +88,9 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 		gTextureRect.x = (texture_width - 320) / 2;
 		gTextureRect.y = (texture_height - 200) / 2;
 		gTextureRect.w = 320; gTextureRect.h = 200;
+#if PAL_HAS_TOUCH
 		PAL_SetTouchBounds(width, height, gOverlayRect);
+#endif
 	}
 	else
 	{
@@ -107,6 +108,7 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 	//
 	return SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
 }
+#endif
 
 INT
 VIDEO_Startup(
@@ -569,7 +571,7 @@ VIDEO_SetPalette(
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenBak, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
-#if (defined (__SYMBIAN32__))
+#if (defined (__SYMBIAN32__)) || (defined (__N3DS__))
    {
       static UINT32 time = 0;
       if (SDL_GetTicks() - time > 50)

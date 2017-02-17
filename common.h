@@ -193,6 +193,29 @@ extern "C"
 # define PAL_CREDIT           "(Unknown)"
 # define PAL_PORTYEAR         "2012"
 
+#elif defined (__N3DS__)
+
+#define PAL_PREFIX            "sdmc:/3ds/sdlpal/"
+#define PAL_SAVE_PREFIX       "sdmc:/3ds/sdlpal/"
+#define PAL_CONFIG_PREFIX     "sdmc:/3ds/sdlpal/"
+#define PAL_SCREENSHOT_PREFIX "sdmc:/3ds/sdlpal/"
+
+#define PAL_AUDIO_DEFAULT_BUFFER_SIZE   2048
+
+#define PAL_HAS_JOYSTICKS     0
+#define PAL_HAS_MP3           0
+#define PAL_HAS_OGG           0
+#define PAL_HAS_TOUCH         0
+
+#define PAL_DEFAULT_WINDOW_WIDTH   320
+#define PAL_DEFAULT_WINDOW_HEIGHT  240
+
+#define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | SDL_TOPSCR | SDL_CONSOLEBOTTOM | SDL_FULLSCREEN)
+
+# define PAL_PLATFORM         "Nintendo 3DS"
+# define PAL_CREDIT           "ZephRay"
+# define PAL_PORTYEAR         "2017"
+
 #elif defined (__IOS__)
 
 #define PAL_PREFIX            UTIL_BasePath()
@@ -404,7 +427,7 @@ typedef const WCHAR        *LPCWSTR;
 #define PAL_HAS_NATIVEMIDI  0
 #endif
 
-#if defined (__SYMBIAN32__)
+#if defined (__SYMBIAN32__) || defined (__N3DS__)
 #define PAL_LARGE           static
 #else
 #define PAL_LARGE           /* */
