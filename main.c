@@ -79,7 +79,7 @@ PAL_Init(
    //
 #if defined(DINGOO)
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) == -1)
-#elif defined (__WINPHONE__)
+#elif defined (__WINPHONE__) || defined (__N3DS__)
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == -1)
 #else
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
@@ -611,7 +611,7 @@ main(
       wScreenHeight = 240;
 #endif
 #else
-#if defined(GPH) || defined(DINGOO)
+#if defined(GPH) || defined(DINGOO) || defined (__N3DS__)
       wScreenWidth = 320;
       wScreenHeight = 240;
 #elif defined (__IOS__) || defined (__ANDROID__)
@@ -623,6 +623,10 @@ main(
 #endif
 #endif
    }
+
+#ifdef __N3DS__
+   fFullScreen = TRUE;
+#endif
 
    //
    // Initialize everything

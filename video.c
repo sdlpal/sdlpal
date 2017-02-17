@@ -42,7 +42,7 @@ static SDL_Surface       *gpScreenReal       = NULL;
 
 volatile BOOL g_bRenderPaused = FALSE;
 
-#if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO)
+#if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO) || defined(__N3DS__)
    static BOOL bScaleScreen = FALSE;
 #else
    static BOOL bScaleScreen = TRUE;
@@ -242,6 +242,9 @@ VIDEO_Init(
       SDL_SWSURFACE | (fFullScreen ? SDL_FULLSCREEN : 0));
 #elif defined (PSP)
    gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
+#elif defined (__N3DS__)
+   gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE | SDL_TOPSCR | 
+            SDL_CONSOLEBOTTOM);
 #else
    gpScreenReal = SDL_SetVideoMode(wScreenWidth, wScreenHeight, 8,
       SDL_HWSURFACE | SDL_RESIZABLE | (fFullScreen ? SDL_FULLSCREEN : 0));
@@ -622,7 +625,7 @@ VIDEO_SetPalette(
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenBak, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
-#if (defined (__SYMBIAN32__))
+#if (defined (__SYMBIAN32__)) || (defined (__N3DS__))
    {
       static UINT32 time = 0;
       if (SDL_GetTicks() - time > 50)

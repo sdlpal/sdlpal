@@ -21,7 +21,7 @@
 
 #include "main.h"
 
-#if !defined (CYGWIN) && !defined (DINGOO) &&  !defined (GEKKO) && !defined (GPH)
+#if !defined (CYGWIN) && !defined (DINGOO) &&  !defined (GEKKO) && !defined (GPH) && !defined(__N3DS__)
 
 static INT iMidCurrent = -1;
 static BOOL fMidLoop = FALSE;

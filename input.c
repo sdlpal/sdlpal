@@ -24,6 +24,10 @@
 #include "main.h"
 #include <math.h>
 
+#ifdef __N3DS__
+#include <3ds.h>
+#endif
+
 volatile PALINPUTSTATE   g_InputState;
 static SDL_Joystick     *g_pJoy = NULL;
 BOOL                     g_fUseJoystick = TRUE;
@@ -1056,6 +1060,15 @@ PAL_InitInput(
 
 #ifdef PAL_ALLOW_KEYREPEAT
    SDL_EnableKeyRepeat(0, 0);
+#endif
+
+#ifdef __N3DS__
+   SDL_N3DSKeyBind(KEY_A, SDLK_RETURN);
+   SDL_N3DSKeyBind(KEY_B, SDLK_ESCAPE);
+   SDL_N3DSKeyBind(KEY_CPAD_UP, SDLK_UP);
+   SDL_N3DSKeyBind(KEY_CPAD_DOWN, SDLK_DOWN);
+   SDL_N3DSKeyBind(KEY_CPAD_LEFT, SDLK_LEFT);
+   SDL_N3DSKeyBind(KEY_CPAD_RIGHT, SDLK_RIGHT);
 #endif
 }
 

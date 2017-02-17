@@ -342,7 +342,11 @@ SOUND_OpenAudio(
    gSndPlayer.spec.freq = PAL_SAMPLE_RATE;
    gSndPlayer.spec.format = AUDIO_S16;
    gSndPlayer.spec.channels = PAL_CHANNELS;
+#ifdef __N3DS__
+   gSndPlayer.spec.samples = 2048;
+#else
    gSndPlayer.spec.samples = 1024;
+#endif
    gSndPlayer.spec.callback = SOUND_FillAudio;
 
    if (SDL_OpenAudio(&gSndPlayer.spec, &spec) < 0)

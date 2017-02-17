@@ -72,12 +72,13 @@ extern "C"
 #define SWAP32(X)    SDL_Swap32(X)
 #endif
 
-#ifndef max
-#define max(a, b)    (((a) > (b)) ? (a) : (b))
+//gcc6 fix
+#ifndef cxmax
+#define cxmax(a, b)    (((a) > (b)) ? (a) : (b))
 #endif
 
-#ifndef min
-#define min(a, b)    (((a) < (b)) ? (a) : (b))
+#ifndef cxmin
+#define cxmin(a, b)    (((a) < (b)) ? (a) : (b))
 #endif
 
 #if defined (__SYMBIAN32__)
@@ -101,6 +102,11 @@ extern "C"
 #define PAL_HAS_JOYSTICKS     0
 #define PAL_PREFIX            "ms0:/"
 #define PAL_SAVE_PREFIX       "ms0:/PSP/SAVEDATA/SDLPAL/"
+
+#elif defined (__N3DS__)
+
+#define PAL_PREFIX            "sdmc:/3ds/sdlpal/"
+#define PAL_SAVE_PREFIX       "sdmc:/3ds/sdlpal/"
 
 #elif defined (__IOS__)
 
@@ -217,7 +223,7 @@ typedef const CHAR         *LPCSTR;
 
 #endif
 
-#if defined (__SYMBIAN32__)
+#if defined (__SYMBIAN32__) || defined (__N3DS__)
 #define PAL_LARGE           static
 #else
 #define PAL_LARGE           /* */
