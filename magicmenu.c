@@ -117,7 +117,7 @@ PAL_MagicSelectionMenuUpdate(
    //
    // Create the box.
    //
-   PAL_CreateBox(PAL_XY(10, 42 + iBoxYOffset), iLinesPerPage - 1, 16, 1, FALSE);
+   PAL_CreateBoxWithShadow(PAL_XY(10, 42 + iBoxYOffset), iLinesPerPage - 1, 16, 1, FALSE, 0);
 
    if (!gConfig.fIsWIN95)
    {
@@ -177,7 +177,7 @@ PAL_MagicSelectionMenuUpdate(
          //
          // Draw the MP of the selected magic.
          //
-         PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
+         PAL_CreateSingleLineBoxWithShadow(PAL_XY(0, 0), 5, FALSE,0);
          PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
             gpScreen, PAL_XY(45, 14));
          PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),

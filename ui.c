@@ -176,6 +176,10 @@ PAL_CreateBoxWithShadow(
       }
    }
 
+   // Include shadow
+   rect.w += nShadowOffset;
+   rect.h += nShadowOffset;
+
    if (fSaveScreen)
    {
       //
@@ -304,6 +308,10 @@ PAL_CreateSingleLineBoxWithShadow(
    rect.w = PAL_RLEGetWidth(lpBitmapLeft) + PAL_RLEGetWidth(lpBitmapRight);
    rect.w += PAL_RLEGetWidth(lpBitmapMid) * nLen;
    rect.h = PAL_RLEGetHeight(lpBitmapLeft);
+
+   // Include shadow
+   rect.w += nShadowOffset;
+   rect.h += nShadowOffset;
 
    if (fSaveScreen)
    {

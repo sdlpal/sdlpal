@@ -1210,7 +1210,8 @@ PAL_ShowDialogText(
          // Create the window box
          //
          pos = PAL_XY(PAL_X(g_TextLib.posDialogText) - len * 4, PAL_Y(g_TextLib.posDialogText));
-         lpBox = PAL_CreateSingleLineBox(pos, (len + 1) / 2, TRUE);
+         // Follow behavior of original version
+         lpBox = PAL_CreateSingleLineBoxWithShadow(pos, (len + 1) / 2, FALSE, 0);
 
          rect.x = PAL_X(pos);
          rect.y = PAL_Y(pos);

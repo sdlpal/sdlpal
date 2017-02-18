@@ -177,7 +177,8 @@ PAL_SaveSlotMenu(
    //
    for (i = 0; i < 5; i++)
    {
-      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(195 - dx, 7 + 38 * i), 6 + (w > 4 ? w - 4 : 0), TRUE);
+      // Fix render problem with shadow
+      rgpBox[i] = PAL_CreateSingleLineBox(PAL_XY(195 - dx, 7 + 38 * i), 6 + (w > 4 ? w - 4 : 0), FALSE);
 
       rgMenuItem[i].wValue = i + 1;
       rgMenuItem[i].fEnabled = TRUE;
@@ -957,6 +958,9 @@ PAL_InGameMenu(
    LPBOX                lpCashBox, lpMenuBox;
    WORD                 wReturnValue;
    const SDL_Rect       rect = {0, 0, 320, 185};
+   
+   // Fix render problem with shadow
+   VIDEO_BackupScreen();
 
    //
    // Create menu items
@@ -978,7 +982,8 @@ PAL_InGameMenu(
    //
    // Create the menu box.
    //
-   lpMenuBox = PAL_CreateBox(PAL_XY(3, 37), 3, PAL_MenuTextMaxWidth(rgMainMenuItem, 4) - 1, 0, TRUE);
+   // Fix render problem with shadow
+   lpMenuBox = PAL_CreateBox(PAL_XY(3, 37), 3, PAL_MenuTextMaxWidth(rgMainMenuItem, 4) - 1, 0, FALSE);
    VIDEO_UpdateScreen(&rect);
 
    //
@@ -1036,7 +1041,8 @@ out:
    PAL_DeleteBox(lpCashBox);
    PAL_DeleteBox(lpMenuBox);
 
-   VIDEO_UpdateScreen(&rect);
+   // Fix render problem with shadow
+   VIDEO_RestoreScreen();
 }
 
 VOID
