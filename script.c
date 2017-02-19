@@ -562,7 +562,7 @@ PAL_AdditionalCredits(
    for (i = 0; i < 12; i++)
    {
       WCHAR buffer[48];
-	  PAL_swprintf(buffer, 48, rgszStrings[i], gConfig.pszMsgFile ? g_rcCredits[i] : rgszcps[i][gConfig.uCodePage]);
+	  PAL_swprintf(buffer, sizeof(buffer), rgszStrings[i], gConfig.pszMsgFile ? g_rcCredits[i] : rgszcps[i][gConfig.uCodePage]);
 	  PAL_DrawText(buffer, PAL_XY(0, 2 + i * 16), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
    }
 
@@ -1438,8 +1438,7 @@ PAL_InterpretInstruction(
          PAL_AddItemToInventory(gpGlobals->g.lprgStore[0].rgwItems[i], 1);
 
          PAL_StartDialog(kDialogCenterWindow, 0, 0, FALSE);
-		 wcscpy(s, PAL_GetWord(42));
-		 wcscat(s, PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
+         PAL_swprintf(s, sizeof(s), L"%ls%ls", PAL_GetWord(42), PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
          PAL_ShowDialogText(s);
       }
       else
