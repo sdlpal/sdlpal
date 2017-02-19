@@ -84,9 +84,68 @@ extern "C"
 #endif /* SDL_FORCE_INLINE not defined */
 
 #if defined(_MSC_VER)
-#define PAL_FORCE_INLINE static SDL_FORCE_INLINE
+# define PAL_FORCE_INLINE static SDL_FORCE_INLINE
 #else
-#define PAL_FORCE_INLINE SDL_FORCE_INLINE
+# define PAL_FORCE_INLINE SDL_FORCE_INLINE
+#endif
+
+#ifdef _WIN32
+
+# include <windows.h>
+# include <io.h>
+
+# if defined(_MSC_VER)
+#  if _MSC_VER < 1900
+#   define vsnprintf _vsnprintf
+#   define snprintf _snprintf
+#  endif
+#  define strdup _strdup
+#  pragma warning (disable:4244)
+# endif
+
+# ifndef _LPCBYTE_DEFINED
+#  define _LPCBYTE_DEFINED
+typedef const BYTE *LPCBYTE;
+# endif
+
+#else
+
+# include <unistd.h>
+# include <dirent.h>
+
+# ifndef FALSE
+#  define FALSE               0
+# endif
+# ifndef TRUE
+#  define TRUE                1
+# endif
+# define VOID                void
+typedef char                CHAR;
+typedef wchar_t             WCHAR;
+typedef short               SHORT;
+typedef long                LONG;
+
+typedef unsigned long       ULONG, *PULONG;
+typedef unsigned short      USHORT, *PUSHORT;
+typedef unsigned char       UCHAR, *PUCHAR;
+
+typedef unsigned short      WORD, *LPWORD;
+typedef unsigned int        DWORD, *LPDWORD;
+typedef int                 INT, *LPINT;
+# ifndef __OBJC__
+typedef int                 BOOL, *LPBOOL;
+# endif
+typedef unsigned int        UINT, *PUINT, UINT32, *PUINT32;
+typedef unsigned char       BYTE, *LPBYTE;
+typedef const BYTE         *LPCBYTE;
+typedef float               FLOAT, *LPFLOAT;
+typedef void               *LPVOID;
+typedef const void         *LPCVOID;
+typedef CHAR               *LPSTR;
+typedef const CHAR         *LPCSTR;
+typedef WCHAR              *LPWSTR;
+typedef const WCHAR        *LPCWSTR;
+
 #endif
 
 /* When porting SDLPAL to a new platform, please make a separate directory and put a file 
@@ -129,69 +188,6 @@ extern "C"
 
 #ifndef PAL_SCREENSHOT_PREFIX
 # define PAL_SCREENSHOT_PREFIX PAL_SAVE_PREFIX
-#endif
-
-#ifdef _WIN32
-
-#include <windows.h>
-#include <io.h>
-
-#if defined(_MSC_VER)
-# if _MSC_VER < 1900
-#  define vsnprintf _vsnprintf
-#  define snprintf _snprintf
-# endif
-# define strdup _strdup
-# pragma warning (disable:4244)
-#endif
-
-#ifndef _LPCBYTE_DEFINED
-# define _LPCBYTE_DEFINED
-typedef const BYTE *LPCBYTE;
-#endif
-
-#ifndef __WINRT__
-# define PAL_HAS_NATIVEMIDI  1
-#endif
-
-#else
-
-#include <unistd.h>
-#include <dirent.h>
-
-#ifndef FALSE
-#define FALSE               0
-#endif
-#ifndef TRUE
-#define TRUE                1
-#endif
-#define VOID                void
-typedef char                CHAR;
-typedef wchar_t             WCHAR;
-typedef short               SHORT;
-typedef long                LONG;
-
-typedef unsigned long       ULONG, *PULONG;
-typedef unsigned short      USHORT, *PUSHORT;
-typedef unsigned char       UCHAR, *PUCHAR;
-
-typedef unsigned short      WORD, *LPWORD;
-typedef unsigned int        DWORD, *LPDWORD;
-typedef int                 INT, *LPINT;
-#ifndef __OBJC__
-typedef int                 BOOL, *LPBOOL;
-#endif
-typedef unsigned int        UINT, *PUINT, UINT32, *PUINT32;
-typedef unsigned char       BYTE, *LPBYTE;
-typedef const BYTE         *LPCBYTE;
-typedef float               FLOAT, *LPFLOAT;
-typedef void               *LPVOID;
-typedef const void         *LPCVOID;
-typedef CHAR               *LPSTR;
-typedef const CHAR         *LPCSTR;
-typedef WCHAR              *LPWSTR;
-typedef const WCHAR        *LPCWSTR;
-
 #endif
 
 #ifndef PAL_HAS_NATIVEMIDI

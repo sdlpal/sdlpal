@@ -6,8 +6,7 @@
 #include <ppltasks.h>
 #include "../SDLPal.Common/AsyncHelper.h"
 #include "../SDLPal.Common/StringHelper.h"
-#include "../../global.h"
-#include "../../palcfg.h"
+#include "../../main.h"
 
 #include "SDL.h"
 #include "SDL_endian.h"
@@ -145,6 +144,17 @@ static int SDLCALL WinRT_EventFilter(void *userdata, SDL_Event * event)
 		// Enter background or exiting, treat as normal exit
 		DeleteRunningFile();
 		break;
+	}
+	return 0;
+}
+
+static int input_event_filter(const SDL_Event *lpEvent, PALINPUTSTATE *state)
+{
+	if (lpEvent->type == SDL_KEYDOWN &&
+		lpEvent->key.keysym.sym == SDLK_AC_BACK &&
+		!gpGlobals->fInMainGame)
+	{
+		PAL_Shutdown(0);
 	}
 	return 0;
 }

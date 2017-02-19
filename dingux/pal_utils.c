@@ -1,30 +1,20 @@
 
 #include "main.h"
-#if defined(NDS)
-#include <fat.h>
-#endif
 
-#if defined(__SYMBIAN32__)
 static int input_event_filter(const SDL_Event *lpEvent, PALINPUTSTATE *state)
 {
-	//
-	// Symbian-specific stuff
-	//
 	switch (lpEvent->type)
 	{
-	case SDLK_0:
-		VIDEO_ToggleScaleScreen();
+	case SDLK_SPACE:
+		state->dwKeyPress = kKeyMenu;
 		return 1;
-	case SDLK_1:
-		AUDIO_DecreaseVolume();
-		return 1;
-	case SDLK_3:
-		AUDIO_IncreaseVolume();
+
+	case SDLK_LCTRL:
+		state->dwKeyPress = kKeySearch;
 		return 1;
 	}
 	return 0;
 }
-#endif
 
 BOOL
 UTIL_GetScreenSize(
@@ -49,12 +39,7 @@ UTIL_Platform_Init(
 	char* argv[]
 )
 {
-#if defined(NDS)
-	fatInitDefault();
-#endif
-#if defined(__SYMBIAN32__)
 	PAL_RegisterInputFilter(NULL, input_event_filter, NULL);
-#endif
 	gConfig.fLaunchSetting = FALSE;
 	return 0;
 }

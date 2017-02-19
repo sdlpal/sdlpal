@@ -24,3 +24,28 @@
 #define PAL_HAS_CONFIG_PAGE  1
 
 #define PAL_FILESYSTEM_IGNORE_CASE 1
+
+LPCSTR
+UTIL_BasePath(
+   VOID
+);
+
+LPCSTR
+UTIL_SavePath(
+   VOID
+);
+
+LPCSTR
+UTIL_ConfigPath(
+   VOID
+);
+
+LPCSTR
+UTIL_ScreenShotPath(
+   VOID
+);
+
+BOOL
+UTIL_TouchEnabled(
+   VOID
+);
