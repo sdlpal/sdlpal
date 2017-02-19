@@ -1822,7 +1822,7 @@ PAL_swprintf(
 	LPCWSTR fmt_start = NULL;
 	LPWSTR cur_fmt = NULL;
 	size_t fmt_len = 0;
-	unsigned long precision, width;
+	int precision, width;
 	int state, left_aligned, wide, narrow, width_var, precision_var, precision_defined;
 
 	if (buffer == NULL || format == NULL)
@@ -1940,16 +1940,16 @@ PAL_swprintf(
 			{
 				LPWSTR buf;
 				size_t len;
-				long i;
+				int i;
 
 				if (width_var)
 				{
-					long w = va_arg(ap, long);
-					left_aligned = (w < 0);
-					width = w < 0 ? -w : w;
+					width = va_arg(ap, int);
+					left_aligned = (width < 0);
+					width = left_aligned ? -width : width;
 				}
 				if (precision_var)
-					precision = va_arg(ap, unsigned long);
+					precision = va_arg(ap, int);
 				else if (!precision_defined)
 					precision = (unsigned long)(-1);
 
@@ -1975,10 +1975,10 @@ PAL_swprintf(
 					buf = chr_buf; len = 1;
 				}
 
-				if (precision > len)
+				if (precision > (int)len)
 					precision = len;
 
-				for (i = 0; !left_aligned && i < (long)(width - precision) && buffer < buffer_end; i++)
+				for (i = 0; !left_aligned && i < width - precision && buffer < buffer_end; i++)
 					*buffer++ = L' ', count++;
 
 				if (buffer + precision > buffer_end)
@@ -1990,7 +1990,7 @@ PAL_swprintf(
 					wcsncpy(buffer, buf, precision);
 				buffer += precision; count += precision;
 
-				for (i = 0; left_aligned && i < (long)(width - precision) && buffer < buffer_end; i++)
+				for (i = 0; left_aligned && i < width - precision && buffer < buffer_end; i++)
 					*buffer++ = L' ', count++;
 			}
 			else
@@ -2007,8 +2007,8 @@ PAL_swprintf(
 				va_end(apd);
 				buffer += cur_cnt; count += cur_cnt;
 
-				if (width_var) va_arg(ap, long);
-				if (precision_var) va_arg(ap, unsigned long);
+				if (width_var) va_arg(ap, int);
+				if (precision_var) va_arg(ap, int);
 
 				switch (*format)
 				{
