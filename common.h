@@ -87,6 +87,7 @@ extern "C"
 #define PAL_FORCE_INLINE static SDL_FORCE_INLINE
 #else
 #define PAL_FORCE_INLINE SDL_FORCE_INLINE
+
 #endif
 
 #if defined (__SYMBIAN32__)
