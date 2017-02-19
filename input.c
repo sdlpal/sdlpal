@@ -24,10 +24,6 @@
 #include "main.h"
 #include <math.h>
 
-#ifdef __N3DS__
-#include <3ds.h>
-#endif
-
 volatile PALINPUTSTATE   g_InputState;
 #if PAL_HAS_JOYSTICKS
 static SDL_Joystick     *g_pJoy = NULL;
@@ -36,11 +32,6 @@ static SDL_Joystick     *g_pJoy = NULL;
 #define SDL_JoystickNameForIndex SDL_JoystickName
 #endif
 BOOL                     g_fUseJoystick = TRUE;
-
-#if defined(GPH)
-#define MIN_DEADZONE -16384
-#define MAX_DEADZONE 16384
-#endif
 
 static VOID
 PAL_KeyboardEventFilter(

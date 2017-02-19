@@ -20,9 +20,6 @@
 //
 
 #include "main.h"
-#ifndef __WIN32__
-#include <sys/time.h>
-#endif
 
 // Screen buffer
 SDL_Surface              *gpScreen           = NULL;
@@ -44,11 +41,7 @@ static SDL_Surface       *gpScreenReal       = NULL;
 
 volatile BOOL g_bRenderPaused = FALSE;
 
-#if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO) || defined(__N3DS__)
-   static BOOL bScaleScreen = FALSE;
-#else
-   static BOOL bScaleScreen = TRUE;
-#endif
+static BOOL bScaleScreen = PAL_SCALE_SCREEN;
 
 // Shake times and level
 static WORD               g_wShakeTime       = 0;

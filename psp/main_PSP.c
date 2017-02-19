@@ -34,6 +34,15 @@ PSP_MODULE_INFO("SDLPAL", 0, 1, 1);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
 PSP_HEAP_SIZE_KB(PSP_HEAP_MEMSIZE);
 
+void
+SOUND_Reload(
+	void
+)
+{
+	fclose(gSndPlayer.mkf);
+	SOUND_LoadMKF();
+}
+
 //
 //Exit callback
 //

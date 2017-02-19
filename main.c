@@ -23,12 +23,6 @@
 
 #include "main.h"
 
-#if defined (NDS) && defined (GEKKO)
-
-# include <fat.h>
-
-#endif
-
 #if defined(LONGJMP_EXIT)
 #include <setjmp.h>
 
@@ -64,20 +58,10 @@ PAL_Init(
 {
    int           e;
 
-#if defined (NDS) && defined (GEKKO)
-   fatInitDefault();
-#endif
-
    //
    // Initialize defaults, video and audio
    //
-#if defined(DINGOO)
-   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) == -1)
-#elif defined (__WINRT__) || defined (__N3DS__)
-   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == -1)
-#else
-   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
-#endif
+   if (SDL_Init(PAL_SDL_INIT_FLAGS) == -1)
    {
 #if defined (_WIN32) && SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
       //
@@ -193,19 +177,13 @@ PAL_Shutdown(
    UTIL_CloseLog();
 
    SDL_Quit();
-#if defined(GPH)
-	chdir("/usr/gp2x");
-	execl("./gp2xmenu", "./gp2xmenu", NULL);
-#endif
-	UTIL_Platform_Quit();
+   UTIL_Platform_Quit();
 #if defined(LONGJMP_EXIT)
-	longjmp(g_exit_jmp_buf, exit_code);
+   longjmp(g_exit_jmp_buf, exit_code);
+#elif defined (NDS)
+   while (1);
 #else
-# if defined (NDS)
-	while (1);
-# else
-	exit(exit_code);
-# endif
+   exit(exit_code);
 #endif
 }
 
@@ -546,10 +524,6 @@ main(
 #endif
 
    UTIL_OpenLog();
-
-#if defined(_WIN32) && SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
-   putenv("SDL_VIDEODRIVER=directx");
-#endif
 
    PAL_LoadConfig(TRUE);
 

@@ -109,16 +109,6 @@ UTIL_CloseFile(
 );
 
 LPCSTR
-UTIL_BasePath(
-   VOID
-);
-
-LPCSTR
-UTIL_SavePath(
-   VOID
-);
-
-LPCSTR
 UTIL_ConfigPath(
    VOID
 );

@@ -91,13 +91,6 @@ AUDIO_SoundEnabled(
    VOID
 );
 
-#ifdef PSP
-VOID
-SOUND_Reload(
-	VOID
-);
-#endif
-
 #define AUDIO_IsIntegerConversion(a) (((a) % gConfig.iSampleRate) == 0 || (gConfig.iSampleRate % (a)) == 0)
 
 #ifdef __cplusplus

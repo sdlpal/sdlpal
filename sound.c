@@ -1031,14 +1031,3 @@ SOUND_Init(
 
 	return NULL;
 }
-
-#ifdef PSP
-void
-SOUND_Reload(
-	void
-	)
-{
-	fclose(gSndPlayer.mkf);
-	SOUND_LoadMKF();
-}
-#endif

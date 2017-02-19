@@ -85,7 +85,7 @@
     <ClCompile>
       <PreprocessorDefinitions>LONGJMP_EXIT;_CRT_SECURE_NO_WARNINGS;PAL_HAS_PLATFORM_SPECIFIC_UTILS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>..\..\liboggvorbis\include;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\liboggvorbis\include;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -100,7 +100,7 @@
     <ClCompile>
       <PreprocessorDefinitions>LONGJMP_EXIT;_CRT_SECURE_NO_WARNINGS;PAL_HAS_PLATFORM_SPECIFIC_UTILS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>..\..\liboggvorbis\include;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\liboggvorbis\include;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -115,7 +115,7 @@
     <ClCompile>
       <PreprocessorDefinitions>LONGJMP_EXIT;_CRT_SECURE_NO_WARNINGS;PAL_HAS_PLATFORM_SPECIFIC_UTILS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>..\..\liboggvorbis\include;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\liboggvorbis\include;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -130,7 +130,7 @@
     <ClCompile>
       <PreprocessorDefinitions>LONGJMP_EXIT;_CRT_SECURE_NO_WARNINGS;PAL_HAS_PLATFORM_SPECIFIC_UTILS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>..\..\liboggvorbis\include;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\liboggvorbis\include;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -251,6 +251,7 @@
     <ClInclude Include="..\..\uigame.h" />
     <ClInclude Include="..\..\util.h" />
     <ClInclude Include="..\..\video.h" />
+    <ClInclude Include="..\pal_config.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\adplug\adlibemu.c" />

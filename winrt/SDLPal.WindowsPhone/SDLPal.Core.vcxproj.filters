@@ -374,6 +374,9 @@
     <ClInclude Include="..\..\palcfg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\pal_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\adplug\binfile.cpp">

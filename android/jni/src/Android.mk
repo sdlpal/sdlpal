@@ -9,7 +9,7 @@ LOCAL_MODULE := main
 
 OGG_PATH := ../../../liboggvorbis
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include $(LOCAL_PATH)/$(OGG_PATH)/include $(LOCAL_PATH)/$(OGG_PATH)/src
+LOCAL_C_INCLUDES := $(LOCAL_PATH) $(LOCAL_PATH)/$(SDL_PATH)/include $(LOCAL_PATH)/$(OGG_PATH)/include $(LOCAL_PATH)/$(OGG_PATH)/src
 
 LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
     $(wildcard $(LOCAL_PATH)/../../../*.cpp) $(wildcard $(LOCAL_PATH)/../../../*.c) \

@@ -497,7 +497,7 @@ UTIL_OpenFileForMode(
 	else
 		fp = fopen(va("%s%s", gConfig.pszGamePath, lpszFileName), szMode);
 
-#if !(defined(_WIN32) || defined(__N3DS__))
+#if !defined(PAL_FILESYSTEM_IGNORE_CASE)
 	if (fp == NULL)
 	{
 		//
