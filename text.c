@@ -1996,11 +1996,15 @@ PAL_swprintf(
 			else
 			{
 				int cur_cnt = 0;
+				va_list apd;
+
 				if (fmt_len < (size_t)(format - fmt_start + 1))
 					cur_fmt = realloc(cur_fmt, ((fmt_len = format - fmt_start + 1) + 1) * sizeof(WCHAR));
 				wcsncpy(cur_fmt, fmt_start, fmt_len);
 				cur_fmt[fmt_len] = L'\0';
-				cur_cnt = vswprintf(buffer, buffer_end - buffer, cur_fmt, ap);
+				va_copy(apd, ap);
+				cur_cnt = vswprintf(buffer, buffer_end - buffer, cur_fmt, apd);
+				va_end(apd);
 				buffer += cur_cnt; count += cur_cnt;
 
 				if (width_var) va_arg(ap, long);
