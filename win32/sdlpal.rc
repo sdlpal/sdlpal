@@ -329,7 +329,7 @@ BEGIN
             VALUE "FileDescription", "SDLPAL Main executable"
             VALUE "FileVersion", "2.0.0.1"
             VALUE "InternalName", "sdlpal.exe"
-            VALUE "LegalCopyright", "Copyright (C) SDLPAL Team 2008 - 2016"
+            VALUE "LegalCopyright", "Copyright (C) SDLPAL Team 2008 - 2017"
             VALUE "OriginalFilename", "sdlpal.exe"
             VALUE "ProductName", "SDL PAL"
             VALUE "ProductVersion", "2.0.0.1"

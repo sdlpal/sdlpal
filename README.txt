@@ -10,7 +10,7 @@ LICENSE
 
 SDLPAL is originally created by Wei Mingzhi from 2009.
 Copyright (c) 2009-2011 Wei Mingzhi <whistler_wmz@users.sf.net>.
-Copyright (c) 2011-2016 SDLPAL development team.
+Copyright (c) 2011-2017 SDLPAL development team.
 All rights reserved.
 
 SDLPAL is distributed under the terms of GNU General Public License, version 3
@@ -119,17 +119,16 @@ COMPILE FOR OTHER PLATFORMS
 To be written.
 
 
-CLASSIC BUILD
+REVISED BUILD
 =============
 
-By default, SDLPAL uses a revised battle system which is more exciting yet
-somewhat harder than the original game. If you prefer the traditional
-turn-based battle system, uncomment the following line:
+By default, SDLPAL builds a "classic" turn-based battle system which is 
+designed to be 100% the same as the original game.
 
-//#define PAL_CLASSIC           1
-
-in the file common.h and recompile. This will build a "classic" build which is
-100% the same as the original game.
+However, SDLPAL also provides a revised battle system which is more exciting
+yet somewhat harder than the original game. If you prefer this new battle 
+system, please define the macro ENABLE_REVISIED_BATTLE in Makefile or in
+common.h, and then recompile the project.
 
 
 RUNNING THE GAME
