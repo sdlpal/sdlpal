@@ -748,13 +748,7 @@ PAL_BattleWon(
          PAL_CreateBox(PAL_XY(offsetX+82, 32), 7, propertyLength+8, 1, FALSE);
 
          WCHAR buffer[256] = L"";
-#ifndef __WIN32__
-          wcscpy(buffer, PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]));
-          wcscat(buffer, PAL_GetWord(STATUS_LABEL_LEVEL));
-          wcscat(buffer, PAL_GetWord(BATTLEWIN_LEVELUP_LABEL));
-#else
-          swprintf(buffer, 256, L"%ls%ls%ls", PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_GetWord(STATUS_LABEL_LEVEL), PAL_GetWord(BATTLEWIN_LEVELUP_LABEL));
-#endif
+		 PAL_swprintf(buffer, 256, L"%ls%ls%ls", PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[w]), PAL_GetWord(STATUS_LABEL_LEVEL), PAL_GetWord(BATTLEWIN_LEVELUP_LABEL));
          PAL_DrawText(buffer, PAL_XY(110, 10), 0, FALSE, FALSE, FALSE);
 
          for (j = 0; j < 8; j++)

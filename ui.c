@@ -733,27 +733,27 @@ PAL_DrawNumber(
    }
 }
 
+/*++
+	Purpose:
+
+		Calculate the text width of the given text.
+
+	Parameters:
+
+		[IN]  itemText - Pointer to the text.
+
+	Return value:
+
+		text width.
+
+--*/
 INT
 PAL_TextWidth(
-LPCWSTR lpszItemText
+   LPCWSTR lpszItemText
 )
-/*++
- Purpose:
- 
- Calculate the text width of the given text.
- 
- Parameters:
- 
- [IN]  itemText - Pointer to the text.
- 
- Return value:
- 
- text width.
- 
- --*/
+
 {
-    size_t l = wcslen(lpszItemText);
-    int j = 0, w = 0;
+    size_t l = wcslen(lpszItemText), j = 0, w = 0;
     for (j = 0; j < l; j++)
     {
         w += PAL_CharWidth(lpszItemText[j]);

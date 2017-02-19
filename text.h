@@ -130,4 +130,12 @@ PAL_GetInvalidChar(
    CODEPAGE      uCodePage
 );
 
+INT
+PAL_swprintf(
+	LPWSTR buffer,
+	size_t count,
+	LPCWSTR format,
+	...
+);
+
 #endif

@@ -25,6 +25,7 @@
 //
 
 #include "main.h"
+#include <errno.h>
 
 #define   FONT_COLOR_DEFAULT        0x4F
 #define   FONT_COLOR_YELLOW         0x2D
@@ -1780,6 +1781,272 @@ PAL_MultiByteToWideChar(
 {
 	return PAL_MultiByteToWideCharCP(gConfig.uCodePage, mbs, mbslength, wcs, wcslength);
 }
+
+/*++
+  Purpose:
+
+    Formatted wide-character output conversion that output Chinese characters correctly.
+	This function supported a subset of format strings that are commonly supported by 
+	various C libraries, which can be formalized as following:
+
+	%[flags] [width] [.precision] [{h | l | ll}] type
+
+	When handling '%c' and '%s', this function follows the Linux's library convention,
+	which means '%c' and '%s' always output multi-byte strings, and '%lc' and '%ls'
+	always output wide-char strings.
+
+  Parameters:
+
+    [IN]  buffer - Storage location for output.
+	[IN]  count - Size of the output buffer, including the termination null character.
+	[IN]  format - Format-control string.
+	[IN]  ... - Optional arguments.
+
+  Return value:
+
+    The length of outputed wide string, not including the termination null character.
+
+--*/
+INT
+PAL_swprintf(
+	LPWSTR buffer,
+	size_t count,
+	LPCWSTR format,
+	...
+)
+{
+	va_list ap;
+	const WCHAR * const format_end = format + wcslen(format);
+	const WCHAR * const buffer_end = buffer + count - 1;
+	WCHAR chr_buf[2] = { 0, 0 };
+	LPCWSTR fmt_start = NULL;
+	LPWSTR cur_fmt = NULL;
+	size_t fmt_len = 0;
+	unsigned long precision, width;
+	int state, left_aligned, wide, narrow, width_var, precision_var, precision_defined;
+
+	if (buffer == NULL || format == NULL)
+	{
+		errno = EINVAL;
+		return -1;
+	}
+
+	if (buffer_end <= buffer)
+		return 0;
+
+	va_start(ap, format);
+
+	count = 0; state = 0;
+	while (buffer < buffer_end && format < format_end)
+	{
+		switch (state)
+		{
+		case 0: // Outside format spec
+			if (*format != L'%')
+			{
+				*buffer++ = *format++;
+				count++;
+				break;
+			}
+			else
+			{
+				fmt_start = format++;
+				left_aligned = wide = narrow = 0;
+				precision_var = width_var = 0;
+				precision_defined = 0;
+				state = 1;
+			}
+		case 1: // [flags]
+			switch (*format)
+			{
+			case L'-':
+				left_aligned = 1;
+			case L'+':
+			case L' ':
+			case L'#':
+			case L'0':
+				format++;
+				continue;
+			default:
+				state = 2;
+				width = width_var = 0;
+			}
+		case 2: // [width]
+			switch (*format)
+			{
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				if (width >= 0)
+					width = width * 10 + (*format - L'0');
+				format++;
+				continue;
+			case '*':
+				if (width == 0)
+					width_var = 1;
+				format++;
+				continue;
+			case '.':
+				format++;
+				precision = precision_var = 0;
+				precision_defined = 1;
+				state = 3;
+				break;
+			default:
+				state = 4;
+				continue;
+			}
+		case 3: // [.precision]
+			switch (*format)
+			{
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				if (precision >= 0)
+					precision = precision * 10 + (*format - L'0');
+				format++;
+				continue;
+			case '*':
+				if (precision == 0)
+					precision_var = 1;
+				format++;
+				continue;
+			default:
+				state = 4;
+			}
+		case 4: // [{h | l | ll}]
+			switch (*format)
+			{
+			case 'l': if (narrow == 0) wide++; format++; continue;
+			case 'h': if (wide == 0) narrow++; format++; continue;
+			default: state = 5;
+			}
+		case 5: // type
+			if (*format == 'c' || *format == 's')
+			{
+				LPWSTR buf;
+				size_t len;
+				long i;
+
+				if (width_var)
+				{
+					long w = va_arg(ap, long);
+					left_aligned = (w < 0);
+					width = w < 0 ? -w : w;
+				}
+				if (precision_var)
+					precision = va_arg(ap, unsigned long);
+				else if (!precision_defined)
+					precision = (unsigned long)(-1);
+
+				if (*format == 's')
+				{
+					if (wide)
+					{
+						buf = va_arg(ap, LPWSTR);
+						len = wcslen(buf);
+					}
+					else
+					{
+						buf = (LPWSTR)va_arg(ap, LPSTR);
+						len = PAL_MultiByteToWideChar((LPCSTR)buf, -1, NULL, 0) - 1;
+					}
+				}
+				else
+				{
+					if (wide)
+						chr_buf[0] = va_arg(ap, WCHAR);
+					else
+						chr_buf[0] = va_arg(ap, int);
+					buf = chr_buf; len = 1;
+				}
+
+				if (precision > len)
+					precision = len;
+
+				for (i = 0; !left_aligned && i < (long)(width - precision) && buffer < buffer_end; i++)
+					*buffer++ = L' ', count++;
+
+				if (buffer + precision > buffer_end)
+					precision = buffer_end - buffer;
+
+				if (*format == 's' && !wide)
+					PAL_MultiByteToWideChar((LPCSTR)buf, -1, buffer, precision);
+				else
+					wcsncpy(buffer, buf, precision);
+				buffer += precision; count += precision;
+
+				for (i = 0; left_aligned && i < (long)(width - precision) && buffer < buffer_end; i++)
+					*buffer++ = L' ', count++;
+			}
+			else
+			{
+				int cur_cnt = 0;
+				if (fmt_len < (size_t)(format - fmt_start + 1))
+					cur_fmt = realloc(cur_fmt, ((fmt_len = format - fmt_start + 1) + 1) * sizeof(WCHAR));
+				wcsncpy(cur_fmt, fmt_start, fmt_len);
+				cur_fmt[fmt_len] = L'\0';
+				cur_cnt = vswprintf(buffer, buffer_end - buffer, cur_fmt, ap);
+				buffer += cur_cnt; count += cur_cnt;
+
+				if (width_var) va_arg(ap, long);
+				if (precision_var) va_arg(ap, unsigned long);
+
+				switch (*format)
+				{
+				case 'd':
+				case 'i':
+				case 'o':
+				case 'u':
+				case 'x':
+				case 'X':
+					if (wide == 1)
+						va_arg(ap, long);
+					else if (wide >= 2)
+						va_arg(ap, long long);
+					else
+						va_arg(ap, int);
+					break;
+				case 'e':
+				case 'E':
+				case 'f':
+				case 'g':
+				case 'G':
+				case 'a':
+				case 'A':
+					va_arg(ap, double);
+					break;
+				case 'p':
+				case 'n':
+					va_arg(ap, void*);
+					break;
+				}
+			}
+			state = 0;
+			format++;
+			break;
+		}
+	}
+	*buffer = L'\0';
+
+	va_end(ap);
+	return count;
+}
+
 
 WCHAR
 PAL_GetInvalidChar(

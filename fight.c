@@ -4832,18 +4832,7 @@ PAL_BattleStealFromEnemy(
 
          if (c > 0)
          {
-#ifndef __WIN32__
-            wcscpy(s, PAL_GetWord(34));
-            char *char_buf = va(" %d ", c);
-            int len = (int)strlen(char_buf);
-            int nChars = PAL_MultiByteToWideChar(char_buf, len, NULL, 0);
-            WCHAR *wchar_buf = (wchar_t *)malloc(nChars * sizeof(wchar_t));
-            PAL_MultiByteToWideChar(char_buf, len, wchar_buf, nChars);
-            wcscat(s, wchar_buf);
-            wcscat(s, PAL_GetWord(10));
-#else
-            swprintf(s, 256, L"%ls %d %ls", PAL_GetWord(34), c, PAL_GetWord(10));
-#endif
+			 PAL_swprintf(s, 256, L"%ls %d %ls", PAL_GetWord(34), c, PAL_GetWord(10));
          }
       }
       else
