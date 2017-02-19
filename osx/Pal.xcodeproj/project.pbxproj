@@ -146,7 +146,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		002F3A3E09D088BA00EBEB88 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = SOURCE_ROOT; };
+		002F3A3E09D088BA00EBEB88 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.c; path = ../main.c; sourceTree = SOURCE_ROOT; };
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -494,7 +494,7 @@
 				5757D21F1B7A3D5800464A74 /* include */,
 				5757D2281B7A3D5800464A74 /* src */,
 			);
-			path = liboggvorbis;
+			path = ../liboggvorbis;
 			sourceTree = "<group>";
 		};
 		5757D21F1B7A3D5800464A74 /* include */ = {
@@ -669,6 +669,7 @@
 				7104FDA80D772FBC00A97E53 /* rix.h */,
 			);
 			name = adplug;
+			path = ../adplug;
 			sourceTree = "<group>";
 		};
 		71E23E7013F6D188001287B6 /* libmad */ = {
@@ -706,6 +707,7 @@
 				71E23E8E13F6D1AD001287B6 /* timer.h */,
 			);
 			name = libmad;
+			path = ../libmad;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -889,8 +891,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				HEADER_SEARCH_PATHS = (
 					/Library/Frameworks/SDL2.framework/Headers,
-					./liboggvorbis/include,
-					./liboggvorbis/src,
+					../liboggvorbis/include,
+					../liboggvorbis/src,
 					"$(HEADER_SEARCH_PATHS)",
 				);
 				INFOPLIST_FILE = Info.plist;
