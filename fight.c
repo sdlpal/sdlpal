@@ -4832,7 +4832,7 @@ PAL_BattleStealFromEnemy(
 
          if (c > 0)
          {
-			 PAL_swprintf(s, sizeof(s), L"%ls %d %ls", PAL_GetWord(34), c, PAL_GetWord(10));
+			 PAL_swprintf(s, sizeof(s) / sizeof(WCHAR), L"%ls %d %ls", PAL_GetWord(34), c, PAL_GetWord(10));
          }
       }
       else
@@ -4843,7 +4843,7 @@ PAL_BattleStealFromEnemy(
          g_Battle.rgEnemy[wTarget].e.nStealItem--;
          PAL_AddItemToInventory(g_Battle.rgEnemy[wTarget].e.wStealItem, 1);
 
-         PAL_swprintf(s, sizeof(s), L"%ls%ls", PAL_GetWord(34), g_Battle.rgEnemy[wTarget].e.wStealItem);
+         PAL_swprintf(s, sizeof(s) / sizeof(WCHAR), L"%ls%ls", PAL_GetWord(34), g_Battle.rgEnemy[wTarget].e.wStealItem);
 	  }
 
       if (s[0] != '\0')

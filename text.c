@@ -1798,7 +1798,7 @@ PAL_MultiByteToWideChar(
   Parameters:
 
     [IN]  buffer - Storage location for output.
-	[IN]  count - Size of the output buffer, including the termination null character.
+	[IN]  count - Length of the output buffer in characters including the termination null one.
 	[IN]  format - Format-control string.
 	[IN]  ... - Optional arguments.
 
