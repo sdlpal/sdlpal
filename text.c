@@ -1782,6 +1782,13 @@ PAL_MultiByteToWideChar(
 	return PAL_MultiByteToWideCharCP(gConfig.uCodePage, mbs, mbslength, wcs, wcslength);
 }
 
+INT
+PAL_swprintf(
+	LPWSTR buffer,
+	size_t count,
+	LPCWSTR format,
+	...
+)
 /*++
   Purpose:
 
@@ -1807,13 +1814,6 @@ PAL_MultiByteToWideChar(
     The length of outputed wide string, not including the termination null character.
 
 --*/
-INT
-PAL_swprintf(
-	LPWSTR buffer,
-	size_t count,
-	LPCWSTR format,
-	...
-)
 {
 	va_list ap;
 	const WCHAR * const format_end = format + wcslen(format);
@@ -1825,6 +1825,7 @@ PAL_swprintf(
 	int precision, width;
 	int state, left_aligned, wide, narrow, width_var, precision_var, precision_defined;
 
+	// Buffer & length check
 	if (buffer == NULL || format == NULL)
 	{
 		errno = EINVAL;
@@ -1846,7 +1847,6 @@ PAL_swprintf(
 			{
 				*buffer++ = *format++;
 				count++;
-				break;
 			}
 			else
 			{
@@ -1856,6 +1856,7 @@ PAL_swprintf(
 				precision_defined = 0;
 				state = 1;
 			}
+			continue;
 		case 1: // [flags]
 			switch (*format)
 			{
@@ -1898,7 +1899,7 @@ PAL_swprintf(
 				precision = precision_var = 0;
 				precision_defined = 1;
 				state = 3;
-				break;
+				continue;
 			default:
 				state = 4;
 				continue;
@@ -1938,23 +1939,30 @@ PAL_swprintf(
 		case 5: // type
 			if (*format == 'c' || *format == 's')
 			{
+				// We handle char & str specially
 				LPWSTR buf;
 				size_t len;
 				int i;
 
+				// Check width
 				if (width_var)
 				{
 					width = va_arg(ap, int);
 					left_aligned = (width < 0);
 					width = left_aligned ? -width : width;
 				}
+				// Although precision has no meaning to '%c' output, however
+				// the argument still needs to be read if '.*' is provided
 				if (precision_var)
 					precision = va_arg(ap, int);
 				else if (!precision_defined)
-					precision = (unsigned long)(-1);
+					precision = INT_MAX;
 
 				if (*format == 's')
 				{
+					// For ANSI string, convert it through PAL_MultiByteToWideChar
+					// To improve effciency, here just test the length and left
+					// actual conversion later directly into the output buffer
 					if (wide)
 					{
 						buf = va_arg(ap, LPWSTR);
@@ -1968,6 +1976,7 @@ PAL_swprintf(
 				}
 				else
 				{
+					// For ANSI character, put it into the internal buffer
 					if (wide)
 						chr_buf[0] = va_arg(ap, WCHAR);
 					else
@@ -1975,41 +1984,52 @@ PAL_swprintf(
 					buf = chr_buf; len = 1;
 				}
 
+				// Limit output length no longer then precision
 				if (precision > (int)len)
 					precision = len;
 
+				// Left-side padding
 				for (i = 0; !left_aligned && i < width - precision && buffer < buffer_end; i++)
 					*buffer++ = L' ', count++;
 
+				// Do not overflow the output buffer
 				if (buffer + precision > buffer_end)
 					precision = buffer_end - buffer;
 
+				// Convert or copy string (char) into output buffer
 				if (*format == 's' && !wide)
 					PAL_MultiByteToWideChar((LPCSTR)buf, -1, buffer, precision);
 				else
 					wcsncpy(buffer, buf, precision);
 				buffer += precision; count += precision;
 
+				// Right-side padding
 				for (i = 0; left_aligned && i < width - precision && buffer < buffer_end; i++)
 					*buffer++ = L' ', count++;
 			}
 			else
 			{
+				// For other types, pass them directly into vswprintf
 				int cur_cnt = 0;
 				va_list apd;
 
+				// We copy this argument's format string into internal buffer
 				if (fmt_len < (size_t)(format - fmt_start + 1))
 					cur_fmt = realloc(cur_fmt, ((fmt_len = format - fmt_start + 1) + 1) * sizeof(WCHAR));
 				wcsncpy(cur_fmt, fmt_start, fmt_len);
 				cur_fmt[fmt_len] = L'\0';
+				// And pass it into vswprintf to get the output
 				va_copy(apd, ap);
 				cur_cnt = vswprintf(buffer, buffer_end - buffer, cur_fmt, apd);
 				va_end(apd);
 				buffer += cur_cnt; count += cur_cnt;
 
+				// Then we need to move the argument pointer into next one
+				// Check if width/precision should be read from arguments
 				if (width_var) va_arg(ap, int);
 				if (precision_var) va_arg(ap, int);
 
+				// Move pointer to pass the actual value argument
 				switch (*format)
 				{
 				case 'd':
@@ -2045,6 +2065,25 @@ PAL_swprintf(
 			break;
 		}
 	}
+
+	// If the format string is malformed, try to copy it into the dest buffer
+	if (state && buffer < buffer_end)
+	{
+		int fmt_len = format - fmt_start;
+		int buf_len = buffer_end - buffer;
+		if (fmt_len <= buf_len)
+		{
+			wcsncpy(buffer, fmt_start, buf_len);
+			buffer += fmt_len;
+		}
+		else
+		{
+			wcsncpy(buffer, fmt_start, buf_len);
+			buffer += buf_len;
+		}
+	}
+
+	// NULL-terminate the string
 	*buffer = L'\0';
 
 	va_end(ap);
