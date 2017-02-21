@@ -20,6 +20,7 @@
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)
 # else
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | (gConfig.fFullScreen ? SDL_FULLSCREEN : 0))
+#  define PAL_FATAL_OUTPUT(s)   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)TerminateOnError,"TerminateOnError",__FILE__, (s)); SDL_Delay(3000)
 # endif
 
 # define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK)
@@ -29,6 +30,7 @@
 # define PAL_PORTYEAR         "2009"
 
 # define PAL_LARGE           static
+# define PAL_FORCE_UPDATE_ON_PALETTE_SET
 
 # if !defined (__S60_5X__)
 #  define PAL_SCALE_SCREEN   FALSE

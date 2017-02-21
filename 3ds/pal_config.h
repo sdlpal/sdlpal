@@ -25,6 +25,7 @@
 # define PAL_PORTYEAR         "2017"
 
 # define PAL_LARGE           static
+# define PAL_FORCE_UPDATE_ON_PALETTE_SET
 
 # define PAL_FILESYSTEM_IGNORE_CASE 1
 
