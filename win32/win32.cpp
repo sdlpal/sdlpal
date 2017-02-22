@@ -8,10 +8,10 @@
 #include <ShlObj.h>
 #include <string>
 #include "resource.h"
-#include "../global.h"
-#include "../util.h"
-#include "../palcfg.h"
-#include "../resampler.h"
+#include "../src/global.h"
+#include "../src/util.h"
+#include "../src/palcfg.h"
+#include "../src/resampler.h"
 
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(linker,"\"/manifestdependency:type='win32' \

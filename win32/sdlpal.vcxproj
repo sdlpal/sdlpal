@@ -97,7 +97,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\src\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -126,7 +126,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\src\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -155,7 +155,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\src\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -186,7 +186,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\src\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -206,9 +206,9 @@
     <Bscmake />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\adplug\adlibemu.c" />
-    <ClCompile Include="..\adplug\dbemuopl.cpp" />
-    <ClCompile Include="..\adplug\dbopl.cpp">
+    <ClCompile Include="..\src\adplug\adlibemu.c" />
+    <ClCompile Include="..\src\adplug\dbemuopl.cpp" />
+    <ClCompile Include="..\src\adplug\dbopl.cpp">
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnySuitable</InlineFunctionExpansion>
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IntrinsicFunctions>
@@ -218,213 +218,213 @@
       <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</OmitFramePointers>
       <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</OmitFramePointers>
     </ClCompile>
-    <ClCompile Include="..\adplug\demuopl.cpp" />
-    <ClCompile Include="..\audio.c" />
-    <ClCompile Include="..\battle.c" />
-    <ClCompile Include="..\ending.c" />
-    <ClCompile Include="..\fight.c" />
-    <ClCompile Include="..\font.c" />
-    <ClCompile Include="..\game.c" />
-    <ClCompile Include="..\global.c" />
-    <ClCompile Include="..\input.c" />
-    <ClCompile Include="..\itemmenu.c" />
-    <ClCompile Include="..\liboggvorbis\src\analysis.c" />
-    <ClCompile Include="..\liboggvorbis\src\bitrate.c" />
-    <ClCompile Include="..\liboggvorbis\src\bitwise.c" />
-    <ClCompile Include="..\liboggvorbis\src\block.c" />
-    <ClCompile Include="..\liboggvorbis\src\codebook.c" />
-    <ClCompile Include="..\liboggvorbis\src\envelope.c" />
-    <ClCompile Include="..\liboggvorbis\src\floor0.c" />
-    <ClCompile Include="..\liboggvorbis\src\floor1.c" />
-    <ClCompile Include="..\liboggvorbis\src\framing.c" />
-    <ClCompile Include="..\liboggvorbis\src\info.c" />
-    <ClCompile Include="..\liboggvorbis\src\lookup.c" />
-    <ClCompile Include="..\liboggvorbis\src\lpc.c" />
-    <ClCompile Include="..\liboggvorbis\src\lsp.c" />
-    <ClCompile Include="..\liboggvorbis\src\mapping0.c" />
-    <ClCompile Include="..\liboggvorbis\src\mdct.c" />
-    <ClCompile Include="..\liboggvorbis\src\psy.c" />
-    <ClCompile Include="..\liboggvorbis\src\registry.c" />
-    <ClCompile Include="..\liboggvorbis\src\res0.c" />
-    <ClCompile Include="..\liboggvorbis\src\sharedbook.c" />
-    <ClCompile Include="..\liboggvorbis\src\smallft.c" />
-    <ClCompile Include="..\liboggvorbis\src\synthesis.c" />
-    <ClCompile Include="..\liboggvorbis\src\vorbisenc.c" />
-    <ClCompile Include="..\liboggvorbis\src\vorbisfile.c" />
-    <ClCompile Include="..\liboggvorbis\src\window.c" />
-    <ClCompile Include="..\magicmenu.c" />
-    <ClCompile Include="..\main.c" />
-    <ClCompile Include="..\map.c" />
-    <ClCompile Include="..\midi.c" />
-    <ClCompile Include="..\mp3play.c" />
-    <ClCompile Include="..\oggplay.c" />
-    <ClCompile Include="..\overlay.c" />
-    <ClCompile Include="..\palcfg.c" />
-    <ClCompile Include="..\palcommon.c" />
-    <ClCompile Include="..\palette.c" />
-    <ClCompile Include="..\play.c" />
-    <ClCompile Include="..\res.c" />
-    <ClCompile Include="..\resampler.c" />
-    <ClCompile Include="..\rixplay.cpp" />
-    <ClCompile Include="..\rngplay.c" />
-    <ClCompile Include="..\scene.c" />
-    <ClCompile Include="..\script.c" />
-    <ClCompile Include="..\sound.c" />
-    <ClCompile Include="..\text.c" />
-    <ClCompile Include="..\ui.c" />
-    <ClCompile Include="..\uibattle.c" />
-    <ClCompile Include="..\uigame.c" />
-    <ClCompile Include="..\util.c" />
-    <ClCompile Include="..\video.c" />
-    <ClCompile Include="..\yj1.c" />
-    <ClCompile Include="..\adplug\binfile.cpp" />
-    <ClCompile Include="..\adplug\binio.cpp" />
-    <ClCompile Include="..\adplug\dosbox_opl.cpp" />
-    <ClCompile Include="..\adplug\emuopl.cpp" />
-    <ClCompile Include="..\adplug\fmopl.c" />
-    <ClCompile Include="..\adplug\fprovide.cpp" />
-    <ClCompile Include="..\adplug\player.cpp" />
-    <ClCompile Include="..\adplug\rix.cpp" />
-    <ClCompile Include="..\adplug\surroundopl.cpp" />
-    <ClCompile Include="..\native_midi\native_midi_common.c" />
-    <ClCompile Include="..\native_midi\native_midi_win32.c" />
-    <ClCompile Include="..\libmad\bit.c" />
-    <ClCompile Include="..\libmad\decoder.c" />
-    <ClCompile Include="..\libmad\fixed.c" />
-    <ClCompile Include="..\libmad\frame.c" />
-    <ClCompile Include="..\libmad\huffman.c" />
-    <ClCompile Include="..\libmad\layer12.c" />
-    <ClCompile Include="..\libmad\layer3.c" />
-    <ClCompile Include="..\libmad\music_mad.c" />
-    <ClCompile Include="..\libmad\stream.c" />
-    <ClCompile Include="..\libmad\synth.c" />
-    <ClCompile Include="..\libmad\timer.c" />
+    <ClCompile Include="..\src\adplug\demuopl.cpp" />
+    <ClCompile Include="..\src\audio.c" />
+    <ClCompile Include="..\src\battle.c" />
+    <ClCompile Include="..\src\ending.c" />
+    <ClCompile Include="..\src\fight.c" />
+    <ClCompile Include="..\src\font.c" />
+    <ClCompile Include="..\src\game.c" />
+    <ClCompile Include="..\src\global.c" />
+    <ClCompile Include="..\src\input.c" />
+    <ClCompile Include="..\src\itemmenu.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\analysis.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\bitrate.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\bitwise.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\block.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\codebook.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\envelope.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\floor0.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\floor1.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\framing.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\info.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\lookup.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\lpc.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\lsp.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\mapping0.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\mdct.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\psy.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\registry.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\res0.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\sharedbook.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\smallft.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\synthesis.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\vorbisenc.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\vorbisfile.c" />
+    <ClCompile Include="..\src\liboggvorbis\src\window.c" />
+    <ClCompile Include="..\src\magicmenu.c" />
+    <ClCompile Include="..\src\main.c" />
+    <ClCompile Include="..\src\map.c" />
+    <ClCompile Include="..\src\midi.c" />
+    <ClCompile Include="..\src\mp3play.c" />
+    <ClCompile Include="..\src\oggplay.c" />
+    <ClCompile Include="..\src\overlay.c" />
+    <ClCompile Include="..\src\palcfg.c" />
+    <ClCompile Include="..\src\palcommon.c" />
+    <ClCompile Include="..\src\palette.c" />
+    <ClCompile Include="..\src\play.c" />
+    <ClCompile Include="..\src\res.c" />
+    <ClCompile Include="..\src\resampler.c" />
+    <ClCompile Include="..\src\rixplay.cpp" />
+    <ClCompile Include="..\src\rngplay.c" />
+    <ClCompile Include="..\src\scene.c" />
+    <ClCompile Include="..\src\script.c" />
+    <ClCompile Include="..\src\sound.c" />
+    <ClCompile Include="..\src\text.c" />
+    <ClCompile Include="..\src\ui.c" />
+    <ClCompile Include="..\src\uibattle.c" />
+    <ClCompile Include="..\src\uigame.c" />
+    <ClCompile Include="..\src\util.c" />
+    <ClCompile Include="..\src\video.c" />
+    <ClCompile Include="..\src\yj1.c" />
+    <ClCompile Include="..\src\adplug\binfile.cpp" />
+    <ClCompile Include="..\src\adplug\binio.cpp" />
+    <ClCompile Include="..\src\adplug\dosbox_opl.cpp" />
+    <ClCompile Include="..\src\adplug\emuopl.cpp" />
+    <ClCompile Include="..\src\adplug\fmopl.c" />
+    <ClCompile Include="..\src\adplug\fprovide.cpp" />
+    <ClCompile Include="..\src\adplug\player.cpp" />
+    <ClCompile Include="..\src\adplug\rix.cpp" />
+    <ClCompile Include="..\src\adplug\surroundopl.cpp" />
+    <ClCompile Include="..\src\native_midi\native_midi_common.c" />
+    <ClCompile Include="..\src\native_midi\native_midi_win32.c" />
+    <ClCompile Include="..\src\libmad\bit.c" />
+    <ClCompile Include="..\src\libmad\decoder.c" />
+    <ClCompile Include="..\src\libmad\fixed.c" />
+    <ClCompile Include="..\src\libmad\frame.c" />
+    <ClCompile Include="..\src\libmad\huffman.c" />
+    <ClCompile Include="..\src\libmad\layer12.c" />
+    <ClCompile Include="..\src\libmad\layer3.c" />
+    <ClCompile Include="..\src\libmad\music_mad.c" />
+    <ClCompile Include="..\src\libmad\stream.c" />
+    <ClCompile Include="..\src\libmad\synth.c" />
+    <ClCompile Include="..\src\libmad\timer.c" />
     <ClCompile Include="win32.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\adplug\adlibemu.h" />
-    <ClInclude Include="..\adplug\dbemuopl.h" />
-    <ClInclude Include="..\adplug\dbopl.h" />
-    <ClInclude Include="..\adplug\kemuopl.h" />
-    <ClInclude Include="..\ascii.h" />
-    <ClInclude Include="..\battle.h" />
-    <ClInclude Include="..\codepage.h" />
-    <ClInclude Include="..\common.h" />
-    <ClInclude Include="..\liboggvorbis\include\ogg\config_types.h" />
-    <ClInclude Include="..\ending.h" />
-    <ClInclude Include="..\fight.h" />
-    <ClInclude Include="..\font.h" />
-    <ClInclude Include="..\fontglyph.h" />
-    <ClInclude Include="..\game.h" />
-    <ClInclude Include="..\global.h" />
-    <ClInclude Include="..\input.h" />
-    <ClInclude Include="..\itemmenu.h" />
-    <ClInclude Include="..\liboggvorbis\include\ogg\ogg.h" />
-    <ClInclude Include="..\liboggvorbis\include\ogg\os_types.h" />
-    <ClInclude Include="..\liboggvorbis\include\vorbis\codec.h" />
-    <ClInclude Include="..\liboggvorbis\include\vorbis\vorbisenc.h" />
-    <ClInclude Include="..\liboggvorbis\include\vorbis\vorbisfile.h" />
-    <ClInclude Include="..\liboggvorbis\src\backends.h" />
-    <ClInclude Include="..\liboggvorbis\src\bitrate.h" />
-    <ClInclude Include="..\liboggvorbis\src\books\coupled\res_books_51.h" />
-    <ClInclude Include="..\liboggvorbis\src\books\coupled\res_books_stereo.h" />
-    <ClInclude Include="..\liboggvorbis\src\books\floor\floor_books.h" />
-    <ClInclude Include="..\liboggvorbis\src\books\uncoupled\res_books_uncoupled.h" />
-    <ClInclude Include="..\liboggvorbis\src\codebook.h" />
-    <ClInclude Include="..\liboggvorbis\src\codec_internal.h" />
-    <ClInclude Include="..\liboggvorbis\src\envelope.h" />
-    <ClInclude Include="..\liboggvorbis\src\highlevel.h" />
-    <ClInclude Include="..\liboggvorbis\src\lookup.h" />
-    <ClInclude Include="..\liboggvorbis\src\lookup_data.h" />
-    <ClInclude Include="..\liboggvorbis\src\lpc.h" />
-    <ClInclude Include="..\liboggvorbis\src\lsp.h" />
-    <ClInclude Include="..\liboggvorbis\src\masking.h" />
-    <ClInclude Include="..\liboggvorbis\src\mdct.h" />
-    <ClInclude Include="..\liboggvorbis\src\misc.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\floor_all.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\psych_11.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\psych_16.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\psych_44.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\psych_8.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\residue_16.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\residue_44.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\residue_44p51.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\residue_44u.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\residue_8.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\setup_11.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\setup_16.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\setup_22.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\setup_32.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\setup_44.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\setup_44p51.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\setup_44u.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\setup_8.h" />
-    <ClInclude Include="..\liboggvorbis\src\modes\setup_X.h" />
-    <ClInclude Include="..\liboggvorbis\src\os.h" />
-    <ClInclude Include="..\liboggvorbis\src\psy.h" />
-    <ClInclude Include="..\liboggvorbis\src\registry.h" />
-    <ClInclude Include="..\liboggvorbis\src\scales.h" />
-    <ClInclude Include="..\liboggvorbis\src\smallft.h" />
-    <ClInclude Include="..\liboggvorbis\src\window.h" />
-    <ClInclude Include="..\magicmenu.h" />
-    <ClInclude Include="..\main.h" />
-    <ClInclude Include="..\map.h" />
-    <ClInclude Include="..\midi.h" />
-    <ClInclude Include="..\palcfg.h" />
-    <ClInclude Include="..\palcommon.h" />
-    <ClInclude Include="..\palette.h" />
-    <ClInclude Include="..\play.h" />
-    <ClInclude Include="..\res.h" />
-    <ClInclude Include="..\resampler.h" />
-    <ClInclude Include="..\players.h" />
-    <ClInclude Include="..\rngplay.h" />
-    <ClInclude Include="..\scene.h" />
-    <ClInclude Include="..\script.h" />
-    <ClInclude Include="..\audio.h" />
-    <ClInclude Include="..\text.h" />
-    <ClInclude Include="..\ui.h" />
-    <ClInclude Include="..\uibattle.h" />
-    <ClInclude Include="..\uigame.h" />
-    <ClInclude Include="..\util.h" />
-    <ClInclude Include="..\video.h" />
-    <ClInclude Include="..\adplug\binfile.h" />
-    <ClInclude Include="..\adplug\binio.h" />
-    <ClInclude Include="..\adplug\demuopl.h" />
-    <ClInclude Include="..\adplug\dosbox_opl.h" />
-    <ClInclude Include="..\adplug\emuopl.h" />
-    <ClInclude Include="..\adplug\fmopl.h" />
-    <ClInclude Include="..\adplug\fprovide.h" />
-    <ClInclude Include="..\adplug\opl.h" />
-    <ClInclude Include="..\adplug\player.h" />
-    <ClInclude Include="..\adplug\rix.h" />
-    <ClInclude Include="..\adplug\surroundopl.h" />
-    <ClInclude Include="..\native_midi\native_midi.h" />
-    <ClInclude Include="..\native_midi\native_midi_common.h" />
-    <ClInclude Include="..\libmad\bit.h" />
-    <ClInclude Include="..\libmad\decoder.h" />
-    <ClInclude Include="..\libmad\fixed.h" />
-    <ClInclude Include="..\libmad\frame.h" />
-    <ClInclude Include="..\libmad\huffman.h" />
-    <ClInclude Include="..\libmad\layer12.h" />
-    <ClInclude Include="..\libmad\layer3.h" />
-    <ClInclude Include="..\libmad\libmad_config.h" />
-    <ClInclude Include="..\libmad\libmad_global.h" />
-    <ClInclude Include="..\libmad\mad.h" />
-    <ClInclude Include="..\libmad\music_mad.h" />
-    <ClInclude Include="..\libmad\stream.h" />
-    <ClInclude Include="..\libmad\synth.h" />
-    <ClInclude Include="..\libmad\timer.h" />
+    <ClInclude Include="..\src\adplug\adlibemu.h" />
+    <ClInclude Include="..\src\adplug\dbemuopl.h" />
+    <ClInclude Include="..\src\adplug\dbopl.h" />
+    <ClInclude Include="..\src\adplug\kemuopl.h" />
+    <ClInclude Include="..\src\ascii.h" />
+    <ClInclude Include="..\src\battle.h" />
+    <ClInclude Include="..\src\codepage.h" />
+    <ClInclude Include="..\src\common.h" />
+    <ClInclude Include="..\src\liboggvorbis\include\ogg\config_types.h" />
+    <ClInclude Include="..\src\ending.h" />
+    <ClInclude Include="..\src\fight.h" />
+    <ClInclude Include="..\src\font.h" />
+    <ClInclude Include="..\src\fontglyph.h" />
+    <ClInclude Include="..\src\game.h" />
+    <ClInclude Include="..\src\global.h" />
+    <ClInclude Include="..\src\input.h" />
+    <ClInclude Include="..\src\itemmenu.h" />
+    <ClInclude Include="..\src\liboggvorbis\include\ogg\ogg.h" />
+    <ClInclude Include="..\src\liboggvorbis\include\ogg\os_types.h" />
+    <ClInclude Include="..\src\liboggvorbis\include\vorbis\codec.h" />
+    <ClInclude Include="..\src\liboggvorbis\include\vorbis\vorbisenc.h" />
+    <ClInclude Include="..\src\liboggvorbis\include\vorbis\vorbisfile.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\backends.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\bitrate.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\books\coupled\res_books_51.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\books\coupled\res_books_stereo.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\books\floor\floor_books.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\books\uncoupled\res_books_uncoupled.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\codebook.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\codec_internal.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\envelope.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\highlevel.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\lookup.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\lookup_data.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\lpc.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\lsp.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\masking.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\mdct.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\misc.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\floor_all.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\psych_11.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\psych_16.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\psych_44.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\psych_8.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\residue_16.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\residue_44.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\residue_44p51.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\residue_44u.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\residue_8.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\setup_11.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\setup_16.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\setup_22.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\setup_32.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\setup_44.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\setup_44p51.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\setup_44u.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\setup_8.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\modes\setup_X.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\os.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\psy.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\registry.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\scales.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\smallft.h" />
+    <ClInclude Include="..\src\liboggvorbis\src\window.h" />
+    <ClInclude Include="..\src\magicmenu.h" />
+    <ClInclude Include="..\src\main.h" />
+    <ClInclude Include="..\src\map.h" />
+    <ClInclude Include="..\src\midi.h" />
+    <ClInclude Include="..\src\palcfg.h" />
+    <ClInclude Include="..\src\palcommon.h" />
+    <ClInclude Include="..\src\palette.h" />
+    <ClInclude Include="..\src\play.h" />
+    <ClInclude Include="..\src\res.h" />
+    <ClInclude Include="..\src\resampler.h" />
+    <ClInclude Include="..\src\players.h" />
+    <ClInclude Include="..\src\rngplay.h" />
+    <ClInclude Include="..\src\scene.h" />
+    <ClInclude Include="..\src\script.h" />
+    <ClInclude Include="..\src\audio.h" />
+    <ClInclude Include="..\src\text.h" />
+    <ClInclude Include="..\src\ui.h" />
+    <ClInclude Include="..\src\uibattle.h" />
+    <ClInclude Include="..\src\uigame.h" />
+    <ClInclude Include="..\src\util.h" />
+    <ClInclude Include="..\src\video.h" />
+    <ClInclude Include="..\src\adplug\binfile.h" />
+    <ClInclude Include="..\src\adplug\binio.h" />
+    <ClInclude Include="..\src\adplug\demuopl.h" />
+    <ClInclude Include="..\src\adplug\dosbox_opl.h" />
+    <ClInclude Include="..\src\adplug\emuopl.h" />
+    <ClInclude Include="..\src\adplug\fmopl.h" />
+    <ClInclude Include="..\src\adplug\fprovide.h" />
+    <ClInclude Include="..\src\adplug\opl.h" />
+    <ClInclude Include="..\src\adplug\player.h" />
+    <ClInclude Include="..\src\adplug\rix.h" />
+    <ClInclude Include="..\src\adplug\surroundopl.h" />
+    <ClInclude Include="..\src\native_midi\native_midi.h" />
+    <ClInclude Include="..\src\native_midi\native_midi_common.h" />
+    <ClInclude Include="..\src\libmad\bit.h" />
+    <ClInclude Include="..\src\libmad\decoder.h" />
+    <ClInclude Include="..\src\libmad\fixed.h" />
+    <ClInclude Include="..\src\libmad\frame.h" />
+    <ClInclude Include="..\src\libmad\huffman.h" />
+    <ClInclude Include="..\src\libmad\layer12.h" />
+    <ClInclude Include="..\src\libmad\layer3.h" />
+    <ClInclude Include="..\src\libmad\libmad_config.h" />
+    <ClInclude Include="..\src\libmad\libmad_global.h" />
+    <ClInclude Include="..\src\libmad\mad.h" />
+    <ClInclude Include="..\src\libmad\music_mad.h" />
+    <ClInclude Include="..\src\libmad\stream.h" />
+    <ClInclude Include="..\src\libmad\synth.h" />
+    <ClInclude Include="..\src\libmad\timer.h" />
     <ClInclude Include="pal_config.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sdlpal.cfg.example" />
     <None Include="..\sdlpal.ico" />
-    <None Include="..\libmad\D.dat" />
-    <None Include="..\libmad\imdct_s.dat" />
-    <None Include="..\libmad\qc_table.dat" />
-    <None Include="..\libmad\rq_table.dat" />
-    <None Include="..\libmad\sf_table.dat" />
+    <None Include="..\src\libmad\D.dat" />
+    <None Include="..\src\libmad\imdct_s.dat" />
+    <None Include="..\src\libmad\qc_table.dat" />
+    <None Include="..\src\libmad\rq_table.dat" />
+    <None Include="..\src\libmad\sf_table.dat" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sdlpal.rc" />

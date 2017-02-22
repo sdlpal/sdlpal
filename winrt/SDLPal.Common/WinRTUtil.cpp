@@ -6,7 +6,7 @@
 #include <ppltasks.h>
 #include "../SDLPal.Common/AsyncHelper.h"
 #include "../SDLPal.Common/StringHelper.h"
-#include "../../main.h"
+#include "../../src/main.h"
 
 #include "SDL.h"
 #include "SDL_endian.h"
