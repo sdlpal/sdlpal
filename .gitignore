@@ -32,6 +32,9 @@ BundleArtifacts/
 *.wasm
 *.wast
 
+# Visual Studio Code files
+.vscode/
+
 # Visual Studio 2015 cache/options directory
 .vs/
 
