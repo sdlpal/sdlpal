@@ -341,6 +341,7 @@
 		C622BE711E474CD5000C8970 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		C622BE731E474CE2000C8970 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		C622BE751E474CFC000C8970 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		C626FFBF1E5BCBE700E39DD9 /* pal_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pal_config.h; path = ../../pal_config.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -559,6 +560,7 @@
 		71655066195BB372006E1227 /* SDLPal */ = {
 			isa = PBXGroup;
 			children = (
+				C626FFBF1E5BCBE700E39DD9 /* pal_config.h */,
 				57FB015A1B7A50E0005FCF4C /* codepage.h */,
 				57FB015B1B7A50E0005FCF4C /* fontglyph.h */,
 				57FB015C1B7A50E0005FCF4C /* mp3play.c */,

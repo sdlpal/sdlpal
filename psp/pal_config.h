@@ -1,0 +1,24 @@
+#ifndef PAL_CONFIG_H
+# define PAL_CONFIG_H
+
+# define PAL_HAS_JOYSTICKS     0
+# define PAL_PREFIX            "ms0:/"
+# define PAL_SAVE_PREFIX       "ms0:/PSP/SAVEDATA/SDLPAL/"
+
+# define PAL_DEFAULT_WINDOW_WIDTH   320
+# define PAL_DEFAULT_WINDOW_HEIGHT  240
+
+# if SDL_VERSION_ATLEAST(2,0,0)
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
+# else
+#  define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | SDL_FULLSCREEN)
+# endif
+
+# define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK)
+# define PAL_SCALE_SCREEN   FALSE
+
+# define PAL_PLATFORM         "Sony PSP"
+# define PAL_CREDIT           "(Unknown)"
+# define PAL_PORTYEAR         "2011"
+
+#endif

@@ -7,7 +7,7 @@ CFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.c))
 CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp))
 OFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 
-CFLAGS = -g -Wall -O2 `sdl-config --cflags` -DDINGOO -DPAL_CLASSIC
+CFLAGS = -g -Wall -O2 `sdl-config --cflags` -DDINGOO -DPAL_CLASSIC -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -I.
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = `sdl-config --libs`
 

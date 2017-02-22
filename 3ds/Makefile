@@ -31,7 +31,7 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	sdlpal
 BUILD		:=	build
-SOURCES		:=	.. ../adplug ../libmad
+SOURCES		:=	. .. ../adplug ../libmad
 
 APP_TITLE	:=	SDLPAL
 APP_DESCRIPTION :=	Pal DOS for 3DS
@@ -48,7 +48,7 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -D__3DS__ -D__N3DS__
+CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -D__3DS__ -D__N3DS__ -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -I.
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++14
 

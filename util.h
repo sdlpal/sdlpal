@@ -108,26 +108,6 @@ UTIL_CloseFile(
    FILE                *fp
 );
 
-LPCSTR
-UTIL_BasePath(
-   VOID
-);
-
-LPCSTR
-UTIL_SavePath(
-   VOID
-);
-
-LPCSTR
-UTIL_ConfigPath(
-   VOID
-);
-
-LPCSTR
-UTIL_ScreenShotPath(
-	VOID
-);
-
 BOOL
 UTIL_GetScreenSize(
    DWORD *pdwScreenWidth,
@@ -137,11 +117,6 @@ UTIL_GetScreenSize(
 BOOL
 UTIL_IsAbsolutePath(
 	LPCSTR  lpszFileName
-);
-
-BOOL
-UTIL_TouchEnabled(
-   VOID
 );
 
 INT

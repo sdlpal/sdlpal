@@ -28,9 +28,6 @@ extern "C"
 # endif
 
 #include "palcommon.h"
-#ifdef __EMSCRIPTEN__
-#include <ctype.h>
-#endif
 
 #define     PAL_MAX_SAMPLERATE           48000
 #define     PAL_MAX_VOLUME               100

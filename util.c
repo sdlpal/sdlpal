@@ -330,16 +330,7 @@ TerminateOnError(
 	  PAL_Shutdown(255);
    }
 #else
-
-# if defined(_WIN32)
-   MessageBoxA(0, string, "FATAL ERROR", MB_ICONERROR);
-# elif defined(__linux__)
-   system(va("beep; xmessage -center \"FATAL ERROR: %s\"", string));
-# elif defined(__SYMBIAN32__)
-   UTIL_WriteLog(LOG_DEBUG,"[0x%08x][%s][%s] - %s",(long)TerminateOnError,"TerminateOnError",__FILE__, string);
-   SDL_Delay(3000);
-# endif
-
+   PAL_FATAL_OUTPUT(string);
 #endif
 
 #ifdef _DEBUG
@@ -497,7 +488,7 @@ UTIL_OpenFileForMode(
 	else
 		fp = fopen(va("%s%s", gConfig.pszGamePath, lpszFileName), szMode);
 
-#if !(defined(_WIN32) || defined(__N3DS__))
+#if !defined(PAL_FILESYSTEM_IGNORE_CASE)
 	if (fp == NULL)
 	{
 		//

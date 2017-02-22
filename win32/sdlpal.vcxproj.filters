@@ -652,6 +652,9 @@
     <ClInclude Include="..\audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pal_config.h">
+      <Filter>platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sdlpal.ico">

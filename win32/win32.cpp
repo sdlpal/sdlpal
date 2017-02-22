@@ -265,6 +265,10 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 
 extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 {
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
+	putenv("SDL_VIDEODRIVER=directx");
+#endif
+
 	g_hInstance = GetModuleHandle(nullptr);
 #ifndef __MINGW32__ // mingw's windows sdk dont support GetThreadUILanguage, since it's a vista+ API
 	g_wLanguage = GetThreadUILanguage();

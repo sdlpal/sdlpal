@@ -14,7 +14,7 @@ OBJS = adplug/binfile.o adplug/emuopl.o adplug/fprovide.o adplug/rix.o \
 PSPSDK = $(shell psp-config --pspsdk-path)
 
 INCDIR = 
-CFLAGS = -O3 -G0 -Wall -g `$(PSPSDK)/../bin/sdl-config --cflags` -DPSP=1
+CFLAGS = -O3 -G0 -Wall -g `$(PSPSDK)/../bin/sdl-config --cflags` -DPSP=1 -I.
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti `$(PSPSDK)/../bin/sdl-config --cflags`
 ASFLAGS = $(CFLAGS)
 

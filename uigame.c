@@ -2011,7 +2011,7 @@ PAL_QuitGame(
    VOID
 )
 {
-#ifndef __N3DS__
+#if PAL_HAS_CONFIG_PAGE
 	WORD wReturnValue = PAL_TripleMenu(SYSMENU_LABEL_LAUNCHSETTING);
 #else
 	WORD wReturnValue = PAL_ConfirmMenu(); // No config menu available

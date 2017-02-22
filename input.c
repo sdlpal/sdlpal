@@ -24,10 +24,6 @@
 #include "main.h"
 #include <math.h>
 
-#ifdef __N3DS__
-#include <3ds.h>
-#endif
-
 volatile PALINPUTSTATE   g_InputState;
 #if PAL_HAS_JOYSTICKS
 static SDL_Joystick     *g_pJoy = NULL;
@@ -37,10 +33,14 @@ static SDL_Joystick     *g_pJoy = NULL;
 #endif
 BOOL                     g_fUseJoystick = TRUE;
 
-#if defined(GPH)
-#define MIN_DEADZONE -16384
-#define MAX_DEADZONE 16384
-#endif
+static void _default_init_filter() {}
+static int _default_input_event_filter(const SDL_Event *event, volatile PALINPUTSTATE *state) { return 0; }
+static void _default_input_shutdown_filter() {}
+
+static void (*input_init_filter)() = _default_init_filter;
+static int (*input_event_filter)(const SDL_Event *, volatile PALINPUTSTATE *) = _default_input_event_filter;
+static void (*input_shutdown_filter)() = _default_input_shutdown_filter;
+
 
 static VOID
 PAL_KeyboardEventFilter(
@@ -88,20 +88,6 @@ PAL_KeyboardEventFilter(
 
       switch (lpEvent->key.keysym.sym)
       {
-#ifdef __SYMBIAN32__
-      //
-      // Symbian-specific stuff
-      //
-      case SDLK_0:
-         VIDEO_ToggleScaleScreen();
-         break;
-      case SDLK_1:
-         AUDIO_DecreaseVolume();
-         break;
-      case SDLK_3:
-         AUDIO_IncreaseVolume();
-         break;
-#endif
       case SDLK_UP:
       case SDLK_KP8:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirNorth)
@@ -142,15 +128,6 @@ PAL_KeyboardEventFilter(
          }
          break;
 
-#if defined(DINGOO)
-      case SDLK_SPACE:
-         g_InputState.dwKeyPress = kKeyMenu;
-         break;
-
-      case SDLK_LCTRL:
-         g_InputState.dwKeyPress = kKeySearch;
-         break;
-#else
       case SDLK_ESCAPE:
       case SDLK_INSERT:
       case SDLK_LALT:
@@ -206,12 +183,6 @@ PAL_KeyboardEventFilter(
          g_InputState.dwKeyPress |= kKeyThrowItem;
          break;
 
-#if defined(__WINRT__)
-      case SDLK_AC_BACK:
-         // If game not started, exit directly
-         if (!gpGlobals->fInMainGame)
-            PAL_Shutdown(0);
-#endif
       case SDLK_q:
          g_InputState.dwKeyPress |= kKeyFlee;
          break;
@@ -229,7 +200,6 @@ PAL_KeyboardEventFilter(
       case SDLK_p:
          VIDEO_SaveScreenshot();
          break;
-#endif
 
       default:
          break;
@@ -496,36 +466,6 @@ PAL_JoystickEventFilter(
 #if PAL_HAS_JOYSTICKS
    switch (lpEvent->type)
    {
-#if defined (GEKKO)
-   case SDL_JOYHATMOTION:
-      switch (lpEvent->jhat.value)
-      {
-      case SDL_HAT_LEFT:
-        g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-        g_InputState.dir = kDirWest;
-        g_InputState.dwKeyPress = kKeyLeft;
-        break;
-
-      case SDL_HAT_RIGHT:
-        g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-        g_InputState.dir = kDirEast;
-        g_InputState.dwKeyPress = kKeyRight;
-        break;
-
-      case SDL_HAT_UP:
-        g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-        g_InputState.dir = kDirNorth;
-        g_InputState.dwKeyPress = kKeyUp;
-        break;
-
-      case SDL_HAT_DOWN:
-        g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-        g_InputState.dir = kDirSouth;
-        g_InputState.dwKeyPress = kKeyDown;
-        break;
-      }
-      break;
-#else
    case SDL_JOYAXISMOTION:
       //
       // Moved an axis on joystick
@@ -536,19 +476,6 @@ PAL_JoystickEventFilter(
          //
          // X axis
          //
-#if defined(GPH)
-      if (lpEvent->jaxis.value > MAX_DEADZONE) {
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirEast;
-         g_InputState.dwKeyPress = kKeyRight;
-      } else if (lpEvent->jaxis.value < MIN_DEADZONE) {
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirWest;
-         g_InputState.dwKeyPress = kKeyLeft;
-      } else {
-         g_InputState.dir = kDirUnknown;
-      }
-#else
          if (lpEvent->jaxis.value > 20000)
          {
             if (g_InputState.dir != kDirEast)
@@ -576,26 +503,12 @@ PAL_JoystickEventFilter(
             }
             g_InputState.prevdir = kDirUnknown;
          }
-#endif
          break;
 
       case 1:
          //
          // Y axis
          //
-#if defined(GPH)
-      if (lpEvent->jaxis.value > MAX_DEADZONE) {
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirSouth;
-         g_InputState.dwKeyPress = kKeyDown;
-      } else if (lpEvent->jaxis.value < MIN_DEADZONE) {
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirNorth;
-         g_InputState.dwKeyPress = kKeyUp;
-      } else {
-         g_InputState.dir = kDirUnknown;
-      }
-#else
          if (lpEvent->jaxis.value > 20000)
          {
             if (g_InputState.dir != kDirSouth)
@@ -623,46 +536,14 @@ PAL_JoystickEventFilter(
             }
             g_InputState.prevdir = kDirUnknown;
          }
-#endif
          break;
       }
       break;
-#endif
 
    case SDL_JOYBUTTONDOWN:
       //
       // Pressed the joystick button
       //
-#if defined(GPH)
-      switch (lpEvent->jbutton.button)
-      {
-#if defined(GP2XWIZ)
-      case 14:
-#elif defined(CAANOO)
-      case 3:
-#endif
-         g_InputState.dwKeyPress = kKeyMenu;
-         break;
-
-#if defined(GP2XWIZ)
-      case 13:
-#elif defined(CAANOO)
-      case 2:
-#endif
-         g_InputState.dwKeyPress = kKeySearch;
-         break;
-#else
-#if defined(GEKKO)
-      switch (lpEvent->jbutton.button)
-      {
-      case 2:
-         g_InputState.dwKeyPress |= kKeyMenu;
-         break;
-
-      case 3:
-         g_InputState.dwKeyPress |= kKeySearch;
-         break;
-#else
       switch (lpEvent->jbutton.button & 1)
       {
       case 0:
@@ -672,8 +553,6 @@ PAL_JoystickEventFilter(
       case 1:
          g_InputState.dwKeyPress |= kKeySearch;
          break;
-#endif
-#endif
       }
       break;
    }
@@ -1083,14 +962,7 @@ PAL_InitInput(
    SDL_EnableKeyRepeat(0, 0);
 #endif
 
-#ifdef __N3DS__
-   SDL_N3DSKeyBind(KEY_A, SDLK_RETURN);
-   SDL_N3DSKeyBind(KEY_B, SDLK_ESCAPE);
-   SDL_N3DSKeyBind(KEY_CPAD_UP, SDLK_UP);
-   SDL_N3DSKeyBind(KEY_CPAD_DOWN, SDLK_DOWN);
-   SDL_N3DSKeyBind(KEY_CPAD_LEFT, SDLK_LEFT);
-   SDL_N3DSKeyBind(KEY_CPAD_RIGHT, SDLK_RIGHT);
-#endif
+   input_init_filter();
 }
 
 VOID
@@ -1113,21 +985,22 @@ PAL_ShutdownInput(
 --*/
 {
 #if PAL_HAS_JOYSTICKS
-#if SDL_VERSION_ATLEAST(2,0,0)
+# if SDL_VERSION_ATLEAST(2,0,0)
    if (g_pJoy != NULL)
    {
       SDL_JoystickClose(g_pJoy);
       g_pJoy = NULL;
    }
-#else
+# else
    if (SDL_JoystickOpened(0))
    {
       assert(g_pJoy != NULL);
       SDL_JoystickClose(g_pJoy);
       g_pJoy = NULL;
    }
+# endif
 #endif
-#endif
+   input_shutdown_filter();
 }
 
 VOID
@@ -1177,7 +1050,7 @@ PAL_PollEvent(
    SDL_Event evt;
 
    int ret = SDL_PollEvent(&evt);
-   if (ret != 0)
+   if (ret != 0 && !input_event_filter(&evt, &g_InputState))
    {
       PAL_EventFilter(&evt);
    }
@@ -1188,4 +1061,39 @@ PAL_PollEvent(
    }
 
    return ret;
+}
+
+VOID
+PAL_RegisterInputFilter(
+   void (*init_filter)(),
+   int (*event_filter)(const SDL_Event *, volatile PALINPUTSTATE *),
+   void (*shutdown_filter)()
+)
+/*++
+  Purpose:
+
+    Register caller-defined input event filter.
+
+  Parameters:
+
+    [IN] init_filter - Filter that will be called inside PAL_InitInput
+	[IN] event_filter - Filter that will be called inside PAL_PollEvent, 
+	                    return non-zero value from this filter disables
+						further internal event processing.
+	[IN] shutdown_filter - Filter that will be called inside PAL_ShutdownInput
+
+	Passing NULL to either parameter means the caller does not provide such filter.
+
+  Return value:
+
+    None.
+
+--*/
+{
+	if (init_filter)
+		input_init_filter = init_filter;
+	if (event_filter)
+		input_event_filter = event_filter;
+	if (shutdown_filter)
+		input_shutdown_filter = shutdown_filter;
 }

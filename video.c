@@ -20,9 +20,6 @@
 //
 
 #include "main.h"
-#ifndef __WIN32__
-#include <sys/time.h>
-#endif
 
 // Screen buffer
 SDL_Surface              *gpScreen           = NULL;
@@ -44,11 +41,7 @@ static SDL_Surface       *gpScreenReal       = NULL;
 
 volatile BOOL g_bRenderPaused = FALSE;
 
-#if (defined (__SYMBIAN32__) && !defined (__S60_5X__)) || defined (PSP) || defined (GEKKO) || defined(__N3DS__)
-   static BOOL bScaleScreen = FALSE;
-#else
-   static BOOL bScaleScreen = TRUE;
-#endif
+static BOOL bScaleScreen = PAL_SCALE_SCREEN;
 
 // Shake times and level
 static WORD               g_wShakeTime       = 0;
@@ -571,7 +564,7 @@ VIDEO_SetPalette(
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenBak, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenReal, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
-#if (defined (__SYMBIAN32__)) || (defined (__N3DS__))
+# if defined(PAL_FORCE_UPDATE_ON_PALETTE_SET)
    {
       static UINT32 time = 0;
       if (SDL_GetTicks() - time > 50)
@@ -580,7 +573,7 @@ VIDEO_SetPalette(
 	      time = SDL_GetTicks();
       }
    }
-#endif
+# endif
 #endif
 }
 
@@ -634,18 +627,10 @@ VIDEO_Resize(
 
    if (gpScreenReal == NULL)
    {
-#ifdef __SYMBIAN32__
-#ifdef __S60_5X__
-      gpScreenReal = SDL_SetVideoMode(640, 360, 8, SDL_SWSURFACE);
-#else
-      gpScreenReal = SDL_SetVideoMode(320, 240, 8, SDL_SWSURFACE);
-#endif
-#else
       //
-      // Fall back to 640x480 software windowed mode.
+      // Fall back to software windowed mode in default size.
       //
-      gpScreenReal = SDL_SetVideoMode(640, 480, 8, SDL_SWSURFACE);
-#endif
+      gpScreenReal = SDL_SetVideoMode(PAL_DEFAULT_WINDOW_WIDTH, PAL_DEFAULT_WINDOW_HEIGHT, 8, SDL_SWSURFACE);
    }
 
    SDL_SetPalette(gpScreenReal, SDL_PHYSPAL | SDL_LOGPAL, palette, 0, i);
@@ -686,7 +671,7 @@ VIDEO_ToggleScaleScreen(
 /*++
   Purpose:
 
-    Toggle scalescreen mode.
+    Toggle scalescreen mode, only used in some platforms.
 
   Parameters:
 
@@ -698,11 +683,9 @@ VIDEO_ToggleScaleScreen(
 
 --*/
 {
-#ifdef __SYMBIAN32__
    bScaleScreen = !bScaleScreen;
-   VIDEO_Resize(320, 240);
+   VIDEO_Resize(PAL_DEFAULT_WINDOW_WIDTH, PAL_DEFAULT_WINDOW_HEIGHT);
    VIDEO_UpdateScreen(NULL);
-#endif
 }
 
 VOID
