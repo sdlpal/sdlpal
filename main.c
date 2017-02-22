@@ -483,6 +483,7 @@ PAL_SplashScreen(
    PAL_FadeOut(1);
 }
 
+#ifndef UNIT_TEST
 int
 main(
    int      argc,
@@ -563,3 +564,5 @@ main(
    assert(FALSE);
    return 255;
 }
+#endif //UNIT_TEST
+

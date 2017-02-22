@@ -66,44 +66,27 @@
 		7104FDB40D772FBC00A97E53 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FDA50D772FBC00A97E53 /* player.cpp */; };
 		7104FDB60D772FBC00A97E53 /* rix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FDA70D772FBC00A97E53 /* rix.cpp */; };
 		71147E4014085E31003FB2DB /* surroundopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71147E3E14085E31003FB2DB /* surroundopl.cpp */; };
-		71147E4114085E31003FB2DB /* surroundopl.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71147E3F14085E31003FB2DB /* surroundopl.h */; };
-		7138FD0E1424E4810060DE76 /* demuopl.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7138FD0B1424E4810060DE76 /* demuopl.h */; };
 		7138FD0F1424E4810060DE76 /* dosbox_opl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */; };
-		7138FD101424E4810060DE76 /* dosbox_opl.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7138FD0D1424E4810060DE76 /* dosbox_opl.h */; };
 		716EB9BC0D77318900D5DE1F /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD3F0D772F6300A97E53 /* game.c */; };
 		716EB9C70D77340300D5DE1F /* sdlpal.icns in Resources */ = {isa = PBXBuildFile; fileRef = 716EB9C60D77340300D5DE1F /* sdlpal.icns */; };
 		716EB9CA0D77347B00D5DE1F /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD5E0D772F6300A97E53 /* ui.c */; };
 		717AE630182663E100B10A11 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 717AE62F182663E100B10A11 /* SDL2.framework */; };
 		71E23E9113F6D1AD001287B6 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E7113F6D1AD001287B6 /* bit.c */; };
-		71E23E9213F6D1AD001287B6 /* bit.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E7213F6D1AD001287B6 /* bit.h */; };
 		71E23E9313F6D1AD001287B6 /* D.dat in Resources */ = {isa = PBXBuildFile; fileRef = 71E23E7313F6D1AD001287B6 /* D.dat */; };
 		71E23E9413F6D1AD001287B6 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E7413F6D1AD001287B6 /* decoder.c */; };
-		71E23E9513F6D1AD001287B6 /* decoder.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E7513F6D1AD001287B6 /* decoder.h */; };
 		71E23E9613F6D1AD001287B6 /* fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E7613F6D1AD001287B6 /* fixed.c */; };
-		71E23E9713F6D1AD001287B6 /* fixed.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E7713F6D1AD001287B6 /* fixed.h */; };
 		71E23E9813F6D1AD001287B6 /* frame.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E7813F6D1AD001287B6 /* frame.c */; };
-		71E23E9913F6D1AD001287B6 /* frame.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E7913F6D1AD001287B6 /* frame.h */; };
 		71E23E9A13F6D1AD001287B6 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E7A13F6D1AD001287B6 /* huffman.c */; };
-		71E23E9B13F6D1AD001287B6 /* huffman.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E7B13F6D1AD001287B6 /* huffman.h */; };
 		71E23E9C13F6D1AD001287B6 /* imdct_s.dat in Resources */ = {isa = PBXBuildFile; fileRef = 71E23E7C13F6D1AD001287B6 /* imdct_s.dat */; };
 		71E23E9D13F6D1AD001287B6 /* layer3.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E7D13F6D1AD001287B6 /* layer3.c */; };
-		71E23E9E13F6D1AD001287B6 /* layer3.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E7E13F6D1AD001287B6 /* layer3.h */; };
 		71E23E9F13F6D1AD001287B6 /* layer12.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E7F13F6D1AD001287B6 /* layer12.c */; };
-		71E23EA013F6D1AD001287B6 /* layer12.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E8013F6D1AD001287B6 /* layer12.h */; };
-		71E23EA113F6D1AD001287B6 /* libmad_config.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E8113F6D1AD001287B6 /* libmad_config.h */; };
-		71E23EA213F6D1AD001287B6 /* libmad_global.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E8213F6D1AD001287B6 /* libmad_global.h */; };
-		71E23EA313F6D1AD001287B6 /* mad.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E8313F6D1AD001287B6 /* mad.h */; };
 		71E23EA413F6D1AD001287B6 /* music_mad.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E8413F6D1AD001287B6 /* music_mad.c */; };
-		71E23EA513F6D1AD001287B6 /* music_mad.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E8513F6D1AD001287B6 /* music_mad.h */; };
 		71E23EA613F6D1AD001287B6 /* qc_table.dat in Resources */ = {isa = PBXBuildFile; fileRef = 71E23E8613F6D1AD001287B6 /* qc_table.dat */; };
 		71E23EA713F6D1AD001287B6 /* rq_table.dat in Resources */ = {isa = PBXBuildFile; fileRef = 71E23E8713F6D1AD001287B6 /* rq_table.dat */; };
 		71E23EA813F6D1AD001287B6 /* sf_table.dat in Resources */ = {isa = PBXBuildFile; fileRef = 71E23E8813F6D1AD001287B6 /* sf_table.dat */; };
 		71E23EA913F6D1AD001287B6 /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E8913F6D1AD001287B6 /* stream.c */; };
-		71E23EAA13F6D1AD001287B6 /* stream.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E8A13F6D1AD001287B6 /* stream.h */; };
 		71E23EAB13F6D1AD001287B6 /* synth.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E8B13F6D1AD001287B6 /* synth.c */; };
-		71E23EAC13F6D1AD001287B6 /* synth.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E8C13F6D1AD001287B6 /* synth.h */; };
 		71E23EAD13F6D1AD001287B6 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E8D13F6D1AD001287B6 /* timer.c */; };
-		71E23EAE13F6D1AD001287B6 /* timer.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 71E23E8E13F6D1AD001287B6 /* timer.h */; };
 		71E27E050D8C7E2F0048BA16 /* fight.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E27E030D8C7E2F0048BA16 /* fight.c */; };
 		71F0F6D70DAA63B400F88C16 /* ending.c in Sources */ = {isa = PBXBuildFile; fileRef = 71F0F6D10DAA63B400F88C16 /* ending.c */; };
 		71F0F6D90DAA63B500F88C16 /* itemmenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 71F0F6D30DAA63B400F88C16 /* itemmenu.c */; };
@@ -111,6 +94,12 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C602B0021CEF3E6C003A7B09 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C602B0011CEF3E6C003A7B09 /* palcfg.c */; };
+		C626003D1E62058F00E39DD9 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = C626003C1E62058F00E39DD9 /* gtest-all.cc */; };
+		C62600401E620C7300E39DD9 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C626FFE61E6204BE00E39DD9 /* Info.plist */; };
+		C62600431E620CE700E39DD9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C62600421E620CE700E39DD9 /* Cocoa.framework */; };
+		C62600451E620F0500E39DD9 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = C62600441E620F0500E39DD9 /* GoogleTests.mm */; };
+		C62600481E6210B200E39DD9 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 717AE62F182663E100B10A11 /* SDL2.framework */; };
+		C62600491E62139C00E39DD9 /* test_swprintf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C62600461E62105500E39DD9 /* test_swprintf.cpp */; };
 		C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11C1CFAF1780037E9A2 /* overlay.c */; };
 		C65BC11F1CFAF7790037E9A2 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11E1CFAF7790037E9A2 /* audio.c */; };
 /* End PBXBuildFile section */
@@ -122,23 +111,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				71E23E9213F6D1AD001287B6 /* bit.h in Copy Frameworks into .app bundle */,
-				71E23E9513F6D1AD001287B6 /* decoder.h in Copy Frameworks into .app bundle */,
-				71E23E9713F6D1AD001287B6 /* fixed.h in Copy Frameworks into .app bundle */,
-				71E23E9913F6D1AD001287B6 /* frame.h in Copy Frameworks into .app bundle */,
-				71E23E9B13F6D1AD001287B6 /* huffman.h in Copy Frameworks into .app bundle */,
-				71E23E9E13F6D1AD001287B6 /* layer3.h in Copy Frameworks into .app bundle */,
-				71E23EA013F6D1AD001287B6 /* layer12.h in Copy Frameworks into .app bundle */,
-				71E23EA113F6D1AD001287B6 /* libmad_config.h in Copy Frameworks into .app bundle */,
-				71E23EA213F6D1AD001287B6 /* libmad_global.h in Copy Frameworks into .app bundle */,
-				71E23EA313F6D1AD001287B6 /* mad.h in Copy Frameworks into .app bundle */,
-				71E23EA513F6D1AD001287B6 /* music_mad.h in Copy Frameworks into .app bundle */,
-				71E23EAA13F6D1AD001287B6 /* stream.h in Copy Frameworks into .app bundle */,
-				71E23EAC13F6D1AD001287B6 /* synth.h in Copy Frameworks into .app bundle */,
-				71E23EAE13F6D1AD001287B6 /* timer.h in Copy Frameworks into .app bundle */,
-				71147E4114085E31003FB2DB /* surroundopl.h in Copy Frameworks into .app bundle */,
-				7138FD0E1424E4810060DE76 /* demuopl.h in Copy Frameworks into .app bundle */,
-				7138FD101424E4810060DE76 /* dosbox_opl.h in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -300,7 +272,7 @@
 		7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.cpp.cpp; name = dosbox_opl.cpp; path = adplug/dosbox_opl.cpp; sourceTree = "<group>"; };
 		7138FD0D1424E4810060DE76 /* dosbox_opl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.c.h; name = dosbox_opl.h; path = adplug/dosbox_opl.h; sourceTree = "<group>"; };
 		716EB9C60D77340300D5DE1F /* sdlpal.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sdlpal.icns; sourceTree = SOURCE_ROOT; };
-		717AE62F182663E100B10A11 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		717AE62F182663E100B10A11 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../Library/Frameworks/SDL2.framework; sourceTree = SOURCE_ROOT; };
 		71E23E7113F6D1AD001287B6 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.c; name = bit.c; path = libmad/bit.c; sourceTree = "<group>"; };
 		71E23E7213F6D1AD001287B6 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = bit.h; path = libmad/bit.h; sourceTree = "<group>"; };
 		71E23E7313F6D1AD001287B6 /* D.dat */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = text; name = D.dat; path = libmad/D.dat; sourceTree = "<group>"; };
@@ -342,7 +314,14 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Pal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C602B0011CEF3E6C003A7B09 /* palcfg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = palcfg.c; sourceTree = "<group>"; };
+		C626003C1E62058F00E39DD9 /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "gtest-all.cc"; path = "../../3rd/googletest/googletest/src/gtest-all.cc"; sourceTree = "<group>"; };
+		C626003E1E6206AA00E39DD9 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		C62600421E620CE700E39DD9 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		C62600441E620F0500E39DD9 /* GoogleTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GoogleTests.mm; sourceTree = "<group>"; };
+		C62600461E62105500E39DD9 /* test_swprintf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_swprintf.cpp; path = ../../tests/test_swprintf.cpp; sourceTree = "<group>"; };
 		C626FFC31E5BD49100E39DD9 /* pal_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pal_config.h; path = macos/pal_config.h; sourceTree = "<group>"; };
+		C626FFE21E6204BE00E39DD9 /* PalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C626FFE61E6204BE00E39DD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C65BC11C1CFAF1780037E9A2 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay.c; sourceTree = "<group>"; };
 		C65BC11E1CFAF7790037E9A2 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -354,6 +333,15 @@
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				717AE630182663E100B10A11 /* SDL2.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C626FFDF1E6204BE00E39DD9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C62600431E620CE700E39DD9 /* Cocoa.framework in Frameworks */,
+				C62600481E6210B200E39DD9 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,6 +370,7 @@
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* Pal.app */,
+				C626FFE21E6204BE00E39DD9 /* PalTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -394,6 +383,7 @@
 				7104FD990D772FAA00A97E53 /* adplug */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				C626FFE31E6204BE00E39DD9 /* PalTests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -485,6 +475,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C62600421E620CE700E39DD9 /* Cocoa.framework */,
+				C626003E1E6206AA00E39DD9 /* XCTest.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
@@ -714,6 +706,17 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
+		C626FFE31E6204BE00E39DD9 /* PalTests */ = {
+			isa = PBXGroup;
+			children = (
+				C62600461E62105500E39DD9 /* test_swprintf.cpp */,
+				C626003C1E62058F00E39DD9 /* gtest-all.cc */,
+				C62600441E620F0500E39DD9 /* GoogleTests.mm */,
+				C626FFE61E6204BE00E39DD9 /* Info.plist */,
+			);
+			path = PalTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -736,6 +739,23 @@
 			productReference = 8D1107320486CEB800E47090 /* Pal.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C626FFE11E6204BE00E39DD9 /* PalTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C626FFE91E6204BE00E39DD9 /* Build configuration list for PBXNativeTarget "PalTests" */;
+			buildPhases = (
+				C626FFDE1E6204BE00E39DD9 /* Sources */,
+				C626FFDF1E6204BE00E39DD9 /* Frameworks */,
+				C626FFE01E6204BE00E39DD9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PalTests;
+			productName = PalTests;
+			productReference = C626FFE21E6204BE00E39DD9 /* PalTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -743,6 +763,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0820;
+				TargetAttributes = {
+					C626FFE11E6204BE00E39DD9 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 8D1107260486CEB800E47090;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Pal" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -756,6 +783,7 @@
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* Pal */,
+				C626FFE11E6204BE00E39DD9 /* PalTests */,
 			);
 		};
 /* End PBXProject section */
@@ -772,6 +800,14 @@
 				71E23EA613F6D1AD001287B6 /* qc_table.dat in Resources */,
 				71E23EA713F6D1AD001287B6 /* rq_table.dat in Resources */,
 				71E23EA813F6D1AD001287B6 /* sf_table.dat in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C626FFE01E6204BE00E39DD9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C62600401E620C7300E39DD9 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,6 +901,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C626FFDE1E6204BE00E39DD9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C626003D1E62058F00E39DD9 /* gtest-all.cc in Sources */,
+				C62600451E620F0500E39DD9 /* GoogleTests.mm in Sources */,
+				C62600491E62139C00E39DD9 /* test_swprintf.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -920,8 +966,8 @@
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
 					/Library/Frameworks/SDL2.framework/Headers,
-					./liboggvorbis/include,
-					./liboggvorbis/src,
+					../liboggvorbis/include,
+					../liboggvorbis/src,
 					"$(HEADER_SEARCH_PATHS)",
 				);
 				INFOPLIST_FILE = Info.plist;
@@ -1002,6 +1048,105 @@
 			};
 			name = Release;
 		};
+		C626FFEA1E6204BE00E39DD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+					"$(FRAMEWORK_SEARCH_PATHS)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"UNIT_TEST=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					../liboggvorbis/include,
+					../liboggvorbis/src,
+					../3rd/googletest/googletest/,
+					../3rd/googletest/googletest/include,
+					/Library/Frameworks/SDL2.framework/Headers,
+					"$(HEADER_SEARCH_PATHS)",
+				);
+				INFOPLIST_FILE = PalTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = user.PalTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pal.app/Contents/MacOS/Pal";
+				USER_HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL2.framework/Headers $(HEADER_SEARCH_PATHS)";
+			};
+			name = Debug;
+		};
+		C626FFEB1E6204BE00E39DD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+					"$(FRAMEWORK_SEARCH_PATHS)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "UNIT_TEST=1";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					../liboggvorbis/include,
+					../liboggvorbis/src,
+					../3rd/googletest/googletest/,
+					../3rd/googletest/googletest/include,
+					/Library/Frameworks/SDL2.framework/Headers,
+					"$(HEADER_SEARCH_PATHS)",
+				);
+				INFOPLIST_FILE = PalTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = user.PalTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pal.app/Contents/MacOS/Pal";
+				USER_HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL2.framework/Headers $(HEADER_SEARCH_PATHS)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1019,6 +1164,15 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C626FFE91E6204BE00E39DD9 /* Build configuration list for PBXNativeTarget "PalTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C626FFEA1E6204BE00E39DD9 /* Debug */,
+				C626FFEB1E6204BE00E39DD9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
