@@ -2,12 +2,12 @@ TARGET = boot
 
 HOST = powerpc-eabi-
 
-SOURCES = . .. ../adplug
+SOURCES = . ../src ../src/adplug
 CFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.c)) 
 CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp))
 OFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 
-CFLAGS = -g -Wall -O2 `sdl-config --cflags` -DGEKKO -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -I.
+CFLAGS = -g -Wall -O2 `sdl-config --cflags` -DGEKKO -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -I. -I../src
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = `sdl-config --libs` -DGEKKO -mrvl
 

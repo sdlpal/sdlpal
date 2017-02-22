@@ -5,11 +5,11 @@ TARGET = sdlpal.html
 HOST =
 
 
-CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) em.c
-CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
+CFILES = $(wildcard ../src/adplug/*.c) $(wildcard ../src/libmad/*.c) $(wildcard ../src/liboggvorbis/src/*.c) $(wildcard ../src/*.c) em.c
+CPPFILES = $(wildcard ../src/adplug/*.cpp) $(wildcard ../src/*.cpp) $(wildcard ./*.cpp)
 OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 
-CFLAGS = -I${EMSCRIPTEN_TOOLCHAIN}/include/SDL2 -g -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS
+CFLAGS = -I${EMSCRIPTEN_TOOLCHAIN}/include/SDL2 -g -Wall -O2 -fno-strict-aliasing -I. -I../src -I../src/liboggvorbis/include -I../src/liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS
 LDFLAGS = -L${EMSCRIPTEN_TOOLCHAIN}/lib -lSDL2 -lm -lstdc++ --preload-file data -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -s DEMANGLE_SUPPORT=1 -s WASM=1 -s ASYNCIFY=1
 
 .c.o:

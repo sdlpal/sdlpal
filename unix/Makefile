@@ -4,11 +4,11 @@ TARGET = sdlpal
 
 HOST =
 
-CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c)
-CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
+CFILES = $(wildcard ../src/adplug/*.c) $(wildcard ../src/libmad/*.c) $(wildcard ../src/liboggvorbis/src/*.c) $(wildcard ../src/*.c)
+CPPFILES = $(wildcard ../src/adplug/*.cpp) $(wildcard ../src/*.cpp) $(wildcard ./*.cpp)
 OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 
-CCFLAGS = `sdl2-config --cflags` -g -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS
+CCFLAGS = `sdl2-config --cflags` -g -Wall -O2 -fno-strict-aliasing -I. -I../src -I../src/liboggvorbis/include -I../src/liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS
 CXXFLAGS = $(CCFLAGS) -std=c++11 `fltk-config --cxxflags`
 CFLAGS = $(CCFLAGS) -std=gnu99 `fltk-config --cflags`
 LDFLAGS = `sdl2-config --libs` `fltk-config --ldflags` -lstdc++ -lm
@@ -23,4 +23,4 @@ $(TARGET): $(OBJFILES)
 	$(HOST)gcc $(CXXFLAGS) -c $< -o $@
 
 clean:
-	-rm -f $(TARGET) *.o ../*.o ../adplug/*.o ../libmad/*.o ../liboggvorbis/src/*.o
+	-rm -f $(TARGET) *.o ../src/*.o ../src/adplug/*.o ../src/libmad/*.o ../src/liboggvorbis/src/*.o
