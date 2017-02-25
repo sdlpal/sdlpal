@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{837BDF47-9375-4C30-866B-07E262E94A01}</ProjectGuid>
-    <RootNamespace>sdlpal</RootNamespace>
+    <ProjectGuid>{FF96772A-FC17-4B67-B770-F4E09DECC15A}</ProjectGuid>
+    <RootNamespace>sdlpal-test</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -74,10 +74,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\SDL2\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\SDL2\VisualC\$(Platform)\$(Configuration)\;..\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_gta</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>..\SDL2\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\SDL2\VisualC\$(Platform)\$(Configuration)\;..\SDL2\lib\x64;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_gta</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\SDL2\include;$(IncludePath)</IncludePath>
@@ -93,7 +95,7 @@
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\Release/sdlpal_sdl2.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Release/sdlpal-test_sdl2.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
@@ -122,7 +124,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <TypeLibraryName>.\Release/sdlpal_sdl2.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Release/sdlpal-test_sdl2.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
@@ -151,13 +153,13 @@
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\Debug/sdlpal_sdl2.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Debug/sdlpal-test_sdl2.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\3rd\googletest\googletest;..\3rd\googletest\googletest\include;.\packages\sdl2.2.0.5\build\native\include;..\;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>UNIT_TEST;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -169,11 +171,12 @@
       <Culture>0x0804</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;sdl2.lib;sdl2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;sdl2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>.\packages\sdl2.2.0.5\build\native\lib\Win32\dynamic;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake />
   </ItemDefinitionGroup>
@@ -182,12 +185,12 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <TypeLibraryName>.\Debug/sdlpal_sdl2.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Debug/sdlpal-test_sdl2.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\3rd\googletest\googletest;..\3rd\googletest\googletest\include;.\packages\sdl2.2.0.5\build\native\include;..\;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -199,14 +202,16 @@
       <Culture>0x0804</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;sdl2.lib;sdl2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;sdl2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>.\packages\sdl2.2.0.5\build\native\lib\x64\dynamic;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rd\googletest\googletest\src\gtest-all.cc" />
     <ClCompile Include="..\adplug\adlibemu.c" />
     <ClCompile Include="..\adplug\dbemuopl.cpp" />
     <ClCompile Include="..\adplug\dbopl.cpp">
@@ -271,6 +276,8 @@
     <ClCompile Include="..\scene.c" />
     <ClCompile Include="..\script.c" />
     <ClCompile Include="..\sound.c" />
+    <ClCompile Include="..\tests\testmain.cpp" />
+    <ClCompile Include="..\tests\test_swprintf.cpp" />
     <ClCompile Include="..\text.c" />
     <ClCompile Include="..\ui.c" />
     <ClCompile Include="..\uibattle.c" />

@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+﻿#include <gtest/gtest.h>
 extern "C"{
     #include "common.h"
     #include "palcommon.h"

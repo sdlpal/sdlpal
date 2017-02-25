@@ -1,9 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26206.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdlpal", "sdlpal.vcxproj", "{837BDF47-9375-4C30-866B-07E262E94A01}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdlpal-test", "sdlpal-test.vcxproj", "{FF96772A-FC17-4B67-B770-F4E09DECC15A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B521C9E7-57F0-46B4-B6AC-34A898C79E1E}"
+	ProjectSection(SolutionItems) = preProject
+		sdlpal.gta.runsettings = sdlpal.gta.runsettings
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +28,14 @@ Global
 		{837BDF47-9375-4C30-866B-07E262E94A01}.Release|Win32.Build.0 = Release|Win32
 		{837BDF47-9375-4C30-866B-07E262E94A01}.Release|x64.ActiveCfg = Release|x64
 		{837BDF47-9375-4C30-866B-07E262E94A01}.Release|x64.Build.0 = Release|x64
+		{FF96772A-FC17-4B67-B770-F4E09DECC15A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FF96772A-FC17-4B67-B770-F4E09DECC15A}.Debug|Win32.Build.0 = Debug|Win32
+		{FF96772A-FC17-4B67-B770-F4E09DECC15A}.Debug|x64.ActiveCfg = Debug|x64
+		{FF96772A-FC17-4B67-B770-F4E09DECC15A}.Debug|x64.Build.0 = Debug|x64
+		{FF96772A-FC17-4B67-B770-F4E09DECC15A}.Release|Win32.ActiveCfg = Release|Win32
+		{FF96772A-FC17-4B67-B770-F4E09DECC15A}.Release|Win32.Build.0 = Release|Win32
+		{FF96772A-FC17-4B67-B770-F4E09DECC15A}.Release|x64.ActiveCfg = Release|x64
+		{FF96772A-FC17-4B67-B770-F4E09DECC15A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
