@@ -7,8 +7,8 @@
 #include "MainPage.xaml.h"
 #include "StringHelper.h"
 #include "AsyncHelper.h"
-#include "../../global.h"
-#include "../../palcfg.h"
+#include "../../src/global.h"
+#include "../../src/palcfg.h"
 
 using namespace SDLPal;
 

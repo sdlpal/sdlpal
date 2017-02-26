@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../global.h"
-#include "../../util.h"
-#include "../../palcfg.h"
+#include "../src/global.h"
+#include "../src/util.h"
+#include "../src/palcfg.h"
 
 #ifndef PAL_NO_LAUNCH_UI
 
