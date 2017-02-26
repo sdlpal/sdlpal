@@ -54,6 +54,12 @@
     <Filter Include="platform">
       <UniqueIdentifier>{06f44698-1e02-440e-bc40-9858a46c2d8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Test Files">
+      <UniqueIdentifier>{c04132fc-026a-4e64-892d-76834bbdaef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test Files\deps">
+      <UniqueIdentifier>{5f2a83a2-9824-4e9e-a352-8dc90c92fbde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\battle.c">
@@ -310,6 +316,15 @@
     </ClCompile>
     <ClCompile Include="..\audio.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rd\googletest\googletest\src\gtest-all.cc">
+      <Filter>Test Files\deps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tests\test_main.cpp">
+      <Filter>Test Files\deps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tests\test_swprintf.cpp">
+      <Filter>Test Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

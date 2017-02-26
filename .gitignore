@@ -23,6 +23,7 @@ bld/
 [Oo]bj/
 Generated Files/
 BundleArtifacts/
+[Tt]est/
 *.o
 *.bc
 *.data

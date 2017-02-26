@@ -5,22 +5,17 @@ extern "C"{
     #include "text.h"
 }
 
-#define swprintf_wrapper( buffer, count, format, ...) ( \
-PAL_swprintf( buffer, count, format, ##__VA_ARGS__ ), \
-buffer \
-)
-
-TEST(sdlpal, PAL_swprintf) {
+TEST(sdlpal, PALswprintf) {
     WCHAR test_buf[256];
-    EXPECT_EQ(0, wcsncmp( L"测试",    swprintf_wrapper( test_buf, sizeof(test_buf)/sizeof(WCHAR), L"%ls%ls", L"测", L"试"), wcslen(L"测试")));
+    EXPECT_EQ(0, wcsncmp( L"测试",    test_buf, PAL_swprintf(test_buf, sizeof(test_buf)/sizeof(WCHAR), L"%ls%ls", L"测", L"试")));
 }
 
-TEST(sdlpal, PAL_swprintf2) {
+TEST(sdlpal, PALswprintf2) {
     WCHAR test_buf[256];
-    EXPECT_EQ(0, wcsncmp( L"测试 2",  swprintf_wrapper( test_buf, sizeof(test_buf)/sizeof(WCHAR), L"%ls%ls %d", L"测", L"试", 2), wcslen(L"测试 2")));
+    EXPECT_EQ(0, wcsncmp( L"测试 2",  test_buf, PAL_swprintf(test_buf, sizeof(test_buf)/sizeof(WCHAR), L"%ls%ls %d", L"测", L"试", 2)));
 }
 
-TEST(sdlpal, PAL_swprintf3) {
+TEST(sdlpal, PALswprintf3) {
     WCHAR test_buf[256];
-    EXPECT_EQ(0, wcsncmp( L"测试 3",  swprintf_wrapper( test_buf, sizeof(test_buf)/sizeof(WCHAR), L"%ls%ls %c", L"测", L"试", '3'), wcslen(L"测试 3")));
+    EXPECT_EQ(0, wcsncmp( L"测试 3",  test_buf, PAL_swprintf(test_buf, sizeof(test_buf)/sizeof(WCHAR), L"%ls%ls %c", L"测", L"试", '3')));
 }

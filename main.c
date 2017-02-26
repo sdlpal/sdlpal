@@ -483,7 +483,6 @@ PAL_SplashScreen(
    PAL_FadeOut(1);
 }
 
-#ifndef UNIT_TEST
 int
 main(
    int      argc,
@@ -542,11 +541,14 @@ main(
    if (gConfig.fLaunchSetting)
 	   return 0;
 
+#if !defined(UNIT_TEST) || defined(UNIT_TEST_GAME_INIT)
    //
    // Initialize everything
    //
    PAL_Init();
+#endif
 
+#if !defined(UNIT_TEST)
    //
    // Show the trademark screen and splash screen
    //
@@ -563,6 +565,8 @@ main(
    //
    assert(FALSE);
    return 255;
+#else
+   extern int testmain(int argc, char *argv[]);
+   return testmain(argc, argv);
+#endif
 }
-#endif //UNIT_TEST
-
