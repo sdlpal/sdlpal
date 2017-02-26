@@ -25,7 +25,7 @@ TEST_CXXFLAGS += -g -Wall -Wextra -pthread
 CCFLAGS = `sdl2-config --cflags` -g -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -I$(GTEST_DIR)
 CXXFLAGS = $(CCFLAGS) -std=c++11 `fltk-config --cxxflags` $(TEST_CPPFLAGS) $(TEST_CXXFLAGS)
 CFLAGS = $(CCFLAGS) -std=gnu99 `fltk-config --cflags`
-LDFLAGS = `sdl2-config --libs` `fltk-config --ldflags` -lstdc++ -lm
+LDFLAGS = `sdl2-config --libs` `fltk-config --ldflags` -lstdc++ -lm $(TEST_CXXFLAGS)
 
 all: $(TARGET)
 
