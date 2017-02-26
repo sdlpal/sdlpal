@@ -229,8 +229,8 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 # SDL2 associated file
-SDL2
-!SDL2/README.txt
+SDL2/
+!SDL2/README.md
 
 android/gen
 android/libs
