@@ -525,6 +525,7 @@ main(
 
    UTIL_OpenLog();
 
+#if !defined(UNIT_TEST) || defined(UNIT_TEST_GAME_INIT)
    PAL_LoadConfig(TRUE);
 
    //
@@ -540,8 +541,6 @@ main(
    //
    if (gConfig.fLaunchSetting)
 	   return 0;
-
-#if !defined(UNIT_TEST) || defined(UNIT_TEST_GAME_INIT)
    //
    // Initialize everything
    //
