@@ -124,7 +124,10 @@ PAL_OpeningMenu(
          //
          // Load game
          //
+         VIDEO_BackupScreen();
          wItemSelected = PAL_SaveSlotMenu(1);
+         VIDEO_RestoreScreen();
+         VIDEO_UpdateScreen(NULL);
          if (wItemSelected != MENUITEM_VALUE_CANCELLED)
          {
             break;
