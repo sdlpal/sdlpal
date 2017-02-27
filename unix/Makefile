@@ -25,24 +25,30 @@ TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra 
 all: $(TARGET)
 
 $(TARGET): $(OBJFILES)
-	$(HOST)gcc $^ -o $@ $(LDFLAGS)
+	@echo [LD] $@
+	@$(HOST)gcc $^ -o $@ $(LDFLAGS)
 
 gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc
-	$(HOST)g++ $(TEST_CXXFLAGS) -c $< -o $@
+	@echo [CC] $^
+	@$(HOST)g++ $(TEST_CXXFLAGS) -c $< -o $@
 
 %.o: %.c
-	$(HOST)gcc $(CFLAGS) -c $< -o $@
+	@echo [CC] $^
+	@$(HOST)gcc $(CFLAGS) -c $< -o $@
 
 %.o: %.cpp
-	$(HOST)g++ $(CXXFLAGS) -c $< -o $@
+	@echo [CC] $^
+	@$(HOST)g++ $(CXXFLAGS) -c $< -o $@
 
 $(TEST_TARGET): $(OBJFILES) $(TEST_OBJFILES) gtest-all.o
-	$(HOST)g++ $^ -o $@ $(LDFLAGS) -lpthread
+	@echo [LD] $@
+	@$(HOST)g++ $^ -o $@ $(LDFLAGS) -lpthread
 
 clean:
 	-rm -f $(TARGET) $(TEST_TARGET) *.o ../*.o ../adplug/*.o ../libmad/*.o ../liboggvorbis/src/*.o ../tests/*.o
 
 check: TEST_CCFLAGS = -DUNIT_TEST=1 -isystem $(GTEST_DIR)/include
 check: $(TEST_TARGET)
-	chmod +x $(TEST_TARGET)
-	exec $(TEST_TARGET)
+	@echo [EXEC] $(TEST_TARGET)
+	@chmod +x $(TEST_TARGET)
+	@exec $(TEST_TARGET)

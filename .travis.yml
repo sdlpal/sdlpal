@@ -1,6 +1,9 @@
 dist: trusty
 language: c
-script: make check
+script:
+ - make
+ - make clean
+ - make check
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq libsdl2-dev libfltk1.3-dev
