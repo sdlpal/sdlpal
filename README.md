@@ -1,7 +1,8 @@
 SDLPAL
 ======
+[![Travis CI](https://travis-ci.org/sdlpal/sdlpal.svg?branch=master)](https://github.com/sdlpal/sdlpal)
 
-***SDLPAL*** is an SDL-based open-source reimplementation of the classic Chinese RPG game *Xiān jiàn Qí Xiá Zhuàn (Chinese: 仙剑奇侠传/仙劍奇俠傳)* (also known as *Chinese Paladin* or *Legend of Sword and Fairy*, or *PAL* for short).
+***SDLPAL*** is an SDL-based open-source cross-platform reimplementation of the classic Chinese RPG game *Xiān jiàn Qí Xiá Zhuàn (Chinese: 仙剑奇侠传/仙劍奇俠傳)* (also known as *Chinese Paladin* or *Legend of Sword and Fairy*, or *PAL* for short).
 
 
 LICENSE
@@ -130,7 +131,13 @@ To set these configuration options, create a file named as *`sdlpal.cfg`* (make 
 Please refer to the file [sdlpal.cfg.example](https://raw.githubusercontent.com/sdlpal/sdlpal/master/sdlpal.cfg.example) for configuration file format.
 
 
+Reporting issues
+================
+
+If you find any issues of SDLPAL, please feel free to report them to the development team through Github's issue tracking system using either English or Chinese.
+
+
 Contributing to the game
 ========================
 
-SDLPAL welcomes any code & documentation contributions as long as the contributed code & documentation is licensed under GPL. You can use Github's pull request system to submit your changes to the main repository here. But remember, as a step to keep the quality of code, you should write corresponding unit tests before your changes can be merged. The guidance of writting unit tests can be found [here](https://github.com/sdlpal/sdlpal/tree/master/tests).
+Any original code & documentation contributions are welcomed as long as the contributed code & documentation is licensed under GPL. You can use Github's pull request system to submit your changes to the main repository here. But remember, as a step to keep the quality of code, you should write corresponding unit tests before your changes can be merged. The guidance of writting unit tests can be found [here](https://github.com/sdlpal/sdlpal/tree/master/tests).
