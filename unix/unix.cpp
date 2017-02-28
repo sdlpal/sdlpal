@@ -244,7 +244,7 @@ UTIL_Platform_Init(
    char* argv[]
 )
 {
-#ifndef PAL_NO_LAUNCH_UI
+#if !defined(UNIT_TEST) && !defined(PAL_NO_LAUNCH_UI)
    if (gConfig.fLaunchSetting)
    {
       Fl_Window *window = InitWindow();
