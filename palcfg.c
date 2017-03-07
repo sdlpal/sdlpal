@@ -379,8 +379,8 @@ PAL_LoadConfig(
 	//
 	// Set configurable global options
 	//
+	if (!gConfig.pszSavePath) gConfig.pszSavePath = gConfig.pszGamePath ? strdup(gConfig.pszGamePath) : strdup(PAL_SAVE_PREFIX);
 	if (!gConfig.pszGamePath) gConfig.pszGamePath = strdup(PAL_PREFIX);
-	if (!gConfig.pszSavePath) gConfig.pszSavePath = strdup(PAL_SAVE_PREFIX);
 	gConfig.eMusicType = eMusicType;
 	gConfig.eCDType = eCDType;
 	gConfig.eOPLType = eOPLType;
