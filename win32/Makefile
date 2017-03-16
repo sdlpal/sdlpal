@@ -27,7 +27,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJFILES)
 	@echo [LD] $@
-	@$(HOST)gcc $^ -o $@ $(LDFLAGS)
+	@$(HOST)g++ $^ -o $@ $(LDFLAGS)
 
 gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc
 	@echo [CC] $^
