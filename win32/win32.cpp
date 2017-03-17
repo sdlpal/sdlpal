@@ -304,7 +304,12 @@ extern "C"
 BOOL UTIL_IsAbsolutePath(LPCSTR  lpszFileName)
 {
 	char szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFname[_MAX_FNAME], szExt[_MAX_EXT];
+#ifndef __MINGW32__
 	if (_splitpath_s(lpszFileName, szDrive, szDir, szFname, szExt) == 0)
+#else
+	_splitpath(lpszFileName, szDrive, szDir, szFname, szExt);
+	if ( errno !=EINVAL )
+#endif
 		return (strlen(szDrive) > 0 && (szDir[0] == '\\' || szDir[0] == '/'));
 	else
 		return FALSE;
