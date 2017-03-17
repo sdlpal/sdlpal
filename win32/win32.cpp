@@ -270,7 +270,7 @@ extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 #endif
 
 	g_hInstance = GetModuleHandle(nullptr);
-#ifndef __MINGW32__ // mingw's windows sdk dont support GetThreadUILanguage, since it's a vista+ API
+#if !defined(__MINGW32__) || _WIN32_WINNT > _WIN32_WINNT_WINXP // compile time switch; make  CCFLAGS=-D_WIN32_WINNT=0x600 for vista+ only automatic language detection, else(default) XP compatible but english only.
 	g_wLanguage = GetThreadUILanguage();
 	if (PRIMARYLANGID(g_wLanguage) == LANG_CHINESE)
 	{
@@ -304,7 +304,7 @@ extern "C"
 BOOL UTIL_IsAbsolutePath(LPCSTR  lpszFileName)
 {
 	char szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFname[_MAX_FNAME], szExt[_MAX_EXT];
-#ifndef __MINGW32__
+#if !defined(__MINGW32__) // MinGW Distro's win32 api lacks this...Anyway, winxp lacks this too
 	if (_splitpath_s(lpszFileName, szDrive, szDir, szFname, szExt) == 0)
 #else
 	_splitpath(lpszFileName, szDrive, szDir, szFname, szExt);
