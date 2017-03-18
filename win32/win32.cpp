@@ -270,7 +270,7 @@ extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 #endif
 
 	g_hInstance = GetModuleHandle(nullptr);
-#if !defined(__MINGW32__) || _WIN32_WINNT > _WIN32_WINNT_WINXP // compile time switch; make  CCFLAGS=-D_WIN32_WINNT=0x600 for vista+ only automatic language detection, else(default) XP compatible but english only.
+#if !defined(__MINGW32__) || _WIN32_WINNT > _WIN32_WINNT_WS03 // compile time switch; make  CCFLAGS=-D_WIN32_WINNT=0x600 for vista+ only automatic language detection, else(default) XP compatible but english only.
 	g_wLanguage = GetThreadUILanguage();
 	if (PRIMARYLANGID(g_wLanguage) == LANG_CHINESE)
 	{
