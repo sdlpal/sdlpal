@@ -62,14 +62,14 @@ BEGIN
     LTEXT           "Message file:",IDC_STATIC,14,60,43,8
     CONTROL         "Enable &touch overlay",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,310,60,83,10
     LTEXT           "Quality:",IDC_STATIC,14,144,26,8
-    LTEXT           "Low                              High",IDC_STATIC,31,154,88,8
+    LTEXT           "Low                              High",IDC_STATIC,31,158,88,8
     CONTROL         "",IDC_QUALITY,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,43,143,60,15
     LTEXT           "Music volume:",IDC_STATIC,118,144,46,8
+    LTEXT           "Low                                      High",IDC_STATIC,153,158,104,8
     CONTROL         "",IDC_MUSICVOLUME,"msctls_trackbar32",WS_TABSTOP,165,143,80,15
-    LTEXT           "Low                                      High",IDC_STATIC,153,154,104,8
     LTEXT           "Sound volume:",IDC_STATIC,256,145,48,8
+    LTEXT           "Low                                      High",IDC_STATIC,291,158,104,8
     CONTROL         "",IDC_SOUNDVOLUME,"msctls_trackbar32",WS_TABSTOP,303,144,80,15
-    LTEXT           "Low                                      High",IDC_STATIC,291,155,104,8
 END
 
 
