@@ -270,8 +270,11 @@ extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 #endif
 
 	g_hInstance = GetModuleHandle(nullptr);
-#if !defined(__MINGW32__) || _WIN32_WINNT > _WIN32_WINNT_WS03 // compile time switch; make  CCFLAGS=-D_WIN32_WINNT=0x600 for vista+ only automatic language detection, else(default) XP compatible but english only.
+#if !defined(__MINGW32__) || _WIN32_WINNT > _WIN32_WINNT_WS03 // compile time switch; use `make CCFLAGS=-D_WIN32_WINNT=_WIN32_WINNT_VISTA` for vista+ only automatic language detection
 	g_wLanguage = GetThreadUILanguage();
+#else // default XP compatible CodePage detection hack.
+	g_wLanguage = GetSystemDefaultLangID();
+#endif
 	if (PRIMARYLANGID(g_wLanguage) == LANG_CHINESE)
 	{
 		if (SUBLANGID(g_wLanguage) == SUBLANG_CHINESE_SIMPLIFIED || SUBLANGID(g_wLanguage) == SUBLANG_CHINESE_SINGAPORE)
@@ -280,7 +283,6 @@ extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 			g_wLanguage = MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL);
 	}
 	else
-#endif
 		g_wLanguage = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);
 	auto dlg = (LPCDLGTEMPLATE)LockResource(LoadResource(g_hInstance, FindResourceEx(g_hInstance, RT_DIALOG, MAKEINTRESOURCE(IDD_LAUNCHER), g_wLanguage)));
 	if (gConfig.fLaunchSetting && DialogBoxIndirect(GetModuleHandle(nullptr), dlg, nullptr, LauncherDialogProc) != IDOK)
