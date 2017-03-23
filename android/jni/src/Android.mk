@@ -17,7 +17,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
     $(wildcard $(LOCAL_PATH)/../../../liboggvorbis/src/*.c) \
     $(wildcard $(LOCAL_PATH)/../../../libmad/*.c)
 
-LOCAL_CFLAGS += -std=c99
+LOCAL_CFLAGS += -std=gnu99
 
 LOCAL_CPPFLAGS += -std=c++11
 
