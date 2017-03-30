@@ -70,6 +70,10 @@ extern "C"
 
 #endif
 
+#if !defined(fmax) || !defined(fmin)
+#include <math.h>
+#endif
+
 #ifndef max
 # define max fmax
 #endif

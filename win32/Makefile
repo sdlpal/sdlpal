@@ -43,7 +43,7 @@ gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc
 
 %.o: %.rc
 	@echo [RES] $^
-	@windres -i $^ -o $@
+	@$(HOST)windres -i $^ -o $@
 
 $(TEST_TARGET): $(OBJFILES) $(TEST_OBJFILES) gtest-all.o
 	@echo [LD] $@

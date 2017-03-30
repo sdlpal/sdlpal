@@ -3,9 +3,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <tchar.h>
-#include <Windows.h>
-#include <CommCtrl.h>
-#include <ShlObj.h>
+#include <windows.h>
+#include <commctrl.h>
+#include <shlobj.h>
 #include <string>
 #include "resource.h"
 #include "../global.h"
