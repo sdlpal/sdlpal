@@ -89,9 +89,11 @@ PAL_BattleMakeScene(
    {
       pos = g_Battle.rgEnemy[i].pos;
 
-      if (g_Battle.rgEnemy[i].rgwStatus[kStatusConfused] > 0 &&
-         g_Battle.rgEnemy[i].rgwStatus[kStatusSleep] == 0 &&
-         g_Battle.rgEnemy[i].rgwStatus[kStatusParalyzed] == 0)
+      if (PAL_CheckRoleStatus(
+		  g_Battle.rgEnemy[i].rgwStatus, 3, TRUE, TRUE,
+		  kStatusConfused, TRUE,
+		  kStatusSleep, FALSE,
+		  kStatusParalyzedOrSlow, FALSE))
       {
          //
          // Enemy is confused
@@ -137,9 +139,9 @@ PAL_BattleMakeScene(
       {
          pos = g_Battle.rgPlayer[i].pos;
 
-         if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0 &&
-            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusSleep] == 0 &&
-            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusParalyzed] == 0 &&
+         if (PAL_CheckRoleStatus(
+			 gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole], 3, TRUE, TRUE,
+			 kStatusConfused, TRUE, kStatusSleep, FALSE, kStatusParalyzedOrSlow, FALSE) &&
             gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] > 0)
          {
             //
@@ -168,9 +170,9 @@ PAL_BattleMakeScene(
       //
       for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
       {
-         if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0 &&
-            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusSleep] == 0 &&
-            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusParalyzed] == 0 &&
+         if (PAL_CheckRoleStatus(
+			 gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole], 3, TRUE, TRUE,
+			 kStatusConfused, TRUE, kStatusSleep, FALSE, kStatusParalyzedOrSlow, FALSE) &&
             gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] > 0)
          {
             //
@@ -367,9 +369,10 @@ PAL_BattleMain(
       g_Battle.BattleResult = kBattleResultOnGoing;
    }
 
-#ifndef PAL_CLASSIC
-   PAL_UpdateTimeChargingUnit();
-#endif
+   if (!PAL_IsClassicBattle())
+   {
+	   PAL_UpdateTimeChargingUnit();
+   }
 
    dwTime = SDL_GetTicks();
 
@@ -1227,102 +1230,103 @@ PAL_StartBattle(
          g_Battle.rgEnemy[i].wScriptOnReady = gpGlobals->g.rgObject[w].enemy.wScriptOnReady;
          g_Battle.rgEnemy[i].iColorShift = 0;
 
-#ifndef PAL_CLASSIC
-         g_Battle.rgEnemy[i].flTimeMeter = 50;
+		 if (!PAL_IsClassicBattle())
+		 {
+			 g_Battle.rgEnemy[i].flTimeMeter = 50;
 
-         //
-         // HACK: Otherwise the black thief lady will be too hard to beat
-         //
-         if (g_Battle.rgEnemy[i].e.wDexterity == 164)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity /= ((gpGlobals->wMaxPartyMemberIndex == 0) ? 6 : 3);
-         }
+			 //
+			 // HACK: Otherwise the black thief lady will be too hard to beat
+			 //
+			 if (g_Battle.rgEnemy[i].e.wDexterity == 164)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity /= ((gpGlobals->wMaxPartyMemberIndex == 0) ? 6 : 3);
+			 }
 
-         //
-         // HACK: Heal up automatically for final boss
-         //
-         if (g_Battle.rgEnemy[i].e.wHealth == 32760)
-         {
-            for (w = 0; w < MAX_PLAYER_ROLES; w++)
-            {
-               gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
-               gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
-            }
-         }
+			 //
+			 // HACK: Heal up automatically for final boss
+			 //
+			 if (g_Battle.rgEnemy[i].e.wHealth == 32760)
+			 {
+				 for (w = 0; w < MAX_PLAYER_ROLES; w++)
+				 {
+					 gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
+					 gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
+				 }
+			 }
 
-         //
-         // Yet another HACKs
-         //
-         if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -32)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity = 0; // for Grandma Knife
-         }
-         else if (g_Battle.rgEnemy[i].e.wDexterity == 20)
-         {
-            //
-            // for Fox Demon
-            //
-            if (gpGlobals->g.PlayerRoles.rgwLevel[0] < 15)
-            {
-               g_Battle.rgEnemy[i].e.wDexterity = 8;
-            }
-            else if (gpGlobals->g.PlayerRoles.rgwLevel[4] > 28 ||
-               gpGlobals->Exp.rgPrimaryExp[4].wExp > 0)
-            {
-               g_Battle.rgEnemy[i].e.wDexterity = 60;
-            }
-         }
-         else if (g_Battle.rgEnemy[i].e.wExp == 250 &&
-            g_Battle.rgEnemy[i].e.wCash == 1100)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity += 12; // for Snake Demon
-         }
-         else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -60)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity = 15; // for Spider
-         }
-         else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -30)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity = (WORD)-10; // for Stone Head
-         }
-         else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -16)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity = 0; // for Zombie
-         }
-         else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -20)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity = -8; // for Flower Demon
-         }
-         else if (g_Battle.rgEnemy[i].e.wLevel < 20 &&
-            gpGlobals->wNumScene >= 0xD8 && gpGlobals->wNumScene <= 0xE2)
-         {
-            //
-            // for low-level monsters in the Cave of Trial
-            //
-            g_Battle.rgEnemy[i].e.wLevel += 15;
-            g_Battle.rgEnemy[i].e.wDexterity += 25;
-         }
-         else if (gpGlobals->wNumScene == 0x90)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity += 25; // for Tower Dragons
-         }
-         else if (g_Battle.rgEnemy[i].e.wLevel == 2 &&
-            g_Battle.rgEnemy[i].e.wCash == 48)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity += 8; // for Miao Fists
-         }
-         else if (g_Battle.rgEnemy[i].e.wLevel == 4 &&
-            g_Battle.rgEnemy[i].e.wCash == 240)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity += 18; // for Fat Miao
-         }
-         else if (g_Battle.rgEnemy[i].e.wLevel == 16 &&
-            g_Battle.rgEnemy[i].e.wMagicRate == 4 &&
-            g_Battle.rgEnemy[i].e.wAttackEquivItemRate == 4)
-         {
-            g_Battle.rgEnemy[i].e.wDexterity += 50; // for Black Spider
-         }
-#endif
+			 //
+			 // Yet another HACKs
+			 //
+			 if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -32)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity = 0; // for Grandma Knife
+			 }
+			 else if (g_Battle.rgEnemy[i].e.wDexterity == 20)
+			 {
+				 //
+				 // for Fox Demon
+				 //
+				 if (gpGlobals->g.PlayerRoles.rgwLevel[0] < 15)
+				 {
+					 g_Battle.rgEnemy[i].e.wDexterity = 8;
+				 }
+				 else if (gpGlobals->g.PlayerRoles.rgwLevel[4] > 28 ||
+					 gpGlobals->Exp.rgPrimaryExp[4].wExp > 0)
+				 {
+					 g_Battle.rgEnemy[i].e.wDexterity = 60;
+				 }
+			 }
+			 else if (g_Battle.rgEnemy[i].e.wExp == 250 &&
+				 g_Battle.rgEnemy[i].e.wCash == 1100)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity += 12; // for Snake Demon
+			 }
+			 else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -60)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity = 15; // for Spider
+			 }
+			 else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -30)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity = (WORD)-10; // for Stone Head
+			 }
+			 else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -16)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity = 0; // for Zombie
+			 }
+			 else if ((SHORT)g_Battle.rgEnemy[i].e.wDexterity == -20)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity = -8; // for Flower Demon
+			 }
+			 else if (g_Battle.rgEnemy[i].e.wLevel < 20 &&
+				 gpGlobals->wNumScene >= 0xD8 && gpGlobals->wNumScene <= 0xE2)
+			 {
+				 //
+				 // for low-level monsters in the Cave of Trial
+				 //
+				 g_Battle.rgEnemy[i].e.wLevel += 15;
+				 g_Battle.rgEnemy[i].e.wDexterity += 25;
+			 }
+			 else if (gpGlobals->wNumScene == 0x90)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity += 25; // for Tower Dragons
+			 }
+			 else if (g_Battle.rgEnemy[i].e.wLevel == 2 &&
+				 g_Battle.rgEnemy[i].e.wCash == 48)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity += 8; // for Miao Fists
+			 }
+			 else if (g_Battle.rgEnemy[i].e.wLevel == 4 &&
+				 g_Battle.rgEnemy[i].e.wCash == 240)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity += 18; // for Fat Miao
+			 }
+			 else if (g_Battle.rgEnemy[i].e.wLevel == 16 &&
+				 g_Battle.rgEnemy[i].e.wMagicRate == 4 &&
+				 g_Battle.rgEnemy[i].e.wAttackEquivItemRate == 4)
+			 {
+				 g_Battle.rgEnemy[i].e.wDexterity += 50; // for Black Spider
+			 }
+		 }
       }
    }
 
@@ -1334,10 +1338,11 @@ PAL_StartBattle(
    for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
    {
       g_Battle.rgPlayer[i].flTimeMeter = 15.0f;
-#ifndef PAL_CLASSIC
-      g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
-      g_Battle.rgPlayer[i].sTurnOrder = -1;
-#endif
+      if (!PAL_IsClassicBattle())
+      {
+         g_Battle.rgPlayer[i].flTimeSpeedModifier = 2.0f;
+         g_Battle.rgPlayer[i].sTurnOrder = -1;
+      }
       g_Battle.rgPlayer[i].wHidingTime = 0;
       g_Battle.rgPlayer[i].state = kFighterWait;
       g_Battle.rgPlayer[i].action.sTarget = -1;
@@ -1408,12 +1413,13 @@ PAL_StartBattle(
 
    PAL_MKFReadChunk(g_Battle.lpEffectSprite, i, 10, gpGlobals->f.fpDATA);
 
-#ifdef PAL_CLASSIC
-   g_Battle.Phase = kBattlePhaseSelectAction;
-   g_Battle.fRepeat = FALSE;
-   g_Battle.fForce = FALSE;
-   g_Battle.fFlee = FALSE;
-#endif
+   if (PAL_IsClassicBattle())
+   {
+	   g_Battle.Phase = kBattlePhaseSelectAction;
+	   g_Battle.fRepeat = FALSE;
+	   g_Battle.fForce = FALSE;
+	   g_Battle.fFlee = FALSE;
+   }
 
 #ifdef PAL_ALLOW_KEYREPEAT
    SDL_EnableKeyRepeat(120, 75);

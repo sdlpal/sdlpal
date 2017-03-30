@@ -511,10 +511,7 @@ PAL_AdditionalCredits(
    LPCWSTR rgszcps[][CP_MAX] = {
 	   // Traditional Chinese, Simplified Chinese
 	   { L"", L"", /*L""*/ },
-	   { L"         \x7D93\x5178\x7279\x5225\x7BC7   ",
-	     L"         \x7ECF\x5178\x7279\x522B\x7BC7   ",
-	     //L"   \x30AF\x30E9\x30B7\x30C3\x30AF\x7279\x5225\x7DE8  "
-	   },
+	   { L"", L"", /*L""*/ },
 	   { L"", L"", /*L""*/ },
 	   { L"", L"", /*L""*/ },
 	   { L"", L"", /*L""*/ },
@@ -538,11 +535,7 @@ PAL_AdditionalCredits(
 
    LPCWSTR rgszStrings[] = {
       L"  SDLPAL (http://sdlpal.codeplex.com/)",
-#ifdef PAL_CLASSIC
-	  L"%ls(" WIDETEXT(__DATE__) L")",
-#else
 	  L"                        (" WIDETEXT(__DATE__) L")",
-#endif
       L" ",
 	  L"    (c) 2009-2011, Wei Mingzhi",
 	  L"        <whistler_wmz@users.sf.net>.",
@@ -1340,11 +1333,7 @@ PAL_InterpretInstruction(
       //
       w = g_Battle.rgEnemy[wEventObjectID].wObjectID;
 
-#ifdef PAL_CLASSIC
-      i = 9;
-#else
-      i = ((pScript->rgwOperand[0] == kStatusSlow) ? 14 : 9);
-#endif
+      i = (!PAL_IsClassicBattle() && pScript->rgwOperand[0] == kStatusParalyzedOrSlow) ? 14 : 9;
 
       if (RandomLong(0, i) >= gpGlobals->g.rgObject[w].enemy.wResistanceToSorcery &&
          g_Battle.rgEnemy[wEventObjectID].rgwStatus[pScript->rgwOperand[0]] == 0)
@@ -1418,19 +1407,22 @@ PAL_InterpretInstruction(
       {
          WCHAR s[256];
 
-#ifdef PAL_CLASSIC
-         i = RandomLong(1, gpGlobals->wCollectValue);
-         if (i > 9)
-         {
-            i = 9;
-         }
-#else
-         i = RandomLong(1, 9);
-         if (i > gpGlobals->wCollectValue)
-         {
-            i = gpGlobals->wCollectValue;
-         }
-#endif
+		 if (PAL_IsClassicBattle())
+		 {
+			 i = RandomLong(1, gpGlobals->wCollectValue);
+			 if (i > 9)
+			 {
+				 i = 9;
+			 }
+		 }
+		 else
+		 {
+			 i = RandomLong(1, 9);
+			 if (i > gpGlobals->wCollectValue)
+			 {
+				 i = gpGlobals->wCollectValue;
+			 }
+		 }
 
          gpGlobals->wCollectValue -= i;
          i--;
@@ -2800,10 +2792,9 @@ PAL_InterpretInstruction(
          }
       }
 
-      if (x < y || g_Battle.iHidingTime > 0 ||
-         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusSleep] != 0 ||
-         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusParalyzed] != 0 ||
-         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusConfused] != 0)
+      if (x < y || g_Battle.iHidingTime > 0 || PAL_CheckRoleStatus(
+		  g_Battle.rgEnemy[wEventObjectID].rgwStatus, 3, FALSE, TRUE,
+		  kStatusSleep, TRUE, kStatusParalyzedOrSlow, TRUE, kStatusConfused, TRUE))
       {
          if (pScript->rgwOperand[2] != 0)
          {
@@ -2859,10 +2850,9 @@ PAL_InterpretInstruction(
       //
       // Enemy transforms into something else
       //
-      if (g_Battle.iHidingTime <= 0 &&
-         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusSleep] == 0 &&
-         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusParalyzed] == 0 &&
-         g_Battle.rgEnemy[wEventObjectID].rgwStatus[kStatusConfused] == 0)
+      if (g_Battle.iHidingTime <= 0 && PAL_CheckRoleStatus(
+		  g_Battle.rgEnemy[wEventObjectID].rgwStatus, 3, TRUE, TRUE,
+		  kStatusSleep, FALSE, kStatusParalyzedOrSlow, FALSE, kStatusConfused, FALSE))
       {
          w = g_Battle.rgEnemy[wEventObjectID].e.wHealth;
 

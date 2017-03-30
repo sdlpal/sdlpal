@@ -40,15 +40,13 @@ BOOL      g_fUpdatedInBattle      = FALSE;
 #define INCLUDE_CODEPAGE_H
 #include "codepage.h"
 
-#ifndef PAL_CLASSIC
 # define ATB_WORD_COUNT             6
 static LPWSTR gc_rgszAdditionalWords[CP_MAX][ATB_WORD_COUNT] = {
-   { L"\x6230\x9B25\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
-   { L"\x6218\x6597\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
+   { L"\x6230\x9B25\x901F\x5EA6", L"\xFF11", L"\xFF12", L"\xFF13", L"\xFF14", L"\xFF15" },
+   { L"\x6218\x6597\x901F\x5EA6", L"\xFF11", L"\xFF12", L"\xFF13", L"\xFF14", L"\xFF15" },
    //{ L"\x6226\x95D8\x901F\x5EA6", L"\x4E00", L"\x4E8C", L"\x4E09", L"\x56DB", L"\x4E94" },
 };
 static LPWSTR gc_rgszDefaultAdditionalWords[ATB_WORD_COUNT] = { NULL, L"\xFF11", L"\xFF12", L"\xFF13", L"\xFF14", L"\xFF15" };
-#endif
 
 #define SDLPAL_EXTRA_WORD_COUNT     1
 static LPWSTR gc_rgszSDLPalWords[CP_MAX][SDLPAL_EXTRA_WORD_COUNT] = {
@@ -455,9 +453,8 @@ PAL_ReadMessageFile(
 		//
 		// Move values from linked list to array
 		//
-#ifndef PAL_CLASSIC
 		int i;
-#endif
+
 		if (word_cnt < MINIMAL_WORD_COUNT - 1) word_cnt = MINIMAL_WORD_COUNT - 1;
 		g_TextLib.nWords = (word_cnt += 1);
 		g_TextLib.lpWordBuf = (LPWSTR *)UTIL_calloc(word_cnt, sizeof(LPWSTR));
@@ -467,11 +464,9 @@ PAL_ReadMessageFile(
 			g_TextLib.lpWordBuf[witem->index] = witem->value;
 			free(witem); witem = temp;
 		}
-#ifndef PAL_CLASSIC
 		for (i = 1; i < ATB_WORD_COUNT; i++)
 			if (!g_TextLib.lpWordBuf[i + SYSMENU_LABEL_BATTLEMODE])
 				g_TextLib.lpWordBuf[i + SYSMENU_LABEL_BATTLEMODE] = gc_rgszDefaultAdditionalWords[i];
-#endif
 	}
 
 	fclose(fp);
@@ -688,10 +683,7 @@ PAL_InitText(
 	   g_TextLib.lpIndexBuf = NULL;
 
 	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_LAUNCHSETTING, gc_rgszSDLPalWords[gConfig.uCodePage], SDLPAL_EXTRA_WORD_COUNT * sizeof(LPCWSTR));
-
-#ifndef PAL_CLASSIC
 	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_BATTLEMODE, gc_rgszAdditionalWords[gConfig.uCodePage], ATB_WORD_COUNT * sizeof(LPCWSTR));
-#endif
    }
 
    g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
@@ -1193,13 +1185,11 @@ PAL_ShowDialogText(
       //
       // The text should be shown in a small window at the center of the screen
       //
-#ifndef PAL_CLASSIC
-      if (gpGlobals->fInBattle && g_Battle.BattleResult == kBattleResultOnGoing)
+      if (!PAL_IsClassicBattle() && gpGlobals->fInBattle && g_Battle.BattleResult == kBattleResultOnGoing)
       {
          PAL_BattleUIShowText(lpszText, 1400);
       }
       else
-#endif
       {
          PAL_POS    pos;
          LPBOX      lpBox;

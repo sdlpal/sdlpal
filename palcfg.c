@@ -17,6 +17,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_USEEMBEDDEDFONTS,  PALCFG_BOOLEAN,  "USEEMBEDDEDFONTS",  16, TRUE,  FALSE, TRUE },								// Default for using embedded fonts in DOS version
 	{ PALCFG_USESURROUNDOPL,    PALCFG_BOOLEAN,  "USESURROUNDOPL",    14, TRUE,  FALSE, TRUE },								// Default for using surround opl
 	{ PALCFG_USETOUCHOVERLAY,   PALCFG_BOOLEAN,  "USETOUCHOVERLAY",   15, PAL_HAS_TOUCH, FALSE, TRUE },
+	{ PALCFG_CLASSICBATTLE,     PALCFG_BOOLEAN,  "CLASSICBATTLE",     13, FALSE, FALSE, TRUE },								// Default for using classic battle
 
 	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SURROUNDOPLOFFSET", 17, 384,   INT32_MIN, INT32_MAX },
 
@@ -396,6 +397,7 @@ PAL_LoadConfig(
 	gConfig.fKeepAspectRatio = values[PALCFG_KEEPASPECTRATIO].bValue;
 #endif
 	gConfig.fFullScreen = values[PALCFG_FULLSCREEN].bValue;
+	gConfig.fClassicBattle = values[PALCFG_CLASSICBATTLE].bValue;
 	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
 
 	gConfig.iSurroundOPLOffset = values[PALCFG_SURROUNDOPLOFFSET].iValue;
@@ -442,6 +444,7 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_USEEMBEDDEDFONTS), gConfig.fUseEmbeddedFonts); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_USESURROUNDOPL), gConfig.fUseSurroundOPL); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_USETOUCHOVERLAY), gConfig.fUseTouchOverlay); fputs(buf, fp);
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_CLASSICBATTLE), gConfig.fClassicBattle); fputs(buf, fp);
 
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_SURROUNDOPLOFFSET), gConfig.iSurroundOPLOffset); fputs(buf, fp);
 

@@ -114,9 +114,7 @@ typedef struct tagBATTLEPLAYER
    BOOL               fDefending;           // TRUE if player is defending
    WORD               wPrevHP;              // HP value prior to action
    WORD               wPrevMP;              // MP value prior to action
-#ifndef PAL_CLASSIC
-   SHORT              sTurnOrder;           // turn order
-#endif
+   SHORT              sTurnOrder;           // turn order, revised battle only
 } BATTLEPLAYER;
 
 typedef struct tagSUMMON
@@ -128,7 +126,7 @@ typedef struct tagSUMMON
 #define MAX_BATTLE_ACTIONS    256
 #define MAX_KILLED_ENEMIES    256
 
-#ifdef PAL_CLASSIC
+// Classic battle only ---
 
 typedef enum tabBATTLEPHASE
 {
@@ -145,7 +143,7 @@ typedef struct tagACTIONQUEUE
 
 #define MAX_ACTIONQUEUE_ITEMS (MAX_PLAYERS_IN_PARTY + MAX_ENEMIES_IN_TEAM * 2)
 
-#endif
+// Classic battle only ===
 
 typedef struct tagBATTLE
 {
@@ -184,14 +182,14 @@ typedef struct tagBATTLE
 
    int              iBlow;
 
-#ifdef PAL_CLASSIC
+// Classic battle only ---
    BATTLEPHASE      Phase;
    ACTIONQUEUE      ActionQueue[MAX_ACTIONQUEUE_ITEMS];
    int              iCurAction;
    BOOL             fRepeat;              // TRUE if player pressed Repeat
    BOOL             fForce;               // TRUE if player pressed Force
    BOOL             fFlee;                // TRUE if player pressed Flee
-#endif
+// Classic battle only ===
 } BATTLE;
 
 extern BATTLE g_Battle;
