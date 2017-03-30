@@ -243,5 +243,5 @@ resources
 sdlpal
 data
 
-xcshareddata
+*.xcscmblueprint
 xcuserdata
