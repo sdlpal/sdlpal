@@ -20,7 +20,7 @@
 //
 
 #include "main.h"
-#if defined(__IOS__) || !defined(__EMSCRIPTEN__)
+#if defined(__IOS__) || defined(__EMSCRIPTEN__)
 #include <sys/time.h>
 #endif
 
