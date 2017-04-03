@@ -43,22 +43,40 @@ Windows
 
 ### Visual Studio
 
-To build SDLPAL as a Windows **desktop** app, you can use ***Microsoft Visual Studio*** (*2013* or higher). Please open the project file *`sdlpal.sln`* under the *`win32`* directory.
+To build SDLPAL as a Windows **desktop** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** (the support of *Visual Studio 2013* is **deprecated** now and will be removed in future) to open the solution file *`sdlpal.sln`* under the *`win32`* directory. As a dependency, you need to have [SDL 2.0](https://www.libsdl.org/download-2.0.php) development or source files installed at the *`SDL2`* directory under the source tree.
 
-To build SDLPAL as a Windows **store** app (or Windows Phone app), open the appropriate project files *`SDLPal.UWP.sln`* (for Windows 10), *`SDLPal.Windows.sln`* (for Windows 8.1), *`SDLPal.WindowsPhone.sln`* (for Windows Phone 8.1) under the *`winrt`* directory. Please note that Visual Studio 2015 or higher version is required to compile the UWP version.
+To build SDLPAL as a **Universal Windows Platform** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** to open the solution file *`SDLPal.UWP.sln`* under the *`winrt`* directory. As a dependency, you need to have [SDL 2.0](https://www.libsdl.org/download-2.0.php) **source** files installed at the *`SDL2`* directory under the source tree.
 
-For all situations, you need to have [SDL 2.0](https://www.libsdl.org/download-2.0.php) development or source files installed at the *`SDL2`* directory under the source tree. You may need to modify the project files if you use the SDL development package.
+There are also solution files for building traditional **Windows (phone) store app** under the *`winrt`* directory, but they are deprecated and will be removed in future.
 
 ### MinGW
 
-To build SDLPAL as a Windows **desktop** app, you can also use ***MinGW***. Steps for building under MinGW is similar as those for *Linux*, by replacing the directory name from *`unix`* to *`win32`*.
+To build SDLPAL as a Windows **desktop** app, you can also use ***MinGW***. Steps for building under MinGW varies depends on the compiling environment you have:
+
+* If you need to compile SDLPAL under **Windows** shell environment, please go to the root of the source code tree and type:
+```shell
+$ cd win32
+$ make -f Makefile.mingw
+```
+
+* If you need to compile SDLPAL under **msys** shell environment, please go to the root of the source code tree and type:
+```shell
+$ cd win32
+$ make
+```
+
+* If you need to cross-compile SDLPAL under **Linux** shell environment, please go to the root of the source code tree and type:
+```shell
+$ cd win32
+$ make HOST=i686-w64-mingw32-  # This builds a 32-bit executable. To build a 64-bit executable, replace 'i686' by 'x86_64'.
+```
 
 
 Linux or Unix
 -------------
 
 To build the game, please go to the root of the source code tree and type:
-```
+```shell
 $ cd unix
 $ make
 ```
@@ -79,7 +97,7 @@ Android
 -------
 
 To build the game, please go to the root of the source code tree and type:
-```
+```shell
 cd android/jni
 ndk-build
 cd ..
@@ -91,7 +109,7 @@ Nintendo 3DS
 ------------
 
 To build the game, please go to the root of the source code tree and type:
-```
+```shell
 cd 3ds
 make
 make cia
@@ -109,7 +127,7 @@ Choosing the battle system
 
 By default, SDLPAL builds a *"classic"* turn-based battle system which is designed to be 100% the same as the original game.
 
-However, SDLPAL also provides a revised battle system which is more exciting yet somewhat harder than the original game. If you prefer this new battle system, please define the macro `ENABLE_REVISIED_BATTLE` in *`Makefile`* or in *`common.h`* and recompile the project.
+SDLPAL also provides a revised battle system (***deprecated*** and will be removed in future) which is more exciting yet somewhat harder than the original game. If you prefer this battle system, please define the macro `ENABLE_REVISIED_BATTLE` in *`Makefile`* or in *`common.h`* and recompile the project.
 
 
 Running the game
