@@ -1,6 +1,7 @@
 SDLPAL
 ======
-[![Travis CI](https://travis-ci.org/sdlpal/sdlpal.svg?branch=master)](https://github.com/sdlpal/sdlpal)
+[![Travis CI](https://travis-ci.org/sdlpal/sdlpal.svg?branch=master)](https://travis-ci.org/sdlpal/sdlpal)
+[![Build status](https://ci.appveyor.com/api/projects/status/wc8r3qlqmh5q6j1c?svg=true)](https://ci.appveyor.com/project/palxex/sdlpal-itfml)
 
 ***SDLPAL*** is an SDL-based open-source cross-platform reimplementation of the classic Chinese RPG game *Xiān jiàn Qí Xiá Zhuàn (Chinese: 仙剑奇侠传/仙劍奇俠傳)* (also known as *Chinese Paladin* or *Legend of Sword and Fairy*, or *PAL* for short).
 
@@ -27,7 +28,7 @@ This program made extensive use of the following libraries:
 * [FLTK](http://www.fltk.org)
 * [DOSBOX project](http://www.dosbox.com) and [MAME project](http://mamedev.org/) for codes of some the OPL simulation cores
 
-Please see [authors.txt](https://raw.githubusercontent.com/sdlpal/sdlpal/master/authors.txt) for additional authors.
+Please see [AUTHORS.txt](https://raw.githubusercontent.com/sdlpal/sdlpal/master/AUTHORS.txt) for additional authors.
 
 This program does **NOT** include any code or data files of the original game, which are proprietary and copyrighted by SoftStar Inc.
 
