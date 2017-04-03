@@ -1,0 +1,40 @@
+version: 2.0.{build}
+environment:
+  matrix:
+  - solution_name: win32/sdlpal.sln
+    SDL_W32:
+    SDL_SRC: rem
+  - solution_name: winrt/SDLPal.UWP.sln
+    SDL_W32: rem
+    SDL_SRC: 
+build_script:
+  - msbuild %solution_name% /p:Configuration=Release /m
+before_build:
+  # SDL include/lib setup; for win32
+  - |-
+    %SDL_W32% appveyor DownloadFile http://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
+    %SDL_W32% 7z x SDL2-devel-2.0.5-VC.zip
+    %SDL_W32% move /y SDL2-2.0.5\include SDL2\ > nul
+    %SDL_W32% move /y SDL2-2.0.5\lib SDL2\ > nul
+    %SDL_W32% rd /s /q SDL2-2.0.5 > nul
+
+  # SDL src setup; for UWP
+  - |-
+    %SDL_SRC% appveyor DownloadFile http://www.libsdl.org/release/SDL2-2.0.5.zip
+    %SDL_SRC% 7z x SDL2-2.0.5.zip
+    %SDL_SRC% rd /s /q SDL2 > nul
+    %SDL_SRC% move /y SDL2-2.0.5 SDL2 > nul
+
+deploy:
+- provider: GitHub
+  on:
+    appveyor_repo_tag: true
+  auth_token:
+    secure: RYDRqm5LncsJG32FRSlCkLzkJC4ykCtlgO3+xW4q80wQOA3U9pHAe2beyMEduJIe
+artifacts:
+  - path: win32/Release/sdlpal.exe
+    name: win32 build
+
+  - path: winrt/AppPackages/SDLPal
+    name: SDLPal UWP
+    type: zip
