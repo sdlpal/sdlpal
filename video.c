@@ -20,9 +20,6 @@
 //
 
 #include "main.h"
-#if defined(__IOS__) || defined(__EMSCRIPTEN__)
-#include <sys/time.h>
-#endif
 
 // Screen buffer
 SDL_Surface              *gpScreen           = NULL;
