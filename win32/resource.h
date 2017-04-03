@@ -5,6 +5,7 @@
 #define IDI_SDLPAL                      101
 #define IDD_LAUNCHER                    101
 #define IDS_CONFIRM                     103
+#define APP_MANIFEST                    1
 #define IDC_GAMEPATH                    1000
 #define IDC_CHT                         1001
 #define IDC_CHS                         1002

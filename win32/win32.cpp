@@ -13,11 +13,6 @@
 #include "../palcfg.h"
 #include "../resampler.h"
 
-#pragma comment(lib, "comctl32.lib")
-#pragma comment(linker,"\"/manifestdependency:type='win32' \
-name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
-processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
-
 #define ComboBox_AddString(hwndDlg, idCtrl, lpsz) \
             (BOOL)SNDMSG(GetDlgItem((hwndDlg), (idCtrl)), CB_ADDSTRING, (WPARAM)(0), (LPARAM)(lpsz))
 #define ComboBox_SetCurSel(hwndDlg, idCtrl, index) \

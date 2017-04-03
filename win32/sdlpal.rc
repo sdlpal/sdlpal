@@ -132,6 +132,63 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// RT_MANIFEST
+//
+
+APP_MANIFEST            RT_MANIFEST             "Application.manifest"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_SDLPAL              ICON                    "../sdlpal.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 2,0,0,1
+ PRODUCTVERSION 2,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "CompanyName", "SDLPAL Team"
+            VALUE "FileDescription", "SDLPAL Main executable"
+            VALUE "FileVersion", "2.0.0.1"
+            VALUE "InternalName", "sdlpal.exe"
+            VALUE "LegalCopyright", "Copyright (C) SDLPAL Team 2008 - 2017"
+            VALUE "OriginalFilename", "sdlpal.exe"
+            VALUE "ProductName", "SDL PAL"
+            VALUE "ProductVersion", "2.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -267,16 +324,6 @@ BEGIN
 END
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_SDLPAL              ICON                    "../sdlpal.ico"
-
-
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -290,7 +337,7 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include ""Windows.h""\r\n"
+    "#include ""windows.h""\r\n"
     "\0"
 END
 
@@ -301,45 +348,6 @@ BEGIN
 END
 
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,0,0,1
- PRODUCTVERSION 2,0,0,1
- FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x40004L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "080404b0"
-        BEGIN
-            VALUE "CompanyName", "SDLPAL Team"
-            VALUE "FileDescription", "SDLPAL Main executable"
-            VALUE "FileVersion", "2.0.0.1"
-            VALUE "InternalName", "sdlpal.exe"
-            VALUE "LegalCopyright", "Copyright (C) SDLPAL Team 2008 - 2017"
-            VALUE "OriginalFilename", "sdlpal.exe"
-            VALUE "ProductName", "SDL PAL"
-            VALUE "ProductVersion", "2.0.0.1"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x804, 1200
-    END
-END
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -362,7 +370,7 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// 中文(繁体，台湾) resources
+// 中文(繁体，中国台湾) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL
@@ -494,7 +502,7 @@ BEGIN
     IDC_BRGAME              "ゴ秨笴栏戈方郎Ж"
 END
 
-#endif    // 中文(繁体，台湾) resources
+#endif    // 中文(繁体，中国台湾) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

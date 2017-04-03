@@ -1,7 +1,7 @@
-# Makefile for win32 platforms with mingw
+# Makefile for win32 platforms with mingw under msys or linux
 
 TARGET = sdlpal.exe
-TEST_TARGET = ./sdlpal-tests
+TEST_TARGET = sdlpal-tests.exe
 
 HOST =
 TEST_CCFLAGS =
@@ -10,7 +10,7 @@ GTEST_DIR = ../3rd/googletest/googletest
 
 CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) ../native_midi/native_midi_win32.c ../native_midi/native_midi_common.c
 CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
-RCFILES = $(wildcard ./*.rc)
+RCFILES = $(wildcard ./sdlpal.rc)
 OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o) $(RCFILES:.rc=.o)
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
@@ -47,7 +47,7 @@ gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc
 
 $(TEST_TARGET): $(OBJFILES) $(TEST_OBJFILES) gtest-all.o
 	@echo [LD] $@
-	@$(HOST)g++ $^ -o $@ $(LDFLAGS) -lpthread
+	@$(HOST)g++ $^ -o $@ $(LDFLAGS) -pthread
 
 clean:
 	-rm -f $(TARGET) $(TEST_TARGET) $(OBJFILES) $(TEST_OBJFILES)
