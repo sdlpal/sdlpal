@@ -104,7 +104,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <PackageCertificateKeyFile>SDLPal.UWP_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>SDLPal_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>9B6928946F268F65424754A037F1F924B819C954</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
@@ -231,7 +232,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="SDLPal.UWP_TemporaryKey.pfx" />
+    <None Include="SDLPal_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\SDLPal.Common\SDLPal.cpp" />

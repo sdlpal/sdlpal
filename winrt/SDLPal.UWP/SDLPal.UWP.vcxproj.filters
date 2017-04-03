@@ -50,7 +50,7 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SDLPal.UWP_TemporaryKey.pfx" />
+    <None Include="SDLPal_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="..\SDLPal.Common\MainPage.xaml" />
