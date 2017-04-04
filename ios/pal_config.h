@@ -29,4 +29,6 @@ UTIL_SavePath(
    VOID
 );
 
+#include <sys/time.h>
+
 #endif
