@@ -50,17 +50,17 @@ matrix:
           - cd ..
 
       - os: linux
-        env: TARGET=Android NDK_VERSION=r10e
-        dist: precise
-        language: android
+        env: TARGET=Android NDK_VERSION=r13b TERM=dumb
         android:
           components:
-            - build-tools-22.0.1
-            - android-22
+            - platform-tools
+            - tools
+            - build-tools-25.0.2
+            - android-24
+        jdk: oraclejdk8
         before_install:
-          - wget http://dl.google.com/android/ndk/android-ndk-$NDK_VERSION-linux-x86_64.bin
-          - chmod +x android-ndk-$NDK_VERSION-linux-x86_64.bin
-          - ./android-ndk-$NDK_VERSION-linux-x86_64.bin | egrep -v ^Extracting
+          - wget http://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip
+          - unzip android-ndk-$NDK_VERSION-linux-x86_64.zip > /dev/null
           - export ANDROID_NDK_HOME=`pwd`/android-ndk-$NDK_VERSION
           - export PATH=${PATH}:${ANDROID_NDK_HOME}
           - cd SDL2
@@ -69,12 +69,9 @@ matrix:
           - mv SDL2-2.0.5/* .
           - cd ..
         script:
-          - cd android/jni
-          - ndk-build
-          - cd ..
-          - sed -i 's/android-24/android-22/g' project.properties
-          - ant debug
-          - mv bin/SDLActivity-debug.apk ../deploy/sdlpal-debug.apk
+          - cd android
+          - ./gradlew assembleDebug
+          - mv app/build/outputs/apk/app-debug.apk ../deploy/sdlpal-debug.apk
           - cd ..
 
       - os: osx
