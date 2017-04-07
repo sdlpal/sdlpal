@@ -1,8 +1,8 @@
 #ifndef PAL_CONFIG_H
 # define PAL_CONFIG_H
 
-# define PAL_PREFIX            "/mnt/sdcard/sdlpal/"
-# define PAL_SAVE_PREFIX       "/mnt/sdcard/sdlpal/"
+# define PAL_PREFIX            UTIL_BasePath()
+# define PAL_SAVE_PREFIX       UTIL_SavePath()
 # define PAL_HAS_TOUCH         1
 # define PAL_DEFAULT_WINDOW_WIDTH   320
 # define PAL_DEFAULT_WINDOW_HEIGHT  200
@@ -19,4 +19,13 @@
 # define PAL_CREDIT           "Rikku2000"
 # define PAL_PORTYEAR         "2013"
 
+LPCSTR
+UTIL_BasePath(
+   VOID
+);
+
+LPCSTR
+UTIL_SavePath(
+   VOID
+);
 #endif
