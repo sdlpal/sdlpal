@@ -386,8 +386,6 @@ PAL_SwitchMenu(
    return (wReturnValue == MENUITEM_VALUE_CANCELLED) ? fEnabled : ((wReturnValue == 0) ? FALSE : TRUE);
 }
 
-#ifndef PAL_CLASSIC
-
 static VOID
 PAL_BattleSpeedMenu(
    VOID
@@ -409,27 +407,27 @@ PAL_BattleSpeedMenu(
 {
    LPBOX           lpBox;
    WORD            wReturnValue;
-   const SDL_Rect  rect = {131, 100, 165, 50};
+   const SDL_Rect  rect = {131, 100, 190, 50};
 
-   MENUITEM        rgMenuItem[5] = {
-      { 1,   BATTLESPEEDMENU_LABEL_1,       TRUE,   PAL_XY(145, 110) },
-      { 2,   BATTLESPEEDMENU_LABEL_2,       TRUE,   PAL_XY(170, 110) },
-      { 3,   BATTLESPEEDMENU_LABEL_3,       TRUE,   PAL_XY(195, 110) },
-      { 4,   BATTLESPEEDMENU_LABEL_4,       TRUE,   PAL_XY(220, 110) },
-      { 5,   BATTLESPEEDMENU_LABEL_5,       TRUE,   PAL_XY(245, 110) },
+   MENUITEM        rgMenuItem[6] = {
+      { 0,   SWITCHMENU_LABEL_DISABLE,      TRUE,   PAL_XY(140, 110) },
+      { 1,   BATTLESPEEDMENU_LABEL_1,       TRUE,   PAL_XY(165, 110) },
+      { 2,   BATTLESPEEDMENU_LABEL_2,       TRUE,   PAL_XY(190, 110) },
+      { 3,   BATTLESPEEDMENU_LABEL_3,       TRUE,   PAL_XY(215, 110) },
+      { 4,   BATTLESPEEDMENU_LABEL_4,       TRUE,   PAL_XY(240, 110) },
+      { 5,   BATTLESPEEDMENU_LABEL_5,       TRUE,   PAL_XY(265, 110) },
    };
 
    //
    // Create the boxes
    //
-   lpBox = PAL_CreateSingleLineBox(PAL_XY(131, 100), 8, TRUE);
+   lpBox = PAL_CreateSingleLineBox(PAL_XY(131, 100), 9, TRUE);
    VIDEO_UpdateScreen(&rect);
 
    //
    // Activate the menu
    //
-   wReturnValue = PAL_ReadMenu(NULL, rgMenuItem, 5, gpGlobals->bBattleSpeed - 1,
-      MENUITEM_COLOR);
+   wReturnValue = PAL_ReadMenu(NULL, rgMenuItem, 6, gpGlobals->bBattleSpeed, MENUITEM_COLOR);
 
    //
    // Delete the boxes
@@ -441,10 +439,9 @@ PAL_BattleSpeedMenu(
    if (wReturnValue != MENUITEM_VALUE_CANCELLED)
    {
       gpGlobals->bBattleSpeed = wReturnValue;
+	  gConfig.fClassicBattle = (gpGlobals->bBattleSpeed == 0);
    }
 }
-
-#endif
 
 LPBOX
 PAL_ShowCash(
@@ -546,10 +543,8 @@ PAL_SystemMenu(
       { 2,      SYSMENU_LABEL_LOAD,          TRUE,     PAL_XY(53, 72 + 18) },
       { 3,      SYSMENU_LABEL_MUSIC,         TRUE,     PAL_XY(53, 72 + 36) },
       { 4,      SYSMENU_LABEL_SOUND,         TRUE,     PAL_XY(53, 72 + 54) },
-      { 5,      SYSMENU_LABEL_QUIT,          TRUE,     PAL_XY(53, 72 + 72) },
-#if !defined(PAL_CLASSIC)
-      { 6,      SYSMENU_LABEL_BATTLEMODE,    TRUE,     PAL_XY(53, 72 + 90) },
-#endif
+      { 5,      SYSMENU_LABEL_BATTLEMODE,    TRUE,     PAL_XY(53, 72 + 72) },
+      { 6,      SYSMENU_LABEL_QUIT,          TRUE,     PAL_XY(53, 72 + 90) },
    };
    const int           nSystemMenuItem = sizeof(rgSystemMenuItem) / sizeof(MENUITEM);
 
@@ -639,19 +634,17 @@ PAL_SystemMenu(
 
    case 5:
       //
-      // Quit
-      //
-      PAL_QuitGame();
-      break;
-
-#if !defined(PAL_CLASSIC)
-   case 6:
-      //
       // Battle Mode
       //
       PAL_BattleSpeedMenu();
       break;
-#endif
+
+   case 6:
+      //
+      // Quit
+      //
+      PAL_QuitGame();
+      break;
    }
 
    PAL_DeleteBox(lpMenuBox);

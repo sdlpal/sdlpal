@@ -97,11 +97,7 @@ extern "C"
 typedef enum tagSTATUS
 {
    kStatusConfused = 0,  // attack friends randomly
-#ifdef PAL_CLASSIC
-   kStatusParalyzed,     // paralyzed
-#else
-   kStatusSlow,          // slower
-#endif
+   kStatusParalyzedOrSlow, // paralyzed (classic) or slow (revised)
    kStatusSleep,         // not allowed to move
    kStatusSilence,       // cannot use magic
    kStatusPuppet,        // for dead players only, continue attacking
@@ -111,10 +107,6 @@ typedef enum tagSTATUS
    kStatusDualAttack,    // dual attack
    kStatusAll
 } STATUS;
-
-#ifndef PAL_CLASSIC
-#define kStatusParalyzed kStatusSleep
-#endif
 
 // body parts of equipments
 typedef enum tagBODYPART
@@ -580,9 +572,7 @@ typedef struct tagGLOBALVARS
    BOOL             fNeedToFadeIn;       // TRUE if need to fade in when drawing scene
    BOOL             fInBattle;           // TRUE if in battle
    BOOL             fAutoBattle;         // TRUE if auto-battle
-#ifndef PAL_CLASSIC
-   BYTE             bBattleSpeed;        // Battle Speed (1 = Fastest, 5 = Slowest)
-#endif
+   BYTE             bBattleSpeed;        // Battle Speed (0 = Turn-based, 1 = Fastest, 5 = Slowest)
    WORD             wLastUnequippedItem; // last unequipped item
 
    PLAYERROLES      rgEquipmentEffect[MAX_PLAYER_EQUIPMENTS + 1]; // equipment effects
@@ -618,6 +608,11 @@ typedef struct tagGLOBALVARS
 } GLOBALVARS, *LPGLOBALVARS;
 
 extern GLOBALVARS * const gpGlobals;
+
+BOOL
+PAL_IsClassicBattle(
+	VOID
+);
 
 BOOL
 PAL_IsWINVersion(
