@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(__WINRT__)
 
 #include <vfw.h>
 #include <SDL.h>
