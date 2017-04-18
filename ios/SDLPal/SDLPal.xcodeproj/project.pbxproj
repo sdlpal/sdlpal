@@ -102,6 +102,10 @@
 		C622BE741E474CE2000C8970 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE731E474CE2000C8970 /* GameController.framework */; };
 		C622BE761E474CFC000C8970 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE751E474CFC000C8970 /* AVFoundation.framework */; };
 		C622BE771E474DF5000C8970 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 71655251195BB6DB006E1227 /* util.c */; };
+		C63505731EA6570300186049 /* midi.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056B1EA6570300186049 /* midi.c */; };
+		C63505741EA6570300186049 /* private.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056C1EA6570300186049 /* private.c */; };
+		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
+		C63505801EA6578700186049 /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057D1EA6578700186049 /* native_midi_macosx.c */; };
 		C6E974A21E49C24500F76B17 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E9749D1E49C22D00F76B17 /* libSDL2.a */; };
 /* End PBXBuildFile section */
 
@@ -342,6 +346,13 @@
 		C622BE731E474CE2000C8970 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		C622BE751E474CFC000C8970 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C626FFBF1E5BCBE700E39DD9 /* pal_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pal_config.h; path = ../../pal_config.h; sourceTree = "<group>"; };
+		C635056A1EA6570300186049 /* midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = midi.h; path = ../../../midi.h; sourceTree = "<group>"; };
+		C635056B1EA6570300186049 /* midi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi.c; path = ../../../midi.c; sourceTree = "<group>"; };
+		C635056C1EA6570300186049 /* private.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = private.c; path = ../../../private.c; sourceTree = "<group>"; };
+		C635057A1EA6578700186049 /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
+		C635057B1EA6578700186049 /* native_midi_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_common.c; sourceTree = "<group>"; };
+		C635057C1EA6578700186049 /* native_midi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi_common.h; sourceTree = "<group>"; };
+		C635057D1EA6578700186049 /* native_midi_macosx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_macosx.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -523,11 +534,13 @@
 			children = (
 				C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */,
 				716551E4195BB6DA006E1227 /* adplug */,
-				7165505F195BB372006E1227 /* Frameworks */,
 				71655212195BB6DA006E1227 /* libmad */,
 				57FB00F01B7A50B0005FCF4C /* liboggvorbis */,
-				7165505E195BB372006E1227 /* Products */,
+				C63505791EA6578700186049 /* native_midi */,
 				71655066195BB372006E1227 /* SDLPal */,
+				71655067195BB372006E1227 /* Supporting Files */,
+				7165505F195BB372006E1227 /* Frameworks */,
+				7165505E195BB372006E1227 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -560,14 +573,12 @@
 		71655066195BB372006E1227 /* SDLPal */ = {
 			isa = PBXGroup;
 			children = (
-				C626FFBF1E5BCBE700E39DD9 /* pal_config.h */,
-				57FB015A1B7A50E0005FCF4C /* codepage.h */,
-				57FB015B1B7A50E0005FCF4C /* fontglyph.h */,
+				C63505771EA6575200186049 /* Headers */,
+				C635056B1EA6570300186049 /* midi.c */,
+				C635056C1EA6570300186049 /* private.c */,
 				57FB015C1B7A50E0005FCF4C /* mp3play.c */,
 				57FB015D1B7A50E0005FCF4C /* oggplay.c */,
-				57FB015E1B7A50E0005FCF4C /* players.h */,
 				57FB015F1B7A50E0005FCF4C /* resampler.c */,
-				57FB01601B7A50E0005FCF4C /* resampler.h */,
 				716551FF195BB6DA006E1227 /* battle.c */,
 				71655202195BB6DA006E1227 /* ending.c */,
 				71655204195BB6DA006E1227 /* fight.c */,
@@ -595,38 +606,9 @@
 				71655253195BB6DB006E1227 /* video.c */,
 				71655255195BB6DB006E1227 /* yj1.c */,
 				7165523F195BB6DB006E1227 /* rixplay.cpp */,
-				716551FE195BB6DA006E1227 /* ascii.h */,
-				71655200195BB6DA006E1227 /* battle.h */,
-				71655201195BB6DA006E1227 /* common.h */,
-				71655203195BB6DA006E1227 /* ending.h */,
-				71655205195BB6DA006E1227 /* fight.h */,
-				71655207195BB6DA006E1227 /* font.h */,
-				71655209195BB6DA006E1227 /* game.h */,
-				7165520D195BB6DA006E1227 /* global.h */,
-				7165520F195BB6DA006E1227 /* input.h */,
-				71655211195BB6DA006E1227 /* itemmenu.h */,
-				71655232195BB6DA006E1227 /* magicmenu.h */,
-				71655234195BB6DA006E1227 /* main.h */,
-				71655236195BB6DA006E1227 /* map.h */,
-				71655238195BB6DA006E1227 /* palcommon.h */,
-				7165523A195BB6DB006E1227 /* palette.h */,
-				7165523C195BB6DB006E1227 /* play.h */,
-				7165523E195BB6DB006E1227 /* res.h */,
-				71655242195BB6DB006E1227 /* rngplay.h */,
-				71655244195BB6DB006E1227 /* scene.h */,
-				71655246195BB6DB006E1227 /* script.h */,
 				C622BE641E474B5E000C8970 /* audio.c */,
-				C622BE651E474B5E000C8970 /* audio.h */,
-				7165524A195BB6DB006E1227 /* text.h */,
-				7165524C195BB6DB006E1227 /* ui.h */,
-				7165524E195BB6DB006E1227 /* uibattle.h */,
-				71655250195BB6DB006E1227 /* uigame.h */,
-				71655252195BB6DB006E1227 /* util.h */,
-				71655254195BB6DB006E1227 /* video.h */,
 				C622BE6A1E474C01000C8970 /* palcfg.c */,
-				C622BE6B1E474C01000C8970 /* palcfg.h */,
 				C622BE6F1E474CA9000C8970 /* overlay.c */,
-				71655067195BB372006E1227 /* Supporting Files */,
 			);
 			path = SDLPal;
 			sourceTree = "<group>";
@@ -642,6 +624,7 @@
 				71655076195BB372006E1227 /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
+			path = SDLPal;
 			sourceTree = "<group>";
 		};
 		716551E4195BB6DA006E1227 /* adplug */ = {
@@ -713,6 +696,59 @@
 			);
 			name = libmad;
 			path = ../../libmad;
+			sourceTree = "<group>";
+		};
+		C63505771EA6575200186049 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				C626FFBF1E5BCBE700E39DD9 /* pal_config.h */,
+				C635056A1EA6570300186049 /* midi.h */,
+				57FB015A1B7A50E0005FCF4C /* codepage.h */,
+				57FB015B1B7A50E0005FCF4C /* fontglyph.h */,
+				57FB015E1B7A50E0005FCF4C /* players.h */,
+				57FB01601B7A50E0005FCF4C /* resampler.h */,
+				716551FE195BB6DA006E1227 /* ascii.h */,
+				71655200195BB6DA006E1227 /* battle.h */,
+				71655201195BB6DA006E1227 /* common.h */,
+				71655203195BB6DA006E1227 /* ending.h */,
+				71655205195BB6DA006E1227 /* fight.h */,
+				71655207195BB6DA006E1227 /* font.h */,
+				71655209195BB6DA006E1227 /* game.h */,
+				7165520D195BB6DA006E1227 /* global.h */,
+				7165520F195BB6DA006E1227 /* input.h */,
+				71655211195BB6DA006E1227 /* itemmenu.h */,
+				71655232195BB6DA006E1227 /* magicmenu.h */,
+				71655234195BB6DA006E1227 /* main.h */,
+				71655236195BB6DA006E1227 /* map.h */,
+				71655238195BB6DA006E1227 /* palcommon.h */,
+				7165523A195BB6DB006E1227 /* palette.h */,
+				7165523C195BB6DB006E1227 /* play.h */,
+				7165523E195BB6DB006E1227 /* res.h */,
+				71655242195BB6DB006E1227 /* rngplay.h */,
+				71655244195BB6DB006E1227 /* scene.h */,
+				71655246195BB6DB006E1227 /* script.h */,
+				C622BE651E474B5E000C8970 /* audio.h */,
+				7165524A195BB6DB006E1227 /* text.h */,
+				7165524C195BB6DB006E1227 /* ui.h */,
+				7165524E195BB6DB006E1227 /* uibattle.h */,
+				71655250195BB6DB006E1227 /* uigame.h */,
+				71655252195BB6DB006E1227 /* util.h */,
+				71655254195BB6DB006E1227 /* video.h */,
+				C622BE6B1E474C01000C8970 /* palcfg.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		C63505791EA6578700186049 /* native_midi */ = {
+			isa = PBXGroup;
+			children = (
+				C635057A1EA6578700186049 /* native_midi.h */,
+				C635057B1EA6578700186049 /* native_midi_common.c */,
+				C635057C1EA6578700186049 /* native_midi_common.h */,
+				C635057D1EA6578700186049 /* native_midi_macosx.c */,
+			);
+			name = native_midi;
+			path = ../../native_midi;
 			sourceTree = "<group>";
 		};
 		C6E974971E49C22D00F76B17 /* Products */ = {
@@ -856,15 +892,19 @@
 				71655267195BB6DB006E1227 /* game.c in Sources */,
 				C622BE661E474B5E000C8970 /* audio.c in Sources */,
 				71655269195BB6DB006E1227 /* global.c in Sources */,
+				C635057F1EA6578700186049 /* native_midi_common.c in Sources */,
 				7165526A195BB6DB006E1227 /* input.c in Sources */,
 				7165526B195BB6DB006E1227 /* itemmenu.c in Sources */,
 				7165526C195BB6DB006E1227 /* bit.c in Sources */,
 				7165526E195BB6DB006E1227 /* decoder.c in Sources */,
+				C63505731EA6570300186049 /* midi.c in Sources */,
 				57FB01481B7A50B0005FCF4C /* floor0.c in Sources */,
 				7165526F195BB6DB006E1227 /* fixed.c in Sources */,
+				C63505801EA6578700186049 /* native_midi_macosx.c in Sources */,
 				71655270195BB6DB006E1227 /* frame.c in Sources */,
 				71655271195BB6DB006E1227 /* huffman.c in Sources */,
 				71655273195BB6DB006E1227 /* layer12.c in Sources */,
+				C63505741EA6570300186049 /* private.c in Sources */,
 				71655274195BB6DB006E1227 /* layer3.c in Sources */,
 				71655275195BB6DB006E1227 /* music_mad.c in Sources */,
 				71655279195BB6DB006E1227 /* stream.c in Sources */,
@@ -978,6 +1018,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"__IOS__=1",
 					"DEBUG=1",
+					"MAC_OS_X_VERSION_MIN_REQUIRED=1060",
 				);
 				HEADER_SEARCH_PATHS = (
 					../../SDL2/include,
@@ -999,7 +1040,10 @@
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = "__IOS__=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"__IOS__=1",
+					"MAC_OS_X_VERSION_MIN_REQUIRED=1060",
+				);
 				HEADER_SEARCH_PATHS = (
 					../../SDL2/include,
 					../../,

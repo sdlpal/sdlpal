@@ -246,6 +246,7 @@ data
 
 *.xcscmblueprint
 xcuserdata
+*.xcuserstate
 
 # Gradle files
 build/

@@ -27,7 +27,6 @@
 
 #include "SDL_config.h"
 
-#include <Carbon/Carbon.h>
 #include <AudioToolbox/AudioToolbox.h>
 #include <AvailabilityMacros.h>
 
@@ -128,7 +127,7 @@ GetSequenceAudioUnit(MusicSequence sequence, AudioUnit *aunit)
                 continue;
             else if (desc.componentType != kAudioUnitType_Output)
                 continue;
-            else if (desc.componentSubType != kAudioUnitSubType_DefaultOutput)
+            else if (desc.componentSubType != kAudioUnitSubType_GenericOutput)
                 continue;
         }
         #endif
