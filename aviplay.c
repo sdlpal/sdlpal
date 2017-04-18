@@ -87,9 +87,5 @@ int PAL_PlayAVI(const char *szFilename) {
 
         return 0;
 }
-#else
-int PAL_PlayAVI(const char *szFilename) {
-	return -1;
-}
 #endif
 
