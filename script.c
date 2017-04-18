@@ -2894,6 +2894,7 @@ PAL_InterpretInstruction(
       // Quit game
       //
       if (gConfig.fIsWIN95)
+	 PAL_PlayAVI(PAL_PREFIX "4.avi") == 0 && PAL_PlayAVI(PAL_PREFIX "5.avi") == 0;
          PAL_EndingScreen();
       PAL_AdditionalCredits();
       PAL_Shutdown(0);
