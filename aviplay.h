@@ -6,10 +6,10 @@
 #ifndef AVIPLAY_H
 #define AVIPLAY_H
 
-#ifdef WIN32
+#ifdef _WIN32
 int PAL_PlayAVI(const char *szFilename);
 #else
-inline PAL_PlayAVI(const char *ignored) { return -1; }
+static inline int PAL_PlayAVI(const char *ignored) { return -1; }
 #endif
 
 #endif

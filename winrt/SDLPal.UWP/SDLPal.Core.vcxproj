@@ -407,6 +407,7 @@
     <ClCompile Include="..\..\uigame.c" />
     <ClCompile Include="..\..\util.c" />
     <ClCompile Include="..\..\video.c" />
+    <ClCompile Include="..\..\aviplay.c" />
     <ClCompile Include="..\..\yj1.c" />
   </ItemGroup>
   <ItemGroup>
