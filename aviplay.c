@@ -20,6 +20,7 @@ int PAL_PlayAVI(const char *szFilename) {
 	extern SDL_Surface *gpScreenReal;
 #endif
 	static BOOL aviDisabled = FALSE;
+	char realPath[1024];
 
 	if(aviDisabled) return -1;
 
@@ -37,7 +38,11 @@ int PAL_PlayAVI(const char *szFilename) {
 
         if (aviDisabled = (hw == NULL)) return -1;
 
-        if (MCIWndOpen(hw, szFilename, 0) != 0) {
+	memset(realPath, 0, sizeof(realPath));
+	strncpy(realPath, PAL_PREFIX, 512);
+	strncat(realPath, szFilename, 512);
+
+        if (MCIWndOpen(hw, realPath, 0) != 0) {
 		aviDisabled = TRUE;
                 MCIWndDestroy(hw);
                 return -1;

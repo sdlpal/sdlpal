@@ -434,7 +434,7 @@ PAL_EndingScreen(
    VOID
 )
 {
-	if(gConfig.fIsWIN95 && PAL_PlayAVI(PAL_PREFIX "6.avi") == 0)  return;
+	if(gConfig.fIsWIN95 && PAL_PlayAVI("6.avi") == 0)  return;
 
 	AUDIO_PlayMusic(0x1a, TRUE, 0);
 	PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 110, 150, 7);
