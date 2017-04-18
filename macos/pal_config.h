@@ -10,6 +10,8 @@
 #  define PAL_HAS_SDLCD         1
 # endif
 
+#define PAL_HAS_NATIVEMIDI 1
+
 # define PAL_PREFIX            "./"
 # define PAL_SAVE_PREFIX       "./"
 
@@ -29,6 +31,10 @@
 # define PAL_CREDIT           NULL
 # define PAL_PORTYEAR         NULL
 
-# define PAL_HAS_CONFIG_PAGE  0
+#define PAL_HAS_NATIVEMIDI  1
+
+#define PAL_HAS_CONFIG_PAGE 0
+
+#define PAL_FILESYSTEM_IGNORE_CASE 1
 
 #endif
