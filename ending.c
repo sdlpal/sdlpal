@@ -267,11 +267,7 @@ PAL_ScrollFBP(
       {
          PAL_FadeIn(gpGlobals->wNumPalette, gpGlobals->fNightPalette, 1);
          gpGlobals->fNeedToFadeIn = FALSE;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-         SDL_SetSurfacePalette(p, gpScreen->format->palette);
-#else
-         SDL_SetPalette(p, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
-#endif
+         VIDEO_UpdateSurfacePalette(p, gpScreen);
       }
 
       UTIL_Delay(800 / wScrollSpeed);
@@ -380,13 +376,8 @@ PAL_EndingAnimation(
       {
          PAL_FadeIn(gpGlobals->wNumPalette, gpGlobals->fNightPalette, 1);
          gpGlobals->fNeedToFadeIn = FALSE;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-         SDL_SetSurfacePalette(pUpper, gpScreen->format->palette);
-         SDL_SetSurfacePalette(pLower, gpScreen->format->palette);
-#else
-         SDL_SetPalette(pUpper, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
-         SDL_SetPalette(pLower, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
-#endif
+         VIDEO_UpdateSurfacePalette(pUpper, gpScreen);
+         VIDEO_UpdateSurfacePalette(pLower, gpScreen);
       }
 
       UTIL_Delay(50);

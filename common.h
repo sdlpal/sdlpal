@@ -60,8 +60,6 @@ extern "C"
 # define SDLK_KP9     SDLK_KP_9
 # define SDLK_KP0     SDLK_KP_0
 
-# define SDL_HWSURFACE     0
-
 #else
 
 # ifndef PAL_FATAL_OUTPUT

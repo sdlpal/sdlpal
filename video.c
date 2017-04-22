@@ -1124,7 +1124,6 @@ VIDEO_DuplicateSurface(
   Parameters:
 
     [IN]  pSource - the source surface.
-	[IN]  flagsMask - flags that should be taken away from the new surface.
 	[IN]  pRect   - the area to be duplicated, NULL for entire surface.
 
   Return value:
@@ -1141,4 +1140,32 @@ VIDEO_DuplicateSurface(
 	}
 
 	return dest;
+}
+
+void
+VIDEO_UpdateSurfacePalette(
+	SDL_Surface    *pSurface,
+	SDL_Surface    *pSource
+)
+/*++
+  Purpose:
+
+    Use the palette from pSource to update the palette of pSurface.
+
+  Parameters:
+
+    [IN]  pSurface - the surface whose palette should be updated.
+	[IN]  pSource  - the surface whose palette is used as source.
+
+  Return value:
+
+    None.
+
+--*/
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetSurfacePalette(pSurface, pSource->format->palette);
+#else
+	SDL_SetPalette(pSurface, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
+#endif
 }

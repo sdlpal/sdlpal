@@ -331,13 +331,8 @@ PAL_SplashScreen(
       }
 
       VIDEO_SetPalette(rgCurrentPalette);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	  SDL_SetSurfacePalette(lpBitmapDown, gpScreen->format->palette);
-	  SDL_SetSurfacePalette(lpBitmapUp, gpScreen->format->palette);
-#else
-      SDL_SetPalette(lpBitmapDown, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
-      SDL_SetPalette(lpBitmapUp, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
-#endif
+      VIDEO_UpdateSurfacePalette(lpBitmapDown, gpScreen);
+      VIDEO_UpdateSurfacePalette(lpBitmapUp, gpScreen);
 
       //
       // Draw the screen
@@ -429,13 +424,8 @@ PAL_SplashScreen(
                   rgCurrentPalette[i].b = (BYTE)(palette[i].b * ((float)dwTime / 15000));
                }
                VIDEO_SetPalette(rgCurrentPalette);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-			   SDL_SetSurfacePalette(lpBitmapDown, gpScreen->format->palette);
-			   SDL_SetSurfacePalette(lpBitmapUp, gpScreen->format->palette);
-#else
-			   SDL_SetPalette(lpBitmapDown, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
-			   SDL_SetPalette(lpBitmapUp, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
-#endif
+               VIDEO_UpdateSurfacePalette(lpBitmapDown, gpScreen);
+               VIDEO_UpdateSurfacePalette(lpBitmapUp, gpScreen);
                UTIL_Delay(8);
                dwTime += 250;
             }

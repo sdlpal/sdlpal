@@ -112,6 +112,12 @@ VIDEO_CreateCompatibleSurface(
 	SDL_Surface    *pSource
 );
 
+void
+VIDEO_UpdateSurfacePalette(
+	SDL_Surface    *pSurface,
+	SDL_Surface    *pSource
+);
+
 #ifdef __cplusplus
 }
 #endif
