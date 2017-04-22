@@ -2071,7 +2071,7 @@ PAL_InterpretInstruction(
       //
       // Fade the screen to scene
       //
-      VIDEO_BackupScreen();
+      VIDEO_BackupScreen(gpScreen);
       PAL_MakeScene();
       VIDEO_FadeScreen(pScript->rgwOperand[0]);
       break;
@@ -2583,7 +2583,7 @@ PAL_InterpretInstruction(
             }
             PAL_BattleDelay(1, 0, TRUE);
          }
-         PAL_BattleBackupScene();
+         VIDEO_BackupScreen(g_Battle.lpSceneBuf);
          PAL_BattleUpdateFighters();
          PAL_BattleMakeScene();
          PAL_BattleFadeScene();
@@ -2694,7 +2694,7 @@ PAL_InterpretInstruction(
       // Fade to the current scene
       // FIXME: This is obviously wrong
       //
-      VIDEO_BackupScreen();
+      VIDEO_BackupScreen(gpScreen);
       PAL_MakeScene();
       VIDEO_FadeScreen(2);
       break;
@@ -2838,7 +2838,7 @@ PAL_InterpretInstruction(
 
          PAL_BattleDelay(2, 0, TRUE);
 
-         PAL_BattleBackupScene();
+         VIDEO_BackupScreen(g_Battle.lpSceneBuf);
          PAL_LoadBattleSprites();
          PAL_BattleMakeScene();
          AUDIO_PlaySound(212);
@@ -2849,7 +2849,7 @@ PAL_InterpretInstruction(
             g_Battle.rgEnemy[i].iColorShift = 0;
          }
 
-         PAL_BattleBackupScene();
+         VIDEO_BackupScreen(g_Battle.lpSceneBuf);
          PAL_BattleMakeScene();
          PAL_BattleFadeScene();
       }
@@ -2882,7 +2882,7 @@ PAL_InterpretInstruction(
          g_Battle.rgEnemy[wEventObjectID].iColorShift = 0;
 
 		 AUDIO_PlaySound(47);
-         PAL_BattleBackupScene();
+         VIDEO_BackupScreen(g_Battle.lpSceneBuf);
          PAL_LoadBattleSprites();
          PAL_BattleMakeScene();
          PAL_BattleFadeScene();
@@ -2973,7 +2973,7 @@ PAL_InterpretInstruction(
       //
       // backup screen
       //
-      VIDEO_BackupScreen();
+      VIDEO_BackupScreen(gpScreen);
       break;
 
    default:
@@ -3122,12 +3122,12 @@ PAL_RunTriggerScript(
 
          if (PAL_DialogIsPlayingRNG())
          {
-            VIDEO_RestoreScreen();
+            VIDEO_RestoreScreen(gpScreen);
          }
          else if (gpGlobals->fInBattle)
          {
             PAL_BattleMakeScene();
-            SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+            VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
             VIDEO_UpdateScreen(NULL);
          }
          else
@@ -3280,7 +3280,7 @@ PAL_RunTriggerScript(
          // Restore the screen
          //
          PAL_ClearDialog(TRUE);
-         VIDEO_RestoreScreen();
+         VIDEO_RestoreScreen(gpScreen);
          VIDEO_UpdateScreen(NULL);
          wScriptEntry++;
          break;
@@ -3300,7 +3300,7 @@ PAL_RunTriggerScript(
                   // Restore the screen
                   //
                   PAL_ClearDialog(TRUE);
-                  VIDEO_RestoreScreen();
+                  VIDEO_RestoreScreen(gpScreen);
                   VIDEO_UpdateScreen(NULL);
                }
 			   else

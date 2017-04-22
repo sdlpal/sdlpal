@@ -498,7 +498,7 @@ PAL_BattleDelay(
       dwTime = SDL_GetTicks() + BATTLE_FRAME_TIME;
 
       PAL_BattleMakeScene();
-      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
       PAL_BattleUIUpdate();
 
       if (wObjectID != 0)
@@ -765,7 +765,7 @@ PAL_BattlePostActionCheck(
                   PAL_BattleDelay(10, 0, TRUE);
 
                   PAL_BattleMakeScene();
-                  SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+                  VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
                   VIDEO_UpdateScreen(NULL);
 
                   g_Battle.BattleResult = kBattleResultPause;
@@ -828,7 +828,7 @@ PAL_BattlePostActionCheck(
                   PAL_BattleDelay(10, 0, TRUE);
 
                   PAL_BattleMakeScene();
-                  SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+                  VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
                   VIDEO_UpdateScreen(NULL);
 
                   g_Battle.BattleResult = kBattleResultPause;
@@ -849,7 +849,7 @@ PAL_BattlePostActionCheck(
 end:
    if (fFade)
    {
-      PAL_BattleBackupScene();
+      VIDEO_BackupScreen(g_Battle.lpSceneBuf);
       PAL_BattleMakeScene();
       PAL_BattleFadeScene();
    }
@@ -867,7 +867,7 @@ end:
 
       g_Battle.sBackgroundColorShift = 0;
 
-      PAL_BattleBackupScene();
+      VIDEO_BackupScreen(g_Battle.lpSceneBuf);
       PAL_BattleMakeScene();
       PAL_BattleFadeScene();
    }
@@ -1068,7 +1068,7 @@ PAL_BattleStartFrame(
    // Update the scene
    //
    PAL_BattleMakeScene();
-   SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+   VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
    //
    // Check if the battle is over
@@ -1125,7 +1125,7 @@ PAL_BattleStartFrame(
 
       if (g_Battle.iHidingTime == 0)
       {
-         PAL_BattleBackupScene();
+         VIDEO_BackupScreen(g_Battle.lpSceneBuf);
          PAL_BattleMakeScene();
          PAL_BattleFadeScene();
       }
@@ -1603,7 +1603,7 @@ PAL_BattleStartFrame(
          {
             if (--g_Battle.iHidingTime == 0)
             {
-               PAL_BattleBackupScene();
+               VIDEO_BackupScreen(g_Battle.lpSceneBuf);
                PAL_BattleMakeScene();
                PAL_BattleFadeScene();
             }
@@ -2028,7 +2028,7 @@ PAL_BattleShowPlayerAttackAnim(
       }
 
       PAL_BattleMakeScene();
-      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
       PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
       x -= 16;
@@ -2275,7 +2275,7 @@ PAL_BattleShowPlayerPreMagicAnim(
          }
 
          PAL_BattleMakeScene();
-         SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+         VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
          PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
 
@@ -2356,7 +2356,7 @@ PAL_BattleShowPlayerDefMagicAnim(
          (gpGlobals->g.lprgMagic[iMagicNum].wSpeed + 5) * 10;
 
       PAL_BattleMakeScene();
-      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
       if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToParty)
       {
@@ -2578,7 +2578,7 @@ PAL_BattleShowPlayerOffMagicAnim(
          (gpGlobals->g.lprgMagic[iMagicNum].wSpeed + 5) * 10;
 
       PAL_BattleMakeScene();
-      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
       if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeNormal)
       {
@@ -2782,7 +2782,7 @@ PAL_BattleShowEnemyMagicAnim(
          (gpGlobals->g.lprgMagic[iMagicNum].wSpeed + 5) * 10;
 
       PAL_BattleMakeScene();
-      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
       if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeNormal)
       {
@@ -2935,7 +2935,7 @@ PAL_BattleShowPlayerSummonMagicAnim(
       PAL_BattleDelay(1, wObjectID, TRUE);
    }
 
-   PAL_BattleBackupScene();
+   VIDEO_BackupScreen(g_Battle.lpSceneBuf);
 
    //
    // Load the sprite of the summoned god
@@ -2976,7 +2976,7 @@ PAL_BattleShowPlayerSummonMagicAnim(
          (gpGlobals->g.lprgMagic[wMagicNum].wSpeed + 5) * 10;
 
       PAL_BattleMakeScene();
-      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
       PAL_BattleUIUpdate();
 
@@ -3892,7 +3892,7 @@ PAL_BattlePlayerPerformAction(
                      PAL_BattleDelay(1, 0, TRUE);
                   }
 
-                  PAL_BattleBackupScene();
+                  VIDEO_BackupScreen(g_Battle.lpSceneBuf);
                   PAL_LoadBattleSprites();
 
                   g_Battle.rgPlayer[wPlayerIndex].iColorShift = 0;
@@ -4064,7 +4064,7 @@ PAL_BattlePlayerPerformAction(
             g_Battle.iHidingTime *= 1.2;
          }
 #endif
-         PAL_BattleBackupScene();
+         VIDEO_BackupScreen(g_Battle.lpSceneBuf);
          PAL_BattleMakeScene();
          PAL_BattleFadeScene();
       }

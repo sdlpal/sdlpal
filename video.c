@@ -168,36 +168,7 @@ VIDEO_Startup(
    //
    if (gpScreen == NULL || gpScreenBak == NULL || gpScreenReal == NULL || gpTexture == NULL)
    {
-      if (gpScreen != NULL)
-      {
-         SDL_FreeSurface(gpScreen);
-         gpScreen = NULL;
-      }
-
-      if (gpScreenBak != NULL)
-      {
-         SDL_FreeSurface(gpScreenBak);
-         gpScreenBak = NULL;
-      }
-
-      if (gpScreenReal != NULL)
-      {
-         SDL_FreeSurface(gpScreenReal);
-         gpScreenReal = NULL;
-      }
-
-	  if (gpTexture != NULL)
-	  {
-		 SDL_DestroyTexture(gpTexture);
-		 gpTexture = NULL;
-	  }
-
-      SDL_DestroyRenderer(gpRenderer);
-      gpRenderer = NULL;
-
-      SDL_DestroyWindow(gpWindow);
-      gpWindow = NULL;
-
+      VIDEO_Shutdown();
       return -2;
    }
 
@@ -258,21 +229,7 @@ VIDEO_Startup(
    //
    if (gpScreen == NULL || gpScreenBak == NULL)
    {
-      if (gpScreen != NULL)
-      {
-         SDL_FreeSurface(gpScreen);
-		 gpScreen = NULL;
-      }
-
-      if (gpScreenBak != NULL)
-      {
-         SDL_FreeSurface(gpScreenBak);
-		 gpScreenBak = NULL;
-      }
-
-      SDL_FreeSurface(gpScreenReal);
-	  gpScreenReal = NULL;
-
+      VIDEO_Shutdown();
       return -2;
    }
 
@@ -827,50 +784,6 @@ VIDEO_SaveScreenshot(
 }
 
 VOID
-VIDEO_BackupScreen(
-   VOID
-)
-/*++
-  Purpose:
-
-    Backup the screen buffer.
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    None.
-
---*/
-{
-   SDL_BlitSurface(gpScreen, NULL, gpScreenBak, NULL);
-}
-
-VOID
-VIDEO_RestoreScreen(
-   VOID
-)
-/*++
-  Purpose:
-
-    Restore the screen buffer which has been saved with VIDEO_BackupScreen().
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    None.
-
---*/
-{
-   SDL_BlitSurface(gpScreenBak, NULL, gpScreen, NULL);
-}
-
-VOID
 VIDEO_ShakeScreen(
    WORD           wShakeTime,
    WORD           wShakeLevel
@@ -1133,34 +1046,99 @@ VIDEO_FadeScreen(
    VIDEO_UpdateScreen(NULL);
 }
 
-#if SDL_VERSION_ATLEAST(2,0,0)
-
+void
+VIDEO_SetWindowTitle(
+	const char*     pszTitle
+)
 /*++
   Purpose:
 
-    Set the caption of the window. For compatibility with SDL2 only.
+    Set the caption of the window.
 
   Parameters:
 
-    [IN]  lpszCaption - the new caption of the window.
-
-    [IN]  lpReserved - not used, for compatibility only.
+    [IN]  lpszTitle - the new caption of the window.
 
   Return value:
 
     None.
 
 --*/
-VOID
-SDL_WM_SetCaption(
-   LPCSTR         lpszCaption,
-   LPVOID         lpReserved
-)
 {
-   if (gpWindow != NULL)
-   {
-      SDL_SetWindowTitle(gpWindow, lpszCaption);
-   }
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_SetWindowTitle(gpWindow, pszTitle);
+#else
+	SDL_WM_SetCaption(lpszCaption, NULL);
+#endif
 }
 
+SDL_Surface *
+VIDEO_CreateCompatibleSurface(
+	SDL_Surface    *pSource
+)
+/*++
+  Purpose:
+
+    Create a surface that compatible with the source surface.
+
+  Parameters:
+
+    [IN]  pSource   - the source surface from which attributes are taken.
+
+  Return value:
+
+    None.
+
+--*/
+{
+	//
+	// Create the surface
+	//
+	SDL_Surface *dest = SDL_CreateRGBSurface(pSource->flags,
+		pSource->w, pSource->h, pSource->format->BitsPerPixel,
+		pSource->format->Rmask, pSource->format->Gmask,
+		pSource->format->Bmask, pSource->format->Amask);
+
+	if (dest)
+	{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_SetSurfacePalette(dest, pSource->format->palette);
+#else
+		SDL_SetPalette(dest, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
 #endif
+	}
+
+	return dest;
+}
+
+SDL_Surface *
+VIDEO_DuplicateSurface(
+	SDL_Surface    *pSource,
+	const SDL_Rect *pRect
+)
+/*++
+  Purpose:
+
+    Duplicate the selected area from the source surface into new surface.
+
+  Parameters:
+
+    [IN]  pSource - the source surface.
+	[IN]  flagsMask - flags that should be taken away from the new surface.
+	[IN]  pRect   - the area to be duplicated, NULL for entire surface.
+
+  Return value:
+
+    None.
+
+--*/
+{
+	SDL_Surface* dest = VIDEO_CreateCompatibleSurface(pSource);
+
+	if (dest)
+	{
+		VIDEO_CopySurface(pSource, pRect, dest, NULL);
+	}
+
+	return dest;
+}

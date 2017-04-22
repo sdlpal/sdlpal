@@ -33,6 +33,12 @@ extern SDL_Surface *gpScreen;
 extern SDL_Surface *gpScreenBak;
 extern volatile BOOL g_bRenderPaused;
 
+#define VIDEO_CopySurface(s, sr, t, tr) SDL_BlitSurface((s), (sr), (t), (tr))
+#define VIDEO_CopyEntireSurface(s, t)   SDL_BlitSurface((s), NULL, (t), NULL)
+#define VIDEO_BackupScreen(s)           SDL_BlitSurface((s), NULL, gpScreenBak, NULL)
+#define VIDEO_RestoreScreen(t)          SDL_BlitSurface(gpScreenBak, NULL, (t), NULL)
+#define VIDEO_FreeSurface(s)            SDL_FreeSurface(s)
+
 INT
 VIDEO_Startup(
    VOID
@@ -75,16 +81,6 @@ VIDEO_SaveScreenshot(
 );
 
 VOID
-VIDEO_BackupScreen(
-   VOID
-);
-
-VOID
-VIDEO_RestoreScreen(
-   VOID
-);
-
-VOID
 VIDEO_ShakeScreen(
    WORD           wShakeTime,
    WORD           wShakeLevel
@@ -100,16 +96,21 @@ VIDEO_FadeScreen(
    WORD           wSpeed
 );
 
-#if SDL_VERSION_ATLEAST(2,0,0)
-//
-// For compatibility with SDL2.
-//
-VOID
-SDL_WM_SetCaption(
-   LPCSTR         lpszCaption,
-   LPVOID         lpReserved
+void
+VIDEO_SetWindowTitle(
+	const char*   pszTitle
 );
-#endif
+
+SDL_Surface *
+VIDEO_DuplicateSurface(
+	SDL_Surface    *pSource,
+	const SDL_Rect *pRect
+);
+
+SDL_Surface *
+VIDEO_CreateCompatibleSurface(
+	SDL_Surface    *pSource
+);
 
 #ifdef __cplusplus
 }

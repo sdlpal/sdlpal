@@ -92,7 +92,7 @@ PAL_Init(
       TerminateOnError("Could not initialize Video: %d.\n", e);
    }
 
-   SDL_WM_SetCaption("Loading...", NULL);
+   VIDEO_SetWindowTitle("Loading...");
 
    if (!gConfig.fIsWIN95 && gConfig.fUseEmbeddedFonts)
    {
@@ -131,17 +131,17 @@ PAL_Init(
    if (gConfig.fIsWIN95)
    {
 #ifdef _DEBUG
-      SDL_WM_SetCaption("Pal WIN95 (Debug Build)", NULL);
+      VIDEO_SetWindowTitle("Pal WIN95 (Debug Build)");
 #else
-      SDL_WM_SetCaption("Pal WIN95", NULL);
+      VIDEO_SetWindowTitle("Pal WIN95");
 #endif
    }
    else
    {
 #ifdef _DEBUG
-      SDL_WM_SetCaption("Pal (Debug Build)", NULL);
+      VIDEO_SetWindowTitle("Pal (Debug Build)");
 #else
-      SDL_WM_SetCaption("Pal", NULL);
+      VIDEO_SetWindowTitle("Pal");
 #endif
    }
 }
@@ -258,20 +258,8 @@ PAL_SplashScreen(
    //
    // Create the surfaces
    //
-   lpBitmapDown = SDL_CreateRGBSurface(gpScreen->flags, 320, 200, 8,
-      gpScreen->format->Rmask, gpScreen->format->Gmask, gpScreen->format->Bmask,
-      gpScreen->format->Amask);
-   lpBitmapUp = SDL_CreateRGBSurface(gpScreen->flags, 320, 200, 8,
-      gpScreen->format->Rmask, gpScreen->format->Gmask, gpScreen->format->Bmask,
-      gpScreen->format->Amask);
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-   SDL_SetSurfacePalette(lpBitmapDown, gpScreen->format->palette);
-   SDL_SetSurfacePalette(lpBitmapUp, gpScreen->format->palette);
-#else
-   SDL_SetPalette(lpBitmapDown, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
-   SDL_SetPalette(lpBitmapUp, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
-#endif
+   lpBitmapDown = VIDEO_CreateCompatibleSurface(gpScreen);
+   lpBitmapUp = VIDEO_CreateCompatibleSurface(gpScreen);
 
    //
    // Read the bitmaps
@@ -368,7 +356,7 @@ PAL_SplashScreen(
       dstrect.y = 0;
       dstrect.h = srcrect.h;
 
-      SDL_BlitSurface(lpBitmapUp, &srcrect, gpScreen, &dstrect);
+	  VIDEO_CopySurface(lpBitmapUp, &srcrect, gpScreen, &dstrect);
 
       //
       // The lower part...
@@ -379,7 +367,7 @@ PAL_SplashScreen(
       dstrect.y = 200 - iImgPos;
       dstrect.h = srcrect.h;
 
-      SDL_BlitSurface(lpBitmapDown, &srcrect, gpScreen, &dstrect);
+	  VIDEO_CopySurface(lpBitmapDown, &srcrect, gpScreen, &dstrect);
 
       //
       // Draw the cranes...
@@ -471,8 +459,8 @@ PAL_SplashScreen(
       }
    }
 
-   SDL_FreeSurface(lpBitmapDown);
-   SDL_FreeSurface(lpBitmapUp);
+   VIDEO_FreeSurface(lpBitmapDown);
+   VIDEO_FreeSurface(lpBitmapUp);
    free(buf);
 
    if (!fUseCD)
@@ -482,6 +470,8 @@ PAL_SplashScreen(
 
    PAL_FadeOut(1);
 }
+
+
 
 int
 main(

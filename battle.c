@@ -196,28 +196,6 @@ PAL_BattleMakeScene(
 }
 
 VOID
-PAL_BattleBackupScene(
-   VOID
-)
-/*++
-  Purpose:
-
-    Backup the scene buffer.
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    None.
-
---*/
-{
-   SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreenBak, NULL);
-}
-
-VOID
 PAL_BattleFadeScene(
    VOID
 )
@@ -277,7 +255,7 @@ PAL_BattleFadeScene(
          //
          // Draw the backup buffer to the screen
          //
-         SDL_BlitSurface(gpScreenBak, NULL, gpScreen, NULL);
+		 VIDEO_RestoreScreen(gpScreen);
 
          PAL_BattleUIUpdate();
          VIDEO_UpdateScreen(NULL);
@@ -287,7 +265,7 @@ PAL_BattleFadeScene(
    //
    // Draw the result buffer to the screen as the final step
    //
-   SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+   VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
    PAL_BattleUIUpdate();
 
    VIDEO_UpdateScreen(NULL);
@@ -315,13 +293,13 @@ PAL_BattleMain(
    int         i;
    DWORD       dwTime;
    
-   VIDEO_BackupScreen();
+   VIDEO_BackupScreen(gpScreen);
 
    //
    // Generate the scene and draw the scene to the screen buffer
    //
    PAL_BattleMakeScene();
-   SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+   VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
    //
    // Fade out the music and delay for a while
@@ -581,20 +559,13 @@ PAL_LoadBattleBackground(
    //
    // Create the surface
    //
-   g_Battle.lpBackground =
-      SDL_CreateRGBSurface(gpScreen->flags & ~SDL_HWSURFACE, 320, 200, 8,
-      gpScreen->format->Rmask, gpScreen->format->Gmask,
-      gpScreen->format->Bmask, gpScreen->format->Amask);
+   g_Battle.lpBackground = VIDEO_CreateCompatibleSurface(gpScreen);
 
    if (g_Battle.lpBackground == NULL)
    {
       TerminateOnError("PAL_LoadBattleBackground(): failed to create surface!");
    }
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-   SDL_SetSurfacePalette(g_Battle.lpBackground, gpScreen->format->palette);
-#else
-   SDL_SetPalette(g_Battle.lpBackground, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
-#endif
+
    //
    // Load the picture
    //
@@ -639,7 +610,7 @@ PAL_BattleWon(
    //
    OrigPlayerRoles = gpGlobals->g.PlayerRoles;
 
-   VIDEO_BackupScreen();
+   VIDEO_BackupScreen(gpScreen);
 
    if (g_Battle.iExpGained > 0)
    {
@@ -740,7 +711,7 @@ PAL_BattleWon(
 
       if (fLevelUp)
       {
-         VIDEO_RestoreScreen();
+         VIDEO_RestoreScreen(gpScreen);
          //
          // Player has gained a level. Show the message
          //
@@ -1035,7 +1006,7 @@ PAL_BattleEnemyEscape(
    	  }
 
    	  PAL_BattleMakeScene();
-      SDL_BlitSurface(g_Battle.lpSceneBuf, NULL, gpScreen, NULL);
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
       VIDEO_UpdateScreen(NULL);
 
       UTIL_Delay(10);
@@ -1355,21 +1326,12 @@ PAL_StartBattle(
    //
    // Create the surface for scene buffer
    //
-   g_Battle.lpSceneBuf =
-      SDL_CreateRGBSurface(gpScreen->flags & ~SDL_HWSURFACE, 320, 200, 8,
-      gpScreen->format->Rmask, gpScreen->format->Gmask,
-      gpScreen->format->Bmask, gpScreen->format->Amask);
+   g_Battle.lpSceneBuf = VIDEO_CreateCompatibleSurface(gpScreen);
 
    if (g_Battle.lpSceneBuf == NULL)
    {
       TerminateOnError("PAL_StartBattle(): creating surface for scene buffer failed!");
    }
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-   SDL_SetSurfacePalette(g_Battle.lpSceneBuf, gpScreen->format->palette);
-#else
-   SDL_SetPalette(g_Battle.lpSceneBuf, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
-#endif
 
    PAL_UpdateEquipments();
 
@@ -1465,8 +1427,8 @@ PAL_StartBattle(
    //
    // Free the surfaces for the background picture and scene buffer
    //
-   SDL_FreeSurface(g_Battle.lpBackground);
-   SDL_FreeSurface(g_Battle.lpSceneBuf);
+   VIDEO_FreeSurface(g_Battle.lpBackground);
+   VIDEO_FreeSurface(g_Battle.lpSceneBuf);
 
    g_Battle.lpBackground = NULL;
    g_Battle.lpSceneBuf = NULL;

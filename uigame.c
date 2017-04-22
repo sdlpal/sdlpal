@@ -124,9 +124,9 @@ PAL_OpeningMenu(
          //
          // Load game
          //
-         VIDEO_BackupScreen();
+         VIDEO_BackupScreen(gpScreen);
          wItemSelected = PAL_SaveSlotMenu(1);
-         VIDEO_RestoreScreen();
+         VIDEO_RestoreScreen(gpScreen);
          VIDEO_UpdateScreen(NULL);
          if (wItemSelected != MENUITEM_VALUE_CANCELLED)
          {
@@ -963,7 +963,7 @@ PAL_InGameMenu(
    const SDL_Rect       rect = {0, 0, 320, 185};
    
    // Fix render problem with shadow
-   VIDEO_BackupScreen();
+   VIDEO_BackupScreen(gpScreen);
 
    //
    // Create menu items
@@ -1045,7 +1045,7 @@ out:
    PAL_DeleteBox(lpMenuBox);
 
    // Fix render problem with shadow
-   VIDEO_RestoreScreen();
+   VIDEO_RestoreScreen(gpScreen);
 }
 
 VOID

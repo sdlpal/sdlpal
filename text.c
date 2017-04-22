@@ -972,7 +972,7 @@ PAL_StartDialog(
 
    if (fPlayingRNG && iNumCharFace)
    {
-      VIDEO_BackupScreen();
+      VIDEO_BackupScreen(gpScreen);
       g_TextLib.fPlayingRNG = TRUE;
    }
 
@@ -1181,7 +1181,7 @@ PAL_ShowDialogText(
       //
       PAL_DialogWaitForKey();
       g_TextLib.nCurrentDialogLine = 0;
-      VIDEO_RestoreScreen();
+      VIDEO_RestoreScreen(gpScreen);
       VIDEO_UpdateScreen(NULL);
    }
 
@@ -1264,7 +1264,7 @@ PAL_ShowDialogText(
             //
             // Save the screen before we show the first line of dialog
             //
-            VIDEO_BackupScreen();
+            VIDEO_BackupScreen(gpScreen);
          }
 
          while (lpszText != NULL && *lpszText != '\0')

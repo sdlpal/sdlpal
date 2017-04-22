@@ -25,6 +25,31 @@
 
 LPSPRITE      gpSpriteUI = NULL;
 
+static LPBOX
+PAL_CreateBoxInternal(
+	const SDL_Rect *rect
+)
+{
+	LPBOX lpBox = (LPBOX)calloc(1, sizeof(BOX));
+	if (lpBox == NULL)
+	{
+		return NULL;
+	}
+
+	lpBox->pos = PAL_XY(rect->x, rect->y);
+	lpBox->lpSavedArea = VIDEO_DuplicateSurface(gpScreen, rect);
+	lpBox->wHeight = (WORD)rect->w;
+	lpBox->wWidth = (WORD)rect->h;
+
+	if (lpBox->lpSavedArea == NULL)
+	{
+		free(lpBox);
+		return NULL;
+	}
+
+	return lpBox;
+}
+
 INT
 PAL_InitUI(
    VOID
@@ -140,7 +165,6 @@ PAL_CreateBoxWithShadow(
    int              i, j, x, m, n;
    LPCBITMAPRLE     rglpBorderBitmap[3][3];
    LPBOX            lpBox = NULL;
-   SDL_Surface     *save;
    SDL_Rect         rect;
 
    //
@@ -185,33 +209,7 @@ PAL_CreateBoxWithShadow(
       //
       // Save the used part of the screen
       //
-      save = SDL_CreateRGBSurface(gpScreen->flags, rect.w, rect.h, 8,
-         gpScreen->format->Rmask, gpScreen->format->Gmask,
-         gpScreen->format->Bmask, gpScreen->format->Amask);
-
-      if (save == NULL)
-      {
-         return NULL;
-      }
-
-      lpBox = (LPBOX)calloc(1, sizeof(BOX));
-      if (lpBox == NULL)
-      {
-         SDL_FreeSurface(save);
-         return NULL;
-      }
-
-#if SDL_VERSION_ATLEAST(2,0,0)
-      SDL_SetSurfacePalette(save, gpScreen->format->palette);
-#else
-      SDL_SetPalette(save, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
-#endif
-      SDL_BlitSurface(gpScreen, &rect, save, NULL);
-
-      lpBox->lpSavedArea = save;
-      lpBox->pos = pos;
-      lpBox->wWidth = rect.w;
-      lpBox->wHeight = rect.h;
+      lpBox = PAL_CreateBoxInternal(&rect);
    }
 
    //
@@ -286,7 +284,6 @@ PAL_CreateSingleLineBoxWithShadow(
    LPCBITMAPRLE          lpBitmapLeft;
    LPCBITMAPRLE          lpBitmapMid;
    LPCBITMAPRLE          lpBitmapRight;
-   SDL_Surface          *save;
    SDL_Rect              rect;
    LPBOX                 lpBox = NULL;
    int                   i;
@@ -318,33 +315,7 @@ PAL_CreateSingleLineBoxWithShadow(
       //
       // Save the used part of the screen
       //
-      save = SDL_CreateRGBSurface(gpScreen->flags, rect.w, rect.h, 8,
-         gpScreen->format->Rmask, gpScreen->format->Gmask,
-         gpScreen->format->Bmask, gpScreen->format->Amask);
-
-      if (save == NULL)
-      {
-         return NULL;
-      }
-
-      lpBox = (LPBOX)calloc(1, sizeof(BOX));
-      if (lpBox == NULL)
-      {
-         SDL_FreeSurface(gpScreen);
-         return NULL;
-      }
-
-#if SDL_VERSION_ATLEAST(2,0,0)
-      SDL_SetSurfacePalette(save, gpScreen->format->palette);
-#else
-      SDL_SetPalette(save, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
-#endif
-      SDL_BlitSurface(gpScreen, &rect, save, NULL);
-
-      lpBox->pos = pos;
-      lpBox->lpSavedArea = save;
-      lpBox->wHeight = (WORD)rect.w;
-      lpBox->wWidth = (WORD)rect.h;
+      lpBox = PAL_CreateBoxInternal(&rect);
    }
    xSaved = rect.x;
 
@@ -419,12 +390,12 @@ PAL_DeleteBox(
    rect.w = lpBox->wWidth;
    rect.h = lpBox->wHeight;
 
-   SDL_BlitSurface(lpBox->lpSavedArea, NULL, gpScreen, &rect);
+   VIDEO_CopySurface(lpBox->lpSavedArea, NULL, gpScreen, &rect);
 
    //
    // Free the memory used by the box
    //
-   SDL_FreeSurface(lpBox->lpSavedArea);
+   VIDEO_FreeSurface(lpBox->lpSavedArea);
    free(lpBox);
 }
 

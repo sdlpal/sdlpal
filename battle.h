@@ -207,11 +207,6 @@ PAL_BattleMakeScene(
 );
 
 VOID
-PAL_BattleBackupScene(
-   VOID
-);
-
-VOID
 PAL_BattleFadeScene(
    VOID
 );
