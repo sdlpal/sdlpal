@@ -120,9 +120,7 @@ AUDIO_FillBuffer(
 
 --*/
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
    memset(stream, 0, len);
-#endif
 
    gAudioDevice.cvt.buf = stream;
    gAudioDevice.cvt.len = len;

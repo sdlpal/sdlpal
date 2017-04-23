@@ -260,10 +260,6 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 
 extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 {
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
-	putenv("SDL_VIDEODRIVER=directx");
-#endif
-
 	g_hInstance = GetModuleHandle(nullptr);
 #if !defined(__MINGW32__) || _WIN32_WINNT > _WIN32_WINNT_WS03 // compile time switch; use `make CCFLAGS=-D_WIN32_WINNT=_WIN32_WINNT_VISTA` for vista+ only automatic language detection
 	g_wLanguage = GetThreadUILanguage();

@@ -4,11 +4,6 @@
 # define PAL_HAS_JOYSTICKS    1
 #endif
 
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
-# define PAL_ALLOW_KEYREPEAT   1
-# define PAL_HAS_SDLCD         1
-#endif
-
 #define PAL_PREFIX            "./"
 #define PAL_SAVE_PREFIX       "./"
 
@@ -21,6 +16,8 @@
 #else
 # define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gConfig.fFullScreen ? SDL_FULLSCREEN : 0))
 # define PAL_FATAL_OUTPUT(s)   MessageBoxA(0, (s), "FATAL ERROR", MB_ICONERROR)
+# define PAL_ALLOW_KEYREPEAT   1
+# define PAL_HAS_SDLCD         1
 #endif
 
 #define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK)

@@ -63,18 +63,7 @@ PAL_Init(
    //
    if (SDL_Init(PAL_SDL_INIT_FLAGS) == -1)
    {
-#if defined (_WIN32) && SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
-      //
-      // Try the WINDIB driver if DirectX failed.
-      //
-      putenv("SDL_VIDEODRIVER=windib");
-      if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK) == -1)
-      {
-         TerminateOnError("Could not initialize SDL: %s.\n", SDL_GetError());
-      }
-#else
       TerminateOnError("Could not initialize SDL: %s.\n", SDL_GetError());
-#endif
    }
 
    //

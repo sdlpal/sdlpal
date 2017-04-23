@@ -28,9 +28,22 @@ volatile PALINPUTSTATE   g_InputState;
 #if PAL_HAS_JOYSTICKS
 static SDL_Joystick     *g_pJoy = NULL;
 #endif
-#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
-#define SDL_JoystickNameForIndex SDL_JoystickName
+
+#if !SDL_VERSION_ATLEAST(2,0,0)
+# define SDLK_KP_1     SDLK_KP1
+# define SDLK_KP_2     SDLK_KP2
+# define SDLK_KP_3     SDLK_KP3
+# define SDLK_KP_4     SDLK_KP4
+# define SDLK_KP_5     SDLK_KP5
+# define SDLK_KP_6     SDLK_KP6
+# define SDLK_KP_7     SDLK_KP7
+# define SDLK_KP_8     SDLK_KP8
+# define SDLK_KP_9     SDLK_KP9
+# define SDLK_KP_0     SDLK_KP0
+
+# define SDL_JoystickNameForIndex SDL_JoystickName
 #endif
+
 BOOL                     g_fUseJoystick = TRUE;
 
 static void _default_init_filter() {}
@@ -89,7 +102,7 @@ PAL_KeyboardEventFilter(
       switch (lpEvent->key.keysym.sym)
       {
       case SDLK_UP:
-      case SDLK_KP8:
+      case SDLK_KP_8:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirNorth)
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -99,7 +112,7 @@ PAL_KeyboardEventFilter(
          break;
 
       case SDLK_DOWN:
-      case SDLK_KP2:
+      case SDLK_KP_2:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirSouth)
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -109,7 +122,7 @@ PAL_KeyboardEventFilter(
          break;
 
       case SDLK_LEFT:
-      case SDLK_KP4:
+      case SDLK_KP_4:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirWest)
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -119,7 +132,7 @@ PAL_KeyboardEventFilter(
          break;
 
      case SDLK_RIGHT:
-     case SDLK_KP6:
+     case SDLK_KP_6:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirEast)
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -132,7 +145,7 @@ PAL_KeyboardEventFilter(
       case SDLK_INSERT:
       case SDLK_LALT:
       case SDLK_RALT:
-      case SDLK_KP0:
+      case SDLK_KP_0:
          g_InputState.dwKeyPress |= kKeyMenu;
          break;
 
@@ -144,12 +157,12 @@ PAL_KeyboardEventFilter(
          break;
 
       case SDLK_PAGEUP:
-      case SDLK_KP9:
+      case SDLK_KP_9:
          g_InputState.dwKeyPress |= kKeyPgUp;
          break;
 
       case SDLK_PAGEDOWN:
-      case SDLK_KP3:
+      case SDLK_KP_3:
          g_InputState.dwKeyPress |= kKeyPgDn;
          break;
 
@@ -213,7 +226,7 @@ PAL_KeyboardEventFilter(
       switch (lpEvent->key.keysym.sym)
       {
       case SDLK_UP:
-      case SDLK_KP8:
+      case SDLK_KP_8:
          if (g_InputState.dir == kDirNorth)
          {
             g_InputState.dir = g_InputState.prevdir;
@@ -222,7 +235,7 @@ PAL_KeyboardEventFilter(
          break;
 
       case SDLK_DOWN:
-      case SDLK_KP2:
+      case SDLK_KP_2:
          if (g_InputState.dir == kDirSouth)
          {
             g_InputState.dir = g_InputState.prevdir;
@@ -231,7 +244,7 @@ PAL_KeyboardEventFilter(
          break;
 
       case SDLK_LEFT:
-      case SDLK_KP4:
+      case SDLK_KP_4:
          if (g_InputState.dir == kDirWest)
          {
             g_InputState.dir = g_InputState.prevdir;
@@ -240,7 +253,7 @@ PAL_KeyboardEventFilter(
          break;
 
       case SDLK_RIGHT:
-      case SDLK_KP6:
+      case SDLK_KP_6:
          if (g_InputState.dir == kDirEast)
          {
             g_InputState.dir = g_InputState.prevdir;
@@ -848,7 +861,6 @@ PAL_EventFilter(
       }
       break;
 
-#ifdef __IOS__
    case SDL_APP_WILLENTERBACKGROUND:
       g_bRenderPaused = TRUE;
       break;
@@ -857,10 +869,7 @@ PAL_EventFilter(
       g_bRenderPaused = FALSE;
       VIDEO_UpdateScreen(NULL);
       break;
-#endif
-
 #else
-           
    case SDL_VIDEORESIZE:
       //
       // resized the window
@@ -941,10 +950,7 @@ PAL_InitInput(
       int i;
 	  for (i = 0; i < SDL_NumJoysticks(); i++)
       {
-         //
-         // HACKHACK: applesmc and Android Accelerometer shouldn't be considered as real joysticks
-         //
-         if (strcmp(SDL_JoystickNameForIndex(i), "applesmc") != 0 && strcmp(SDL_JoystickNameForIndex(i), "Android Accelerometer") != 0)
+         if (PAL_IS_VALID_JOYSTICK(SDL_JoystickNameForIndex(i)))
          {
             g_pJoy = SDL_JoystickOpen(i);
             break;
@@ -985,20 +991,11 @@ PAL_ShutdownInput(
 --*/
 {
 #if PAL_HAS_JOYSTICKS
-# if SDL_VERSION_ATLEAST(2,0,0)
    if (g_pJoy != NULL)
    {
       SDL_JoystickClose(g_pJoy);
       g_pJoy = NULL;
    }
-# else
-   if (SDL_JoystickOpened(0))
-   {
-      assert(g_pJoy != NULL);
-      SDL_JoystickClose(g_pJoy);
-      g_pJoy = NULL;
-   }
-# endif
 #endif
    input_shutdown_filter();
 }
