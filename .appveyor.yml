@@ -38,3 +38,10 @@ artifacts:
   - path: winrt/AppPackages/SDLPal
     name: SDLPal UWP
     type: zip
+notifications:
+- provider: Webhook
+  url: https://webhooks.gitter.im/e/2accb0e6e37119e604b3
+  method: POST
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true
