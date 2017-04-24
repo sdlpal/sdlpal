@@ -1,5 +1,7 @@
 SDLPAL
 ======
+
+[![Join the chat at https://gitter.im/sdlpal/sdlpal](https://badges.gitter.im/sdlpal/sdlpal.svg)](https://gitter.im/sdlpal/sdlpal?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Travis CI](https://travis-ci.org/sdlpal/sdlpal.svg?branch=master)](https://travis-ci.org/sdlpal/sdlpal)
 [![Build status](https://ci.appveyor.com/api/projects/status/wc8r3qlqmh5q6j1c?svg=true)](https://ci.appveyor.com/project/palxex/sdlpal-itfml)
 
