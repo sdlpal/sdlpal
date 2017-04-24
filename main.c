@@ -195,6 +195,8 @@ PAL_TrademarkScreen(
 
 --*/
 {
+   if(gConfig.fIsWIN95 && PAL_PlayAVI(PAL_PREFIX "1.avi") == 0) return;
+
    PAL_SetPalette(3, FALSE);
    PAL_RNGPlay(6, 0, 1000, 25);
    UTIL_Delay(1000);
@@ -220,6 +222,8 @@ PAL_SplashScreen(
 
 --*/
 {
+   if(gConfig.fIsWIN95 && PAL_PlayAVI(PAL_PREFIX "2.avi") == 0) return;
+
    SDL_Color     *palette = PAL_GetPalette(1, FALSE);
    SDL_Color      rgCurrentPalette[256];
    SDL_Surface   *lpBitmapDown, *lpBitmapUp;

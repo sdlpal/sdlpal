@@ -37,7 +37,8 @@ static SDL_Rect           gTextureRect;
 #endif
 
 // The real screen surface
-static SDL_Surface       *gpScreenReal       = NULL;
+// Make it global, AVI play in SDL v1 will use it
+SDL_Surface       *gpScreenReal       = NULL;
 
 volatile BOOL g_bRenderPaused = FALSE;
 
