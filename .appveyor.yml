@@ -2,28 +2,31 @@ version: 2.0.{build}
 environment:
   matrix:
   - solution_name: win32/sdlpal.sln
-    SDL_W32:
-    SDL_SRC: rem
+    BUILD_WIN32:
+    BUILD_UWP: rem
   - solution_name: winrt/SDLPal.UWP.sln
-    SDL_W32: rem
-    SDL_SRC: 
+    BUILD_WIN32: rem
+    BUILD_UWP: 
 build_script:
-  - msbuild %solution_name% /p:Configuration=Release /m
+  - |
+    %BUILD_WIN32% msbuild %solution_name% /p:Configuration=Release /m
+  - |
+    %BUILD_UWP% msbuild %solution_name% /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM" /m
 before_build:
   # SDL include/lib setup; for win32
   - |-
-    %SDL_W32% appveyor DownloadFile http://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
-    %SDL_W32% 7z x SDL2-devel-2.0.5-VC.zip
-    %SDL_W32% move /y SDL2-2.0.5\include SDL2\ > nul
-    %SDL_W32% move /y SDL2-2.0.5\lib SDL2\ > nul
-    %SDL_W32% rd /s /q SDL2-2.0.5 > nul
+    %BUILD_WIN32% appveyor DownloadFile http://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
+    %BUILD_WIN32% 7z x SDL2-devel-2.0.5-VC.zip
+    %BUILD_WIN32% move /y SDL2-2.0.5\include SDL2\ > nul
+    %BUILD_WIN32% move /y SDL2-2.0.5\lib SDL2\ > nul
+    %BUILD_WIN32% rd /s /q SDL2-2.0.5 > nul
 
   # SDL src setup; for UWP
   - |-
-    %SDL_SRC% appveyor DownloadFile http://www.libsdl.org/release/SDL2-2.0.5.zip
-    %SDL_SRC% 7z x SDL2-2.0.5.zip
-    %SDL_SRC% rd /s /q SDL2 > nul
-    %SDL_SRC% move /y SDL2-2.0.5 SDL2 > nul
+    %BUILD_UWP% appveyor DownloadFile http://www.libsdl.org/release/SDL2-2.0.5.zip
+    %BUILD_UWP% 7z x SDL2-2.0.5.zip
+    %BUILD_UWP% rd /s /q SDL2 > nul
+    %BUILD_UWP% move /y SDL2-2.0.5 SDL2 > nul
 
 deploy:
 - provider: GitHub
