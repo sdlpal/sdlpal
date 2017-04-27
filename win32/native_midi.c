@@ -20,8 +20,6 @@
     florian.proff.schulze@gmx.net
 */
 
-#ifdef WIN32
-
 #include "SDL.h"
 
 /* everything below is currently one very big bad hack ;) Proff */
@@ -33,8 +31,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "native_midi.h"
-#include "native_midi_common.h"
+#include "native_midi/native_midi.h"
+#include "native_midi/native_midi_common.h"
 
 struct _NativeMidiSong {
   int MusicLoaded;
@@ -317,6 +315,4 @@ const char *native_midi_error(void)
 {
   return "";
 }
-
-#endif
 
