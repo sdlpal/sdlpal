@@ -16,6 +16,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
     $(wildcard $(LOCAL_PATH)/../../../adplug/*.c) $(wildcard $(LOCAL_PATH)/../../../adplug/*.cpp) \
     $(wildcard $(LOCAL_PATH)/../../../liboggvorbis/src/*.c) \
     $(wildcard $(LOCAL_PATH)/../../../libmad/*.c) \
+    $(wildcard $(LOCAL_PATH)/../../../native_midi/*.c) \
     $(wildcard $(LOCAL_PATH)/*.c) \
 
 LOCAL_CFLAGS += -std=gnu99 -DPAL_HAS_PLATFORM_SPECIFIC_UTILS

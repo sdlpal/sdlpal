@@ -19,6 +19,12 @@
 # define PAL_CREDIT           "Rikku2000"
 # define PAL_PORTYEAR         "2013"
 
+#define PAL_HAS_NATIVEMIDI  1
+
+#define PAL_HAS_CONFIG_PAGE 0
+
+#define PAL_FILESYSTEM_IGNORE_CASE 1
+
 # define PAL_IS_VALID_JOYSTICK(s)  (strcmp((s), "Android Accelerometer") != 0)
 
 LPCSTR
