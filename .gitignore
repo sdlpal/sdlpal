@@ -241,7 +241,7 @@ android/so
 *.keystore
 resources
 
-sdlpal
+unix/sdlpal
 data
 
 *.xcscmblueprint
