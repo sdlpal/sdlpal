@@ -1,5 +1,8 @@
 /* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
+// native_midi.cpp: Native UWP MIDI player for SDLPal.
+// Author: Lou Yihua @ 2017
+//
 // Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // Copyright (c) 2011-2017 SDLPAL development team.
 // All rights reserved.
@@ -32,8 +35,8 @@
 #include <atomic>
 
 extern "C" {
-#include "../../native_midi/native_midi.h"
-#include "../../native_midi/native_midi_common.h"
+#include "native_midi/native_midi.h"
+#include "native_midi/native_midi_common.h"
 }
 
 struct MidiEvent
@@ -202,24 +205,6 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *eventlist)
 	song->Position = 0;
 	song->Loaded = 1;
 }
-//
-//void CALLBACK MidiProc(HMIDIIN hMidi, UINT uMsg, unsigned long dwInstance,
-//	unsigned long dwParam1, unsigned long dwParam2)
-//{
-//	switch (uMsg)
-//	{
-//	case MOM_DONE:
-//		if ((currentsong->MusicLoaded) && (dwParam1 == (unsigned long)&currentsong->MidiStreamHdr))
-//			BlockOut(currentsong);
-//		break;
-//	case MOM_POSITIONCB:
-//		if ((currentsong->MusicLoaded) && (dwParam1 == (unsigned long)&currentsong->MidiStreamHdr))
-//			currentsong->MusicPlaying = 0;
-//		break;
-//	default:
-//		break;
-//	}
-//}
 
 int native_midi_detect()
 {
@@ -230,18 +215,6 @@ int native_midi_detect()
 		return 0;
 	}
 	return 1;
-
-	//auto devs = AWait(Windows::Devices::Enumeration::DeviceInformation::FindAllAsync(Windows::Devices::Enumeration::DeviceClass::AudioRender));
-	//for each(auto dev in devs)
-	//{
-	//	if (wcsstr(dev->Name->Data(), L"ASUS"))
-	//	{
-	//		Synthesizer = AWait(Windows::Devices::Midi::MidiSynthesizer::CreateAsync(dev));
-	//		std::unique_ptr<SDL_RWops> rw(SDL_RWFromConstMem(data, sizeof(data)));
-	//		native_midi_loadsong_RW(rw.get());
-	//	}
-	//}
-	//return Synthesizer ? 0 : 1;
 }
 
 NativeMidiSong *native_midi_loadsong(const char *midifile)
