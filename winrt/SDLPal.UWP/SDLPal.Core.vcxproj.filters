@@ -45,6 +45,9 @@
     <Filter Include="liboggvorbis\src\books\uncoupled">
       <UniqueIdentifier>{7a01992b-546d-4d62-a521-c01bd1500f9c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="native_midi">
+      <UniqueIdentifier>{34823dc2-aeaf-4acc-bdef-5069e35186ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\adplug\binfile.h">
@@ -377,6 +380,12 @@
     <ClInclude Include="..\pal_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\native_midi\native_midi.h">
+      <Filter>native_midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\native_midi\native_midi_common.h">
+      <Filter>native_midi</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\adplug\binfile.cpp">
@@ -620,6 +629,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\palcfg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\native_midi\native_midi_common.c">
+      <Filter>native_midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\midi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

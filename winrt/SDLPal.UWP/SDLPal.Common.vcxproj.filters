@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClInclude Include="..\SDLPal.Common\AsyncHelper.h" />
     <ClInclude Include="..\SDLPal.Common\StringHelper.h" />
+    <ClInclude Include="..\SDLPal.Common\NativeBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\SDLPal.Common\SDLPal.Common.def" />

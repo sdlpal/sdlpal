@@ -34,6 +34,7 @@
     <ClCompile Include="..\SDLPal.Common\SDLPal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\native_midi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
