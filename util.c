@@ -34,6 +34,16 @@
 #include "SDL_messagebox.h"
 #endif
 
+void UTIL_MsgBox(char *string){
+    extern SDL_Window *gpWindow;
+    char buffer[300];
+    SDL_MessageBoxButtonData buttons[] = { { 0, 0, "OK" } };
+    SDL_MessageBoxData mbd = { SDL_MESSAGEBOX_WARNING, gpWindow, "Alert",buffer, 1, buttons, NULL };
+    int btnid;
+    sprintf(buffer, "%s\n", string);
+    SDL_ShowMessageBox(&mbd, &btnid);
+}
+
 long
 flength(
    FILE *fp
@@ -488,7 +498,7 @@ UTIL_OpenFileForMode(
 	else
 		fp = fopen(va("%s%s", gConfig.pszGamePath, lpszFileName), szMode);
 
-#if !defined(PAL_FILESYSTEM_IGNORE_CASE)
+#if !defined(PAL_FILESYSTEM_IGNORE_CASE) || !PAL_FILESYSTEM_IGNORE_CASE
 	if (fp == NULL)
 	{
 		//

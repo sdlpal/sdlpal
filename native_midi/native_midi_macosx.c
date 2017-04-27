@@ -20,6 +20,8 @@
     icculus@icculus.org
 */
 
+#ifdef __APPLE__
+
 /* This is Mac OS X only, using Core MIDI.
    Mac OS 9 support via QuickTime is in native_midi_mac.c */
 
@@ -310,3 +312,6 @@ const char *native_midi_error(void)
 {
     return "";  /* !!! FIXME */
 }
+
+#endif
+

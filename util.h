@@ -32,6 +32,11 @@ extern "C"
 {
 #endif
 
+void
+UTIL_MsgBox(
+   char *string
+);
+
 long
 flength(
    FILE *fp

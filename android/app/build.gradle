@@ -27,4 +27,8 @@ android {
             path '../jni/Android.mk'
         }
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/java'
+    }
 }

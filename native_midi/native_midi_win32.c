@@ -20,6 +20,8 @@
     florian.proff.schulze@gmx.net
 */
 
+#ifdef __WIN32__
+
 #include "SDL.h"
 
 /* everything below is currently one very big bad hack ;) Proff */
@@ -315,3 +317,6 @@ const char *native_midi_error(void)
 {
   return "";
 }
+
+#endif
+
