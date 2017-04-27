@@ -21,14 +21,13 @@
 
 /* This is Android only, using MediaPlayer ( need java part work together ) */
 
-#ifdef __ANDROID__
 #include "android_jni.h"
 
 #include "SDL_config.h"
 
 #include "SDL.h"
 #include "SDL_endian.h"
-#include "native_midi.h"
+#include "native_midi/native_midi.h"
 
 /* Native Midi song */
 struct _NativeMidiSong
@@ -144,5 +143,3 @@ const char *native_midi_error(void)
 {
     return "";  /* !!! FIXME */
 }
-
-#endif
