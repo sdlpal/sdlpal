@@ -212,9 +212,9 @@ int native_midi_detect()
 	if (synthesizer)
 	{
 		delete synthesizer;
-		return 0;
+		return 1;
 	}
-	return 1;
+	return 0;
 }
 
 NativeMidiSong *native_midi_loadsong(const char *midifile)
