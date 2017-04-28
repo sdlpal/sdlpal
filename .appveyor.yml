@@ -23,10 +23,7 @@ before_build:
 
   # SDL src setup; for UWP
   - |-
-    %BUILD_UWP% appveyor DownloadFile http://www.libsdl.org/release/SDL2-2.0.5.zip
-    %BUILD_UWP% 7z x SDL2-2.0.5.zip
-    %BUILD_UWP% rd /s /q SDL2 > nul
-    %BUILD_UWP% move /y SDL2-2.0.5 SDL2 > nul
+    %BUILD_UWP% git submodule update --init 3rd/SDL
 
 deploy:
 - provider: GitHub
