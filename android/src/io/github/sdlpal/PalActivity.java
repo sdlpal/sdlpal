@@ -19,7 +19,7 @@ public class PalActivity extends SDLActivity {
             mediaPlayer.setDataSource(mSingleton.getApplicationContext(), Uri.fromFile(new File(filename)));
             mediaPlayer.prepare();
         } catch(IOException e) {
-            Log.e(TAG, interFileURI.toString() + " not available for playing, check");
+            Log.e(TAG, filename + " not available for playing, check");
         }
     }
 
