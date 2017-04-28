@@ -13,17 +13,9 @@ build_script:
   - |
     %BUILD_UWP% msbuild %solution_name% /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM" /m
 before_build:
-  # SDL include/lib setup; for win32
+  # SDL submodule setup
   - |-
-    %BUILD_WIN32% appveyor DownloadFile http://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
-    %BUILD_WIN32% 7z x SDL2-devel-2.0.5-VC.zip
-    %BUILD_WIN32% move /y SDL2-2.0.5\include SDL2\ > nul
-    %BUILD_WIN32% move /y SDL2-2.0.5\lib SDL2\ > nul
-    %BUILD_WIN32% rd /s /q SDL2-2.0.5 > nul
-
-  # SDL src setup; for UWP
-  - |-
-    %BUILD_UWP% git submodule update --init 3rd/SDL
+    git submodule update --init 3rd/SDL
 
 deploy:
 - provider: GitHub
