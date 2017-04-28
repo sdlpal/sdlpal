@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
 
     defaultConfig {
-        applicationId "com.codeplex.sdlpal"
+        applicationId "io.github.sdlpal"
         minSdkVersion 10
         targetSdkVersion 12
         externalNativeBuild {
