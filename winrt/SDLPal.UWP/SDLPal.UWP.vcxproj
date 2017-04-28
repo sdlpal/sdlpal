@@ -109,11 +109,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>

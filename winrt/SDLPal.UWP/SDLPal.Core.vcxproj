@@ -100,12 +100,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <GenerateManifest>false</GenerateManifest>
