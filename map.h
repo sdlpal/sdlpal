@@ -22,11 +22,6 @@
 #ifndef _MAP_H
 #define _MAP_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "common.h"
 
 //
@@ -69,6 +64,8 @@ typedef struct tagPALMAP
 } PALMAP, *LPPALMAP;
 
 typedef const PALMAP *LPCPALMAP;
+
+PAL_C_LINKAGE_BEGIN
 
 LPPALMAP
 PAL_LoadMap(
@@ -116,6 +113,8 @@ PAL_MapBlitToSurface(
    BYTE                  ucLayer
 );
 
+PAL_C_LINKAGE_END
+
 //
 // Convert map location to the real location
 //
@@ -131,9 +130,5 @@ PAL_MapBlitToSurface(
    (x) = (BYTE)(PAL_X(pos) / 32);                     \
    (y) = (BYTE)(PAL_Y(pos) / 16);                     \
 }
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

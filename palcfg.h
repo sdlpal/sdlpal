@@ -22,11 +22,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-# ifdef __cplusplus
-extern "C"
-{
-# endif
-
+#include "common.h"
 #include "palcommon.h"
 
 #define     PAL_MAX_SAMPLERATE           48000
@@ -197,6 +193,8 @@ typedef struct tagCONFIGURATION
 #endif
 } CONFIGURATION, *LPCONFIGURATION;
 
+PAL_C_LINKAGE_BEGIN
+
 extern CONFIGURATION gConfig;
 
 VOID
@@ -232,8 +230,6 @@ PAL_LimitConfig(
 	ConfigValue * pValue
 );
 
-# ifdef __cplusplus
-}
-# endif
+PAL_C_LINKAGE_END
 
 #endif

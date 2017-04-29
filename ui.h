@@ -24,11 +24,6 @@
 #ifndef UI_H
 #define UI_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "common.h"
 
 #define CHUNKNUM_SPRITEUI                  9
@@ -175,6 +170,8 @@ typedef enum tagNUMALIGN
    kNumAlignRight
 } NUMALIGN;
 
+PAL_C_LINKAGE_BEGIN
+
 INT
 PAL_InitUI(
    VOID
@@ -282,8 +279,6 @@ PAL_GetObjectDesc(
 
 extern LPSPRITE gpSpriteUI;
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

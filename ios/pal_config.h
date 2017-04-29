@@ -25,6 +25,8 @@
 
 #define PAL_HAS_CONFIG_PAGE 0
 
+PAL_C_LINKAGE_BEGIN
+
 LPCSTR
 UTIL_BasePath(
    VOID
@@ -34,6 +36,8 @@ LPCSTR
 UTIL_SavePath(
    VOID
 );
+
+PAL_C_LINKAGE_END
 
 #include <sys/time.h>
 

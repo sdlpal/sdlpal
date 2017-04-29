@@ -22,10 +22,9 @@
 #ifndef MAGICMENU_H
 #define MAGICMENU_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#include "common.h"
+
+PAL_C_LINKAGE_BEGIN
 
 WORD
 PAL_MagicSelectionMenuUpdate(
@@ -46,7 +45,6 @@ PAL_MagicSelectionMenu(
    WORD         wDefaultMagic
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
+
 #endif

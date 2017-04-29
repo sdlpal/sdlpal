@@ -29,11 +29,6 @@
 #include "map.h"
 #include "ui.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 //
 // SOME NOTES ON "AUTO SCRIPT" AND "TRIGGER SCRIPT":
 //
@@ -617,6 +612,8 @@ typedef struct tagGLOBALVARS
    DWORD            dwFrameNum;
 } GLOBALVARS, *LPGLOBALVARS;
 
+PAL_C_LINKAGE_BEGIN
+
 extern GLOBALVARS * const gpGlobals;
 
 BOOL
@@ -796,8 +793,6 @@ PAL_PlayerLevelUp(
    WORD          wNumLevel
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

@@ -22,11 +22,6 @@
 #ifndef BATTLE_H
 #define BATTLE_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "global.h"
 #include "uibattle.h"
 
@@ -194,6 +189,8 @@ typedef struct tagBATTLE
 #endif
 } BATTLE;
 
+PAL_C_LINKAGE_BEGIN
+
 extern BATTLE g_Battle;
 
 VOID
@@ -227,8 +224,6 @@ PAL_StartBattle(
    BOOL        fIsBoss
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

@@ -24,11 +24,7 @@
 #ifndef UIBATTLE_H
 #define UIBATTLE_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
+#include "common.h"
 #include "ui.h"
 
 typedef enum tagBATTLEUISTATE
@@ -117,6 +113,8 @@ typedef struct tagBATTLEUI
    SHOWNUM          rgShowNum[BATTLEUI_MAX_SHOWNUM];
 } BATTLEUI;
 
+PAL_C_LINKAGE_BEGIN
+
 VOID
 PAL_PlayerInfoBox(
    PAL_POS         pos,
@@ -149,7 +147,6 @@ PAL_BattleUIShowNum(
    NUMCOLOR       color
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
+
 #endif

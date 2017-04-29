@@ -27,6 +27,8 @@
 
 # define PAL_IS_VALID_JOYSTICK(s)  (strcmp((s), "Android Accelerometer") != 0)
 
+PAL_C_LINKAGE_BEGIN
+
 LPCSTR
 UTIL_BasePath(
    VOID
@@ -36,4 +38,7 @@ LPCSTR
 UTIL_SavePath(
    VOID
 );
+
+PAL_C_LINKAGE_END
+
 #endif

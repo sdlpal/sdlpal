@@ -22,22 +22,19 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "common.h"
-
-extern SDL_Surface *gpScreen;
-extern SDL_Surface *gpScreenBak;
-extern volatile BOOL g_bRenderPaused;
 
 #define VIDEO_CopySurface(s, sr, t, tr) SDL_BlitSurface((s), (sr), (t), (tr))
 #define VIDEO_CopyEntireSurface(s, t)   SDL_BlitSurface((s), NULL, (t), NULL)
 #define VIDEO_BackupScreen(s)           SDL_BlitSurface((s), NULL, gpScreenBak, NULL)
 #define VIDEO_RestoreScreen(t)          SDL_BlitSurface(gpScreenBak, NULL, (t), NULL)
 #define VIDEO_FreeSurface(s)            SDL_FreeSurface(s)
+
+PAL_C_LINKAGE_BEGIN
+
+extern SDL_Surface *gpScreen;
+extern SDL_Surface *gpScreenBak;
+extern volatile BOOL g_bRenderPaused;
 
 INT
 VIDEO_Startup(
@@ -118,8 +115,6 @@ VIDEO_UpdateSurfacePalette(
 	SDL_Surface    *pSource
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

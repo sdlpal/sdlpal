@@ -24,13 +24,11 @@
 
 #include "common.h"
 
-#ifdef __cplusplus
-extern "C"
-{
+#if PAL_HAS_NATIVEMIDI
+# include "native_midi/native_midi.h"
 #endif
 
-#if PAL_HAS_NATIVEMIDI
-#include "native_midi/native_midi.h"
+PAL_C_LINKAGE_BEGIN
 
 VOID
 MIDI_Play(
@@ -43,10 +41,6 @@ MIDI_CheckLoop(
    VOID
 );
 
-#endif
-
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

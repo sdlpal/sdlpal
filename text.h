@@ -24,6 +24,8 @@
 #ifndef _TEXT_H
 #define _TEXT_H
 
+#include "common.h"
+
 typedef enum tagDIALOGPOSITION
 {
    kDialogUpper       = 0,
@@ -31,6 +33,8 @@ typedef enum tagDIALOGPOSITION
    kDialogLower,
    kDialogCenterWindow
 } DIALOGLOCATION;
+
+PAL_C_LINKAGE_BEGIN
 
 extern LPWSTR g_rcCredits[12];
 
@@ -137,5 +141,7 @@ PAL_swprintf(
 	LPCWSTR format,
 	...
 );
+
+PAL_C_LINKAGE_END
 
 #endif

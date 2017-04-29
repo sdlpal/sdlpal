@@ -22,10 +22,9 @@
 #ifndef _SCENE_H
 #define	_SCENE_H
 
-#ifdef	__cplusplus
-extern "C"
-{
-#endif
+#include "common.h"
+
+PAL_C_LINKAGE_BEGIN
 
 VOID
 PAL_ApplyWave(
@@ -60,8 +59,6 @@ PAL_NPCWalkOneStep(
    INT           iSpeed
 );
 
-#ifdef	__cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

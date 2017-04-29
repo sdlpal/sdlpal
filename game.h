@@ -27,6 +27,7 @@
 #define    FPS             10
 #define    FRAME_TIME      (1000 / FPS)
 
+PAL_C_LINKAGE
 VOID
 PAL_GameMain(
    VOID

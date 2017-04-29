@@ -27,6 +27,11 @@
 
 typedef struct _NativeMidiSong NativeMidiSong;
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 int native_midi_detect();
 NativeMidiSong *native_midi_loadsong(const char *midifile);
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw);
@@ -36,5 +41,9 @@ void native_midi_stop();
 int native_midi_active();
 void native_midi_setvolume(int volume);
 const char *native_midi_error(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _NATIVE_MIDI_H_ */

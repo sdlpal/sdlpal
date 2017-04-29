@@ -22,10 +22,9 @@
 #ifndef PLAY_H
 #define PLAY_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#include "common.h"
+
+PAL_C_LINKAGE_BEGIN
 
 VOID
 PAL_GameUpdate(
@@ -52,8 +51,6 @@ PAL_WaitForKey(
    WORD      wTimeOut
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

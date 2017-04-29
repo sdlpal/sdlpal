@@ -25,18 +25,11 @@
 #include "common.h"
 #include "palcommon.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 typedef struct tagPALINPUTSTATE
 {
    PALDIRECTION           dir, prevdir;
    DWORD                  dwKeyPress;
 } PALINPUTSTATE;
-
-extern volatile PALINPUTSTATE g_InputState;
 
 enum PALKEY
 {
@@ -59,6 +52,8 @@ enum PALKEY
    kKeyHome        = (1 << 16),
    kKeyEnd         = (1 << 17),
 };
+
+PAL_C_LINKAGE_BEGIN
 
 VOID
 PAL_ClearKeyState(
@@ -99,10 +94,10 @@ PAL_RegisterInputFilter(
    void (*shutdown_filter)()
 );
 
+extern volatile PALINPUTSTATE g_InputState;
+
 extern BOOL g_fUseJoystick;
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

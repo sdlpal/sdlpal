@@ -24,11 +24,6 @@
 
 #include "common.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 typedef LPBYTE      LPSPRITE, LPBITMAPRLE;
 typedef LPCBYTE     LPCSPRITE, LPCBITMAPRLE;
 
@@ -50,7 +45,9 @@ typedef enum tagPALDIRECTION
    kDirEast,
    kDirUnknown
 } PALDIRECTION, *LPPALDIRECTION;
-    
+
+PAL_C_LINKAGE_BEGIN
+
 INT
 PAL_RLEBlitToSurface(
    LPCBITMAPRLE      lpBitmapRLE,
@@ -165,6 +162,8 @@ YJ2_Decompress(
    INT          DestSize
 );
 
+PAL_C_LINKAGE_END
+
 #define PAL_DelayUntil(t) \
    PAL_ProcessEvent(); \
    while (!SDL_TICKS_PASSED(SDL_GetTicks(), (t))) \
@@ -172,9 +171,5 @@ YJ2_Decompress(
       PAL_ProcessEvent(); \
       SDL_Delay(1); \
    }
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // _PALUTILS_H

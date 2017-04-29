@@ -27,6 +27,8 @@
 
 #define PAL_FILESYSTEM_IGNORE_CASE 1
 
+PAL_C_LINKAGE_BEGIN
+
 LPCSTR
 UTIL_BasePath(
    VOID
@@ -51,3 +53,5 @@ BOOL
 UTIL_TouchEnabled(
    VOID
 );
+
+PAL_C_LINKAGE_END

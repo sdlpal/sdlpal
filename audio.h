@@ -24,10 +24,7 @@
 
 #include "common.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+PAL_C_LINKAGE_BEGIN
 
 INT
 AUDIO_OpenDevice(
@@ -91,10 +88,8 @@ AUDIO_SoundEnabled(
    VOID
 );
 
-#define AUDIO_IsIntegerConversion(a) (((a) % gConfig.iSampleRate) == 0 || (gConfig.iSampleRate % (a)) == 0)
+PAL_C_LINKAGE_END
 
-#ifdef __cplusplus
-}
-#endif
+#define AUDIO_IsIntegerConversion(a) (((a) % gConfig.iSampleRate) == 0 || (gConfig.iSampleRate % (a)) == 0)
 
 #endif

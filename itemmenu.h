@@ -22,10 +22,10 @@
 #ifndef ITEMMENU_H
 #define ITEMMENU_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#include "common.h"
+#include "ui.h"
+
+PAL_C_LINKAGE_BEGIN
 
 WORD
 PAL_ItemSelectMenuUpdate(
@@ -43,7 +43,6 @@ PAL_ItemSelectMenu(
    WORD                      wItemFlags
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
+
 #endif

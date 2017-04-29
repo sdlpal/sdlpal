@@ -25,14 +25,8 @@
 
 #include "common.h"
 
-#ifdef __cplusplus
-
-extern "C"
+typedef struct tagAUDIOPLAYER
 {
-#endif
-
-	typedef struct tagAUDIOPLAYER
-	{
 #define AUDIOPLAYER_COMMONS \
 	VOID (*Shutdown)(VOID*); \
 	BOOL (*Play)(VOID*, INT, BOOL, FLOAT); \
@@ -40,6 +34,8 @@ extern "C"
 
 	AUDIOPLAYER_COMMONS;
 } AUDIOPLAYER, *LPAUDIOPLAYER;
+
+PAL_C_LINKAGE_BEGIN
 
 /* RIX */
 
@@ -73,8 +69,6 @@ SOUND_Init(
 	VOID
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

@@ -22,12 +22,11 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#include "common.h"
 
 #define PAL_ITEM_DESC_BOTTOM	(1 << 15)
+
+PAL_C_LINKAGE_BEGIN
 
 WORD
 PAL_RunTriggerScript(
@@ -43,8 +42,6 @@ PAL_RunAutoScript(
 
 extern BOOL       g_fScriptSuccess;
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

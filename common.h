@@ -147,8 +147,13 @@ typedef const WCHAR        *LPCWSTR;
 #endif
 
 #ifdef __cplusplus
-extern "C"
-{
+# define PAL_C_LINKAGE       extern "C"
+# define PAL_C_LINKAGE_BEGIN PAL_C_LINKAGE {
+# define PAL_C_LINKAGE_END   }
+#else
+# define PAL_C_LINKAGE
+# define PAL_C_LINKAGE_BEGIN
+# define PAL_C_LINKAGE_END
 #endif
 
 /* When porting SDLPAL to a new platform, please make a separate directory and put a file 
@@ -214,9 +219,5 @@ typedef enum tagCODEPAGE {
 	CP_MAX = CP_GBK + 1,
 	CP_UTF_8 = CP_MAX + 1
 } CODEPAGE;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -27,10 +27,7 @@
 #include "common.h"
 #include "palcommon.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+PAL_C_LINKAGE_BEGIN
 
 INT
 PAL_InitEmbeddedFont(
@@ -66,8 +63,6 @@ PAL_FontHeight(
    VOID
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif

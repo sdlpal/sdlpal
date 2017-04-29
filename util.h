@@ -27,10 +27,7 @@
 
 //#define ENABLE_LOG 1
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+PAL_C_LINKAGE_BEGIN
 
 void
 UTIL_MsgBox(
@@ -135,6 +132,8 @@ UTIL_Platform_Quit(
    VOID
 );
 
+PAL_C_LINKAGE_END
+
 #define LOG_EMERG           0 /* system is unusable */
 #define LOG_ALERT           1 /* action must be taken immediately */
 #define LOG_CRIT            2 /* critical conditions */
@@ -146,6 +145,8 @@ UTIL_Platform_Quit(
 #define LOG_LAST_PRIORITY   8 /* last level */
 
 #ifdef ENABLE_LOG
+
+PAL_C_LINKAGE_BEGIN
 
 FILE *
 UTIL_OpenLog(
@@ -164,16 +165,14 @@ UTIL_WriteLog(
    ...
 );
 
+PAL_C_LINKAGE_END
+
 #else
 
-#define UTIL_OpenLog()       ((void)(0))
-#define UTIL_CloseLog()      ((void)(0))
-#define UTIL_WriteLog(...)   ((void)(0))
+# define UTIL_OpenLog()       ((void)(0))
+# define UTIL_CloseLog()      ((void)(0))
+# define UTIL_WriteLog(...)   ((void)(0))
 
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif

@@ -24,10 +24,7 @@
 
 #include "common.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+PAL_C_LINKAGE_BEGIN
 
 SDL_Color *
 PAL_GetPalette(
@@ -79,8 +76,6 @@ PAL_FadeToRed(
    VOID
 );
 
-#ifdef __cplusplus
-}
-#endif
+PAL_C_LINKAGE_END
 
 #endif
