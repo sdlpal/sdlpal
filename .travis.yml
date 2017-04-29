@@ -63,11 +63,6 @@ matrix:
           - unzip android-ndk-$NDK_VERSION-linux-x86_64.zip > /dev/null
           - export ANDROID_NDK_HOME=`pwd`/android-ndk-$NDK_VERSION
           - export PATH=${PATH}:${ANDROID_NDK_HOME}
-          - cd SDL2
-          - wget https://www.libsdl.org/release/SDL2-2.0.5.zip
-          - unzip SDL2-2.0.5.zip
-          - mv SDL2-2.0.5/* .
-          - cd ..
         script:
           - cd android
           - ./gradlew assembleDebug

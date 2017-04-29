@@ -1,5 +1,5 @@
 SDLPAL_LOCAL_PATH := $(call my-dir)
-SDL_PATH := $(SDLPAL_LOCAL_PATH)/../../../SDL2
+SDL_PATH := $(SDLPAL_LOCAL_PATH)/../../../3rd/SDL
 
 include $(SDL_PATH)/Android.mk
 
