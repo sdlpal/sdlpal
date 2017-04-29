@@ -26,11 +26,6 @@
 # define PAL_CLASSIC        1
 #endif
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -47,9 +42,8 @@ extern "C"
 #include "SDL.h"
 #include "SDL_endian.h"
 
-#ifndef PAL_FATAL_OUTPUT
-# define PAL_FATAL_OUTPUT(s)
-#endif
+#define __WIDETEXT(quote) L##quote
+#define WIDETEXT(quote) __WIDETEXT(quote)
 
 #if !defined(fmax) || !defined(fmin)
 # include <math.h>
@@ -61,6 +55,19 @@ extern "C"
 
 #ifndef min
 # define min fmin
+#endif
+
+// For SDL 1.2 compatibility
+#ifndef SDL_TICKS_PASSED
+#define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)
+#endif
+
+#ifndef SDL_INIT_CDROM
+# define SDL_INIT_CDROM       0	  /* Compatibility with SDL 1.2 */
+#endif
+
+#ifndef SDL_AUDIO_BITSIZE
+# define SDL_AUDIO_BITSIZE(x)         (x & 0xFF)
 #endif
 
 /* This is need when compiled with SDL 1.2 */
@@ -139,6 +146,11 @@ typedef const WCHAR        *LPCWSTR;
 
 #endif
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* When porting SDLPAL to a new platform, please make a separate directory and put a file 
    named 'pal_config.h' that contains marco definitions & header includes into the directory.
    The example of this file can be found in directories of existing portings.
@@ -165,14 +177,6 @@ typedef const WCHAR        *LPCWSTR;
 # define PAL_HAS_OGG          1   /* Try always enable OGG. If compilation/run failed, please change this value to 0. */
 #endif
 
-#ifndef SDL_INIT_CDROM
-# define SDL_INIT_CDROM       0	  /* Compatibility with SDL 1.2 */
-#endif
-
-#ifndef SDL_AUDIO_BITSIZE
-# define SDL_AUDIO_BITSIZE(x)         (x & 0xFF)
-#endif
-
 #ifndef PAL_CONFIG_PREFIX
 # define PAL_CONFIG_PREFIX PAL_PREFIX
 #endif
@@ -193,16 +197,12 @@ typedef const WCHAR        *LPCWSTR;
 # define PAL_SCALE_SCREEN   TRUE
 #endif
 
-#define __WIDETEXT(quote) L##quote
-#define WIDETEXT(quote) __WIDETEXT(quote)
-
-// For SDL 1.2 compatibility
-#ifndef SDL_TICKS_PASSED
-#define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)
-#endif
-
 #ifndef PAL_IS_VALID_JOYSTICK
 # define PAL_IS_VALID_JOYSTICK(s)  TRUE
+#endif
+
+#ifndef PAL_FATAL_OUTPUT
+# define PAL_FATAL_OUTPUT(s)
 #endif
 
 typedef enum tagCODEPAGE {
