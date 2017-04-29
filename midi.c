@@ -22,35 +22,18 @@
 
 #include "main.h"
 
-#if PAL_HAS_NATIVEMIDI
-
-static INT iMidCurrent = -1;
+static int  iMidCurrent = -1;
 static BOOL fMidLoop = FALSE;
 
 static NativeMidiSong *g_pMid = NULL;
 
-VOID
+void
 MIDI_Play(
-   INT       iNumRIX,
-   BOOL      fLoop
+	int       iNumRIX,
+	BOOL      fLoop
 )
-/*++
-  Purpose:
-
-    Start playing the specified music in MIDI format.
-
-  Parameters:
-
-    [IN]  iNumRIX - number of the music. 0 to stop playing current music.
-
-    [IN]  fLoop - Whether the music should be looped or not.
-
-  Return value:
-
-    None.
-
---*/
 {
+#if PAL_HAS_NATIVEMIDI
    if (g_pMid != NULL && iNumRIX == iMidCurrent && native_midi_active())
    {
       return;
@@ -125,17 +108,18 @@ MIDI_Play(
       SDL_RWclose(rw);
       free(buf);
    }
+#endif
 }
 
-VOID
+void
 MIDI_CheckLoop(
-   VOID
+   void
 )
 {
+#if PAL_HAS_NATIVEMIDI
    if (fMidLoop && g_pMid != NULL && !native_midi_active())
    {
       MIDI_Play(iMidCurrent, TRUE);
    }
-}
-
 #endif
+}

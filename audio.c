@@ -385,9 +385,10 @@ AUDIO_CloseDevice(
 	  gAudioDevice.pSoundBuffer = NULL;
    }
 
-#if PAL_HAS_NATIVEMIDI
-   if (gConfig.eMusicType == MUSIC_MIDI) MIDI_Play(0, FALSE);
-#endif
+   if (gConfig.eMusicType == MUSIC_MIDI)
+   {
+      MIDI_Play(0, FALSE);
+   }
 }
 
 SDL_AudioSpec*
@@ -498,13 +499,12 @@ AUDIO_PlayMusic(
    FLOAT     flFadeTime
 )
 {
-#if PAL_HAS_NATIVEMIDI
    if (gConfig.eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(iNumRIX, fLoop);
       return;
    }
-#endif
+
    SDL_LockAudio();
    if (gAudioDevice.pMusPlayer)
    {

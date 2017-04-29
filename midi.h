@@ -24,22 +24,35 @@
 #define PAL_MIDI_H
 
 #include "common.h"
-
-#if PAL_HAS_NATIVEMIDI
-# include "native_midi/native_midi.h"
-#endif
+#include "native_midi/native_midi.h"
 
 PAL_C_LINKAGE_BEGIN
 
-VOID
+/*++
+  Purpose:
+
+    Start playing the specified music in MIDI format.
+
+  Parameters:
+
+    [IN]  iNumRIX - number of the music. 0 to stop playing current music.
+
+    [IN]  fLoop - Whether the music should be looped or not.
+
+  Return value:
+
+    None.
+
+--*/
+void
 MIDI_Play(
-   INT       iNumRIX,
-   BOOL      fLoop
+	int       iNumRIX,
+	BOOL      fLoop
 );
 
-VOID
+void
 MIDI_CheckLoop(
-   VOID
+	void
 );
 
 PAL_C_LINKAGE_END
