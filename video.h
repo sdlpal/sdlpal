@@ -110,10 +110,15 @@ VIDEO_CreateCompatibleSurface(
 	SDL_Surface    *pSource
 );
 
+SDL_Surface *
+VIDEO_CreateCompatibleSizedSurface(
+	SDL_Surface    *pSource,
+	const SDL_Rect *pSize
+);
+
 void
 VIDEO_UpdateSurfacePalette(
-	SDL_Surface    *pSurface,
-	SDL_Surface    *pSource
+	SDL_Surface    *pSurface
 );
 
 PAL_C_LINKAGE_END

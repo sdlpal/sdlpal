@@ -28,6 +28,9 @@ SDL_Surface              *gpScreen           = NULL;
 // Backup screen buffer
 SDL_Surface              *gpScreenBak        = NULL;
 
+// The global palette
+static SDL_Palette       *gpPalette          = NULL;
+
 #if SDL_VERSION_ATLEAST(2,0,0)
 SDL_Window               *gpWindow           = NULL;
 static SDL_Renderer      *gpRenderer         = NULL;
@@ -165,9 +168,14 @@ VIDEO_Startup(
    gpTexture = VIDEO_CreateTexture(render_w, render_h);
 
    //
+   // Create palette object
+   //
+   gpPalette = SDL_AllocPalette(256);
+
+   //
    // Failed?
    //
-   if (gpScreen == NULL || gpScreenBak == NULL || gpScreenReal == NULL || gpTexture == NULL)
+   if (gpScreen == NULL || gpScreenBak == NULL || gpScreenReal == NULL || gpTexture == NULL || gpPalette == NULL)
    {
       VIDEO_Shutdown();
       return -2;
@@ -213,6 +221,8 @@ VIDEO_Startup(
    {
       return -1;
    }
+
+   gpPalette = gpScreenReal->format->palette;
 
    //
    // Create the screen buffer and the backup screen buffer.
@@ -301,7 +311,12 @@ VIDEO_Shutdown(
    }
    gpWindow = NULL;
 
+   if (gpPalette)
+   {
+      SDL_FreePalette(gpPalette);
+   }
 #endif
+   gpPalette = NULL;
 
    if (gpScreenReal != NULL)
    {
@@ -493,17 +508,10 @@ VIDEO_SetPalette(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-   SDL_Palette   *palette = SDL_AllocPalette(256);
+   SDL_SetPaletteColors(gpPalette, rgPalette, 0, 256);
 
-   if (palette == NULL)
-   {
-      return;
-   }
-
-   SDL_SetPaletteColors(palette, rgPalette, 0, 256);
-
-   SDL_SetSurfacePalette(gpScreen, palette);
-   SDL_SetSurfacePalette(gpScreenBak, palette);
+   SDL_SetSurfacePalette(gpScreen, gpPalette);
+   SDL_SetSurfacePalette(gpScreenBak, gpPalette);
 
    //
    // HACKHACK: need to invalidate gpScreen->map otherwise the palette
@@ -515,9 +523,6 @@ VIDEO_SetPalette(
    SDL_SetSurfaceColorMod(gpScreenBak, 0xFF, 0xFF, 0xFF);
 
    VIDEO_UpdateScreen(NULL);
-
-   // The palette should be freed, or memory leak occurs.
-   SDL_FreePalette(palette);
 #else
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenBak, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
@@ -615,11 +620,7 @@ VIDEO_GetPalette(
 
 --*/
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
-   return gpScreen->format->palette->colors;
-#else
-   return gpScreenReal->format->palette->colors;
-#endif
+   return gpPalette->colors;
 }
 
 VOID
@@ -1077,6 +1078,15 @@ SDL_Surface *
 VIDEO_CreateCompatibleSurface(
 	SDL_Surface    *pSource
 )
+{
+	return VIDEO_CreateCompatibleSizedSurface(pSource, NULL);
+}
+
+SDL_Surface *
+VIDEO_CreateCompatibleSizedSurface(
+	SDL_Surface    *pSource,
+	const SDL_Rect *pSize
+)
 /*++
   Purpose:
 
@@ -1085,6 +1095,7 @@ VIDEO_CreateCompatibleSurface(
   Parameters:
 
     [IN]  pSource   - the source surface from which attributes are taken.
+    [IN]  pSize     - the size (width & height) of the created surface.
 
   Return value:
 
@@ -1096,17 +1107,15 @@ VIDEO_CreateCompatibleSurface(
 	// Create the surface
 	//
 	SDL_Surface *dest = SDL_CreateRGBSurface(pSource->flags,
-		pSource->w, pSource->h, pSource->format->BitsPerPixel,
+		pSize ? pSize->w : pSource->w,
+		pSize ? pSize->h : pSource->h,
+		pSource->format->BitsPerPixel,
 		pSource->format->Rmask, pSource->format->Gmask,
 		pSource->format->Bmask, pSource->format->Amask);
 
 	if (dest)
 	{
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		SDL_SetSurfacePalette(dest, pSource->format->palette);
-#else
-		SDL_SetPalette(dest, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
-#endif
+		VIDEO_UpdateSurfacePalette(dest);
 	}
 
 	return dest;
@@ -1133,7 +1142,7 @@ VIDEO_DuplicateSurface(
 
 --*/
 {
-	SDL_Surface* dest = VIDEO_CreateCompatibleSurface(pSource);
+	SDL_Surface* dest = VIDEO_CreateCompatibleSizedSurface(pSource, pRect);
 
 	if (dest)
 	{
@@ -1145,18 +1154,16 @@ VIDEO_DuplicateSurface(
 
 void
 VIDEO_UpdateSurfacePalette(
-	SDL_Surface    *pSurface,
-	SDL_Surface    *pSource
+	SDL_Surface    *pSurface
 )
 /*++
   Purpose:
 
-    Use the palette from pSource to update the palette of pSurface.
+    Use the global palette to update the palette of pSurface.
 
   Parameters:
 
     [IN]  pSurface - the surface whose palette should be updated.
-	[IN]  pSource  - the surface whose palette is used as source.
 
   Return value:
 
@@ -1165,8 +1172,8 @@ VIDEO_UpdateSurfacePalette(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_SetSurfacePalette(pSurface, pSource->format->palette);
+	SDL_SetSurfacePalette(pSurface, gpPalette);
 #else
-	SDL_SetPalette(pSurface, SDL_PHYSPAL | SDL_LOGPAL, VIDEO_GetPalette(), 0, 256);
+	SDL_SetPalette(pSurface, SDL_PHYSPAL | SDL_LOGPAL, gpPalette->colors, 0, 256);
 #endif
 }

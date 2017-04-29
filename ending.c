@@ -268,7 +268,7 @@ PAL_ScrollFBP(
       {
          PAL_FadeIn(gpGlobals->wNumPalette, gpGlobals->fNightPalette, 1);
          gpGlobals->fNeedToFadeIn = FALSE;
-         VIDEO_UpdateSurfacePalette(p, gpScreen);
+         VIDEO_UpdateSurfacePalette(p);
       }
 
       UTIL_Delay(800 / wScrollSpeed);
@@ -377,8 +377,8 @@ PAL_EndingAnimation(
       {
          PAL_FadeIn(gpGlobals->wNumPalette, gpGlobals->fNightPalette, 1);
          gpGlobals->fNeedToFadeIn = FALSE;
-         VIDEO_UpdateSurfacePalette(pUpper, gpScreen);
-         VIDEO_UpdateSurfacePalette(pLower, gpScreen);
+         VIDEO_UpdateSurfacePalette(pUpper);
+         VIDEO_UpdateSurfacePalette(pLower);
       }
 
       UTIL_Delay(50);

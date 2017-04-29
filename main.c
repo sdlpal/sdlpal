@@ -307,8 +307,8 @@ PAL_SplashScreen(
       }
 
       VIDEO_SetPalette(rgCurrentPalette);
-      VIDEO_UpdateSurfacePalette(lpBitmapDown, gpScreen);
-      VIDEO_UpdateSurfacePalette(lpBitmapUp, gpScreen);
+      VIDEO_UpdateSurfacePalette(lpBitmapDown);
+      VIDEO_UpdateSurfacePalette(lpBitmapUp);
 
       //
       // Draw the screen
@@ -400,8 +400,8 @@ PAL_SplashScreen(
                   rgCurrentPalette[i].b = (BYTE)(palette[i].b * ((float)dwTime / 15000));
                }
                VIDEO_SetPalette(rgCurrentPalette);
-               VIDEO_UpdateSurfacePalette(lpBitmapDown, gpScreen);
-               VIDEO_UpdateSurfacePalette(lpBitmapUp, gpScreen);
+               VIDEO_UpdateSurfacePalette(lpBitmapDown);
+               VIDEO_UpdateSurfacePalette(lpBitmapUp);
                UTIL_Delay(8);
                dwTime += 250;
             }
