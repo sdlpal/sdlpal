@@ -70,7 +70,6 @@
 		716EB9BC0D77318900D5DE1F /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD3F0D772F6300A97E53 /* game.c */; };
 		716EB9C70D77340300D5DE1F /* sdlpal.icns in Resources */ = {isa = PBXBuildFile; fileRef = 716EB9C60D77340300D5DE1F /* sdlpal.icns */; };
 		716EB9CA0D77347B00D5DE1F /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD5E0D772F6300A97E53 /* ui.c */; };
-		717AE630182663E100B10A11 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 717AE62F182663E100B10A11 /* SDL2.framework */; };
 		71E23E9113F6D1AD001287B6 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E7113F6D1AD001287B6 /* bit.c */; };
 		71E23E9313F6D1AD001287B6 /* D.dat in Resources */ = {isa = PBXBuildFile; fileRef = 71E23E7313F6D1AD001287B6 /* D.dat */; };
 		71E23E9413F6D1AD001287B6 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 71E23E7413F6D1AD001287B6 /* decoder.c */; };
@@ -104,11 +103,54 @@
 		C62600401E620C7300E39DD9 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C626FFE61E6204BE00E39DD9 /* Info.plist */; };
 		C62600431E620CE700E39DD9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C62600421E620CE700E39DD9 /* Cocoa.framework */; };
 		C62600451E620F0500E39DD9 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = C62600441E620F0500E39DD9 /* GoogleTests.mm */; };
-		C62600481E6210B200E39DD9 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 717AE62F182663E100B10A11 /* SDL2.framework */; };
 		C62600491E62139C00E39DD9 /* test_swprintf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C62600461E62105500E39DD9 /* test_swprintf.cpp */; };
+		C63505C31EB4624B00186049 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505B51EB45F9A00186049 /* libSDL2.a */; };
+		C63505C71EB4627700186049 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505C61EB4627700186049 /* IOKit.framework */; };
+		C63505C91EB4629400186049 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505C81EB4629400186049 /* CoreAudio.framework */; };
+		C63505CD1EB462D600186049 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505CC1EB462D600186049 /* CoreVideo.framework */; };
+		C63505D31EB4631100186049 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D21EB4631100186049 /* ForceFeedback.framework */; };
+		C63505D41EB4633000186049 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D01EB4630200186049 /* Carbon.framework */; };
 		C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11C1CFAF1780037E9A2 /* overlay.c */; };
 		C65BC11F1CFAF7790037E9A2 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11E1CFAF7790037E9A2 /* audio.c */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C63505B21EB45F9A00186049 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BECDF66C0761BA81005FE872;
+			remoteInfo = Framework;
+		};
+		C63505B41EB45F9A00186049 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BECDF6B30761BA81005FE872;
+			remoteInfo = "Static Library";
+		};
+		C63505B61EB45F9A00186049 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DB31407717554B71006C0E22;
+			remoteInfo = "Shared Library";
+		};
+		C63505B81EB45F9A00186049 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BECDF6BE0761BA81005FE872;
+			remoteInfo = "Standard DMG";
+		};
+		C63505C41EB4625000186049 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BECDF66D0761BA81005FE872;
+			remoteInfo = "Static Library";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		002F39FD09D0883400EBEB88 /* Copy Frameworks into .app bundle */ = {
@@ -278,7 +320,6 @@
 		7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.cpp.cpp; name = dosbox_opl.cpp; path = adplug/dosbox_opl.cpp; sourceTree = "<group>"; };
 		7138FD0D1424E4810060DE76 /* dosbox_opl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.c.h; name = dosbox_opl.h; path = adplug/dosbox_opl.h; sourceTree = "<group>"; };
 		716EB9C60D77340300D5DE1F /* sdlpal.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sdlpal.icns; sourceTree = SOURCE_ROOT; };
-		717AE62F182663E100B10A11 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../Library/Frameworks/SDL2.framework; sourceTree = SOURCE_ROOT; };
 		71E23E7113F6D1AD001287B6 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.c; name = bit.c; path = libmad/bit.c; sourceTree = "<group>"; };
 		71E23E7213F6D1AD001287B6 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = bit.h; path = libmad/bit.h; sourceTree = "<group>"; };
 		71E23E7313F6D1AD001287B6 /* D.dat */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = text; name = D.dat; path = libmad/D.dat; sourceTree = "<group>"; };
@@ -339,6 +380,14 @@
 		C626FFC31E5BD49100E39DD9 /* pal_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pal_config.h; path = macos/pal_config.h; sourceTree = "<group>"; };
 		C626FFE21E6204BE00E39DD9 /* PalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C626FFE61E6204BE00E39DD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C63505AB1EB45F9900186049 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = ../3rd/SDL/Xcode/SDL/SDL.xcodeproj; sourceTree = "<group>"; };
+		C63505C61EB4627700186049 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		C63505C81EB4629400186049 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		C63505CA1EB462AC00186049 /* libffi.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libffi.tbd; path = usr/lib/libffi.tbd; sourceTree = SDKROOT; };
+		C63505CC1EB462D600186049 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		C63505CE1EB462EB00186049 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		C63505D01EB4630200186049 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		C63505D21EB4631100186049 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
 		C65BC11C1CFAF1780037E9A2 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay.c; sourceTree = "<group>"; };
 		C65BC11E1CFAF7790037E9A2 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -348,10 +397,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C63505D41EB4633000186049 /* Carbon.framework in Frameworks */,
+				C63505D31EB4631100186049 /* ForceFeedback.framework in Frameworks */,
+				C63505CD1EB462D600186049 /* CoreVideo.framework in Frameworks */,
+				C63505C91EB4629400186049 /* CoreAudio.framework in Frameworks */,
+				C63505C71EB4627700186049 /* IOKit.framework in Frameworks */,
+				C63505C31EB4624B00186049 /* libSDL2.a in Frameworks */,
 				C614646E1EA6430100A76CC9 /* CoreMIDI.framework in Frameworks */,
 				C614646C1EA642F200A76CC9 /* AudioToolbox.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				717AE630182663E100B10A11 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,7 +414,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C62600431E620CE700E39DD9 /* Cocoa.framework in Frameworks */,
-				C62600481E6210B200E39DD9 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,7 +423,6 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				717AE62F182663E100B10A11 /* SDL2.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -397,6 +449,7 @@
 		29B97314FDCFA39411CA2CEA /* Pal */ = {
 			isa = PBXGroup;
 			children = (
+				C63505AB1EB45F9900186049 /* SDL.xcodeproj */,
 				5757D21E1B7A3D5800464A74 /* liboggvorbis */,
 				71E23E7013F6D188001287B6 /* libmad */,
 				7104FD990D772FAA00A97E53 /* adplug */,
@@ -467,6 +520,13 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C63505D21EB4631100186049 /* ForceFeedback.framework */,
+				C63505D01EB4630200186049 /* Carbon.framework */,
+				C63505CE1EB462EB00186049 /* CoreFoundation.framework */,
+				C63505CC1EB462D600186049 /* CoreVideo.framework */,
+				C63505CA1EB462AC00186049 /* libffi.tbd */,
+				C63505C81EB4629400186049 /* CoreAudio.framework */,
+				C63505C61EB4627700186049 /* IOKit.framework */,
 				C614646D1EA6430100A76CC9 /* CoreMIDI.framework */,
 				C614646B1EA642F200A76CC9 /* AudioToolbox.framework */,
 				C62600421E620CE700E39DD9 /* Cocoa.framework */,
@@ -765,6 +825,17 @@
 			path = PalTests;
 			sourceTree = "<group>";
 		};
+		C63505AC1EB45F9900186049 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C63505B31EB45F9A00186049 /* SDL2.framework */,
+				C63505B51EB45F9A00186049 /* libSDL2.a */,
+				C63505B71EB45F9A00186049 /* libSDL2.dylib */,
+				C63505B91EB45F9A00186049 /* Standard DMG */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -780,6 +851,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C63505C51EB4625000186049 /* PBXTargetDependency */,
 			);
 			name = Pal;
 			productInstallPath = "$(HOME)/Applications";
@@ -828,6 +900,12 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Pal */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = C63505AC1EB45F9900186049 /* Products */;
+					ProjectRef = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* Pal */,
@@ -835,6 +913,37 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		C63505B31EB45F9A00186049 /* SDL2.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SDL2.framework;
+			remoteRef = C63505B21EB45F9A00186049 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C63505B51EB45F9A00186049 /* libSDL2.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSDL2.a;
+			remoteRef = C63505B41EB45F9A00186049 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C63505B71EB45F9A00186049 /* libSDL2.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libSDL2.dylib;
+			remoteRef = C63505B61EB45F9A00186049 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C63505B91EB45F9A00186049 /* Standard DMG */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "Standard DMG";
+			remoteRef = C63505B81EB45F9A00186049 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D1107290486CEB800E47090 /* Resources */ = {
@@ -965,6 +1074,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		C63505C51EB4625000186049 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static Library";
+			targetProxy = C63505C41EB4625000186049 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -992,7 +1109,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				HEADER_SEARCH_PATHS = (
-					/Library/Frameworks/SDL2.framework/Headers,
+					../3rd/SDL/include,
 					../liboggvorbis/include,
 					../liboggvorbis/src,
 					"$(HEADER_SEARCH_PATHS)",
@@ -1017,7 +1134,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
-					/Library/Frameworks/SDL2.framework/Headers,
+					../3rd/SDL/include,
 					../liboggvorbis/include,
 					../liboggvorbis/src,
 					"$(HEADER_SEARCH_PATHS)",

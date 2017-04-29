@@ -83,10 +83,6 @@ matrix:
       - os: osx
         env: TARGET=macOS
         language: c
-        before_install:
-          - wget https://www.libsdl.org/release/SDL2-2.0.5.dmg
-          - hdiutil attach SDL2-2.0.5.dmg;
-          - sudo cp -a /Volumes/SDL2/SDL2.framework /Library/Frameworks/
         script:
           - cd macos
           - xcodebuild
@@ -110,6 +106,6 @@ notifications:
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/922838d6727e919df50e
-    on_success: change  # options: [always|never|change] default: always
+    on_success: always  # options: [always|never|change] default: always
     on_failure: always  # options: [always|never|change] default: always
     on_start: never     # options: [always|never|change] default: always
