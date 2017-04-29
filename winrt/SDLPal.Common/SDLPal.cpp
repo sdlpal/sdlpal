@@ -6,6 +6,9 @@
 #include "../../global.h"
 #include "../../palcfg.h"
 #include "App.xaml.h"
+extern "C" {
+#include "../../native_midi/native_midi.h"
+}
 
 HANDLE g_eventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
 
@@ -18,7 +21,6 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	PAL_LoadConfig(TRUE);
 
 	bool last_crashed = false;
-
 	try
 	{
 		// Check the 'running' file to determine whether the program is abnormally terminated last time.
@@ -32,8 +34,9 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		AWait(file->DeleteAsync(), g_eventHandle);
 	}
-	catch(Platform::Exception^)
-	{ }
+	catch (Platform::Exception^)
+	{
+	}
 
 	if (gConfig.fLaunchSetting || last_crashed)
 	{

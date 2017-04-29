@@ -1,7 +1,31 @@
+/* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
+//
+// WinRTIO.cpp: UWP C-style file I/O wrapper for SDLPal.
+// Author: Lou Yihua @ 2016-2017
+//
+// Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
+// Copyright (c) 2011-2017 SDLPAL development team.
+// All rights reserved.
+//
+// This file is part of SDLPAL.
+//
+// SDLPAL is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+
 #include <wrl.h>
 #include <string>
 #include <DXGI.h>
-#include <ppltasks.h>
 #include <shcore.h>
 #include <unordered_set>
 #include "AsyncHelper.h"
@@ -66,30 +90,76 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 {
 	if (nullptr == _Filename || nullptr == _Mode || nullptr == pFile) return EINVAL;
 
-	std::wstring path;
+	auto ptr = _Filename;
+	while (*ptr == '/' || *ptr == '\\') ptr++;
+
+	Platform::String^ directory = ref new Platform::String((ptr != _Filename) ? L"\\" : L"");
 	Platform::String^ filename;
-	ConvertString(_Filename, path);
-	auto ptr = (wchar_t*)path.c_str() + path.length();
-	while (ptr >= path.c_str() && *ptr != L'/' && *ptr != L'\\') ptr--;
-	filename = ref new Platform::String(ptr + 1);
-	path = path.substr(0, ptr - path.c_str());
-	size_t offset = 0;
-	while ((offset = path.find(L'/', offset)) != std::wstring::npos)
-		path[offset++] = L'\\';
-	if (path.size() > 0)
+	while (*ptr)
 	{
-		if (path.back() == L':') path.append(L"\\");
-	}
-	else
-	{
-		path.assign(Windows::Storage::ApplicationData::Current->LocalFolder->Path->Data());
+		std::wstring temp;
+		auto pos = ptr;
+		while (*pos && *pos != '/' && *pos != '\\') pos++;
+		if (*pos)
+		{
+			ConvertString(std::string(ptr, pos - ptr + 1), temp); temp[pos - ptr] = L'\\';
+			directory = Platform::String::Concat(directory, ref new Platform::String(temp.c_str()));
+		}
+		else
+		{
+			ConvertString(std::string(ptr, pos - ptr), temp);
+			filename = ref new Platform::String(temp.c_str());
+		}
+		while (*pos == '/' || *pos == '\\') pos++;
+		ptr = pos;
 	}
 
-	Windows::Storage::StorageFolder^ folder = nullptr;
-	Event eventHandle;
+	if (directory->Length() == 0)
+	{
+		directory = Windows::Storage::ApplicationData::Current->LocalFolder->Path;
+	}
+
+	bool r, w, b = false;
+	switch (*_Mode)
+	{
+	case 'a': w = true; r = false; break;
+	case 'w': w = true; r = false; break;
+	case 'r': w = false; r = true; break;
+	default: delete filename; return EINVAL;
+	}
+	for (size_t i = 1; i < strlen(_Mode); i++)
+	{
+		switch (_Mode[i])
+		{
+		case '+': r = w = true; break;
+		case 'b': b = true; break;
+		case 't': b = false; break;
+		default: delete filename; return EINVAL;
+		}
+	}
+	*pFile = nullptr;
+
 	try
 	{
-		folder = AWait(Windows::Storage::StorageFolder::GetFolderFromPathAsync(ref new Platform::String(path.c_str())), eventHandle);
+		Event eventHandle;
+		Windows::Storage::StorageFolder^ folder = AWait(Windows::Storage::StorageFolder::GetFolderFromPathAsync(directory), eventHandle);
+		Windows::Storage::StorageFile^ file = nullptr;
+		switch (*_Mode)
+		{
+		case 'a':
+			file = AWait(folder->CreateFileAsync(filename, Windows::Storage::CreationCollisionOption::OpenIfExists), eventHandle);
+			break;
+		case 'w':
+			file = AWait(folder->CreateFileAsync(filename, Windows::Storage::CreationCollisionOption::ReplaceExisting), eventHandle);
+			break;
+		case 'r':
+			file = AWait(folder->GetFileAsync(filename), eventHandle);
+			break;
+		}
+		if (file)
+		{
+			*pFile = new WRT_FILE(AWait(file->OpenAsync(w ? Windows::Storage::FileAccessMode::ReadWrite : Windows::Storage::FileAccessMode::Read), eventHandle), r, w, b);
+		}
 	}
 	catch (Platform::AccessDeniedException^)
 	{
@@ -100,39 +170,6 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 		return EIO;
 	}
 
-	WRT_FILE* ret = nullptr;
-	try
-	{
-		Windows::Storage::StorageFile^ file;
-		bool r, w;
-		switch (*_Mode)
-		{
-		case 'a': file = AWait(folder->CreateFileAsync(filename, Windows::Storage::CreationCollisionOption::OpenIfExists), eventHandle); w = true; r = false; break;
-		case 'w': file = AWait(folder->CreateFileAsync(filename, Windows::Storage::CreationCollisionOption::ReplaceExisting), eventHandle); w = true; r = false; break;
-		case 'r': file = AWait(folder->GetFileAsync(filename), eventHandle); w = false; r = true; break;
-		default: CloseHandle(eventHandle); return EINVAL;
-		}
-		if (file)
-		{
-			bool b = false;
-			for (size_t i = 1; i < strlen(_Mode); i++)
-			{
-				switch (_Mode[i])
-				{
-				case '+': r = w = true; break;
-				case 'b': b = true; break;
-				case 't': b = false; break;
-				default: return EINVAL;
-				}
-			}
-			ret = new WRT_FILE(AWait(file->OpenAsync(w ? Windows::Storage::FileAccessMode::ReadWrite : Windows::Storage::FileAccessMode::Read), eventHandle), r, w, b);
-		}
-	}
-	catch (Platform::Exception^)
-	{
-		return EIO;
-	}
-	*pFile = ret;
 	return 0;
 }
 

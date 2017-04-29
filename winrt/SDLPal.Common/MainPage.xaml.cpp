@@ -54,7 +54,7 @@ void SDLPal::MainPage::LoadControlContents()
 	slQuality->Value = gConfig.iResampleQuality;
 
 	cbCD->SelectedIndex = (gConfig.eCDType == MUSIC_MP3) ? 0 : 1;
-	cbBGM->SelectedIndex = (gConfig.eMusicType >= MUSIC_RIX && gConfig.eMusicType <= MUSIC_OGG) ? (gConfig.eMusicType - MUSIC_RIX) : 0;
+	cbBGM->SelectedIndex = (gConfig.eMusicType <= MUSIC_OGG) ? gConfig.eMusicType : MUSIC_RIX;
 	cbOPL->SelectedIndex = (int)gConfig.eOPLType;
 
 	if (gConfig.iSampleRate <= 11025)
@@ -104,7 +104,7 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.uCodePage = tsLanguage->IsOn ? CP_GBK : CP_BIG5;
 
 	gConfig.eCDType = (MUSICTYPE)(MUSIC_MP3 + cbCD->SelectedIndex);
-	gConfig.eMusicType = (MUSICTYPE)(MUSIC_RIX + cbBGM->SelectedIndex);
+	gConfig.eMusicType = (MUSICTYPE)cbBGM->SelectedIndex;
 	gConfig.eOPLType = (OPLTYPE)cbOPL->SelectedIndex;
 
 	gConfig.iSampleRate = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbSampleRate->SelectedItem)->Content)->Data(), nullptr, 10);
@@ -114,7 +114,7 @@ void SDLPal::MainPage::SaveControlContents()
 
 void SDLPal::MainPage::cbBGM_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
-	auto visibility = (cbBGM->SelectedIndex == 0) ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
+	auto visibility = (cbBGM->SelectedIndex == MUSIC_RIX) ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
 	cbOPL->Visibility = visibility;
 	cbOPLSR->Visibility = visibility;
 	tsSurroundOPL->Visibility = visibility;

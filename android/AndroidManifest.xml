@@ -3,7 +3,7 @@
      com.gamemaker.game
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.codeplex.sdlpal"
+      package="io.github.sdlpal"
       android:versionCode="2"
       android:versionName="2.0"
       android:installLocation="auto">

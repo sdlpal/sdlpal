@@ -360,7 +360,6 @@
     <ClCompile Include="..\adplug\rix.cpp" />
     <ClCompile Include="..\adplug\surroundopl.cpp" />
     <ClCompile Include="..\native_midi\native_midi_common.c" />
-    <ClCompile Include="..\native_midi\native_midi_win32.c" />
     <ClCompile Include="..\libmad\bit.c" />
     <ClCompile Include="..\libmad\decoder.c" />
     <ClCompile Include="..\libmad\fixed.c" />
@@ -372,6 +371,7 @@
     <ClCompile Include="..\libmad\stream.c" />
     <ClCompile Include="..\libmad\synth.c" />
     <ClCompile Include="..\libmad\timer.c" />
+    <ClCompile Include="native_midi.c" />
     <ClCompile Include="win32.cpp" />
   </ItemGroup>
   <ItemGroup>

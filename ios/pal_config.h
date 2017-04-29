@@ -21,6 +21,10 @@
 
 # define PAL_IS_VALID_JOYSTICK(s)  (strcmp((s), "applesmc") != 0)
 
+#define PAL_HAS_NATIVEMIDI  1
+
+#define PAL_HAS_CONFIG_PAGE 0
+
 LPCSTR
 UTIL_BasePath(
    VOID

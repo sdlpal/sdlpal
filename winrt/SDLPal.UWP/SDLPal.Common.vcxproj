@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SDLPal.Common\AsyncHelper.h" />
+    <ClInclude Include="..\SDLPal.Common\NativeBuffer.h" />
     <ClInclude Include="..\SDLPal.Common\StringHelper.h" />
   </ItemGroup>
   <ItemGroup>

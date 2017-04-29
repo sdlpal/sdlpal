@@ -173,9 +173,6 @@
     <ClCompile Include="..\native_midi\native_midi_common.c">
       <Filter>native_midi</Filter>
     </ClCompile>
-    <ClCompile Include="..\native_midi\native_midi_win32.c">
-      <Filter>native_midi</Filter>
-    </ClCompile>
     <ClCompile Include="..\libmad\bit.c">
       <Filter>libmad</Filter>
     </ClCompile>
@@ -325,6 +322,9 @@
     </ClCompile>
     <ClCompile Include="..\tests\test_swprintf.cpp">
       <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="native_midi.c">
+      <Filter>native_midi</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

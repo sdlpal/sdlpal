@@ -94,6 +94,12 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C602B0021CEF3E6C003A7B09 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C602B0011CEF3E6C003A7B09 /* palcfg.c */; };
+		C61464681EA6425700A76CC9 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C61464641EA6425700A76CC9 /* native_midi_common.c */; };
+		C61464691EA6425700A76CC9 /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = C61464661EA6425700A76CC9 /* native_midi_macosx.c */; };
+		C614646C1EA642F200A76CC9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C614646B1EA642F200A76CC9 /* AudioToolbox.framework */; };
+		C614646E1EA6430100A76CC9 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C614646D1EA6430100A76CC9 /* CoreMIDI.framework */; };
+		C61464741EA643BD00A76CC9 /* midi.c in Sources */ = {isa = PBXBuildFile; fileRef = C61464701EA643BD00A76CC9 /* midi.c */; };
+		C61464751EA643BD00A76CC9 /* private.c in Sources */ = {isa = PBXBuildFile; fileRef = C61464731EA643BD00A76CC9 /* private.c */; };
 		C626003D1E62058F00E39DD9 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = C626003C1E62058F00E39DD9 /* gtest-all.cc */; };
 		C62600401E620C7300E39DD9 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C626FFE61E6204BE00E39DD9 /* Info.plist */; };
 		C62600431E620CE700E39DD9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C62600421E620CE700E39DD9 /* Cocoa.framework */; };
@@ -314,6 +320,17 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Pal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C602B0011CEF3E6C003A7B09 /* palcfg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = palcfg.c; sourceTree = "<group>"; };
+		C61464631EA6425700A76CC9 /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
+		C61464641EA6425700A76CC9 /* native_midi_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_common.c; sourceTree = "<group>"; };
+		C61464651EA6425700A76CC9 /* native_midi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi_common.h; sourceTree = "<group>"; };
+		C61464661EA6425700A76CC9 /* native_midi_macosx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = native_midi_macosx.c; path = ../macos/native_midi_macosx.c; sourceTree = "<group>"; };
+		C614646B1EA642F200A76CC9 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		C614646D1EA6430100A76CC9 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
+		C614646F1EA643BD00A76CC9 /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
+		C61464701EA643BD00A76CC9 /* midi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = midi.c; sourceTree = "<group>"; };
+		C61464711EA643BD00A76CC9 /* midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi.h; sourceTree = "<group>"; };
+		C61464721EA643BD00A76CC9 /* palcfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = palcfg.h; sourceTree = "<group>"; };
+		C61464731EA643BD00A76CC9 /* private.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = private.c; sourceTree = "<group>"; };
 		C626003C1E62058F00E39DD9 /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "gtest-all.cc"; path = "../../3rd/googletest/googletest/src/gtest-all.cc"; sourceTree = "<group>"; };
 		C626003E1E6206AA00E39DD9 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		C62600421E620CE700E39DD9 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -331,6 +348,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C614646E1EA6430100A76CC9 /* CoreMIDI.framework in Frameworks */,
+				C614646C1EA642F200A76CC9 /* AudioToolbox.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				717AE630182663E100B10A11 /* SDL2.framework in Frameworks */,
 			);
@@ -381,7 +400,9 @@
 				5757D21E1B7A3D5800464A74 /* liboggvorbis */,
 				71E23E7013F6D188001287B6 /* libmad */,
 				7104FD990D772FAA00A97E53 /* adplug */,
-				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				C61464621EA6425700A76CC9 /* native_midi */,
+				C61464761EA643E600A76CC9 /* Headers */,
+				29B97315FDCFA39411CA2CEA /* Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				C626FFE31E6204BE00E39DD9 /* PalTests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -390,10 +411,9 @@
 			name = Pal;
 			sourceTree = "<group>";
 		};
-		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+		29B97315FDCFA39411CA2CEA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				C626FFC31E5BD49100E39DD9 /* pal_config.h */,
 				7104FD3A0D772F6300A97E53 /* battle.c */,
 				71F0F6D10DAA63B400F88C16 /* ending.c */,
 				71E27E030D8C7E2F0048BA16 /* fight.c */,
@@ -424,41 +444,13 @@
 				7104FD660D772F6300A97E53 /* video.c */,
 				7104FD680D772F6300A97E53 /* yj1.c */,
 				7104FD520D772F6300A97E53 /* rixplay.cpp */,
-				7104FD390D772F6300A97E53 /* ascii.h */,
-				7104FD3B0D772F6300A97E53 /* battle.h */,
-				5757D2981B7A3E0300464A74 /* codepage.h */,
-				7104FD3C0D772F6300A97E53 /* common.h */,
-				71F0F6D20DAA63B400F88C16 /* ending.h */,
-				71E27E040D8C7E2F0048BA16 /* fight.h */,
-				7104FD3E0D772F6300A97E53 /* font.h */,
-				5757D2991B7A3E0300464A74 /* fontglyph.h */,
-				7104FD400D772F6300A97E53 /* game.h */,
-				7104FD440D772F6300A97E53 /* global.h */,
-				7104FD460D772F6300A97E53 /* input.h */,
-				71F0F6D40DAA63B400F88C16 /* itemmenu.h */,
-				71F0F6D60DAA63B400F88C16 /* magicmenu.h */,
-				7104FD470D772F6300A97E53 /* main.h */,
-				7104FD490D772F6300A97E53 /* map.h */,
-				7104FD4B0D772F6300A97E53 /* palcommon.h */,
-				7104FD4D0D772F6300A97E53 /* palette.h */,
-				7104FD4F0D772F6300A97E53 /* play.h */,
-				5757D2921B7A3DCE00464A74 /* players.h */,
-				7104FD510D772F6300A97E53 /* res.h */,
-				5757D2941B7A3DCE00464A74 /* resampler.h */,
-				7104FD550D772F6300A97E53 /* rngplay.h */,
-				7104FD570D772F6300A97E53 /* scene.h */,
-				7104FD590D772F6300A97E53 /* script.h */,
-				7104FD5D0D772F6300A97E53 /* text.h */,
-				7104FD5F0D772F6300A97E53 /* ui.h */,
-				7104FD610D772F6300A97E53 /* uibattle.h */,
-				7104FD630D772F6300A97E53 /* uigame.h */,
-				7104FD650D772F6300A97E53 /* util.h */,
-				7104FD670D772F6300A97E53 /* video.h */,
 				C602B0011CEF3E6C003A7B09 /* palcfg.c */,
 				C65BC11C1CFAF1780037E9A2 /* overlay.c */,
 				C65BC11E1CFAF7790037E9A2 /* audio.c */,
+				C61464701EA643BD00A76CC9 /* midi.c */,
+				C61464731EA643BD00A76CC9 /* private.c */,
 			);
-			name = "Other Sources";
+			name = Sources;
 			path = ..;
 			sourceTree = "<group>";
 		};
@@ -475,6 +467,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C614646D1EA6430100A76CC9 /* CoreMIDI.framework */,
+				C614646B1EA642F200A76CC9 /* AudioToolbox.framework */,
 				C62600421E620CE700E39DD9 /* Cocoa.framework */,
 				C626003E1E6206AA00E39DD9 /* XCTest.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
@@ -706,6 +700,60 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
+		C61464621EA6425700A76CC9 /* native_midi */ = {
+			isa = PBXGroup;
+			children = (
+				C61464631EA6425700A76CC9 /* native_midi.h */,
+				C61464641EA6425700A76CC9 /* native_midi_common.c */,
+				C61464651EA6425700A76CC9 /* native_midi_common.h */,
+				C61464661EA6425700A76CC9 /* native_midi_macosx.c */,
+			);
+			name = native_midi;
+			path = ../native_midi;
+			sourceTree = "<group>";
+		};
+		C61464761EA643E600A76CC9 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				C626FFC31E5BD49100E39DD9 /* pal_config.h */,
+				7104FD390D772F6300A97E53 /* ascii.h */,
+				7104FD3B0D772F6300A97E53 /* battle.h */,
+				5757D2981B7A3E0300464A74 /* codepage.h */,
+				7104FD3C0D772F6300A97E53 /* common.h */,
+				71F0F6D20DAA63B400F88C16 /* ending.h */,
+				71E27E040D8C7E2F0048BA16 /* fight.h */,
+				7104FD3E0D772F6300A97E53 /* font.h */,
+				5757D2991B7A3E0300464A74 /* fontglyph.h */,
+				7104FD400D772F6300A97E53 /* game.h */,
+				7104FD440D772F6300A97E53 /* global.h */,
+				7104FD460D772F6300A97E53 /* input.h */,
+				71F0F6D40DAA63B400F88C16 /* itemmenu.h */,
+				71F0F6D60DAA63B400F88C16 /* magicmenu.h */,
+				7104FD470D772F6300A97E53 /* main.h */,
+				7104FD490D772F6300A97E53 /* map.h */,
+				7104FD4B0D772F6300A97E53 /* palcommon.h */,
+				7104FD4D0D772F6300A97E53 /* palette.h */,
+				7104FD4F0D772F6300A97E53 /* play.h */,
+				5757D2921B7A3DCE00464A74 /* players.h */,
+				7104FD510D772F6300A97E53 /* res.h */,
+				5757D2941B7A3DCE00464A74 /* resampler.h */,
+				7104FD550D772F6300A97E53 /* rngplay.h */,
+				7104FD570D772F6300A97E53 /* scene.h */,
+				7104FD590D772F6300A97E53 /* script.h */,
+				7104FD5D0D772F6300A97E53 /* text.h */,
+				7104FD5F0D772F6300A97E53 /* ui.h */,
+				7104FD610D772F6300A97E53 /* uibattle.h */,
+				7104FD630D772F6300A97E53 /* uigame.h */,
+				7104FD650D772F6300A97E53 /* util.h */,
+				7104FD670D772F6300A97E53 /* video.h */,
+				C614646F1EA643BD00A76CC9 /* audio.h */,
+				C61464711EA643BD00A76CC9 /* midi.h */,
+				C61464721EA643BD00A76CC9 /* palcfg.h */,
+			);
+			name = Headers;
+			path = ..;
+			sourceTree = "<group>";
+		};
 		C626FFE31E6204BE00E39DD9 /* PalTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -842,6 +890,7 @@
 				7104FD840D772F6300A97E53 /* rngplay.c in Sources */,
 				7104FD860D772F6300A97E53 /* scene.c in Sources */,
 				7104FD880D772F6300A97E53 /* script.c in Sources */,
+				C61464691EA6425700A76CC9 /* native_midi_macosx.c in Sources */,
 				7104FD8A0D772F6300A97E53 /* sound.c in Sources */,
 				5757D2801B7A3D5800464A74 /* registry.c in Sources */,
 				7104FD8C0D772F6300A97E53 /* text.c in Sources */,
@@ -854,6 +903,7 @@
 				7104FDA90D772FBC00A97E53 /* binfile.cpp in Sources */,
 				7104FDAB0D772FBC00A97E53 /* binio.cpp in Sources */,
 				5757D27A1B7A3D5800464A74 /* lookup.c in Sources */,
+				C61464681EA6425700A76CC9 /* native_midi_common.c in Sources */,
 				7104FDAD0D772FBC00A97E53 /* emuopl.cpp in Sources */,
 				5757D27D1B7A3D5800464A74 /* mapping0.c in Sources */,
 				5757D2861B7A3D5800464A74 /* vorbisfile.c in Sources */,
@@ -862,12 +912,14 @@
 				7104FDB10D772FBC00A97E53 /* fprovide.cpp in Sources */,
 				5757D28F1B7A3D8100464A74 /* demuopl.cpp in Sources */,
 				7104FDB40D772FBC00A97E53 /* player.cpp in Sources */,
+				C61464741EA643BD00A76CC9 /* midi.c in Sources */,
 				7104FDB60D772FBC00A97E53 /* rix.cpp in Sources */,
 				5757D27B1B7A3D5800464A74 /* lpc.c in Sources */,
 				5757D28D1B7A3D8100464A74 /* dbemuopl.cpp in Sources */,
 				716EB9BC0D77318900D5DE1F /* game.c in Sources */,
 				5757D2711B7A3D5800464A74 /* bitrate.c in Sources */,
 				716EB9CA0D77347B00D5DE1F /* ui.c in Sources */,
+				C61464751EA643BD00A76CC9 /* private.c in Sources */,
 				71E27E050D8C7E2F0048BA16 /* fight.c in Sources */,
 				71F0F6D70DAA63B400F88C16 /* ending.c in Sources */,
 				5757D2751B7A3D5800464A74 /* envelope.c in Sources */,
