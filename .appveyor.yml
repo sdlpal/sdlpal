@@ -1,17 +1,19 @@
 version: 2.0.{build}
+image:
+  - Visual Studio 2015
 environment:
   matrix:
   - solution_name: win32/sdlpal.sln
-    BUILD_OPTIONS: /p:Configuration=Release /m
+    BUILD_OPTIONS: /p:Configuration=Release
   - solution_name: winrt/SDLPal.UWP.sln
-    BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM" /m
+    BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM"
 build_script:
   - |
-    msbuild %solution_name% %BUILD_OPTIONS%
+    msbuild /nologo /m %solution_name% %BUILD_OPTIONS%
 before_build:
   # SDL submodule setup
   - |-
-    git submodule update --init 3rd/SDL
+    git submodule update --init --recursive
 
 deploy:
 - provider: GitHub
@@ -19,13 +21,14 @@ deploy:
     appveyor_repo_tag: true
   auth_token:
     secure: RYDRqm5LncsJG32FRSlCkLzkJC4ykCtlgO3+xW4q80wQOA3U9pHAe2beyMEduJIe
-artifacts:
-  - path: win32/Release/sdlpal.exe
-    name: win32 build
 
+artifacts:
+  - path: win32/Win32/Release/sdlpal.exe
+    name: Windows Desktop
   - path: winrt/AppPackages/SDLPal
-    name: SDLPal UWP
+    name: Universal Windows Platform
     type: zip
+
 notifications:
 - provider: Webhook
   url: https://webhooks.gitter.im/e/2accb0e6e37119e604b3
