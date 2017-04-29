@@ -1021,13 +1021,13 @@
 					"MAC_OS_X_VERSION_MIN_REQUIRED=1060",
 				);
 				HEADER_SEARCH_PATHS = (
-					../../SDL2/include,
+					../../3rd/SDL/include,
 					../../,
 					../../liboggvorbis/include,
 					../../liboggvorbis/src,
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = com.codeplex.sdlpal;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1036,7 +1036,7 @@
 		7165507C195BB372006E1227 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -1045,13 +1045,13 @@
 					"MAC_OS_X_VERSION_MIN_REQUIRED=1060",
 				);
 				HEADER_SEARCH_PATHS = (
-					../../SDL2/include,
+					../../3rd/SDL/include,
 					../../,
 					../../liboggvorbis/include,
 					../../liboggvorbis/src,
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = com.codeplex.sdlpal;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

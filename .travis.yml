@@ -74,7 +74,7 @@ matrix:
         language: c
         script:
           - cd ios/SDLPal
-          - xcodebuild ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED="NO"
+          - xcodebuild ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO
           - mkdir -p Payload
           - mv build/Release-iphoneos/SDLPal.app Payload
           - zip ../../deploy/sdlpal-impactor.ipa -r Payload
