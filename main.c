@@ -83,22 +83,10 @@ PAL_Init(
 
    VIDEO_SetWindowTitle("Loading...");
 
-   if (!gConfig.fIsWIN95 && gConfig.fUseEmbeddedFonts)
+   e = PAL_InitFont(&gConfig);
+   if (e != 0)
    {
-      e = PAL_InitEmbeddedFont();
-      if (e != 0)
-      {
-         TerminateOnError("Could not load fonts: %d.\n", e);
-      }
-   }
-
-   if (gConfig.pszBdfFile != NULL)
-   {
-	  e = PAL_LoadBdfFont(gConfig.pszBdfFile);
-      if (e != 0)
-      {
-         TerminateOnError("Could not load BDF fonts: %d.\n", e);
-      }
+      TerminateOnError("Could not load fonts: %d.\n", e);
    }
 
    e = PAL_InitUI();

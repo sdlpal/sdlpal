@@ -32,7 +32,7 @@
 
 static int _font_height = 16;
 
-uint8_t reverseBits(uint8_t x) {
+static uint8_t reverseBits(uint8_t x) {
     uint8_t y = 0;
     for(int i = 0 ; i < 8; i++){
         y <<= 1;
@@ -41,24 +41,8 @@ uint8_t reverseBits(uint8_t x) {
     }
     return y;
 }
-INT
-PAL_InitEmbeddedFont(
-   VOID
-)
-/*++
-  Purpose:
 
-    None.
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    Always return 0.
-
---*/
+static void PAL_InitEmbeddedFont(void)
 {
 	FILE *fp;
 	char *char_buf;
@@ -70,7 +54,7 @@ PAL_InitEmbeddedFont(
 	//
 	if (NULL == (fp = UTIL_OpenFile("wor16.asc")))
 	{
-		return 0;
+		return;
 	}
 
 	//
@@ -85,7 +69,7 @@ PAL_InitEmbeddedFont(
 	if (NULL == (char_buf = (char *)malloc(nBytes)))
 	{
 		fclose(fp);
-		return 0;
+		return;
 	}
 	fseek(fp, 0, SEEK_SET);
 	fread(char_buf, 1, nBytes, fp);
@@ -102,7 +86,7 @@ PAL_InitEmbeddedFont(
 	if (NULL == (wchar_buf = (wchar_t *)malloc(nChars * sizeof(wchar_t))))
 	{
 		free(char_buf);
-		return 0;
+		return;
 	}
 	PAL_MultiByteToWideChar(char_buf, nBytes, wchar_buf, nChars);
 	free(char_buf);
@@ -137,8 +121,6 @@ PAL_InitEmbeddedFont(
 		unicode_font[i][15] = 0;
 	}
 	_font_height = 15;
-
-	return 0;
 }
 
 INT
@@ -244,55 +226,39 @@ PAL_LoadBdfFont(
    return 0;
 }
 
-VOID
-PAL_FreeFont(
-   VOID
+int
+PAL_InitFont(
+	const CONFIGURATION* cfg
 )
-/*++
-  Purpose:
+{
+	if (cfg->pszBdfFile)
+	{
+		PAL_LoadBdfFont(cfg->pszBdfFile);
+	}
 
-    None.
+	if (!cfg->fIsWIN95 && cfg->fUseEmbeddedFonts)
+	{
+		PAL_InitEmbeddedFont();
+	}
 
-  Parameters:
+	return 0;
+}
 
-    None.
-
-  Return value:
-
-    None.
-
---*/
+void
+PAL_FreeFont(
+	void
+)
 {
 }
 
-VOID
+void
 PAL_DrawCharOnSurface(
-   WORD                     wChar,
-   SDL_Surface             *lpSurface,
-   PAL_POS                  pos,
-   BYTE                     bColor,
-   BOOL                     fUse8x8Font
+	uint16_t                 wChar,
+	SDL_Surface             *lpSurface,
+	PAL_POS                  pos,
+	uint8_t                  bColor,
+	BOOL                     fUse8x8Font
 )
-/*++
-  Purpose:
-
-    Draw a Unicode character on a surface.
-
-  Parameters:
-
-    [IN]  wChar - the unicode character to be drawn.
-
-    [OUT] lpSurface - the destination surface.
-
-    [IN]  pos - the destination location of the surface.
-
-    [IN]  bColor - the color of the character.
-
-  Return value:
-
-    None.
-
---*/
 {
 	int       i, j;
 	int       x = PAL_X(pos), y = PAL_Y(pos);
@@ -370,24 +336,10 @@ PAL_DrawCharOnSurface(
 	}
 }
 
-INT
+int
 PAL_CharWidth(
-   WORD                     wChar
+	uint16_t                 wChar
 )
-/*++
-  Purpose:
-
-    Get the text width of a character.
-
-  Parameters:
-
-    [IN]  wChar - the unicode character for width calculation.
-
-  Return value:
-
-    The width of the character, 16 for full-width char and 8 for half-width char.
-
---*/
 {
 	if ((wChar >= unicode_lower_top && wChar < unicode_upper_base) || wChar >= unicode_upper_top)
 	{
@@ -405,9 +357,9 @@ PAL_CharWidth(
 	return font_width[wChar] >> 1;
 }
 
-INT
+int
 PAL_FontHeight(
-   VOID
+	void
 )
 {
 	return _font_height;

@@ -38,6 +38,7 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include "SDL.h"
 #include "SDL_endian.h"
@@ -209,15 +210,5 @@ typedef const WCHAR        *LPCWSTR;
 #ifndef PAL_FATAL_OUTPUT
 # define PAL_FATAL_OUTPUT(s)
 #endif
-
-typedef enum tagCODEPAGE {
-	CP_MIN = 0,
-	CP_BIG5 = 0,
-	CP_GBK = 1,
-	CP_SHIFTJIS = 2,
-	CP_JISX0208 = 3,
-	CP_MAX = CP_GBK + 1,
-	CP_UTF_8 = CP_MAX + 1
-} CODEPAGE;
 
 #endif
