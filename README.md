@@ -43,16 +43,32 @@ We have a Gitter Room which you can join below.
 Building the game
 =================
 
-The steps for building SDLPAL varies in different platforms. Currently, SDLPAL supports most desktop platforms including *Windows* (including *Windows Store*), *Linux* and *macOS*, as well as most popular mobile platforms including *Android*, *iOS* and *Windows Phone*. It is also ported to several *home console* platforms.
+Currently, SDLPAL supports the following platforms:
+* Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*), *Linux* and *macOS*
+* Mobile platforms: *Android*, *iOS* and *Windows*
+* Home consoles: *3DS*, *WII*, *PSP* and others (some of them are not actively maintained now)
+
+To build SDLPAL, there are three major steps you need to do:
+1. Clone the source code from Github into your local folder using `git` or through corresponding GUI:
+```shell
+$ cd <parent-path-of-sdlpal>
+$ git clone https://github.com/sdlpal/sdlpal.git
+```
+2. Update all the submodules used by SDLPAL using `git submodule` or through corresponding GUI:
+```shell
+$ cd <parent-path-of-sdlpal>/sdlpal
+$ git submodule update --init --recursive
+```
+3. Follow the platform-specific steps listed below.
 
 Windows
 -------
 
 ### Visual Studio
 
-To build SDLPAL as a Windows **desktop** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** (the support of *Visual Studio 2013* is **deprecated** now and will be removed in future) to open the solution file *`sdlpal.sln`* under the *`win32`* directory. As a dependency, you need to have [SDL 2.0](https://www.libsdl.org/download-2.0.php) development or source files installed at the *`SDL2`* directory under the source tree.
+To build SDLPAL as a Windows **desktop** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** (the support of *Visual Studio 2013* is **deprecated** now and will be removed in future) to open the solution file *`sdlpal.sln`* under the *`win32`* directory.
 
-To build SDLPAL as a **Universal Windows Platform** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** to open the solution file *`SDLPal.UWP.sln`* under the *`winrt`* directory. As a dependency, you need to have [SDL 2.0](https://www.libsdl.org/download-2.0.php) **source** files installed at the *`SDL2`* directory under the source tree.
+To build SDLPAL as a **Universal Windows Platform** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** to open the solution file *`SDLPal.UWP.sln`* under the *`winrt`* directory.
 
 There are also solution files for building traditional **Windows (phone) store app** under the *`winrt`* directory, but they are deprecated and will be removed in future.
 
@@ -98,7 +114,7 @@ To compile, open *`Pal.xcodeproj`* with `Xcode`, and click Build. You need to ha
 iOS
 ---
 
-To compile, open the project *`ios/SDLPal/SDLPal.xcodeproj`* with `Xcode`, and click Build. You need to have SDL2 **source files** (not development files) extracted in the *`SDL2`* folder.
+To compile, open the project *`ios/SDLPal/SDLPal.xcodeproj`* with `Xcode`, and click Build.
 
 Android
 -------
@@ -110,7 +126,6 @@ ndk-build
 cd ..
 ant debug
 ```
-You need to have SDL2 **source files** (not development files) extracted in the *`SDL2`* folder.
 
 Nintendo 3DS
 ------------
