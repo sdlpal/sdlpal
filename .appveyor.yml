@@ -2,16 +2,12 @@ version: 2.0.{build}
 environment:
   matrix:
   - solution_name: win32/sdlpal.sln
-    BUILD_WIN32:
-    BUILD_UWP: rem
+    BUILD_OPTIONS: /p:Configuration=Release /m
   - solution_name: winrt/SDLPal.UWP.sln
-    BUILD_WIN32: rem
-    BUILD_UWP: 
+    BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM" /m
 build_script:
   - |
-    %BUILD_WIN32% msbuild %solution_name% /p:Configuration=Release /m
-  - |
-    %BUILD_UWP% msbuild %solution_name% /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM" /m
+    msbuild %solution_name% %BUILD_OPTIONS%
 before_build:
   # SDL submodule setup
   - |-
