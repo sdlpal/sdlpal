@@ -34,13 +34,11 @@ matrix:
             - gcc-mingw-w64-i686 
             - g++-mingw-w64-i686 
         before_install:
-          - cd SDL2
+          - cd win32
           - wget http://libsdl.org/release/SDL2-devel-2.0.5-mingw.tar.gz
           - tar xvf SDL2-devel-2.0.5-mingw.tar.gz
-          - mv SDL2-2.0.5/* .
-          - sed -i "s@/usr/local/cross-tools@$(pwd)@g" i686-w64-mingw32/bin/sdl2-config
-          - sed -i "/#include <intrin.h>/d" i686-w64-mingw32/include/SDL2/SDL_cpuinfo.h #dirty hack
-          - export PATH=$PATH:$(pwd)/i686-w64-mingw32/bin
+          - sed -i "s@/usr/local/cross-tools@$(pwd)/SDL2-2.0.5@g" SDL2-2.0.5/i686-w64-mingw32/bin/sdl2-config
+          - export PATH=$(pwd)/SDL2-2.0.5/i686-w64-mingw32/bin:$PATH
           - cd ..
         script:
           - cd win32
