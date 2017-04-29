@@ -72,12 +72,6 @@ matrix:
       - os: osx
         env: TARGET=iOS
         language: c
-        before_install:
-          - cd SDL2
-          - wget https://www.libsdl.org/release/SDL2-2.0.5.zip
-          - unzip SDL2-2.0.5.zip
-          - mv SDL2-2.0.5/* .
-          - cd ..
         script:
           - cd ios/SDLPal
           - xcodebuild ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED="NO"
