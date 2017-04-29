@@ -1,8 +1,8 @@
 /* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
-// Copyright (c) 2009, Wei Mingzhi <whistler_wmz@users.sf.net>.
+// Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
+// Copyright (c) 2011-2017, SDLPAL development team.
 // All rights reserved.
-// Created by Lou Yihua <louyihua@21cn.com>, 2015-06-03.
 //
 // This file is part of SDLPAL.
 //
@@ -19,8 +19,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// Codepage definition file for GBK/BIG5/SHIFT-JIS.
-// 
+// codepage.h: Codepage definition file for GBK/BIG5/SHIFT-JIS.
+//    @Author: Lou Yihua <louyihua@21cn.com>, 2015-06-03.
 
 #ifndef _CODEPAGE_H
 #define _CODEPAGE_H

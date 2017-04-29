@@ -1,10 +1,8 @@
-/* -*- mode: c; tab-width: 4; c-basic-offset: 3; c-file-style: "linux" -*- */
+/* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
-// Copyright (c) 2009, Wei Mingzhi <whistler_wmz@users.sf.net>.
+// Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
+// Copyright (c) 2011-2017, SDLPAL development team.
 // All rights reserved.
-//
-// Portions based on PalLibrary by Lou Yihua <louyihua@21cn.com>.
-// Copyright (c) 2006-2007, Lou Yihua.
 //
 // This file is part of SDLPAL.
 //
@@ -20,6 +18,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// Portions based on PalLibrary by Lou Yihua <louyihua@21cn.com>.
+// Copyright (c) 2006-2007, Lou Yihua.
 //
 
 #include "main.h"
