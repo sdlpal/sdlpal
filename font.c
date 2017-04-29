@@ -122,7 +122,7 @@ PAL_InitEmbeddedFont(
 	//
 	for (i = 0; i < nChars; i++)
 	{
-		wchar_t w = (wchar_buf[i] >= unicode_upper_base) ? (wchar_buf[i] - unicode_upper_base + 0xd800) : wchar_buf[i];
+		wchar_t w = (wchar_buf[i] >= unicode_upper_base) ? (wchar_buf[i] - unicode_upper_base + unicode_lower_top) : wchar_buf[i];
 		fread(unicode_font[w], 30, 1, fp);
 		unicode_font[w][30] = 0;
 		unicode_font[w][31] = 0;
@@ -220,7 +220,7 @@ PAL_LoadBdfFont(
             PAL_MultiByteToWideCharCP(codepage, (LPCSTR)szCp, 2, wc, 1);
             if (wc[0] != 0)
             {
-               wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + 0xd800) : wc[0];
+               wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + unicode_lower_top) : wc[0];
                memcpy(unicode_font[w], bFontGlyph, sizeof(bFontGlyph));
             }
 
@@ -300,7 +300,7 @@ PAL_DrawCharOnSurface(
 	//
 	// Check for NULL pointer & invalid char code.
 	//
-	if (lpSurface == NULL || (wChar >= 0xd800 && wChar < unicode_upper_base) ||
+	if (lpSurface == NULL || (wChar >= unicode_lower_top && wChar < unicode_upper_base) ||
 		wChar >= unicode_upper_top || (_font_height == 8 && wChar >= 0x100))
 	{
 		return;
@@ -311,7 +311,7 @@ PAL_DrawCharOnSurface(
 	//
 	if (wChar >= unicode_upper_base)
 	{
-		wChar -= (unicode_upper_base - 0xd800);
+		wChar -= (unicode_upper_base - unicode_lower_top);
 	}
 
 	//
@@ -389,7 +389,7 @@ PAL_CharWidth(
 
 --*/
 {
-	if ((wChar >= 0xd800 && wChar < unicode_upper_base) || wChar >= unicode_upper_top)
+	if ((wChar >= unicode_lower_top && wChar < unicode_upper_base) || wChar >= unicode_upper_top)
 	{
 		return 0;
 	}
@@ -399,7 +399,7 @@ PAL_CharWidth(
 	//
 	if (wChar >= unicode_upper_base)
 	{
-		wChar -= (unicode_upper_base - 0xd800);
+		wChar -= (unicode_upper_base - unicode_lower_top);
 	}
 
 	return font_width[wChar] >> 1;
