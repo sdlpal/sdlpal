@@ -240,7 +240,13 @@ NativeMidiSong *native_midi_loadsong(const char *midifile)
 {
 	/* Attempt to load the midi file */
 	auto rw = SDL_RWFromFile(midifile, "rb");
-	return native_midi_loadsong_RW(rw);
+	if (rw)
+	{
+		auto song = native_midi_loadsong_RW(rw);
+		SDL_RWclose(rw);
+		return song;
+	}
+	return nullptr;
 }
 
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
@@ -293,10 +299,11 @@ void native_midi_start(NativeMidiSong *song, int looping)
 			} while (song->Position < song->Size && song->Events[song->Position].deltaTime == 0);
 			if (song->Position < song->Size)
 			{
+				auto mutex = std::unique_lock<std::mutex>(song->Mutex);
 				time += std::chrono::system_clock::duration(song->Events[song->Position].DeltaTimeAsTick(song->ppq));
 				while (song->Playing)
 				{
-					if (song->Stop.wait_until(std::unique_lock<std::mutex>(song->Mutex), time) == std::cv_status::timeout)
+					if (song->Stop.wait_until(mutex, time) == std::cv_status::timeout)
 						break;
 				}
 			}
