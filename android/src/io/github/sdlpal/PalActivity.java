@@ -10,6 +10,7 @@ import java.util.*;
 
 public class PalActivity extends SDLActivity {
     private static final String TAG = "sdlpal-debug";
+    private static MediaPlayer mediaPlayer;
 
     private static MediaPlayer JNI_mediaplayer_load(String filename){
         Log.v(TAG, "loading midi:" + filename);
@@ -21,6 +22,7 @@ public class PalActivity extends SDLActivity {
         } catch(IOException e) {
             Log.e(TAG, filename + " not available for playing, check");
         }
+        PalActivity.mediaPlayer = mediaPlayer;
         return mediaPlayer;
     }
 
@@ -43,7 +45,7 @@ public class PalActivity extends SDLActivity {
 
     @Override
     protected void onPause() {
-        if (!this.isFinishing()){
+        if (!this.isFinishing() && mediaPlayer != null) {
             mediaPlayer.pause();
         }
         super.onPause();
@@ -51,7 +53,9 @@ public class PalActivity extends SDLActivity {
 
     @Override
     protected void onResume() {
-        mediaPlayer.start();
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
         super.onResume();
     }
 }

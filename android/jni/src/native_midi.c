@@ -96,7 +96,7 @@ void native_midi_stop(NativeMidiSong *song)
 
 int native_midi_active(NativeMidiSong *song)
 {
-    return song ? JNI_mediaplayer_play(song->player) : 0;
+    return song ? JNI_mediaplayer_isplaying(song->player) : 0;
 }
 
 void native_midi_setvolume(NativeMidiSong *song, int volume)

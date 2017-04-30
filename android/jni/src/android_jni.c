@@ -12,8 +12,8 @@
 #include "global.h"
 #include "palcfg.h"
 
-static char externalStoragePath[1024];
-static char midiInterFile[1024];
+char externalStoragePath[1024];
+char midiInterFile[1024];
 
 static int jstring_to_utf8(JNIEnv *env, jstring j_str, char *buffer, int capacity)
 {
@@ -181,6 +181,7 @@ void* JNI_mediaplayer_load(const char *filename)
 
 void JNI_mediaplayer_free(void *player)
 {
+    JNIEnv *env = getJNIEnv();
     (*env)->DeleteGlobalRef(env, (jobject)player);
 }
 
