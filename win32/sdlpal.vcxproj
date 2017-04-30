@@ -371,7 +371,7 @@
     <ClCompile Include="..\libmad\stream.c" />
     <ClCompile Include="..\libmad\synth.c" />
     <ClCompile Include="..\libmad\timer.c" />
-    <ClCompile Include="native_midi.c" />
+    <ClCompile Include="native_midi.cpp" />
     <ClCompile Include="win32.cpp" />
   </ItemGroup>
   <ItemGroup>
