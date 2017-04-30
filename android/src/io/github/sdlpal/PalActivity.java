@@ -10,38 +10,23 @@ import java.util.*;
 
 public class PalActivity extends SDLActivity {
     private static final String TAG = "sdlpal-debug";
-    private static final MediaPlayer mediaPlayer = new MediaPlayer();
 
-    private static void JNI_mediaplayer_load(String filename){
+    private static MediaPlayer JNI_mediaplayer_load(String filename){
         Log.v(TAG, "loading midi:" + filename);
+        MediaPlayer mediaPlayer = new MediaPlayer();
         mediaPlayer.reset();
-        mediaPlayer.setLooping(true);
         try {
             mediaPlayer.setDataSource(mSingleton.getApplicationContext(), Uri.fromFile(new File(filename)));
             mediaPlayer.prepare();
         } catch(IOException e) {
             Log.e(TAG, filename + " not available for playing, check");
         }
-    }
-
-    private static void JNI_mediaplayer_play() {
-        mediaPlayer.start();
-    }
-
-    private static void JNI_mediaplayer_stop() {
-        mediaPlayer.stop();
-    }
-
-    private static int JNI_mediaplayer_playing() {
-        return mediaPlayer.isPlaying() ? 1 : 0;
-    }
-
-    private static void JNI_mediaplayer_setvolume(int volume) {
-        mediaPlayer.setVolume((float)volume/256, (float)volume/256);
+        return mediaPlayer;
     }
 
     public static native void setExternalStorage(String str);
     public static native void setMIDIInterFile(String str);
+
     @Override
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);

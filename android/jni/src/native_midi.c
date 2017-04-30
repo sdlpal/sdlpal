@@ -32,12 +32,9 @@
 /* Native Midi song */
 struct _NativeMidiSong
 {
-    int _placeholder;
-    int playing;
+    void *player;
+    int   volume;
 };
-
-static NativeMidiSong *currentsong = NULL;
-static int latched_volume = 128;
 
 int native_midi_detect()
 {
@@ -46,79 +43,71 @@ int native_midi_detect()
 
 NativeMidiSong *native_midi_loadsong(const char *midifile)
 {
-    NativeMidiSong *retval = (NativeMidiSong *)malloc(sizeof(NativeMidiSong));
-    if (retval)
+    NativeMidiSong *song = (NativeMidiSong *)malloc(sizeof(NativeMidiSong));
+    if (song)
     {
-        memset(retval, 0, sizeof(NativeMidiSong));
-        JNI_mediaplayer_load(midifile);
+        song->volume = 127;
+        song->player = JNI_mediaplayer_load(midifile);
     }
-    return retval;
+    return song;
 }
 
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
 {
-    NativeMidiSong *retval = (NativeMidiSong *)malloc(sizeof(NativeMidiSong));
-    if (retval)
+    FILE *fp = fopen(midiInterFile, "wb+");
+    if (fp)
     {
-        FILE *fp = fopen(midiInterFile, "wb+");
-        if (fp)
-        {
-            char buf[4096];
-            size_t bytes;
-            while(bytes = SDL_RWread(rw, buf, sizeof(char), sizeof(buf)))
-                fwrite(buf, sizeof(char), bytes, fp);
-            fclose(fp);
+        char buf[4096];
+        size_t bytes;
+        while(bytes = SDL_RWread(rw, buf, sizeof(char), sizeof(buf)))
+            fwrite(buf, sizeof(char), bytes, fp);
+        fclose(fp);
 
-            memset(retval, 0, sizeof(NativeMidiSong));
-            JNI_mediaplayer_load(midiInterFile);
-        }
+        return native_midi_loadsong(midiInterFile);
     }
-    return retval;
+    return NULL;
 }
 
 void native_midi_freesong(NativeMidiSong *song)
 {
     if (song != NULL)
     {
-        if (currentsong == song)
-            currentsong = NULL;
+        JNI_mediaplayer_free(song->player);
         free(song);
     }
 }
 
-void native_midi_start(NativeMidiSong *song)
+void native_midi_start(NativeMidiSong *song, int looping)
 {
-    native_midi_stop();
+    native_midi_stop(song);
     if (song != NULL)
     {
-        currentsong = song;
-        currentsong->playing = 1;
-        JNI_mediaplayer_play();
+        JNI_mediaplayer_play(song->player, looping);
     }
 }
 
-void native_midi_stop()
+void native_midi_stop(NativeMidiSong *song)
 {
-    if (currentsong) {
-        currentsong->playing = 0;
-        JNI_mediaplayer_stop();
-    }
-}
-
-int native_midi_active()
-{
-    return currentsong ? currentsong->playing : 0;
-}
-
-void native_midi_setvolume(int volume)
-{
-    if (latched_volume != volume)
+    if (song)
     {
-        JNI_mediaplayer_setvolume(latched_volume = volume);
+        JNI_mediaplayer_stop(song->player);
     }
 }
 
-const char *native_midi_error(void)
+int native_midi_active(NativeMidiSong *song)
+{
+    return song ? JNI_mediaplayer_play(song->player) : 0;
+}
+
+void native_midi_setvolume(NativeMidiSong *song, int volume)
+{
+    if (song)
+    {
+        JNI_mediaplayer_setvolume(song->player, song->volume = volume);
+    }
+}
+
+const char *native_midi_error(NativeMidiSong *song)
 {
     return "";  /* !!! FIXME */
 }

@@ -12,8 +12,8 @@
 #include "global.h"
 #include "palcfg.h"
 
-char externalStoragePath[255];
-char midiInterFile[255];
+static char externalStoragePath[1024];
+static char midiInterFile[1024];
 
 static int jstring_to_utf8(JNIEnv *env, jstring j_str, char *buffer, int capacity)
 {
@@ -155,9 +155,8 @@ JNIEnv *getJNIEnv()
  */  
 JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setExternalStorage(JNIEnv *env, jclass cls, jstring j_str)  
 {
-    jstring_to_utf8(env, j_str, externalStoragePath, 255 - 8);
+    jstring_to_utf8(env, j_str, externalStoragePath, sizeof(externalStoragePath) - 8);
     strncat(externalStoragePath, "/sdlpal/", 8);
-    return;
 }
 
 /* 
@@ -167,42 +166,52 @@ JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setExternalStorage(JNIE
  */  
 JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setMIDIInterFile(JNIEnv *env, jclass cls, jstring j_str)  
 {
-    jstring_to_utf8(env, j_str, midiInterFile, 255);
+    jstring_to_utf8(env, j_str, midiInterFile, sizeof(externalStoragePath));
     LOGV("JNI got midi inter filename:%s", midiInterFile);
-    return;
 }
 
-void JNI_mediaplayer_load(const char *filename)
+void* JNI_mediaplayer_load(const char *filename)
 {
     JNIEnv *env = getJNIEnv();
     jclass clazz = (*env)->FindClass(env, "io/github/sdlpal/PalActivity");
-    jmethodID mid = (*env)->GetStaticMethodID(env, clazz, "JNI_mediaplayer_load", "(Ljava/lang/String;)V");
-    (*env)->CallStaticVoidMethod(env, clazz, mid, jstring_from_utf8(env, filename));
+    jmethodID mid = (*env)->GetStaticMethodID(env, clazz, "JNI_mediaplayer_load", "(Ljava/lang/String;)Landroid/media/MediaPlayer;");
+    jobject player = (*env)->CallStaticObjectMethod(env, clazz, mid, jstring_from_utf8(env, filename));
+    return (*env)->NewGlobalRef(env, player);
 }
 
-void JNI_mediaplayer_play()
+void JNI_mediaplayer_free(void *player)
+{
+    (*env)->DeleteGlobalRef(env, (jobject)player);
+}
+
+void JNI_mediaplayer_play(void *player, int looping)
 {
     JNIEnv *env = getJNIEnv();
-    jclass clazz = (*env)->FindClass(env, "io/github/sdlpal/PalActivity");
-    jmethodID mid = (*env)->GetStaticMethodID(env, clazz, "JNI_mediaplayer_play", "()V");
-    (*env)->CallStaticVoidMethod(env, clazz, mid);
+    jclass clazz = (*env)->FindClass(env, "android/media/MediaPlayer");
+    (*env)->CallVoidMethod(env, (jobject)player, (*env)->GetMethodID(env, clazz, "setLooping", "(Z)V"), looping ? JNI_TRUE : JNI_FALSE);
+    (*env)->CallVoidMethod(env, (jobject)player, (*env)->GetMethodID(env, clazz, "start", "()V"));
 }
 
-void JNI_mediaplayer_stop()
+void JNI_mediaplayer_stop(void *player)
 {
     JNIEnv *env = getJNIEnv();
-    jclass clazz = (*env)->FindClass(env, "io/github/sdlpal/PalActivity");
-    jmethodID mid = (*env)->GetStaticMethodID(env, clazz, "JNI_mediaplayer_stop", "()V");
-    (*env)->CallStaticVoidMethod(env, clazz, mid);
+    jclass clazz = (*env)->FindClass(env, "android/media/MediaPlayer");
+    (*env)->CallVoidMethod(env, (jobject)player, (*env)->GetMethodID(env, clazz, "stop", "()V"));
 }
 
-int JNI_mediaplayer_isplaying()
+int JNI_mediaplayer_isplaying(void *player)
 {
-    return 0;
+    JNIEnv *env = getJNIEnv();
+    jclass clazz = (*env)->FindClass(env, "android/media/MediaPlayer");
+    return (*env)->CallBooleanMethod(env, (jobject)player, (*env)->GetMethodID(env, clazz, "isPlaying", "()Z"));
 }
 
-void JNI_mediaplayer_setvolume(int volume)
+void JNI_mediaplayer_setvolume(void *player, int volume)
 {
+    float vol = (float)volume / 127.0f;
+    JNIEnv *env = getJNIEnv();
+    jclass clazz = (*env)->FindClass(env, "android/media/MediaPlayer");
+    return (*env)->CallVoidMethod(env, (jobject)player, (*env)->GetMethodID(env, clazz, "setVolume", "(FF)V"), vol, vol);
 }
 
 LPCSTR
