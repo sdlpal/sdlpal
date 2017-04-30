@@ -105,7 +105,8 @@
 		C63505731EA6570300186049 /* midi.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056B1EA6570300186049 /* midi.c */; };
 		C63505741EA6570300186049 /* private.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056C1EA6570300186049 /* private.c */; };
 		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
-		C63505801EA6578700186049 /* native_midi_ios.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057D1EA6578700186049 /* native_midi_ios.c */; };
+		C63505801EA6578700186049 /* native_midi.m in Sources */ = {isa = PBXBuildFile; fileRef = C635057D1EA6578700186049 /* native_midi.m */; };
+		C694CF871EB6197C0006F937 /* gs_instruments.dls in Resources */ = {isa = PBXBuildFile; fileRef = C694CF861EB619660006F937 /* gs_instruments.dls */; };
 		C6E974A21E49C24500F76B17 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E9749D1E49C22D00F76B17 /* libSDL2.a */; };
 /* End PBXBuildFile section */
 
@@ -352,7 +353,8 @@
 		C635057A1EA6578700186049 /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		C635057B1EA6578700186049 /* native_midi_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_common.c; sourceTree = "<group>"; };
 		C635057C1EA6578700186049 /* native_midi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi_common.h; sourceTree = "<group>"; };
-		C635057D1EA6578700186049 /* native_midi_ios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = native_midi_ios.c; path = ../iOS/SDLPal/SDLPal/native_midi_ios.c; sourceTree = "<group>"; };
+		C635057D1EA6578700186049 /* native_midi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = native_midi.m; path = ../iOS/SDLPal/SDLPal/native_midi.m; sourceTree = "<group>"; };
+		C694CF861EB619660006F937 /* gs_instruments.dls */ = {isa = PBXFileReference; lastKnownFileType = file; name = gs_instruments.dls; path = /System/Library/Components/CoreAudio.component/Contents/Resources/gs_instruments.dls; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -745,7 +747,8 @@
 				C635057A1EA6578700186049 /* native_midi.h */,
 				C635057B1EA6578700186049 /* native_midi_common.c */,
 				C635057C1EA6578700186049 /* native_midi_common.h */,
-				C635057D1EA6578700186049 /* native_midi_ios.c */,
+				C635057D1EA6578700186049 /* native_midi.m */,
+				C694CF861EB619660006F937 /* gs_instruments.dls */,
 			);
 			name = native_midi;
 			path = ../../native_midi;
@@ -840,6 +843,7 @@
 				71655075195BB372006E1227 /* Default@2x.png in Resources */,
 				71655077195BB372006E1227 /* Default-568h@2x.png in Resources */,
 				7165507F195BB3D8006E1227 /* Icon.png in Resources */,
+				C694CF871EB6197C0006F937 /* gs_instruments.dls in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -900,7 +904,7 @@
 				C63505731EA6570300186049 /* midi.c in Sources */,
 				57FB01481B7A50B0005FCF4C /* floor0.c in Sources */,
 				7165526F195BB6DB006E1227 /* fixed.c in Sources */,
-				C63505801EA6578700186049 /* native_midi_ios.c in Sources */,
+				C63505801EA6578700186049 /* native_midi.m in Sources */,
 				71655270195BB6DB006E1227 /* frame.c in Sources */,
 				71655271195BB6DB006E1227 /* huffman.c in Sources */,
 				71655273195BB6DB006E1227 /* layer12.c in Sources */,

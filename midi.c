@@ -52,7 +52,7 @@ MIDI_Play(
    if (gConfig.fIsWIN95)
    {
       char filename[1024];
-      sprintf(filename, "%s/musics/%.3d.mid", PAL_PREFIX, iNumRIX);
+      sprintf(filename, "%s/Musics/%.3d.mid", PAL_PREFIX, iNumRIX);
 
       g_pMid = native_midi_loadsong(filename);
       if (g_pMid != NULL)
