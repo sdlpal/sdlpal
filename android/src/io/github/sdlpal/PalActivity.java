@@ -6,6 +6,7 @@ import android.util.*;
 import android.media.*;
 import android.net.Uri;
 import java.io.*;
+import java.util.*;
 
 public class PalActivity extends SDLActivity {
     private static final String TAG = "sdlpal-debug";
@@ -44,7 +45,7 @@ public class PalActivity extends SDLActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);
-        String appDataPath = mSingleton.getApplicationContext().getFilesDir().getPath();
+        String appDataPath = mSingleton.getApplicationContext().getCacheDir().getPath();
         String interFilePath = appDataPath+"/intermediates.midi";
         Log.v(TAG, "java interfile path " + interFilePath);
         setMIDIInterFile(interFilePath);
@@ -53,5 +54,19 @@ public class PalActivity extends SDLActivity {
             setExternalStorage(Environment.getExternalStorageDirectory().getPath());
             Log.v(TAG, "sdcard path " + Environment.getExternalStorageDirectory().getPath());
         }
+    }
+
+    @Override
+    protected void onPause() {
+        if (!this.isFinishing()){
+            mediaPlayer.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        mediaPlayer.start();
+        super.onResume();
     }
 }
