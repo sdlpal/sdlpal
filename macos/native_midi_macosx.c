@@ -41,6 +41,7 @@ struct _NativeMidiSong
     MusicSequence sequence;
     MusicTimeStamp endTime;
     AudioUnit audiounit;
+    int Loopinng;
 };
 
 static NativeMidiSong *currentsong = NULL;
@@ -245,7 +246,7 @@ void native_midi_freesong(NativeMidiSong *song)
     }
 }
 
-void native_midi_start(NativeMidiSong *song)
+void native_midi_start(NativeMidiSong *song, int looping)
 {
     int vol;
 
@@ -265,7 +266,7 @@ void native_midi_start(NativeMidiSong *song)
 
     vol = latched_volume;
     latched_volume++;  /* just make this not match. */
-    native_midi_setvolume(vol);
+    native_midi_setvolume(song,vol);
 
     SDL_LockAudio();
     SDL_PauseAudio(0);
@@ -294,20 +295,20 @@ int native_midi_active()
             (currentTime >= kMusicTimeStamp_EndOfTrack));
 }
 
-void native_midi_setvolume(int volume)
+void native_midi_setvolume(NativeMidiSong *song, int volume)
 {
     if (latched_volume == volume)
         return;
 
     latched_volume = volume;
-    if ((currentsong) && (currentsong->audiounit)) {
+    if ((song) && (song->audiounit)) {
         const float floatvol = ((float) volume) / ((float) 128);
-        AudioUnitSetParameter(currentsong->audiounit, kHALOutputParam_Volume,
+        AudioUnitSetParameter(song->audiounit, kHALOutputParam_Volume,
                               kAudioUnitScope_Global, 0, floatvol, 0);
     }
 }
 
-const char *native_midi_error(void)
+const char *native_midi_error(NativeMidiSong *song)
 {
     return "";  /* !!! FIXME */
 }
