@@ -1,8 +1,12 @@
 #ifndef SDLPAL_JNI_H
 #define SDLPAL_JNI_H
 
-extern char externalStoragePath[255];
-extern char midiInterFile[255];
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern char externalStoragePath[1024];
+extern char midiInterFile[1024];
 
 void* JNI_mediaplayer_load(const char *);
 void JNI_mediaplayer_free(void *);
@@ -10,5 +14,9 @@ void JNI_mediaplayer_play(void *, int);
 void JNI_mediaplayer_stop(void *);
 int JNI_mediaplayer_isplaying(void *);
 void JNI_mediaplayer_setvolume(void *, int);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // SDLPAL_JNI_H

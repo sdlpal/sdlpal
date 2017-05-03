@@ -72,6 +72,7 @@ void native_midi_freesong(NativeMidiSong *song)
 {
     if (song != NULL)
     {
+        JNI_mediaplayer_stop(song->player);
         JNI_mediaplayer_free(song->player);
         free(song);
     }
@@ -79,7 +80,6 @@ void native_midi_freesong(NativeMidiSong *song)
 
 void native_midi_start(NativeMidiSong *song, int looping)
 {
-    native_midi_stop(song);
     if (song != NULL)
     {
         JNI_mediaplayer_play(song->player, looping);

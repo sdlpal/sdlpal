@@ -32,8 +32,7 @@ public class PalActivity extends SDLActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);
-        String appDataPath = mSingleton.getApplicationContext().getCacheDir().getPath();
-        String interFilePath = appDataPath+"/intermediates.midi";
+        String interFilePath = mSingleton.getApplicationContext().getCacheDir().getPath() + "/intermediates.mid";
         Log.v(TAG, "java interfile path " + interFilePath);
         setMIDIInterFile(interFilePath);
         String externalStorageState = Environment.getExternalStorageState();
