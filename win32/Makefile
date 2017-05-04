@@ -6,8 +6,6 @@ TEST_TARGET = sdlpal-tests.exe
 HOST =
 TEST_CCFLAGS =
 
-GCCV6P := $(shell expr `$(HOST)g++ -dumpversion | cut -f1 -d.` \>= 6)
-
 GTEST_DIR = ../3rd/googletest/googletest
 
 CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) $(wildcard ../native_midi/*.c) $(wildcard ../win32/*.c)
@@ -18,14 +16,8 @@ TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 
 override CCFLAGS += `sdl2-config --cflags` -g -msse2 -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS)
-CXXFLAGS = $(CCFLAGS)
+CXXFLAGS = $(CCFLAGS) -std=c++11
 CFLAGS = $(CCFLAGS) -std=gnu99
-# GCC v6 or higher has already defaults to gnu++14
-ifeq "$(GCCV6P)" "1"
-	CXXFLAGS += -std=gnu++14
-else
-    CXXFLAGS += -std=c++11
-endif
 LDFLAGS = `sdl2-config --libs` -lm -lwinmm -lole32 -loleaut32 -limm32 -lcomctl32 -luuid -ldxguid -lversion -static -static-libgcc -static-libstdc++
 TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra -pthread
 
