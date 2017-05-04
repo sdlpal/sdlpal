@@ -1018,7 +1018,6 @@ PAL_ProcessEvent(
 
 --*/
 {
-   MIDI_CheckLoop();
    while (PAL_PollEvent(NULL));
 }
 

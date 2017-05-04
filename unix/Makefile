@@ -17,7 +17,7 @@ TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 CCFLAGS = `sdl2-config --cflags` -g -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS)
 CXXFLAGS = $(CCFLAGS) -std=c++11 `fltk-config --cxxflags`
 CFLAGS = $(CCFLAGS) -std=gnu99 `fltk-config --cflags`
-LDFLAGS = `sdl2-config --libs` `fltk-config --ldflags` -lstdc++ -lm
+LDFLAGS = `sdl2-config --libs` `fltk-config --ldflags` -lstdc++ -lm -pthread
 TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra -pthread
 
 .PHONY : all clean check

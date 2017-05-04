@@ -118,11 +118,11 @@ va(
 
 --*/
 {
-   static char string[256];
+   static char string[1024];
    va_list     argptr;
 
    va_start(argptr, format);
-   vsnprintf(string, 256, format, argptr);
+   vsnprintf(string, sizeof(string), format, argptr);
    va_end(argptr);
 
    return string;
@@ -296,10 +296,6 @@ UTIL_Delay(
       SDL_Delay(1);
       while (PAL_PollEvent(NULL));
    }
-
-#if PAL_HAS_NATIVEMIDI
-   MIDI_CheckLoop();
-#endif
 }
 
 void

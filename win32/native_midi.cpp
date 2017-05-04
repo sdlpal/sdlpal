@@ -19,38 +19,122 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// native_midi.cpp: Native Windows Runtime MIDI player for SDLPal.
+// native_midi.cpp: Native Windows Desktop MIDI player for SDLPal.
 //         @Author: Lou Yihua, 2017
 //
 
-#include "pch.h"
-#include "AsyncHelper.h"
-#include "NativeBuffer.h"
-#include <SDL.h>
+#include "SDL.h"
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <mmsystem.h>
+#include <stdlib.h>
 #include <memory>
 #include <future>
 #include <thread>
 #include <condition_variable>
 #include <mutex>
 #include <atomic>
+#include <vector>
+
+#if (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS)
+#include "mingw.condition_variable.h"
+#include "mingw.mutex.h"
+#include "mingw.thread.h"
+#endif
 
 #include "native_midi/native_midi.h"
 #include "native_midi/native_midi_common.h"
 
-using namespace Windows::Devices::Midi;
+static int native_midi_available = -1;
+
+enum class MidiSystemMessage {
+	Exclusive = 0,
+	TimeCode = 1,
+	SongPositionPointer = 2,
+	SongSelect = 3,
+	TuneRequest = 6,
+	EndOfExclusive = 7,
+	TimingClock = 8,
+	Start = 10,
+	Continue = 11,
+	Stop = 12,
+	ActiveSensing = 14,
+	SystemReset = 15
+};
+
+struct MidiMessage
+{
+	virtual MMRESULT Send(HMIDIOUT hmo) = 0;
+};
+
+struct MidiShortMessage
+	: public MidiMessage
+{
+	uint32_t data;
+
+	MidiShortMessage(uint32_t data) : data(data) {}
+
+	virtual MMRESULT Send(HMIDIOUT hmo) { return midiOutShortMsg(hmo, data); }
+};
+
+struct MidiLongMessage
+	: public MidiMessage
+{
+	MIDIHDR hdr;
+
+	MidiLongMessage(uint8_t* data, int length)
+	{
+		memset(&hdr, 0, sizeof(MIDIHDR));
+		hdr.lpData = (LPSTR)malloc(length);
+		hdr.dwBufferLength = hdr.dwBytesRecorded = length;
+		memcpy(hdr.lpData, data, length);
+	}
+
+	virtual MMRESULT Send(HMIDIOUT hmo)
+	{
+		MMRESULT retval;
+		if (MMSYSERR_NOERROR == (retval = midiOutPrepareHeader(hmo, &hdr, sizeof(MIDIHDR))))
+		{
+			retval = midiOutLongMsg(hmo, &hdr, sizeof(MIDIHDR));
+			midiOutUnprepareHeader(hmo, &hdr, sizeof(MIDIHDR));
+		}
+		return retval;
+	}
+};
+
+struct MidiResetMessage
+	: public MidiMessage
+{
+	virtual MMRESULT Send(HMIDIOUT hmo) { return midiOutReset(hmo); }
+};
+
+struct MidiCustomMessage
+	: public MidiMessage
+{
+	uint32_t message;
+	uint32_t data1;
+	uint32_t data2;
+
+	MidiCustomMessage(uint8_t status, uint8_t data1, uint8_t data2)
+		: message(status), data1(data1), data2(data2)
+	{}
+
+	virtual MMRESULT SendEvent(HMIDIOUT hmo) { return midiOutMessage(hmo, message, data1, data2); }
+};
 
 struct MidiEvent
 {
-	IMidiMessage^ message;
-	uint32_t      deltaTime;		// time in ticks
-	uint32_t      tempo;			// microseconds per quarter note
+	std::unique_ptr<MidiMessage> message;
+	uint32_t                     deltaTime;		// time in ticks
+	uint32_t                     tempo;			// microseconds per quarter note
 
 	std::chrono::system_clock::duration DeltaTimeAsTick(uint16_t ppq)
 	{
-		return std::chrono::system_clock::duration((int64_t)deltaTime * tempo * 10 / ppq);
+		return std::chrono::microseconds((int64_t)deltaTime * tempo / ppq);
 	}
 
-	void Send(MidiSynthesizer^ synthesizer) { synthesizer->SendMessage(message); }
+	MMRESULT Send(HMIDIOUT hmo) { return message->Send(hmo); }
 };
 
 struct _NativeMidiSong {
@@ -58,7 +142,7 @@ struct _NativeMidiSong {
 	std::thread             Thread;
 	std::mutex              Mutex;
 	std::condition_variable Stop;
-	MidiSynthesizer^        Synthesizer;
+	HMIDIOUT                Synthesizer;
 	int                     Size;
 	int                     Position;
 	Uint16                  ppq;		// parts (ticks) per quarter note
@@ -70,22 +154,6 @@ struct _NativeMidiSong {
 		: Synthesizer(nullptr), Size(0), Position(0)
 		, ppq(0), Playing(false), Loaded(false), Looping(false)
 	{ }
-};
-
-static MidiSystemResetMessage^ ResetMessage = ref new MidiSystemResetMessage();
-
-enum class MidiSystemMessage {
-	Exclusive = 0,
-	TimeCode = 1,
-	SongPositionPointer = 2,
-	SongSelect = 3,
-	TuneRequest = 6,
-	TimingClock = 8,
-	Start = 10,
-	Continue = 11,
-	Stop = 12,
-	ActiveSensing = 14,
-	SystemReset = 15
 };
 
 static void MIDItoStream(NativeMidiSong *song, MIDIEvent *eventlist)
@@ -105,86 +173,43 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *eventlist)
 	eventcount = 0;
 	for (MIDIEvent* event = eventlist; event; event = event->next)
 	{
-		IMidiMessage^ message = nullptr;
+		MidiMessage* message = nullptr;
 		int status = (event->status & 0xF0) >> 4;
 		switch (status)
 		{
 		case MIDI_STATUS_NOTE_OFF:
-			message = ref new MidiNoteOffMessage(event->status - (status << 4), event->data[0], event->data[1]);
-			break;
-
 		case MIDI_STATUS_NOTE_ON:
-			message = ref new MidiNoteOnMessage(event->status - (status << 4), event->data[0], event->data[1]);
-			break;
-
 		case MIDI_STATUS_AFTERTOUCH:
-			message = ref new MidiPolyphonicKeyPressureMessage(event->status - (status << 4), event->data[0], event->data[1]);
-			break;
-
 		case MIDI_STATUS_CONTROLLER:
-			message = ref new MidiControlChangeMessage(event->status - (status << 4), event->data[0], event->data[1]);
-			break;
-
 		case MIDI_STATUS_PROG_CHANGE:
-			message = ref new MidiProgramChangeMessage(event->status - (status << 4), event->data[0]);
-			break;
-
 		case MIDI_STATUS_PRESSURE:
-			message = ref new MidiChannelPressureMessage(event->status - (status << 4), event->data[0]);
-			break;
-
 		case MIDI_STATUS_PITCH_WHEEL:
-			message = ref new MidiPitchBendChangeMessage(event->status - (status << 4), event->data[0] | (event->data[1] << 7));
+			message = new MidiShortMessage(event->status | (event->data[0] << 8) | (event->data[1] << 16));
 			break;
 
 		case MIDI_STATUS_SYSEX:
 			switch ((MidiSystemMessage)(event->status & 0xF))
 			{
 			case MidiSystemMessage::Exclusive:
-			{
-				auto buffer = NativeBuffer::GetIBuffer(event->extraData, event->extraLen);
-				if (buffer)
-				{
-					message = ref new MidiSystemExclusiveMessage(buffer);
-					delete buffer;
-				}
-			}
+				message = new MidiLongMessage(event->extraData, event->extraLen);
 				break;
 
 			case MidiSystemMessage::TimeCode:
-				message = ref new MidiTimeCodeMessage(event->extraData[0] >> 4, event->extraData[0] & 0xF);
+			case MidiSystemMessage::SongSelect:
+				message = new MidiShortMessage(event->status | (event->extraData[0] << 8));
 				break;
 
 			case MidiSystemMessage::SongPositionPointer:
-				message = ref new MidiSongPositionPointerMessage(event->extraData[0] | (event->extraData[1] << 7));
-				break;
-
-			case MidiSystemMessage::SongSelect:
-				message = ref new MidiSongSelectMessage(event->extraData[0]);
+				message = new MidiShortMessage(event->status | (event->extraData[0] << 8) | (event->extraData[1] << 16));
 				break;
 
 			case MidiSystemMessage::TuneRequest:
-				message = ref new MidiTuneRequestMessage();
-				break;
-
 			case MidiSystemMessage::TimingClock:
-				message = ref new MidiTimingClockMessage();
-				break;
-
 			case MidiSystemMessage::Start:
-				message = ref new MidiStartMessage();
-				break;
-
 			case MidiSystemMessage::Continue:
-				message = ref new MidiContinueMessage();
-				break;
-
 			case MidiSystemMessage::Stop:
-				message = ref new MidiStopMessage();
-				break;
-
 			case MidiSystemMessage::ActiveSensing:
-				message = ref new MidiActiveSensingMessage();
+				message = new MidiShortMessage(event->status);
 				break;
 
 			case MidiSystemMessage::SystemReset:
@@ -198,23 +223,30 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *eventlist)
 
 		if (message)
 		{
-			song->Events[eventcount].message = message;
-			song->Events[eventcount].deltaTime = event->time - prevtime;
-			song->Events[eventcount].tempo = tempo;
-			prevtime = event->time; eventcount++;
+			auto evt = &song->Events[eventcount++];
+			evt->message.reset(message);
+			evt->deltaTime = event->time - prevtime;
+			evt->tempo = tempo;
+			prevtime = event->time;
 		}
 	}
 }
 
 int native_midi_detect()
 {
-	auto synthesizer = AWait(MidiSynthesizer::CreateAsync());
-	if (synthesizer)
+	if (-1 == native_midi_available)
 	{
-		delete synthesizer;
-		return 1;
+		HMIDIOUT out;
+
+		if (MMSYSERR_NOERROR == midiOutOpen(&out, MIDI_MAPPER, 0, 0, CALLBACK_NULL))
+		{
+			midiOutClose(out);
+			native_midi_available = 1;
+		}
+		else
+			native_midi_available = 0;
 	}
-	return 0;
+	return native_midi_available;
 }
 
 NativeMidiSong *native_midi_loadsong(const char *midifile)
@@ -236,14 +268,14 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
 
 	if (newsong)
 	{
-		auto evntlist = CreateMIDIEventList(rw, &newsong->ppq);
+		auto eventlist = CreateMIDIEventList(rw, &newsong->ppq);
 
-		if (evntlist)
+		if (eventlist)
 		{
-			MIDItoStream(newsong.get(), evntlist);
-			FreeMIDIEventList(evntlist);
-
-			if (newsong->Synthesizer = AWait(MidiSynthesizer::CreateAsync()))
+			MIDItoStream(newsong.get(), eventlist);
+			FreeMIDIEventList(eventlist);
+			
+			if (midiOutOpen(&newsong->Synthesizer, MIDI_MAPPER, NULL, 0, CALLBACK_NULL) == MMSYSERR_NOERROR)
 				return newsong.release();
 		}
 	}
@@ -257,7 +289,7 @@ void native_midi_freesong(NativeMidiSong *song)
 	{
 		native_midi_stop(song);
 		if (song->Synthesizer)
-			delete song->Synthesizer;
+			midiOutClose(song->Synthesizer);
 		delete song;
 	}
 }
@@ -291,7 +323,7 @@ void native_midi_start(NativeMidiSong *song, int looping)
 			else if (song->Playing = song->Looping)
 			{
 				song->Position = 0;
-				song->Synthesizer->SendMessage(ResetMessage);
+				midiOutReset(song->Synthesizer);
 			}
 		}
 	}, song));
@@ -307,9 +339,7 @@ void native_midi_stop(NativeMidiSong *song)
 			song->Thread.join();
 		song->Thread = std::move(std::thread());
 		if (song->Synthesizer)
-		{
-			song->Synthesizer->SendMessage(ResetMessage);
-		}
+			midiOutReset(song->Synthesizer);
 	}
 }
 
@@ -322,15 +352,17 @@ void native_midi_setvolume(NativeMidiSong *song, int volume)
 {
 	if (song && song->Synthesizer)
 	{
+		uint16_t calcVolume;
 		if (volume > 127)
 			volume = 127;
-		else if (volume < 0)
+		if (volume < 0)
 			volume = 0;
-		song->Synthesizer->Volume = (double)volume / 127.0;
+		calcVolume = volume << 9;
+		midiOutSetVolume(song->Synthesizer, MAKELONG(calcVolume, calcVolume));
 	}
 }
 
 const char *native_midi_error(NativeMidiSong *song)
 {
-	return "";
+  return "";
 }

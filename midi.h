@@ -26,8 +26,6 @@
 #include "common.h"
 #include "native_midi/native_midi.h"
 
-PAL_C_LINKAGE_BEGIN
-
 /*++
   Purpose:
 
@@ -44,17 +42,11 @@ PAL_C_LINKAGE_BEGIN
     None.
 
 --*/
+PAL_C_LINKAGE
 void
 MIDI_Play(
 	int       iNumRIX,
 	BOOL      fLoop
 );
-
-void
-MIDI_CheckLoop(
-	void
-);
-
-PAL_C_LINKAGE_END
 
 #endif

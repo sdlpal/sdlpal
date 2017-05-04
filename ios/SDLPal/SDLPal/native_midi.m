@@ -93,7 +93,7 @@ void native_midi_freesong(NativeMidiSong *song)
 {
     if (song != NULL)
     {
-        native_midi_stop();
+        native_midi_stop(song);
         if (currentsong == song)
             currentsong = NULL;
         free(song);
@@ -104,9 +104,9 @@ void native_midi_freesong(NativeMidiSong *song)
     }
 }
 
-void native_midi_start(NativeMidiSong *song)
+void native_midi_start(NativeMidiSong *song, int looping)
 {
-    native_midi_stop();
+    native_midi_stop(song);
     if (song != NULL)
     {
         currentsong = song;
@@ -114,7 +114,7 @@ void native_midi_start(NativeMidiSong *song)
         [midiPlayer play:^(){
             if( currentsong ) {
                 midiPlayer.currentPosition = 0;
-                native_midi_start(currentsong);
+                native_midi_start(currentsong,looping);
             }
         }];
     }
@@ -133,11 +133,11 @@ int native_midi_active()
     return currentsong ? currentsong->playing : 0;
 }
 
-void native_midi_setvolume(int volume)
+void native_midi_setvolume(NativeMidiSong *song, int volume)
 {
 }
 
-const char *native_midi_error(void)
+const char *native_midi_error(NativeMidiSong *song)
 {
     return "";  /* !!! FIXME */
 }

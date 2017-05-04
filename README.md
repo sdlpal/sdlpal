@@ -11,8 +11,8 @@ LICENSE
 
 SDLPAL is originally created by [Wei Mingzhi](https://github.com/CecilHarvey) from 2009.
 ```
-Copyright (c) 2009-2011 Wei Mingzhi <whistler_wmz@users.sf.net>.
-Copyright (c) 2011-2017 SDLPAL development team.
+Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
+Copyright (c) 2011-2017, SDLPAL development team.
 All rights reserved.
 ```
 SDLPAL is distributed under the terms of GNU General Public License, version 3 (or any later version) as published by the Free Software Foundation. See [gpl.txt](https://raw.githubusercontent.com/sdlpal/sdlpal/master/gpl.txt) for details.
@@ -66,11 +66,11 @@ Windows
 
 ### Visual Studio
 
-To build SDLPAL as a Windows **desktop** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** (the support of *Visual Studio 2013* is **deprecated** now and will be removed in future) to open the solution file *`sdlpal.sln`* under the *`win32`* directory.
+To build SDLPAL as a Windows **desktop** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** to open the solution file *`sdlpal.sln`* under the *`win32`* directory.
 
 To build SDLPAL as a **Universal Windows Platform** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** to open the solution file *`SDLPal.UWP.sln`* under the *`winrt`* directory.
 
-There are also solution files for building traditional **Windows (phone) store app** under the *`winrt`* directory, but they are deprecated and will be removed in future.
+There are also solution files for building traditional **Windows (phone) store app** under the *`winrt`* directory, but they are deprecated (which means there will be no further platform-specific feature update for these two platforms) and may be removed in future.
 
 ### MinGW
 
@@ -91,7 +91,10 @@ $ make
 * If you need to cross-compile SDLPAL under **Linux** shell environment, please go to the root of the source code tree and type:
 ```shell
 $ cd win32
-$ make HOST=i686-w64-mingw32-  # This builds a 32-bit executable. To build a 64-bit executable, replace 'i686' by 'x86_64'.
+$ # This builds a 32-bit executable.
+$ make HOST=i686-w64-mingw32-
+$ # This builds a 64-bit executable.
+$ make HOST=x86_64-w64-mingw32-
 ```
 
 
@@ -119,13 +122,7 @@ To compile, open the project *`ios/SDLPal/SDLPal.xcodeproj`* with `Xcode`, and c
 Android
 -------
 
-To build the game, please go to the root of the source code tree and type:
-```shell
-cd android/jni
-ndk-build
-cd ..
-ant debug
-```
+To build the game, open the `android` directory through ***Android Studio***, and click `Make Project`.
 
 Nintendo 3DS
 ------------
@@ -161,15 +158,17 @@ To run the game, copy all the files in the original game CD to a directory, then
 
 Note that the filenames of data files should be all in lower-case under systems that use case-sensitive filesystems such as Linux or other Unix-like operating systems.
 
+If you prefer using MIDI as background music source, please note that the MIDI playing feature is not yet complete under every supported platform. Currently, **offical** support is provided under *Windows Desktop*, *Universal Windows Platform*, *Android*, *iOS* and *macOS*. There is also a preliminary support for *Linux* that relys upon package *timidity*. Other platforms do not support playing MIDI for now.
+
 
 Configuring the game
 ====================
 
-PAL has several variants using different and incompatible resource files, and SDLPAL supports several configuration options for supporting such variants.
+PAL has several variants using different and incompatible resource files, and SDLPAL supports several configuration options for supporting such variants. The default values are used to support the resources from original DOS version. If you want to change these configurations, you have two options: through the configuration GUI or by manipulating the configuration file *`sdlpal.cfg`* manually.
 
-To set these configuration options, create a file named as *`sdlpal.cfg`* (make sure to use lower-case file name in case-sensitive filesystems) in the game directory created by the above step. If no configuration file exists, SDLPAL uses default values that supports the resources from original DOS version.
+Configuration GUI is available under *Windows Desktop*, *Universal Windows Platform* and *Linux (X11)*, which is able to change the most common configurations. If you launch SDLPAL for the first time, it will bring you to the configuration GUI by default. Once you have saved configurations from the GUI, it will default not to show again on following launches. However, you can bring it back again through the in-game system menu. You will also have the opportunity to bring it again if you encountered fatal game program errors. Configuration GUIs for *Android* and *iOS/macOS* are still unavailable for now and we welcome contributions to implement them.
 
-Please refer to the file [sdlpal.cfg.example](https://raw.githubusercontent.com/sdlpal/sdlpal/master/sdlpal.cfg.example) for configuration file format.
+To set these configuration options manually, create a file named as *`sdlpal.cfg`* (make sure to use lower-case file name in case-sensitive filesystems) in the game directory created by the above step. Please refer to the file [sdlpal.cfg.example](https://raw.githubusercontent.com/sdlpal/sdlpal/master/sdlpal.cfg.example) for format specfication.
 
 
 Reporting issues

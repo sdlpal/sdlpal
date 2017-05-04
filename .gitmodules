@@ -4,3 +4,6 @@
 [submodule "3rd/SDL"]
 	path = 3rd/SDL
 	url = https://github.com/sdlpal/SDL.git
+[submodule "3rd/mingw-std-threads"]
+	path = 3rd/mingw-std-threads
+	url = https://github.com/sdlpal/mingw-std-threads.git

@@ -323,7 +323,7 @@
     <ClCompile Include="..\tests\test_swprintf.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
-    <ClCompile Include="native_midi.c">
+    <ClCompile Include="native_midi.cpp">
       <Filter>native_midi</Filter>
     </ClCompile>
   </ItemGroup>

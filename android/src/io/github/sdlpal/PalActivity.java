@@ -10,43 +10,29 @@ import java.util.*;
 
 public class PalActivity extends SDLActivity {
     private static final String TAG = "sdlpal-debug";
-    private static final MediaPlayer mediaPlayer = new MediaPlayer();
+    private static MediaPlayer mediaPlayer;
 
-    private static void JNI_mediaplayer_load(String filename){
+    private static MediaPlayer JNI_mediaplayer_load(String filename){
         Log.v(TAG, "loading midi:" + filename);
+        MediaPlayer mediaPlayer = new MediaPlayer();
         mediaPlayer.reset();
-        mediaPlayer.setLooping(true);
         try {
             mediaPlayer.setDataSource(mSingleton.getApplicationContext(), Uri.fromFile(new File(filename)));
             mediaPlayer.prepare();
         } catch(IOException e) {
             Log.e(TAG, filename + " not available for playing, check");
         }
-    }
-
-    private static void JNI_mediaplayer_play() {
-        mediaPlayer.start();
-    }
-
-    private static void JNI_mediaplayer_stop() {
-        mediaPlayer.stop();
-    }
-
-    private static int JNI_mediaplayer_playing() {
-        return mediaPlayer.isPlaying() ? 1 : 0;
-    }
-
-    private static void JNI_mediaplayer_setvolume(int volume) {
-        mediaPlayer.setVolume((float)volume/256, (float)volume/256);
+        PalActivity.mediaPlayer = mediaPlayer;
+        return mediaPlayer;
     }
 
     public static native void setExternalStorage(String str);
     public static native void setMIDIInterFile(String str);
+
     @Override
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);
-        String appDataPath = mSingleton.getApplicationContext().getCacheDir().getPath();
-        String interFilePath = appDataPath+"/intermediates.midi";
+        String interFilePath = mSingleton.getApplicationContext().getCacheDir().getPath() + "/intermediates.mid";
         Log.v(TAG, "java interfile path " + interFilePath);
         setMIDIInterFile(interFilePath);
         String externalStorageState = Environment.getExternalStorageState();
@@ -58,7 +44,7 @@ public class PalActivity extends SDLActivity {
 
     @Override
     protected void onPause() {
-        if (!this.isFinishing()){
+        if (!this.isFinishing() && mediaPlayer != null) {
             mediaPlayer.pause();
         }
         super.onPause();
@@ -66,7 +52,9 @@ public class PalActivity extends SDLActivity {
 
     @Override
     protected void onResume() {
-        mediaPlayer.start();
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
         super.onResume();
     }
 }
