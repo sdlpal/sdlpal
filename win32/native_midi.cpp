@@ -39,6 +39,8 @@
 #include "native_midi/native_midi.h"
 #include "native_midi/native_midi_common.h"
 
+static int native_midi_available = -1;
+
 enum class MidiSystemMessage {
 	Exclusive = 0,
 	TimeCode = 1,
@@ -122,7 +124,7 @@ struct MidiEvent
 
 	std::chrono::system_clock::duration DeltaTimeAsTick(uint16_t ppq)
 	{
-		return std::chrono::system_clock::duration((int64_t)deltaTime * tempo * 10 / ppq);
+		return std::chrono::microseconds((int64_t)deltaTime * tempo / ppq);
 	}
 
 	MMRESULT Send(HMIDIOUT hmo) { return message->Send(hmo); }
@@ -225,15 +227,19 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *eventlist)
 
 int native_midi_detect()
 {
-	HMIDIOUT out;
-
-	if (MMSYSERR_NOERROR == midiOutOpen(&out, MIDI_MAPPER, 0, 0, CALLBACK_NULL))
+	if (-1 == native_midi_available)
 	{
-		midiOutClose(out);
-		return 1;
-	}
+		HMIDIOUT out;
 
-	return 0;
+		if (MMSYSERR_NOERROR == midiOutOpen(&out, MIDI_MAPPER, 0, 0, CALLBACK_NULL))
+		{
+			midiOutClose(out);
+			native_midi_available = 1;
+		}
+		else
+			native_midi_available = 0;
+	}
+	return native_midi_available;
 }
 
 NativeMidiSong *native_midi_loadsong(const char *midifile)

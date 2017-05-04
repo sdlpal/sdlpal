@@ -32,7 +32,7 @@ MIDI_Play(
 )
 {
 #if PAL_HAS_NATIVEMIDI
-	if (!native_midi_detect() ) 
+	if (!native_midi_detect())
 		return;
 
 	if (native_midi_active(g_pMidi) && iNumRIX == g_iMidiCurrent)
@@ -41,6 +41,7 @@ MIDI_Play(
 	}
 
 	AUDIO_PlayCDTrack(-1);
+	native_midi_stop(g_pMidi);
 	native_midi_freesong(g_pMidi);
 	g_pMidi = NULL;
 	g_iMidiCurrent = -1;
