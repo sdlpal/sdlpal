@@ -101,11 +101,13 @@
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <GenerateManifest>false</GenerateManifest>
