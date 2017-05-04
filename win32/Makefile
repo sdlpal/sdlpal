@@ -21,7 +21,9 @@ override CCFLAGS += `sdl2-config --cflags` -g -msse2 -Wall -O2 -fno-strict-alias
 CXXFLAGS = $(CCFLAGS)
 CFLAGS = $(CCFLAGS) -std=gnu99
 # GCC v6 or higher has already defaults to gnu++14
-ifeq "$(GCCV6P)" "0"
+ifeq "$(GCCV6P)" "1"
+	CXXFLAGS += -std=gnu++14
+else
     CXXFLAGS += -std=c++11
 endif
 LDFLAGS = `sdl2-config --libs` -lm -lwinmm -lole32 -loleaut32 -limm32 -lcomctl32 -luuid -ldxguid -lversion -static -static-libgcc -static-libstdc++

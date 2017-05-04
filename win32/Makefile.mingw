@@ -22,6 +22,8 @@ CXXFLAGS = $(CCFLAGS)
 CFLAGS = $(CCFLAGS) -std=gnu99
 # GCC v6 or higher has already defaults to gnu++14
 ifeq "$(GCCV6P)" "0"
+	CXXFLAGS += -std=gnu++14
+else
     CXXFLAGS += -std=c++11
 endif
 LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -mwindows -lm -lwinmm -lole32 -loleaut32 -limm32 -lcomctl32 -luuid -ldxguid -lversion -static -static-libgcc -static-libstdc++
