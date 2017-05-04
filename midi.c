@@ -32,6 +32,9 @@ MIDI_Play(
 )
 {
 #if PAL_HAS_NATIVEMIDI
+	if (!native_midi_detect() ) 
+		return;
+
 	if (native_midi_active(g_pMidi) && iNumRIX == g_iMidiCurrent)
 	{
 		return;
@@ -58,7 +61,7 @@ MIDI_Play(
 		uint8_t *buf = NULL;
 		int      size;
 
-		if (fp = UTIL_OpenFile("midi.mkf"))
+		if ((fp = UTIL_OpenFile("midi.mkf")) != NULL)
 		{
 			
 			if ((size = PAL_MKFGetChunkSize(iNumRIX, fp)) > 0 &&

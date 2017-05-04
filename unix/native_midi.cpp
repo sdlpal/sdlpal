@@ -38,7 +38,8 @@ extern "C" int native_midi_detect()
         free(timidity);
         timidity = nullptr;
     }
-    if (system("timidity -v") == 0)
+    //system `timidity -v` will cause CLI blocked by the version info...
+    if (access("/usr/bin/timidity",F_OK) == 0)
     {
         timidity = strdup("/usr/bin/timidity");
         return 1;
@@ -86,6 +87,9 @@ extern "C" void native_midi_freesong(NativeMidiSong *song)
 {
     if (song)
     {
+	//stop it first to prevent app terminated by destructing joinable thread destruction 
+	if (native_midi_active(song)) 
+		native_midi_stop(song);
         if (song->file) delete []song->file;
         delete song;
     }
@@ -129,9 +133,12 @@ extern "C" void native_midi_stop(NativeMidiSong *song)
 	{
 		song->looping = false;
 		song->playing = false;
-        song->Mutex.lock();
-        kill(song->pid, SIGTERM);
-        song->Mutex.unlock();
+ 		if (-1 != song->pid)
+            	{
+			song->Mutex.lock();
+			kill(song->pid, SIGTERM);
+			song->Mutex.unlock();
+            	}
 		if (song->Thread.joinable())
 			song->Thread.join();
 		song->Thread = std::move(std::thread());
