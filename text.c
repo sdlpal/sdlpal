@@ -1356,7 +1356,8 @@ PAL_ShowDialogText(
                text[0] = *lpszText++;
 			   text[1] = 0;
 
-               PAL_DrawText(text, PAL_XY(x, y), g_TextLib.bCurrentFontColor, TRUE, TRUE, FALSE);
+			   // Update the screen on each draw operation is time-consuming, so disable it if user want to skip
+               PAL_DrawText(text, PAL_XY(x, y), g_TextLib.bCurrentFontColor, TRUE, !g_TextLib.fUserSkip, FALSE);
 			   x += PAL_CharWidth(text[0]);
 
                if (!g_TextLib.fUserSkip)
@@ -1374,6 +1375,12 @@ PAL_ShowDialogText(
                }
             }
          }
+
+		 // and update the full screen at once after all texts are drawn
+		 if (g_TextLib.fUserSkip)
+		 {
+			 VIDEO_UpdateScreen(NULL);
+		 }
 
          g_TextLib.posIcon = PAL_XY(x, y);
          g_TextLib.nCurrentDialogLine++;
