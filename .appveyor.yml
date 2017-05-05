@@ -3,10 +3,14 @@ image:
   - Visual Studio 2015
 environment:
   matrix:
-  - solution_name: win32/sdlpal.sln
-    BUILD_OPTIONS: /p:Configuration=Release
-  - solution_name: winrt/SDLPal.UWP.sln
-    BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM"
+    - solution_name: win32/sdlpal.sln
+      BUILD_OPTIONS: /p:Configuration=Release
+    - solution_name: winrt/SDLPal.UWP.sln
+      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM"
+    - solution_name: winrt/SDLPal.Windows.sln
+      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM"
+    - solution_name: winrt/SDLPal.WindowsPhone.sln
+      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="ARM"
 build_script:
   - |
     msbuild /nologo /m %solution_name% %BUILD_OPTIONS%

@@ -62,24 +62,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -314,6 +314,7 @@
     <ClCompile Include="..\..\magicmenu.c" />
     <ClCompile Include="..\..\main.c" />
     <ClCompile Include="..\..\map.c" />
+    <ClCompile Include="..\..\midi.c" />
     <ClCompile Include="..\..\mp3play.c" />
     <ClCompile Include="..\..\oggplay.c" />
     <ClCompile Include="..\..\overlay.c" />

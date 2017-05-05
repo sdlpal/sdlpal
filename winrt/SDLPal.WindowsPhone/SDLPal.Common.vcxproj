@@ -69,13 +69,13 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <IgnoreImportLibrary>false</IgnoreImportLibrary>

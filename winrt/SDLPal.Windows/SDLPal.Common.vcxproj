@@ -108,26 +108,32 @@
     <PackageCertificateKeyFile>SDLPal.Common_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>

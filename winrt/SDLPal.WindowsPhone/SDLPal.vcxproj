@@ -74,22 +74,22 @@
     <AppxBundlePlatforms>arm</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
@@ -213,7 +213,7 @@
     <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SDL2\VisualC-WinRT\WinPhone81_VS2013\SDL-WinPhone81.vcxproj">
+    <ProjectReference Include="..\..\3rd\SDL\VisualC-WinRT\WinPhone81_VS2013\SDL-WinPhone81.vcxproj">
       <Project>{48fadc0e-964d-4dab-bced-372e0ad19577}</Project>
     </ProjectReference>
     <ProjectReference Include="..\SDLPal.WindowsPhone\SDLPal.Common.vcxproj">

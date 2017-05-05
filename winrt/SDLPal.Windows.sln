@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDL2-WinRT81", "..\SDL2\VisualC-WinRT\WinRT81_VS2013\SDL-WinRT81.vcxproj", "{C8DF6173-06A1-4F56-A9BC-2002596B30E9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDL2-WinRT81", "..\3rd\SDL\VisualC-WinRT\WinRT81_VS2013\SDL-WinRT81.vcxproj", "{C8DF6173-06A1-4F56-A9BC-2002596B30E9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{30689076-D95B-4947-A05E-07843DA8C10B} = {30689076-D95B-4947-A05E-07843DA8C10B}
 	EndProjectSection

@@ -559,6 +559,9 @@
     <ClCompile Include="..\..\map.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\map.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\palcommon.c">
       <Filter>Source Files</Filter>
     </ClCompile>

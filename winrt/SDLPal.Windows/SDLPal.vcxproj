@@ -98,32 +98,32 @@
     <PackageCertificateKeyFile>SDLPal_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
@@ -334,7 +334,7 @@
     <PRIResource Include="..\SDLPal.Common\Strings\zh-hant\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SDL2\VisualC-WinRT\WinRT81_VS2013\SDL-WinRT81.vcxproj">
+    <ProjectReference Include="..\..\3rd\SDL\VisualC-WinRT\WinRT81_VS2013\SDL-WinRT81.vcxproj">
       <Project>{c8df6173-06a1-4f56-a9bc-2002596b30e9}</Project>
     </ProjectReference>
     <ProjectReference Include="SDLPal.Common.vcxproj">

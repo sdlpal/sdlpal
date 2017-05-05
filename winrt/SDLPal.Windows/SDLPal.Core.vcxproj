@@ -98,32 +98,32 @@
     <PackageCertificateKeyFile>SDLPal.Core_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
-    <IntDir>$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).Windows\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
@@ -369,6 +369,7 @@
     <ClCompile Include="..\..\magicmenu.c" />
     <ClCompile Include="..\..\main.c" />
     <ClCompile Include="..\..\map.c" />
+    <ClCompile Include="..\..\midi.c" />
     <ClCompile Include="..\..\mp3play.c" />
     <ClCompile Include="..\..\oggplay.c" />
     <ClCompile Include="..\..\overlay.c" />
