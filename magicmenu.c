@@ -161,7 +161,7 @@ PAL_MagicSelectionMenuUpdate(
                   *next++ = '\0';
                }
 
-               PAL_DrawText(d, PAL_XY(100, k), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
+               PAL_DrawText(d, PAL_XY(102, k), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
                k += 16;
 
                if (next == NULL)
@@ -176,7 +176,7 @@ PAL_MagicSelectionMenuUpdate(
          //
          // Draw the MP of the selected magic.
          //
-         PAL_CreateSingleLineBoxWithShadow(PAL_XY(0, 0), 5, FALSE,0);
+         PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
          PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
             gpScreen, PAL_XY(45, 14));
          PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),

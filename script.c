@@ -3459,7 +3459,7 @@ begin:
    case 0xFFFF:
 	   if (gConfig.fIsWIN95)
 	   {
-		   int XBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 75 : 100;
+		   int XBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 75 : 102;
 		   int YBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 150 - gConfig.ScreenLayout.ExtraItemDescLines * 16 : 3;
 		   int iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
 
