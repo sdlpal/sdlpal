@@ -11,6 +11,7 @@ import java.util.*;
 public class PalActivity extends SDLActivity {
     private static final String TAG = "sdlpal-debug";
     private static MediaPlayer mediaPlayer;
+    private static int screenWidth, screenHeight;
 
     private static MediaPlayer JNI_mediaplayer_load(String filename){
         Log.v(TAG, "loading midi:" + filename);
@@ -40,6 +41,10 @@ public class PalActivity extends SDLActivity {
             setExternalStorage(Environment.getExternalStorageDirectory().getPath());
             Log.v(TAG, "sdcard path " + Environment.getExternalStorageDirectory().getPath());
         }
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        screenWidth = metrics.widthPixels;
+        screenHeight = metrics.heightPixels;
     }
 
     @Override

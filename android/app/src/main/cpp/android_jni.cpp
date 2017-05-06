@@ -157,8 +157,15 @@ UTIL_GetScreenSize(
    DWORD *pdwScreenHeight
 )
 {
-    *pdwScreenWidth  = 640;
-    *pdwScreenHeight = 400;
+    JNIEnv* env = getJNIEnv();
+    jclass clazz = env->FindClass("io/github/sdlpal/PalActivity");
+    *pdwScreenWidth = env->GetStaticIntField(clazz, env->GetStaticFieldID(clazz, "screenWidth", "I"));
+    *pdwScreenHeight = env->GetStaticIntField(clazz, env->GetStaticFieldID(clazz, "screenHeight", "I"));
+    if (*pdwScreenWidth == 0 || *pdwScreenHeight == 0)
+    {
+        *pdwScreenWidth  = 640;
+        *pdwScreenHeight = 400;
+    }
     return TRUE;
 }
 
