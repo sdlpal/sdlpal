@@ -1,5 +1,5 @@
 NDK_LOCAL_PATH := $(call my-dir)
-SDLPAL_PATH := $(NDK_LOCAL_PATH)/../../..
+SDLPAL_PATH := $(NDK_LOCAL_PATH)/../../../../..
 SDL_PATH := $(SDLPAL_PATH)/3rd/SDL
 
 include $(SDL_PATH)/Android.mk
