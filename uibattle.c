@@ -1437,7 +1437,7 @@ PAL_BattleUIUpdate(
 
       if (g_Battle.UI.wActionType == kBattleActionCoopMagic)
       {
-         if (!PAL_BattleUIIsActionValid(kBattleActionCoopMagic))
+         if (!PAL_BattleUIIsActionValid(kBattleUIActionCoopMagic))
          {
             g_Battle.UI.state = kBattleUISelectMove;
             break;
