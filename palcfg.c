@@ -33,37 +33,52 @@
 #define PAL_HAS_TOUCH     0
 #endif
 
+#define MAKE_VALUE(defv, minv, maxv) (LPCSTR)(defv), (LPCSTR)(minv), (LPCSTR)(maxv)
+
 static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
-	{ PALCFG_FULLSCREEN,        PALCFG_BOOLEAN,  "FULLSCREEN",        10, FALSE, FALSE, TRUE },
-	{ PALCFG_KEEPASPECTRATIO,   PALCFG_BOOLEAN,  "KEEPASPECTRATIO",   15, TRUE,  FALSE, TRUE },
-	{ PALCFG_LAUNCHSETTING,     PALCFG_BOOLEAN,  "LAUNCHSETTING",     13, TRUE,  FALSE, TRUE },
-	{ PALCFG_STEREO,            PALCFG_BOOLEAN,  "STEREO",             6, TRUE,  FALSE, TRUE },								// Default for stereo audio
-	{ PALCFG_USEEMBEDDEDFONTS,  PALCFG_BOOLEAN,  "USEEMBEDDEDFONTS",  16, TRUE,  FALSE, TRUE },								// Default for using embedded fonts in DOS version
-	{ PALCFG_USESURROUNDOPL,    PALCFG_BOOLEAN,  "USESURROUNDOPL",    14, TRUE,  FALSE, TRUE },								// Default for using surround opl
-	{ PALCFG_USETOUCHOVERLAY,   PALCFG_BOOLEAN,  "USETOUCHOVERLAY",   15, PAL_HAS_TOUCH, FALSE, TRUE },
+	{ PALCFG_FULLSCREEN,        PALCFG_BOOLEAN,  "FullScreen",        10, MAKE_VALUE(FALSE,                         FALSE,                 TRUE) },
+	{ PALCFG_KEEPASPECTRATIO,   PALCFG_BOOLEAN,  "KeepAspectRatio",   15, MAKE_VALUE(TRUE,                          FALSE,                 TRUE) },
+	{ PALCFG_LAUNCHSETTING,     PALCFG_BOOLEAN,  "LaunchSetting",     13, MAKE_VALUE(TRUE,                          FALSE,                 TRUE) },
+	{ PALCFG_STEREO,            PALCFG_BOOLEAN,  "Stereo",             6, MAKE_VALUE(TRUE,                          FALSE,                 TRUE) },                  // Default for stereo audio
+	{ PALCFG_USEEMBEDDEDFONTS,  PALCFG_BOOLEAN,  "UseEmbeddedFonts",  16, MAKE_VALUE(TRUE,                          FALSE,                 TRUE) },                  // Default for using embedded fonts in DOS version
+	{ PALCFG_USESURROUNDOPL,    PALCFG_BOOLEAN,  "UseSurroundOPL",    14, MAKE_VALUE(TRUE,                          FALSE,                 TRUE) },                  // Default for using surround opl
+	{ PALCFG_USETOUCHOVERLAY,   PALCFG_BOOLEAN,  "UseTouchOverlay",   15, MAKE_VALUE(PAL_HAS_TOUCH,                 FALSE,                 TRUE) },
 
-	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SURROUNDOPLOFFSET", 17, 384,   INT32_MIN, INT32_MAX },
+	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SurroundOPLOffset", 17, MAKE_VALUE(384,                           INT32_MIN,             INT32_MAX) },
+	{ PALCFG_AUDIOBUFFERSIZE,   PALCFG_UNSIGNED, "AudioBufferSize",   15, MAKE_VALUE(PAL_AUDIO_DEFAULT_BUFFER_SIZE, 2,                     32768) },
+	{ PALCFG_CODEPAGE,          PALCFG_UNSIGNED, "CodePage",           8, MAKE_VALUE(CP_BIG5,                       CP_MIN,                CP_MAX - 1) },            // Default for BIG5
+	{ PALCFG_OPLSAMPLERATE,     PALCFG_UNSIGNED, "OPLSampleRate",     13, MAKE_VALUE(49716,                         0,                     UINT32_MAX) },
+	{ PALCFG_RESAMPLEQUALITY,   PALCFG_UNSIGNED, "ResampleQuality",   15, MAKE_VALUE(RESAMPLER_QUALITY_MAX,         RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX) }, // Default for best quality
+	{ PALCFG_SAMPLERATE,        PALCFG_UNSIGNED, "SampleRate",        10, MAKE_VALUE(44100,                         0,                     PAL_MAX_SAMPLERATE) },
+	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MusicVolume",       11, MAKE_VALUE(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
+	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_VALUE(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
+	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_VALUE(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
+	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WindowWidth",       11, MAKE_VALUE(PAL_DEFAULT_WINDOW_WIDTH,      0,                     UINT32_MAX) },
 
-	{ PALCFG_AUDIOBUFFERSIZE,   PALCFG_UNSIGNED, "AUDIOBUFFERSIZE",   15, PAL_AUDIO_DEFAULT_BUFFER_SIZE, 2, 32768 },
-	{ PALCFG_CODEPAGE,          PALCFG_UNSIGNED, "CODEPAGE",           8, CP_BIG5, CP_BIG5, CP_MAX - 1 },											// Default for BIG5
-	{ PALCFG_OPLSAMPLERATE,     PALCFG_UNSIGNED, "OPLSAMPLERATE",     13, 49716,   0, UINT32_MAX },
-	{ PALCFG_RESAMPLEQUALITY,   PALCFG_UNSIGNED, "RESAMPLEQUALITY",   15, RESAMPLER_QUALITY_MAX, RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX },	// Default for best quality
-	{ PALCFG_SAMPLERATE,        PALCFG_UNSIGNED, "SAMPLERATE",        10, 44100,   0, PAL_MAX_SAMPLERATE },
-	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MUSICVOLUME",       11, PAL_MAX_VOLUME, 0, PAL_MAX_VOLUME },										// Default for maximum volume
-	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SOUNDVOLUME",       11, PAL_MAX_VOLUME, 0, PAL_MAX_VOLUME },										// Default for maximum volume
-	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WINDOWHEIGHT",      12, PAL_DEFAULT_WINDOW_HEIGHT, 0, UINT32_MAX },
-	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WINDOWWIDTH",       11, PAL_DEFAULT_WINDOW_WIDTH,  0, UINT32_MAX },
-
-	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, "OGG", NULL, NULL },
-	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GAMEPATH",           8, NULL, NULL, NULL },
-	{ PALCFG_SAVEPATH,          PALCFG_STRING,   "SAVEPATH",           8, NULL, NULL, NULL },
-	{ PALCFG_MESSAGEFILE,       PALCFG_STRING,   "MESSAGEFILENAME",   15, NULL, NULL, NULL },
-	{ PALCFG_BDFFILE,           PALCFG_STRING,   "BDFFILENAME",       11, NULL, NULL, NULL },
-	{ PALCFG_MUSIC,             PALCFG_STRING,   "MUSIC",              5, "RIX", NULL, NULL },
+	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, "OGG",    NULL, NULL },
+	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GamePath",           8, NULL,     NULL, NULL },
+	{ PALCFG_SAVEPATH,          PALCFG_STRING,   "SavePath",           8, NULL,     NULL, NULL },
+	{ PALCFG_MESSAGEFILE,       PALCFG_STRING,   "MessageFileName",   15, NULL,     NULL, NULL },
+	{ PALCFG_BDFFILE,           PALCFG_STRING,   "BDFFileName",       11, NULL,     NULL, NULL },
+	{ PALCFG_MUSIC,             PALCFG_STRING,   "Music",              5, "RIX",    NULL, NULL },
 	{ PALCFG_OPL,               PALCFG_STRING,   "OPL",                3, "DOSBOX", NULL, NULL },
-	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXEXTRAINIT",      12, NULL, NULL, NULL },
+	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, NULL,     NULL, NULL },
 };
 
+
+static char * ParseStringValue(const char *sValue, char *original)
+{
+	int n = strlen(sValue);
+	while (n > 0 && isspace(sValue[n - 1])) n--;
+	if (n > 0)
+	{
+		char *newval = (char *)realloc(original, n + 1);
+		memcpy(newval, sValue, n);
+		newval[n] = '\0';
+		return newval;
+	}
+	return original;
+}
 
 BOOL
 PAL_ParseConfigLine(
@@ -268,53 +283,17 @@ PAL_LoadConfig(
 					values[item->Item] = value;
 					break;
 				case PALCFG_MESSAGEFILE:
-				{
-					int n = strlen(value.sValue);
-					while (n > 0 && isspace(value.sValue[n - 1])) n--;
-					if (n > 0)
-					{
-						gConfig.pszMsgFile = (char *)realloc(gConfig.pszMsgFile, n + 1);
-						memcpy(gConfig.pszMsgFile, value.sValue, n);
-						gConfig.pszMsgFile[n] = '\0';
-					}
+					gConfig.pszMsgFile = ParseStringValue(value.sValue, gConfig.pszMsgFile);
 					break;
-				}
 				case PALCFG_BDFFILE:
-				{
-					int n = strlen(value.sValue);
-					while (n > 0 && isspace(value.sValue[n - 1])) n--;
-					if (n > 0)
-					{
-						gConfig.pszBdfFile = (char *)realloc(gConfig.pszBdfFile, n + 1);
-						memcpy(gConfig.pszBdfFile, value.sValue, n);
-						gConfig.pszBdfFile[n] = '\0';
-					}
+					gConfig.pszBdfFile = ParseStringValue(value.sValue, gConfig.pszBdfFile);
 					break;
-				}
 				case PALCFG_GAMEPATH:
-				{
-					int n = strlen(value.sValue);
-					while (n > 0 && isspace(value.sValue[n - 1])) n--;
-					if (n > 0)
-					{
-						gConfig.pszGamePath = (char *)realloc(gConfig.pszGamePath, n + 1);
-						memcpy(gConfig.pszGamePath, value.sValue, n);
-						gConfig.pszGamePath[n] = '\0';
-					}
+					gConfig.pszGamePath = ParseStringValue(value.sValue, gConfig.pszGamePath);
 					break;
-				}
 				case PALCFG_SAVEPATH:
-				{
-					int n = strlen(value.sValue);
-					while (n > 0 && isspace(value.sValue[n - 1])) n--;
-					if (n > 0)
-					{
-						gConfig.pszSavePath = (char *)realloc(gConfig.pszSavePath, n + 1);
-						memcpy(gConfig.pszSavePath, value.sValue, n);
-						gConfig.pszSavePath[n] = '\0';
-					}
+					gConfig.pszSavePath = ParseStringValue(value.sValue, gConfig.pszSavePath);
 					break;
-				}
 				case PALCFG_CD:
 				{
 					if (PAL_HAS_MP3 && SDL_strncasecmp(value.sValue, "MP3", 3) == 0)
@@ -416,9 +395,7 @@ PAL_LoadConfig(
 	gConfig.fUseSurroundOPL = values[PALCFG_STEREO].bValue && values[PALCFG_USESURROUNDOPL].bValue;
 	gConfig.fLaunchSetting = values[PALCFG_LAUNCHSETTING].bValue;
 	gConfig.fUseTouchOverlay = values[PALCFG_USETOUCHOVERLAY].bValue;
-#if SDL_VERSION_ATLEAST(2,0,0)
 	gConfig.fKeepAspectRatio = values[PALCFG_KEEPASPECTRATIO].bValue;
-#endif
 	gConfig.fFullScreen = values[PALCFG_FULLSCREEN].bValue;
 	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
 
@@ -457,9 +434,7 @@ PAL_SaveConfig(
 
 	if (fp)
 	{
-#if SDL_VERSION_ATLEAST(2,0,0)
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_KEEPASPECTRATIO), gConfig.fKeepAspectRatio); fputs(buf, fp);
-#endif
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_FULLSCREEN), gConfig.fFullScreen); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_LAUNCHSETTING), gConfig.fLaunchSetting); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_STEREO), gConfig.iAudioChannels == 2 ? TRUE : FALSE); fputs(buf, fp);

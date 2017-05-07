@@ -182,9 +182,7 @@ typedef struct tagCONFIGURATION
 	BOOL             fIsWIN95;
 	BOOL             fUseEmbeddedFonts;
 	BOOL             fUseSurroundOPL;
-#if SDL_VERSION_ATLEAST(2,0,0)
 	BOOL             fKeepAspectRatio;
-#endif
 	BOOL             fFullScreen;
 	BOOL             fEnableJoyStick;
 	BOOL             fUseCustomScreenLayout;
