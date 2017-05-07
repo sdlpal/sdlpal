@@ -46,7 +46,8 @@ static void PAL_InitEmbeddedFont(void)
 	FILE *fp;
 	char *char_buf;
 	wchar_t *wchar_buf;
-	int nBytes, nChars, i;
+	size_t nBytes;
+	int nChars, i;
 
 	//
 	// Load the wor16.asc file.
@@ -71,7 +72,11 @@ static void PAL_InitEmbeddedFont(void)
 		return;
 	}
 	fseek(fp, 0, SEEK_SET);
-	fread(char_buf, 1, nBytes, fp);
+	if (fread(char_buf, 1, nBytes, fp) < nBytes)
+	{
+		fclose(fp);
+		return;
+	}
 
 	//
 	// Close wor16.asc file.
@@ -106,9 +111,11 @@ static void PAL_InitEmbeddedFont(void)
 	for (i = 0; i < nChars; i++)
 	{
 		wchar_t w = (wchar_buf[i] >= unicode_upper_base) ? (wchar_buf[i] - unicode_upper_base + unicode_lower_top) : wchar_buf[i];
-		fread(unicode_font[w], 30, 1, fp);
-		unicode_font[w][30] = 0;
-		unicode_font[w][31] = 0;
+		if (fread(unicode_font[w], 30, 1, fp) == 1)
+		{
+			unicode_font[w][30] = 0;
+			unicode_font[w][31] = 0;
+		}
 	}
 	free(wchar_buf);
 

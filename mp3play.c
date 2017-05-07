@@ -23,13 +23,12 @@
 #include "util.h"
 #include "global.h"
 #include "palcfg.h"
-
-#if PAL_HAS_MP3
-
 #include "audio.h"
 #include "players.h"
-#include "resampler.h"
+
+#if PAL_HAS_MP3
 #include "libmad/music_mad.h"
+#include "resampler.h"
 
 typedef struct tagMP3PLAYER
 {
@@ -142,7 +141,7 @@ MP3_Init(
 )
 {
 	LPMP3PLAYER player;
-	if (player = (LPMP3PLAYER)malloc(sizeof(MP3PLAYER)))
+	if ((player = (LPMP3PLAYER)malloc(sizeof(MP3PLAYER))) != NULL)
 	{
 		player->FillBuffer = MP3_FillBuffer;
 		player->Play = MP3_Play;
@@ -151,12 +150,18 @@ MP3_Init(
 		player->pMP3 = NULL;
 		player->iMusic = -1;
 		player->fLoop = FALSE;
-		return (LPAUDIOPLAYER)player;
 	}
-	else
-	{
-		return NULL;
-	}
+	return (LPAUDIOPLAYER)player;
+}
+
+#else
+
+LPAUDIOPLAYER
+MP3_Init(
+	VOID
+)
+{
+	return NULL;
 }
 
 #endif

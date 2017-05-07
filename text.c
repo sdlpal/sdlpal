@@ -25,6 +25,7 @@
 
 #include "main.h"
 #include <errno.h>
+#include <wctype.h>
 
 #define   FONT_COLOR_DEFAULT        0x4F
 #define   FONT_COLOR_YELLOW         0x2D
@@ -208,7 +209,7 @@ PAL_ReadMessageFile(
 	while (!feof(fp))
 	{
 		char *buffer;
-		if (buffer = PAL_ReadOneLine(temp, MESSAGE_MAX_BUFFER_SIZE, fp))
+		if ((buffer = PAL_ReadOneLine(temp, MESSAGE_MAX_BUFFER_SIZE, fp)) != NULL)
 		{
 			switch(state)
 			{
@@ -571,7 +572,12 @@ PAL_InitText(
 		   return -1;
 	   }
 	   fseek(fpWord, 0, SEEK_SET);
-	   fread(temp, i, 1, fpWord);
+	   if (fread(temp, 1, i, fpWord) < (size_t)i)
+	   {
+		   fclose(fpWord);
+		   fclose(fpMsg);
+		   return -1;
+	   }
 	   memset(temp + i, 0, gConfig.dwWordLength * g_TextLib.nWords - i);
 
 	   //
@@ -591,7 +597,6 @@ PAL_InitText(
 	   if (g_TextLib.lpWordBuf == NULL)
 	   {
 		   free(temp);
-		   fclose(fpWord);
 		   fclose(fpMsg);
 		   return -1;
 	   }
@@ -600,7 +605,6 @@ PAL_InitText(
 	   {
 		   free(g_TextLib.lpWordBuf);
 		   free(temp);
-		   fclose(fpWord);
 		   fclose(fpMsg);
 		   return -1;
 	   }
@@ -625,6 +629,7 @@ PAL_InitText(
 	   offsets = (LPDWORD)malloc(i * sizeof(DWORD));
 	   if (offsets == NULL)
 	   {
+		   free(g_TextLib.lpWordBuf[0]);
 		   free(g_TextLib.lpWordBuf);
 		   fclose(fpMsg);
 		   return -1;
@@ -649,7 +654,14 @@ PAL_InitText(
 	   }
 
 	   fseek(fpMsg, 0, SEEK_SET);
-	   fread(temp, 1, i, fpMsg);
+	   if (fread(temp, 1, i, fpMsg) < (size_t)i)
+	   {
+		   free(offsets);
+		   free(g_TextLib.lpWordBuf[0]);
+		   free(g_TextLib.lpWordBuf);
+		   fclose(fpMsg);
+		   return -1;
+	   }
 
 	   fclose(fpMsg);
 
@@ -661,6 +673,7 @@ PAL_InitText(
 	   g_TextLib.lpMsgBuf = (LPWSTR*)malloc(g_TextLib.nMsgs * sizeof(LPWSTR));
 	   if (g_TextLib.lpMsgBuf == NULL)
 	   {
+		   free(g_TextLib.lpWordBuf[0]);
 		   free(g_TextLib.lpWordBuf);
 		   free(offsets);
 		   return -1;
@@ -669,6 +682,7 @@ PAL_InitText(
 	   if (tmp == NULL)
 	   {
 		   free(g_TextLib.lpMsgBuf);
+		   free(g_TextLib.lpWordBuf[0]);
 		   free(g_TextLib.lpWordBuf);
 		   free(offsets);
 		   return -1;
@@ -1828,8 +1842,9 @@ PAL_swprintf(
 	LPCWSTR fmt_start = NULL;
 	LPWSTR cur_fmt = NULL;
 	size_t fmt_len = 0;
-	int precision, width;
-	int state, left_aligned, wide, narrow, width_var, precision_var, precision_defined;
+	int state, precision = 0, width = 0;
+	int left_aligned = 0, wide = 0, narrow = 0;
+	int width_var = 0, precision_var = 0, precision_defined = 0;
 
 	// Buffer & length check
 	if (buffer == NULL || format == NULL)

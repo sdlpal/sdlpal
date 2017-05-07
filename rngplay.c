@@ -82,8 +82,8 @@ PAL_RNGReadFrame(
    // Get the offset of the chunk.
    //
    fseek(fpRngMKF, 4 * uiRngNum, SEEK_SET);
-   fread(&uiOffset, sizeof(UINT), 1, fpRngMKF);
-   fread(&uiNextOffset, sizeof(UINT), 1, fpRngMKF);
+   PAL_fread(&uiOffset, sizeof(UINT), 1, fpRngMKF);
+   PAL_fread(&uiNextOffset, sizeof(UINT), 1, fpRngMKF);
    uiOffset = SDL_SwapLE32(uiOffset);
    uiNextOffset = SDL_SwapLE32(uiNextOffset);
 
@@ -103,7 +103,7 @@ PAL_RNGReadFrame(
    //
    // Get the number of sub chunks.
    //
-   fread(&uiChunkCount, sizeof(UINT), 1, fpRngMKF);
+   PAL_fread(&uiChunkCount, sizeof(UINT), 1, fpRngMKF);
    uiChunkCount = (SDL_SwapLE32(uiChunkCount) - 4) / 4;
    if (uiFrameNum >= uiChunkCount)
    {
@@ -114,8 +114,8 @@ PAL_RNGReadFrame(
    // Get the offset of the sub chunk.
    //
    fseek(fpRngMKF, uiOffset + 4 * uiFrameNum, SEEK_SET);
-   fread(&uiSubOffset, sizeof(UINT), 1, fpRngMKF);
-   fread(&uiNextOffset, sizeof(UINT), 1, fpRngMKF);
+   PAL_fread(&uiSubOffset, sizeof(UINT), 1, fpRngMKF);
+   PAL_fread(&uiNextOffset, sizeof(UINT), 1, fpRngMKF);
    uiSubOffset = SDL_SwapLE32(uiSubOffset);
    uiNextOffset = SDL_SwapLE32(uiNextOffset);
 
@@ -131,14 +131,10 @@ PAL_RNGReadFrame(
    if (iChunkLen != 0)
    {
       fseek(fpRngMKF, uiOffset + uiSubOffset, SEEK_SET);
-      fread(lpBuffer, iChunkLen, 1, fpRngMKF);
-   }
-   else
-   {
-      return -1;
+      return (int)fread(lpBuffer, 1, iChunkLen, fpRngMKF);
    }
 
-   return iChunkLen;
+   return -1;
 }
 
 static INT

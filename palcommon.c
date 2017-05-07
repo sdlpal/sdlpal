@@ -697,10 +697,10 @@ PAL_MKFGetChunkCount(
    }
 
    fseek(fp, 0, SEEK_SET);
-   fread(&iNumChunk, sizeof(INT), 1, fp);
-
-   iNumChunk = (SDL_SwapLE32(iNumChunk) - 4) / 4;
-   return iNumChunk;
+   if (fread(&iNumChunk, sizeof(INT), 1, fp) == 1)
+      return (SDL_SwapLE32(iNumChunk) - 4) >> 2;
+   else
+      return 0;
 }
 
 INT
@@ -743,8 +743,9 @@ PAL_MKFGetChunkSize(
    // Get the offset of the specified chunk and the next chunk.
    //
    fseek(fp, 4 * uiChunkNum, SEEK_SET);
-   fread(&uiOffset, sizeof(UINT), 1, fp);
-   fread(&uiNextOffset, sizeof(UINT), 1, fp);
+   PAL_fread(&uiOffset, sizeof(UINT), 1, fp);
+   PAL_fread(&uiNextOffset, sizeof(UINT), 1, fp);
+
    uiOffset = SDL_SwapLE32(uiOffset);
    uiNextOffset = SDL_SwapLE32(uiNextOffset);
 
@@ -807,8 +808,8 @@ PAL_MKFReadChunk(
    // Get the offset of the chunk.
    //
    fseek(fp, 4 * uiChunkNum, SEEK_SET);
-   fread(&uiOffset, 4, 1, fp);
-   fread(&uiNextOffset, 4, 1, fp);
+   PAL_fread(&uiOffset, 4, 1, fp);
+   PAL_fread(&uiNextOffset, 4, 1, fp);
    uiOffset = SDL_SwapLE32(uiOffset);
    uiNextOffset = SDL_SwapLE32(uiNextOffset);
 
@@ -825,14 +826,10 @@ PAL_MKFReadChunk(
    if (uiChunkLen != 0)
    {
       fseek(fp, uiOffset, SEEK_SET);
-      fread(lpBuffer, uiChunkLen, 1, fp);
-   }
-   else
-   {
-      return -1;
+      return (int)fread(lpBuffer, 1, uiChunkLen, fp);
    }
 
-   return (INT)uiChunkLen;
+   return -1;
 }
 
 INT
@@ -880,7 +877,7 @@ PAL_MKFGetDecompressedSize(
    // Get the offset of the chunk.
    //
    fseek(fp, 4 * uiChunkNum, SEEK_SET);
-   fread(&uiOffset, 4, 1, fp);
+   PAL_fread(&uiOffset, 4, 1, fp);
    uiOffset = SDL_SwapLE32(uiOffset);
 
    //
@@ -889,14 +886,14 @@ PAL_MKFGetDecompressedSize(
    fseek(fp, uiOffset, SEEK_SET);
    if (gConfig.fIsWIN95)
    {
-      fread(buf, sizeof(DWORD), 1, fp);
+      PAL_fread(buf, sizeof(DWORD), 1, fp);
       buf[0] = SDL_SwapLE32(buf[0]);
 
       return (INT)buf[0];
    }
    else
    {
-      fread(buf, sizeof(DWORD), 2, fp);
+      PAL_fread(buf, sizeof(DWORD), 2, fp);
       buf[0] = SDL_SwapLE32(buf[0]);
       buf[1] = SDL_SwapLE32(buf[1]);
 

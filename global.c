@@ -54,7 +54,7 @@ PAL_IsWINVersion(
 )
 {
 	FILE *fps[] = { UTIL_OpenRequiredFile("abc.mkf"), UTIL_OpenRequiredFile("map.mkf"), gpGlobals->f.fpF, gpGlobals->f.fpFBP, gpGlobals->f.fpFIRE, gpGlobals->f.fpMGO };
-	char *data = NULL;
+	uint8_t *data = NULL;
 	int data_size = 0, dos_score = 0, win_score = 0;
 	BOOL result = FALSE;
 
@@ -72,7 +72,7 @@ PAL_IsWINVersion(
 		// Note that this check is not 100% correct, however in incorrect situations,
 		// the sub-file will be over 784MB if uncompressed, which is highly unlikely.
 		//
-		if (data_size < size) data = (char *)realloc(data, data_size = size);
+		if (data_size < size) data = (uint8_t *)realloc(data, data_size = size);
 		PAL_MKFReadChunk(data, data_size, j, fps[i]);
 		if (data[0] == 'Y' && data[1] == 'J' && data[2] == '_' && data[3] == '1')
 		{
@@ -521,11 +521,47 @@ typedef struct tagSAVEDGAME_WIN
 	EVENTOBJECT      rgEventObject[MAX_EVENT_OBJECTS];
 } SAVEDGAME_WIN, *LPSAVEDGAME_WIN;
 
-static VOID
+static BOOL
 PAL_LoadGame_Common(
-	const LPSAVEDGAME_COMMON s
+	const char         *szFileName,
+	LPSAVEDGAME_COMMON  s,
+	size_t              size
 )
 {
+	//
+	// Try to open the specified file
+	//
+	FILE *fp = fopen(szFileName, "rb");
+	//
+	// Read all data from the file and close.
+	//
+	size_t n = fp ? fread(s, 1, size, fp) : 0;
+
+	if (fp != NULL)
+	{
+		fclose(fp);
+	}
+
+	if (n < size - sizeof(EVENTOBJECT) * MAX_EVENT_OBJECTS)
+	{
+		return FALSE;
+	}
+
+	//
+	// Adjust endianness
+	//
+	DO_BYTESWAP(&s, size);
+
+	//
+	// Cash amount is in DWORD, so do a wordswap in Big-Endian.
+	//
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	s->dwCash = ((s->dwCash >> 16) | (s->dwCash << 16));
+#endif
+
+	//
+	// Get common data from the saved game struct.
+	//
 	gpGlobals->viewport = PAL_XY(s->wViewportX, s->wViewportY);
 	gpGlobals->wMaxPartyMemberIndex = s->nPartyMember;
 	gpGlobals->wNumScene = s->wNumScene;
@@ -557,6 +593,12 @@ PAL_LoadGame_Common(
 	memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
 	memcpy(gpGlobals->rgInventory, s->rgInventory, sizeof(gpGlobals->rgInventory));
 	memcpy(gpGlobals->g.rgScene, s->rgScene, sizeof(gpGlobals->g.rgScene));
+
+	gpGlobals->fEnteringScene = FALSE;
+
+	PAL_CompressInventory();
+
+	return TRUE;
 }
 
 static INT
@@ -578,41 +620,15 @@ PAL_LoadGame_DOS(
 
 --*/
 {
-   FILE                     *fp;
    PAL_LARGE SAVEDGAME_DOS   s;
    int                       i;
 
    //
-   // Try to open the specified file
-   //
-   fp = fopen(szFileName, "rb");
-   if (fp == NULL)
-   {
-      return -1;
-   }
-
-   //
-   // Read all data from the file and close.
-   //
-   fread(&s, sizeof(SAVEDGAME_DOS), 1, fp);
-   fclose(fp);
-
-   //
-   // Adjust endianness
-   //
-   DO_BYTESWAP(&s, sizeof(SAVEDGAME_DOS));
-
-   //
-   // Cash amount is in DWORD, so do a wordswap in Big-Endian.
-   //
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-   s.dwCash = ((s.dwCash >> 16) | (s.dwCash << 16));
-#endif
-
-   //
    // Get all the data from the saved game struct.
    //
-   PAL_LoadGame_Common((LPSAVEDGAME_COMMON)&s);
+   if (!PAL_LoadGame_Common(szFileName, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_DOS)))
+	   return -1;
+
    //
    // Convert the DOS-style data structure to WIN-style data structure
    //
@@ -629,12 +645,7 @@ PAL_LoadGame_DOS(
          gpGlobals->g.rgObject[i].rgwData[6] = 0;
       }
    }
-   memcpy(gpGlobals->g.lprgEventObject, s.rgEventObject,
-      sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
-
-   gpGlobals->fEnteringScene = FALSE;
-
-   PAL_CompressInventory();
+   memcpy(gpGlobals->g.lprgEventObject, s.rgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
    //
    // Success
@@ -661,47 +672,16 @@ PAL_LoadGame_WIN(
 
 --*/
 {
-   FILE                     *fp;
    PAL_LARGE SAVEDGAME_WIN   s;
-
-   //
-   // Try to open the specified file
-   //
-   fp = fopen(szFileName, "rb");
-   if (fp == NULL)
-   {
-      return -1;
-   }
-
-   //
-   // Read all data from the file and close.
-   //
-   fread(&s, sizeof(SAVEDGAME_WIN), 1, fp);
-   fclose(fp);
-
-   //
-   // Adjust endianness
-   //
-   DO_BYTESWAP(&s, sizeof(SAVEDGAME_WIN));
-
-   //
-   // Cash amount is in DWORD, so do a wordswap in Big-Endian.
-   //
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-   s.dwCash = ((s.dwCash >> 16) | (s.dwCash << 16));
-#endif
 
    //
    // Get all the data from the saved game struct.
    //
-   PAL_LoadGame_Common((LPSAVEDGAME_COMMON)&s);
+   if (!PAL_LoadGame_Common(szFileName, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_WIN)))
+	   return -1;
+
    memcpy(gpGlobals->g.rgObject, s.rgObject, sizeof(gpGlobals->g.rgObject));
-   memcpy(gpGlobals->g.lprgEventObject, s.rgEventObject,
-      sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
-
-   gpGlobals->fEnteringScene = FALSE;
-
-   PAL_CompressInventory();
+   memcpy(gpGlobals->g.lprgEventObject, s.rgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
    //
    // Success
@@ -719,9 +699,16 @@ PAL_LoadGame(
 
 static VOID
 PAL_SaveGame_Common(
-    const LPSAVEDGAME_COMMON s
+	LPCSTR             szFileName,
+	WORD               wSavedTimes,
+	LPSAVEDGAME_COMMON s,
+	size_t             size
 )
 {
+	FILE *fp;
+	int   i;
+
+	s->wSavedTimes = wSavedTimes;
 	s->wViewportX = PAL_X(gpGlobals->viewport);
 	s->wViewportY = PAL_Y(gpGlobals->viewport);
 	s->nPartyMember = gpGlobals->wMaxPartyMemberIndex;
@@ -751,6 +738,32 @@ PAL_SaveGame_Common(
 	memcpy(s->rgPoisonStatus, gpGlobals->rgPoisonStatus, sizeof(gpGlobals->rgPoisonStatus));
 	memcpy(s->rgInventory, gpGlobals->rgInventory, sizeof(gpGlobals->rgInventory));
 	memcpy(s->rgScene, gpGlobals->g.rgScene, sizeof(gpGlobals->g.rgScene));
+
+	//
+	// Adjust endianness
+	//
+	DO_BYTESWAP(&s, size);
+
+	//
+	// Cash amount is in DWORD, so do a wordswap in Big-Endian.
+	//
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	s->dwCash = ((s->dwCash >> 16) | (s->dwCash << 16));
+#endif
+
+	//
+	// Try writing to file
+	//
+	if ((fp = fopen(szFileName, "wb")) == NULL)
+	{
+		return;
+	}
+
+	i = PAL_MKFGetChunkSize(0, gpGlobals->f.fpSSS);
+	i += size - sizeof(EVENTOBJECT) * MAX_EVENT_OBJECTS;
+
+	fwrite(&s, i, 1, fp);
+	fclose(fp);
 }
 
 static VOID
@@ -773,14 +786,9 @@ PAL_SaveGame_DOS(
 
 --*/
 {
-   FILE                     *fp;
    PAL_LARGE SAVEDGAME_DOS   s;
    UINT32                    i;
 
-   //
-   // Put all the data to the saved game struct.
-   //
-   PAL_SaveGame_Common((LPSAVEDGAME_COMMON)&s);
    //
    // Convert the WIN-style data structure to DOS-style data structure
    //
@@ -792,37 +800,12 @@ PAL_SaveGame_DOS(
          s.rgObject[i].rgwData[5] = gpGlobals->g.rgObject[i].rgwData[6];     // wFlags
 	  }
    }
-   memcpy(s.rgEventObject, gpGlobals->g.lprgEventObject,
-      sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
-
-   s.wSavedTimes = wSavedTimes;
+   memcpy(s.rgEventObject, gpGlobals->g.lprgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
    //
-   // Adjust endianness
+   // Put all the data to the saved game struct.
    //
-   DO_BYTESWAP(&s, sizeof(SAVEDGAME));
-
-   //
-   // Cash amount is in DWORD, so do a wordswap in Big-Endian.
-   //
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-   s.dwCash = ((s.dwCash >> 16) | (s.dwCash << 16));
-#endif
-
-   //
-   // Try writing to file
-   //
-   fp = fopen(szFileName, "wb");
-   if (fp == NULL)
-   {
-      return;
-   }
-
-   i = PAL_MKFGetChunkSize(0, gpGlobals->f.fpSSS);
-   i += sizeof(SAVEDGAME_DOS) - sizeof(EVENTOBJECT) * MAX_EVENT_OBJECTS;
-
-   fwrite(&s, i, 1, fp);
-   fclose(fp);
+   PAL_SaveGame_Common(szFileName, wSavedTimes, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_DOS));
 }
 
 static VOID
@@ -845,46 +828,15 @@ PAL_SaveGame_WIN(
 
 --*/
 {
-   FILE                     *fp;
    PAL_LARGE SAVEDGAME_WIN   s;
-   UINT32                    i;
 
    //
    // Put all the data to the saved game struct.
    //
-   PAL_SaveGame_Common((LPSAVEDGAME_COMMON)&s);
    memcpy(s.rgObject, gpGlobals->g.rgObject, sizeof(gpGlobals->g.rgObject));
-   memcpy(s.rgEventObject, gpGlobals->g.lprgEventObject,
-      sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
+   memcpy(s.rgEventObject, gpGlobals->g.lprgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
-   s.wSavedTimes = wSavedTimes;
-
-   //
-   // Adjust endianness
-   //
-   DO_BYTESWAP(&s, sizeof(SAVEDGAME));
-
-   //
-   // Cash amount is in DWORD, so do a wordswap in Big-Endian.
-   //
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-   s.dwCash = ((s.dwCash >> 16) | (s.dwCash << 16));
-#endif
-
-   //
-   // Try writing to file
-   //
-   fp = fopen(szFileName, "wb");
-   if (fp == NULL)
-   {
-      return;
-   }
-
-   i = PAL_MKFGetChunkSize(0, gpGlobals->f.fpSSS);
-   i += sizeof(SAVEDGAME_WIN) - sizeof(EVENTOBJECT) * MAX_EVENT_OBJECTS;
-
-   fwrite(&s, i, 1, fp);
-   fclose(fp);
+   PAL_SaveGame_Common(szFileName, wSavedTimes, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_WIN));
 }
 
 VOID

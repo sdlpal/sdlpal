@@ -48,24 +48,18 @@ RIX_Init(
 );
 
 /* OGG */
-#if PAL_HAS_OGG
 
 LPAUDIOPLAYER
 OGG_Init(
 	VOID
 );
 
-#endif
-
 /* MP3 */
-#if PAL_HAS_MP3
 
 LPAUDIOPLAYER
 MP3_Init(
 	VOID
 );
-
-#endif
 
 LPAUDIOPLAYER
 SOUND_Init(

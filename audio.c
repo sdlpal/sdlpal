@@ -259,21 +259,15 @@ AUDIO_OpenDevice(
 	   }
 	   break;
    case MUSIC_MP3:
-#if PAL_HAS_MP3
 	   gAudioDevice.pMusPlayer = MP3_Init();
-#else
-	   gAudioDevice.pMusPlayer = NULL;
-#endif
 	   break;
    case MUSIC_OGG:
-#if PAL_HAS_OGG
 	   gAudioDevice.pMusPlayer = OGG_Init();
-#else
-	   gAudioDevice.pMusPlayer = NULL;
-#endif
 	   break;
    case MUSIC_MIDI:
 	   gAudioDevice.pMusPlayer = NULL;
+	   break;
+   default:
 	   break;
    }
 
@@ -309,18 +303,12 @@ AUDIO_OpenDevice(
 	   break;
    }
    case MUSIC_MP3:
-#if PAL_HAS_MP3
 	   gAudioDevice.pCDPlayer = MP3_Init();
-#else
-	   gAudioDevice.pCDPlayer = NULL;
-#endif
 	   break;
    case MUSIC_OGG:
-#if PAL_HAS_OGG
 	   gAudioDevice.pCDPlayer = OGG_Init();
-#else
-	   gAudioDevice.pCDPlayer = NULL;
-#endif
+	   break;
+   default:
 	   break;
    }
 

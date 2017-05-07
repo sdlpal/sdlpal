@@ -226,7 +226,7 @@ decode_frame(mad_data *mp3_mad) {
     lo = (int)mp3_mad->frame.header.samplerate < mp3_mad->mixer.freq ? mp3_mad->frame.header.samplerate : mp3_mad->mixer.freq;
 	if (hi != lo) {
       /* Need sample rate conversion, resampler should be used. Try to create resamplers. */
-      if (mp3_mad->resampler[0] = resampler_create()) {
+      if ((mp3_mad->resampler[0] = resampler_create()) != NULL) {
         if (mp3_mad->mixer.channels == 2) {
           if ((mp3_mad->resampler[1] = resampler_create())) {
             resampler_set_quality(mp3_mad->resampler[1], (hi % lo == 0) ? RESAMPLER_QUALITY_MIN : mp3_mad->resampler_quality);

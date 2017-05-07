@@ -74,7 +74,7 @@ extern "C" NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
     {
         char buf[4096];
         size_t bytes;
-        while(bytes = SDL_RWread(rw, buf, sizeof(char), sizeof(buf)))
+        while((bytes = SDL_RWread(rw, buf, sizeof(char), sizeof(buf))) > 0)
             fwrite(buf, sizeof(char), bytes, fp);
         fclose(fp);
 

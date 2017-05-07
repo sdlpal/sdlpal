@@ -46,8 +46,8 @@ static inline uint8_t conver_to_uint8(int32_t sample)
 }
 
 CDBemuopl::CDBemuopl(int rate, bool bit16, bool usestereo)
-	: use16bit(bit16), stereo(usestereo), rate(rate)
-	, maxlen(0), buffer(NULL)
+	: buffer(NULL), rate(rate), maxlen(0)
+	, use16bit(bit16), stereo(usestereo)
 {
 	currType = TYPE_OPL2;
 	chip.Setup(rate);

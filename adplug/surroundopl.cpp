@@ -28,7 +28,7 @@
 //#include "debug.h"
 
 CSurroundopl::CSurroundopl(Copl *a, Copl *b, bool use16bit, double opl_freq, double freq_offset)
-	: use16bit(use16bit), bufsize(4096), a(a), b(b), opl_freq(opl_freq), freq_offset(freq_offset)
+	: a(a), b(b), freq_offset(freq_offset), opl_freq(opl_freq), bufsize(4096), use16bit(use16bit)
 {
 	currType = TYPE_OPL2;
 	this->lbuf = new short[this->bufsize];

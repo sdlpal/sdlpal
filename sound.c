@@ -126,17 +126,17 @@ SOUND_LoadWAVEData(
 --*/
 {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#	define RIFF		'RIFF'
-#	define WAVE		'WAVE'
-#	define FMT		'fmt '
-#	define DATA		'data'
-#	define PCM     0x0100
+#	define RIFF		0x52494646 // 'RIFF'
+#	define WAVE		0x57415645 // 'WAVE'
+#	define FMT		0x666D7420 // 'fmt '
+#	define DATA		0x64617461 // 'data'
+#	define PCM      0x0100
 #else
-#	define RIFF		'FFIR'
-#	define WAVE		'EVAW'
-#	define FMT		' tmf'
-#	define DATA		'atad'
-#	define PCM     0x0001
+#	define RIFF		0x46464952 // 'FFIR'
+#	define WAVE		0x45564157 // 'EVAW'
+#	define FMT		0x20746D66 // ' tmf'
+#	define DATA		0x61746164 // 'atad'
+#	define PCM      0x0001
 #endif
 	LPCRIFFHEADER lpRiff = (LPCRIFFHEADER)lpData;
 	LPCRIFFCHUNK lpChunk;
@@ -916,7 +916,7 @@ SOUND_Shutdown(
 			if (cursnd->resampler[0]) resampler_delete(cursnd->resampler[0]);
 			if (cursnd->resampler[1]) resampler_delete(cursnd->resampler[1]);
 			if (cursnd->base) free((void *)cursnd->base);
-		} while (cursnd = cursnd->next);
+		} while ((cursnd = cursnd->next) != NULL);
 		cursnd = player->soundlist.next;
 		while (cursnd)
 		{

@@ -24,7 +24,7 @@
 #include <string.h>
 
 CDemuopl::CDemuopl(int rate, bool bit16, bool usestereo)
-	: use16bit(bit16), stereo(usestereo), rate(rate), chip(adlib_init(rate))
+	: chip(adlib_init(rate)), rate(rate), use16bit(bit16), stereo(usestereo)
 {
 	currType = TYPE_OPL2;
 }

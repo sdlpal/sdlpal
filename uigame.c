@@ -22,6 +22,21 @@
 
 #include "main.h"
 
+static WORD GetSavedTimes(int saveslot)
+{
+	FILE *fp = fopen(va("%s%d%s", gConfig.pszSavePath, saveslot, ".rpg"), "rb");
+	WORD wSavedTimes = 0;
+	if (fp != NULL)
+	{
+		if (fread(&wSavedTimes, sizeof(WORD), 1, fp) == 1)
+			wSavedTimes = SDL_SwapLE16(wSavedTimes);
+		else
+			wSavedTimes = 0;
+		fclose(fp);
+	}
+	return wSavedTimes;
+}
+
 VOID
 PAL_DrawOpeningMenuBackground(
    VOID
@@ -166,9 +181,7 @@ PAL_SaveSlotMenu(
    LPBOX           rgpBox[5];
    int             i, w = PAL_WordMaxWidth(LOADMENU_LABEL_SLOT_FIRST, 5);
    int             dx = (w > 4) ? (w - 4) * 16 : 0;
-   FILE           *fp;
    WORD            wItemSelected;
-   WORD            wSavedTimes;
 
    MENUITEM        rgMenuItem[5];
 
@@ -193,22 +206,10 @@ PAL_SaveSlotMenu(
    //
    for (i = 1; i <= 5; i++)
    {
-      fp = fopen(va("%s%d%s", gConfig.pszSavePath, i, ".rpg"), "rb");
-      if (fp == NULL)
-      {
-         wSavedTimes = 0;
-      }
-      else
-      {
-         fread(&wSavedTimes, sizeof(WORD), 1, fp);
-         wSavedTimes = SDL_SwapLE16(wSavedTimes);
-         fclose(fp);
-      }
-
       //
       // Draw the number
       //
-      PAL_DrawNumber((UINT)wSavedTimes, 4, PAL_XY(270, 38 * i - 17),
+      PAL_DrawNumber((UINT)GetSavedTimes(i), 4, PAL_XY(270, 38 * i - 17),
          kNumColorYellow, kNumAlignRight);
    }
 
@@ -531,8 +532,7 @@ PAL_SystemMenu(
 {
    LPBOX               lpMenuBox;
    WORD                wReturnValue;
-   int                 iSlot, i, iSavedTimes;
-   FILE               *fp;
+   int                 iSlot, i;
    const SDL_Rect      rect = {40, 60, 280, 135};
 
    //
@@ -583,25 +583,18 @@ PAL_SystemMenu(
 
       if (iSlot != MENUITEM_VALUE_CANCELLED)
       {
+         WORD wSavedTimes = 0;
          gpGlobals->bCurrentSaveSlot = (BYTE)iSlot;
 
-         iSavedTimes = 0;
          for (i = 1; i <= 5; i++)
          {
-            fp = fopen(va("%s%d%s", gConfig.pszSavePath, i, ".rpg"), "rb");
-            if (fp != NULL)
+            WORD curSavedTimes = GetSavedTimes(i);
+            if (curSavedTimes > wSavedTimes)
             {
-               WORD wSavedTimes;
-               fread(&wSavedTimes, sizeof(WORD), 1, fp);
-               fclose(fp);
-               wSavedTimes = SDL_SwapLE16(wSavedTimes);
-               if ((int)wSavedTimes > iSavedTimes)
-               {
-                  iSavedTimes = wSavedTimes;
-               }
+               wSavedTimes = curSavedTimes;
             }
          }
-         PAL_SaveGame(va("%s%d%s", gConfig.pszSavePath, iSlot, ".rpg"), iSavedTimes + 1);
+         PAL_SaveGame(va("%s%d%s", gConfig.pszSavePath, iSlot, ".rpg"), wSavedTimes + 1);
       }
       break;
 

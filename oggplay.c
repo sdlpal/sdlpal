@@ -29,9 +29,9 @@
 #include "players.h"
 #include "audio.h"
 #include <math.h>
+
 #if PAL_HAS_OGG
 #include <vorbis/vorbisfile.h>
-
 #include "resampler.h"
 
 #define FLAG_OY 0x01
@@ -236,8 +236,9 @@ static BOOL OGG_Rewind(LPOGGPLAYER player)
 																for vd here */
 		player->iStage = STAGE_PAGEOUT;
 		player->iFlags |= FLAG_VD | FLAG_VB;
+		player->fUseResampler = (player->vi.rate != gConfig.iSampleRate);
 
-		if (player->fUseResampler = player->vi.rate != gConfig.iSampleRate) {
+		if (player->fUseResampler) {
 			double factor = (double)player->vi.rate / (double)gConfig.iSampleRate;
 			for (i = 0; i < min(player->vi.channels, 2); i++)
 			{
@@ -477,9 +478,9 @@ OGG_Init(
 )
 {
 	LPOGGPLAYER player;
-	if (player = (LPOGGPLAYER)malloc(sizeof(OGGPLAYER)))
+	if ((player = (LPOGGPLAYER)malloc(sizeof(OGGPLAYER))) != NULL)
 	{
-		memset(player, 0, sizeof(LPOGGPLAYER));
+		memset(player, 0, sizeof(OGGPLAYER));
 
 		player->FillBuffer = OGG_FillBuffer;
 		player->Play = OGG_Play;
@@ -503,13 +504,18 @@ OGG_Init(
 				player->resampler[0] = NULL;
 			}
 		}
+	}
+	return (LPAUDIOPLAYER)player;
+}
 
-		return (LPAUDIOPLAYER)player;
-	}
-	else
-	{
-		return NULL;
-	}
+#else
+
+LPAUDIOPLAYER
+OGG_Init(
+	VOID
+)
+{
+	return NULL;
 }
 
 #endif

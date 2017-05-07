@@ -217,6 +217,8 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *eventlist)
 				if (event->data[0] == 0x51)
 					tempo = (event->extraData[0] << 16) | (event->extraData[1] << 8) | event->extraData[2];
 				break;
+			default:
+				break;
 			}
 			break;
 		}
