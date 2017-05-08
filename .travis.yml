@@ -55,6 +55,7 @@ matrix:
             - tools
             - build-tools-25.0.2
             - android-24
+            - extra-android-m2repository
         jdk: oraclejdk8
         before_install:
           - wget http://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip

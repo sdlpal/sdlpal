@@ -243,6 +243,18 @@ PAL_LimitConfig(
 	ConfigValue * pValue
 );
 
+BOOL
+PAL_GetConfigItem(
+	const char  *szName,
+	ConfigValue *value
+);
+
+BOOL
+PAL_SetConfigItem(
+	const char  *szName,
+	const ConfigValue *value
+);
+
 PAL_C_LINKAGE_END
 
 #endif

@@ -1,0 +1,34 @@
+<resources>
+    <string-array name="audio_rate">
+        <item>11025</item>
+        <item>22050</item>
+        <item>44100</item>
+    </string-array>
+    <string-array name="buffer_size">
+        <item>512</item>
+        <item>1024</item>
+        <item>2048</item>
+        <item>4096</item>
+        <item>8192</item>
+    </string-array>
+    <string-array name="cd_format">
+        <item>MP3</item>
+        <item>OGG</item>
+    </string-array>
+    <string-array name="music_format">
+        <item>MIDI</item>
+        <item>RIX</item>
+        <item>MP3</item>
+        <item>OGG</item>
+    </string-array>
+    <string-array name="opl_type">
+        <item>DOSBOX</item>
+        <item>MAME</item>
+        <item>DOSBOXNEW</item>
+    </string-array>
+    <string-array name="opl_rate">
+        <item>12429</item>
+        <item>24858</item>
+        <item>49716</item>
+    </string-array>
+</resources>

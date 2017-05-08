@@ -15,23 +15,20 @@
 #include "palcfg.h"
 #include "util.h"
 
-char externalStoragePath[1024];
-char midiInterFile[1024];
+#include <string>
 
-static int jstring_to_utf8(JNIEnv* env, jstring j_str, char *buffer, int capacity)
+static std::string g_basepath, g_configpath, g_midipath;
+static int g_screenWidth = 640, g_screenHeight = 400;
+const char* midiInterFile;
+
+static std::string jstring_to_utf8(JNIEnv* env, jstring j_str)
 {
     jsize length = env->GetStringUTFLength(j_str);
     const char * const base = env->GetStringUTFChars(j_str, NULL);
-    if (base == NULL)
-    {
-        return 0;
-    }
-    if (capacity <= length)
-        length = capacity - 1;
-    strncpy(buffer, base, length);
+    if (base == NULL) return "";
+    std::string value(base, length);
     env->ReleaseStringUTFChars(j_str, base);
-    buffer[length] = '\0';
-    return length;
+    return value;
 }
 
 static JavaVM* gJVM;
@@ -55,29 +52,134 @@ static JNIEnv* getJNIEnv()
     return env;
 }
 
-/* 
- * Class:     io_github_sdlpal_PalActivity 
- * Method:    setExternalStorage 
- * Signature: (Ljava/lang/String;)V
- */  
+/*
+ * Class:     io_github_sdlpal_PalActivity
+ * Method:    setAppPath
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)V
+ */
 EXTERN_C_LINKAGE
-JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setExternalStorage(JNIEnv *env, jclass cls, jstring j_str)  
+JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setAppPath(JNIEnv *env, jclass cls, jstring base_path, jstring cache_path)
 {
-    jstring_to_utf8(env, j_str, externalStoragePath, sizeof(externalStoragePath) - 8);
-    strcat(externalStoragePath, "/sdlpal/");
-    LOGV("JNI got externalStoragePath:%s", externalStoragePath);
+    g_basepath = jstring_to_utf8(env, base_path);
+    g_configpath = jstring_to_utf8(env, cache_path);
+    if (*g_basepath.rbegin() != '/') g_basepath.append("/");
+    if (*g_configpath.rbegin() != '/') g_configpath.append("/");
+    g_midipath = g_configpath + "intermediates.mid";
+    midiInterFile = g_midipath.c_str();
 }
 
-/* 
- * Class:     io_github_sdlpal_PalActivity 
- * Method:    setMIDIInterFile 
- * Signature: (Ljava/lang/String;)V
- */  
+/*
+ * Class:     io_github_sdlpal_PalActivity
+ * Method:    setScreenSize
+ * Signature: (II)V
+ */
 EXTERN_C_LINKAGE
-JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setMIDIInterFile(JNIEnv *env, jclass cls, jstring j_str)  
+JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setScreenSize(JNIEnv *env, jclass cls, int width, int height)
 {
-    jstring_to_utf8(env, j_str, midiInterFile, sizeof(midiInterFile));
-    LOGV("JNI got midi inter filename:%s", midiInterFile);
+    g_screenWidth = width;
+    g_screenHeight = height;
+}
+
+/*
+ * Class:     io_github_sdlpal_SettingsActivity
+ * Method:    loadConfigFile
+ * Signature: (V)Z
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_loadConfigFile(JNIEnv *env, jclass cls)
+{
+    PAL_LoadConfig(TRUE);
+    return gConfig.fLaunchSetting ? JNI_TRUE : JNI_FALSE;
+}
+
+/*
+ * Class:     io_github_sdlpal_SettingsActivity
+ * Method:    saveConfigFile
+ * Signature: (V)Z
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_saveConfigFile(JNIEnv *env, jclass cls)
+{
+    return PAL_SaveConfig() ? JNI_TRUE : JNI_FALSE;
+}
+
+/*
+ * Class:     io_github_sdlpal_SettingsActivity
+ * Method:    getConfigBoolean
+ * Signature: (Ljava/lang/String;)Z
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigBoolean(JNIEnv *env, jclass cls, jstring j_str)
+{
+    ConfigValue value;
+    std::string name = jstring_to_utf8(env, j_str);
+    return PAL_GetConfigItem(name.c_str(), &value) ? value.bValue : JNI_FALSE;
+}
+
+/*
+ * Class:     io_github_sdlpal_SettingsActivity
+ * Method:    getConfigInt
+ * Signature: (Ljava/lang/String;)I
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT int JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigInt(JNIEnv *env, jclass cls, jstring j_str)
+{
+    ConfigValue value;
+    std::string name = jstring_to_utf8(env, j_str);
+    return PAL_GetConfigItem(name.c_str(), &value) ? value.iValue : JNI_FALSE;
+}
+
+/*
+ * Class:     io_github_sdlpal_SettingsActivity
+ * Method:    getConfigString
+ * Signature: (Ljava/lang/String;)ILjava/lang/String;
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jstring JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigString(JNIEnv *env, jclass cls, jstring j_str)
+{
+    ConfigValue value;
+    std::string name = jstring_to_utf8(env, j_str);
+    return PAL_GetConfigItem(name.c_str(), &value) ? env->NewStringUTF(value.sValue) : nullptr;
+}
+
+/*
+ * Class:     io_github_sdlpal_SettingsActivity
+ * Method:    setConfigBoolean
+ * Signature: (Ljava/lang/String;Z)Z
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigBoolean(JNIEnv *env, jclass cls, jstring j_str, jboolean val)
+{
+    ConfigValue value = { (LPCSTR)(val ? TRUE : FALSE) };
+    std::string name = jstring_to_utf8(env, j_str);
+    return PAL_SetConfigItem(name.c_str(), &value) ? JNI_TRUE : JNI_FALSE;
+}
+
+/*
+ * Class:     io_github_sdlpal_SettingsActivity
+ * Method:    setConfigInt
+ * Signature: (Ljava/lang/String;I)Z
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigInt(JNIEnv *env, jclass cls, jstring j_str, int val)
+{
+    ConfigValue value = { (LPCSTR)val };
+    std::string name = jstring_to_utf8(env, j_str);
+    return PAL_SetConfigItem(name.c_str(), &value) ? JNI_TRUE : JNI_FALSE;
+}
+
+/*
+ * Class:     io_github_sdlpal_SettingsActivity
+ * Method:    setConfigString
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)I
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigString(JNIEnv *env, jclass cls, jstring j_str, jstring v_str)
+{
+    std::string name = jstring_to_utf8(env, j_str);
+    std::string val = jstring_to_utf8(env, v_str);
+    ConfigValue value = { val.c_str() };
+    return PAL_SetConfigItem(name.c_str(), &value) ? JNI_TRUE : JNI_FALSE;
 }
 
 EXTERN_C_LINKAGE
@@ -138,7 +240,7 @@ UTIL_BasePath(
    VOID
 )
 {
-    return externalStoragePath;
+    return g_basepath.c_str();
 }
 
 EXTERN_C_LINKAGE
@@ -147,7 +249,16 @@ UTIL_SavePath(
    VOID
 )
 {
-    return externalStoragePath;
+    return g_basepath.c_str();
+}
+
+EXTERN_C_LINKAGE
+LPCSTR
+UTIL_ConfigPath(
+   VOID
+)
+{
+    return g_configpath.c_str();
 }
 
 EXTERN_C_LINKAGE
@@ -157,16 +268,9 @@ UTIL_GetScreenSize(
    DWORD *pdwScreenHeight
 )
 {
-    JNIEnv* env = getJNIEnv();
-    jclass clazz = env->FindClass("io/github/sdlpal/PalActivity");
-    *pdwScreenWidth = env->GetStaticIntField(clazz, env->GetStaticFieldID(clazz, "screenWidth", "I"));
-    *pdwScreenHeight = env->GetStaticIntField(clazz, env->GetStaticFieldID(clazz, "screenHeight", "I"));
-    if (*pdwScreenWidth == 0 || *pdwScreenHeight == 0)
-    {
-        *pdwScreenWidth  = 640;
-        *pdwScreenHeight = 400;
-    }
-    return TRUE;
+    if (*pdwScreenWidth) *pdwScreenWidth = g_screenWidth;
+    if (*pdwScreenHeight) *pdwScreenHeight = g_screenHeight;
+    return (pdwScreenWidth && pdwScreenHeight && *pdwScreenWidth && *pdwScreenHeight);
 }
 
 EXTERN_C_LINKAGE
@@ -196,8 +300,9 @@ UTIL_Platform_Init(
 		__android_log_print(level_mapping[level], TAG, "%s", str);
 	});
 
-   gConfig.fLaunchSetting = FALSE;
-   return 0;
+    FILE *fp = fopen((g_configpath + "running").c_str(), "w");
+    if (fp) fclose(fp);
+    return 0;
 }
 
 EXTERN_C_LINKAGE
@@ -206,4 +311,5 @@ UTIL_Platform_Quit(
    VOID
 )
 {
+    unlink((g_configpath + "running").c_str());
 }
