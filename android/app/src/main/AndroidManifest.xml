@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><!--
- Replace org.libsdl.app with the identifier of your game below, e.g.
-     com.gamemaker.game
--->
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.sdlpal"
     android:installLocation="auto"
     android:versionCode="2"
-    android:versionName="2.0"> <!-- Android 2.3.3 -->
+    android:versionName="2.0">
+
+    <!-- Android 2.3.3 -->
     <uses-sdk
         android:minSdkVersion="10"
         android:targetSdkVersion="12" />
@@ -18,16 +17,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!--
- Create a Java class extending SDLActivity and place it in a
-         directory under src matching the package, e.g.
-         	src/com/gamemaker/game/MyGame.java
 
-         then replace "SDLActivity" with the name of your class (e.g. "MyGame")
-         in the XML below.
-
-         An example Java class can be found in README-android.txt
-    -->
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
