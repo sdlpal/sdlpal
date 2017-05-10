@@ -17,7 +17,7 @@
 
 #include <string>
 
-static std::string g_basepath, g_configpath, g_midipath;
+static std::string g_basepath, g_configpath, g_cachepath, g_midipath;
 static int g_screenWidth = 640, g_screenHeight = 400;
 const char* midiInterFile;
 
@@ -58,13 +58,16 @@ static JNIEnv* getJNIEnv()
  * Signature: (Ljava/lang/String;Ljava/lang/String;)V
  */
 EXTERN_C_LINKAGE
-JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setAppPath(JNIEnv *env, jclass cls, jstring base_path, jstring cache_path)
+JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setAppPath(JNIEnv *env, jclass cls, jstring base_path, jstring data_path, jstring cache_path)
 {
     g_basepath = jstring_to_utf8(env, base_path);
-    g_configpath = jstring_to_utf8(env, cache_path);
+    g_configpath = jstring_to_utf8(env, data_path);
+    g_cachepath = jstring_to_utf8(env, cache_path);
+    LOGV("got basepath:%s,configpath:%s,cachepath:%s\n",g_basepath.c_str(),g_configpath.c_str(),g_cachepath.c_str());
     if (*g_basepath.rbegin() != '/') g_basepath.append("/");
     if (*g_configpath.rbegin() != '/') g_configpath.append("/");
-    g_midipath = g_configpath + "intermediates.mid";
+    if (*g_cachepath.rbegin() != '/') g_cachepath.append("/");
+    g_midipath = g_cachepath + "intermediates.mid";
     midiInterFile = g_midipath.c_str();
 }
 
@@ -300,7 +303,7 @@ UTIL_Platform_Init(
 		__android_log_print(level_mapping[level], TAG, "%s", str);
 	});
 
-    FILE *fp = fopen((g_configpath + "running").c_str(), "w");
+    FILE *fp = fopen((g_cachepath + "running").c_str(), "w");
     if (fp) fclose(fp);
     return 0;
 }
@@ -311,5 +314,5 @@ UTIL_Platform_Quit(
    VOID
 )
 {
-    unlink((g_configpath + "running").c_str());
+    unlink((g_cachepath + "running").c_str());
 }
