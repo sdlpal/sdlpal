@@ -53,7 +53,7 @@ MIDI_Play(
 
 	if (gConfig.fIsWIN95)
 	{
-		g_pMidi = native_midi_loadsong(va("%s/Musics/%.3d.mid", gConfig.pszGamePath, iNumRIX));
+		g_pMidi = native_midi_loadsong(va("%sMusics/%.3d.mid", gConfig.pszGamePath, iNumRIX));
 	}
 
 	if (!g_pMidi)
