@@ -287,7 +287,7 @@ extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 {
 #if defined(_DEBUG)
 	// Defaults log to debug output on debug builds
-	UTIL_LogSetOutput([](const char* str, const char* _)->void {
+	UTIL_LogSetOutput([](LOGLEVEL, const char* str, const char*)->void {
 		OutputDebugStringA(str);
 	}, 1024);
 #endif

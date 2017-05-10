@@ -140,8 +140,6 @@ UTIL_Platform_Quit(
  * Logging utilities
  */
 
-typedef void(*LOGCALLBACK)(const char *, const char *);
-
 typedef enum LOGLEVEL
 {
 	LOGLEVEL_MIN,
@@ -153,6 +151,8 @@ typedef enum LOGLEVEL
 	LOGLEVEL_FATAL,
 	LOGLEVEL_MAX = LOGLEVEL_FATAL,
 } LOGLEVEL;
+
+typedef void(*LOGCALLBACK)(LOGLEVEL, const char *, const char *);
 
 void
 UTIL_LogSetOutput(
