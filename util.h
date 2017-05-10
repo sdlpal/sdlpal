@@ -25,8 +25,6 @@
 
 #include "common.h"
 
-//#define ENABLE_LOG 1
-
 PAL_C_LINKAGE_BEGIN
 
 void
@@ -110,69 +108,70 @@ UTIL_CloseFile(
    FILE                *fp
 );
 
+
+/*
+ * Platform-specific utilities
+ */
+
 BOOL
 UTIL_GetScreenSize(
-   DWORD *pdwScreenWidth,
-   DWORD *pdwScreenHeight
+	DWORD *pdwScreenWidth,
+	DWORD *pdwScreenHeight
 );
 
 BOOL
 UTIL_IsAbsolutePath(
-	LPCSTR  lpszFileName
+	const char *lpszFileName
 );
 
-INT
+int
 UTIL_Platform_Init(
-   int argc,
-   char* argv[]
+	int   argc,
+	char *argv[]
 );
 
-VOID
+void
 UTIL_Platform_Quit(
-   VOID
+	void
+);
+
+
+/*
+ * Logging utilities
+ */
+
+typedef void(*LOGCALLBACK)(const char *, const char *);
+
+typedef enum LOGLEVEL
+{
+	LOGLEVEL_MIN,
+	LOGLEVEL_VERBOSE = LOGLEVEL_MIN,
+	LOGLEVEL_DEBUG,
+	LOGLEVEL_INFO,
+	LOGLEVEL_WARNING,
+	LOGLEVEL_ERROR,
+	LOGLEVEL_FATAL,
+	LOGLEVEL_MAX = LOGLEVEL_FATAL,
+} LOGLEVEL;
+
+void
+UTIL_LogSetOutput(
+	LOGCALLBACK    callback,
+	int            maxloglen
+);
+
+void
+UTIL_LogOutput(
+	LOGLEVEL       level,
+	const char    *fmt,
+	...
+);
+
+void
+UTIL_LogSetLevel(
+	LOGLEVEL       minlevel
 );
 
 PAL_C_LINKAGE_END
-
-#define LOG_EMERG           0 /* system is unusable */
-#define LOG_ALERT           1 /* action must be taken immediately */
-#define LOG_CRIT            2 /* critical conditions */
-#define LOG_ERR             3 /* error conditions */
-#define LOG_WARNING         4 /* warning conditions */
-#define LOG_NOTICE          5 /* normal but significant condition */
-#define LOG_INFO            6 /* informational */
-#define LOG_DEBUG           7 /* debug-level messages */
-#define LOG_LAST_PRIORITY   8 /* last level */
-
-#ifdef ENABLE_LOG
-
-PAL_C_LINKAGE_BEGIN
-
-FILE *
-UTIL_OpenLog(
-   VOID
-);
-
-VOID
-UTIL_CloseLog(
-   VOID
-);
-
-VOID
-UTIL_WriteLog(
-   int             Priority,
-   const char     *Fmt,
-   ...
-);
-
-PAL_C_LINKAGE_END
-
-#else
-
-# define UTIL_OpenLog()       ((void)(0))
-# define UTIL_CloseLog()      ((void)(0))
-# define UTIL_WriteLog(...)   ((void)(0))
-
-#endif
 
 #endif

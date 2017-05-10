@@ -285,6 +285,13 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 
 extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 {
+#if defined(_DEBUG)
+	// Defaults log to debug output on debug builds
+	UTIL_LogSetOutput([](const char* str, const char* _)->void {
+		OutputDebugStringA(str);
+	}, 1024);
+#endif
+
 	g_hInstance = GetModuleHandle(nullptr);
 #if !defined(__MINGW32__) || _WIN32_WINNT > _WIN32_WINNT_WS03 // compile time switch; use `make CCFLAGS=-D_WIN32_WINNT=_WIN32_WINNT_VISTA` for vista+ only automatic language detection
 	g_wLanguage = GetThreadUILanguage();
