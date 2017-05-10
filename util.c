@@ -580,10 +580,9 @@ UTIL_Platform_Quit(
 * Logging utilities
 */
 
-static LOGLEVEL _min_loglevel = LOGLEVEL_WARNING;
-
-static void(*_log_callback)(const char *, const char *) = NULL;
+static LOGCALLBACK _log_callback = NULL;
 static int _max_log_length = 0;
+static LOGLEVEL _min_loglevel = LOGLEVEL_WARNING;
 
 static const char * const _loglevel_str[] = {
 	"[VERBOSE]",
@@ -631,7 +630,7 @@ UTIL_LogOutput(
 	vsnprintf(buf + 31, maxloglen + 1, fmt, va);
 	va_end(va);
 
-	callback(buf, buf + 31);
+	callback(level, buf, buf + 31);
 	free(buf);
 }
 
