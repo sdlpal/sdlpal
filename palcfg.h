@@ -245,14 +245,15 @@ PAL_LimitConfig(
 
 BOOL
 PAL_GetConfigItem(
-	const char  *szName,
-	ConfigValue *value
+	const char * szName,
+	ConfigValue * pValue,
+	BOOL isDefault
 );
 
 BOOL
 PAL_SetConfigItem(
-	const char  *szName,
-	const ConfigValue *value
+	const char * szName,
+	const ConfigValue * pValue
 );
 
 PAL_C_LINKAGE_END

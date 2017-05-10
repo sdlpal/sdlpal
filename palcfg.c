@@ -506,13 +506,19 @@ PAL_SaveConfig(
 BOOL
 PAL_GetConfigItem(
 	const char  *szName,
-	ConfigValue *value
+	ConfigValue *value,
+	BOOL isDefault
 )
 {
 	for (int index = PALCFG_ALL_MIN; index < PALCFG_ALL_MAX; index++)
 	{
 		if (SDL_strcasecmp(gConfigItems[index].Name, szName) == 0)
 		{
+			if (isDefault)
+			{
+				*value = gConfigItems[index].DefaultValue;
+				return TRUE;
+			}
 			switch (index)
 			{
 			case PALCFG_FULLSCREEN:        value->bValue = gConfig.fFullScreen; return TRUE;
@@ -540,6 +546,7 @@ PAL_GetConfigItem(
 			case PALCFG_MUSIC:             value->sValue = music_types[gConfig.eMusicType]; return TRUE;
 			case PALCFG_OPL:               value->sValue = opl_types[gConfig.eOPLType]; return TRUE;
 			}
+			break;
 		}
 	}
 	return FALSE;

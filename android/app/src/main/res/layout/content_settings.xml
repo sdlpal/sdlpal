@@ -27,22 +27,15 @@
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="-1dp" />
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/edFolder"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/edFolder"
-                    android:layout_width="368dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="textUri"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="16dp" />
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textUri"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="16dp" />
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/swEmbedFont"
@@ -222,9 +215,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/action_suropl" />
+
             </LinearLayout>
 
-            <RelativeLayout
+            <android.support.v7.widget.GridLayout
+                app:columnCount="3"
+                app:rowCount="1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -235,9 +231,20 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginStart="20dp"
-                    android:text="@string/action_default" />
+                    android:text="@string/action_default"
+                    app:layout_column="0"
+                    app:layout_columnWeight="1" />
+
+                <Button
+                    android:id="@+id/btnReset"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/action_restore"
+                    app:layout_column="1"
+                    app:layout_columnWeight="1" />
 
                 <Button
                     android:id="@+id/btnFinish"
@@ -246,10 +253,10 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/action_finish" />
-            </RelativeLayout>
+                    android:text="@string/action_finish"
+                    app:layout_column="2"
+                    app:layout_columnWeight="1" />
+            </android.support.v7.widget.GridLayout>
 
         </LinearLayout>
     </ScrollView>

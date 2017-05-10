@@ -26,4 +26,5 @@
     <string name="msg_empty">必須指定遊戲資源檔案夾！</string>
     <string name="msg_exit">您的設定已保存，下次啟動時將直接開始遊戲。在遊戲中，您可以通過遊戲系統功能表的返回設定選項回到本設定頁面。</string>
     <string name="switch_simplified">簡</string>
+    <string name="action_restore">撤銷修改</string>
 </resources>

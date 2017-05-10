@@ -21,8 +21,9 @@
     <string name="label_oplrate">OPL emulator\'s samplerate</string>
     <string name="label_opl">OPL emulator</string>
     <string name="action_suropl">Surround OPL</string>
-    <string name="action_default">Default values</string>
-    <string name="action_finish">Finish Setting</string>
+    <string name="action_default">Default</string>
+    <string name="action_finish">Finish</string>
+    <string name="action_restore">Reset</string>
     <string name="msg_exit">Settings have been saved and the game will be started on next launch. You can use the main menu option inside the game to return to this page.</string>
     <string name="msg_crash">The program is abnormally terminated last time. The setting page has been launched for you. Please check if there are any incorrect settings.</string>
     <string name="msg_empty">The game resource folder must be specified!</string>

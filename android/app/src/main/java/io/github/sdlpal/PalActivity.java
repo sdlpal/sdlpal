@@ -40,9 +40,9 @@ public class PalActivity extends SDLActivity {
         String cachePath = getApplicationContext().getCacheDir().getPath();
         String sdcardState = Environment.getExternalStorageState();
         if (sdcardState.equals(Environment.MEDIA_MOUNTED)){
-            setAppPath(Environment.getExternalStorageDirectory().getPath() + "/sdlpal", dataPath, cachePath);
+            setAppPath(Environment.getExternalStorageDirectory().getPath() + "/sdlpal/", dataPath, cachePath);
         } else {
-            setAppPath("/sdcard/sdlpal", dataPath, cachePath);
+            setAppPath("/sdcard/sdlpal/", dataPath, cachePath);
         }
 
         DisplayMetrics metrics = new DisplayMetrics();

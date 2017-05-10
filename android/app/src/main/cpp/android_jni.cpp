@@ -109,40 +109,40 @@ JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_saveConfigFile
 /*
  * Class:     io_github_sdlpal_SettingsActivity
  * Method:    getConfigBoolean
- * Signature: (Ljava/lang/String;)Z
+ * Signature: (Ljava/lang/String;Z)Z
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigBoolean(JNIEnv *env, jclass cls, jstring j_str)
+JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigBoolean(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
 {
     ConfigValue value;
     std::string name = jstring_to_utf8(env, j_str);
-    return PAL_GetConfigItem(name.c_str(), &value) ? value.bValue : JNI_FALSE;
+    return PAL_GetConfigItem(name.c_str(), &value, defval) ? value.bValue : JNI_FALSE;
 }
 
 /*
  * Class:     io_github_sdlpal_SettingsActivity
  * Method:    getConfigInt
- * Signature: (Ljava/lang/String;)I
+ * Signature: (Ljava/lang/String;Z)I
  */
 EXTERN_C_LINKAGE
-JNIEXPORT int JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigInt(JNIEnv *env, jclass cls, jstring j_str)
+JNIEXPORT int JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigInt(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
 {
     ConfigValue value;
     std::string name = jstring_to_utf8(env, j_str);
-    return PAL_GetConfigItem(name.c_str(), &value) ? value.iValue : JNI_FALSE;
+    return PAL_GetConfigItem(name.c_str(), &value, defval) ? value.iValue : JNI_FALSE;
 }
 
 /*
  * Class:     io_github_sdlpal_SettingsActivity
  * Method:    getConfigString
- * Signature: (Ljava/lang/String;)ILjava/lang/String;
+ * Signature: (Ljava/lang/String;Z)ILjava/lang/String;
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jstring JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigString(JNIEnv *env, jclass cls, jstring j_str)
+JNIEXPORT jstring JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigString(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
 {
     ConfigValue value;
     std::string name = jstring_to_utf8(env, j_str);
-    return PAL_GetConfigItem(name.c_str(), &value) ? env->NewStringUTF(value.sValue) : nullptr;
+    return PAL_GetConfigItem(name.c_str(), &value, defval) ? env->NewStringUTF(value.sValue) : nullptr;
 }
 
 /*

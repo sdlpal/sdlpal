@@ -2,6 +2,7 @@ package io.github.sdlpal;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.SwitchCompat;
@@ -18,9 +19,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static native boolean loadConfigFile();
     public static native boolean saveConfigFile();
-    public static native boolean getConfigBoolean(String item);
-    public static native int getConfigInt(String item);
-    public static native String getConfigString(String item);
+    public static native boolean getConfigBoolean(String item, boolean defval);
+    public static native int getConfigInt(String item, boolean defval);
+    public static native String getConfigString(String item, boolean defval);
     public static native boolean setConfigBoolean(String item, boolean value);
     public static native boolean setConfigInt(String item, int value);
     public static native boolean setConfigString(String item, String value);
@@ -89,6 +90,13 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.btnReset).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetConfigs();
+            }
+        });
+
         findViewById(R.id.btnFinish).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,7 +117,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        setDefaults();
+        resetConfigs();
 
         if (PalActivity.crashed) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -142,32 +150,66 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     protected void setDefaults() {
+        String sdcardState = Environment.getExternalStorageState();
+
         findViewById(R.id.edLangFile).setVisibility(View.GONE);
         findViewById(R.id.layoutOPL).setVisibility(View.VISIBLE);
 
-        ((SeekBar)findViewById(R.id.sbMusVol)).setProgress(getConfigInt(MusicVolume));
-        ((SeekBar)findViewById(R.id.sbSFXVol)).setProgress(getConfigInt(SoundVolume));
-        ((SeekBar)findViewById(R.id.sbQuality)).setProgress(getConfigInt(ResampleQuality)); // Best quality
+        ((SeekBar)findViewById(R.id.sbMusVol)).setProgress(getConfigInt(MusicVolume, true));
+        ((SeekBar)findViewById(R.id.sbSFXVol)).setProgress(getConfigInt(SoundVolume, true));
+        ((SeekBar)findViewById(R.id.sbQuality)).setProgress(getConfigInt(ResampleQuality, true));
 
-        String langFile = getConfigString(MessageFileName);
-        ((EditText)findViewById(R.id.edFolder)).setText(getConfigString(GamePath));
-        ((EditText)findViewById(R.id.edLangFile)).setText(langFile);
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+            ((EditText)findViewById(R.id.edFolder)).setText(Environment.getExternalStorageDirectory().getPath() + "/sdlpal/");
+        } else {
+            ((EditText)findViewById(R.id.edFolder)).setText("/sdcard/sdlpal/");
+        }
+        ((EditText)findViewById(R.id.edLangFile)).setText("");
 
-        ((SwitchCompat)findViewById(R.id.swEmbedFont)).setChecked(getConfigBoolean(UseEmbeddedFonts));
-        ((SwitchCompat)findViewById(R.id.swCustomLang)).setChecked(langFile != null && !langFile.isEmpty());
-        ((SwitchCompat)findViewById(R.id.swGameLang)).setChecked(getConfigInt(CodePage) != 0);
-        ((SwitchCompat)findViewById(R.id.swTouch)).setChecked(getConfigBoolean(UseTouchOverlay));
-        ((SwitchCompat)findViewById(R.id.swAspect)).setChecked(getConfigBoolean(KeepAspectRatio));
-        ((SwitchCompat)findViewById(R.id.swSurround)).setChecked(getConfigBoolean(UseSurroundOPL));
+        ((SwitchCompat)findViewById(R.id.swEmbedFont)).setChecked(getConfigBoolean(UseEmbeddedFonts, true));
+        ((SwitchCompat)findViewById(R.id.swCustomLang)).setChecked(false);
+        ((SwitchCompat)findViewById(R.id.swGameLang)).setChecked(getConfigInt(CodePage, true) != 0);
+        ((SwitchCompat)findViewById(R.id.swTouch)).setChecked(getConfigBoolean(UseTouchOverlay, true));
+        ((SwitchCompat)findViewById(R.id.swAspect)).setChecked(getConfigBoolean(KeepAspectRatio, true));
+        ((SwitchCompat)findViewById(R.id.swSurround)).setChecked(getConfigBoolean(UseSurroundOPL, true));
+        ((SwitchCompat)findViewById(R.id.swStereo)).setChecked(getConfigBoolean(Stereo, true));
 
-        ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate), AudioSampleRates, 2));    // 44100Hz
-        ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize), AudioBufferSizes, 1));    // 1024
-        ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat), CDFormats, 1));     // OGG
-        ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat), MusicFormats, 1));    // RIX
-        ((AppCompatSpinner)findViewById(R.id.spOPL)).setSelection(findMatchedStringIndex(getConfigString(OPLFormat), OPLFormats, 1));       // MAME
-        ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate), OPLSampleRates, 2));  // 49716Hz
+        ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, true), AudioSampleRates, 2));    // 44100Hz
+        ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, true), AudioBufferSizes, 1));    // 1024
+        ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, true), CDFormats, 1));     // OGG
+        ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, true), MusicFormats, 1));    // RIX
+        ((AppCompatSpinner)findViewById(R.id.spOPL)).setSelection(findMatchedStringIndex(getConfigString(OPLFormat, true), OPLFormats, 1));       // MAME
+        ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, true), OPLSampleRates, 2));  // 49716Hz
     }
 
+
+    protected void resetConfigs() {
+        findViewById(R.id.edLangFile).setVisibility(View.GONE);
+        findViewById(R.id.layoutOPL).setVisibility(View.VISIBLE);
+
+        ((SeekBar)findViewById(R.id.sbMusVol)).setProgress(getConfigInt(MusicVolume, false));
+        ((SeekBar)findViewById(R.id.sbSFXVol)).setProgress(getConfigInt(SoundVolume, false));
+        ((SeekBar)findViewById(R.id.sbQuality)).setProgress(getConfigInt(ResampleQuality, false)); // Best quality
+
+        String langFile = getConfigString(MessageFileName, false);
+        ((EditText)findViewById(R.id.edFolder)).setText(getConfigString(GamePath, false));
+        ((EditText)findViewById(R.id.edLangFile)).setText(langFile);
+
+        ((SwitchCompat)findViewById(R.id.swEmbedFont)).setChecked(getConfigBoolean(UseEmbeddedFonts, false));
+        ((SwitchCompat)findViewById(R.id.swCustomLang)).setChecked(langFile != null && !langFile.isEmpty());
+        ((SwitchCompat)findViewById(R.id.swGameLang)).setChecked(getConfigInt(CodePage, false) != 0);
+        ((SwitchCompat)findViewById(R.id.swTouch)).setChecked(getConfigBoolean(UseTouchOverlay, false));
+        ((SwitchCompat)findViewById(R.id.swAspect)).setChecked(getConfigBoolean(KeepAspectRatio, false));
+        ((SwitchCompat)findViewById(R.id.swSurround)).setChecked(getConfigBoolean(UseSurroundOPL, false));
+        ((SwitchCompat)findViewById(R.id.swStereo)).setChecked(getConfigBoolean(Stereo, false));
+
+        ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, false), AudioSampleRates, 2));    // 44100Hz
+        ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, false), AudioBufferSizes, 1));    // 1024
+        ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, false), CDFormats, 1));     // OGG
+        ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, false), MusicFormats, 1));    // RIX
+        ((AppCompatSpinner)findViewById(R.id.spOPL)).setSelection(findMatchedStringIndex(getConfigString(OPLFormat, false), OPLFormats, 1));       // MAME
+        ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, false), OPLSampleRates, 2));  // 49716Hz
+    }
 
     protected boolean setConfigs() {
         if (((EditText)findViewById(R.id.edFolder)).getText().toString().isEmpty()) {
@@ -196,6 +238,7 @@ public class SettingsActivity extends AppCompatActivity {
         setConfigBoolean(UseTouchOverlay, ((SwitchCompat)findViewById(R.id.swTouch)).isChecked());
         setConfigBoolean(KeepAspectRatio, ((SwitchCompat)findViewById(R.id.swAspect)).isChecked());
         setConfigBoolean(UseSurroundOPL, ((SwitchCompat)findViewById(R.id.swSurround)).isChecked());
+        setConfigBoolean(Stereo, ((SwitchCompat)findViewById(R.id.swStereo)).isChecked());
 
         setConfigInt(SampleRate, Integer.parseInt((String)((AppCompatSpinner)findViewById(R.id.spSample)).getSelectedItem()));
         setConfigInt(AudioBufferSize, Integer.parseInt((String)((AppCompatSpinner)findViewById(R.id.spBuffer)).getSelectedItem()));
