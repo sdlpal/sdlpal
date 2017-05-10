@@ -576,65 +576,74 @@ UTIL_Platform_Quit(
 
 #endif
 
-#ifdef ENABLE_LOG
+/*
+* Logging utilities
+*/
 
-static FILE *pLogFile = NULL;
+static LOGLEVEL _min_loglevel = LOGLEVEL_WARNING;
 
-FILE *
-UTIL_OpenLog(
-   VOID
+static void(*_log_callback)(const char *, const char *) = NULL;
+static int _max_log_length = 0;
+
+static const char * const _loglevel_str[] = {
+	"[VERBOSE]",
+	"  [DEBUG]",
+	"   [INFO]",
+	"[WARNING]",
+	"  [ERROR]",
+	"  [FATAL]",
+};
+
+void
+UTIL_LogSetOutput(
+	LOGCALLBACK    callback,
+	int            maxloglen
 )
 {
-   if ((pLogFile = fopen(va("%slog.txt", gConfig.pszSavePath), "a+")) == NULL)
-   {
-      return NULL;
-   }
-
-   return pLogFile;
+	_log_callback = callback;
+	_max_log_length = maxloglen;
 }
 
-VOID
-UTIL_CloseLog(
-   VOID
+void
+UTIL_LogOutput(
+	LOGLEVEL       level,
+	const char    *fmt,
+	...
 )
 {
-   if (pLogFile != NULL)
-   {
-      fclose(pLogFile);
-   }
+	va_list      va;
+	time_t       tv = time(NULL);
+	struct tm   *tmval = localtime(&tv);
+	LOGCALLBACK  callback = _log_callback;
+	int          maxloglen = _max_log_length;
+	char        *buf;
+
+	if (level < _min_loglevel || !callback || maxloglen <= 0 ||
+		NULL == (buf = (char *)malloc(maxloglen + 32)))
+		return;
+
+	snprintf(buf, 32, "%04d-%02d-%02d %02d:%02d:%02d %s: ",
+		tmval->tm_year, tmval->tm_mon, tmval->tm_mday,
+		tmval->tm_hour, tmval->tm_min, tmval->tm_sec,
+		_loglevel_str[level > LOGLEVEL_MAX ? LOGLEVEL_MAX : level]);
+
+	va_start(va, fmt);
+	vsnprintf(buf + 31, maxloglen + 1, fmt, va);
+	va_end(va);
+
+	callback(buf, buf + 31);
+	free(buf);
 }
 
-VOID
-UTIL_WriteLog(
-   int             Priority,
-   const char     *Fmt,
-   ...
+void
+UTIL_LogSetLevel(
+	LOGLEVEL       minlevel
 )
 {
-   va_list       vaa;
-   time_t        lTime;
-   struct tm    *curTime;
-   char          szDateBuf[260];
-
-   time(&lTime);
-
-   if ((Priority < LOG_EMERG) || (Priority >= LOG_LAST_PRIORITY))
-   {
-      return;
-   }
-
-   curTime = localtime(&lTime);
-   strftime(szDateBuf, 128, "%Y-%m-%d   %H:%M:%S", curTime);
-   szDateBuf[strlen(szDateBuf) - 1] = '\0'; //remove the
-
-   va_start(vaa,Fmt);
-
-   fprintf(pLogFile, "[%s]", szDateBuf);
-   vfprintf(pLogFile, Fmt, vaa);
-   fprintf(pLogFile, "\n");
-   fflush(pLogFile);
-
-   va_end(vaa);
+	if (minlevel < LOGLEVEL_MIN)
+		_min_loglevel = LOGLEVEL_MIN;
+	else if (minlevel > LOGLEVEL_MAX)
+		_min_loglevel = LOGLEVEL_MAX;
+	else
+		_min_loglevel = minlevel;
 }
-
-#endif

@@ -150,8 +150,6 @@ PAL_Shutdown(
    PAL_ShutdownInput();
    VIDEO_Shutdown();
 
-   UTIL_CloseLog();
-
    SDL_Quit();
    UTIL_Platform_Quit();
 #if defined(LONGJMP_EXIT)
@@ -478,8 +476,6 @@ main(
       chdir(buf);
    }
 #endif
-
-   UTIL_OpenLog();
 
 #if !defined(UNIT_TEST) || defined(UNIT_TEST_GAME_INIT)
    PAL_LoadConfig(TRUE);
