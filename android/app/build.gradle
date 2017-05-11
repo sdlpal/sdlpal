@@ -18,8 +18,17 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+        debug {
+            jniDebuggable true
+            externalNativeBuild {
+                ndkBuild {
+                    cFlags "-DDEBUG", "-g"
+                    cppFlags "-DDEBUG", "-g"
+                }
+            }
         }
     }
     externalNativeBuild {
