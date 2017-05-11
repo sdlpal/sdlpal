@@ -51,6 +51,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_INTEGER_MIN = PALCFG_BOOLEAN_MAX,
 	/* Integers */
 	PALCFG_SURROUNDOPLOFFSET = PALCFG_INTEGER_MIN,
+	PALCFG_LOGLEVEL,
 	/* Integers */
 	PALCFG_INTEGER_MAX,
 
@@ -177,6 +178,7 @@ typedef struct tagCONFIGURATION
 	INT              iResampleQuality;
 	INT              iMusicVolume;
 	INT              iSoundVolume;
+	LOGLEVEL         iLogLevel;
 	MUSICTYPE        eMusicType;
 	MUSICTYPE        eCDType;
 	OPLTYPE          eOPLType;
