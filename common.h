@@ -226,4 +226,6 @@ typedef enum tagLOGLEVEL
 	LOGLEVEL_MAX = LOGLEVEL_FATAL,
 } LOGLEVEL;
 
+#define PAL_LOG_MAX_OUTPUTS   4
+
 #endif

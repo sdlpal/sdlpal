@@ -205,20 +205,12 @@ PAL_FreeGlobals(
    if (!gConfig.fIsWIN95)
       PAL_FreeObjectDesc(gpGlobals->lpObjectDesc);
 
-#if USE_RIX_EXTRA_INIT
-   free(gConfig.pExtraFMRegs);
-   free(gConfig.pExtraFMVals);
-   free(gConfig.dwExtraLength);
-#endif
-   free(gConfig.pszMsgFile);
-   free(gConfig.pszBdfFile);
-   free(gConfig.pszGamePath);
-
    //
    // Clear the instance
    //
    memset(gpGlobals, 0, sizeof(GLOBALVARS));
-   memset(&gConfig, 0, sizeof(CONFIGURATION));
+
+   PAL_FreeConfig();
 }
 
 

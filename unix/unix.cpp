@@ -253,7 +253,7 @@ UTIL_Platform_Init(
 )
 {
 	openlog("sdlpal", LOG_PERROR | LOG_PID, LOG_USER);
-	UTIL_LogSetOutput([](LOGLEVEL level, const char* str, const char*)->void {
+	UTIL_LogAddOutputCallback([](LOGLEVEL level, const char* str, const char*)->void {
 		const static int priorities[] = {
 			LOG_DEBUG,
 			LOG_DEBUG,
@@ -263,7 +263,7 @@ UTIL_Platform_Init(
 			LOG_EMERG
 		};
 		syslog(priorities[level], "%s", str);
-	}, 1024, TRUE);
+	});
 
 #if !defined(UNIT_TEST) && !defined(PAL_NO_LAUNCH_UI)
    if (gConfig.fLaunchSetting)

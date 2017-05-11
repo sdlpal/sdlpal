@@ -64,6 +64,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_BDFFILE,           PALCFG_STRING,   "BDFFileName",       11, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_MUSIC,             PALCFG_STRING,   "Music",              5, MAKE_VALUE("RIX",    NULL, NULL) },
 	{ PALCFG_OPL,               PALCFG_STRING,   "OPL",                3, MAKE_VALUE("DOSBOX", NULL, NULL) },
+	{ PALCFG_LOGFILE,           PALCFG_STRING,   "LogFile",            7, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_CLIMIDIPLAYER,     PALCFG_STRING,   "CLIMIDIPlayer",     13, MAKE_VALUE(NULL,     NULL, NULL) },
 };
@@ -222,7 +223,28 @@ PAL_LimitConfig(
 	}
 }
 
-VOID
+
+void
+PAL_FreeConfig(
+	void
+)
+{
+
+#if USE_RIX_EXTRA_INIT
+	free(gConfig.pExtraFMRegs);
+	free(gConfig.pExtraFMVals);
+	free(gConfig.dwExtraLength);
+#endif
+	free(gConfig.pszMsgFile);
+	free(gConfig.pszBdfFile);
+	free(gConfig.pszGamePath);
+	free(gConfig.pszSavePath);
+	free(gConfig.pszLogFile);
+
+	memset(&gConfig, 0, sizeof(CONFIGURATION));
+}
+
+void
 PAL_LoadConfig(
 	BOOL fFromFile
 )
@@ -292,6 +314,9 @@ PAL_LoadConfig(
 					break;
 				case PALCFG_SAVEPATH:
 					gConfig.pszSavePath = ParseStringValue(value.sValue, gConfig.pszSavePath);
+					break;
+				case PALCFG_LOGFILE:
+					gConfig.pszLogFile = ParseStringValue(value.sValue, gConfig.pszLogFile);
 					break;
 				case PALCFG_CD:
 				{
@@ -427,7 +452,7 @@ PAL_LoadConfig(
 
 BOOL
 PAL_SaveConfig(
-	VOID
+	void
 )
 {
 	static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
@@ -466,6 +491,7 @@ PAL_SaveConfig(
 		if (gConfig.pszSavePath && *gConfig.pszSavePath && strncmp(gConfig.pszSavePath, PAL_SAVE_PREFIX, strnlen(gConfig.pszSavePath,PATH_MAX)) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
 		if (gConfig.pszMsgFile && *gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 		if (gConfig.pszBdfFile && *gConfig.pszBdfFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_BDFFILE), gConfig.pszBdfFile); fputs(buf, fp); }
+		if (gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
 		if (gConfig.pszCLIMIDIPlayerPath && *gConfig.pszCLIMIDIPlayerPath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CLIMIDIPLAYER), gConfig.pszCLIMIDIPlayerPath); fputs(buf, fp); }
 
 		fclose(fp);

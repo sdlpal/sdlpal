@@ -185,7 +185,7 @@ UTIL_Platform_Init(
    char* argv[]
 )
 {
-	UTIL_LogSetOutput([](LOGLEVEL level, const char*, const char* str)->void {
+	UTIL_LogAddOutputCallback([](LOGLEVEL level, const char*, const char* str)->void {
 		const static int level_mapping[] = {
 			ANDROID_LOG_VERBOSE,
 			ANDROID_LOG_DEBUG,
@@ -194,7 +194,7 @@ UTIL_Platform_Init(
 			ANDROID_LOG_ERROR
 		};
 		__android_log_print(level_mapping[level], TAG, "%s", str);
-	}, 1024, TRUE);
+	});
 
    gConfig.fLaunchSetting = FALSE;
    return 0;
