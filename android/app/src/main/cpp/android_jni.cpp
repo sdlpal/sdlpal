@@ -185,6 +185,19 @@ UTIL_Platform_Init(
    char* argv[]
 )
 {
+#if defined(DEBUG)
+	UTIL_LogSetOutput([](LOGLEVEL level, const char*, const char* str)->void {
+		const static int level_mapping[] = {
+			ANDROID_LOG_VERBOSE,
+			ANDROID_LOG_DEBUG,
+			ANDROID_LOG_INFO,
+			ANDROID_LOG_WARN,
+			ANDROID_LOG_ERROR
+		};
+		__android_log_print(level_mapping[level], TAG, "%s", str);
+	}, 1024, TRUE);
+#endif
+
    gConfig.fLaunchSetting = FALSE;
    return 0;
 }
@@ -196,52 +209,3 @@ UTIL_Platform_Quit(
 )
 {
 }
-
-#ifdef ENABLE_NEWLOG
-
-static int maxLogLevel = LOG_WARNING;
-
-PAL_C_LINKAGE VOID
-UTIL_SetLogLevel(
-	int             level
-)
-{
-	if (level >= LOG_EMERG && level < LOG_LAST_PRIORITY)
-	{
-		maxLogLevel = level;
-	}
-}
-
-EXTERN_C_LINKAGE
-VOID
-UTIL_WriteLog(
-   int             Priority,
-   const char     *Fmt,
-   ...
-)
-{
-	if (Priority < LOG_EMERG || Priority > maxLogLevel)
-	{
-		return;
-	}
-    
-    switch(Priority)
-    {
-    case LOG_EMERG:   Priority = ANDROID_LOG_FATAL; break;
-    case LOG_ALERT:   Priority = ANDROID_LOG_FATAL; break;
-    case LOG_CRIT:    Priority = ANDROID_LOG_ERROR; break;
-    case LOG_ERR:     Priority = ANDROID_LOG_ERROR; break;
-    case LOG_WARNING: Priority = ANDROID_LOG_WARN; break;
-    case LOG_NOTICE:  Priority = ANDROID_LOG_INFO; break;
-    case LOG_INFO:    Priority = ANDROID_LOG_INFO; break;
-    case LOG_DEBUG:   Priority = ANDROID_LOG_DEBUG; break;
-    default:          Priority = ANDROID_LOG_VERBOSE; break;
-    }
-
-    va_list ap;
-    va_start(ap, Fmt);
-    __android_log_vprint(ANDROID_LOG_VERBOSE, TAG, Fmt, ap);
-    va_end(ap);
-}
-
-#endif
