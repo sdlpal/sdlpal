@@ -94,7 +94,7 @@
 		716552AA195BBE1B006E1227 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552A9195BBE1B006E1227 /* CoreAudio.framework */; };
 		716552AE195BBE7D006E1227 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AD195BBE7D006E1227 /* AudioToolbox.framework */; };
 		716552B0195BBECE006E1227 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AF195BBECE006E1227 /* QuartzCore.framework */; };
-		71AA35801A0BCA4E00793FFF /* util.m in Sources */ = {isa = PBXBuildFile; fileRef = 71AA357F1A0BCA4E00793FFF /* util.m */; };
+		71AA35801A0BCA4E00793FFF /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = 71AA357F1A0BCA4E00793FFF /* util.mm */; };
 		C622BE661E474B5E000C8970 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE641E474B5E000C8970 /* audio.c */; };
 		C622BE6C1E474C01000C8970 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6A1E474C01000C8970 /* palcfg.c */; };
 		C622BE701E474CA9000C8970 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6F1E474CA9000C8970 /* overlay.c */; };
@@ -336,7 +336,7 @@
 		716552AB195BBE4C006E1227 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		716552AD195BBE7D006E1227 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		716552AF195BBECE006E1227 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		71AA357F1A0BCA4E00793FFF /* util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = util.m; sourceTree = "<group>"; };
+		71AA357F1A0BCA4E00793FFF /* util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = util.mm; sourceTree = "<group>"; };
 		C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = "../../3rd/SDL/Xcode-iOS/SDL/SDL.xcodeproj"; sourceTree = "<group>"; };
 		C622BE641E474B5E000C8970 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = audio.c; path = ../../../audio.c; sourceTree = "<group>"; };
 		C622BE651E474B5E000C8970 /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio.h; path = ../../../audio.h; sourceTree = "<group>"; };
@@ -618,7 +618,7 @@
 		71655067195BB372006E1227 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				71AA357F1A0BCA4E00793FFF /* util.m */,
+				71AA357F1A0BCA4E00793FFF /* util.mm */,
 				7165507D195BB3D8006E1227 /* Icon.png */,
 				71655068195BB372006E1227 /* SDLPal-Info.plist */,
 				71655072195BB372006E1227 /* Default.png */,
@@ -790,9 +790,14 @@
 		71655055195BB372006E1227 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = codeplex;
+				CLASSPREFIX = github;
 				LastUpgradeCheck = 0460;
-				ORGANIZATIONNAME = "Wei Mingzhi";
+				ORGANIZATIONNAME = "SDLPAL team";
+				TargetAttributes = {
+					7165505C195BB372006E1227 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 71655058195BB372006E1227 /* Build configuration list for PBXProject "SDLPal" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -938,7 +943,7 @@
 				7165528D195BB6DB006E1227 /* video.c in Sources */,
 				7165528E195BB6DB006E1227 /* yj1.c in Sources */,
 				57FB014D1B7A50B0005FCF4C /* lpc.c in Sources */,
-				71AA35801A0BCA4E00793FFF /* util.m in Sources */,
+				71AA35801A0BCA4E00793FFF /* util.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1033,6 +1038,7 @@
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1057,6 +1063,7 @@
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

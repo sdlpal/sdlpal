@@ -1,6 +1,6 @@
 /*
  native_midi_android:  Native Midi support on iOS for SDLPal
- Copyright (C) 2017  Pal Lockheart
+ Copyright (C) 2017  SDLPal team
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -16,7 +16,7 @@
  License along with this library; if not, write to the Free
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  
- Pal Lockheart
+ SDLPal team
  */
 
 #include "SDL_config.h"
