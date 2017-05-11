@@ -252,22 +252,19 @@ UTIL_Platform_Init(
    char* argv[]
 )
 {
-#if defined(_DEBUG)
 	openlog("sdlpal", LOG_PERROR | LOG_PID, LOG_USER);
 	UTIL_LogSetOutput([](LOGLEVEL level, const char* str, const char*)->void {
-		int priority = LOG_DEBUG;
-		switch (level)
-		{
-		case LOGLEVEL_VERBOSE: priority = LOG_DEBUG; break;
-		case LOGLEVEL_DEBUG:   priority = LOG_DEBUG; break;
-		case LOGLEVEL_INFO:    priority = LOG_INFO; break;
-		case LOGLEVEL_WARNING: priority = LOG_WARNING; break;
-		case LOGLEVEL_ERROR:   priority = LOG_ERR; break;
-		case LOGLEVEL_FATAL:   priority = LOG_EMERG; break;
-		}
-		syslog(priority, "%s", str);
+		const static int priorities[] = {
+			LOG_DEBUG,
+			LOG_DEBUG,
+			LOG_INFO,
+			LOG_WARNING,
+			LOG_ERR,
+			LOG_EMERG
+		};
+		syslog(priorities[level], "%s", str);
 	}, 1024, TRUE);
-#endif
+
 #if !defined(UNIT_TEST) && !defined(PAL_NO_LAUNCH_UI)
    if (gConfig.fLaunchSetting)
    {

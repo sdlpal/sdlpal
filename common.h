@@ -214,4 +214,16 @@ typedef const WCHAR        *LPCWSTR;
 
 #define PAL_fread(buf, elem, num, fp) if (fread((buf), (elem), (num), (fp)) < (num)) return -1
 
+typedef enum tagLOGLEVEL
+{
+	LOGLEVEL_MIN,
+	LOGLEVEL_VERBOSE = LOGLEVEL_MIN,
+	LOGLEVEL_DEBUG,
+	LOGLEVEL_INFO,
+	LOGLEVEL_WARNING,
+	LOGLEVEL_ERROR,
+	LOGLEVEL_FATAL,
+	LOGLEVEL_MAX = LOGLEVEL_FATAL,
+} LOGLEVEL;
+
 #endif

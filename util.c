@@ -583,7 +583,6 @@ UTIL_Platform_Quit(
 static LOGCALLBACK _log_callback = NULL;
 static char *_global_log_buffer = NULL;
 static int _max_log_length = 0;
-static LOGLEVEL _min_loglevel = LOGLEVEL_WARNING;
 static const int _log_extra_length = 32;
 
 static const char * const _loglevel_str[] = {
@@ -630,14 +629,14 @@ UTIL_LogOutput(
 	int          maxloglen = _max_log_length;
 	int          local_alloc = (buf == NULL);
 
-	if (level < _min_loglevel || !callback || maxloglen <= 0) return;
-	if (local_alloc) buf = (char *)malloc(maxloglen + _log_extra_length);
-	if (NULL == buf) return;
+	if (level < gConfig.iLogLevel || !callback || maxloglen <= 0) return;
+	if (local_alloc && NULL == (buf = (char *)malloc(maxloglen + _log_extra_length))) return;
+	if (level > LOGLEVEL_MAX) level = LOGLEVEL_MAX;
 
 	snprintf(buf, _log_extra_length, "%04d-%02d-%02d %02d:%02d:%02d %s: ",
 		tmval->tm_year + 1900, tmval->tm_mon, tmval->tm_mday,
 		tmval->tm_hour, tmval->tm_min, tmval->tm_sec,
-		_loglevel_str[level > LOGLEVEL_MAX ? LOGLEVEL_MAX : level]);
+		_loglevel_str[level]);
 
 	va_start(va, fmt);
 	vsnprintf(buf + _log_extra_length - 1, maxloglen + 1, fmt, va);
@@ -653,9 +652,9 @@ UTIL_LogSetLevel(
 )
 {
 	if (minlevel < LOGLEVEL_MIN)
-		_min_loglevel = LOGLEVEL_MIN;
+		gConfig.iLogLevel = LOGLEVEL_MIN;
 	else if (minlevel > LOGLEVEL_MAX)
-		_min_loglevel = LOGLEVEL_MAX;
+		gConfig.iLogLevel = LOGLEVEL_MAX;
 	else
-		_min_loglevel = minlevel;
+		gConfig.iLogLevel = minlevel;
 }
