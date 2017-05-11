@@ -161,29 +161,40 @@ typedef void(*LOGCALLBACK)(LOGLEVEL level, const char *full_log, const char *use
 /*++
   Purpose:
 
-    Initialize the internal log system.
+    Adds a log output callback.
 
   Parameters:
 
-    [IN]  callback     - The callback function to be called at each
-	                     call of UTIL_LogOutput.
-    [IN]  maxloglen    - The max buffer size that holds the output
-	                     correspoind to user-provided format string,
-					     not including the terminal null-character.
-    [IN]  staticbuffer - Whether UTIL_LogOutput should generate the
-	                     output string into a one-time allocated global
-						 buffer, or to a per-call allocated locall buffer.
+    [IN]  callback     - The callback function to be added. Once added,
+	                     it will be called by UTIL_LogOutput.
 
   Return value:
 
-    None.
+    The id of this callback, -1 if all slots are used.
+
+--*/
+int
+UTIL_LogAddOutputCallback(
+	LOGCALLBACK    callback
+);
+
+/*++
+  Purpose:
+
+    Removes a log output callback.
+
+  Parameters:
+
+    [IN]  id           - The id of callback function to be removed.
+
+  Return value:
+
+    None
 
 --*/
 void
-UTIL_LogSetOutput(
-	LOGCALLBACK    callback,
-	int            maxloglen,
-	BOOL           staticbuffer
+UTIL_LogRemoveOutputCallback(
+	int            id
 );
 
 /*++
@@ -228,6 +239,13 @@ UTIL_LogOutput(
 void
 UTIL_LogSetLevel(
 	LOGLEVEL       minlevel
+);
+
+void
+UTIL_LogToFile(
+	LOGLEVEL       _,
+	const char    *string,
+	const char    *__
 );
 
 PAL_C_LINKAGE_END

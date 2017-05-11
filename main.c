@@ -493,6 +493,13 @@ main(
    //
    if (gConfig.fLaunchSetting)
 	   return 0;
+
+   //
+   // If user requests a file-based log, then add it after the system-specific one.
+   //
+   if (gConfig.pszLogFile)
+	   UTIL_LogAddOutputCallback(UTIL_LogToFile);
+
    //
    // Initialize everything
    //

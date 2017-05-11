@@ -286,9 +286,9 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 {
 	// Defaults log to debug output
-	UTIL_LogSetOutput([](LOGLEVEL, const char* str, const char*)->void {
+	UTIL_LogAddOutputCallback([](LOGLEVEL, const char* str, const char*)->void {
 		OutputDebugStringA(str);
-	}, 1024, TRUE);
+	});
 
 	g_hInstance = GetModuleHandle(nullptr);
 #if !defined(__MINGW32__) || _WIN32_WINNT > _WIN32_WINNT_WS03 // compile time switch; use `make CCFLAGS=-D_WIN32_WINNT=_WIN32_WINNT_VISTA` for vista+ only automatic language detection

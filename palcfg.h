@@ -78,6 +78,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_BDFFILE,
 	PALCFG_MUSIC,
 	PALCFG_OPL,
+	PALCFG_LOGFILE,
 	PALCFG_RIXEXTRAINIT,
 	PALCFG_CLIMIDIPLAYER,
 	/* Strings */
@@ -167,6 +168,7 @@ typedef struct tagCONFIGURATION
 	char            *pszMsgFile;
 	char            *pszBdfFile;
 	char            *pszCLIMIDIPlayerPath;
+	char            *pszLogFile;
 	CODEPAGE         uCodePage;
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;
@@ -203,14 +205,19 @@ PAL_C_LINKAGE_BEGIN
 
 extern CONFIGURATION gConfig;
 
-VOID
+void
 PAL_LoadConfig(
 	BOOL fFromFile
 );
 
 BOOL
 PAL_SaveConfig(
-	VOID
+	void
+);
+
+void
+PAL_FreeConfig(
+	void
 );
 
 BOOL

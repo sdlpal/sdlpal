@@ -580,10 +580,14 @@ UTIL_Platform_Quit(
 * Logging utilities
 */
 
-static LOGCALLBACK _log_callback = NULL;
-static char *_global_log_buffer = NULL;
-static int _max_log_length = 0;
-static const int _log_extra_length = 32;
+#ifndef PAL_LOG_BUFFER_SIZE
+# define PAL_LOG_BUFFER_SIZE      4096
+#endif
+
+#define PAL_LOG_BUFFER_EXTRA_SIZE 32
+
+static LOGCALLBACK _log_callbacks[PAL_LOG_MAX_OUTPUTS];
+static char _log_buffer[PAL_LOG_BUFFER_SIZE + PAL_LOG_BUFFER_EXTRA_SIZE];
 
 static const char * const _loglevel_str[] = {
 	"[VERBOSE]",
@@ -594,24 +598,42 @@ static const char * const _loglevel_str[] = {
 	"  [FATAL]",
 };
 
-void
-UTIL_LogSetOutput(
-	LOGCALLBACK    callback,
-	int            maxloglen,
-	BOOL           staticbuffer
+int
+UTIL_LogAddOutputCallback(
+	LOGCALLBACK    callback
 )
 {
-	_log_callback = callback;
-	_max_log_length = maxloglen;
-	if (staticbuffer)
+	if (!callback) return -1;
+
+	// De-duplication
+	for (int i = 0; i < PAL_LOG_MAX_OUTPUTS; i++)
 	{
-		_global_log_buffer = (char *)realloc(_global_log_buffer, maxloglen + _log_extra_length);
+		if (!_log_callbacks[i])
+		{
+			_log_callbacks[i] = callback;
+		}
+		if (_log_callbacks[i] == callback)
+		{
+			return i;
+		}
 	}
-	else
+
+	return -1;
+}
+
+void
+UTIL_LogRemoveOutputCallback(
+	int            id
+)
+{
+	if (id < 0 || id >= PAL_LOG_MAX_OUTPUTS) return;
+
+	while (id < PAL_LOG_MAX_OUTPUTS - 1)
 	{
-		free(_global_log_buffer);
-		_global_log_buffer = NULL;
+		_log_callbacks[id] = _log_callbacks[id + 1];
+		id++;
 	}
+	_log_callbacks[id] = NULL;
 }
 
 void
@@ -621,29 +643,28 @@ UTIL_LogOutput(
 	...
 )
 {
-	va_list      va;
-	time_t       tv = time(NULL);
-	struct tm   *tmval = localtime(&tv);
-	char        *buf = _global_log_buffer;
-	LOGCALLBACK  callback = _log_callback;
-	int          maxloglen = _max_log_length;
-	int          local_alloc = (buf == NULL);
+	va_list    va;
+	time_t     tv = time(NULL);
+	struct tm *tmval = localtime(&tv);
+	int        id;
 
-	if (level < gConfig.iLogLevel || !callback || maxloglen <= 0) return;
-	if (local_alloc && NULL == (buf = (char *)malloc(maxloglen + _log_extra_length))) return;
+	if (level < gConfig.iLogLevel || !_log_callbacks[0]) return;
 	if (level > LOGLEVEL_MAX) level = LOGLEVEL_MAX;
 
-	snprintf(buf, _log_extra_length, "%04d-%02d-%02d %02d:%02d:%02d %s: ",
+	snprintf(_log_buffer, PAL_LOG_BUFFER_EXTRA_SIZE,
+		"%04d-%02d-%02d %02d:%02d:%02d %s: ",
 		tmval->tm_year + 1900, tmval->tm_mon, tmval->tm_mday,
 		tmval->tm_hour, tmval->tm_min, tmval->tm_sec,
 		_loglevel_str[level]);
 
 	va_start(va, fmt);
-	vsnprintf(buf + _log_extra_length - 1, maxloglen + 1, fmt, va);
+	vsnprintf(_log_buffer + PAL_LOG_BUFFER_EXTRA_SIZE - 1, PAL_LOG_BUFFER_SIZE + 1, fmt, va);
 	va_end(va);
 
-	callback(level, buf, buf + 31);
-	if (local_alloc) free(buf);
+	for(id = 0; id < PAL_LOG_MAX_OUTPUTS && _log_callbacks[id]; id++)
+	{
+		_log_callbacks[id](level, _log_buffer, _log_buffer + PAL_LOG_BUFFER_EXTRA_SIZE - 1);
+	}
 }
 
 void
@@ -657,4 +678,19 @@ UTIL_LogSetLevel(
 		gConfig.iLogLevel = LOGLEVEL_MAX;
 	else
 		gConfig.iLogLevel = minlevel;
+}
+
+void
+UTIL_LogToFile(
+	LOGLEVEL       _,
+	const char    *string,
+	const char    *__
+)
+{
+	FILE *fp = fopen(gConfig.pszLogFile, "a");
+	if (fp)
+	{
+		fputs(string, fp);
+		fclose(fp);
+	}
 }
