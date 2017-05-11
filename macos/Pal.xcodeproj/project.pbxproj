@@ -110,6 +110,7 @@
 		C63505CD1EB462D600186049 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505CC1EB462D600186049 /* CoreVideo.framework */; };
 		C63505D31EB4631100186049 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D21EB4631100186049 /* ForceFeedback.framework */; };
 		C63505D41EB4633000186049 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D01EB4630200186049 /* Carbon.framework */; };
+		C63DF68B1EC50B7300C778B8 /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = C63DF68A1EC50B7300C778B8 /* util.mm */; };
 		C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11C1CFAF1780037E9A2 /* overlay.c */; };
 		C65BC11F1CFAF7790037E9A2 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11E1CFAF7790037E9A2 /* audio.c */; };
 /* End PBXBuildFile section */
@@ -388,6 +389,7 @@
 		C63505CE1EB462EB00186049 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		C63505D01EB4630200186049 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		C63505D21EB4631100186049 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
+		C63DF68A1EC50B7300C778B8 /* util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = util.mm; sourceTree = "<group>"; };
 		C65BC11C1CFAF1780037E9A2 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay.c; sourceTree = "<group>"; };
 		C65BC11E1CFAF7790037E9A2 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -510,6 +512,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C63DF68A1EC50B7300C778B8 /* util.mm */,
 				716EB9C60D77340300D5DE1F /* sdlpal.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -1050,6 +1053,7 @@
 				71E23E9F13F6D1AD001287B6 /* layer12.c in Sources */,
 				71E23EA413F6D1AD001287B6 /* music_mad.c in Sources */,
 				5757D2811B7A3D5800464A74 /* res0.c in Sources */,
+				C63DF68B1EC50B7300C778B8 /* util.mm in Sources */,
 				71E23EA913F6D1AD001287B6 /* stream.c in Sources */,
 				71E23EAB13F6D1AD001287B6 /* synth.c in Sources */,
 				5757D2961B7A3DCE00464A74 /* oggplay.c in Sources */,
@@ -1097,6 +1101,7 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1116,7 +1121,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_BUNDLE_IDENTIFIER = com.weimingzhi.Pal;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = Pal;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -1126,6 +1131,7 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1141,7 +1147,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_BUNDLE_IDENTIFIER = com.weimingzhi.Pal;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = Pal;
 				WRAPPER_EXTENSION = app;
 			};
