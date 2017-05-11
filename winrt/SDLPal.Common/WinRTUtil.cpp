@@ -162,6 +162,13 @@ static int input_event_filter(const SDL_Event *lpEvent, PALINPUTSTATE *state)
 extern "C"
 INT UTIL_Platform_Init(int argc, char* argv[])
 {
+#if defined(_DEBUG)
+	// Defaults log to debug output on debug builds
+	UTIL_LogSetOutput([](LOGLEVEL, const char* str, const char*)->void {
+		OutputDebugStringA(str);
+	}, 1024, TRUE);
+#endif
+
 	CreateRunningFile();
 
 	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeRight");
