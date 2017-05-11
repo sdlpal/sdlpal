@@ -581,8 +581,10 @@ UTIL_Platform_Quit(
 */
 
 static LOGCALLBACK _log_callback = NULL;
+static char *_global_log_buffer = NULL;
 static int _max_log_length = 0;
 static LOGLEVEL _min_loglevel = LOGLEVEL_WARNING;
+static const int _log_extra_length = 32;
 
 static const char * const _loglevel_str[] = {
 	"[VERBOSE]",
@@ -596,11 +598,21 @@ static const char * const _loglevel_str[] = {
 void
 UTIL_LogSetOutput(
 	LOGCALLBACK    callback,
-	int            maxloglen
+	int            maxloglen,
+	BOOL           staticbuffer
 )
 {
 	_log_callback = callback;
 	_max_log_length = maxloglen;
+	if (staticbuffer)
+	{
+		_global_log_buffer = (char *)realloc(_global_log_buffer, maxloglen + _log_extra_length);
+	}
+	else
+	{
+		free(_global_log_buffer);
+		_global_log_buffer = NULL;
+	}
 }
 
 void
@@ -613,25 +625,26 @@ UTIL_LogOutput(
 	va_list      va;
 	time_t       tv = time(NULL);
 	struct tm   *tmval = localtime(&tv);
+	char        *buf = _global_log_buffer;
 	LOGCALLBACK  callback = _log_callback;
 	int          maxloglen = _max_log_length;
-	char        *buf;
+	int          local_alloc = (buf == NULL);
 
-	if (level < _min_loglevel || !callback || maxloglen <= 0 ||
-		NULL == (buf = (char *)malloc(maxloglen + 32)))
-		return;
+	if (level < _min_loglevel || !callback || maxloglen <= 0) return;
+	if (local_alloc) buf = (char *)malloc(maxloglen + _log_extra_length);
+	if (NULL == buf) return;
 
-	snprintf(buf, 32, "%04d-%02d-%02d %02d:%02d:%02d %s: ",
-		tmval->tm_year, tmval->tm_mon, tmval->tm_mday,
+	snprintf(buf, _log_extra_length, "%04d-%02d-%02d %02d:%02d:%02d %s: ",
+		tmval->tm_year + 1900, tmval->tm_mon, tmval->tm_mday,
 		tmval->tm_hour, tmval->tm_min, tmval->tm_sec,
 		_loglevel_str[level > LOGLEVEL_MAX ? LOGLEVEL_MAX : level]);
 
 	va_start(va, fmt);
-	vsnprintf(buf + 31, maxloglen + 1, fmt, va);
+	vsnprintf(buf + _log_extra_length - 1, maxloglen + 1, fmt, va);
 	va_end(va);
 
 	callback(level, buf, buf + 31);
-	free(buf);
+	if (local_alloc) free(buf);
 }
 
 void

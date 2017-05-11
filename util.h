@@ -152,14 +152,68 @@ typedef enum LOGLEVEL
 	LOGLEVEL_MAX = LOGLEVEL_FATAL,
 } LOGLEVEL;
 
-typedef void(*LOGCALLBACK)(LOGLEVEL, const char *, const char *);
+/*++
+  Purpose:
 
+    The pointer to callback function that produces actual log output.
+
+  Parameters:
+
+    [IN]  level    - The log level of this output call.
+	[IN]  full_log - The full log string produced by UTIL_LogOutput.
+	[IN]  user_log - The log string produced by user-provided format.
+
+  Return value:
+
+    None.
+
+--*/
+typedef void(*LOGCALLBACK)(LOGLEVEL level, const char *full_log, const char *user_log);
+
+/*++
+  Purpose:
+
+    Initialize the internal log system.
+
+  Parameters:
+
+    [IN]  callback     - The callback function to be called at each
+	                     call of UTIL_LogOutput.
+    [IN]  maxloglen    - The max buffer size that holds the output
+	                     correspoind to user-provided format string,
+					     not including the terminal null-character.
+    [IN]  staticbuffer - Whether UTIL_LogOutput should generate the
+	                     output string into a one-time allocated global
+						 buffer, or to a per-call allocated locall buffer.
+
+  Return value:
+
+    None.
+
+--*/
 void
 UTIL_LogSetOutput(
 	LOGCALLBACK    callback,
-	int            maxloglen
+	int            maxloglen,
+	BOOL           staticbuffer
 );
 
+/*++
+  Purpose:
+
+    Set the minimal log level that could be output.
+	Any level below this level will produce no output.
+
+  Parameters:
+
+    [IN]  minlevel - The minimal log level, must be within the
+	                 range [LOGLEVEL_MIN, LOGLEVEL_MAX].
+
+  Return value:
+
+    None.
+
+--*/
 void
 UTIL_LogOutput(
 	LOGLEVEL       level,
@@ -167,6 +221,22 @@ UTIL_LogOutput(
 	...
 );
 
+/*++
+  Purpose:
+
+    Set the minimal log level that could be output.
+	Any level below this level will produce no output.
+
+  Parameters:
+
+    [IN]  minlevel - The minimal log level, must be within the
+	                 range [LOGLEVEL_MIN, LOGLEVEL_MAX].
+
+  Return value:
+
+    None.
+
+--*/
 void
 UTIL_LogSetLevel(
 	LOGLEVEL       minlevel
