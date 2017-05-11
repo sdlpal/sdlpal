@@ -13,8 +13,10 @@
 #include <vector>
 
 #include "native_midi/native_midi.h"
+#include "util.h"
+#include "palcfg.h"
 
-// Warning: this is a unverified implementation and this comment should be removed if verified
+#define CLIPLAYER_EXECUTABLE (which("timidity"))
 
 struct _NativeMidiSong
 {
@@ -28,20 +30,34 @@ struct _NativeMidiSong
 };
 
 const char* midi_file = "/tmp/sdlpal.temp.mid";
-char* timidity = nullptr;
+char* cliplayer = nullptr;
+
+static char *which(const char *cmd)
+{
+    char path[PATH_MAX];
+    FILE *fp = popen(va("which %s", cmd), "r");
+    if (fp == NULL) {
+        return NULL;
+    }else{
+        fgets(path, sizeof(path)-1, fp);
+        pclose(fp);
+        if( path[strlen(path)-1] == '\n' ) path[strlen(path)-1] = '\0';
+        if( path[strlen(path)-1] == '\r' ) path[strlen(path)-1] = '\0';
+        return path;
+    }
+}
 
 extern "C" int native_midi_detect()
 {
-    // FIXME!!!
-    if (timidity)
+    if (cliplayer)
     {
-        free(timidity);
-        timidity = nullptr;
+        free(cliplayer);
+        cliplayer = nullptr;
     }
-    //system `timidity -v` will cause CLI blocked by the version info...
-    if (access("/usr/bin/timidity",F_OK) == 0)
+    char *path = (gConfig.pszCLIMIDIPlayerPath ? gConfig.pszCLIMIDIPlayerPath : CLIPLAYER_EXECUTABLE);
+    if (path && access(path,F_OK) == 0)
     {
-        timidity = strdup("/usr/bin/timidity");
+        cliplayer = strdup(path);
         return 1;
     }
     else
@@ -87,7 +103,6 @@ extern "C" void native_midi_freesong(NativeMidiSong *song)
 {
     if (song)
     {
-	//stop it first to prevent app terminated by destructing joinable thread destruction 
 	if (native_midi_active(song)) 
 		native_midi_stop(song);
         if (song->file) delete []song->file;
@@ -111,8 +126,8 @@ extern "C" void native_midi_start(NativeMidiSong *song, int looping)
 
             if (0 == pid)
             {
-                char* args[] = { timidity, song->file, NULL };
-                if (-1 == execv(timidity, args)) exit(-1);
+                char* args[] = { cliplayer, song->file, NULL };
+                if (-1 == execv(cliplayer, args)) exit(-1);
             }
             else if (-1 == pid)
             {

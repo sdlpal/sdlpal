@@ -78,6 +78,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_MUSIC,
 	PALCFG_OPL,
 	PALCFG_RIXEXTRAINIT,
+	PALCFG_CLIMIDIPLAYER,
 	/* Strings */
 	PALCFG_STRING_MAX,
 
@@ -164,6 +165,7 @@ typedef struct tagCONFIGURATION
 	char            *pszSavePath;
 	char            *pszMsgFile;
 	char            *pszBdfFile;
+	char            *pszCLIMIDIPlayerPath;
 	CODEPAGE         uCodePage;
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;

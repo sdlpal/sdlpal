@@ -19,6 +19,12 @@
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Choice.H>
 
+#ifdef PAL_HAS_NATIVEMIDI
+    #define MUSIC_MIN MUSIC_MIDI
+#else
+    #define MUSIC_MIN MUSIC_RIX
+#endif
+
 struct {
    Fl_Input* gamepath;
    Fl_Radio_Round_Button* cht;
@@ -100,7 +106,7 @@ void InitControls()
 #endif
    gWidgets.fullscreen->value(gConfig.fFullScreen ? 1 : 0);
    gWidgets.cd->value(gConfig.eCDType - MUSIC_MP3);
-   gWidgets.bgm->value(gConfig.eMusicType - MUSIC_RIX);
+   gWidgets.bgm->value(gConfig.eMusicType - MUSIC_MIN);
    gWidgets.stereo->value(gConfig.iAudioChannels == 2 ? 1 : 0);
    sprintf(buffer, "%d", gConfig.iSampleRate); gWidgets.samplerate->value(buffer);
    gWidgets.opl->value(gConfig.eOPLType);
@@ -126,7 +132,7 @@ void SaveControls()
 #endif
    gConfig.fFullScreen = gWidgets.fullscreen->value();
    gConfig.eCDType = (MUSICTYPE)(gWidgets.cd->value() + MUSIC_MP3);
-   gConfig.eMusicType = (MUSICTYPE)(gWidgets.bgm->value() + MUSIC_RIX);
+   gConfig.eMusicType = (MUSICTYPE)(gWidgets.bgm->value() + MUSIC_MIN);
    gConfig.iAudioChannels = gWidgets.stereo->value() ? 2 : 1;
    gConfig.iSampleRate = atoi(gWidgets.samplerate->value());
    gConfig.eOPLType = (OPLTYPE)gWidgets.opl->value();
@@ -174,7 +180,7 @@ Fl_Window* InitWindow()
 
    (new Fl_Box(FL_BORDER_BOX, 5, 210, 630, 130, gLabels[lang].audio))->align(FL_ALIGN_TOP);
    (gWidgets.cd = new Fl_Choice(84, 219, lang ? 100 : 120, 22, gLabels[lang].cd))->add("MP3|OGG");
-   (gWidgets.bgm = new Fl_Choice(285, 219, 60, 22, gLabels[lang].bgm))->add("RIX|MP3|OGG");
+   (gWidgets.bgm = new Fl_Choice(285, 219, 60, 22, gLabels[lang].bgm))->add( va("%s%s",(PAL_HAS_NATIVEMIDI ? "MIDI|" : ""), "RIX|MP3|OGG") );
    gWidgets.stereo = new Fl_Check_Button(365, 220, 60, 20, gLabels[lang].stereo);
    gWidgets.samplerate = new Fl_Int_Input(570, 219, 60, 22, gLabels[lang].samplerate);
    (gWidgets.opl = new Fl_Choice(84, 249, lang ? 100 : 120, 22, gLabels[lang].opl))->add("DOSBOX|MAME|DOSBOXNEW");

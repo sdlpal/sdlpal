@@ -63,6 +63,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_MUSIC,             PALCFG_STRING,   "Music",              5, MAKE_VALUE("RIX",    NULL, NULL) },
 	{ PALCFG_OPL,               PALCFG_STRING,   "OPL",                3, MAKE_VALUE("DOSBOX", NULL, NULL) },
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_VALUE(NULL,     NULL, NULL) },
+	{ PALCFG_CLIMIDIPLAYER,     PALCFG_STRING,   "CLIMIDIPlayer",     13, MAKE_VALUE(NULL,     NULL, NULL) },
 };
 
 
@@ -365,6 +366,9 @@ PAL_LoadConfig(
 #endif
 					break;
 				}
+				case PALCFG_CLIMIDIPLAYER:
+					gConfig.pszCLIMIDIPlayerPath = ParseStringValue(value.sValue, gConfig.pszCLIMIDIPlayerPath);
+					break;
 				default:
 					values[item->Item] = value;
 					break;
@@ -458,6 +462,7 @@ PAL_SaveConfig(
 		if (gConfig.pszSavePath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
 		if (gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 		if (gConfig.pszBdfFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_BDFFILE), gConfig.pszBdfFile); fputs(buf, fp); }
+		if (gConfig.pszCLIMIDIPlayerPath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CLIMIDIPLAYER), gConfig.pszCLIMIDIPlayerPath); fputs(buf, fp); }
 
 		fclose(fp);
 

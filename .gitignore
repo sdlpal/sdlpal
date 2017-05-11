@@ -242,6 +242,7 @@ android/so
 resources
 
 unix/sdlpal
+sdlpal.cfg
 data
 
 *.xcscmblueprint
