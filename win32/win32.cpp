@@ -289,7 +289,7 @@ extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 	// Defaults log to debug output on debug builds
 	UTIL_LogSetOutput([](LOGLEVEL, const char* str, const char*)->void {
 		OutputDebugStringA(str);
-	}, 1024);
+	}, 1024, TRUE);
 #endif
 
 	g_hInstance = GetModuleHandle(nullptr);
