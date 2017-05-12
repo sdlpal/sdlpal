@@ -587,6 +587,7 @@ UTIL_Platform_Quit(
 #define PAL_LOG_BUFFER_EXTRA_SIZE 32
 
 static LOGCALLBACK _log_callbacks[PAL_LOG_MAX_OUTPUTS];
+static LOGLEVEL _log_callback_levels[PAL_LOG_MAX_OUTPUTS];
 static char _log_buffer[PAL_LOG_BUFFER_SIZE + PAL_LOG_BUFFER_EXTRA_SIZE];
 
 static const char * const _loglevel_str[] = {
@@ -600,7 +601,8 @@ static const char * const _loglevel_str[] = {
 
 int
 UTIL_LogAddOutputCallback(
-	LOGCALLBACK    callback
+	LOGCALLBACK    callback,
+	LOGLEVEL       loglevel
 )
 {
 	if (!callback) return -1;
@@ -614,6 +616,7 @@ UTIL_LogAddOutputCallback(
 		}
 		if (_log_callbacks[i] == callback)
 		{
+			_log_callback_levels[i] = loglevel;
 			return i;
 		}
 	}
@@ -631,9 +634,11 @@ UTIL_LogRemoveOutputCallback(
 	while (id < PAL_LOG_MAX_OUTPUTS - 1)
 	{
 		_log_callbacks[id] = _log_callbacks[id + 1];
+		_log_callback_levels[id] = _log_callback_levels[id + 1];
 		id++;
 	}
 	_log_callbacks[id] = NULL;
+	_log_callback_levels[id] = LOGLEVEL_MIN;
 }
 
 void
@@ -663,7 +668,10 @@ UTIL_LogOutput(
 
 	for(id = 0; id < PAL_LOG_MAX_OUTPUTS && _log_callbacks[id]; id++)
 	{
-		_log_callbacks[id](level, _log_buffer, _log_buffer + PAL_LOG_BUFFER_EXTRA_SIZE - 1);
+		if (level >= _log_callback_levels[id])
+		{
+			_log_callbacks[id](level, _log_buffer, _log_buffer + PAL_LOG_BUFFER_EXTRA_SIZE - 1);
+		}
 	}
 }
 

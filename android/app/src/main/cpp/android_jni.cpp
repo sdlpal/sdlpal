@@ -301,7 +301,7 @@ UTIL_Platform_Init(
 			ANDROID_LOG_ERROR
 		};
 		__android_log_print(level_mapping[level], TAG, "%s", str);
-	});
+	}, PAL_DEFAULT_LOGLEVEL);
 
     FILE *fp = fopen((g_cachepath + "running").c_str(), "w");
     if (fp) fclose(fp);

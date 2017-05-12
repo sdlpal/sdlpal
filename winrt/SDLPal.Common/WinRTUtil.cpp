@@ -165,7 +165,7 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 	// Defaults log to debug output
 	UTIL_LogAddOutputCallback([](LOGLEVEL, const char* str, const char*)->void {
 		OutputDebugStringA(str);
-	});
+	}, PAL_DEFAULT_LOGLEVEL);
 
 	CreateRunningFile();
 

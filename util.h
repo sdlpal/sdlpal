@@ -167,15 +167,19 @@ typedef void(*LOGCALLBACK)(LOGLEVEL level, const char *full_log, const char *use
 
     [IN]  callback     - The callback function to be added. Once added,
 	                     it will be called by UTIL_LogOutput.
+    [IN]  loglevel     - The minimal log level that the callback should
+	                     be called. Any log whose level below this will
+						 be ignored by the callback.
 
   Return value:
 
-    The id of this callback, -1 if all slots are used.
+    The slot id (>= 0), -1 if all slots are used or callback is NULL.
 
 --*/
 int
 UTIL_LogAddOutputCallback(
-	LOGCALLBACK    callback
+	LOGCALLBACK    callback,
+	LOGLEVEL       loglevel
 );
 
 /*++

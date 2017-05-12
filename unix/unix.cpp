@@ -263,7 +263,7 @@ UTIL_Platform_Init(
 			LOG_EMERG
 		};
 		syslog(priorities[level], "%s", str);
-	});
+	}, PAL_DEFAULT_LOGLEVEL);
 
 #if !defined(UNIT_TEST) && !defined(PAL_NO_LAUNCH_UI)
    if (gConfig.fLaunchSetting)

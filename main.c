@@ -498,7 +498,7 @@ main(
    // If user requests a file-based log, then add it after the system-specific one.
    //
    if (gConfig.pszLogFile)
-	   UTIL_LogAddOutputCallback(UTIL_LogToFile);
+	   UTIL_LogAddOutputCallback(UTIL_LogToFile, gConfig.iLogLevel);
 
    //
    // Initialize everything
