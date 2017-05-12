@@ -5,8 +5,7 @@
 extern "C" {
 #endif
 
-extern char externalStoragePath[1024];
-extern char midiInterFile[1024];
+extern char *midiInterFile;
 
 void* JNI_mediaplayer_load(const char *);
 void JNI_mediaplayer_free(void *);

@@ -1,17 +1,22 @@
 package io.github.sdlpal;
 
 import org.libsdl.app.SDLActivity;
+
+import android.content.Intent;
 import android.os.*;
 import android.util.*;
 import android.media.*;
 import android.net.Uri;
 import java.io.*;
-import java.util.*;
 
 public class PalActivity extends SDLActivity {
     private static final String TAG = "sdlpal-debug";
     private static MediaPlayer mediaPlayer;
-    private static int screenWidth, screenHeight;
+
+    public static native void setAppPath(String basepath, String datapath, String cachepath);
+    public static native void setScreenSize(int width, int height);
+
+    public static boolean crashed = false;
 
     private static MediaPlayer JNI_mediaplayer_load(String filename){
         Log.v(TAG, "loading midi:" + filename);
@@ -27,24 +32,39 @@ public class PalActivity extends SDLActivity {
         return mediaPlayer;
     }
 
-    public static native void setExternalStorage(String str);
-    public static native void setMIDIInterFile(String str);
-
     @Override
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);
-        String interFilePath = mSingleton.getApplicationContext().getCacheDir().getPath() + "/intermediates.mid";
-        Log.v(TAG, "java interfile path " + interFilePath);
-        setMIDIInterFile(interFilePath);
-        String externalStorageState = Environment.getExternalStorageState();
-        if (externalStorageState.equals(Environment.MEDIA_MOUNTED)){
-            setExternalStorage(Environment.getExternalStorageDirectory().getPath());
-            Log.v(TAG, "sdcard path " + Environment.getExternalStorageDirectory().getPath());
+
+        String dataPath = getApplicationContext().getFilesDir().getPath();
+        String cachePath = getApplicationContext().getCacheDir().getPath();
+        String sdcardState = Environment.getExternalStorageState();
+        if (sdcardState.equals(Environment.MEDIA_MOUNTED)){
+            setAppPath(Environment.getExternalStorageDirectory().getPath() + "/sdlpal/", dataPath, cachePath);
+        } else {
+            setAppPath("/sdcard/sdlpal/", dataPath, cachePath);
         }
+
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        screenWidth = metrics.widthPixels;
-        screenHeight = metrics.heightPixels;
+        setScreenSize(metrics.widthPixels, metrics.heightPixels);
+
+        File runningFile = new File(cachePath + "/running");
+        crashed = runningFile.exists();
+
+        if (SettingsActivity.loadConfigFile() || crashed) {
+            runningFile.delete();
+
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

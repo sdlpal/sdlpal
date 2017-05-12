@@ -69,6 +69,9 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_CLIMIDIPLAYER,     PALCFG_STRING,   "CLIMIDIPlayer",     13, MAKE_VALUE(NULL,     NULL, NULL) },
 };
 
+static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
+static const char *opl_types[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
+
 
 static char * ParseStringValue(const char *sValue, char *original)
 {
@@ -455,8 +458,6 @@ PAL_SaveConfig(
 	void
 )
 {
-	static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
-	static const char *opl_types[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
 	char buf[512];
 	FILE *fp = fopen(va("%ssdlpal.cfg", PAL_CONFIG_PREFIX), "w");
 
@@ -491,7 +492,7 @@ PAL_SaveConfig(
 		if (gConfig.pszSavePath && *gConfig.pszSavePath && strncmp(gConfig.pszSavePath, PAL_SAVE_PREFIX, strnlen(gConfig.pszSavePath, PAL_MAX_PATH)) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
 		if (gConfig.pszMsgFile && *gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 		if (gConfig.pszBdfFile && *gConfig.pszBdfFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_BDFFILE), gConfig.pszBdfFile); fputs(buf, fp); }
-		if (gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
+		if (gConfig.pszLogFile && *gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
 		if (gConfig.pszCLIMIDIPlayerPath && *gConfig.pszCLIMIDIPlayerPath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CLIMIDIPLAYER), gConfig.pszCLIMIDIPlayerPath); fputs(buf, fp); }
 
 		fclose(fp);
@@ -500,4 +501,145 @@ PAL_SaveConfig(
 	}
 	else
 		return FALSE;
+}
+
+BOOL
+PAL_GetConfigItem(
+	const char  *szName,
+	ConfigValue *value,
+	BOOL isDefault
+)
+{
+	for (int index = PALCFG_ALL_MIN; index < PALCFG_ALL_MAX; index++)
+	{
+		if (SDL_strcasecmp(gConfigItems[index].Name, szName) == 0)
+		{
+			if (isDefault)
+			{
+				*value = gConfigItems[index].DefaultValue;
+				return TRUE;
+			}
+			switch (index)
+			{
+			case PALCFG_FULLSCREEN:        value->bValue = gConfig.fFullScreen; return TRUE;
+			case PALCFG_KEEPASPECTRATIO:   value->bValue = gConfig.fKeepAspectRatio; return TRUE;
+			case PALCFG_LAUNCHSETTING:     value->bValue = gConfig.fLaunchSetting; return TRUE;
+			case PALCFG_STEREO:            value->bValue = (gConfig.iAudioChannels == 2); return TRUE;
+			case PALCFG_USEEMBEDDEDFONTS:  value->bValue = gConfig.fUseEmbeddedFonts; return TRUE;
+			case PALCFG_USESURROUNDOPL:    value->bValue = gConfig.fUseSurroundOPL; return TRUE;
+			case PALCFG_USETOUCHOVERLAY:   value->bValue = gConfig.fUseTouchOverlay; return TRUE;
+			case PALCFG_SURROUNDOPLOFFSET: value->iValue = gConfig.iSurroundOPLOffset; return TRUE;
+			case PALCFG_AUDIOBUFFERSIZE:   value->uValue = gConfig.wAudioBufferSize; return TRUE;
+			case PALCFG_CODEPAGE:          value->uValue = gConfig.uCodePage; return TRUE;
+			case PALCFG_OPLSAMPLERATE:     value->uValue = gConfig.iOPLSampleRate; return TRUE;
+			case PALCFG_RESAMPLEQUALITY:   value->uValue = gConfig.iResampleQuality; return TRUE;
+			case PALCFG_SAMPLERATE:        value->uValue = gConfig.iSampleRate; return TRUE;
+			case PALCFG_MUSICVOLUME:       value->uValue = gConfig.iMusicVolume; return TRUE;
+			case PALCFG_SOUNDVOLUME:       value->uValue = gConfig.iSoundVolume; return TRUE;
+			case PALCFG_WINDOWHEIGHT:      value->uValue = gConfig.dwScreenHeight; return TRUE;
+			case PALCFG_WINDOWWIDTH:       value->uValue = gConfig.dwScreenWidth; return TRUE;
+			case PALCFG_CD:                value->sValue = music_types[gConfig.eCDType]; return TRUE;
+			case PALCFG_GAMEPATH:          value->sValue = gConfig.pszGamePath; return TRUE;
+			case PALCFG_SAVEPATH:          value->sValue = gConfig.pszSavePath; return TRUE;
+			case PALCFG_MESSAGEFILE:       value->sValue = gConfig.pszMsgFile; return TRUE;
+			case PALCFG_BDFFILE:           value->sValue = gConfig.pszBdfFile; return TRUE;
+			case PALCFG_LOGFILE:           value->sValue = gConfig.pszLogFile; return TRUE;
+			case PALCFG_CLIMIDIPLAYER:     value->sValue = gConfig.pszCLIMIDIPlayerPath; return TRUE;
+			case PALCFG_MUSIC:             value->sValue = music_types[gConfig.eMusicType]; return TRUE;
+			case PALCFG_OPL:               value->sValue = opl_types[gConfig.eOPLType]; return TRUE;
+			}
+			break;
+		}
+	}
+	return FALSE;
+}
+
+
+BOOL
+PAL_SetConfigItem(
+	const char  *szName,
+	const ConfigValue *value
+)
+{
+	for (int index = PALCFG_ALL_MIN; index < PALCFG_ALL_MAX; index++)
+	{
+		if (SDL_strcasecmp(gConfigItems[index].Name, szName) == 0)
+		{
+			switch (index)
+			{
+			case PALCFG_FULLSCREEN:        gConfig.fFullScreen = value->bValue; return TRUE;
+			case PALCFG_KEEPASPECTRATIO:   gConfig.fKeepAspectRatio = value->bValue; return TRUE;
+			case PALCFG_LAUNCHSETTING:     gConfig.fLaunchSetting = value->bValue; return TRUE;
+			case PALCFG_STEREO:            gConfig.iAudioChannels = value->bValue ? 2 : 1; return TRUE;
+			case PALCFG_USEEMBEDDEDFONTS:  gConfig.fUseEmbeddedFonts = value->bValue; return TRUE;
+			case PALCFG_USESURROUNDOPL:    gConfig.fUseSurroundOPL = value->bValue; return TRUE;
+			case PALCFG_USETOUCHOVERLAY:   gConfig.fUseTouchOverlay = value->bValue; return TRUE;
+			case PALCFG_SURROUNDOPLOFFSET: gConfig.iSurroundOPLOffset = value->iValue; return TRUE;
+			case PALCFG_AUDIOBUFFERSIZE:   gConfig.wAudioBufferSize = value->uValue; return TRUE;
+			case PALCFG_CODEPAGE:          gConfig.uCodePage = value->uValue; return TRUE;
+			case PALCFG_OPLSAMPLERATE:     gConfig.iOPLSampleRate = value->uValue; return TRUE;
+			case PALCFG_RESAMPLEQUALITY:   gConfig.iResampleQuality = value->uValue; return TRUE;
+			case PALCFG_SAMPLERATE:        gConfig.iSampleRate = value->uValue; return TRUE;
+			case PALCFG_MUSICVOLUME:       gConfig.iMusicVolume = value->uValue; return TRUE;
+			case PALCFG_SOUNDVOLUME:       gConfig.iSoundVolume = value->uValue; return TRUE;
+			case PALCFG_WINDOWHEIGHT:      gConfig.dwScreenHeight = value->uValue; return TRUE;
+			case PALCFG_WINDOWWIDTH:       gConfig.dwScreenWidth = value->uValue; return TRUE;
+			case PALCFG_GAMEPATH:
+				if (gConfig.pszGamePath) free(gConfig.pszGamePath);
+				gConfig.pszGamePath = value->sValue && value->sValue[0] ? strdup(value->sValue) : strdup(PAL_SAVE_PREFIX);
+				return TRUE;
+			case PALCFG_SAVEPATH:
+				if (gConfig.pszSavePath) free(gConfig.pszSavePath);
+				gConfig.pszSavePath = value->sValue && value->sValue[0] ? strdup(value->sValue) : (gConfig.pszGamePath ? strdup(gConfig.pszGamePath) : strdup(PAL_SAVE_PREFIX));
+				return TRUE;
+			case PALCFG_MESSAGEFILE:
+				if (gConfig.pszMsgFile) free(gConfig.pszMsgFile);
+				gConfig.pszMsgFile = value->sValue && value->sValue[0] ? strdup(value->sValue) : NULL;
+				return TRUE;
+			case PALCFG_BDFFILE:
+				if (gConfig.pszBdfFile) free(gConfig.pszBdfFile);
+				gConfig.pszBdfFile = value->sValue && value->sValue[0] ? strdup(value->sValue) : NULL;
+				return TRUE;
+			case PALCFG_LOGFILE:
+				if (gConfig.pszLogFile) free(gConfig.pszLogFile);
+				gConfig.pszLogFile = value->sValue && value->sValue[0] ? strdup(value->sValue) : NULL;
+				return TRUE;
+			case PALCFG_CLIMIDIPLAYER:
+				if (gConfig.pszCLIMIDIPlayerPath) free(gConfig.pszCLIMIDIPlayerPath);
+				gConfig.pszCLIMIDIPlayerPath = value->sValue && value->sValue[0] ? strdup(value->sValue) : NULL;
+				return TRUE;
+			case PALCFG_CD:
+				for (int i = 0; i < sizeof(music_types) / sizeof(music_types[0]); i++)
+				{
+					if (SDL_strcasecmp(value->sValue, music_types[i]) == 0)
+					{
+						gConfig.eCDType = (MUSICTYPE)i;
+						return TRUE;
+					}
+				}
+				break;
+			case PALCFG_MUSIC:
+				for (int i = 0; i < sizeof(music_types) / sizeof(music_types[0]); i++)
+				{
+					if (SDL_strcasecmp(value->sValue, music_types[i]) == 0)
+					{
+						gConfig.eMusicType = (MUSICTYPE)i;
+						return TRUE;
+					}
+				}
+				break;
+			case PALCFG_OPL:
+				for (int i = 0; i < sizeof(opl_types) / sizeof(opl_types[0]); i++)
+				{
+					if (SDL_strcasecmp(value->sValue, opl_types[i]) == 0)
+					{
+						gConfig.eOPLType = (OPLTYPE)i;
+						return TRUE;
+					}
+				}
+				break;
+			}
+		}
+	}
+	return FALSE;
 }

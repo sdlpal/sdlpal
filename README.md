@@ -166,9 +166,19 @@ Configuring the game
 
 PAL has several variants using different and incompatible resource files, and SDLPAL supports several configuration options for supporting such variants. The default values are used to support the resources from original DOS version. If you want to change these configurations, you have two options: through the configuration GUI or by manipulating the configuration file *`sdlpal.cfg`* manually.
 
-Configuration GUI is available under *Windows Desktop*, *Universal Windows Platform* and *Linux (X11)*, which is able to change the most common configurations. If you launch SDLPAL for the first time, it will bring you to the configuration GUI by default. Once you have saved configurations from the GUI, it will default not to show again on following launches. However, you can bring it back again through the in-game system menu. You will also have the opportunity to bring it again if you encountered fatal game program errors. Configuration GUIs for *Android* and *iOS/macOS* are still unavailable for now and we welcome contributions to implement them.
+GUI
+---
+The configuration GUI provides options for you to change the most common configuration options. If you launch SDLPAL for the first time, it will bring you to the configuration GUI by default. Once you have saved configurations from the GUI, the GUI will not to show again on subsequent launches. However, you have the opportunity to bring the GUI back on fatal game program errors or through the in-game system menu.
 
-To set these configuration options manually, create a file named as *`sdlpal.cfg`* (make sure to use lower-case file name in case-sensitive filesystems) in the game directory created by the above step. Please refer to the file [sdlpal.cfg.example](https://raw.githubusercontent.com/sdlpal/sdlpal/master/sdlpal.cfg.example) for format specfication.
+Currently, the configuration GUI is available under the following platforms:
+* Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*) and *Linux*
+* Mobile platforms: *Android* and *Windows*
+
+Configuration GUIs for *iOS* and *macOS* are still unavailable for now and we welcome contributions to implement them.
+
+Manually
+--------
+To set the configuration options manually, create a file named as *`sdlpal.cfg`* (make sure to use lower-case file name in case-sensitive filesystems) in the game directory created by the above step. Please refer to the file [sdlpal.cfg.example](https://raw.githubusercontent.com/sdlpal/sdlpal/master/sdlpal.cfg.example) for format specfication.
 
 
 Reporting issues

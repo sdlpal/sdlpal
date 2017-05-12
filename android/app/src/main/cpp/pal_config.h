@@ -28,6 +28,7 @@
 
 # define PAL_PREFIX            UTIL_BasePath()
 # define PAL_SAVE_PREFIX       UTIL_SavePath()
+# define PAL_CONFIG_PREFIX     UTIL_ConfigPath()
 # define PAL_HAS_TOUCH         1
 # define PAL_DEFAULT_WINDOW_WIDTH   320
 # define PAL_DEFAULT_WINDOW_HEIGHT  200
@@ -46,7 +47,7 @@
 
 #define PAL_HAS_NATIVEMIDI  1
 
-#define PAL_HAS_CONFIG_PAGE 0
+#define PAL_HAS_CONFIG_PAGE 1
 
 #define PAL_FILESYSTEM_IGNORE_CASE 1
 
@@ -61,6 +62,11 @@ UTIL_BasePath(
 
 LPCSTR
 UTIL_SavePath(
+   VOID
+);
+
+LPCSTR
+UTIL_ConfigPath(
    VOID
 );
 
