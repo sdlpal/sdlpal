@@ -27,7 +27,7 @@ UTIL_Platform_Init(
 {
     UTIL_LogAddOutputCallback([](LOGLEVEL, const char* str, const char*)->void {
         NSLog(@"%s",str);
-    });
+    }, PAL_DEFAULT_LOGLEVEL);
     gConfig.fLaunchSetting = FALSE;
     return 0;
 }
