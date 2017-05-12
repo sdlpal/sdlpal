@@ -133,6 +133,16 @@ PAL_GetInvalidChar(
    CODEPAGE      uCodePage
 );
 
+CODEPAGE
+PAL_GetCodePage(
+	void
+);
+
+void
+PAL_SetCodePage(
+	CODEPAGE    uCodePage
+);
+
 INT
 PAL_swprintf(
 	LPWSTR buffer,

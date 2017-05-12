@@ -109,6 +109,93 @@ PAL_IsWINVersion_Exit:
 	return result;
 }
 
+CODEPAGE
+PAL_DetectCodePage(
+	void
+)
+{
+	// Try to convert the content of word.dat with different codepages,
+	// and use the codepage with minimal inconvertible characters
+	// Works fine currently for detecting Simplified Chinese & Traditional Chinese.
+	// Since we're using language files to support additional languages, this detection
+	// should be fine for us now.
+
+	FILE *fp;
+	char *word_buf = NULL;
+	long word_len = 0;
+	CODEPAGE cp = CP_BIG5;	// Defaults to BIG5
+
+	if (NULL != (fp = UTIL_OpenFile("word.dat")))
+	{
+		fseek(fp, 0, SEEK_END);
+		word_len = ftell(fp);
+		word_buf = (char *)malloc(word_len);
+		fseek(fp, 0, SEEK_SET);
+		fread(word_buf, 1, word_len, fp);
+		UTIL_CloseFile(fp);
+		// Eliminates null characters so that PAL_MultiByteToWideCharCP works properly
+		for (char *ptr = word_buf; ptr < word_buf + word_len; ptr++)
+		{
+			if (!*ptr)
+				*ptr = ' ';
+		}
+	}
+
+	if (word_buf)
+	{
+		// The WORD.DAT should not contain characters outside these ranges
+		const static int valid_ranges[][2] = {
+			{ 0x4E00, 0x9FFF }, // CJK Unified Ideographs
+			{ 0x3400, 0x4DBF }, // CJK Unified Ideographs Extension A
+			{ 0xF900, 0xFAFF }, // CJK Compatibility Ideographs
+			{ 0x0030, 0x0039 }, // 0 - 9, ASCII
+			{ 0xFF10, 0xFF19 }, // 0 - 9, full wide
+			{ 0x0041, 0x005A }, // A - Z, ASCII
+			{ 0xFF21, 0xFF3A }, // A - Z, full wide
+			{ 0x0061, 0x007A }, // a - z, ASCII
+			{ 0xFF41, 0xFF5A }, // a - z, full wide
+		};
+		int min_invalids = INT_MAX;
+
+		for (CODEPAGE i = CP_BIG5; i <= CP_GBK; i++)
+		{
+			int invalids, length = PAL_MultiByteToWideCharCP(i, word_buf, word_len, NULL, 0);
+			WCHAR *wbuf = (WCHAR *)malloc(length * sizeof(WCHAR));
+			PAL_MultiByteToWideCharCP(i, word_buf, word_len, wbuf, length);
+			for (int j = invalids = 0; j < length; j++)
+			{
+				int score = 1;
+				if (iswspace(wbuf[j])) continue;
+				for (int k = 0; k < sizeof(valid_ranges) / sizeof(valid_ranges[0]); k++)
+				{
+					if (wbuf[j] >= valid_ranges[k][0] &&
+						wbuf[j] <= valid_ranges[k][1])
+					{
+						score = 0;
+						break;
+					}
+				}
+				invalids += score;
+			}
+			// code page with less invalid chars wins
+			if (invalids < min_invalids)
+			{
+				min_invalids = invalids;
+				cp = i;
+			}
+			free(wbuf);
+		}
+		free(word_buf);
+
+		if (min_invalids == 0)
+			UTIL_LogOutput(LOGLEVEL_INFO, "%s detected code page: %s\n", __func__, cp ? "GBK" : "BIG5");
+		else
+			UTIL_LogOutput(LOGLEVEL_WARNING, "%s detected possible code page: %s [%d invalids]\n", __func__, cp ? "GBK" : "BIG5", min_invalids);
+	}
+
+	return cp;
+}
+
 INT
 PAL_InitGlobals(
    VOID
@@ -141,9 +228,14 @@ PAL_InitGlobals(
    gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
 
    //
-   // Retrieve game resource version & language
+   // Retrieve game resource version
    //
    if (!PAL_IsWINVersion(&gConfig.fIsWIN95)) return -1;
+
+   //
+   // Detect game language only when no message file specified
+   //
+   if (!gConfig.pszMsgFile) PAL_SetCodePage(PAL_DetectCodePage());
 
    //
    // Set decompress function

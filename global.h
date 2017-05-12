@@ -554,6 +554,11 @@ PAL_IsWINVersion(
    BOOL *pfIsWIN95
 );
 
+CODEPAGE
+PAL_DetectCodePage(
+	void
+);
+
 INT
 PAL_InitGlobals(
    VOID

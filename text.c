@@ -698,10 +698,10 @@ PAL_InitText(
 
 	   g_TextLib.lpIndexBuf = NULL;
 
-	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_LAUNCHSETTING, gc_rgszSDLPalWords[gConfig.uCodePage], SDLPAL_EXTRA_WORD_COUNT * sizeof(LPCWSTR));
+	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_LAUNCHSETTING, gc_rgszSDLPalWords[PAL_GetCodePage()], SDLPAL_EXTRA_WORD_COUNT * sizeof(LPCWSTR));
 
 #ifndef PAL_CLASSIC
-	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_BATTLEMODE, gc_rgszAdditionalWords[gConfig.uCodePage], ATB_WORD_COUNT * sizeof(LPCWSTR));
+	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_BATTLEMODE, gc_rgszAdditionalWords[PAL_GetCodePage()], ATB_WORD_COUNT * sizeof(LPCWSTR));
 #endif
    }
 
@@ -1512,6 +1512,39 @@ PAL_DialogIsPlayingRNG(
    return g_TextLib.fPlayingRNG;
 }
 
+WCHAR
+PAL_GetInvalidChar(
+	CODEPAGE      uCodePage
+)
+{
+	switch (uCodePage)
+	{
+	case CP_BIG5:     return 0x3f;
+	case CP_GBK:      return 0x3f;
+		//case CP_SHIFTJIS: return 0x30fb;
+	case CP_UTF_8:    return 0x3f;
+	default:          return 0;
+	}
+}
+
+static CODEPAGE g_codepage = CP_UTF_8;
+
+CODEPAGE
+PAL_GetCodePage(
+	void
+)
+{
+	return g_codepage;
+}
+
+void
+PAL_SetCodePage(
+	CODEPAGE    uCodePage
+)
+{
+	g_codepage = uCodePage;
+}
+
 INT
 PAL_MultiByteToWideCharCP(
    CODEPAGE      cp,
@@ -1797,7 +1830,7 @@ PAL_MultiByteToWideChar(
 
 --*/
 {
-	return PAL_MultiByteToWideCharCP(gConfig.uCodePage, mbs, mbslength, wcs, wcslength);
+	return PAL_MultiByteToWideCharCP(g_codepage, mbs, mbslength, wcs, wcslength);
 }
 
 INT
@@ -2107,20 +2140,4 @@ PAL_swprintf(
 
 	va_end(ap);
 	return count;
-}
-
-
-WCHAR
-PAL_GetInvalidChar(
-   CODEPAGE      uCodePage
-)
-{
-   switch(uCodePage)
-   {
-   case CP_BIG5:     return 0x3f;
-   case CP_GBK:      return 0x3f;
-   //case CP_SHIFTJIS: return 0x30fb;
-   case CP_UTF_8:    return 0x3f;
-   default:          return 0;
-   }
 }

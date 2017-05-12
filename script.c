@@ -561,7 +561,7 @@ PAL_AdditionalCredits(
    for (i = 0; i < 12; i++)
    {
       WCHAR buffer[48];
-      PAL_swprintf(buffer, sizeof(buffer) / sizeof(WCHAR), rgszStrings[i], gConfig.pszMsgFile ? g_rcCredits[i] : rgszcps[i][gConfig.uCodePage]);
+      PAL_swprintf(buffer, sizeof(buffer) / sizeof(WCHAR), rgszStrings[i], gConfig.pszMsgFile ? g_rcCredits[i] : rgszcps[i][PAL_GetCodePage()]);
       PAL_DrawText(buffer, PAL_XY(0, 2 + i * 16), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
    }
 
@@ -3044,9 +3044,9 @@ PAL_RunTriggerScript(
    {
       pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
 
-      UTIL_LogOutput(LOGLEVEL_DEBUG, "[SCRIPT] %.4x: %.4x %.4x %.4x %.4x\n", wScriptEntry,
-         pScript->wOperation, pScript->rgwOperand[0], pScript->rgwOperand[1],
-         pScript->rgwOperand[2], pScript->rgwOperand[3]);
+      UTIL_LogOutput(LOGLEVEL_DEBUG, "[SCRIPT] %.4x: %.4x %.4x %.4x\n", wScriptEntry,
+         pScript->wOperation, pScript->rgwOperand[0],
+         pScript->rgwOperand[1], pScript->rgwOperand[2]);
 
       switch (pScript->wOperation)
       {
