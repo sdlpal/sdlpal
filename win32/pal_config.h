@@ -56,7 +56,3 @@
 #define PAL_HAS_CONFIG_PAGE 1
 
 #define PAL_FILESYSTEM_IGNORE_CASE 1
-
-#ifndef PATH_MAX
-#define PATH_MAX MAX_PATH
-#endif

@@ -108,6 +108,8 @@
 typedef const BYTE *LPCBYTE;
 # endif
 
+# define PAL_MAX_PATH  MAX_PATH
+
 #else
 
 # include <unistd.h>
@@ -145,6 +147,8 @@ typedef CHAR               *LPSTR;
 typedef const CHAR         *LPCSTR;
 typedef WCHAR              *LPWSTR;
 typedef const WCHAR        *LPCWSTR;
+
+# define PAL_MAX_PATH  PATH_MAX
 
 #endif
 
