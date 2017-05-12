@@ -492,7 +492,7 @@ PAL_SaveConfig(
 		if (gConfig.pszSavePath && *gConfig.pszSavePath && strncmp(gConfig.pszSavePath, PAL_SAVE_PREFIX, strnlen(gConfig.pszSavePath, PAL_MAX_PATH)) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
 		if (gConfig.pszMsgFile && *gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 		if (gConfig.pszBdfFile && *gConfig.pszBdfFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_BDFFILE), gConfig.pszBdfFile); fputs(buf, fp); }
-		if (gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
+		if (gConfig.pszLogFile && *gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
 		if (gConfig.pszCLIMIDIPlayerPath && *gConfig.pszCLIMIDIPlayerPath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CLIMIDIPLAYER), gConfig.pszCLIMIDIPlayerPath); fputs(buf, fp); }
 
 		fclose(fp);
@@ -543,6 +543,8 @@ PAL_GetConfigItem(
 			case PALCFG_SAVEPATH:          value->sValue = gConfig.pszSavePath; return TRUE;
 			case PALCFG_MESSAGEFILE:       value->sValue = gConfig.pszMsgFile; return TRUE;
 			case PALCFG_BDFFILE:           value->sValue = gConfig.pszBdfFile; return TRUE;
+			case PALCFG_LOGFILE:           value->sValue = gConfig.pszLogFile; return TRUE;
+			case PALCFG_CLIMIDIPLAYER:     value->sValue = gConfig.pszCLIMIDIPlayerPath; return TRUE;
 			case PALCFG_MUSIC:             value->sValue = music_types[gConfig.eMusicType]; return TRUE;
 			case PALCFG_OPL:               value->sValue = opl_types[gConfig.eOPLType]; return TRUE;
 			}
@@ -597,6 +599,14 @@ PAL_SetConfigItem(
 			case PALCFG_BDFFILE:
 				if (gConfig.pszBdfFile) free(gConfig.pszBdfFile);
 				gConfig.pszBdfFile = value->sValue && value->sValue[0] ? strdup(value->sValue) : NULL;
+				return TRUE;
+			case PALCFG_LOGFILE:
+				if (gConfig.pszLogFile) free(gConfig.pszLogFile);
+				gConfig.pszLogFile = value->sValue && value->sValue[0] ? strdup(value->sValue) : NULL;
+				return TRUE;
+			case PALCFG_CLIMIDIPLAYER:
+				if (gConfig.pszCLIMIDIPlayerPath) free(gConfig.pszCLIMIDIPlayerPath);
+				gConfig.pszCLIMIDIPlayerPath = value->sValue && value->sValue[0] ? strdup(value->sValue) : NULL;
 				return TRUE;
 			case PALCFG_CD:
 				for (int i = 0; i < sizeof(music_types) / sizeof(music_types[0]); i++)
