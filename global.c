@@ -188,9 +188,9 @@ PAL_DetectCodePage(
 		free(word_buf);
 
 		if (min_invalids == 0)
-			UTIL_LogOutput(LOGLEVEL_INFO, "%s detected code page: %s\n", __func__, cp ? "GBK" : "BIG5");
+			UTIL_LogOutput(LOGLEVEL_INFO, "PAL_DetectCodePage detected code page: %s\n", cp ? "GBK" : "BIG5");
 		else
-			UTIL_LogOutput(LOGLEVEL_WARNING, "%s detected possible code page: %s [%d invalids]\n", __func__, cp ? "GBK" : "BIG5", min_invalids);
+			UTIL_LogOutput(LOGLEVEL_WARNING, "PAL_DetectCodePage detected possible code page: %s [%d invalids]\n", cp ? "GBK" : "BIG5", min_invalids);
 	}
 
 	return cp;
