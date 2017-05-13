@@ -183,7 +183,6 @@ typedef struct tagCONFIGURATION
 	OPLTYPE          eOPLType;
 	WORD             wAudioBufferSize;
 	BOOL             fIsWIN95;
-	BOOL             fUseEmbeddedFonts;
 	BOOL             fUseSurroundOPL;
 	BOOL             fKeepAspectRatio;
 	BOOL             fFullScreen;

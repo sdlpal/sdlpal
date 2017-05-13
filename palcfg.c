@@ -59,10 +59,10 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GamePath",           8, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_SAVEPATH,          PALCFG_STRING,   "SavePath",           8, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_MESSAGEFILE,       PALCFG_STRING,   "MessageFileName",   15, MAKE_VALUE(NULL,     NULL, NULL) },
-	{ PALCFG_FONTFILE,          PALCFG_STRING,   "FontFileName",      11, MAKE_VALUE(NULL,     NULL, NULL) },
+	{ PALCFG_FONTFILE,          PALCFG_STRING,   "FontFileName",      12, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_MUSIC,             PALCFG_STRING,   "Music",              5, MAKE_VALUE("RIX",    NULL, NULL) },
 	{ PALCFG_OPL,               PALCFG_STRING,   "OPL",                3, MAKE_VALUE("DOSBOX", NULL, NULL) },
-	{ PALCFG_LOGFILE,           PALCFG_STRING,   "LogFileName",        7, MAKE_VALUE(NULL,     NULL, NULL) },
+	{ PALCFG_LOGFILE,           PALCFG_STRING,   "LogFileName",       11, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_CLIMIDIPLAYER,     PALCFG_STRING,   "CLIMIDIPlayer",     13, MAKE_VALUE(NULL,     NULL, NULL) },
 };
@@ -497,8 +497,8 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MUSIC), music_types[gConfig.eMusicType]); fputs(buf, fp);
 		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_OPL), opl_types[gConfig.eOPLType]); fputs(buf, fp);
 
-		if (gConfig.pszGamePath && *gConfig.pszGamePath && strncmp(gConfig.pszGamePath, PAL_PREFIX, strnlen(gConfig.pszGamePath, PAL_MAX_PATH)) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_GAMEPATH), gConfig.pszGamePath); fputs(buf, fp); }
-		if (gConfig.pszSavePath && *gConfig.pszSavePath && strncmp(gConfig.pszSavePath, PAL_SAVE_PREFIX, strnlen(gConfig.pszSavePath, PAL_MAX_PATH)) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
+		if (gConfig.pszGamePath && *gConfig.pszGamePath && strcmp(gConfig.pszGamePath, PAL_PREFIX) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_GAMEPATH), gConfig.pszGamePath); fputs(buf, fp); }
+		if (gConfig.pszSavePath && *gConfig.pszSavePath && strcmp(gConfig.pszSavePath, PAL_SAVE_PREFIX) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
 		if (gConfig.pszMsgFile && *gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 		if (gConfig.pszFontFile && *gConfig.pszFontFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_FONTFILE), gConfig.pszFontFile); fputs(buf, fp); }
 		if (gConfig.pszLogFile && *gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
@@ -582,7 +582,7 @@ PAL_SetConfigItem(
 	case PALCFG_WINDOWWIDTH:       gConfig.dwScreenWidth = value.uValue; break;
 	case PALCFG_GAMEPATH:
 		if (gConfig.pszGamePath) free(gConfig.pszGamePath);
-		gConfig.pszGamePath = value.sValue && value.sValue[0] ? strdup(value.sValue) : strdup(PAL_SAVE_PREFIX);
+		gConfig.pszGamePath = value.sValue && value.sValue[0] ? strdup(value.sValue) : strdup(PAL_PREFIX);
 		break;
 	case PALCFG_SAVEPATH:
 		if (gConfig.pszSavePath) free(gConfig.pszSavePath);

@@ -24,52 +24,59 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_LAUNCHER DIALOGEX 0, 0, 405, 206
+IDD_LAUNCHER DIALOGEX 0, 0, 405, 250
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "SDL PAL Launcher"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "&Launch game",IDOK,177,185,50,14
-    PUSHBUTTON      "E&xit",IDCANCEL,7,185,50,14
+    DEFPUSHBUTTON   "&Launch game",IDOK,177,229,50,14
+    PUSHBUTTON      "E&xit",IDCANCEL,7,229,50,14
     LTEXT           "Game resource path:",IDC_STATIC,14,10,68,8
     EDITTEXT        IDC_GAMEPATH,84,7,256,14,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "CD source:",IDC_STATIC,14,106,36,8
-    GROUPBOX        "Game Language",IDC_STATIC,7,28,192,50
-    CONTROL         "&Traditional Chinese",IDC_CHT,"Button",BS_AUTORADIOBUTTON | WS_GROUP,14,44,77,10
-    CONTROL         "Simplified &Chinese",IDC_CHS,"Button",BS_AUTORADIOBUTTON,102,44,73,10
-    CONTROL         "Use &embedded font",IDC_EMBEDFONT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,215,44,79,10
-    GROUPBOX        "Display",IDC_STATIC,206,28,192,50
-    CONTROL         "&Keep aspect ratio",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,215,60,72,10
-    LTEXT           "BGM source:",IDC_STATIC,115,106,41,8
-    CONTROL         "&Full screen",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,310,44,50,10
-    EDITTEXT        IDC_MSGFILE,59,57,131,14,ES_AUTOHSCROLL
-    GROUPBOX        "Audio",IDC_STATIC,7,86,391,85
-    COMBOBOX        IDC_CD,54,103,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_BGM,157,103,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "OPL type:",IDC_STATIC,14,125,33,8
-    COMBOBOX        IDC_OPL,54,122,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "S&tereo",IDC_STEREO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,225,106,37,10
-    PUSHBUTTON      "&Default",IDC_DEFAULT,348,185,50,14
-    CONTROL         "Surround &OPL",IDC_SURROUNDOPL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,225,125,55,10
-    LTEXT           "Audio sample rate:                      Hz",IDC_STATIC,280,106,113,8
-    EDITTEXT        IDC_SAMPLERATE,342,103,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "OPL sample rate:                       Hz",IDC_STATIC,108,125,110,8
-    EDITTEXT        IDC_OPLSR,165,122,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "Audio buffer:",IDC_STATIC,298,125,44,8
-    EDITTEXT        IDC_AUDIOBUFFER,342,122,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "CD source:",IDC_STATIC,14,160,36,8
+    GROUPBOX        "Font && Language",IDC_STATIC,7,30,391,50
+    GROUPBOX        "Display",IDC_STATIC,7,110,391,30
+    CONTROL         "&Keep aspect ratio",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,150,124,72,10
+    LTEXT           "BGM source:",IDC_STATIC,115,160,41,8
+    CONTROL         "&Full screen",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,124,50,10
+    EDITTEXT        IDC_MSGFILE,70,61,270,14,ES_AUTOHSCROLL | ES_READONLY
+    GROUPBOX        "Audio",IDC_STATIC,7,140,391,85
+    COMBOBOX        IDC_CD,54,157,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_BGM,157,157,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "OPL type:",IDC_STATIC,14,179,33,8
+    COMBOBOX        IDC_OPL,54,176,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "S&tereo",IDC_STEREO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,225,160,37,10
+    PUSHBUTTON      "&Default",IDC_DEFAULT,348,229,50,14
+    CONTROL         "Surround &OPL",IDC_SURROUNDOPL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,225,179,55,10
+    LTEXT           "Audio sample rate:                      Hz",IDC_STATIC,280,160,113,8
+    EDITTEXT        IDC_SAMPLERATE,342,157,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "OPL sample rate:                       Hz",IDC_STATIC,108,179,110,8
+    EDITTEXT        IDC_OPLSR,165,176,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Audio buffer:",IDC_STATIC,298,179,44,8
+    EDITTEXT        IDC_AUDIOBUFFER,342,176,40,14,ES_AUTOHSCROLL | ES_NUMBER
     PUSHBUTTON      "&Browse",IDC_BRGAME,348,7,50,14
-    LTEXT           "Message file:",IDC_STATIC,14,60,43,8
-    CONTROL         "Enable &touch overlay",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,310,60,83,10
-    LTEXT           "Quality:",IDC_STATIC,14,144,26,8
-    LTEXT           "Low                              High",IDC_STATIC,31,158,88,8
-    CONTROL         "",IDC_QUALITY,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,43,143,60,15
-    LTEXT           "Music volume:",IDC_STATIC,118,144,46,8
-    LTEXT           "Low                                      High",IDC_STATIC,153,158,104,8
-    CONTROL         "",IDC_MUSICVOLUME,"msctls_trackbar32",WS_TABSTOP,165,143,80,15
-    LTEXT           "Sound volume:",IDC_STATIC,256,145,48,8
-    LTEXT           "Low                                      High",IDC_STATIC,291,158,104,8
-    CONTROL         "",IDC_SOUNDVOLUME,"msctls_trackbar32",WS_TABSTOP,303,144,80,15
+    CONTROL         "Message file:",IDC_USEMSGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,64,56,8
+    CONTROL         "Enable &touch overlay",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,306,124,83,10
+    LTEXT           "Quality:",IDC_STATIC,14,198,26,8
+    LTEXT           "Low                              High",IDC_STATIC,31,212,88,8
+    CONTROL         "",IDC_QUALITY,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,43,197,60,15
+    LTEXT           "Music volume:",IDC_STATIC,118,198,46,8
+    LTEXT           "Low                                      High",IDC_STATIC,153,212,104,8
+    CONTROL         "",IDC_MUSICVOLUME,"msctls_trackbar32",WS_TABSTOP,165,197,80,15
+    LTEXT           "Sound volume:",IDC_STATIC,256,199,48,8
+    LTEXT           "Low                                      High",IDC_STATIC,291,212,104,8
+    CONTROL         "",IDC_SOUNDVOLUME,"msctls_trackbar32",WS_TABSTOP,303,198,80,15
+    EDITTEXT        IDC_FONTFILE,70,43,270,14,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Font file:",IDC_USEFONTFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,46,56,8
+    GROUPBOX        "Logging",IDC_STATIC,7,80,391,30
+    LTEXT           "Log level:",IDC_STATIC,14,95,32,8
+    COMBOBOX        IDC_LOGLEVEL,46,92,61,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Log file:",IDC_USELOGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,95,40,8
+    EDITTEXT        IDC_LOGFILE,160,92,180,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "&Browse",IDC_BRFONT,348,43,50,14,WS_DISABLED
+    PUSHBUTTON      "&Browse",IDC_BRMSG,348,61,50,14,WS_DISABLED
+    PUSHBUTTON      "&Browse",IDC_BRLOG,348,92,50,14,WS_DISABLED
 END
 
 
@@ -86,7 +93,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 398
         TOPMARGIN, 7
-        BOTTOMMARGIN, 199
+        BOTTOMMARGIN, 243
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -110,22 +117,32 @@ END
 
 IDD_LAUNCHER DLGINIT
 BEGIN
-    IDC_CD, 0x403, 4, 0,
+    IDC_CD, 0x403, 4, 0
 0x504d, 0x0033, 
-    IDC_CD, 0x403, 4, 0,
+    IDC_CD, 0x403, 4, 0
 0x474f, 0x0047, 
-    IDC_BGM, 0x403, 4, 0,
+    IDC_BGM, 0x403, 4, 0
 0x4952, 0x0058, 
-    IDC_BGM, 0x403, 5, 0,
-0x494d, 0x4944, "\000", 
-    IDC_BGM, 0x403, 4, 0,
+    IDC_BGM, 0x403, 5, 0
+0x494d, 0x4944, "\000" 
+    IDC_BGM, 0x403, 4, 0
 0x504d, 0x0033, 
-    IDC_BGM, 0x403, 4, 0,
+    IDC_BGM, 0x403, 4, 0
 0x474f, 0x0047, 
-    IDC_OPL, 0x403, 7, 0,
-0x4f44, 0x4253, 0x584f, "\000", 
-    IDC_OPL, 0x403, 5, 0,
-0x414d, 0x454d, "\000", 
+    IDC_OPL, 0x403, 7, 0
+0x4f44, 0x4253, 0x584f, "\000" 
+    IDC_OPL, 0x403, 5, 0
+0x414d, 0x454d, "\000" 
+    IDC_LOGLEVEL, 0x403, 8, 0
+0x6556, 0x6272, 0x736f, 0x0065, 
+    IDC_LOGLEVEL, 0x403, 6, 0
+0x6544, 0x7562, 0x0067, 
+    IDC_LOGLEVEL, 0x403, 14, 0
+0x6e49, 0x6f66, 0x6d72, 0x7461, 0x6f69, 0x616e, 0x006c, 
+    IDC_LOGLEVEL, 0x403, 8, 0
+0x6157, 0x6e72, 0x6e69, 0x0067, 
+    IDC_LOGLEVEL, 0x403, 6, 0
+0x6146, 0x6174, 0x006c, 
     0
 END
 
@@ -200,6 +217,21 @@ END
 STRINGTABLE
 BEGIN
     IDC_BRGAME              "Open game resource folder"
+    IDC_BRMSG               "Select customized game message file"
+END
+
+STRINGTABLE
+BEGIN
+    IDC_MSGFILE             "Message file (*.msg)|*.msg||"
+    IDC_LOGLEVEL            "Verbose;Debug;Informational;Warning;Error;Fatal"
+    IDC_BRFONT              "Select customized font file"
+    IDC_FONTFILE            "Font file (*.bdf)|*.bdf||"
+END
+
+STRINGTABLE
+BEGIN
+    IDC_BRLOG               "Select file to record logs"
+    IDC_LOGFILE             "Log file (*.log, *.txt)|*.log;*.txt||"
 END
 
 #endif    // 非特定语言 resources
@@ -218,52 +250,59 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 // Dialog
 //
 
-IDD_LAUNCHER DIALOGEX 0, 0, 405, 206
+IDD_LAUNCHER DIALOGEX 0, 0, 405, 250
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "SDL PAL 启动器"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "启动游戏(&L)",IDOK,177,185,50,14
-    PUSHBUTTON      "退出(&X)",IDCANCEL,7,185,50,14
-    LTEXT           "游戏资源目录：",IDC_STATIC,14,10,57,8
-    EDITTEXT        IDC_GAMEPATH,71,7,270,14,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "CD 音源：",IDC_STATIC,14,106,36,8
-    GROUPBOX        "游戏语言设置",IDC_STATIC,7,28,192,50
-    CONTROL         "繁体中文(&T)",IDC_CHT,"Button",BS_AUTORADIOBUTTON | WS_GROUP,14,44,57,10
-    CONTROL         "简体中文(&C)",IDC_CHS,"Button",BS_AUTORADIOBUTTON,102,44,58,10
-    CONTROL         "使用游戏内字体(&E)",IDC_EMBEDFONT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,215,44,81,10
-    GROUPBOX        "显示设置",IDC_STATIC,206,28,192,50
-    CONTROL         "保持纵横比(&K)",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,215,60,65,10
-    LTEXT           "BGM 音源：",IDC_STATIC,115,106,41,8
-    CONTROL         "全屏启动游戏(&F)",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,310,44,73,10
-    EDITTEXT        IDC_MSGFILE,57,57,133,14,ES_AUTOHSCROLL
-    GROUPBOX        "音频设置",IDC_STATIC,7,86,391,85
-    COMBOBOX        IDC_CD,54,103,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_BGM,157,103,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "OPL 类型：",IDC_STATIC,14,125,40,8
-    COMBOBOX        IDC_OPL,54,122,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "立体声(&T)",IDC_STEREO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,225,106,49,10
-    PUSHBUTTON      "默认设置(&D)",IDC_DEFAULT,348,185,50,14
-    CONTROL         "环绕声 &OPL",IDC_SURROUNDOPL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,225,125,55,10
-    LTEXT           "音频采样率：                      Hz",IDC_STATIC,285,106,101,8
-    EDITTEXT        IDC_SAMPLERATE,335,103,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "OPL 采样率：                       Hz",IDC_STATIC,115,125,102,8
-    EDITTEXT        IDC_OPLSR,165,122,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "音频缓冲区：",IDC_STATIC,285,125,49,8
-    EDITTEXT        IDC_AUDIOBUFFER,335,122,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    DEFPUSHBUTTON   "启动游戏(&L)",IDOK,177,229,50,14
+    PUSHBUTTON      "退出(&X)",IDCANCEL,7,229,50,14
+    LTEXT           "游戏资源目录：",IDC_STATIC,14,10,56,8
+    EDITTEXT        IDC_GAMEPATH,70,7,270,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "CD 音源：",IDC_STATIC,14,160,36,8
+    GROUPBOX        "字体及语言设置",IDC_STATIC,7,30,391,50
+    GROUPBOX        "显示设置",IDC_STATIC,7,110,391,30
+    CONTROL         "保持纵横比(&K)",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,160,124,65,10
+    LTEXT           "BGM 音源：",IDC_STATIC,115,160,41,8
+    CONTROL         "全屏启动游戏(&F)",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,124,73,10
+    EDITTEXT        IDC_MSGFILE,70,61,270,14,ES_AUTOHSCROLL | ES_READONLY
+    GROUPBOX        "音频设置",IDC_STATIC,7,140,391,85
+    COMBOBOX        IDC_CD,54,157,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_BGM,157,157,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "OPL 类型：",IDC_STATIC,14,179,40,8
+    COMBOBOX        IDC_OPL,54,176,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "立体声(&T)",IDC_STEREO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,225,160,49,10
+    PUSHBUTTON      "默认设置(&D)",IDC_DEFAULT,348,229,50,14
+    CONTROL         "环绕声 &OPL",IDC_SURROUNDOPL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,225,179,55,10
+    LTEXT           "音频采样率：                      Hz",IDC_STATIC,285,160,101,8
+    EDITTEXT        IDC_SAMPLERATE,335,157,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "OPL 采样率：                       Hz",IDC_STATIC,115,179,102,8
+    EDITTEXT        IDC_OPLSR,165,176,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "音频缓冲区：",IDC_STATIC,285,179,49,8
+    EDITTEXT        IDC_AUDIOBUFFER,335,176,40,14,ES_AUTOHSCROLL | ES_NUMBER
     PUSHBUTTON      "浏览(&B)",IDC_BRGAME,348,7,50,14
-    LTEXT           "语言文件：",IDC_STATIC,14,60,41,8
-    CONTROL         "启用触屏辅助(&T)",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,310,60,73,10
-    LTEXT           "音频质量：",IDC_STATIC,14,144,41,8
-    LTEXT           "低                              高",IDC_STATIC,47,158,77,8
-    CONTROL         "",IDC_QUALITY,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,55,143,60,15
-    LTEXT           "音乐音量：",IDC_STATIC,131,144,41,8
-    CONTROL         "",IDC_MUSICVOLUME,"msctls_trackbar32",WS_TABSTOP,172,143,80,15
-    LTEXT           "低                                      高",IDC_STATIC,165,158,93,8
-    LTEXT           "音效音量：",IDC_STATIC,266,145,41,8
-    CONTROL         "",IDC_SOUNDVOLUME,"msctls_trackbar32",WS_TABSTOP,307,144,80,15
-    LTEXT           "低                                      高",IDC_STATIC,300,158,93,8
+    CONTROL         "语言文件：",IDC_USEMSGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,64,56,8
+    CONTROL         "启用触屏辅助(&T)",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,309,124,73,10
+    LTEXT           "音频质量：",IDC_STATIC,14,198,41,8
+    LTEXT           "低                              高",IDC_STATIC,47,212,77,8
+    CONTROL         "",IDC_QUALITY,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,55,197,60,15
+    LTEXT           "音乐音量：",IDC_STATIC,131,198,41,8
+    CONTROL         "",IDC_MUSICVOLUME,"msctls_trackbar32",WS_TABSTOP,172,197,80,15
+    LTEXT           "低                                      高",IDC_STATIC,165,212,93,8
+    LTEXT           "音效音量：",IDC_STATIC,266,199,41,8
+    CONTROL         "",IDC_SOUNDVOLUME,"msctls_trackbar32",WS_TABSTOP,307,198,80,15
+    LTEXT           "低                                      高",IDC_STATIC,300,212,93,8
+    EDITTEXT        IDC_FONTFILE,70,43,270,14,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "字体文件：",IDC_USEFONTFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,46,56,8
+    GROUPBOX        "日志记录设置",IDC_STATIC,7,80,391,30
+    LTEXT           "记录级别：",IDC_STATIC,14,95,41,8
+    COMBOBOX        IDC_LOGLEVEL,57,92,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "记录到文件：",IDC_USELOGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,95,55,8
+    EDITTEXT        IDC_LOGFILE,175,92,165,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "浏览(&B)",IDC_BRFONT,348,43,50,14,WS_DISABLED
+    PUSHBUTTON      "浏览(&B)",IDC_BRMSG,348,61,50,14,WS_DISABLED
+    PUSHBUTTON      "浏览(&B)",IDC_BRLOG,348,92,50,14,WS_DISABLED
 END
 
 
@@ -280,7 +319,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 398
         TOPMARGIN, 7
-        BOTTOMMARGIN, 199
+        BOTTOMMARGIN, 243
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -304,22 +343,34 @@ END
 
 IDD_LAUNCHER DLGINIT
 BEGIN
-    IDC_CD, 0x403, 4, 0,
+    IDC_CD, 0x403, 4, 0
 0x504d, 0x0033, 
-    IDC_CD, 0x403, 4, 0,
+    IDC_CD, 0x403, 4, 0
 0x474f, 0x0047, 
-    IDC_BGM, 0x403, 4, 0,
+    IDC_BGM, 0x403, 4, 0
 0x4952, 0x0058, 
-    IDC_BGM, 0x403, 5, 0,
-0x494d, 0x4944, "\000", 
-    IDC_BGM, 0x403, 4, 0,
+    IDC_BGM, 0x403, 5, 0
+0x494d, 0x4944, "\000" 
+    IDC_BGM, 0x403, 4, 0
 0x504d, 0x0033, 
-    IDC_BGM, 0x403, 4, 0,
+    IDC_BGM, 0x403, 4, 0
 0x474f, 0x0047, 
-    IDC_OPL, 0x403, 7, 0,
-0x4f44, 0x4253, 0x584f, "\000", 
-    IDC_OPL, 0x403, 5, 0,
-0x414d, 0x454d, "\000", 
+    IDC_OPL, 0x403, 7, 0
+0x4f44, 0x4253, 0x584f, "\000" 
+    IDC_OPL, 0x403, 5, 0
+0x414d, 0x454d, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xeacf, 0xb8cf, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xf7b5, 0xd4ca, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xc5d0, 0xa2cf, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xafbe, 0xe6b8, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xedb4, 0xf3ce, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xc2d6, 0xfcc3, "\000" 
     0
 END
 
@@ -363,6 +414,21 @@ END
 STRINGTABLE
 BEGIN
     IDC_BRGAME              "打开游戏资源文件夹"
+    IDC_BRMSG               "选择自定义游戏语言文件"
+END
+
+STRINGTABLE
+BEGIN
+    IDC_MSGFILE             "语言文件(*.msg)|*.msg||"
+    IDC_LOGLEVEL            "详细;调试;信息;警告;错误;致命"
+    IDC_BRFONT              "选择自定义字体文件"
+    IDC_FONTFILE            "字体文件(*.bdf)|*.bdf||"
+END
+
+STRINGTABLE
+BEGIN
+    IDC_BRLOG               "选择用于日志记录的文件"
+    IDC_LOGFILE             "日志文件(*.log, *.txt)|*.log;*.txt||"
 END
 
 #endif    // 中文(简体，中国) resources
@@ -381,52 +447,59 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL
 // Dialog
 //
 
-IDD_LAUNCHER DIALOGEX 0, 0, 405, 206
+IDD_LAUNCHER DIALOGEX 0, 0, 405, 250
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "SDL PAL 币笆竟"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "币笆笴栏(&L)",IDOK,177,185,50,14
-    PUSHBUTTON      "癶(&X)",IDCANCEL,7,185,50,14
+    DEFPUSHBUTTON   "币笆笴栏(&L)",IDOK,177,229,50,14
+    PUSHBUTTON      "癶(&X)",IDCANCEL,7,229,50,14
     LTEXT           "笴栏戈方郎Ж",IDC_STATIC,14,10,57,8
-    EDITTEXT        IDC_GAMEPATH,71,7,270,14,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "CD 方",IDC_STATIC,14,106,36,8
-    GROUPBOX        "笴栏粂ē砞﹚",IDC_STATIC,7,28,192,50
-    CONTROL         "羉砰いゅ(&T)",IDC_CHT,"Button",BS_AUTORADIOBUTTON | WS_GROUP,14,44,57,10
-    CONTROL         "虏砰いゅ(&C)",IDC_CHS,"Button",BS_AUTORADIOBUTTON,102,44,58,10
-    CONTROL         "ㄏノ笴栏ず砰(&E)",IDC_EMBEDFONT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,215,44,81,10
-    GROUPBOX        "陪ボ砞﹚",IDC_STATIC,206,28,192,50
-    CONTROL         "玂羇绢ゑ(&K)",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,215,60,65,10
-    LTEXT           "BGM 方",IDC_STATIC,115,106,41,8
-    CONTROL         "币笆笴栏(&F)",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,310,44,73,10
-    EDITTEXT        IDC_MSGFILE,57,57,133,14,ES_AUTOHSCROLL
-    GROUPBOX        "癟砞﹚",IDC_STATIC,7,86,391,85
-    COMBOBOX        IDC_CD,54,103,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_BGM,157,103,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "OPL 摸",IDC_STATIC,14,124,40,8
-    COMBOBOX        IDC_OPL,54,121,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "ミ砰羘(&T)",IDC_STEREO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,230,106,49,10
-    PUSHBUTTON      "纐粄砞﹚(&D)",IDC_DEFAULT,348,185,50,14
-    CONTROL         "吏露羘 &OPL",IDC_SURROUNDOPL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,230,124,55,10
-    LTEXT           "癟妓硉瞯                      Hz",IDC_STATIC,285,106,109,8
-    EDITTEXT        IDC_SAMPLERATE,342,103,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "OPL 妓硉瞯                       Hz",IDC_STATIC,115,124,110,8
-    EDITTEXT        IDC_OPLSR,172,121,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "癟珇借",IDC_STATIC,14,144,41,8
-    CONTROL         "",IDC_QUALITY,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,55,143,60,15
-    LTEXT           "癟絯侥跋",IDC_STATIC,293,124,48,8
-    EDITTEXT        IDC_AUDIOBUFFER,342,121,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_GAMEPATH,70,7,270,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "CD 方",IDC_STATIC,14,160,36,8
+    GROUPBOX        "砰の粂ē砞﹚",IDC_STATIC,7,30,391,50
+    GROUPBOX        "陪ボ砞﹚",IDC_STATIC,7,110,391,30
+    CONTROL         "玂羇绢ゑ(&K)",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,160,124,65,10
+    LTEXT           "BGM 方",IDC_STATIC,115,160,41,8
+    CONTROL         "币笆笴栏(&F)",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,124,73,10
+    EDITTEXT        IDC_MSGFILE,70,61,270,14,ES_AUTOHSCROLL | ES_READONLY
+    GROUPBOX        "癟砞﹚",IDC_STATIC,7,140,391,85
+    COMBOBOX        IDC_CD,54,157,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_BGM,157,157,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "OPL 摸",IDC_STATIC,14,178,40,8
+    COMBOBOX        IDC_OPL,54,175,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "ミ砰羘(&T)",IDC_STEREO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,230,160,49,10
+    PUSHBUTTON      "纐粄砞﹚(&D)",IDC_DEFAULT,348,229,50,14
+    CONTROL         "吏露羘 &OPL",IDC_SURROUNDOPL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,230,178,55,10
+    LTEXT           "癟妓硉瞯                      Hz",IDC_STATIC,285,160,109,8
+    EDITTEXT        IDC_SAMPLERATE,342,157,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "OPL 妓硉瞯                       Hz",IDC_STATIC,115,178,110,8
+    EDITTEXT        IDC_OPLSR,172,175,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "癟珇借",IDC_STATIC,14,198,41,8
+    CONTROL         "",IDC_QUALITY,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,55,197,60,15
+    LTEXT           "癟絯侥跋",IDC_STATIC,293,178,48,8
+    EDITTEXT        IDC_AUDIOBUFFER,342,175,40,14,ES_AUTOHSCROLL | ES_NUMBER
     PUSHBUTTON      "聅凝(&B)",IDC_BRGAME,348,7,50,14
-    LTEXT           "粂ē郎",IDC_STATIC,14,60,33,8
-    CONTROL         "币ノ牟徊(&T)",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,310,60,73,10
-    LTEXT           "                              蔼",IDC_STATIC,47,158,77,8
-    LTEXT           "贾秖",IDC_STATIC,131,144,41,8
-    CONTROL         "",IDC_MUSICVOLUME,"msctls_trackbar32",WS_TABSTOP,172,143,80,15
-    LTEXT           "                                      蔼",IDC_STATIC,165,158,93,8
-    LTEXT           "秖",IDC_STATIC,266,145,41,8
-    CONTROL         "",IDC_SOUNDVOLUME,"msctls_trackbar32",WS_TABSTOP,307,144,80,15
-    LTEXT           "                                      蔼",IDC_STATIC,300,158,93,8
+    CONTROL         "璹粂ē郎",IDC_USEMSGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,64,56,8
+    CONTROL         "币ノ牟徊(&T)",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,309,124,73,10
+    LTEXT           "                              蔼",IDC_STATIC,47,212,77,8
+    LTEXT           "贾秖",IDC_STATIC,131,198,41,8
+    CONTROL         "",IDC_MUSICVOLUME,"msctls_trackbar32",WS_TABSTOP,172,197,80,15
+    LTEXT           "                                      蔼",IDC_STATIC,165,212,93,8
+    LTEXT           "秖",IDC_STATIC,266,199,41,8
+    CONTROL         "",IDC_SOUNDVOLUME,"msctls_trackbar32",WS_TABSTOP,307,198,80,15
+    LTEXT           "                                      蔼",IDC_STATIC,300,212,93,8
+    EDITTEXT        IDC_FONTFILE,70,43,270,14,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "璹砰郎",IDC_USEFONTFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,46,56,8
+    GROUPBOX        "ら粁癘魁砞﹚",IDC_STATIC,7,80,391,30
+    LTEXT           "癘魁",IDC_STATIC,14,95,41,8
+    COMBOBOX        IDC_LOGLEVEL,57,92,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "癘魁郎",IDC_USELOGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,95,50,8
+    EDITTEXT        IDC_LOGFILE,170,92,170,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "聅凝(&B)",IDC_BRFONT,348,43,50,14,WS_DISABLED
+    PUSHBUTTON      "聅凝(&B)",IDC_BRMSG,348,61,50,14,WS_DISABLED
+    PUSHBUTTON      "聅凝(&B)",IDC_BRLOG,348,92,50,14,WS_DISABLED
 END
 
 
@@ -443,7 +516,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 398
         TOPMARGIN, 7
-        BOTTOMMARGIN, 199
+        BOTTOMMARGIN, 243
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -467,22 +540,34 @@ END
 
 IDD_LAUNCHER DLGINIT
 BEGIN
-    IDC_CD, 0x403, 4, 0,
+    IDC_CD, 0x403, 4, 0
 0x504d, 0x0033, 
-    IDC_CD, 0x403, 4, 0,
+    IDC_CD, 0x403, 4, 0
 0x474f, 0x0047, 
-    IDC_BGM, 0x403, 4, 0,
+    IDC_BGM, 0x403, 4, 0
 0x4952, 0x0058, 
-    IDC_BGM, 0x403, 5, 0,
-0x494d, 0x4944, "\000", 
-    IDC_BGM, 0x403, 4, 0,
+    IDC_BGM, 0x403, 5, 0
+0x494d, 0x4944, "\000" 
+    IDC_BGM, 0x403, 4, 0
 0x504d, 0x0033, 
-    IDC_BGM, 0x403, 4, 0,
+    IDC_BGM, 0x403, 4, 0
 0x474f, 0x0047, 
-    IDC_OPL, 0x403, 7, 0,
-0x4f44, 0x4253, 0x584f, "\000", 
-    IDC_OPL, 0x403, 5, 0,
-0x414d, 0x454d, "\000", 
+    IDC_OPL, 0x403, 7, 0
+0x4f44, 0x4253, 0x584f, "\000" 
+    IDC_OPL, 0x403, 5, 0
+0x414d, 0x454d, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xd4b8, 0xd3b2, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xd5bd, 0xd5b8, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0x48ab, 0xa7ae, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xb5c4, 0x69a7, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0xf9bf, 0x7ebb, "\000" 
+    IDC_LOGLEVEL, 0x403, 5, 0
+0x50ad, 0x52a9, "\000" 
     0
 END
 
@@ -500,6 +585,21 @@ END
 STRINGTABLE
 BEGIN
     IDC_BRGAME              "ゴ秨笴栏戈方郎Ж"
+    IDC_BRMSG               "匡拒璹粂ē郎"
+END
+
+STRINGTABLE
+BEGIN
+    IDC_MSGFILE             "粂ē郎(*.msg)|*.msg||"
+    IDC_LOGLEVEL            "冈灿;秸刚;獺;牡;岿粇;璓㏑"
+    IDC_BRFONT              "匡拒璹砰郎"
+    IDC_FONTFILE            "砰郎(*.bdf)|*.bdf||"
+END
+
+STRINGTABLE
+BEGIN
+    IDC_BRLOG               "匡拒ノら粁癘魁郎"
+    IDC_LOGFILE             "ら粁郎(*.log, *.txt)|*.log;*.txt||"
 END
 
 #endif    // 中文(繁体，中国台湾) resources
