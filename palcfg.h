@@ -42,7 +42,6 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_KEEPASPECTRATIO,
 	PALCFG_LAUNCHSETTING,
 	PALCFG_STEREO,
-	PALCFG_USEEMBEDDEDFONTS,
 	PALCFG_USESURROUNDOPL,
 	PALCFG_USETOUCHOVERLAY,
 	/* Booleans */
@@ -58,7 +57,6 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_UNSIGNED_MIN = PALCFG_INTEGER_MAX,
 	/* Unsigneds */
 	PALCFG_AUDIOBUFFERSIZE = PALCFG_UNSIGNED_MIN,
-	PALCFG_CODEPAGE,
 	PALCFG_OPLSAMPLERATE,
 	PALCFG_RESAMPLEQUALITY,
 	PALCFG_SAMPLERATE,
@@ -75,7 +73,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_GAMEPATH,
 	PALCFG_SAVEPATH,
 	PALCFG_MESSAGEFILE,
-	PALCFG_BDFFILE,
+	PALCFG_FONTFILE,
 	PALCFG_MUSIC,
 	PALCFG_OPL,
 	PALCFG_LOGFILE,
@@ -166,10 +164,9 @@ typedef struct tagCONFIGURATION
 	char            *pszGamePath;
 	char            *pszSavePath;
 	char            *pszMsgFile;
-	char            *pszBdfFile;
+	char            *pszFontFile;
 	char            *pszCLIMIDIPlayerPath;
 	char            *pszLogFile;
-	CODEPAGE         uCodePage;
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;
 	DWORD            dwScreenHeight;
@@ -227,13 +224,18 @@ PAL_ParseConfigLine(
 	ConfigValue * pValue
 );
 
-ConfigValue
-PAL_DefaultConfig(
+const char *
+PAL_ConfigName(
 	PALCFG_ITEM item
 );
 
-const char *
-PAL_ConfigName(
+PALCFG_ITEM
+PAL_ConfigIndex(
+	const char *name
+);
+
+PALCFG_TYPE
+PAL_ConfigType(
 	PALCFG_ITEM item
 );
 
@@ -243,17 +245,64 @@ PAL_LimitConfig(
 	ConfigValue * pValue
 );
 
-BOOL
+ConfigValue
 PAL_GetConfigItem(
-	const char * szName,
-	ConfigValue * pValue,
-	BOOL isDefault
+	PALCFG_ITEM   item,
+	BOOL default_value
+);
+
+void
+PAL_SetConfigItem(
+	PALCFG_ITEM       item,
+	const ConfigValue value
 );
 
 BOOL
-PAL_SetConfigItem(
-	const char * szName,
-	const ConfigValue * pValue
+PAL_GetConfigBoolean(
+	PALCFG_ITEM item,
+	BOOL        default_value
+);
+
+int
+PAL_GetConfigInteger(
+	PALCFG_ITEM item,
+	BOOL        default_value
+);
+
+unsigned int
+PAL_GetConfigUnsigned(
+	PALCFG_ITEM item,
+	BOOL        default_value
+);
+
+const char *
+PAL_GetConfigString(
+	PALCFG_ITEM item,
+	BOOL        default_value
+);
+
+BOOL
+PAL_SetConfigBoolean(
+	PALCFG_ITEM item,
+	BOOL        value
+);
+
+BOOL
+PAL_SetConfigInteger(
+	PALCFG_ITEM item,
+	int         value
+);
+
+BOOL
+PAL_SetConfigUnsigned(
+	PALCFG_ITEM  item,
+	unsigned int value
+);
+
+BOOL
+PAL_SetConfigString(
+	PALCFG_ITEM item,
+	const char *value
 );
 
 PAL_C_LINKAGE_END
