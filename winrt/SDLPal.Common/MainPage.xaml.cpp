@@ -23,14 +23,18 @@ using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 
+static Platform::String^ msg_file_exts[] = { ".msg" };
+static Platform::String^ font_file_exts[] = { ".bdf" };
+static Platform::String^ log_file_exts[] = { ".log" };
+
 MainPage::MainPage()
 {
 	InitializeComponent();
 
 	m_controls = ref new Platform::Collections::Map<Platform::String^, ButtonAttribute^>();
-	m_controls->Insert(btnBrowseMsgFile->Name, ref new ButtonAttribute(tbMsgFile, ref new Platform::Array<Platform::String^>{ ".bdf" }));
-	m_controls->Insert(btnBrowseFontFile->Name, ref new ButtonAttribute(tbFontFile, ref new Platform::Array<Platform::String^>{ ".msg" }));
-	m_controls->Insert(btnBrowseLogFile->Name, ref new ButtonAttribute(tbLogFile, ref new Platform::Array<Platform::String^>{ ".log" }));
+	m_controls->Insert(btnBrowseMsgFile->Name, ref new ButtonAttribute(tbMsgFile, ref new Platform::Array<Platform::String^>(msg_file_exts, sizeof(msg_file_exts) / sizeof(msg_file_exts[0]))));
+	m_controls->Insert(btnBrowseFontFile->Name, ref new ButtonAttribute(tbFontFile, ref new Platform::Array<Platform::String^>(font_file_exts, sizeof(font_file_exts) / sizeof(font_file_exts[0]))));
+	m_controls->Insert(btnBrowseLogFile->Name, ref new ButtonAttribute(tbLogFile, ref new Platform::Array<Platform::String^>(log_file_exts, sizeof(log_file_exts) / sizeof(log_file_exts[0]))));
 	m_controls->Insert(cbUseMsgFile->Name, ref new ButtonAttribute(gridMsgFile, nullptr));
 	m_controls->Insert(cbUseFontFile->Name, ref new ButtonAttribute(gridFontFile, nullptr));
 	m_controls->Insert(cbUseLogFile->Name, ref new ButtonAttribute(gridLogFile, nullptr));

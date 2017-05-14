@@ -105,7 +105,7 @@ void InitControls()
    gWidgets.aspect->value(gConfig.fKeepAspectRatio ? 1 : 0);
    gWidgets.fullscreen->value(gConfig.fFullScreen ? 1 : 0);
    gWidgets.cd->value(gConfig.eCDType - MUSIC_MP3);
-   gWidgets.bgm->value(gConfig.eMusicType - MUSIC_MIN);
+   gWidgets.bgm->value(gConfig.eMusicType);
    gWidgets.stereo->value(gConfig.iAudioChannels == 2 ? 1 : 0);
    sprintf(buffer, "%d", gConfig.iSampleRate); gWidgets.samplerate->value(buffer);
    gWidgets.opl->value(gConfig.eOPLType);

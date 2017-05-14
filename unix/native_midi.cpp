@@ -34,15 +34,17 @@ char* cliplayer = nullptr;
 
 static char *which(const char *cmd)
 {
-    char path[PATH_MAX];
+	static char path[PATH_MAX] = { '\0' };
     FILE *fp = popen(va("which %s", cmd), "r");
     if (fp == NULL) {
         return NULL;
     }else{
-        fgets(path, sizeof(path)-1, fp);
+        if (fgets(path, sizeof(path)-1, fp) != NULL)
+		{
+			if (path[strlen(path) - 1] == '\n') path[strlen(path) - 1] = '\0';
+			if (path[strlen(path) - 1] == '\r') path[strlen(path) - 1] = '\0';
+		}
         pclose(fp);
-        if( path[strlen(path)-1] == '\n' ) path[strlen(path)-1] = '\0';
-        if( path[strlen(path)-1] == '\r' ) path[strlen(path)-1] = '\0';
         return path;
     }
 }

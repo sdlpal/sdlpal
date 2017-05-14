@@ -131,7 +131,7 @@ PAL_DetectCodePage(
 		word_len = ftell(fp);
 		word_buf = (char *)malloc(word_len);
 		fseek(fp, 0, SEEK_SET);
-		fread(word_buf, 1, word_len, fp);
+		word_len = fread(word_buf, 1, word_len, fp);
 		UTIL_CloseFile(fp);
 		// Eliminates null characters so that PAL_MultiByteToWideCharCP works properly
 		for (char *ptr = word_buf; ptr < word_buf + word_len; ptr++)
@@ -165,7 +165,7 @@ PAL_DetectCodePage(
 			for (int j = invalids = 0; j < length; j++)
 			{
 				int score = 1;
-				if (iswspace(wbuf[j])) continue;
+				if (iswspace(wbuf[j]) != 0) continue;
 				for (int k = 0; k < sizeof(valid_ranges) / sizeof(valid_ranges[0]); k++)
 				{
 					if (wbuf[j] >= valid_ranges[k][0] &&
