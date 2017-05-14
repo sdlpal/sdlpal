@@ -2,11 +2,7 @@
 <resources>
     <string name="label_folder">游戏资源所在文件夹：</string>
     <string name="action_browse">浏览</string>
-    <string name="action_embedded_font">使用游戏资源内置字体</string>
     <string name="title_settings">设置模式</string>
-    <string name="action_custom_lang">自定义语言文件</string>
-    <string name="action_lang">游戏资源语言</string>
-    <string name="switch_traditional">繁</string>
     <string name="action_touch">启用触屏辅助</string>
     <string name="action_aspect">保持纵横比</string>
     <string name="action_default">默认设置</string>
@@ -25,6 +21,9 @@
     <string name="msg_crash">上次程序异常退出，已显示设置页供您检查设置是否正确。</string>
     <string name="msg_empty">必须指定游戏资源文件夹！</string>
     <string name="msg_exit">您的设置已保存，下次启动时将直接开始游戏。在游戏中，您可以通过游戏系统菜单中的返回设置选项回到本设置页面。</string>
-    <string name="switch_simplified">简</string>
     <string name="action_restore">撤销修改</string>
+    <string name="label_loglevel">日志记录级别</string>
+    <string name="action_uselogfile">记录到文件</string>
+    <string name="action_usemsgfile">自定义语言文件</string>
+    <string name="action_usefontfile">自定义字体文件</string>
 </resources>

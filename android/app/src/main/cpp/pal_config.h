@@ -27,7 +27,7 @@
 # define PAL_CONFIG_H
 
 # define PAL_PREFIX            UTIL_BasePath()
-# define PAL_SAVE_PREFIX       UTIL_SavePath()
+# define PAL_SAVE_PREFIX       UTIL_BasePath()
 # define PAL_CONFIG_PREFIX     UTIL_ConfigPath()
 # define PAL_HAS_TOUCH         1
 # define PAL_DEFAULT_WINDOW_WIDTH   320

@@ -262,6 +262,12 @@ PAL_GetConfigBoolean(
 	BOOL        default_value
 );
 
+long
+PAL_GetConfigNumber(
+	PALCFG_ITEM item,
+	BOOL        default_value
+);
+
 int
 PAL_GetConfigInteger(
 	PALCFG_ITEM item,
@@ -284,6 +290,12 @@ BOOL
 PAL_SetConfigBoolean(
 	PALCFG_ITEM item,
 	BOOL        value
+);
+
+BOOL
+PAL_SetConfigNumber(
+	PALCFG_ITEM item,
+	long        value
 );
 
 BOOL

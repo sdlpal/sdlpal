@@ -648,6 +648,20 @@ PAL_GetConfigBoolean(
 	return gConfigItems[item].Type == PALCFG_BOOLEAN ? PAL_GetConfigItem(item, default_value).bValue : FALSE;
 }
 
+long
+PAL_GetConfigNumber(
+	PALCFG_ITEM item,
+	BOOL        default_value
+)
+{
+	switch (gConfigItems[item].Type)
+	{
+	case PALCFG_INTEGER:  return (long)PAL_GetConfigItem(item, default_value).iValue;
+	case PALCFG_UNSIGNED: return (long)PAL_GetConfigItem(item, default_value).uValue;
+	default:              return 0;
+	}
+}
+
 int
 PAL_GetConfigInteger(
 	PALCFG_ITEM item,
@@ -682,6 +696,24 @@ PAL_SetConfigBoolean(
 )
 {
 	if (gConfigItems[item].Type == PALCFG_BOOLEAN)
+	{
+		ConfigValue val = { (const char *)(intptr_t)value };
+		PAL_SetConfigItem(item, val);
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+BOOL
+PAL_SetConfigNumber(
+	PALCFG_ITEM item,
+	long        value
+)
+{
+	if (gConfigItems[item].Type == PALCFG_INTEGER || gConfigItems[item].Type == PALCFG_UNSIGNED)
 	{
 		ConfigValue val = { (const char *)(intptr_t)value };
 		PAL_SetConfigItem(item, val);
