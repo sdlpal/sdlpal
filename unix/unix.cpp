@@ -285,7 +285,5 @@ UTIL_Platform_Quit(
    VOID
 )
 {
-#if defined(_DEBUG)
 	closelog();
-#endif
 }
