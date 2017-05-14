@@ -128,30 +128,29 @@ void App::RootFrame_FirstNavigated(Object^ sender, NavigationEventArgs^ e)
 
 void SDLPal::App::OnActivated(Windows::ApplicationModel::Activation::IActivatedEventArgs ^ args)
 {
-	auto page = static_cast<SDLPal::MainPage^>(e->ContinuationData->Lookup("Page"));
-	switch (args->Kind)
+	if (dynamic_cast<IContinuationActivatedEventArgs^>(args) != nullptr)
 	{
-	case ActivationKind::PickFolderContinuation:
-		page->SetPath(static_cast<IFolderPickerContinuationEventArgs^>(args)->Folder);
-		break;
-	case ActivationKind::PickFileContinuation:
-	{
-		auto e = safe_cast<IFileOpenPickerContinuationEventArgs^>(args);
-		if (e->Files->Size > 0)
+		auto contdata = dynamic_cast<IContinuationActivatedEventArgs^>(args)->ContinuationData;
+		auto page = dynamic_cast<SDLPal::MainPage^>(contdata->Lookup("Page"));
+		auto target = contdata->HasKey("Target") ? dynamic_cast<Windows::UI::Xaml::Controls::TextBox^>(contdata->Lookup("Target")) : nullptr;
+		switch (args->Kind)
 		{
-			page->SetFile(static_cast<Windows::UI::Xaml::Controls::TextBox^>(e->ContinuationData->Lookup("Target")), e->Files->GetAt(0));
+		case ActivationKind::PickFolderContinuation:
+			page->SetPath(dynamic_cast<IFolderPickerContinuationEventArgs^>(args)->Folder);
+			break;
+		case ActivationKind::PickFileContinuation:
+			if (dynamic_cast<IFileOpenPickerContinuationEventArgs^>(args)->Files->Size > 0)
+			{
+				page->SetFile(target, dynamic_cast<IFileOpenPickerContinuationEventArgs^>(args)->Files->GetAt(0));
+			}
+			break;
+		case ActivationKind::PickSaveFileContinuation:
+			if (dynamic_cast<IFileSavePickerContinuationEventArgs^>(args)->File)
+			{
+				page->SetFile(target, dynamic_cast<IFileSavePickerContinuationEventArgs^>(args)->File);
+			}
+			break;
 		}
-		break;
-	}
-	case ActivationKind::PickSaveFileContinuation:
-	{
-		auto e = safe_cast<IFileSavePickerContinuationEventArgs^>(args);
-		if (e->File)
-		{
-			page->SetFile(static_cast<Windows::UI::Xaml::Controls::TextBox^>(e->ContinuationData->Lookup("Target")), e->File);
-		}
-		break;
-	}
 	}
 	Application::OnActivated(args);
 }
