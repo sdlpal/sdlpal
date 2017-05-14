@@ -683,7 +683,7 @@ PAL_SetConfigBoolean(
 {
 	if (gConfigItems[item].Type == PALCFG_BOOLEAN)
 	{
-		ConfigValue val = { (const char *)value };
+		ConfigValue val = { (const char *)(intptr_t)value };
 		PAL_SetConfigItem(item, val);
 		return TRUE;
 	}
@@ -701,7 +701,7 @@ PAL_SetConfigInteger(
 {
 	if (gConfigItems[item].Type == PALCFG_INTEGER)
 	{
-		ConfigValue val = { (const char *)value };
+		ConfigValue val = { (const char *)(intptr_t)value };
 		PAL_SetConfigItem(item, val);
 		return TRUE;
 	}
@@ -719,7 +719,7 @@ PAL_SetConfigUnsigned(
 {
 	if (gConfigItems[item].Type == PALCFG_UNSIGNED)
 	{
-		ConfigValue val = { (const char *)value };
+		ConfigValue val = { (const char *)(intptr_t)value };
 		PAL_SetConfigItem(item, val);
 		return TRUE;
 	}
