@@ -192,10 +192,6 @@ typedef const WCHAR        *LPCWSTR;
 # define PAL_CONFIG_PREFIX PAL_PREFIX
 #endif
 
-#ifndef PAL_SCREENSHOT_PREFIX
-# define PAL_SCREENSHOT_PREFIX PAL_SAVE_PREFIX
-#endif
-
 #ifndef PAL_HAS_NATIVEMIDI
 # define PAL_HAS_NATIVEMIDI  0
 #endif
