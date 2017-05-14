@@ -139,16 +139,17 @@ void SDLPal::App::OnActivated(Windows::ApplicationModel::Activation::IActivatedE
 		auto e = safe_cast<IFileOpenPickerContinuationEventArgs^>(args);
 		if (e->Files->Size > 0)
 		{
-			auto target = static_cast<Windows::UI::Xaml::Controls::TextBox^>(e->ContinuationData->Lookup("Target"));
-			page->SetFile(target, e->Files->GetAt(0));
+			page->SetFile(static_cast<Windows::UI::Xaml::Controls::TextBox^>(e->ContinuationData->Lookup("Target")), e->Files->GetAt(0));
 		}
 		break;
 	}
 	case ActivationKind::PickSaveFileContinuation:
 	{
-		auto file = safe_cast<IFileSavePickerContinuationEventArgs^>(args)->File;
-		auto target = static_cast<Windows::UI::Xaml::Controls::TextBox^>(e->ContinuationData->Lookup("Target"));
-		if (file) page->SetFile(target, file);
+		auto e = safe_cast<IFileSavePickerContinuationEventArgs^>(args);
+		if (e->File)
+		{
+			page->SetFile(static_cast<Windows::UI::Xaml::Controls::TextBox^>(e->ContinuationData->Lookup("Target")), e->File);
+		}
 		break;
 	}
 	}

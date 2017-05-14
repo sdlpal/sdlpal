@@ -112,30 +112,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Dialog Info
-//
-
-IDD_LAUNCHER DLGINIT
-BEGIN
-    IDC_CD, 0x403, 4, 0, 0x504d, 0x0033, 
-    IDC_CD, 0x403, 4, 0, 0x474f, 0x0047, 
-    IDC_BGM, 0x403, 4, 0, 0x4952, 0x0058, 
-    IDC_BGM, 0x403, 5, 0, 0x494d, 0x4944, "\000" 
-    IDC_BGM, 0x403, 4, 0, 0x504d, 0x0033, 
-    IDC_BGM, 0x403, 4, 0, 0x474f, 0x0047, 
-    IDC_OPL, 0x403, 7, 0, 0x4f44, 0x4253, 0x584f, "\000" 
-    IDC_OPL, 0x403, 5, 0, 0x414d, 0x454d, "\000" 
-    IDC_LOGLEVEL, 0x403, 8, 0, 0x6556, 0x6272, 0x736f, 0x0065, 
-    IDC_LOGLEVEL, 0x403, 6, 0, 0x6544, 0x7562, 0x0067, 
-    IDC_LOGLEVEL, 0x403, 14, 0, 0x6e49, 0x6f66, 0x6d72, 0x7461, 0x6f69, 0x616e, 0x006c, 
-    IDC_LOGLEVEL, 0x403, 8, 0, 0x6157, 0x6e72, 0x6e69, 0x0067, 
-    IDC_LOGLEVEL, 0x403, 6, 0, 0x6146, 0x6174, 0x006c, 
-    0
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // RT_MANIFEST
 //
 
@@ -323,45 +299,6 @@ BEGIN
 END
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog Info
-//
-
-IDD_LAUNCHER DLGINIT
-BEGIN
-    IDC_CD, 0x403, 4, 0
-0x504d, 0x0033, 
-    IDC_CD, 0x403, 4, 0
-0x474f, 0x0047, 
-    IDC_BGM, 0x403, 4, 0
-0x4952, 0x0058, 
-    IDC_BGM, 0x403, 5, 0
-0x494d, 0x4944, "\000" 
-    IDC_BGM, 0x403, 4, 0
-0x504d, 0x0033, 
-    IDC_BGM, 0x403, 4, 0
-0x474f, 0x0047, 
-    IDC_OPL, 0x403, 7, 0
-0x4f44, 0x4253, 0x584f, "\000" 
-    IDC_OPL, 0x403, 5, 0
-0x414d, 0x454d, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xeacf, 0xb8cf, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xf7b5, 0xd4ca, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xc5d0, 0xa2cf, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xafbe, 0xe6b8, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xedb4, 0xf3ce, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xc2d6, 0xfcc3, "\000" 
-    0
-END
-
-
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -516,45 +453,6 @@ END
 
 IDD_LAUNCHER AFX_DIALOG_LAYOUT
 BEGIN
-    0
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog Info
-//
-
-IDD_LAUNCHER DLGINIT
-BEGIN
-    IDC_CD, 0x403, 4, 0
-0x504d, 0x0033, 
-    IDC_CD, 0x403, 4, 0
-0x474f, 0x0047, 
-    IDC_BGM, 0x403, 4, 0
-0x4952, 0x0058, 
-    IDC_BGM, 0x403, 5, 0
-0x494d, 0x4944, "\000" 
-    IDC_BGM, 0x403, 4, 0
-0x504d, 0x0033, 
-    IDC_BGM, 0x403, 4, 0
-0x474f, 0x0047, 
-    IDC_OPL, 0x403, 7, 0
-0x4f44, 0x4253, 0x584f, "\000" 
-    IDC_OPL, 0x403, 5, 0
-0x414d, 0x454d, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xd4b8, 0xd3b2, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xd5bd, 0xd5b8, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0x48ab, 0xa7ae, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xb5c4, 0x69a7, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0xf9bf, 0x7ebb, "\000" 
-    IDC_LOGLEVEL, 0x403, 5, 0
-0x50ad, 0x52a9, "\000" 
     0
 END
 
