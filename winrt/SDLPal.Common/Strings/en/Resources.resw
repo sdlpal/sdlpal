@@ -133,22 +133,16 @@
     <value>Audio buffer size</value>
   </data>
   <data name="AudioBuffer.PlaceholderText" xml:space="preserve">
-    <value>Audio buffer size</value>
+    <value>Choose audio buffer size</value>
   </data>
   <data name="BGM.Header" xml:space="preserve">
     <value>Format of BGM</value>
   </data>
   <data name="BGM.PlaceholderText" xml:space="preserve">
-    <value>Format of BGM</value>
+    <value>Choose format of BGM</value>
   </data>
   <data name="ButtonBrowse.Content" xml:space="preserve">
-    <value>Browse folder</value>
-  </data>
-  <data name="ButtonBrowseFile.Content" xml:space="preserve">
-    <value>Select</value>
-  </data>
-  <data name="ButtonClearFile.Content" xml:space="preserve">
-    <value>Disable</value>
+    <value>Browse</value>
   </data>
   <data name="ButtonDefault.Content" xml:space="preserve">
     <value>Default setting</value>
@@ -156,29 +150,26 @@
   <data name="ButtonFinish.Content" xml:space="preserve">
     <value>Finish setting</value>
   </data>
+  <data name="ButtonReset.Content" xml:space="preserve">
+    <value>Reset setting</value>
+  </data>
   <data name="CD.Header" xml:space="preserve">
     <value>Format of CD track</value>
   </data>
   <data name="CD.PlaceholderText" xml:space="preserve">
-    <value>Format of CD track</value>
+    <value>Choose format of CD track</value>
   </data>
-  <data name="DOS.Header" xml:space="preserve">
-    <value>Game resource version</value>
+  <data name="Debug.Content" xml:space="preserve">
+    <value>Debug</value>
   </data>
-  <data name="DOS.OffContent" xml:space="preserve">
-    <value>WIN95</value>
+  <data name="Error.Content" xml:space="preserve">
+    <value>Error</value>
   </data>
-  <data name="DOS.OnContent" xml:space="preserve">
-    <value>DOS</value>
+  <data name="Fatal.Content" xml:space="preserve">
+    <value>Fatal</value>
   </data>
-  <data name="EmbeddedFont.Header" xml:space="preserve">
-    <value>Use the font embedded in game resource</value>
-  </data>
-  <data name="EmbeddedFont.OffContent" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="EmbeddedFont.OnContent" xml:space="preserve">
-    <value>Yes</value>
+  <data name="FontFile.PlaceholderText" xml:space="preserve">
+    <value>No customized font file</value>
   </data>
   <data name="GamePath.Header" xml:space="preserve">
     <value>Folder of game resource</value>
@@ -186,14 +177,20 @@
   <data name="GamePath.PlaceholderText" xml:space="preserve">
     <value>No folder selected</value>
   </data>
-  <data name="Language.Header" xml:space="preserve">
-    <value>Game resource language</value>
+  <data name="Information.Content" xml:space="preserve">
+    <value>Informational</value>
   </data>
-  <data name="Language.OffContent" xml:space="preserve">
-    <value>Traditional Chinese</value>
+  <data name="LogFile.PlaceholderText" xml:space="preserve">
+    <value>No logging file</value>
   </data>
-  <data name="Language.OnContent" xml:space="preserve">
-    <value>Simplified Chinese</value>
+  <data name="LogFileType" xml:space="preserve">
+    <value>Log files</value>
+  </data>
+  <data name="LogLevel.Header" xml:space="preserve">
+    <value>Logging level</value>
+  </data>
+  <data name="LogLevel.PlaceholderText" xml:space="preserve">
+    <value>Choose logging level</value>
   </data>
   <data name="MBCrashContent" xml:space="preserve">
     <value>The program is abnormally terminated last time. The setting page has been launched for you. Please check if there are any incorrect settings.</value>
@@ -208,9 +205,6 @@ You can use the main menu option inside the game to return to this page.</value>
   <data name="MBExitTitle" xml:space="preserve">
     <value>Setting finished</value>
   </data>
-  <data name="MessageFile.Header" xml:space="preserve">
-    <value>Customized message file</value>
-  </data>
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
     <value>No customized message file</value>
   </data>
@@ -218,16 +212,16 @@ You can use the main menu option inside the game to return to this page.</value>
     <value>Music volume</value>
   </data>
   <data name="OPL.Header" xml:space="preserve">
-    <value>Type of OPL simulator</value>
+    <value>Type of OPL emulator</value>
   </data>
   <data name="OPL.PlaceholderText" xml:space="preserve">
-    <value>Type of OPL simulator</value>
+    <value>Choose type of OPL emulator</value>
   </data>
   <data name="OPLSR.Header" xml:space="preserve">
-    <value>Sample rate of OPL simulator</value>
+    <value>Sample rate of OPL emulator</value>
   </data>
   <data name="OPLSR.PlaceholderText" xml:space="preserve">
-    <value>Sample rate of OPL simulator</value>
+    <value>Choose sample rate of OPL emulator</value>
   </data>
   <data name="Publisher" xml:space="preserve">
     <value>SDLPAL development team</value>
@@ -239,7 +233,7 @@ You can use the main menu option inside the game to return to this page.</value>
     <value>Sample rate of audio output</value>
   </data>
   <data name="Samplerate.PlaceholderText" xml:space="preserve">
-    <value>Sample rate of audio output</value>
+    <value>Choose sample rate of audio output</value>
   </data>
   <data name="SoundVolume.Header" xml:space="preserve">
     <value>Sound volume</value>
@@ -273,5 +267,20 @@ You can use the main menu option inside the game to return to this page.</value>
   </data>
   <data name="TouchOverlay.OnContent" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="UseFontFile.Content" xml:space="preserve">
+    <value>Use customized font file</value>
+  </data>
+  <data name="UseLogFile.Content" xml:space="preserve">
+    <value>Log to file</value>
+  </data>
+  <data name="UseMessageFile.Content" xml:space="preserve">
+    <value>Customized message file</value>
+  </data>
+  <data name="Verbose.Content" xml:space="preserve">
+    <value>Verbose</value>
+  </data>
+  <data name="Warning.Content" xml:space="preserve">
+    <value>Warning</value>
   </data>
 </root>

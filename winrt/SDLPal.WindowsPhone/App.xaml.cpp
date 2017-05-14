@@ -128,17 +128,27 @@ void App::RootFrame_FirstNavigated(Object^ sender, NavigationEventArgs^ e)
 
 void SDLPal::App::OnActivated(Windows::ApplicationModel::Activation::IActivatedEventArgs ^ args)
 {
+	auto page = static_cast<SDLPal::MainPage^>(e->ContinuationData->Lookup("Page"));
 	switch (args->Kind)
 	{
 	case ActivationKind::PickFolderContinuation:
-	{
-		static_cast<SDLPal::MainPage^>(Page)->SetPath(safe_cast<IFolderPickerContinuationEventArgs^>(args)->Folder);
+		page->SetPath(static_cast<IFolderPickerContinuationEventArgs^>(args)->Folder);
 		break;
-	}
 	case ActivationKind::PickFileContinuation:
 	{
-		auto files = safe_cast<IFileOpenPickerContinuationEventArgs^>(args)->Files;
-		if (files->Size > 0) static_cast<SDLPal::MainPage^>(Page)->SetFile(files->GetAt(0));
+		auto e = safe_cast<IFileOpenPickerContinuationEventArgs^>(args);
+		if (e->Files->Size > 0)
+		{
+			auto target = static_cast<Windows::UI::Xaml::Controls::TextBox^>(e->ContinuationData->Lookup("Target"));
+			page->SetFile(target, e->Files->GetAt(0));
+		}
+		break;
+	}
+	case ActivationKind::PickSaveFileContinuation:
+	{
+		auto file = safe_cast<IFileSavePickerContinuationEventArgs^>(args)->File;
+		auto target = static_cast<Windows::UI::Xaml::Controls::TextBox^>(e->ContinuationData->Lookup("Target"));
+		if (file) page->SetFile(target, file);
 		break;
 	}
 	}

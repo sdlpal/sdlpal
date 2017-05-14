@@ -14,3 +14,6 @@ EXPORTS
 	fputs=WRT_fputs
 	fgetc=WRT_fgetc
 	fgets=WRT_fgets
+
+	get_special_files_map
+	get_special_folders_map

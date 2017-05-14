@@ -26,24 +26,67 @@ using namespace Windows::UI::Xaml::Navigation;
 MainPage::MainPage()
 {
 	InitializeComponent();
+
+	m_controls = ref new Platform::Collections::Map<Platform::String^, ButtonAttribute^>();
+	m_controls->Insert(btnBrowseMsgFile->Name, ref new ButtonAttribute(tbMsgFile, ref new Platform::Array<Platform::String^>{ ".bdf" }));
+	m_controls->Insert(btnBrowseFontFile->Name, ref new ButtonAttribute(tbFontFile, ref new Platform::Array<Platform::String^>{ ".msg" }));
+	m_controls->Insert(btnBrowseLogFile->Name, ref new ButtonAttribute(tbLogFile, ref new Platform::Array<Platform::String^>{ ".log" }));
+	m_controls->Insert(cbUseMsgFile->Name, ref new ButtonAttribute(gridMsgFile, nullptr));
+	m_controls->Insert(cbUseFontFile->Name, ref new ButtonAttribute(gridFontFile, nullptr));
+	m_controls->Insert(cbUseLogFile->Name, ref new ButtonAttribute(gridLogFile, nullptr));
+
+	m_acl[PALCFG_GAMEPATH] = ref new AccessListEntry(tbGamePath, nullptr, ConvertString(PAL_ConfigName(PALCFG_GAMEPATH)));
+	m_acl[PALCFG_SAVEPATH] = ref new AccessListEntry(tbGamePath, nullptr, ConvertString(PAL_ConfigName(PALCFG_SAVEPATH)));
+	m_acl[PALCFG_MESSAGEFILE] = ref new AccessListEntry(tbMsgFile, cbUseMsgFile, ConvertString(PAL_ConfigName(PALCFG_MESSAGEFILE)));
+	m_acl[PALCFG_FONTFILE] = ref new AccessListEntry(tbFontFile, cbUseFontFile, ConvertString(PAL_ConfigName(PALCFG_FONTFILE)));
+	m_acl[PALCFG_LOGFILE] = ref new AccessListEntry(tbLogFile, cbUseLogFile, ConvertString(PAL_ConfigName(PALCFG_LOGFILE)));
+
 	LoadControlContents();
 
 	m_resLdr = Windows::ApplicationModel::Resources::ResourceLoader::GetForCurrentView();
-	auto app = static_cast<App^>(Application::Current);
-#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
-	app->Page = this;
-#endif
-	if (app->LastCrashed)
+	if (static_cast<App^>(Application::Current)->LastCrashed)
+	{
 		(ref new Windows::UI::Popups::MessageDialog(m_resLdr->GetString("MBCrashContent")))->ShowAsync();
+	}
 }
 
-void SDLPal::MainPage::LoadControlContents()
+void SDLPal::MainPage::LoadControlContents(bool loadDefault)
 {
-	if (gConfig.pszGamePath) tbGamePath->Text = ConvertString(gConfig.pszGamePath);
-	if (gConfig.pszMsgFile) tbMsgFile->Text = ConvertString(gConfig.pszMsgFile);
+	for (auto i = m_acl.begin(); i != m_acl.end(); i++)
+	{
+		auto item = i->second;
+		item->text->Text = "";
+		item->text->Tag = nullptr;
+		if (item->check)
+		{
+			item->check->IsChecked = false;
+			m_controls->Lookup(item->check->Name)->Object->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+		}
+	}
 
-	tsLanguage->IsOn = (gConfig.uCodePage == CP_GBK);
-	tsUseEmbedFont->IsOn = (gConfig.fUseEmbeddedFonts == TRUE);
+	if (!loadDefault)
+	{
+		// Always load folder/files from FutureAccessList
+		std::list<Platform::String^> invalid_tokens;
+		auto fal = Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList;
+		for each (auto entry in fal->Entries)
+		{
+			auto& ace = m_acl[PAL_ConfigIndex(ConvertString(entry.Token).c_str())];
+			ace->text->Tag = AWait(fal->GetItemAsync(entry.Token), g_eventHandle);
+			if (ace->text->Tag)
+				ace->text->Text = entry.Metadata;
+			else
+				invalid_tokens.push_back(entry.Token);
+			if (ace->check)
+			{
+				auto grid = m_controls->Lookup(ace->check->Name)->Object;
+				ace->check->IsChecked = (ace->text->Tag != nullptr);
+				grid->Visibility = ace->check->IsChecked->Value ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
+			}
+		}
+		for (auto i = invalid_tokens.begin(); i != invalid_tokens.end(); fal->Remove(*i++));
+	}
+
 	tsKeepAspect->IsOn = (gConfig.fKeepAspectRatio == TRUE);
 	tsStereo->IsOn = (gConfig.iAudioChannels == 2);
 	tsSurroundOPL->IsOn = (gConfig.fUseSurroundOPL == TRUE);
@@ -52,6 +95,7 @@ void SDLPal::MainPage::LoadControlContents()
 	slMusicVolume->Value = gConfig.iMusicVolume;
 	slSoundVolume->Value = gConfig.iSoundVolume;
 	slQuality->Value = gConfig.iResampleQuality;
+	cbLogLevel->SelectedIndex = (int)gConfig.iLogLevel;
 
 	cbCD->SelectedIndex = (gConfig.eCDType == MUSIC_MP3) ? 0 : 1;
 	cbBGM->SelectedIndex = (gConfig.eMusicType <= MUSIC_OGG) ? gConfig.eMusicType : MUSIC_RIX;
@@ -82,17 +126,12 @@ void SDLPal::MainPage::LoadControlContents()
 
 void SDLPal::MainPage::SaveControlContents()
 {
-	std::wstring path;
+	// All folders/files are not stored in config file, as they are store in FutureAcessList
+	if (gConfig.pszGamePath) { free(gConfig.pszGamePath); gConfig.pszGamePath = nullptr; }
+	if (gConfig.pszMsgFile) { free(gConfig.pszMsgFile); gConfig.pszMsgFile = nullptr; }
+	if (gConfig.pszFontFile) { free(gConfig.pszFontFile); gConfig.pszFontFile = nullptr; }
+	if (gConfig.pszLogFile) { free(gConfig.pszLogFile); gConfig.pszLogFile = nullptr; }
 
-	if (gConfig.pszGamePath) free(gConfig.pszGamePath);
-	path.assign(tbGamePath->Text->Data());
-	if (path.back() != '\\') path.append(L"\\");
-	gConfig.pszGamePath = strdup(ConvertString(path).c_str());
-
-	if (gConfig.pszMsgFile) { free(gConfig.pszMsgFile); gConfig.pszMsgFile = NULL; }
-	gConfig.pszMsgFile = (tbMsgFile->Text->Length() > 0) ? strdup(ConvertString(tbMsgFile->Text).c_str()) : nullptr;
-
-	gConfig.fUseEmbeddedFonts = tsUseEmbedFont->IsOn ? TRUE : FALSE;
 	gConfig.fKeepAspectRatio = tsKeepAspect->IsOn ? TRUE : FALSE;
 	gConfig.iAudioChannels = tsStereo->IsOn ? 2 : 1;
 	gConfig.fUseSurroundOPL = tsSurroundOPL->IsOn ? TRUE : FALSE;
@@ -101,7 +140,7 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.iMusicVolume = (int)slMusicVolume->Value;
 	gConfig.iSoundVolume = (int)slSoundVolume->Value;
 	gConfig.iResampleQuality = (int)slQuality->Value;
-	gConfig.uCodePage = tsLanguage->IsOn ? CP_GBK : CP_BIG5;
+	gConfig.iLogLevel = (LOGLEVEL)cbLogLevel->SelectedIndex;
 
 	gConfig.eCDType = (MUSICTYPE)(MUSIC_MP3 + cbCD->SelectedIndex);
 	gConfig.eMusicType = (MUSICTYPE)cbBGM->SelectedIndex;
@@ -120,10 +159,15 @@ void SDLPal::MainPage::cbBGM_SelectionChanged(Platform::Object^ sender, Windows:
 	tsSurroundOPL->Visibility = visibility;
 }
 
+void SDLPal::MainPage::btnDefault_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	PAL_LoadConfig(FALSE);
+	LoadControlContents(true);
+}
 
 void SDLPal::MainPage::btnReset_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	PAL_LoadConfig(FALSE);
+	PAL_LoadConfig(TRUE);
 	LoadControlContents();
 }
 
@@ -131,9 +175,16 @@ void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xa
 {
 	if (tbGamePath->Text->Length() > 0)
 	{
-		auto mru_list = Windows::Storage::AccessCache::StorageApplicationPermissions::MostRecentlyUsedList;
-		if (tbGamePath->Tag) mru_list->Add(safe_cast<Windows::Storage::StorageFolder^>(tbGamePath->Tag), tbGamePath->Text);
-		if (tbMsgFile->Tag) mru_list->Add(safe_cast<Windows::Storage::StorageFile^>(tbMsgFile->Tag), tbMsgFile->Text);
+		auto fal = Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList;
+		for (auto i = m_acl.begin(); i != m_acl.end(); i++)
+		{
+			auto item = i->second;
+			auto check = item->check ? item->check->IsChecked->Value : true;
+			if (check && item->text->Tag)
+				fal->AddOrReplace(item->token, safe_cast<Windows::Storage::IStorageItem^>(item->text->Tag), item->text->Text);
+			else if (fal->ContainsItem(item->token))
+				fal->Remove(item->token);
+		}
 
 		SaveControlContents();
 		gConfig.fLaunchSetting = FALSE;
@@ -166,35 +217,70 @@ void SDLPal::MainPage::SetPath(Windows::Storage::StorageFolder^ folder)
 	}
 }
 
-void SDLPal::MainPage::SetFile(Windows::Storage::StorageFile^ file)
+void SDLPal::MainPage::SetFile(Windows::UI::Xaml::Controls::TextBox^ target, Windows::Storage::StorageFile^ file)
 {
-	if (file)
+	if (target && file)
 	{
-		tbMsgFile->Text = file->Path;
-		tbMsgFile->Tag = file;
+		target->Text = file->Path;
+		target->Tag = file;
 	}
 }
 
-void SDLPal::MainPage::btnBrowse_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void SDLPal::MainPage::btnBrowseFolder_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	auto picker = ref new Windows::Storage::Pickers::FolderPicker();
 	picker->FileTypeFilter->Append("*");
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+	picker->ContinuationData->Insert("Page", this);
 	picker->PickFolderAndContinue();
 #else
 	concurrency::create_task(picker->PickSingleFolderAsync()).then([this](Windows::Storage::StorageFolder^ folder) { SetPath(folder); });
 #endif
 }
 
-void SDLPal::MainPage::btnBrowseFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void SDLPal::MainPage::btnBrowseFileOpen_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	auto button = static_cast<Windows::UI::Xaml::Controls::Button^>(sender);
+	auto target = m_controls->Lookup(button->Name);
 	auto picker = ref new Windows::Storage::Pickers::FileOpenPicker();
-	picker->FileTypeFilter->Append("*");
+	picker->FileTypeFilter->ReplaceAll(target->Filter);
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+	picker->ContinuationData->Insert("Page", this);
+	picker->ContinuationData->Insert("Target", target->Object);
 	picker->PickSingleFileAndContinue();
 #else
-	concurrency::create_task(picker->PickSingleFileAsync()).then([this](Windows::Storage::StorageFile^ file) { SetFile(file); });
+	concurrency::create_task(picker->PickSingleFileAsync()).then(
+		[this, target](Windows::Storage::StorageFile^ file) {
+			SetFile(static_cast<Windows::UI::Xaml::Controls::TextBox^>(target->Object), file);
+		}
+	);
 #endif
+}
+
+void SDLPal::MainPage::btnBrowseFileSave_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	auto button = static_cast<Windows::UI::Xaml::Controls::Button^>(sender);
+	auto target = m_controls->Lookup(button->Name);
+	auto picker = ref new Windows::Storage::Pickers::FileSavePicker();
+	picker->FileTypeChoices->Insert(m_resLdr->GetString("LogFileType"), ref new Platform::Collections::Vector<Platform::String^>(target->Filter));
+#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+	picker->ContinuationData->Insert("Page", this);
+	picker->ContinuationData->Insert("Target", target->Object);
+	picker->PickSaveFileAndContinue();
+#else
+	concurrency::create_task(picker->PickSaveFileAsync()).then(
+		[this, target](Windows::Storage::StorageFile^ file) {
+		SetFile(static_cast<Windows::UI::Xaml::Controls::TextBox^>(target->Object), file);
+	}
+	);
+#endif
+}
+
+void SDLPal::MainPage::cbUseFile_CheckChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	auto checker = static_cast<Windows::UI::Xaml::Controls::CheckBox^>(sender);
+	auto attr = m_controls->Lookup(checker->Name);
+	attr->Object->Visibility = checker->IsChecked->Value ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 void SDLPal::MainPage::Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
