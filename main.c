@@ -486,6 +486,8 @@ main(
    if (UTIL_Platform_Init(argc, argv) != 0)
 	   return -1;
 
+   // Without the detection, app will automatically exit on platforms that dont have config page.
+#if defined(PAL_HAS_CONFIG_PAGE) && PAL_HAS_CONFIG_PAGE
    //
    // Should launch setting
    // However, it may arrive here through the activatation event on WinRT platform
@@ -493,6 +495,7 @@ main(
    //
    if (gConfig.fLaunchSetting)
 	   return 0;
+#endif
 
    //
    // If user requests a file-based log, then add it after the system-specific one.
