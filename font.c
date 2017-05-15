@@ -84,6 +84,17 @@ static void PAL_LoadEmbeddedFont(void)
 	fclose(fp);
 
 	//
+	// Detect the codepage of 'wor16.asc' and exit if not BIG5 or probability < 99
+	// Note: 100% probability is impossible as the function does not recognize some special
+	// characters such as bopomofo that may be used by 'wor16.asc'.
+	//
+	if (PAL_DetectCodePageForString(char_buf, nBytes, CP_BIG5, &i) != CP_BIG5 || i < 99)
+	{
+		free(char_buf);
+		return;
+	}
+
+	//
 	// Convert characters into unicode
 	// Explictly specify BIG5 here for compatibility with codepage auto-detection
 	//

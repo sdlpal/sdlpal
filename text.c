@@ -1545,6 +1545,72 @@ PAL_SetCodePage(
 	g_codepage = uCodePage;
 }
 
+CODEPAGE
+PAL_DetectCodePageForString(
+	const char *   text,
+	int            text_len,
+	CODEPAGE       default_cp,
+	int *          probability
+)
+{
+	// Try to convert the content of word.dat with different codepages,
+	// and use the codepage with minimal inconvertible characters
+	// Works fine currently for detecting Simplified Chinese & Traditional Chinese.
+	// Since we're using language files to support additional languages, this detection
+	// should be fine for us now.
+	int min_invalids = INT_MAX;
+
+	if (text && text_len > 0)
+	{
+		// The file to be detected should not contain characters outside these ranges
+		const static int valid_ranges[][2] = {
+			{ 0x4E00, 0x9FFF }, // CJK Unified Ideographs
+			{ 0x3400, 0x4DBF }, // CJK Unified Ideographs Extension A
+			{ 0xF900, 0xFAFF }, // CJK Compatibility Ideographs
+			{ 0x0020, 0x007E }, // Basic ASCII
+			{ 0x3000, 0x301E }, // CJK Symbols
+			{ 0xFF01, 0xFF5E }, // Fullwidth Forms
+		};
+
+		for (CODEPAGE i = CP_BIG5; i <= CP_GBK; i++)
+		{
+			int invalids, length = PAL_MultiByteToWideCharCP(i, text, text_len, NULL, 0);
+			WCHAR *wbuf = (WCHAR *)malloc(length * sizeof(WCHAR));
+			PAL_MultiByteToWideCharCP(i, text, text_len, wbuf, length);
+			for (int j = invalids = 0; j < length; j++)
+			{
+				int score = 1;
+				for (int k = 0; k < sizeof(valid_ranges) / sizeof(valid_ranges[0]); k++)
+				{
+					if (wbuf[j] >= valid_ranges[k][0] &&
+						wbuf[j] <= valid_ranges[k][1])
+					{
+						score = 0;
+						break;
+					}
+				}
+				invalids += score;
+			}
+			// code page with less invalid chars wins
+			if (invalids < min_invalids)
+			{
+				min_invalids = invalids;
+				default_cp = i;
+			}
+			free(wbuf);
+		}
+	}
+	if (probability)
+	{
+		if (min_invalids < text_len / 2)
+			*probability = (text_len / 2 - min_invalids) * 200 / text_len;
+		else
+			*probability = 0;
+	}
+
+	return default_cp;
+}
+
 INT
 PAL_MultiByteToWideCharCP(
    CODEPAGE      cp,

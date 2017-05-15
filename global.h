@@ -556,7 +556,7 @@ PAL_IsWINVersion(
 
 CODEPAGE
 PAL_DetectCodePage(
-	void
+	const char *   filename
 );
 
 INT
