@@ -233,10 +233,9 @@ PAL_InitGlobals(
    if (!PAL_IsWINVersion(&gConfig.fIsWIN95)) return -1;
 
    //
-   // Detect game language no matter whether message file specified; or DOS version + message file
-   // will crash when loading wor16.fon, since the default UTF-8 is used for converting wor16.asc.
+   // Detect game language only when no message file specified
    //
-   PAL_SetCodePage(PAL_DetectCodePage());
+   if (!gConfig.pszMsgFile) PAL_SetCodePage(PAL_DetectCodePage());
 
    //
    // Set decompress function
