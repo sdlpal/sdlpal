@@ -65,7 +65,7 @@ matrix:
         script:
           - cd android
           - ./gradlew assembleRelease
-          - mv app/build/outputs/apk/app-release.apk ../deploy/sdlpal-release.apk
+          - mv app/build/outputs/apk/app-release-unsigned.apk ../deploy/sdlpal-release.apk
           - cd ..
 
       - os: osx
