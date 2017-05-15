@@ -486,16 +486,16 @@ main(
    if (UTIL_Platform_Init(argc, argv) != 0)
 	   return -1;
 
-   // Without the detection, app will automatically exit on platforms that dont have config page.
-#if defined(PAL_HAS_CONFIG_PAGE) && PAL_HAS_CONFIG_PAGE
    //
-   // Should launch setting
-   // However, it may arrive here through the activatation event on WinRT platform
-   // So close the current process so that the new process can go to setting
+   // Should launch setting?
+   // Generally, the condition should never be TRUE as the UTIL_Platform_Init is assumed
+   // to handle gConfig.fLaunchSetting correctly. However, it may actually be true due to
+   // the activatation event on WinRT platform, so close the current process to make new
+   // process go to setting.
+   // For platforms without configuration page available, this condition will NEVER be true.
    //
-   if (gConfig.fLaunchSetting)
+   if (PAL_HAS_CONFIG_PAGE && gConfig.fLaunchSetting)
 	   return 0;
-#endif
 
    //
    // If user requests a file-based log, then add it after the system-specific one.

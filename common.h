@@ -234,4 +234,8 @@ typedef enum tagLOGLEVEL
 # define PAL_DEFAULT_LOGLEVEL  LOGLEVEL_MAX
 #endif
 
+#ifndef PAL_HAS_CONFIG_PAGE
+# define PAL_HAS_CONFIG_PAGE   FALSE
+#endif
+
 #endif
