@@ -53,8 +53,8 @@ matrix:
           components:
             - platform-tools
             - tools
-            - build-tools-25.0.2
-            - android-24
+            - build-tools-25.0.3
+            - android-25
             - extra-android-m2repository
         jdk: oraclejdk8
         before_install:
@@ -64,8 +64,8 @@ matrix:
           - export PATH=${PATH}:${ANDROID_NDK_HOME}
         script:
           - cd android
-          - ./gradlew assembleDebug
-          - mv app/build/outputs/apk/app-debug.apk ../deploy/sdlpal-debug.apk
+          - ./gradlew assembleRelease
+          - mv app/build/outputs/apk/app-release-unsigned.apk ../deploy/sdlpal-release.apk
           - cd ..
 
       - os: osx
