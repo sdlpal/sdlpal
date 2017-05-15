@@ -2,12 +2,7 @@
     <string name="app_name" translatable="false">SDLPal</string>
     <string name="label_folder">Game resource folder:</string>
     <string name="action_browse">Browse</string>
-    <string name="action_embedded_font">Using embedded font</string>
     <string name="title_settings">Settings</string>
-    <string name="action_custom_lang">Use language file</string>
-    <string name="action_lang">Game language</string>
-    <string name="switch_traditional">CHT</string>
-    <string name="switch_simplified">CHS</string>
     <string name="action_touch">Enable touch overlay</string>
     <string name="action_aspect">Keep aspect ratio</string>
     <string name="action_stereo">Stereo</string>
@@ -27,4 +22,8 @@
     <string name="msg_exit">Settings have been saved and the game will be started on next launch. You can use the main menu option inside the game to return to this page.</string>
     <string name="msg_crash">The program is abnormally terminated last time. The setting page has been launched for you. Please check if there are any incorrect settings.</string>
     <string name="msg_empty">The game resource folder must be specified!</string>
+    <string name="label_loglevel">Logging level</string>
+    <string name="action_usemsgfile">Customized message file</string>
+    <string name="action_usefontfile">Customized font file</string>
+    <string name="action_uselogfile">Log to file</string>
 </resources>

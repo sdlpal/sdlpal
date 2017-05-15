@@ -133,22 +133,16 @@
     <value>音频缓冲区大小</value>
   </data>
   <data name="AudioBuffer.PlaceholderText" xml:space="preserve">
-    <value>音频缓冲区大小</value>
+    <value>选择音频缓冲区大小</value>
   </data>
   <data name="BGM.Header" xml:space="preserve">
     <value>背景音乐格式</value>
   </data>
   <data name="BGM.PlaceholderText" xml:space="preserve">
-    <value>背景音乐格式</value>
+    <value>选择背景音乐格式</value>
   </data>
   <data name="ButtonBrowse.Content" xml:space="preserve">
-    <value>浏览文件夹</value>
-  </data>
-  <data name="ButtonBrowseFile.Content" xml:space="preserve">
-    <value>选择语言文件</value>
-  </data>
-  <data name="ButtonClearFile.Content" xml:space="preserve">
-    <value>禁用语言文件</value>
+    <value>浏览</value>
   </data>
   <data name="ButtonDefault.Content" xml:space="preserve">
     <value>默认设置</value>
@@ -156,29 +150,26 @@
   <data name="ButtonFinish.Content" xml:space="preserve">
     <value>完成设置</value>
   </data>
+  <data name="ButtonReset.Content" xml:space="preserve">
+    <value>还原设置</value>
+  </data>
   <data name="CD.Header" xml:space="preserve">
     <value>CD 音轨格式</value>
   </data>
   <data name="CD.PlaceholderText" xml:space="preserve">
-    <value>CD 音轨格式</value>
+    <value>选择 CD 音轨格式</value>
   </data>
-  <data name="DOS.Header" xml:space="preserve">
-    <value>游戏资源版本</value>
+  <data name="Debug.Content" xml:space="preserve">
+    <value>调试</value>
   </data>
-  <data name="DOS.OffContent" xml:space="preserve">
-    <value>WIN95</value>
+  <data name="Error.Content" xml:space="preserve">
+    <value>错误</value>
   </data>
-  <data name="DOS.OnContent" xml:space="preserve">
-    <value>DOS</value>
+  <data name="Fatal.Content" xml:space="preserve">
+    <value>致命</value>
   </data>
-  <data name="EmbeddedFont.Header" xml:space="preserve">
-    <value>使用游戏资源内置字体</value>
-  </data>
-  <data name="EmbeddedFont.OffContent" xml:space="preserve">
-    <value>否</value>
-  </data>
-  <data name="EmbeddedFont.OnContent" xml:space="preserve">
-    <value>是</value>
+  <data name="FontFile.PlaceholderText" xml:space="preserve">
+    <value>无自定义字体文件</value>
   </data>
   <data name="GamePath.Header" xml:space="preserve">
     <value>游戏资源文件夹</value>
@@ -186,14 +177,20 @@
   <data name="GamePath.PlaceholderText" xml:space="preserve">
     <value>未选择文件夹</value>
   </data>
-  <data name="Language.Header" xml:space="preserve">
-    <value>游戏资源语言</value>
+  <data name="Information.Content" xml:space="preserve">
+    <value>信息</value>
   </data>
-  <data name="Language.OffContent" xml:space="preserve">
-    <value>繁体中文</value>
+  <data name="LogFile.PlaceholderText" xml:space="preserve">
+    <value>无日志文件</value>
   </data>
-  <data name="Language.OnContent" xml:space="preserve">
-    <value>简体中文</value>
+  <data name="LogFileType" xml:space="preserve">
+    <value>日志文件</value>
+  </data>
+  <data name="LogLevel.Header" xml:space="preserve">
+    <value>日志记录级别</value>
+  </data>
+  <data name="LogLevel.PlaceholderText" xml:space="preserve">
+    <value>选择日志记录级别</value>
   </data>
   <data name="MBCrashContent" xml:space="preserve">
     <value>上次程序异常退出，已显示设置页供您检查设置是否正确。</value>
@@ -208,9 +205,6 @@
   <data name="MBExitTitle" xml:space="preserve">
     <value>设置已完成</value>
   </data>
-  <data name="MessageFile.Header" xml:space="preserve">
-    <value>自定义语言文件</value>
-  </data>
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
     <value>无自定义语言文件</value>
   </data>
@@ -221,13 +215,13 @@
     <value>OPL 模拟器</value>
   </data>
   <data name="OPL.PlaceholderText" xml:space="preserve">
-    <value>OPL 模拟器</value>
+    <value>选择 OPL 模拟器</value>
   </data>
   <data name="OPLSR.Header" xml:space="preserve">
     <value>OPL 模拟器采样率</value>
   </data>
   <data name="OPLSR.PlaceholderText" xml:space="preserve">
-    <value>OPL 模拟器采样率</value>
+    <value>选择 OPL 模拟器采样率</value>
   </data>
   <data name="Publisher" xml:space="preserve">
     <value>SDLPAL 开发组</value>
@@ -239,7 +233,7 @@
     <value>音频输出采样率</value>
   </data>
   <data name="Samplerate.PlaceholderText" xml:space="preserve">
-    <value>音频输出采样率</value>
+    <value>选择音频输出采样率</value>
   </data>
   <data name="SoundVolume.Header" xml:space="preserve">
     <value>音效音量</value>
@@ -273,5 +267,20 @@
   </data>
   <data name="TouchOverlay.OnContent" xml:space="preserve">
     <value>是</value>
+  </data>
+  <data name="UseFontFile.Content" xml:space="preserve">
+    <value>自定义字体文件</value>
+  </data>
+  <data name="UseLogFile.Content" xml:space="preserve">
+    <value>记录日志到文件</value>
+  </data>
+  <data name="UseMessageFile.Content" xml:space="preserve">
+    <value>自定义语言文件</value>
+  </data>
+  <data name="Verbose.Content" xml:space="preserve">
+    <value>详细</value>
+  </data>
+  <data name="Warning.Content" xml:space="preserve">
+    <value>警告</value>
   </data>
 </root>

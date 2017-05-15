@@ -91,16 +91,24 @@ int WINAPI LoadStringEx(
 	}
 }
 
+std::wstring LoadResourceString(UINT uID)
+{
+	auto hrc = FindResourceEx(g_hInstance, RT_STRING, MAKEINTRESOURCE((uID >> 4) + 1), g_wLanguage);
+	if (hrc)
+	{
+		auto begin = (LPCWSTR)LockResource(LoadResource(g_hInstance, hrc));
+		for (int idx = 0; idx < (int)(uID & 0xf); idx++)
+			begin += *begin + 1;
+		return std::wstring(begin + 1, *begin);
+	}
+	return L"";
+}
+
 void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 {
 	int textLen;
 
-	if (IsDlgButtonChecked(hwndDlg, IDC_CHS))
-		gConfig.uCodePage = CP_GBK;
-	else
-		gConfig.uCodePage = CP_BIG5;
-
-	if ((textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_MSGFILE))) > 0)
+	if (IsDlgButtonChecked(hwndDlg, IDC_USEMSGFILE) && (textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_MSGFILE))) > 0)
 	{
 		gConfig.pszMsgFile = (char*)realloc(gConfig.pszMsgFile, textLen + 1);
 		GetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile, textLen + 1);
@@ -109,6 +117,27 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	{
 		free(gConfig.pszMsgFile); gConfig.pszMsgFile = nullptr;
 	}
+
+	if (IsDlgButtonChecked(hwndDlg, IDC_USELOGFILE) && (textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_LOGFILE))) > 0)
+	{
+		gConfig.pszLogFile = (char*)realloc(gConfig.pszLogFile, textLen + 1);
+		GetDlgItemTextA(hwndDlg, IDC_LOGFILE, gConfig.pszLogFile, textLen + 1);
+	}
+	else
+	{
+		free(gConfig.pszLogFile); gConfig.pszLogFile = nullptr;
+	}
+
+	if (IsDlgButtonChecked(hwndDlg, IDC_USEFONTFILE) && (textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_FONTFILE))) > 0)
+	{
+		gConfig.pszFontFile = (char*)realloc(gConfig.pszFontFile, textLen + 1);
+		GetDlgItemTextA(hwndDlg, IDC_FONTFILE, gConfig.pszFontFile, textLen + 1);
+	}
+	else
+	{
+		free(gConfig.pszFontFile); gConfig.pszFontFile = nullptr;
+	}
+
 	if ((textLen = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_GAMEPATH))) > 0)
 	{
 		gConfig.pszGamePath = (char*)realloc(gConfig.pszGamePath, textLen + 1);
@@ -121,17 +150,18 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 
 	gConfig.fFullScreen = IsDlgButtonChecked(hwndDlg, IDC_FULLSCREEN);
 	gConfig.fUseTouchOverlay = IsDlgButtonChecked(hwndDlg, IDC_TOUCHOVERLAY);
-	gConfig.fUseEmbeddedFonts = IsDlgButtonChecked(hwndDlg, IDC_EMBEDFONT);
 	gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO);
 	gConfig.eCDType = (MUSICTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD) + MUSIC_MP3);
 	gConfig.eMusicType = (MUSICTYPE)ComboBox_GetCurSel(hwndDlg, IDC_BGM);
 	gConfig.eOPLType = (OPLTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_OPL));
+	gConfig.iLogLevel = (LOGLEVEL)(ComboBox_GetCurSel(hwndDlg, IDC_LOGLEVEL));
 	gConfig.iAudioChannels = IsDlgButtonChecked(hwndDlg, IDC_STEREO) ? 2 : 1;
 	gConfig.iSampleRate = GetDlgItemInt(hwndDlg, IDC_SAMPLERATE, nullptr, FALSE);
 	gConfig.wAudioBufferSize = GetDlgItemInt(hwndDlg, IDC_AUDIOBUFFER, nullptr, FALSE);
 	gConfig.iMusicVolume = TrackBar_GetPos(hwndDlg, IDC_MUSICVOLUME);
 	gConfig.iSoundVolume = TrackBar_GetPos(hwndDlg, IDC_SOUNDVOLUME);
 	gConfig.iResampleQuality = TrackBar_GetPos(hwndDlg, IDC_QUALITY);
+
 	if (gConfig.eMusicType == MUSIC_RIX)
 	{
 		gConfig.fUseSurroundOPL = IsDlgButtonChecked(hwndDlg, IDC_SURROUNDOPL);
@@ -149,18 +179,23 @@ void ResetControls(HWND hwndDlg)
 	EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_OPLSR, gConfig.eMusicType == MUSIC_RIX);
 
-	CheckRadioButton(hwndDlg, IDC_CHT, IDC_CHS, IDC_CHT + gConfig.uCodePage);
-
 	CheckDlgButton(hwndDlg, IDC_FULLSCREEN, gConfig.fFullScreen);
 	CheckDlgButton(hwndDlg, IDC_TOUCHOVERLAY, gConfig.fUseTouchOverlay);
-	CheckDlgButton(hwndDlg, IDC_EMBEDFONT, gConfig.fUseEmbeddedFonts);
 	CheckDlgButton(hwndDlg, IDC_ASPECTRATIO, gConfig.fKeepAspectRatio);
 	CheckDlgButton(hwndDlg, IDC_SURROUNDOPL, gConfig.fUseSurroundOPL);
 	CheckDlgButton(hwndDlg, IDC_STEREO, gConfig.iAudioChannels == 2);
 
+	CheckDlgButton(hwndDlg, IDC_USEMSGFILE, gConfig.pszMsgFile != nullptr);
+	EnableDlgItem(hwndDlg, IDC_BRMSG, gConfig.pszMsgFile != nullptr);
+	CheckDlgButton(hwndDlg, IDC_USEFONTFILE, gConfig.pszFontFile != nullptr);
+	EnableDlgItem(hwndDlg, IDC_BRFONT, gConfig.pszFontFile != nullptr);
+	CheckDlgButton(hwndDlg, IDC_USELOGFILE, gConfig.pszLogFile != nullptr);
+	EnableDlgItem(hwndDlg, IDC_BRLOG, gConfig.pszLogFile != nullptr);
+
 	ComboBox_SetCurSel(hwndDlg, IDC_CD, gConfig.eCDType - MUSIC_MP3);
 	ComboBox_SetCurSel(hwndDlg, IDC_BGM, gConfig.eMusicType);
 	ComboBox_SetCurSel(hwndDlg, IDC_OPL, gConfig.eOPLType);
+	ComboBox_SetCurSel(hwndDlg, IDC_LOGLEVEL, gConfig.iLogLevel);
 
 	SetDlgItemText(hwndDlg, IDC_SAMPLERATE, _itot(gConfig.iSampleRate, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_OPLSR, _itot(gConfig.iOPLSampleRate, buffer, 10));
@@ -168,6 +203,8 @@ void ResetControls(HWND hwndDlg)
 
 	if (gConfig.pszGamePath) SetDlgItemTextA(hwndDlg, IDC_GAMEPATH, gConfig.pszGamePath);
 	if (gConfig.pszMsgFile) SetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile);
+	if (gConfig.pszFontFile) SetDlgItemTextA(hwndDlg, IDC_FONTFILE, gConfig.pszFontFile);
+	if (gConfig.pszLogFile) SetDlgItemTextA(hwndDlg, IDC_LOGFILE, gConfig.pszLogFile);
 
 	TrackBar_SetPos(hwndDlg, IDC_QUALITY, gConfig.iResampleQuality, TRUE);
 	TrackBar_SetPos(hwndDlg, IDC_MUSICVOLUME, gConfig.iMusicVolume, TRUE);
@@ -177,6 +214,27 @@ void ResetControls(HWND hwndDlg)
 INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 {
 	InitCommonControls();
+
+	auto log_levels = LoadResourceString(IDC_LOGLEVEL);
+	for (size_t pos = 0; pos != std::string::npos; )
+	{
+		std::wstring item;
+		auto next = log_levels.find(L';', pos);
+		if (next != std::string::npos)
+		{
+			item.assign(log_levels.c_str() + pos, next - pos);
+			pos = next + 1;
+		}
+		else
+		{
+			item.assign(log_levels.c_str() + pos);
+			pos = next;
+		}
+		if (item.length() > 0)
+		{
+			ComboBox_AddString(hwndDlg, IDC_LOGLEVEL, item.c_str());
+		}
+	}
 
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("MP3"));
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("OGG"));
@@ -231,7 +289,7 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 	{
 		TCHAR szName[MAX_PATH * 2], szTitle[200];
 		BROWSEINFO bi = { hwndDlg, nullptr, szName, szTitle, BIF_USENEWUI, nullptr, NULL, 0 };
-		LoadStringEx(g_hInstance, idControl, g_wLanguage, szTitle, 200);
+		LoadStringEx(g_hInstance, IDC_BRGAME, g_wLanguage, szTitle, 200);
 		auto pidl = SHBrowseForFolder(&bi);
 		if (pidl)
 		{
@@ -242,6 +300,34 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 		}
 		return TRUE;
 	}
+
+	case IDC_BRFONT:
+	case IDC_BRMSG:
+	case IDC_BRLOG:
+	{
+		TCHAR szFilePath[MAX_PATH * 2] = { 0 };
+		auto filter = LoadResourceString(idControl + 1);
+		auto title = LoadResourceString(idControl);
+		for (auto i = filter.begin(); i != filter.end(); *i = (*i == '|') ? '\0' : *i, i++);
+		OPENFILENAME ofn = {
+			sizeof(OPENFILENAME), hwndDlg, nullptr,
+			filter.c_str(), nullptr, 0, 0,
+			szFilePath, sizeof(szFilePath) / sizeof(TCHAR),
+			nullptr, 0, nullptr, title.c_str(),
+			OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | (idControl != IDC_BRLOG ? OFN_FILEMUSTEXIST : (DWORD)0)
+		};
+		if (idControl == IDC_BRLOG ? GetSaveFileName(&ofn) : GetOpenFileName(&ofn))
+		{
+			SetDlgItemText(hwndDlg, idControl + 1, ofn.lpstrFile);
+		}
+		return TRUE;
+	}
+
+	case IDC_USEMSGFILE:
+	case IDC_USEFONTFILE:
+	case IDC_USELOGFILE:
+		EnableDlgItem(hwndDlg, idControl + 1, IsDlgButtonChecked(hwndDlg, idControl));
+		return TRUE;
 
 	default: return FALSE;
 	}
@@ -283,19 +369,21 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 	}
 }
 
+typedef LANGID(__stdcall *GETLANGUAGEID)(void);
+
 extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 {
+	// Try to get Vista+ API at runtime, and falls back to XP's API if not found
+	GETLANGUAGEID GetLanguage = (GETLANGUAGEID)GetProcAddress(GetModuleHandle(TEXT("Kernel32.dll")), "GetThreadUILanguage");
+	if (!GetLanguage) GetLanguage = GetUserDefaultLangID;
+
 	// Defaults log to debug output
 	UTIL_LogAddOutputCallback([](LOGLEVEL, const char* str, const char*)->void {
 		OutputDebugStringA(str);
 	}, PAL_DEFAULT_LOGLEVEL);
 
 	g_hInstance = GetModuleHandle(nullptr);
-#if !defined(__MINGW32__) || _WIN32_WINNT > _WIN32_WINNT_WS03 // compile time switch; use `make CCFLAGS=-D_WIN32_WINNT=_WIN32_WINNT_VISTA` for vista+ only automatic language detection
-	g_wLanguage = GetThreadUILanguage();
-#else // default XP compatible CodePage detection hack.
-	g_wLanguage = GetSystemDefaultLangID();
-#endif
+	g_wLanguage = GetLanguage();
 	if (PRIMARYLANGID(g_wLanguage) == LANG_CHINESE)
 	{
 		if (SUBLANGID(g_wLanguage) == SUBLANG_CHINESE_SIMPLIFIED || SUBLANGID(g_wLanguage) == SUBLANG_CHINESE_SINGAPORE)

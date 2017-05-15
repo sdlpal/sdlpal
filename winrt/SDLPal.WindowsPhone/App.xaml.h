@@ -17,7 +17,6 @@ namespace SDLPal
 	internal:
 		App();
 
-		property Windows::UI::Xaml::Controls::Page^ Page;
 		property bool LastCrashed;
 
 	protected:

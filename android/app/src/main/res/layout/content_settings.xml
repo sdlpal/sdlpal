@@ -20,7 +20,6 @@
             >
 
             <TextView
-                android:id="@+id/tvFolder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_folder"
@@ -38,37 +37,55 @@
                 tools:layout_editor_absoluteY="16dp" />
 
             <android.support.v7.widget.SwitchCompat
-                android:id="@+id/swEmbedFont"
+                android:id="@+id/swMsgFile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/action_embedded_font"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="121dp" />
-
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/swCustomLang"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_custom_lang"
+                android:text="@string/action_usemsgfile"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="191dp" />
 
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/swGameLang"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_lang"
-                android:textOff="@string/switch_traditional"
-                android:textOn="@string/switch_simplified"
-                app:showText="true"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="155dp" />
-
             <EditText
-                android:id="@+id/edLangFile"
+                android:id="@+id/edMsgFile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textUri" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swFontFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_usefontfile" />
+
+            <EditText
+                android:id="@+id/edFontFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textUri" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_loglevel" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/spLogLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/log_level" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swLogFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_uselogfile" />
+
+            <EditText
+                android:id="@+id/edLogFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textUri" />
 
@@ -97,7 +114,6 @@
                 tools:layout_editor_absoluteY="311dp" />
 
             <TextView
-                android:id="@+id/tvMusVol"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_musvol" />
@@ -109,7 +125,6 @@
                 android:max="100" />
 
             <TextView
-                android:id="@+id/tvSFXVol"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_sfxvol" />
@@ -121,7 +136,6 @@
                 android:max="100" />
 
             <TextView
-                android:id="@+id/tvQuality"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_quality" />
@@ -133,7 +147,6 @@
                 android:max="4" />
 
             <TextView
-                android:id="@+id/tvSample"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_audrate" />
@@ -145,7 +158,6 @@
                 android:entries="@array/audio_rate"/>
 
             <TextView
-                android:id="@+id/tvBuffer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_bufsize" />
@@ -157,7 +169,6 @@
                 android:entries="@array/buffer_size" />
 
             <TextView
-                android:id="@+id/tvCDFmt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_cdfmt" />
@@ -169,7 +180,6 @@
                 android:entries="@array/cd_format" />
 
             <TextView
-                android:id="@+id/tvMusFmt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_musfmt" />
@@ -187,7 +197,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tvOPLRate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/label_oplrate" />
@@ -199,7 +208,6 @@
                     android:entries="@array/opl_rate" />
 
                 <TextView
-                    android:id="@+id/tvOPL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/label_opl" />

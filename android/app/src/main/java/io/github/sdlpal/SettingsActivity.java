@@ -10,10 +10,13 @@ import android.support.v7.widget.Toolbar;
 import  android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+
+import java.util.ArrayList;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -26,15 +29,13 @@ public class SettingsActivity extends AppCompatActivity {
     public static native boolean setConfigInt(String item, int value);
     public static native boolean setConfigString(String item, String value);
 
-    private static final String FullScreen = "FullScreen";
     private static final String KeepAspectRatio = "KeepAspectRatio";
     private static final String LaunchSetting = "LaunchSetting";
     private static final String Stereo = "Stereo";
-    private static final String UseEmbeddedFonts = "UseEmbeddedFonts";
     private static final String UseSurroundOPL = "UseSurroundOPL";
     private static final String UseTouchOverlay = "UseTouchOverlay";
     private static final String AudioBufferSize = "AudioBufferSize";
-    private static final String CodePage = "CodePage";
+    private static final String LogLevel = "LogLevel";
     private static final String OPLSampleRate = "OPLSampleRate";
     private static final String ResampleQuality = "ResampleQuality";
     private static final String SampleRate = "SampleRate";
@@ -44,6 +45,8 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String GamePath = "GamePath";
     private static final String SavePath = "SavePath";
     private static final String MessageFileName = "MessageFileName";
+    private static final String LogFileName = "LogFileName";
+    private static final String FontFileName = "FontFileName";
     private static final String MusicFormat = "Music";
     private static final String OPLFormat = "OPL";
 
@@ -63,11 +66,24 @@ public class SettingsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ((SwitchCompat)findViewById(R.id.swCustomLang)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        ((SwitchCompat)findViewById(R.id.swMsgFile)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                findViewById(R.id.swGameLang).setVisibility(isChecked ? View.GONE : View.VISIBLE);
-                findViewById(R.id.edLangFile).setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                findViewById(R.id.edMsgFile).setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        ((SwitchCompat)findViewById(R.id.swFontFile)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                findViewById(R.id.edFontFile).setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        ((SwitchCompat)findViewById(R.id.swLogFile)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                findViewById(R.id.edLogFile).setVisibility(isChecked ? View.VISIBLE : View.GONE);
             }
         });
 
@@ -152,7 +168,9 @@ public class SettingsActivity extends AppCompatActivity {
     protected void setDefaults() {
         String sdcardState = Environment.getExternalStorageState();
 
-        findViewById(R.id.edLangFile).setVisibility(View.GONE);
+        findViewById(R.id.edMsgFile).setVisibility(View.GONE);
+        findViewById(R.id.edFontFile).setVisibility(View.GONE);
+        findViewById(R.id.edLogFile).setVisibility(View.GONE);
         findViewById(R.id.layoutOPL).setVisibility(View.VISIBLE);
 
         ((SeekBar)findViewById(R.id.sbMusVol)).setProgress(getConfigInt(MusicVolume, true));
@@ -164,16 +182,19 @@ public class SettingsActivity extends AppCompatActivity {
         } else {
             ((EditText)findViewById(R.id.edFolder)).setText("/sdcard/sdlpal/");
         }
-        ((EditText)findViewById(R.id.edLangFile)).setText("");
+        ((EditText)findViewById(R.id.edMsgFile)).setText("");
+        ((EditText)findViewById(R.id.edFontFile)).setText("");
+        ((EditText)findViewById(R.id.edLogFile)).setText("");
 
-        ((SwitchCompat)findViewById(R.id.swEmbedFont)).setChecked(getConfigBoolean(UseEmbeddedFonts, true));
-        ((SwitchCompat)findViewById(R.id.swCustomLang)).setChecked(false);
-        ((SwitchCompat)findViewById(R.id.swGameLang)).setChecked(getConfigInt(CodePage, true) != 0);
+        ((SwitchCompat)findViewById(R.id.swMsgFile)).setChecked(false);
+        ((SwitchCompat)findViewById(R.id.swFontFile)).setChecked(false);
+        ((SwitchCompat)findViewById(R.id.swLogFile)).setChecked(false);
         ((SwitchCompat)findViewById(R.id.swTouch)).setChecked(getConfigBoolean(UseTouchOverlay, true));
         ((SwitchCompat)findViewById(R.id.swAspect)).setChecked(getConfigBoolean(KeepAspectRatio, true));
         ((SwitchCompat)findViewById(R.id.swSurround)).setChecked(getConfigBoolean(UseSurroundOPL, true));
         ((SwitchCompat)findViewById(R.id.swStereo)).setChecked(getConfigBoolean(Stereo, true));
 
+        ((AppCompatSpinner)findViewById(R.id.spLogLevel)).setSelection(getConfigInt(LogLevel, true));
         ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, true), AudioSampleRates, 2));    // 44100Hz
         ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, true), AudioBufferSizes, 1));    // 1024
         ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, true), CDFormats, 1));     // OGG
@@ -184,25 +205,30 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     protected void resetConfigs() {
-        findViewById(R.id.edLangFile).setVisibility(View.GONE);
+        findViewById(R.id.edMsgFile).setVisibility(View.GONE);
+        findViewById(R.id.edFontFile).setVisibility(View.GONE);
+        findViewById(R.id.edLogFile).setVisibility(View.GONE);
         findViewById(R.id.layoutOPL).setVisibility(View.VISIBLE);
 
         ((SeekBar)findViewById(R.id.sbMusVol)).setProgress(getConfigInt(MusicVolume, false));
         ((SeekBar)findViewById(R.id.sbSFXVol)).setProgress(getConfigInt(SoundVolume, false));
         ((SeekBar)findViewById(R.id.sbQuality)).setProgress(getConfigInt(ResampleQuality, false)); // Best quality
 
-        String langFile = getConfigString(MessageFileName, false);
+        String msgFile, fontFile, logFile;
         ((EditText)findViewById(R.id.edFolder)).setText(getConfigString(GamePath, false));
-        ((EditText)findViewById(R.id.edLangFile)).setText(langFile);
+        ((EditText)findViewById(R.id.edMsgFile)).setText(msgFile = getConfigString(MessageFileName, false));
+        ((EditText)findViewById(R.id.edFontFile)).setText(fontFile = getConfigString(FontFileName, false));
+        ((EditText)findViewById(R.id.edLogFile)).setText(logFile = getConfigString(LogFileName, false));
 
-        ((SwitchCompat)findViewById(R.id.swEmbedFont)).setChecked(getConfigBoolean(UseEmbeddedFonts, false));
-        ((SwitchCompat)findViewById(R.id.swCustomLang)).setChecked(langFile != null && !langFile.isEmpty());
-        ((SwitchCompat)findViewById(R.id.swGameLang)).setChecked(getConfigInt(CodePage, false) != 0);
+        ((SwitchCompat)findViewById(R.id.swMsgFile)).setChecked(msgFile != null && !msgFile.isEmpty());
+        ((SwitchCompat)findViewById(R.id.swFontFile)).setChecked(fontFile != null && !fontFile.isEmpty());
+        ((SwitchCompat)findViewById(R.id.swLogFile)).setChecked(logFile != null && !logFile.isEmpty());
         ((SwitchCompat)findViewById(R.id.swTouch)).setChecked(getConfigBoolean(UseTouchOverlay, false));
         ((SwitchCompat)findViewById(R.id.swAspect)).setChecked(getConfigBoolean(KeepAspectRatio, false));
         ((SwitchCompat)findViewById(R.id.swSurround)).setChecked(getConfigBoolean(UseSurroundOPL, false));
         ((SwitchCompat)findViewById(R.id.swStereo)).setChecked(getConfigBoolean(Stereo, false));
 
+        ((AppCompatSpinner)findViewById(R.id.spLogLevel)).setSelection(getConfigInt(LogLevel, false));
         ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, false), AudioSampleRates, 2));    // 44100Hz
         ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, false), AudioBufferSizes, 1));    // 1024
         ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, false), CDFormats, 1));     // OGG
@@ -231,15 +257,16 @@ public class SettingsActivity extends AppCompatActivity {
 
         setConfigString(GamePath, ((EditText)findViewById(R.id.edFolder)).getText().toString());
         setConfigString(SavePath, ((EditText)findViewById(R.id.edFolder)).getText().toString());
-        setConfigString(MessageFileName, ((EditText)findViewById(R.id.edLangFile)).getText().toString());
+        setConfigString(MessageFileName, ((SwitchCompat)findViewById(R.id.swMsgFile)).isChecked() ? ((EditText)findViewById(R.id.edMsgFile)).getText().toString() : null);
+        setConfigString(FontFileName, ((SwitchCompat)findViewById(R.id.swFontFile)).isChecked() ? ((EditText)findViewById(R.id.edFontFile)).getText().toString() : null);
+        setConfigString(LogFileName, ((SwitchCompat)findViewById(R.id.swLogFile)).isChecked() ? ((EditText)findViewById(R.id.edLogFile)).getText().toString() : null);
 
-        setConfigBoolean(UseEmbeddedFonts, ((SwitchCompat)findViewById(R.id.swEmbedFont)).isChecked());
-        setConfigInt(CodePage, ((SwitchCompat)findViewById(R.id.swGameLang)).isChecked() ? 1 : 0);
         setConfigBoolean(UseTouchOverlay, ((SwitchCompat)findViewById(R.id.swTouch)).isChecked());
         setConfigBoolean(KeepAspectRatio, ((SwitchCompat)findViewById(R.id.swAspect)).isChecked());
         setConfigBoolean(UseSurroundOPL, ((SwitchCompat)findViewById(R.id.swSurround)).isChecked());
         setConfigBoolean(Stereo, ((SwitchCompat)findViewById(R.id.swStereo)).isChecked());
 
+        setConfigInt(LogLevel, ((AppCompatSpinner)findViewById(R.id.spLogLevel)).getSelectedItemPosition());
         setConfigInt(SampleRate, Integer.parseInt((String)((AppCompatSpinner)findViewById(R.id.spSample)).getSelectedItem()));
         setConfigInt(AudioBufferSize, Integer.parseInt((String)((AppCompatSpinner)findViewById(R.id.spBuffer)).getSelectedItem()));
         setConfigString(CDFormat, (String)((AppCompatSpinner)findViewById(R.id.spCDFmt)).getSelectedItem());

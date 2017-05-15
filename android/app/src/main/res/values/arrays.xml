@@ -1,34 +1,42 @@
 <resources>
-    <string-array name="audio_rate">
+    <string-array name="audio_rate" translatable="false">
         <item>11025</item>
         <item>22050</item>
         <item>44100</item>
     </string-array>
-    <string-array name="buffer_size">
+    <string-array name="buffer_size" translatable="false">
         <item>512</item>
         <item>1024</item>
         <item>2048</item>
         <item>4096</item>
         <item>8192</item>
     </string-array>
-    <string-array name="cd_format">
+    <string-array name="cd_format" translatable="false">
         <item>MP3</item>
         <item>OGG</item>
     </string-array>
-    <string-array name="music_format">
+    <string-array name="music_format" translatable="false">
         <item>MIDI</item>
         <item>RIX</item>
         <item>MP3</item>
         <item>OGG</item>
     </string-array>
-    <string-array name="opl_type">
+    <string-array name="opl_type" translatable="false">
         <item>DOSBOX</item>
         <item>MAME</item>
         <item>DOSBOXNEW</item>
     </string-array>
-    <string-array name="opl_rate">
+    <string-array name="opl_rate" translatable="false">
         <item>12429</item>
         <item>24858</item>
         <item>49716</item>
+    </string-array>
+    <string-array name="log_level">
+        <item>Verbose</item>
+        <item>Debug</item>
+        <item>Informational</item>
+        <item>Warning</item>
+        <item>Error</item>
+        <item>Fatal</item>
     </string-array>
 </resources>

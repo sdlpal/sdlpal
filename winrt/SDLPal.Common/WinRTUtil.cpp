@@ -2,6 +2,8 @@
 
 #include <wrl.h>
 #include <string>
+#include <map>
+#include <list>
 #include <DXGI.h>
 #include <ppltasks.h>
 #include "../SDLPal.Common/AsyncHelper.h"
@@ -11,35 +13,11 @@
 #include "SDL.h"
 #include "SDL_endian.h"
 
-static std::string g_basepath, g_configpath;
+static std::string g_configpath;
 
 extern HANDLE g_eventHandle;
-
-extern "C"
-LPCSTR UTIL_BasePath(VOID)
-{
-	if (g_basepath.empty())
-	{
-		auto mru_list = Windows::Storage::AccessCache::StorageApplicationPermissions::MostRecentlyUsedList;
-		for each (auto entry in mru_list->Entries)
-		{
-			if (dynamic_cast<Windows::Storage::StorageFolder^>(AWait(mru_list->GetItemAsync(entry.Token), g_eventHandle)) != nullptr)
-			{
-				auto localfolder = entry.Metadata;
-				if (localfolder->End()[-1] != L'\\') localfolder += "\\";
-				ConvertString(localfolder, g_basepath);
-				break;
-			}
-		}
-	}
-	return g_basepath.c_str();
-}
-
-extern "C"
-LPCSTR UTIL_SavePath(VOID)
-{
-	return UTIL_BasePath();
-}
+extern "C" std::map<std::string, Windows::Storage::StorageFile^>* get_special_files_map();
+extern "C" std::map<std::string, Windows::Storage::StorageFolder^>* get_special_folders_map();
 
 extern "C"
 LPCSTR UTIL_ConfigPath(VOID)
@@ -173,6 +151,39 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 	SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
 
 	SDL_AddEventWatch(WinRT_EventFilter, nullptr);
+
+	std::list<Platform::String^> invalid_tokens;
+	auto& files = *get_special_files_map();
+	auto& folders = *get_special_folders_map();
+	auto fal = Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList;
+	for each (auto entry in fal->Entries)
+	{
+		auto item = AWait(fal->GetItemAsync(entry.Token), g_eventHandle);
+		if (!item)
+		{
+			invalid_tokens.push_back(entry.Token);
+			continue;
+		}
+
+		if (dynamic_cast<Windows::Storage::StorageFolder^>(item) != nullptr)
+		{
+			auto localfolder = entry.Metadata;
+			if (localfolder->End()[-1] != L'\\') localfolder += "\\";
+			auto folder = ConvertString(localfolder);
+			folders[folder] = dynamic_cast<Windows::Storage::StorageFolder^>(item);
+			PAL_SetConfigItem(PAL_ConfigIndex(ConvertString(entry.Token).c_str()), ConfigValue{ folder.c_str() });
+			continue;
+		}
+
+		if (dynamic_cast<Windows::Storage::StorageFile^>(item) != nullptr)
+		{
+			auto file = ConvertString(entry.Metadata);
+			files[file] = dynamic_cast<Windows::Storage::StorageFile^>(item);
+			PAL_SetConfigItem(PAL_ConfigIndex(ConvertString(entry.Token).c_str()), ConfigValue{ file.c_str() });
+			continue;
+		}
+	}
+	for (auto i = invalid_tokens.begin(); i != invalid_tokens.end(); fal->Remove(*i++));
 
 	return 0;
 }

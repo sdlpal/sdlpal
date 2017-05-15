@@ -2,16 +2,12 @@
 <resources>
     <string name="label_folder">游戏资源所在文件夹：</string>
     <string name="action_browse">瀏覽</string>
-    <string name="action_embedded_font">使用遊戲資源內置字體</string>
     <string name="action_aspect">保持縱橫比</string>
     <string name="label_bufsize">音訊緩衝區大小</string>
     <string name="label_musfmt">背景音樂格式</string>
     <string name="action_default">默認設定</string>
     <string name="action_finish">完成設定</string>
     <string name="label_cdfmt">CD 音軌格式</string>
-    <string name="switch_traditional">繁</string>
-    <string name="action_lang">遊戲資源語言</string>
-    <string name="action_custom_lang">自訂語言檔案</string>
     <string name="label_quality">音訊品質</string>
     <string name="label_audrate">音訊輸出取樣速率</string>
     <string name="action_stereo">立體聲</string>
@@ -25,6 +21,9 @@
     <string name="msg_crash">上次程式異常退出，已顯示設定頁供您檢查設定是否正確。</string>
     <string name="msg_empty">必須指定遊戲資源檔案夾！</string>
     <string name="msg_exit">您的設定已保存，下次啟動時將直接開始遊戲。在遊戲中，您可以通過遊戲系統功能表的返回設定選項回到本設定頁面。</string>
-    <string name="switch_simplified">簡</string>
     <string name="action_restore">撤銷修改</string>
+    <string name="label_loglevel">日誌記錄級別</string>
+    <string name="action_usefontfile">自訂字體檔案</string>
+    <string name="action_usemsgfile">自訂語言檔案</string>
+    <string name="action_uselogfile">記錄到檔案</string>
 </resources>
