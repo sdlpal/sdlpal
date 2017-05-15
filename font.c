@@ -85,14 +85,15 @@ static void PAL_LoadEmbeddedFont(void)
 
 	//
 	// Convert characters into unicode
+	// Explictly specify BIG5 here for compatibility with codepage auto-detection
 	//
-	nChars = PAL_MultiByteToWideChar(char_buf, nBytes, NULL, 0);
+	nChars = PAL_MultiByteToWideCharCP(CP_BIG5, char_buf, nBytes, NULL, 0);
 	if (NULL == (wchar_buf = (wchar_t *)malloc(nChars * sizeof(wchar_t))))
 	{
 		free(char_buf);
 		return;
 	}
-	PAL_MultiByteToWideChar(char_buf, nBytes, wchar_buf, nChars);
+	PAL_MultiByteToWideCharCP(CP_BIG5, char_buf, nBytes, wchar_buf, nChars);
 	free(char_buf);
 
 	//
