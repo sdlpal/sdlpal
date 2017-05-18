@@ -77,19 +77,19 @@ There are also solution files for building traditional **Windows (phone) store a
 To build SDLPAL as a Windows **desktop** app, you can also use ***MinGW***. Steps for building under MinGW varies depends on the compiling environment you have:
 
 * If you need to compile SDLPAL under **Windows** shell environment, please go to the root of the source code tree and type:
-```shell
-$ cd win32
-$ make -f Makefile.mingw
+```cmd
+C:\sdlpal> cd win32
+C:\sdlpal> make -f Makefile.mingw
 ```
 
 * If you need to compile SDLPAL under **msys** shell environment, please go to the root of the source code tree and type:
-```shell
+```bash
 $ cd win32
 $ make
 ```
 
 * If you need to cross-compile SDLPAL under **Linux** shell environment, please go to the root of the source code tree and type:
-```shell
+```bash
 $ cd win32
 $ # This builds a 32-bit executable.
 $ make HOST=i686-w64-mingw32-

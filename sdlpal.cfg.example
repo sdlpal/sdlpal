@@ -4,15 +4,6 @@
 # Lines started with '#' is treated as comments.    #
 #####################################################
 
-# CodePage: Indicates the codepage to use, 0 for big5 (default), 1 for gbk.
-#CodePage=0
-
-# UseEmbeddedFonts: Indicates whether to use DOS-version's embedded fonts.
-#                   Non-zero for using DOS-version's embedded fonts (default),
-#                   zero for using SDLPAL's internal fonts.
-# Note that this value is ignored when the DOS option is zero.
-#UseEmbeddedFonts=1
-
 # CD: Indicates which type of CD audio source to use. Valid types include 'RAW',
 #     'OGG' and 'MP3'. 'RAW' means use the SDL 1.2's CDAudio API (default when
 #     compiled with SDL 1.2), 'OGG' means use files named as '100xx.ogg' inside
@@ -25,7 +16,7 @@
 #        'MIDI' means midi (either in 'mus.mkf' or inside 'musics' directory),
 #        'OGG' means use files named as 'xx.ogg' inside the 'ogg' directory, while
 #        'MP3' means use files named as 'xx.mp3' inside the 'mp3' directory.
-#MUSIC=RIX
+#Music=RIX
 
 # OPL: Indicates which type of OPL emulator to use. Valid types include 'DOSBOX'
 #      (default), 'MAME' and 'DOSBOXNEW'. 'DOSBOXNEW' is the recommended OPL simulator
@@ -86,3 +77,14 @@
 
 # MessageFileName: Indicates whether to use external message files.
 #MessageFileName=jm.msg
+
+# FontFileName: Indicates whether to use external font files. Currently supports only BDF font.
+#FontFileName=jm.msg
+
+# LogLevel: This value controls how many logs can be output by the program. Valid ranges are:
+# 0 (Verbose), 1 (Debug), 2 (Informational), 3 (Warning), 4 (Error) and 5 (Fatal). Only logs
+# whose levels are larger or equal to this value can be output.
+#LogLevel=5
+
+# LogFileName: When set, the program's log will be output to this file as well.
+#LogFileName=sdlpal.log
