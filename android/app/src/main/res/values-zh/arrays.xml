@@ -1,0 +1,10 @@
+<resources>
+    <string-array name="log_level">
+        <item>详细</item>
+        <item>调试</item>
+        <item>信息</item>
+        <item>警告</item>
+        <item>错误</item>
+        <item>致命</item>
+    </string-array>
+</resources>

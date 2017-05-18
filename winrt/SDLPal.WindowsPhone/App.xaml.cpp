@@ -128,19 +128,29 @@ void App::RootFrame_FirstNavigated(Object^ sender, NavigationEventArgs^ e)
 
 void SDLPal::App::OnActivated(Windows::ApplicationModel::Activation::IActivatedEventArgs ^ args)
 {
-	switch (args->Kind)
+	if (dynamic_cast<IContinuationActivatedEventArgs^>(args) != nullptr)
 	{
-	case ActivationKind::PickFolderContinuation:
-	{
-		static_cast<SDLPal::MainPage^>(Page)->SetPath(safe_cast<IFolderPickerContinuationEventArgs^>(args)->Folder);
-		break;
-	}
-	case ActivationKind::PickFileContinuation:
-	{
-		auto files = safe_cast<IFileOpenPickerContinuationEventArgs^>(args)->Files;
-		if (files->Size > 0) static_cast<SDLPal::MainPage^>(Page)->SetFile(files->GetAt(0));
-		break;
-	}
+		auto contdata = dynamic_cast<IContinuationActivatedEventArgs^>(args)->ContinuationData;
+		auto page = dynamic_cast<SDLPal::MainPage^>(contdata->Lookup("Page"));
+		auto target = contdata->HasKey("Target") ? dynamic_cast<Windows::UI::Xaml::Controls::TextBox^>(contdata->Lookup("Target")) : nullptr;
+		switch (args->Kind)
+		{
+		case ActivationKind::PickFolderContinuation:
+			page->SetPath(dynamic_cast<IFolderPickerContinuationEventArgs^>(args)->Folder);
+			break;
+		case ActivationKind::PickFileContinuation:
+			if (dynamic_cast<IFileOpenPickerContinuationEventArgs^>(args)->Files->Size > 0)
+			{
+				page->SetFile(target, dynamic_cast<IFileOpenPickerContinuationEventArgs^>(args)->Files->GetAt(0));
+			}
+			break;
+		case ActivationKind::PickSaveFileContinuation:
+			if (dynamic_cast<IFileSavePickerContinuationEventArgs^>(args)->File)
+			{
+				page->SetFile(target, dynamic_cast<IFileSavePickerContinuationEventArgs^>(args)->File);
+			}
+			break;
+		}
 	}
 	Application::OnActivated(args);
 }

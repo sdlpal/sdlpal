@@ -114,9 +114,8 @@ JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_saveConfigFile
 EXTERN_C_LINKAGE
 JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigBoolean(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
 {
-    ConfigValue value;
-    std::string name = jstring_to_utf8(env, j_str);
-    return PAL_GetConfigItem(name.c_str(), &value, defval) ? value.bValue : JNI_FALSE;
+    PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
+    return item >= 0 ? PAL_GetConfigBoolean(item, defval) : JNI_FALSE;
 }
 
 /*
@@ -127,9 +126,8 @@ JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigBoole
 EXTERN_C_LINKAGE
 JNIEXPORT int JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigInt(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
 {
-    ConfigValue value;
-    std::string name = jstring_to_utf8(env, j_str);
-    return PAL_GetConfigItem(name.c_str(), &value, defval) ? value.iValue : JNI_FALSE;
+    PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
+    return item >= 0 ? (int)PAL_GetConfigNumber(item, defval) : 0;
 }
 
 /*
@@ -140,9 +138,8 @@ JNIEXPORT int JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigInt(JNIEnv
 EXTERN_C_LINKAGE
 JNIEXPORT jstring JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigString(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
 {
-    ConfigValue value;
-    std::string name = jstring_to_utf8(env, j_str);
-    return PAL_GetConfigItem(name.c_str(), &value, defval) ? env->NewStringUTF(value.sValue) : nullptr;
+    PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
+    return item >= 0 ? env->NewStringUTF(PAL_GetConfigString(item, defval)) : nullptr;
 }
 
 /*
@@ -153,9 +150,8 @@ JNIEXPORT jstring JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigString
 EXTERN_C_LINKAGE
 JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigBoolean(JNIEnv *env, jclass cls, jstring j_str, jboolean val)
 {
-    ConfigValue value = { (LPCSTR)(val ? TRUE : FALSE) };
-    std::string name = jstring_to_utf8(env, j_str);
-    return PAL_SetConfigItem(name.c_str(), &value) ? JNI_TRUE : JNI_FALSE;
+    PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
+    return item >= 0 ? PAL_SetConfigBoolean(item, val ? TRUE : FALSE) : JNI_FALSE;
 }
 
 /*
@@ -166,9 +162,8 @@ JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigBoole
 EXTERN_C_LINKAGE
 JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigInt(JNIEnv *env, jclass cls, jstring j_str, int val)
 {
-    ConfigValue value = { (LPCSTR)val };
-    std::string name = jstring_to_utf8(env, j_str);
-    return PAL_SetConfigItem(name.c_str(), &value) ? JNI_TRUE : JNI_FALSE;
+    PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
+    return item >= 0 ? PAL_SetConfigNumber(item, (long)val) : JNI_FALSE;
 }
 
 /*
@@ -179,10 +174,8 @@ JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigInt(J
 EXTERN_C_LINKAGE
 JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigString(JNIEnv *env, jclass cls, jstring j_str, jstring v_str)
 {
-    std::string name = jstring_to_utf8(env, j_str);
-    std::string val = jstring_to_utf8(env, v_str);
-    ConfigValue value = { val.c_str() };
-    return PAL_SetConfigItem(name.c_str(), &value) ? JNI_TRUE : JNI_FALSE;
+    PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
+    return item >= 0 ? PAL_SetConfigString(item, v_str ? jstring_to_utf8(env, v_str).c_str() : nullptr) : JNI_FALSE;
 }
 
 EXTERN_C_LINKAGE
@@ -240,15 +233,6 @@ void JNI_mediaplayer_setvolume(void *player, int volume)
 EXTERN_C_LINKAGE
 LPCSTR
 UTIL_BasePath(
-   VOID
-)
-{
-    return g_basepath.c_str();
-}
-
-EXTERN_C_LINKAGE
-LPCSTR
-UTIL_SavePath(
    VOID
 )
 {

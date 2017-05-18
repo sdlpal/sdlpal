@@ -143,6 +143,14 @@ PAL_SetCodePage(
 	CODEPAGE    uCodePage
 );
 
+CODEPAGE
+PAL_DetectCodePageForString(
+	const char *   text,
+	int            text_len,
+	CODEPAGE       default_cp,
+	int *          probability
+);
+
 INT
 PAL_swprintf(
 	LPWSTR buffer,

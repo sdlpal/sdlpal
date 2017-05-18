@@ -41,7 +41,7 @@ static uint8_t reverseBits(uint8_t x) {
     return y;
 }
 
-static void PAL_InitEmbeddedFont(void)
+static void PAL_LoadEmbeddedFont(void)
 {
 	FILE *fp;
 	char *char_buf;
@@ -84,15 +84,27 @@ static void PAL_InitEmbeddedFont(void)
 	fclose(fp);
 
 	//
-	// Convert characters into unicode
+	// Detect the codepage of 'wor16.asc' and exit if not BIG5 or probability < 99
+	// Note: 100% probability is impossible as the function does not recognize some special
+	// characters such as bopomofo that may be used by 'wor16.asc'.
 	//
-	nChars = PAL_MultiByteToWideChar(char_buf, nBytes, NULL, 0);
+	if (PAL_DetectCodePageForString(char_buf, nBytes, CP_BIG5, &i) != CP_BIG5 || i < 99)
+	{
+		free(char_buf);
+		return;
+	}
+
+	//
+	// Convert characters into unicode
+	// Explictly specify BIG5 here for compatibility with codepage auto-detection
+	//
+	nChars = PAL_MultiByteToWideCharCP(CP_BIG5, char_buf, nBytes, NULL, 0);
 	if (NULL == (wchar_buf = (wchar_t *)malloc(nChars * sizeof(wchar_t))))
 	{
 		free(char_buf);
 		return;
 	}
-	PAL_MultiByteToWideChar(char_buf, nBytes, wchar_buf, nChars);
+	PAL_MultiByteToWideCharCP(CP_BIG5, char_buf, nBytes, wchar_buf, nChars);
 	free(char_buf);
 
 	//
@@ -130,7 +142,7 @@ static void PAL_InitEmbeddedFont(void)
 }
 
 INT
-PAL_LoadBdfFont(
+PAL_LoadUserFont(
    LPCSTR      pszBdfFileName
 )
 /*++
@@ -237,14 +249,14 @@ PAL_InitFont(
 	const CONFIGURATION* cfg
 )
 {
-	if (cfg->pszBdfFile)
+	if (!cfg->fIsWIN95)
 	{
-		PAL_LoadBdfFont(cfg->pszBdfFile);
+		PAL_LoadEmbeddedFont();
 	}
 
-	if (!cfg->fIsWIN95 && cfg->fUseEmbeddedFonts)
+	if (cfg->pszFontFile)
 	{
-		PAL_InitEmbeddedFont();
+		PAL_LoadUserFont(cfg->pszFontFile);
 	}
 
 	return 0;

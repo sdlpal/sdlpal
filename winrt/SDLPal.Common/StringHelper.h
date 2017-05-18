@@ -65,12 +65,17 @@ static void ConvertString(const std::string& src, std::wstring& dst)
 
 static Platform::String^ ConvertString(const char* src)
 {
-	int len = MultiByteToWideChar(CP_ACP, 0, src, -1, nullptr, 0);
-	auto wc = new wchar_t[len];
-	MultiByteToWideChar(CP_ACP, 0, src, -1, wc, len);
-	auto dst = ref new Platform::String(wc);
-	delete[] wc;
-	return dst;
+	if (src)
+	{
+		int len = MultiByteToWideChar(CP_ACP, 0, src, -1, nullptr, 0);
+		auto wc = new wchar_t[len];
+		MultiByteToWideChar(CP_ACP, 0, src, -1, wc, len);
+		auto dst = ref new Platform::String(wc);
+		delete[] wc;
+		return dst;
+	}
+	else
+		return "";
 }
 
 static Platform::String^ ConvertString(const std::string& src)

@@ -658,9 +658,6 @@
     <ClInclude Include="..\liboggvorbis\include\ogg\config_types.h">
       <Filter>liboggvorbis\include\ogg</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\palcfg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -669,6 +666,9 @@
     </ClInclude>
     <ClInclude Include="pal_config.h">
       <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -25,10 +25,9 @@
 
 #pragma once
 
-#define PAL_PREFIX            UTIL_BasePath()
-#define PAL_SAVE_PREFIX       UTIL_SavePath()
+#define PAL_PREFIX            ""
+#define PAL_SAVE_PREFIX       ""
 #define PAL_CONFIG_PREFIX     UTIL_ConfigPath()
-#define PAL_SCREENSHOT_PREFIX UTIL_ScreenShotPath()
 #define PAL_HAS_TOUCH         1
 #define PAL_AUDIO_DEFAULT_BUFFER_SIZE   4096
 #define PAL_DEFAULT_WINDOW_WIDTH   320
