@@ -6,11 +6,14 @@ TEST_TARGET = ./sdlpal-tests
 HOST =
 TEST_CCFLAGS =
 
+DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
+
 GTEST_DIR = ../3rd/googletest/googletest
 
-CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c)
+CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) 
 CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
 OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
+DEPFILES = $(OBJFILES:.o=.d) 
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 
@@ -20,6 +23,8 @@ CFLAGS = $(CCFLAGS) -std=gnu99 `fltk-config --cflags`
 LDFLAGS = `sdl2-config --libs` `fltk-config --ldflags` -lstdc++ -lm -pthread
 TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra -pthread
 
+POSTCOMPILE = @mv -f $*.Td $*.d && touch $@
+
 .PHONY : all clean check
 
 all: $(TARGET)
@@ -28,24 +33,32 @@ $(TARGET): $(OBJFILES)
 	@echo [LD] $@
 	@$(HOST)gcc $^ -o $@ $(LDFLAGS)
 
-gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc
-	@echo [CC] $^
-	@$(HOST)g++ $(TEST_CXXFLAGS) -c $< -o $@
+gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc %.d
+	@echo [CC] $<
+	@$(HOST)g++ $(DEPFLAGS) $(TEST_CXXFLAGS) -c $< -o $@
+	$(POSTCOMPILE)
 
-%.o: %.c
-	@echo [CC] $^
-	@$(HOST)gcc $(CFLAGS) -c $< -o $@
+%.o: %.c %.d
+	@echo [CC] $<
+	@$(HOST)gcc $(DEPFLAGS) $(CFLAGS) -c $< -o $@
+	$(POSTCOMPILE)
 
-%.o: %.cpp
-	@echo [CC] $^
-	@$(HOST)g++ $(CXXFLAGS) -c $< -o $@
+%.o: %.cpp %.d
+	@echo [CC] $<
+	@$(HOST)g++ $(DEPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(POSTCOMPILE)
 
 $(TEST_TARGET): $(OBJFILES) $(TEST_OBJFILES) gtest-all.o
 	@echo [LD] $@
 	@$(HOST)g++ $^ -o $@ $(LDFLAGS) -lpthread
 
 clean:
-	-rm -f $(TARGET) $(TEST_TARGET) *.o ../*.o ../adplug/*.o ../libmad/*.o ../liboggvorbis/src/*.o ../tests/*.o
+	-rm -f $(TARGET) $(TEST_TARGET) $(OBJFILES) $(TEST_OBJFILES) $(DEPFILES)
+
+%.d: ;
+.PRECIOUS: %.d
+
+-include $(DEPFILES)
 
 check: TEST_CCFLAGS = -DUNIT_TEST=1 -isystem $(GTEST_DIR)/include
 check: $(TEST_TARGET)
