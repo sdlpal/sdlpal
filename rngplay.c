@@ -139,10 +139,9 @@ PAL_RNGReadFrame(
 
 static INT
 PAL_RNGBlitToSurface(
-   INT                      iNumRNG,
-   INT                      iNumFrame,
-   SDL_Surface             *lpDstSurface,
-   FILE                    *fpRngMKF
+   const uint8_t   *rng,
+   int              length,
+   SDL_Surface     *lpDstSurface
 )
 /*++
   Purpose:
@@ -155,13 +154,11 @@ PAL_RNGBlitToSurface(
 
   Parameters:
 
-    [IN]  iNumRNG - The number of the animation in the MKF archive.
+    [IN]  rng - Pointer to the RNG data.
 
-    [IN]  iNumFrame - The number of the frame in the animation.
+    [IN]  length - Length of the RNG data.
 
     [OUT] lpDstSurface - pointer to the destination SDL surface.
-
-    [IN]  fpRngMKF - Pointer to the fopen'ed rng.mkf file.
 
   Return value:
 
@@ -169,56 +166,26 @@ PAL_RNGBlitToSurface(
 
 --*/
 {
-   INT                   ptr         = 0;
-   INT                   dst_ptr     = 0;
-   BYTE                  data        = 0;
-   WORD                  wdata       = 0;
-   INT                   x, y, i, n;
-   LPBYTE                rng         = NULL;
-   LPBYTE                buf         = NULL;
+   int                   ptr         = 0;
+   int                   dst_ptr     = 0;
+   uint16_t              wdata       = 0;
+   int                   x, y, i, n;
 
    //
    // Check for invalid parameters.
    //
-   if (lpDstSurface == NULL || iNumRNG < 0 || iNumFrame < 0)
+   if (lpDstSurface == NULL || length < 0)
    {
       return -1;
    }
-
-   buf = (LPBYTE)calloc(1, 65000);
-   if (buf == NULL)
-   {
-      return -1;
-   }
-
-   //
-   // Read the frame.
-   //
-   if (PAL_RNGReadFrame(buf, 65000, iNumRNG, iNumFrame, fpRngMKF) < 0)
-   {
-      free(buf);
-      return -1;
-   }
-
-   //
-   // Decompress the frame.
-   //
-   rng = (LPBYTE)calloc(1, 65000);
-   if (rng == NULL)
-   {
-      free(buf);
-      return -1;
-   }
-   Decompress(buf, rng, 65000);
-   free(buf);
 
    //
    // Draw the frame to the surface.
    // FIXME: Dirty and ineffective code, needs to be cleaned up
    //
-   while (TRUE)
+   while (ptr < length)
    {
-      data = rng[ptr++];
+      uint8_t data = rng[ptr++];
       switch (data)
       {
       case 0x00:
@@ -399,7 +366,6 @@ PAL_RNGBlitToSurface(
    }
 
 end:
-   free(rng);
    return 0;
 }
 
@@ -431,23 +397,25 @@ PAL_RNGPlay(
 
 --*/
 {
-   UINT            iTime;
    int             iDelay = 800 / (iSpeed == 0 ? 16 : iSpeed);
-   FILE           *fp;
+   uint8_t        *rng = (uint8_t *)malloc(65000);
+   uint8_t        *buf = (uint8_t *)malloc(65000);
+   FILE           *fp = UTIL_OpenRequiredFile("rng.mkf");
 
-   fp = UTIL_OpenRequiredFile("rng.mkf");
-
-   for (; iStartFrame <= iEndFrame; iStartFrame++)
+   for (; rng && buf && iStartFrame <= iEndFrame; iStartFrame++)
    {
-      iTime = SDL_GetTicks() + iDelay;
+      uint32_t iTime = SDL_GetTicks() + iDelay;
 
-      if (PAL_RNGBlitToSurface(iNumRNG, iStartFrame, gpScreen, fp) == -1)
+      //
+      // Read, decompress and render the frame
+      //
+      if (PAL_RNGReadFrame(buf, 65000, iNumRNG, iStartFrame, fp) < 0 ||
+          PAL_RNGBlitToSurface(rng, Decompress(buf, rng, 65000), gpScreen) == -1)
       {
          //
          // Failed to get the frame, don't go further
          //
-         fclose(fp);
-         return;
+         break;
       }
 
       //
@@ -471,4 +439,6 @@ PAL_RNGPlay(
    }
 
    fclose(fp);
+   free(rng);
+   free(buf);
 }
