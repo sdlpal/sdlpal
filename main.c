@@ -21,13 +21,10 @@
 //
 
 #include "main.h"
-
-#if defined(LONGJMP_EXIT)
 #include <setjmp.h>
 
 static jmp_buf g_exit_jmp_buf;
-#endif
-
+static int g_exit_code = 0;
 
 #define BITMAPNUM_SPLASH_UP         (gConfig.fIsWIN95 ? 0x03 : 0x26)
 #define BITMAPNUM_SPLASH_DOWN       (gConfig.fIsWIN95 ? 0x04 : 0x27)
@@ -151,14 +148,9 @@ PAL_Shutdown(
    VIDEO_Shutdown();
 
    SDL_Quit();
-   UTIL_Platform_Quit();
-#if defined(LONGJMP_EXIT)
-   longjmp(g_exit_jmp_buf, exit_code);
-#elif defined (NDS)
-   while (1);
-#else
-   exit(exit_code);
-#endif
+
+   g_exit_code = exit_code;
+   longjmp(g_exit_jmp_buf, 1);
 }
 
 VOID
@@ -459,12 +451,6 @@ main(
 
 --*/
 {
-#if defined(LONGJMP_EXIT)
-	int exit_code;
-	if (exit_code = setjmp(g_exit_jmp_buf))
-		return exit_code != 1 ? exit_code : 0;
-#endif
-
 #if defined(__APPLE__) && !defined(__IOS__) && !defined(DEBUG) //for ease of debugging(specify resource dir in xcode scheme)
    char *p = strstr(argv[0], "/Pal.app/");
 
@@ -476,6 +462,13 @@ main(
       chdir(buf);
    }
 #endif
+
+   if (setjmp(g_exit_jmp_buf) != 0)
+   {
+	   // A longjmp is made, should exit here
+	   UTIL_Platform_Quit();
+	   return g_exit_code;
+   }
 
 #if !defined(UNIT_TEST) || defined(UNIT_TEST_GAME_INIT)
    PAL_LoadConfig(TRUE);

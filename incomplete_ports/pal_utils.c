@@ -64,4 +64,7 @@ UTIL_Platform_Quit(
 	VOID
 )
 {
+#if defined (NDS)
+   while (1);
+#endif
 }
