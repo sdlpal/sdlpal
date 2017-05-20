@@ -53,12 +53,12 @@ static JNIEnv* getJNIEnv()
 }
 
 /*
- * Class:     io_github_sdlpal_PalActivity
+ * Class:     io_github_sdlpal_MainActivity
  * Method:    setAppPath
- * Signature: (Ljava/lang/String;Ljava/lang/String;)V
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
  */
 EXTERN_C_LINKAGE
-JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setAppPath(JNIEnv *env, jclass cls, jstring base_path, jstring data_path, jstring cache_path)
+JNIEXPORT void JNICALL Java_io_github_sdlpal_MainActivity_setAppPath(JNIEnv *env, jclass cls, jstring base_path, jstring data_path, jstring cache_path)
 {
     g_basepath = jstring_to_utf8(env, base_path);
     g_configpath = jstring_to_utf8(env, data_path);
@@ -299,4 +299,5 @@ UTIL_Platform_Quit(
 )
 {
     unlink((g_cachepath + "running").c_str());
+    exit(0);
 }
