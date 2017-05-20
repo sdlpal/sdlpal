@@ -104,22 +104,19 @@ PAL_Init(
    PAL_InitResources();
    AUDIO_OpenDevice();
 
-   if (gConfig.fIsWIN95)
-   {
-#ifdef _DEBUG
-      VIDEO_SetWindowTitle("Pal WIN95 (Debug Build)");
+   VIDEO_SetWindowTitle(va("Pal %s%s%s",
+	   gConfig.fIsWIN95 ? "Win95" : "DOS",
+#if defined(_DEBUG) || defined(DEBUG)
+	   " (Debug) ",
 #else
-      VIDEO_SetWindowTitle("Pal WIN95");
+	   "",
 #endif
-   }
-   else
-   {
-#ifdef _DEBUG
-      VIDEO_SetWindowTitle("Pal (Debug Build)");
+#if defined(PAL_GIT_REVISION)
+	   " ["  PAL_GIT_REVISION "] "
 #else
-      VIDEO_SetWindowTitle("Pal");
+	   ""
 #endif
-   }
+   ));
 }
 
 VOID

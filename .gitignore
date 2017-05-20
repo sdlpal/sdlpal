@@ -229,10 +229,6 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
-# SDL2 associated file
-SDL2/
-!SDL2/README.md
-
 # ant immediate
 android/gen
 android/libs
