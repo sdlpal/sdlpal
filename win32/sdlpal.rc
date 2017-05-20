@@ -185,16 +185,16 @@ END
 
 STRINGTABLE
 BEGIN
-    IDC_MSGFILE             "Message file (*.msg)|*.msg||"
+    IDC_MSGFILE             "Message file (*.msg)|*.msg|All files (*.*)|*.*||"
     IDC_LOGLEVEL            "Verbose;Debug;Informational;Warning;Error;Fatal"
     IDC_BRFONT              "Select customized font file"
-    IDC_FONTFILE            "Font file (*.bdf)|*.bdf||"
+    IDC_FONTFILE            "Font file (*.bdf)|*.bdf|All files (*.*)|*.*||"
 END
 
 STRINGTABLE
 BEGIN
     IDC_BRLOG               "Select file to record logs"
-    IDC_LOGFILE             "Log file (*.log, *.txt)|*.log;*.txt||"
+    IDC_LOGFILE             "Log file (*.log, *.txt)|*.log;*.txt|All files (*.*)|*.*||"
 END
 
 #endif    // 非特定语言 resources
@@ -343,16 +343,16 @@ END
 
 STRINGTABLE
 BEGIN
-    IDC_MSGFILE             "语言文件(*.msg)|*.msg||"
+    IDC_MSGFILE             "语言文件(*.msg)|*.msg|所有文件 (*.*)|*.*||"
     IDC_LOGLEVEL            "详细;调试;信息;警告;错误;致命"
     IDC_BRFONT              "选择自定义字体文件"
-    IDC_FONTFILE            "字体文件(*.bdf)|*.bdf||"
+    IDC_FONTFILE            "字体文件(*.bdf)|*.bdf|所有文件 (*.*)|*.*||"
 END
 
 STRINGTABLE
 BEGIN
     IDC_BRLOG               "选择用于日志记录的文件"
-    IDC_LOGFILE             "日志文件(*.log, *.txt)|*.log;*.txt||"
+    IDC_LOGFILE             "日志文件(*.log, *.txt)|*.log;*.txt|所有文件 (*.*)|*.*||"
 END
 
 #endif    // 中文(简体，中国) resources
@@ -475,16 +475,16 @@ END
 
 STRINGTABLE
 BEGIN
-    IDC_MSGFILE             "粂ē郎(*.msg)|*.msg||"
+    IDC_MSGFILE             "粂ē郎(*.msg)|*.msg|┮Τ郎 (*.*)|*.*||"
     IDC_LOGLEVEL            "冈灿;秸刚;獺;牡;岿粇;璓㏑"
     IDC_BRFONT              "匡拒璹砰郎"
-    IDC_FONTFILE            "砰郎(*.bdf)|*.bdf||"
+    IDC_FONTFILE            "砰郎(*.bdf)|*.bdf|┮Τ郎 (*.*)|*.*||"
 END
 
 STRINGTABLE
 BEGIN
     IDC_BRLOG               "匡拒ノら粁癘魁郎"
-    IDC_LOGFILE             "ら粁郎(*.log, *.txt)|*.log;*.txt||"
+    IDC_LOGFILE             "ら粁郎(*.log, *.txt)|*.log;*.txt|┮Τ郎 (*.*)|*.*||"
 END
 
 #endif    // 中文(繁体，中国台湾) resources
