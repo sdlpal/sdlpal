@@ -48,6 +48,10 @@
     <Filter Include="native_midi">
       <UniqueIdentifier>{34823dc2-aeaf-4acc-bdef-5069e35186ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="generated">
+      <UniqueIdentifier>{715380f7-416a-47aa-8162-46cc7696849d}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\adplug\binfile.h">
@@ -385,6 +389,9 @@
     </ClInclude>
     <ClInclude Include="..\..\native_midi\native_midi_common.h">
       <Filter>native_midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\generated.h">
+      <Filter>generated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

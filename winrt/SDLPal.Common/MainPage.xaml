@@ -11,7 +11,14 @@
         <ScrollViewer HorizontalScrollMode="Disabled">
             <StackPanel VerticalAlignment="Top" Margin="10,0,20,10">
                 <TextBlock Text="SDLPAL" FontSize="48" />
-                <TextBlock x:Uid="Title" Text="设置模式" FontSize="28" VerticalAlignment="Center" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="Title" Text="设置模式" FontSize="28" VerticalAlignment="Center" Grid.Column="0" />
+                    <TextBlock x:Name="tbGitRevision" VerticalAlignment="Bottom" Grid.Column="1" />
+                </Grid>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>

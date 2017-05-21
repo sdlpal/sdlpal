@@ -4,6 +4,10 @@
     <Filter Include="adplug">
       <UniqueIdentifier>{e0154447-2329-47d7-8713-a66a8cc6b0c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="generated">
+      <UniqueIdentifier>{57bdc1bf-35de-46f5-a72d-d58fabea7512}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
     <Filter Include="libmad">
       <UniqueIdentifier>{03839bd5-b2c2-4ac7-b7bc-2b254ebe404d}</UniqueIdentifier>
     </Filter>
@@ -88,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="..\..\adplug\dbopl.h">
       <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\generated.h">
+      <Filter>generated</Filter>
     </ClInclude>
     <ClInclude Include="..\..\liboggvorbis\include\ogg\config_types.h">
       <Filter>liboggvorbis\include\ogg</Filter>

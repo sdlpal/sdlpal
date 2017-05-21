@@ -29,6 +29,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static native boolean setConfigBoolean(String item, boolean value);
     public static native boolean setConfigInt(String item, int value);
     public static native boolean setConfigString(String item, String value);
+    public static native String getGitRevision();
 
     private static final String KeepAspectRatio = "KeepAspectRatio";
     private static final String LaunchSetting = "LaunchSetting";
@@ -66,6 +67,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setSubtitle(getResources().getString(R.string.title_settings) + " (" + getGitRevision() + ")");
 
         ((SwitchCompat)findViewById(R.id.swMsgFile)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
