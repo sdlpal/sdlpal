@@ -158,7 +158,8 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 	auto fal = Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList;
 	for each (auto entry in fal->Entries)
 	{
-		auto item = AWait(fal->GetItemAsync(entry.Token), g_eventHandle);
+		Windows::Storage::IStorageItem^ item = nullptr;
+		try { item = AWait(fal->GetItemAsync(entry.Token), g_eventHandle); } catch (Exception^) {}
 		if (!item)
 		{
 			invalid_tokens.push_back(entry.Token);

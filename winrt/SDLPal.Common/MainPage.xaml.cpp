@@ -9,6 +9,7 @@
 #include "AsyncHelper.h"
 #include "../../global.h"
 #include "../../palcfg.h"
+#include "../../generated.h"
 
 using namespace SDLPal;
 
@@ -44,6 +45,8 @@ MainPage::MainPage()
 	m_acl[PALCFG_MESSAGEFILE] = ref new AccessListEntry(tbMsgFile, cbUseMsgFile, ConvertString(PAL_ConfigName(PALCFG_MESSAGEFILE)));
 	m_acl[PALCFG_FONTFILE] = ref new AccessListEntry(tbFontFile, cbUseFontFile, ConvertString(PAL_ConfigName(PALCFG_FONTFILE)));
 	m_acl[PALCFG_LOGFILE] = ref new AccessListEntry(tbLogFile, cbUseLogFile, ConvertString(PAL_ConfigName(PALCFG_LOGFILE)));
+
+	tbGitRevision->Text = "  " PAL_GIT_REVISION;
 
 	LoadControlContents();
 
