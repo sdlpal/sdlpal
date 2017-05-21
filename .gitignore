@@ -241,6 +241,8 @@ unix/sdlpal
 sdlpal.cfg
 data
 
+generated.h
+
 *.Td
 *.d
 

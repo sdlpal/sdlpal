@@ -108,7 +108,7 @@ PAL_Init(
 #else
 	   "",
 #endif
-#if defined(PAL_GIT_REVISION)
+#if defined(PAL_HAS_GIT_REVISION) && defined(PAL_GIT_REVISION)
 	   " ["  PAL_GIT_REVISION "] "
 #else
 	   ""

@@ -60,6 +60,10 @@
     <Filter Include="Test Files\deps">
       <UniqueIdentifier>{5f2a83a2-9824-4e9e-a352-8dc90c92fbde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="generated">
+      <UniqueIdentifier>{85918901-0fba-453a-8dca-fd0665d789b3}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\battle.c">
@@ -669,6 +673,9 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\generated.h">
+      <Filter>generated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

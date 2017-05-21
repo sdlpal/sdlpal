@@ -139,6 +139,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -160,6 +163,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -185,6 +191,9 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
     <ClCompile>
@@ -211,6 +220,9 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -233,6 +245,9 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <ClCompile>
@@ -257,6 +272,9 @@
       </AdditionalLibraryDirectories>
     </Link>
     <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\3rd\googletest\googletest\src\gtest-all.cc">
@@ -489,6 +507,7 @@
     <ClInclude Include="..\libmad\timer.h" />
     <ClInclude Include="pal_config.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="..\generated.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sdlpal.cfg.example" />

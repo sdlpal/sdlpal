@@ -6,6 +6,8 @@ TEST_TARGET = sdlpal-tests.exe
 HOST =
 TEST_CCFLAGS =
 
+GENERATED = -DPAL_HAS_GIT_REVISION $(shell ../scripts/gengitrev)
+
 DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
 
 GTEST_DIR = ../3rd/googletest/googletest
@@ -18,7 +20,7 @@ DEPFILES = $(CFILES:.c=.d) $(CPPFILES:.cpp=.d)
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 
-override CCFLAGS += `sdl2-config --cflags` -g -msse2 -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS)
+override CCFLAGS += `sdl2-config --cflags` -g -msse2 -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS) $(GENERATED)
 CXXFLAGS = $(CCFLAGS) -std=c++11
 CFLAGS = $(CCFLAGS) -std=gnu99
 LDFLAGS = `sdl2-config --libs` -lm -lwinmm -lole32 -loleaut32 -limm32 -lcomctl32 -luuid -ldxguid -lversion -static -static-libgcc -static-libstdc++
