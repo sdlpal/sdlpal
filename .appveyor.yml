@@ -19,11 +19,7 @@ before_build:
     git submodule update --init --recursive
 after_build:
   - |-
-    for /d %%d in ("%APPVEYOR_BUILD_FOLDER%\winrt\SDLPal.*") do (
-      for /d %%c in ("%%d\AppPackages\*") do (
-        ren "%%c" SDLPal
-      )
-    )
+    for /d %%d in ("%APPVEYOR_BUILD_FOLDER%\winrt\SDLPal.*") do ( for /d %%c in ("%%d\AppPackages\*") do ( ren "%%c" SDLPal ) )
 
 deploy:
 - provider: GitHub
