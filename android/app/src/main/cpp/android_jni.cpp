@@ -14,6 +14,7 @@
 #include "global.h"
 #include "palcfg.h"
 #include "util.h"
+#include "generated.h"
 
 #include <string>
 
@@ -81,6 +82,17 @@ JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setScreenSize(JNIEnv *e
 {
     g_screenWidth = width;
     g_screenHeight = height;
+}
+
+/*
+ * Class:     io_github_sdlpal_SettingsActivity
+ * Method:    getGitRevision
+ * Signature: (V)Ljava/lang/String;
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jstring JNICALL Java_io_github_sdlpal_SettingsActivity_getGitRevision(JNIEnv *env, jclass cls)
+{
+    return env->NewStringUTF(PAL_GIT_REVISION);
 }
 
 /*

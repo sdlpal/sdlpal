@@ -5,6 +5,7 @@ SDL_PATH := $(SDLPAL_PATH)/3rd/SDL
 include $(SDL_PATH)/Android.mk
 
 include $(CLEAR_VARS)
+GENERATED := -DPAL_HAS_GIT_REVISION $(shell $(SDLPAL_PATH)/scripts/gengitrev)
 LOCAL_PATH := $(NDK_LOCAL_PATH)
 LOCAL_MODULE := main
 
@@ -21,9 +22,9 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
     $(wildcard $(LOCAL_PATH)/*.cpp) \
     $(wildcard $(LOCAL_PATH)/*.c)
 
-LOCAL_CFLAGS += -std=gnu99 -DPAL_HAS_PLATFORM_SPECIFIC_UTILS
+LOCAL_CFLAGS += -std=gnu99 -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(GENERATED)
 
-LOCAL_CPPFLAGS += -std=c++11
+LOCAL_CPPFLAGS += -std=c++11 -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(GENERATED)
 
 LOCAL_SHARED_LIBRARIES := SDL2
 
