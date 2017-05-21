@@ -73,7 +73,7 @@ matrix:
         language: c
         script:
           - cd ios/SDLPal
-          - xcodebuild ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO
+          - xcodebuild ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO -configuration Release
           - mkdir -p Payload
           - mv build/Release-iphoneos/SDLPal.app Payload
           - zip ../../deploy/sdlpal-impactor.ipa -r Payload
@@ -84,7 +84,7 @@ matrix:
         language: c
         script:
           - cd macos
-          - xcodebuild
+          - xcodebuild -configuration Release
           - hdiutil create -srcfolder build/Release/Pal.app -volname "SDLPal" ../deploy/sdlpal-macos.dmg
           - #xcodebuild test -scheme PalTests #disabled since always fail in travis-ci
           - cd ..
