@@ -770,6 +770,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7165507A195BB372006E1227 /* Build configuration list for PBXNativeTarget "SDLPal" */;
 			buildPhases = (
+				C60CBDEB1ED1AD9500B5D156 /* ShellScript */,
 				71655059195BB372006E1227 /* Sources */,
 				7165505A195BB372006E1227 /* Frameworks */,
 				7165505B195BB372006E1227 /* Resources */,
@@ -853,6 +854,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C60CBDEB1ED1AD9500B5D156 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec ../../scripts/gengitrev";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		71655059195BB372006E1227 /* Sources */ = {
