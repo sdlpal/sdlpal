@@ -377,6 +377,8 @@ AUDIO_CloseDevice(
    {
       MIDI_Play(0, FALSE);
    }
+
+   gAudioDevice.fOpened = FALSE;
 }
 
 SDL_AudioSpec*
