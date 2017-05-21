@@ -6,18 +6,24 @@ environment:
     - solution_name: win32/sdlpal.sln
       BUILD_OPTIONS: /p:Configuration=Release
     - solution_name: winrt/SDLPal.UWP.sln
-      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM"
+      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
     - solution_name: winrt/SDLPal.Windows.sln
-      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM"
+      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
     - solution_name: winrt/SDLPal.WindowsPhone.sln
-      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="ARM"
+      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="ARM";AppxPackageDir="AppPackages"
 build_script:
   - |
     msbuild /nologo /m %solution_name% %BUILD_OPTIONS%
 before_build:
-  # SDL submodule setup
   - |-
     git submodule update --init --recursive
+after_build:
+  - |-
+    for /d %%d in ("%APPVEYOR_BUILD_FOLDER%\winrt\SDLPal.*") do (
+      for /d %%c in ("%%d\AppPackages\*") do (
+        ren "%%c" SDLPal
+      )
+    )
 
 deploy:
 - provider: GitHub
@@ -29,8 +35,14 @@ deploy:
 artifacts:
   - path: win32/Win32/Release/sdlpal.exe
     name: Windows Desktop
-  - path: winrt/AppPackages/SDLPal
-    name: Universal Windows Platform
+  - path: winrt/SDLPal.UWP/AppPackages/SDLPal
+    name: sdlpal-uwp
+    type: zip
+  - path: winrt/SDLPal.Windows/AppPackages/SDLPal
+    name: sdlpal-ws81
+    type: zip
+  - path: winrt/SDLPal.WindowsPhone/AppPackages/SDLPal
+    name: sdlpal-wp81
     type: zip
 
 notifications:
