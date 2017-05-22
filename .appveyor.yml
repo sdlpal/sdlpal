@@ -21,6 +21,7 @@ before_build:
 after_build:
   - |-
     if "%APPVEYOR_REPO_TAG%" == "true" ( for /d %%d in ("%APPVEYOR_BUILD_FOLDER%\winrt\SDLPal.*") do ( for /d %%c in ("%%d\AppPackages\*") do ( ren "%%c" SDLPal ) ) )
+    if exist win32\Win32\Release\sdlpal.exe ( 7z a sdlpal-win32.zip win32\Win32\Release\sdlpal.exe )
 
 deploy:
 - provider: GitHub
@@ -30,9 +31,8 @@ deploy:
     secure: RYDRqm5LncsJG32FRSlCkLzkJC4ykCtlgO3+xW4q80wQOA3U9pHAe2beyMEduJIe
 
 artifacts:
-  - path: win32/Win32/Release/sdlpal.exe
-    name: sdlpal-win32
-    type: zip
+  - path: sdlpal-win32.zip
+    name: Win32
   - path: winrt/SDLPal.UWP/AppPackages/SDLPal
     name: sdlpal-uwp
     type: zip
