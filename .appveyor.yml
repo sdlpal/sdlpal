@@ -4,22 +4,23 @@ image:
 environment:
   matrix:
     - solution_name: win32/sdlpal.sln
-      BUILD_OPTIONS: /p:Configuration=Release
+      APPX_OPTIONS:
     - solution_name: winrt/SDLPal.UWP.sln
-      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
+      APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
     - solution_name: winrt/SDLPal.Windows.sln
-      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
+      APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
     - solution_name: winrt/SDLPal.WindowsPhone.sln
-      BUILD_OPTIONS: /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms="ARM";AppxPackageDir="AppPackages"
+      APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="ARM";AppxPackageDir="AppPackages"
 build_script:
-  - |
-    msbuild /nologo /m %solution_name% %BUILD_OPTIONS%
+  - |-
+    if "%APPVEYOR_REPO_TAG%" == "false" ( set APPX_OPTIONS= )
+    msbuild /nologo /m %solution_name% /p:Configuration=Release %APPX_OPTIONS%
 before_build:
   - |-
     git submodule update --init --recursive
 after_build:
   - |-
-    for /d %%d in ("%APPVEYOR_BUILD_FOLDER%\winrt\SDLPal.*") do ( for /d %%c in ("%%d\AppPackages\*") do ( ren "%%c" SDLPal ) )
+    if "%APPVEYOR_REPO_TAG%" == "true" ( for /d %%d in ("%APPVEYOR_BUILD_FOLDER%\winrt\SDLPal.*") do ( for /d %%c in ("%%d\AppPackages\*") do ( ren "%%c" SDLPal ) ) )
 
 deploy:
 - provider: GitHub
@@ -30,7 +31,8 @@ deploy:
 
 artifacts:
   - path: win32/Win32/Release/sdlpal.exe
-    name: Windows Desktop
+    name: sdlpal-win32
+    type: zip
   - path: winrt/SDLPal.UWP/AppPackages/SDLPal
     name: sdlpal-uwp
     type: zip
