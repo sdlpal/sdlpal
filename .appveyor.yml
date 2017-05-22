@@ -20,8 +20,10 @@ before_build:
     git submodule update --init --recursive
 after_build:
   - |-
-    if "%APPVEYOR_REPO_TAG%" == "true" ( for /d %%d in ("%APPVEYOR_BUILD_FOLDER%\winrt\SDLPal.*") do ( for /d %%c in ("%%d\AppPackages\*") do ( ren "%%c" SDLPal ) ) )
-    if exist win32\Win32\Release\sdlpal.exe ( 7z a sdlpal-win32.zip win32\Win32\Release\sdlpal.exe )
+    if exist win32\Win32\Release\sdlpal.exe ( cd win32\Win32\Release & 7z a ..\..\..\sdlpal-win32.zip sdlpal.exe & cd ..\..\..\ )
+    for /d %%d in ("winrt\SDLPal.UWP\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-uwp.zip * & cd ..\..\..\..\ )
+    for /d %%d in ("winrt\SDLPal.Windows\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-ws81.zip * & cd ..\..\..\..\ )
+    for /d %%d in ("winrt\SDLPal.WindowsPhone\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-wp81.zip * & cd ..\..\..\..\ )
 
 deploy:
 - provider: GitHub
@@ -33,15 +35,12 @@ deploy:
 artifacts:
   - path: sdlpal-win32.zip
     name: Win32
-  - path: winrt/SDLPal.UWP/AppPackages/SDLPal
-    name: sdlpal-uwp
-    type: zip
-  - path: winrt/SDLPal.Windows/AppPackages/SDLPal
-    name: sdlpal-ws81
-    type: zip
-  - path: winrt/SDLPal.WindowsPhone/AppPackages/SDLPal
-    name: sdlpal-wp81
-    type: zip
+  - path: sdlpal-uwp.zip
+    name: UWP
+  - path: sdlpal-ws81.zip
+    name: WindowsStore
+  - path: sdlpal-wp81.zip
+    name: WindowsPhone
 
 notifications:
 - provider: Webhook
