@@ -26,4 +26,5 @@
     <string name="action_usemsgfile">Customized message file</string>
     <string name="action_usefontfile">Customized font file</string>
     <string name="action_uselogfile">Log to file</string>
+    <string name="toast_requestpermission">Please approve accessing sdcard or app cannot work properly.</string>
 </resources>

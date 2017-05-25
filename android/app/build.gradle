@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "io.github.sdlpal"
         minSdkVersion 10
-        targetSdkVersion 12
+        targetSdkVersion 25
         externalNativeBuild {
             ndkBuild {
                 arguments "NDK_APPLICATION_MK:=src/main/cpp/Application.mk"

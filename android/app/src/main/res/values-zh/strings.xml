@@ -26,4 +26,5 @@
     <string name="action_uselogfile">记录到文件</string>
     <string name="action_usemsgfile">自定义语言文件</string>
     <string name="action_usefontfile">自定义字体文件</string>
+    <string name="toast_requestpermission">请允许SD卡读写，否则程序无法正常运行</string>
 </resources>
