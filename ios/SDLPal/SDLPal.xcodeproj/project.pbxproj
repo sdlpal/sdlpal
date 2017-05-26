@@ -95,6 +95,7 @@
 		716552AE195BBE7D006E1227 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AD195BBE7D006E1227 /* AudioToolbox.framework */; };
 		716552B0195BBECE006E1227 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AF195BBECE006E1227 /* QuartzCore.framework */; };
 		71AA35801A0BCA4E00793FFF /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = 71AA357F1A0BCA4E00793FFF /* util.mm */; };
+		C60441781ED9AF3C006C7A7C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C604417A1ED9AF3C006C7A7C /* Settings.storyboard */; };
 		71DCB6961ED9CBB000F120DB /* aviplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 71DCB6941ED9CBB000F120DB /* aviplay.c */; };
 		71DCB6991ED9CCFE00F120DB /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE731E474CE2000C8970 /* GameController.framework */; };
 		C622BE661E474B5E000C8970 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE641E474B5E000C8970 /* audio.c */; };
@@ -107,8 +108,11 @@
 		C63505741EA6570300186049 /* private.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056C1EA6570300186049 /* private.c */; };
 		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
 		C63505801EA6578700186049 /* native_midi.m in Sources */ = {isa = PBXBuildFile; fileRef = C635057D1EA6578700186049 /* native_midi.m */; };
+		C66C6CA41ECCB73100CE10C1 /* SDLPal_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */; };
+		C6743A841ECCAFA700AEF782 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */; };
 		C694CF871EB6197C0006F937 /* gs_instruments.dls in Resources */ = {isa = PBXBuildFile; fileRef = C694CF861EB619660006F937 /* gs_instruments.dls */; };
 		C6E974A21E49C24500F76B17 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E9749D1E49C22D00F76B17 /* libSDL2.a */; };
+		F9BC4A0C6F1B983EB45414F3 /* libPods-SDLPal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,6 +140,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SDLPal.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		57FB00E81B7A4FEA005FCF4C /* dbemuopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbemuopl.cpp; sourceTree = "<group>"; };
 		57FB00E91B7A4FEA005FCF4C /* dbemuopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbemuopl.h; sourceTree = "<group>"; };
 		57FB00EA1B7A4FEA005FCF4C /* dbopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbopl.cpp; sourceTree = "<group>"; };
@@ -340,6 +345,9 @@
 		71AA357F1A0BCA4E00793FFF /* util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = util.mm; sourceTree = "<group>"; };
 		71DCB6941ED9CBB000F120DB /* aviplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aviplay.c; path = ../../../aviplay.c; sourceTree = "<group>"; };
 		71DCB6951ED9CBB000F120DB /* aviplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aviplay.h; path = ../../../aviplay.h; sourceTree = "<group>"; };
+		C604417B1ED9B500006C7A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		C604417D1ED9B521006C7A7C /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Settings.strings"; sourceTree = "<group>"; };
+		C604417E1ED9B60C006C7A7C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings.strings"; sourceTree = "<group>"; };
 		C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = "../../3rd/SDL/Xcode-iOS/SDL/SDL.xcodeproj"; sourceTree = "<group>"; };
 		C622BE641E474B5E000C8970 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = audio.c; path = ../../../audio.c; sourceTree = "<group>"; };
 		C622BE651E474B5E000C8970 /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio.h; path = ../../../audio.h; sourceTree = "<group>"; };
@@ -357,7 +365,13 @@
 		C635057B1EA6578700186049 /* native_midi_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_common.c; sourceTree = "<group>"; };
 		C635057C1EA6578700186049 /* native_midi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi_common.h; sourceTree = "<group>"; };
 		C635057D1EA6578700186049 /* native_midi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = native_midi.m; path = ../iOS/SDLPal/SDLPal/native_midi.m; sourceTree = "<group>"; };
+		C66C6CA21ECCB73100CE10C1 /* SDLPal_AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLPal_AppDelegate.h; sourceTree = "<group>"; };
+		C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLPal_AppDelegate.m; sourceTree = "<group>"; };
+		C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
+		C6743A851ECCAFC600AEF782 /* SettingsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		C694CF861EB619660006F937 /* gs_instruments.dls */ = {isa = PBXFileReference; lastKnownFileType = file; name = gs_instruments.dls; path = /System/Library/Components/CoreAudio.component/Contents/Resources/gs_instruments.dls; sourceTree = "<group>"; };
+		E8A03C34C8311310F5BFC81E /* Pods-SDLPal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDLPal.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SDLPal/Pods-SDLPal.debug.xcconfig"; sourceTree = "<group>"; };
+		F7379C304509DA5D22123C42 /* Pods-SDLPal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDLPal.release.xcconfig"; path = "Pods/Target Support Files/Pods-SDLPal/Pods-SDLPal.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,12 +390,22 @@
 				71655061195BB372006E1227 /* UIKit.framework in Frameworks */,
 				71655063195BB372006E1227 /* Foundation.framework in Frameworks */,
 				71655065195BB372006E1227 /* CoreGraphics.framework in Frameworks */,
+				F9BC4A0C6F1B983EB45414F3 /* libPods-SDLPal.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0BAAECF7C4C397CAC97402E4 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E8A03C34C8311310F5BFC81E /* Pods-SDLPal.debug.xcconfig */,
+				F7379C304509DA5D22123C42 /* Pods-SDLPal.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		57FB00F01B7A50B0005FCF4C /* liboggvorbis */ = {
 			isa = PBXGroup;
 			children = (
@@ -546,6 +570,7 @@
 				71655067195BB372006E1227 /* Supporting Files */,
 				7165505F195BB372006E1227 /* Frameworks */,
 				7165505E195BB372006E1227 /* Products */,
+				0BAAECF7C4C397CAC97402E4 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -571,6 +596,7 @@
 				71655060195BB372006E1227 /* UIKit.framework */,
 				71655062195BB372006E1227 /* Foundation.framework */,
 				71655064195BB372006E1227 /* CoreGraphics.framework */,
+				2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -622,12 +648,18 @@
 		71655067195BB372006E1227 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				C626FFBF1E5BCBE700E39DD9 /* pal_config.h */,
+				C66C6CA21ECCB73100CE10C1 /* SDLPal_AppDelegate.h */,
+				C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */,
 				71AA357F1A0BCA4E00793FFF /* util.mm */,
 				7165507D195BB3D8006E1227 /* Icon.png */,
 				71655068195BB372006E1227 /* SDLPal-Info.plist */,
 				71655072195BB372006E1227 /* Default.png */,
 				71655074195BB372006E1227 /* Default@2x.png */,
 				71655076195BB372006E1227 /* Default-568h@2x.png */,
+				C604417A1ED9AF3C006C7A7C /* Settings.storyboard */,
+				C6743A851ECCAFC600AEF782 /* SettingsTableViewController.h */,
+				C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */,
 			);
 			name = "Supporting Files";
 			path = SDLPal;
@@ -708,7 +740,6 @@
 			isa = PBXGroup;
 			children = (
 				71DCB6951ED9CBB000F120DB /* aviplay.h */,
-				C626FFBF1E5BCBE700E39DD9 /* pal_config.h */,
 				C635056A1EA6570300186049 /* midi.h */,
 				57FB015A1B7A50E0005FCF4C /* codepage.h */,
 				57FB015B1B7A50E0005FCF4C /* fontglyph.h */,
@@ -775,10 +806,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7165507A195BB372006E1227 /* Build configuration list for PBXNativeTarget "SDLPal" */;
 			buildPhases = (
+				110EC7BBCFA53B90C23ED695 /* [CP] Check Pods Manifest.lock */,
 				C60CBDEB1ED1AD9500B5D156 /* ShellScript */,
 				71655059195BB372006E1227 /* Sources */,
 				7165505A195BB372006E1227 /* Frameworks */,
 				7165505B195BB372006E1227 /* Resources */,
+				0E25B343B96701D736CC551B /* [CP] Embed Pods Frameworks */,
+				F6629F352CD0A33AD0B0EF80 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -812,6 +846,9 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
+				"zh-Hant",
+				"zh-Hans",
 			);
 			mainGroup = 71655054195BB372006E1227;
 			productRefGroup = 7165505E195BB372006E1227 /* Products */;
@@ -854,6 +891,7 @@
 				71655073195BB372006E1227 /* Default.png in Resources */,
 				71655075195BB372006E1227 /* Default@2x.png in Resources */,
 				71655077195BB372006E1227 /* Default-568h@2x.png in Resources */,
+				C60441781ED9AF3C006C7A7C /* Settings.storyboard in Resources */,
 				7165507F195BB3D8006E1227 /* Icon.png in Resources */,
 				C694CF871EB6197C0006F937 /* gs_instruments.dls in Resources */,
 			);
@@ -862,6 +900,36 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0E25B343B96701D736CC551B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SDLPal/Pods-SDLPal-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		110EC7BBCFA53B90C23ED695 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		C60CBDEB1ED1AD9500B5D156 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -872,8 +940,23 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/bin/sh -x";
+			shellScript = "exec ../../scripts/gengitrev\nsed -i '' 's/int main/int nomain/g' ../../3rd/SDL/src/video/uikit/SDL_uikitappdelegate.m";
+		};
+		F6629F352CD0A33AD0B0EF80 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "exec ../../scripts/gengitrev";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SDLPal/Pods-SDLPal-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -883,6 +966,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C622BE771E474DF5000C8970 /* util.c in Sources */,
+				C66C6CA41ECCB73100CE10C1 /* SDLPal_AppDelegate.m in Sources */,
 				57FB00EF1B7A4FEA005FCF4C /* demuopl.cpp in Sources */,
 				57FB00ED1B7A4FEA005FCF4C /* dbemuopl.cpp in Sources */,
 				57FB01591B7A50B0005FCF4C /* window.c in Sources */,
@@ -896,6 +980,7 @@
 				57FB01511B7A50B0005FCF4C /* psy.c in Sources */,
 				57FB01551B7A50B0005FCF4C /* smallft.c in Sources */,
 				57FB014B1B7A50B0005FCF4C /* info.c in Sources */,
+				C6743A841ECCAFA700AEF782 /* SettingsTableViewController.m in Sources */,
 				57FB01421B7A50B0005FCF4C /* analysis.c in Sources */,
 				57FB014F1B7A50B0005FCF4C /* mapping0.c in Sources */,
 				57FB01531B7A50B0005FCF4C /* res0.c in Sources */,
@@ -981,11 +1066,25 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		C604417A1ED9AF3C006C7A7C /* Settings.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C604417B1ED9B500006C7A7C /* Base */,
+				C604417D1ED9B521006C7A7C /* zh-Hant */,
+				C604417E1ED9B60C006C7A7C /* zh-Hans */,
+			);
+			name = Settings.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		71655078195BB372006E1227 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = NO;
@@ -1018,6 +1117,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = NO;
@@ -1043,57 +1143,81 @@
 		};
 		7165507B195BB372006E1227 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E8A03C34C8311310F5BFC81E /* Pods-SDLPal.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
 					"__IOS__=1",
 					"DEBUG=1",
-					"MAC_OS_X_VERSION_MIN_REQUIRED=1060",
+					PAL_HAS_GIT_REVISION,
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
 					../../3rd/SDL/include,
 					../../,
 					../../liboggvorbis/include,
 					../../liboggvorbis/src,
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				INIT_ROUTINE = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"ActionSheetPicker-3.0\"",
+					"-framework",
+					"\"UIKit\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "";
+				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
 		7165507C195BB372006E1227 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F7379C304509DA5D22123C42 /* Pods-SDLPal.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
 					"__IOS__=1",
-					"MAC_OS_X_VERSION_MIN_REQUIRED=1060",
+					PAL_HAS_GIT_REVISION,
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
 					../../3rd/SDL/include,
 					../../,
 					../../liboggvorbis/include,
 					../../liboggvorbis/src,
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				INIT_ROUTINE = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"ActionSheetPicker-3.0\"",
+					"-framework",
+					"\"UIKit\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "";
+				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

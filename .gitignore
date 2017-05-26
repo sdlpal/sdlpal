@@ -270,3 +270,6 @@ import-summary.txt
 # Android Studio
 .idea
 *.iml
+
+# CocoaPods
+Pods

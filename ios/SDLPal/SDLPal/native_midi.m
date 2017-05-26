@@ -79,7 +79,6 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
         NSURL *midiFileURL = [NSURL URLWithString:[NSString stringWithUTF8String:midiInterFile]];
         NSURL *bankURL = [[NSBundle mainBundle] URLForResource:@"gs_instruments" withExtension: @"dls"];
         if( midiPlayer ) {
-            [midiPlayer dealloc];
             midiPlayer = nil;
         }
         NSError *err=nil;
@@ -98,7 +97,6 @@ void native_midi_freesong(NativeMidiSong *song)
             currentsong = NULL;
         free(song);
         if( midiPlayer ) {
-            [midiPlayer dealloc];
             midiPlayer = nil;
         }
     }

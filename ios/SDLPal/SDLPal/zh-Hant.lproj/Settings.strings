@@ -1,0 +1,78 @@
+
+/* Class = "UIBarButtonItem"; title = "Discard"; ObjectID = "0TA-XO-i0Z"; */
+"0TA-XO-i0Z.title" = "撤銷";
+
+/* Class = "UILabel"; text = "保持纵横比"; ObjectID = "1Ej-ro-rVM"; */
+"1Ej-ro-rVM.text" = "保持縱橫比";
+
+/* Class = "UILabel"; text = "日志文件"; ObjectID = "2J1-Pe-ygl"; */
+"2J1-Pe-ygl.text" = "自訂日誌檔案";
+
+/* Class = "UITableViewSection"; headerTitle = "字体及语言设置"; ObjectID = "5ym-4D-dzP"; */
+"5ym-4D-dzP.headerTitle" = "字體及語言設定";
+
+/* Class = "UILabel"; text = "OPL环绕模式"; ObjectID = "7y3-G9-hca"; */
+"7y3-G9-hca.text" = "環繞聲";
+
+/* Class = "UITableViewSection"; headerTitle = "全局"; ObjectID = "Ct9-Es-qVF"; */
+"Ct9-Es-qVF.headerTitle" = "一般";
+
+/* Class = "UILabel"; text = "启用触屏辅助"; ObjectID = "F74-lN-NuX"; */
+"F74-lN-NuX.text" = "啓用觸屏輔助";
+
+/* Class = "UILabel"; text = "字体文件"; ObjectID = "FLw-EA-IAl"; */
+"FLw-EA-IAl.text" = "自訂字體檔案";
+
+/* Class = "UILabel"; text = "BGM音源"; ObjectID = "H6w-EN-xQ6"; */
+"H6w-EN-xQ6.text" = "背景音樂格式";
+
+/* Class = "UITableViewSection"; headerTitle = "显示设置"; ObjectID = "KKa-Sg-wye"; */
+"KKa-Sg-wye.headerTitle" = "顯示設置";
+
+/* Class = "UILabel"; text = "音效音量"; ObjectID = "L24-lU-K9K"; */
+"L24-lU-K9K.text" = "音效音量";
+
+/* Class = "UILabel"; text = "OPL采样率"; ObjectID = "LM0-rh-yuy"; */
+"LM0-rh-yuy.text" = "OPL取樣速率";
+
+/* Class = "UITableViewSection"; headerTitle = "日志记录设置"; ObjectID = "Lil-2E-Cmo"; */
+"Lil-2E-Cmo.headerTitle" = "日誌記錄設定";
+
+/* Class = "UIBarButtonItem"; title = "确定"; ObjectID = "R0E-e5-3Mm"; */
+"R0E-e5-3Mm.title" = "確定";
+
+/* Class = "UILabel"; text = "游戏资源"; ObjectID = "VQP-NM-z3r"; */
+"VQP-NM-z3r.text" = "遊戲資源";
+
+/* Class = "UILabel"; text = "iTunes 文件分享"; ObjectID = "aNN-DF-3OJ"; */
+"aNN-DF-3OJ.text" = "iTunes 檔案共享";
+
+/* Class = "UILabel"; text = "缓冲区"; ObjectID = "azm-6Q-Twc"; */
+"azm-6Q-Twc.text" = "音訊緩衝區大小";
+
+/* Class = "UILabel"; text = "音乐音量"; ObjectID = "csD-lo-BFX"; */
+"csD-lo-BFX.text" = "音樂音量";
+
+/* Class = "UILabel"; text = "采样率"; ObjectID = "hQp-nd-FWB"; */
+"hQp-nd-FWB.text" = "取樣速率";
+
+/* Class = "UITableViewSection"; headerTitle = "音频设置"; ObjectID = "kPc-Yq-LOh"; */
+"kPc-Yq-LOh.headerTitle" = "音频设置";
+
+/* Class = "UILabel"; text = "OPL类型"; ObjectID = "lpD-tV-FRw"; */
+"lpD-tV-FRw.text" = "OPL類型";
+
+/* Class = "UILabel"; text = "SSRC质量"; ObjectID = "oQa-bR-CM1"; */
+"oQa-bR-CM1.text" = "SSRC品質";
+
+/* Class = "UILabel"; text = "立体声"; ObjectID = "sIK-1p-lB9"; */
+"sIK-1p-lB9.text" = "環繞聲";
+
+/* Class = "UILabel"; text = "CD音源"; ObjectID = "t2Y-EX-5pB"; */
+"t2Y-EX-5pB.text" = "CD音源";
+
+/* Class = "UILabel"; text = "语言文件"; ObjectID = "vvj-5L-w4s"; */
+"vvj-5L-w4s.text" = "自訂語言檔案";
+
+/* Class = "UILabel"; text = "日志记录级别"; ObjectID = "yup-CB-6Rc"; */
+"yup-CB-6Rc.text" = "日誌記錄級別";
