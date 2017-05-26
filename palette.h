@@ -62,7 +62,7 @@ VOID
 PAL_PaletteFade(
    INT         iPaletteNum,
    BOOL        fNight,
-   INT         iDelay
+   BOOL        fUpdateScene
 );
 
 VOID

@@ -73,17 +73,21 @@ matrix:
           - jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/app-release-unsigned.apk 5f85e55b-6e81-4b08-ac2d-c51f3dae22ae
 
       - os: osx
+        osx_image: xcode8.3
         env: TARGET=iOS
         language: c
         script:
           - cd ios/SDLPal
-          - xcodebuild ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO -configuration Release
+          - pod install
+          - sed -i '' 's/int main/int nomain/g' ../../3rd/SDL/src/video/uikit/SDL_uikitappdelegate.m # hackhack
+          - xcodebuild -workspace SDLPal.xcworkspace -scheme SDLPal ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO -configuration Release CONFIGURATION_BUILD_DIR=/tmp/sdlpal-build
           - mkdir -p Payload
-          - mv build/Release-iphoneos/SDLPal.app Payload
+          - mv /tmp/sdlpal-build/SDLPal.app Payload
           - zip ../../deploy/sdlpal-impactor.ipa -r Payload
           - cd ../..
 
       - os: osx
+        osx_image: xcode8.3
         env: TARGET=macOS
         language: c
         script:

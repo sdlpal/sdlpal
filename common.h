@@ -114,6 +114,9 @@ typedef const BYTE *LPCBYTE;
 
 # include <unistd.h>
 # include <dirent.h>
+# ifdef __APPLE__
+#  include <objc/objc.h>
+# endif
 
 # ifndef FALSE
 #  define FALSE               0
@@ -134,7 +137,7 @@ typedef unsigned char       UCHAR, *PUCHAR;
 typedef unsigned short      WORD, *LPWORD;
 typedef unsigned int        DWORD, *LPDWORD;
 typedef int                 INT, *LPINT;
-# ifndef __OBJC__
+# ifndef __APPLE__
 typedef int                 BOOL, *LPBOOL;
 # endif
 typedef unsigned int        UINT, *PUINT, UINT32, *PUINT32;
