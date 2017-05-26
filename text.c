@@ -1340,6 +1340,10 @@ PAL_ShowDialogText(
                //
                // Delay for a period and quit
                //
+               if (g_TextLib.fUserSkip)
+               {
+                  VIDEO_UpdateScreen(NULL);
+               }
                UTIL_Delay(wcstol(lpszText + 1, NULL, 10) * 80 / 7);
 			   g_TextLib.nCurrentDialogLine = 0;
                g_TextLib.fUserSkip = FALSE;
