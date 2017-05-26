@@ -10,7 +10,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import java.io.*;
 
@@ -23,15 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final static int REQUEST_FILESYSTEM_ACCESS_CODE = 101;
 
-    private boolean checkIfAlreadyhavePermission() {
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    private void requestForSpecificPermission() {
+    private void requestForPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILESYSTEM_ACCESS_CODE);
     }
 
@@ -49,7 +40,13 @@ public class MainActivity extends AppCompatActivity {
                     builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            requestForSpecificPermission();
+                            requestForPermissions();
+                        }
+                    });
+                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            System.exit(1);
                         }
                     });
                     builder.create().show();
@@ -61,12 +58,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        int MyVersion = Build.VERSION.SDK_INT;
-        if (MyVersion < Build.VERSION_CODES.M || checkIfAlreadyhavePermission())
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
             StartGame();
         else
-            requestForSpecificPermission();
+            requestForPermissions();
     }
 
     public void StartGame() {
