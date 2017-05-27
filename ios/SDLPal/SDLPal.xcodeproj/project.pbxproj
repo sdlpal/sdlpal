@@ -95,11 +95,12 @@
 		716552AE195BBE7D006E1227 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AD195BBE7D006E1227 /* AudioToolbox.framework */; };
 		716552B0195BBECE006E1227 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AF195BBECE006E1227 /* QuartzCore.framework */; };
 		71AA35801A0BCA4E00793FFF /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = 71AA357F1A0BCA4E00793FFF /* util.mm */; };
+		71DCB6961ED9CBB000F120DB /* aviplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 71DCB6941ED9CBB000F120DB /* aviplay.c */; };
+		71DCB6991ED9CCFE00F120DB /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE731E474CE2000C8970 /* GameController.framework */; };
 		C622BE661E474B5E000C8970 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE641E474B5E000C8970 /* audio.c */; };
 		C622BE6C1E474C01000C8970 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6A1E474C01000C8970 /* palcfg.c */; };
 		C622BE701E474CA9000C8970 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6F1E474CA9000C8970 /* overlay.c */; };
 		C622BE721E474CD5000C8970 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE711E474CD5000C8970 /* CoreMotion.framework */; };
-		C622BE741E474CE2000C8970 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE731E474CE2000C8970 /* GameController.framework */; };
 		C622BE761E474CFC000C8970 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE751E474CFC000C8970 /* AVFoundation.framework */; };
 		C622BE771E474DF5000C8970 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 71655251195BB6DB006E1227 /* util.c */; };
 		C63505731EA6570300186049 /* midi.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056B1EA6570300186049 /* midi.c */; };
@@ -337,6 +338,8 @@
 		716552AD195BBE7D006E1227 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		716552AF195BBECE006E1227 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		71AA357F1A0BCA4E00793FFF /* util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = util.mm; sourceTree = "<group>"; };
+		71DCB6941ED9CBB000F120DB /* aviplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aviplay.c; path = ../../../aviplay.c; sourceTree = "<group>"; };
+		71DCB6951ED9CBB000F120DB /* aviplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aviplay.h; path = ../../../aviplay.h; sourceTree = "<group>"; };
 		C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = "../../3rd/SDL/Xcode-iOS/SDL/SDL.xcodeproj"; sourceTree = "<group>"; };
 		C622BE641E474B5E000C8970 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = audio.c; path = ../../../audio.c; sourceTree = "<group>"; };
 		C622BE651E474B5E000C8970 /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio.h; path = ../../../audio.h; sourceTree = "<group>"; };
@@ -364,8 +367,8 @@
 			files = (
 				C6E974A21E49C24500F76B17 /* libSDL2.a in Frameworks */,
 				C622BE761E474CFC000C8970 /* AVFoundation.framework in Frameworks */,
-				C622BE741E474CE2000C8970 /* GameController.framework in Frameworks */,
 				C622BE721E474CD5000C8970 /* CoreMotion.framework in Frameworks */,
+				71DCB6991ED9CCFE00F120DB /* GameController.framework in Frameworks */,
 				716552B0195BBECE006E1227 /* QuartzCore.framework in Frameworks */,
 				716552AE195BBE7D006E1227 /* AudioToolbox.framework in Frameworks */,
 				716552AA195BBE1B006E1227 /* CoreAudio.framework in Frameworks */,
@@ -576,6 +579,7 @@
 			isa = PBXGroup;
 			children = (
 				C63505771EA6575200186049 /* Headers */,
+				71DCB6941ED9CBB000F120DB /* aviplay.c */,
 				C635056B1EA6570300186049 /* midi.c */,
 				C635056C1EA6570300186049 /* private.c */,
 				57FB015C1B7A50E0005FCF4C /* mp3play.c */,
@@ -703,6 +707,7 @@
 		C63505771EA6575200186049 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				71DCB6951ED9CBB000F120DB /* aviplay.h */,
 				C626FFBF1E5BCBE700E39DD9 /* pal_config.h */,
 				C635056A1EA6570300186049 /* midi.h */,
 				57FB015A1B7A50E0005FCF4C /* codepage.h */,
@@ -796,6 +801,7 @@
 				ORGANIZATIONNAME = "SDLPAL team";
 				TargetAttributes = {
 					7165505C195BB372006E1227 = {
+						DevelopmentTeam = 8M76ZZN98N;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -954,6 +960,7 @@
 				71655287195BB6DB006E1227 /* sound.c in Sources */,
 				71655288195BB6DB006E1227 /* text.c in Sources */,
 				57FB01461B7A50B0005FCF4C /* codebook.c in Sources */,
+				71DCB6961ED9CBB000F120DB /* aviplay.c in Sources */,
 				71655289195BB6DB006E1227 /* ui.c in Sources */,
 				7165528A195BB6DB006E1227 /* uibattle.c in Sources */,
 				7165528B195BB6DB006E1227 /* uigame.c in Sources */,
@@ -1037,6 +1044,7 @@
 		7165507B195BB372006E1227 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -1053,9 +1061,11 @@
 					../../liboggvorbis/src,
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1063,6 +1073,7 @@
 		7165507C195BB372006E1227 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -1078,9 +1089,11 @@
 					../../liboggvorbis/src,
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
