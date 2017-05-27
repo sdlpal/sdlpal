@@ -165,7 +165,6 @@ PAL_ParseAVInfoList(
 {
     AVIChunk         hdr;
     DWORD            dwNextOffset;
-    MainAVIHeader    aviHeader;
     AVIStreamHeader  streamHdr;
     BitmapInfoHeader bitmapHdr;
     WaveFormat       waveFormat;
@@ -208,7 +207,7 @@ PAL_ParseAVInfoList(
         default:
             break;
         }
-        
+
         fseek(lpAVIPlayState->fp, dwNextOffset, SEEK_SET);
     }
 
@@ -230,7 +229,7 @@ PAL_ParseHdrlList(
         {
             return; // end of file reached
         }
-        
+
         fread(&hdr, sizeof(DWORD) * 2, 1, lpAVIPlayState->fp);
         hdr.dwFourCC = SDL_SwapLE32(hdr.dwFourCC);
         hdr.dwSize = SDL_SwapLE32(hdr.dwSize);

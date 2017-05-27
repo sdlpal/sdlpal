@@ -1066,7 +1066,7 @@ VIDEO_SetWindowTitle(
 
   Parameters:
 
-    [IN]  lpszTitle - the new caption of the window.
+    [IN]  pszTitle - the new caption of the window.
 
   Return value:
 
@@ -1077,7 +1077,7 @@ VIDEO_SetWindowTitle(
 #if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_SetWindowTitle(gpWindow, pszTitle);
 #else
-	SDL_WM_SetCaption(lpszCaption, NULL);
+	SDL_WM_SetCaption(pszTitle, NULL);
 #endif
 }
 
@@ -1229,6 +1229,7 @@ VIDEO_DrawSurfaceToScreen(
    // Draw the surface to screen.
    //
    SDL_SoftStretch(pCompatSurface, NULL, gpScreenReal, NULL);
+
    SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
    SDL_FreeSurface(pCompatSurface);
 #endif
