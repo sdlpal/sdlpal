@@ -51,6 +51,7 @@
 #include "play.h"
 #include "game.h"
 #include "midi.h"
+#include "aviplay.h"
 
 VOID
 PAL_Shutdown(

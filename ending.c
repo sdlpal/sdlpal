@@ -397,7 +397,32 @@ VOID
 PAL_EndingScreen(
    VOID
 )
+/*++
+ Purpose:
+ 
+   Show the ending screen for Win95 version.
+
+ Parameters:
+
+   None.
+
+ Return value:
+
+   None.
+
+--*/
 {
+    //
+    // Use AVI if we can
+    //
+    if (PAL_PlayAVI("4.avi") && PAL_PlayAVI("5.avi") && PAL_PlayAVI("6.avi"))
+    {
+        return;
+    }
+
+    //
+    // Otherwise, simulate the ending of DOS version
+    //
 	AUDIO_PlayMusic(0x1a, TRUE, 0);
 	PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 110, 150, 7);
 	PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 151, 999, 9);

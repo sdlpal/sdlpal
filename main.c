@@ -100,6 +100,7 @@ PAL_Init(
    PAL_InitInput();
    PAL_InitResources();
    AUDIO_OpenDevice();
+   PAL_AVIInit();
 
    VIDEO_SetWindowTitle(va("Pal %s%s%s",
 	   gConfig.fIsWIN95 ? "Win95" : "DOS",
@@ -136,6 +137,7 @@ PAL_Shutdown(
 --*/
 {
    AUDIO_CloseDevice();
+   PAL_AVIShutdown();
    PAL_FreeFont();
    PAL_FreeResources();
    PAL_FreeGlobals();
@@ -169,6 +171,13 @@ PAL_TrademarkScreen(
 
 --*/
 {
+   if (gConfig.fIsWIN95)
+   {
+      if (PAL_PlayAVI("1.avi"))
+      {
+         return;
+      }
+   }
    PAL_SetPalette(3, FALSE);
    PAL_RNGPlay(6, 0, 1000, 25);
    UTIL_Delay(1000);
@@ -204,6 +213,14 @@ PAL_SplashScreen(
    int            cranepos[9][3], i, iImgPos = 200, iCraneFrame = 0, iTitleHeight;
    DWORD          dwTime, dwBeginTime;
    BOOL           fUseCD = TRUE;
+
+   if (gConfig.fIsWIN95)
+   {
+      if (PAL_PlayAVI("2.avi"))
+      {
+         return;
+      }
+   }
 
    if (palette == NULL)
    {

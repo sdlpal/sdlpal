@@ -121,6 +121,11 @@ VIDEO_UpdateSurfacePalette(
 	SDL_Surface    *pSurface
 );
 
+VOID
+VIDEO_DrawSurfaceToScreen(
+    SDL_Surface    *pSurface
+);
+
 PAL_C_LINKAGE_END
 
 #endif

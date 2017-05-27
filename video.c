@@ -1177,3 +1177,52 @@ VIDEO_UpdateSurfacePalette(
 	SDL_SetPalette(pSurface, SDL_PHYSPAL | SDL_LOGPAL, gpPalette->colors, 0, 256);
 #endif
 }
+
+VOID
+VIDEO_DrawSurfaceToScreen(
+    SDL_Surface    *pSurface
+)
+/*++
+  Purpose:
+
+    Draw a surface directly to screen.
+
+  Parameters:
+
+    [IN]  pSurface - the surface which needs to be drawn to screen.
+
+  Return value:
+
+    None.
+
+--*/
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+   //
+   // Draw the surface to screen.
+   //
+   SDL_BlitScaled(pSurface, NULL, gpScreenReal, NULL);
+   VIDEO_RenderCopy();
+#else
+   SDL_Surface   *pCompatSurface;
+   SDL_Rect       rect;
+
+   rect.x = rect.y = 0;
+   rect.w = pSurface->w;
+   rect.h = pSurface->h;
+
+   pCompatSurface = VIDEO_CreateCompatibleSizedSurface(gpScreenReal, &rect);
+
+   //
+   // First convert the surface to compatible format.
+   //
+   SDL_BlitSurface(pSurface, NULL, pCompatSurface, NULL);
+
+   //
+   // Draw the surface to screen.
+   //
+   SDL_SoftStretch(pCompatSurface, NULL, gpScreenReal, NULL);
+   SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+   SDL_FreeSurface(pCompatSurface);
+#endif
+}
