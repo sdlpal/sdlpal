@@ -508,6 +508,8 @@ VIDEO_SetPalette(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+   SDL_Rect rect;
+
    SDL_SetPaletteColors(gpPalette, rgPalette, 0, 256);
 
    SDL_SetSurfacePalette(gpScreen, gpPalette);
@@ -522,7 +524,12 @@ VIDEO_SetPalette(
    SDL_SetSurfaceColorMod(gpScreenBak, 0, 0, 0);
    SDL_SetSurfaceColorMod(gpScreenBak, 0xFF, 0xFF, 0xFF);
 
-   VIDEO_UpdateScreen(NULL);
+   rect.x = 0;
+   rect.y = 0;
+   rect.w = 320;
+   rect.h = 200;
+
+   VIDEO_UpdateScreen(&rect);
 #else
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenBak, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
