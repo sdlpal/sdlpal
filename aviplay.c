@@ -58,7 +58,7 @@ typedef struct
 {
     FILE         *fp;                 // pointer to the AVI file
     SDL_Surface  *surface;            // video buffer
-    
+
     DWORD         dwVideoEndOffset;
     WORD          wWidth, wHeight;    // width and height of video
     WORD          wMsPerFrame;        // milliseconds per frame
@@ -68,7 +68,7 @@ typedef struct
     SDL_AudioCVT  cvt;
 
     SDL_mutex    *mtxAudioData;
-    BYTE          bAudioBuf[25600000];  // ring buffer for audio data
+    BYTE          bAudioBuf[256000];  // ring buffer for audio data
     DWORD         dwAudioReadPos;
     DWORD         dwAudioWritePos;
 } AVIPlayState;
