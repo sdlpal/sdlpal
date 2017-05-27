@@ -725,6 +725,9 @@ AVI_FillAudioBuffer(
     if (gpAVIPlayState != NULL)
     {
         FLOAT flRateScale = ((FLOAT)gConfig.iSampleRate / gpAVIPlayState->dwAudioSamplesPerSec);
+
+        SDL_mutexP(gpAVIPlayState->mtxAudioData);
+
         while (len > 0 && gpAVIPlayState->dwAudioReadPos != gpAVIPlayState->dwAudioWritePos)
         {
             INT remainingLen = gpAVIPlayState->dwAudioWritePos - gpAVIPlayState->dwAudioReadPos;
@@ -758,6 +761,8 @@ AVI_FillAudioBuffer(
 
             gpAVIPlayState->dwAudioReadPos %= sizeof(gpAVIPlayState->bAudioBuf);
         }
+
+        SDL_mutexV(gpAVIPlayState->mtxAudioData);
     }
     SDL_mutexV(gpAVIPlayStateMutex);
 }
