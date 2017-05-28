@@ -20,6 +20,7 @@
     NSArray *MusicFormats;
     NSArray *OPLFormats;
     NSArray *LogLevels;
+    NSArray *allFiles;
     NSMutableArray *AvailFiles;
     
     AbstractActionSheetPicker *picker;
@@ -78,7 +79,8 @@
     AvailFiles = [NSMutableArray new];
     NSArray *builtinList = @[ @"wor16.fon", @"wor16.asc", @"m.msg"];
     NSArray *builtinExtensionList = @[@"exe",@"drv",@"dll",@"rpg",@"mkf",@"avi",@"dat",@"cfg",@"ini"];
-    for( NSString *filename in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[NSString stringWithUTF8String:UTIL_BasePath()] error:nil] ) {
+    allFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[NSString stringWithUTF8String:UTIL_BasePath()] error:nil];
+    for( NSString *filename in allFiles ) {
         if( ![self includedInList:builtinExtensionList name:filename.pathExtension] &&
             ![self includedInList:builtinList name:filename] ) {
             [AvailFiles addObject:filename];
@@ -193,6 +195,8 @@ typedef void(^SelectedBlock)(NSString *selected);
 
 - (void)readConfigs {
     gConfig.fFullScreen = YES; //iOS specific; need this to make sure statusbar hidden in game completely
+    
+    lblResourceStatus.text  = [NSString stringWithFormat:@"%@%@",lblResourceStatus.text, [self includedInList:allFiles name:@"fbp.mkf"] ? @"✅" : @"❌" ];
     
     lblLanguageFile.text    = [NSString stringWithUTF8String:gConfig.pszMsgFile  ? gConfig.pszMsgFile  : ""];
     lblFontFile.text        = [NSString stringWithUTF8String:gConfig.pszFontFile ? gConfig.pszFontFile : ""];
