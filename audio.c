@@ -171,7 +171,7 @@ AUDIO_FillBuffer(
    //
    // Play sound for AVI
    //
-   AVI_FillAudioBuffer(NULL, (LPBYTE)stream, len);
+   AVI_FillAudioBuffer(AVI_GetPlayState(), (LPBYTE)stream, len);
 
    //
    // Convert audio from native byte-order to actual byte-order

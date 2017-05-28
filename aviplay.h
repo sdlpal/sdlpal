@@ -38,14 +38,19 @@ PAL_AVIShutdown(
 
 BOOL
 PAL_PlayAVI(
-    LPCSTR     lpszPath
+    const char *lpszPath
 );
 
-VOID SDLCALL
+void SDLCALL
 AVI_FillAudioBuffer(
-    LPVOID          udata,
-    LPBYTE          stream,
-    INT             len
+    void       *udata,
+    uint8_t    *stream,
+    int         len
+);
+
+void *
+AVI_GetPlayState(
+	void
 );
 
 PAL_C_LINKAGE_END
