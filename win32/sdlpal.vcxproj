@@ -297,7 +297,6 @@
       <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</OmitFramePointers>
       <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</OmitFramePointers>
     </ClCompile>
-    <ClCompile Include="..\aviplay.c" />
     <ClCompile Include="..\adplug\demuopl.cpp" />
     <ClCompile Include="..\audio.c" />
     <ClCompile Include="..\aviplay.c" />
@@ -335,7 +334,6 @@
     <ClCompile Include="..\liboggvorbis\src\window.c" />
     <ClCompile Include="..\magicmenu.c" />
     <ClCompile Include="..\main.c" />
-    <ClCompile Include="..\aviplay.c" />
     <ClCompile Include="..\map.c" />
     <ClCompile Include="..\midi.c" />
     <ClCompile Include="..\mp3play.c" />
