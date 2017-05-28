@@ -145,6 +145,7 @@
     <ClInclude Include="..\..\adplug\rix.h" />
     <ClInclude Include="..\..\adplug\surroundopl.h" />
     <ClInclude Include="..\..\ascii.h" />
+    <ClInclude Include="..\..\aviplay.h" />
     <ClInclude Include="..\..\battle.h" />
     <ClInclude Include="..\..\codepage.h" />
     <ClInclude Include="..\..\common.h" />
@@ -230,6 +231,7 @@
     <ClInclude Include="..\..\players.h" />
     <ClInclude Include="..\..\res.h" />
     <ClInclude Include="..\..\resampler.h" />
+    <ClInclude Include="..\..\riff.h" />
     <ClInclude Include="..\..\rngplay.h" />
     <ClInclude Include="..\..\scene.h" />
     <ClInclude Include="..\..\script.h" />
@@ -257,6 +259,7 @@
     <ClCompile Include="..\..\adplug\rix.cpp" />
     <ClCompile Include="..\..\adplug\surroundopl.cpp" />
     <ClCompile Include="..\..\audio.c" />
+    <ClCompile Include="..\..\aviplay.c" />
     <ClCompile Include="..\..\battle.c" />
     <ClCompile Include="..\..\ending.c" />
     <ClCompile Include="..\..\fight.c" />

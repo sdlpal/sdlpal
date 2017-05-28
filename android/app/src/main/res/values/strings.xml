@@ -6,6 +6,7 @@
     <string name="action_touch">Enable touch overlay</string>
     <string name="action_aspect">Keep aspect ratio</string>
     <string name="action_stereo">Stereo</string>
+    <string name="action_avi">Enable AVI animation</string>
     <string name="label_musvol">Music volume</string>
     <string name="label_sfxvol">SFX volume</string>
     <string name="label_quality">Audio quality</string>

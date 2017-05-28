@@ -98,6 +98,7 @@ void SDLPal::MainPage::LoadControlContents(bool loadDefault)
 	tsStereo->IsOn = (gConfig.iAudioChannels == 2);
 	tsSurroundOPL->IsOn = (gConfig.fUseSurroundOPL == TRUE);
 	tsTouchOverlay->IsOn = (gConfig.fUseTouchOverlay == TRUE);
+	tsEnableAVI->IsOn = (gConfig.fEnableAviPlay == TRUE);
 
 	slMusicVolume->Value = gConfig.iMusicVolume;
 	slSoundVolume->Value = gConfig.iSoundVolume;
@@ -143,6 +144,7 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.iAudioChannels = tsStereo->IsOn ? 2 : 1;
 	gConfig.fUseSurroundOPL = tsSurroundOPL->IsOn ? TRUE : FALSE;
 	gConfig.fUseTouchOverlay = tsTouchOverlay->IsOn ? TRUE : FALSE;
+	gConfig.fEnableAviPlay = tsEnableAVI->IsOn ? TRUE : FALSE;
 
 	gConfig.iMusicVolume = (int)slMusicVolume->Value;
 	gConfig.iSoundVolume = (int)slSoundVolume->Value;

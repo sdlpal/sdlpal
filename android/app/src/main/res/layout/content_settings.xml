@@ -98,6 +98,14 @@
                 tools:layout_editor_absoluteY="228dp" />
 
             <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swAVI"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_avi"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="228dp" />
+
+            <android.support.v7.widget.SwitchCompat
                 android:id="@+id/swAspect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

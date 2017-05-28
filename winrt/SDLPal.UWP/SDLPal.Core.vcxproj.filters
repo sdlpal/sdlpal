@@ -393,6 +393,12 @@
     <ClInclude Include="..\..\generated.h">
       <Filter>generated</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\aviplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\riff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\adplug\binfile.cpp">
@@ -642,6 +648,9 @@
       <Filter>native_midi</Filter>
     </ClCompile>
     <ClCompile Include="..\..\midi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\aviplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

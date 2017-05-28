@@ -37,9 +37,9 @@ BEGIN
     LTEXT           "CD source:",IDC_STATIC,14,160,36,8
     GROUPBOX        "Font && Language",IDC_STATIC,7,30,391,50
     GROUPBOX        "Display",IDC_STATIC,7,110,391,30
-    CONTROL         "&Keep aspect ratio",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,150,124,72,10
+    CONTROL         "&Keep aspect ratio",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,114,124,72,10
     LTEXT           "BGM source:",IDC_STATIC,115,160,41,8
-    CONTROL         "&Full screen",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,124,50,10
+    CONTROL         "Start game in &full screen",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,124,93,10
     EDITTEXT        IDC_MSGFILE,70,61,270,14,ES_AUTOHSCROLL | ES_READONLY
     GROUPBOX        "Audio",IDC_STATIC,7,140,391,85
     COMBOBOX        IDC_CD,54,157,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -57,7 +57,7 @@ BEGIN
     EDITTEXT        IDC_AUDIOBUFFER,342,176,40,14,ES_AUTOHSCROLL | ES_NUMBER
     PUSHBUTTON      "&Browse",IDC_BRGAME,348,7,50,14
     CONTROL         "Message file:",IDC_USEMSGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,64,56,8
-    CONTROL         "Enable &touch overlay",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,306,124,83,10
+    CONTROL         "Enable &touch overlay",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,314,124,80,10
     LTEXT           "Quality:",IDC_STATIC,14,198,26,8
     LTEXT           "Low                              High",IDC_STATIC,31,212,88,8
     CONTROL         "",IDC_QUALITY,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,43,197,60,15
@@ -77,6 +77,7 @@ BEGIN
     PUSHBUTTON      "&Browse",IDC_BRFONT,348,43,50,14,WS_DISABLED
     PUSHBUTTON      "&Browse",IDC_BRMSG,348,61,50,14,WS_DISABLED
     PUSHBUTTON      "&Browse",IDC_BRLOG,348,92,50,14,WS_DISABLED
+    CONTROL         "Enable A&VI animation",IDC_ENABLEAVI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,214,124,77,10
 END
 
 
@@ -226,7 +227,7 @@ BEGIN
     LTEXT           "CD 音源：",IDC_STATIC,14,160,36,8
     GROUPBOX        "字体及语言设置",IDC_STATIC,7,30,391,50
     GROUPBOX        "显示设置",IDC_STATIC,7,110,391,30
-    CONTROL         "保持纵横比(&K)",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,160,124,65,10
+    CONTROL         "保持纵横比(&K)",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,114,124,65,10
     LTEXT           "BGM 音源：",IDC_STATIC,115,160,41,8
     CONTROL         "全屏启动游戏(&F)",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,124,73,10
     EDITTEXT        IDC_MSGFILE,70,61,270,14,ES_AUTOHSCROLL | ES_READONLY
@@ -246,7 +247,7 @@ BEGIN
     EDITTEXT        IDC_AUDIOBUFFER,335,176,40,14,ES_AUTOHSCROLL | ES_NUMBER
     PUSHBUTTON      "浏览(&B)",IDC_BRGAME,348,7,50,14
     CONTROL         "语言文件：",IDC_USEMSGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,64,56,8
-    CONTROL         "启用触屏辅助(&T)",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,309,124,73,10
+    CONTROL         "启用触屏辅助(&T)",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,314,124,73,10
     LTEXT           "音频质量：",IDC_STATIC,14,198,41,8
     LTEXT           "低                              高",IDC_STATIC,47,212,77,8
     CONTROL         "",IDC_QUALITY,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,55,197,60,15
@@ -266,6 +267,7 @@ BEGIN
     PUSHBUTTON      "浏览(&B)",IDC_BRFONT,348,43,50,14,WS_DISABLED
     PUSHBUTTON      "浏览(&B)",IDC_BRMSG,348,61,50,14,WS_DISABLED
     PUSHBUTTON      "浏览(&B)",IDC_BRLOG,348,92,50,14,WS_DISABLED
+    CONTROL         "启用 AVI 过场动画(&V)",IDC_ENABLEAVI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,214,124,86,10
 END
 
 
@@ -344,7 +346,7 @@ END
 STRINGTABLE
 BEGIN
     IDC_MSGFILE             "语言文件(*.msg)|*.msg|所有文件 (*.*)|*.*||"
-    IDC_LOGLEVEL            "详细;调试;信息;警告;错误;致命"
+    IDC_LOGLEVEL            "详细信息;调试信息;运行信息;普通警告;严重错误;致命错误"
     IDC_BRFONT              "选择自定义字体文件"
     IDC_FONTFILE            "字体文件(*.bdf)|*.bdf|所有文件 (*.*)|*.*||"
 END
@@ -384,7 +386,7 @@ BEGIN
     LTEXT           "CD 方",IDC_STATIC,14,160,36,8
     GROUPBOX        "砰の粂ē砞﹚",IDC_STATIC,7,30,391,50
     GROUPBOX        "陪ボ砞﹚",IDC_STATIC,7,110,391,30
-    CONTROL         "玂羇绢ゑ(&K)",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,160,124,65,10
+    CONTROL         "玂羇绢ゑ(&K)",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,114,124,65,10
     LTEXT           "BGM 方",IDC_STATIC,115,160,41,8
     CONTROL         "币笆笴栏(&F)",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,124,73,10
     EDITTEXT        IDC_MSGFILE,70,61,270,14,ES_AUTOHSCROLL | ES_READONLY
@@ -406,7 +408,7 @@ BEGIN
     EDITTEXT        IDC_AUDIOBUFFER,342,175,40,14,ES_AUTOHSCROLL | ES_NUMBER
     PUSHBUTTON      "聅凝(&B)",IDC_BRGAME,348,7,50,14
     CONTROL         "璹粂ē郎",IDC_USEMSGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,64,56,8
-    CONTROL         "币ノ牟徊(&T)",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,309,124,73,10
+    CONTROL         "币ノ牟徊(&T)",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,314,124,73,10
     LTEXT           "                              蔼",IDC_STATIC,47,212,77,8
     LTEXT           "贾秖",IDC_STATIC,131,198,41,8
     CONTROL         "",IDC_MUSICVOLUME,"msctls_trackbar32",WS_TABSTOP,172,197,80,15
@@ -424,6 +426,7 @@ BEGIN
     PUSHBUTTON      "聅凝(&B)",IDC_BRFONT,348,43,50,14,WS_DISABLED
     PUSHBUTTON      "聅凝(&B)",IDC_BRMSG,348,61,50,14,WS_DISABLED
     PUSHBUTTON      "聅凝(&B)",IDC_BRLOG,348,92,50,14,WS_DISABLED
+    CONTROL         "币ノ AVI 筁初笆礶(&V)",IDC_ENABLEAVI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,214,124,85,10
 END
 
 
@@ -476,7 +479,7 @@ END
 STRINGTABLE
 BEGIN
     IDC_MSGFILE             "粂ē郎(*.msg)|*.msg|┮Τ郎 (*.*)|*.*||"
-    IDC_LOGLEVEL            "冈灿;秸刚;獺;牡;岿粇;璓㏑"
+    IDC_LOGLEVEL            "冈灿獺;秸刚獺;笲︽獺;炊硄牡;腨岿粇;璓㏑岿粇"
     IDC_BRFONT              "匡拒璹砰郎"
     IDC_FONTFILE            "砰郎(*.bdf)|*.bdf|┮Τ郎 (*.*)|*.*||"
 END

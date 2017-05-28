@@ -33,6 +33,8 @@
 #define IDC_USELOGFILE                  1024
 #define IDC_BRLOG                       1025
 #define IDC_LOGFILE                     1026
+#define IDC_CHECK1                      1027
+#define IDC_ENABLEAVI                   1027
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -41,7 +43,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        104
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1024
+#define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

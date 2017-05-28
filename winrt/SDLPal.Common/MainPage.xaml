@@ -46,12 +46,12 @@
                     <Button x:Name="btnBrowseFontFile" x:Uid="ButtonBrowse" Grid.Column="1" Content="浏览" HorizontalAlignment="Right" Click="btnBrowseFileOpen_Click" />
                 </Grid>
                 <ComboBox x:Name="cbLogLevel" x:Uid="LogLevel" HorizontalAlignment="Stretch" Header="日志记录级别" PlaceholderText="选择日志记录级别">
-                    <ComboBoxItem x:Uid="Verbose" Content="详细"/>
-                    <ComboBoxItem x:Uid="Debug" Content="调试"/>
-                    <ComboBoxItem x:Uid="Information" Content="信息"/>
-                    <ComboBoxItem x:Uid="Warning" Content="警告"/>
-                    <ComboBoxItem x:Uid="Error" Content="错误"/>
-                    <ComboBoxItem x:Uid="Fatal" Content="致命"/>
+                    <ComboBoxItem x:Uid="Verbose" Content="详细信息"/>
+                    <ComboBoxItem x:Uid="Debug" Content="调试信息"/>
+                    <ComboBoxItem x:Uid="Information" Content="运行信息"/>
+                    <ComboBoxItem x:Uid="Warning" Content="普通警告"/>
+                    <ComboBoxItem x:Uid="Error" Content="严重错误"/>
+                    <ComboBoxItem x:Uid="Fatal" Content="致命错误"/>
                 </ComboBox>
                 <CheckBox x:Name="cbUseLogFile" x:Uid="UseLogFile" Content="记录日志到文件" Checked="cbUseFile_CheckChanged" Unchecked="cbUseFile_CheckChanged" />
                 <Grid x:Name="gridLogFile">
@@ -64,6 +64,7 @@
                 </Grid>
                 <ToggleSwitch x:Name="tsTouchOverlay" x:Uid="TouchOverlay" Header="启用触屏辅助" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsKeepAspect" x:Uid="AspectRatio" Header="保持纵横比" OffContent="否" OnContent="是" />
+                <ToggleSwitch x:Name="tsEnableAVI" x:Uid="EnableAVI" Header="启用 AVI 过场动画" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsStereo" x:Uid="Stereo" Header="立体声" OffContent="否" OnContent="是" />
                 <Slider x:Name="slMusicVolume" x:Uid="MusicVolume" Header="音乐音量" TickPlacement="Inline" TickFrequency="10" />
                 <Slider x:Name="slSoundVolume" x:Uid="SoundVolume" Header="音效音量" TickPlacement="Inline" TickFrequency="10" />

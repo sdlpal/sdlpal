@@ -160,13 +160,22 @@
     <value>選擇 CD 音軌格式</value>
   </data>
   <data name="Debug.Content" xml:space="preserve">
-    <value>調試</value>
+    <value>調試信息</value>
+  </data>
+  <data name="EnableAVI.Header" xml:space="preserve">
+    <value>啟用 AVI 過場動畫</value>
+  </data>
+  <data name="EnableAVI.OffContent" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="EnableAVI.OnContent" xml:space="preserve">
+    <value>是</value>
   </data>
   <data name="Error.Content" xml:space="preserve">
-    <value>錯誤</value>
+    <value>嚴重錯誤</value>
   </data>
   <data name="Fatal.Content" xml:space="preserve">
-    <value>致命</value>
+    <value>致命錯誤</value>
   </data>
   <data name="FontFile.PlaceholderText" xml:space="preserve">
     <value>無自訂字體檔案</value>
@@ -178,7 +187,7 @@
     <value>未選擇檔案夾</value>
   </data>
   <data name="Information.Content" xml:space="preserve">
-    <value>信息</value>
+    <value>運行信息</value>
   </data>
   <data name="LogFile.PlaceholderText" xml:space="preserve">
     <value>無日誌檔案</value>
@@ -278,9 +287,9 @@
     <value>自訂語言檔案</value>
   </data>
   <data name="Verbose.Content" xml:space="preserve">
-    <value>詳細</value>
+    <value>詳細信息</value>
   </data>
   <data name="Warning.Content" xml:space="preserve">
-    <value>警告</value>
+    <value>普通警告</value>
   </data>
 </root>

@@ -36,6 +36,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String Stereo = "Stereo";
     private static final String UseSurroundOPL = "UseSurroundOPL";
     private static final String UseTouchOverlay = "UseTouchOverlay";
+    private static final String EnableAviPlay = "EnableAviPlay";
     private static final String AudioBufferSize = "AudioBufferSize";
     private static final String LogLevel = "LogLevel";
     private static final String OPLSampleRate = "OPLSampleRate";
@@ -54,7 +55,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final int AudioSampleRates[] = { 11025, 22050, 44100 };
     private static final int AudioBufferSizes[] = { 512, 1024, 2048, 4096, 8192 };
-    private static final int OPLSampleRates[] = { 12429, 24858, 49716 };
+    private static final int OPLSampleRates[] = { 11025, 12429, 22050, 24858, 44100, 49716 };
     private static final String CDFormats[] = { "MP3", "OGG" };
     private static final String MusicFormats[] = { "MIDI", "RIX", "MP3", "OGG" };
     private static final String OPLFormats[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
@@ -196,6 +197,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((SwitchCompat)findViewById(R.id.swMsgFile)).setChecked(false);
         ((SwitchCompat)findViewById(R.id.swFontFile)).setChecked(false);
         ((SwitchCompat)findViewById(R.id.swLogFile)).setChecked(false);
+        ((SwitchCompat)findViewById(R.id.swAVI)).setChecked(getConfigBoolean(EnableAviPlay, true));
         ((SwitchCompat)findViewById(R.id.swTouch)).setChecked(getConfigBoolean(UseTouchOverlay, true));
         ((SwitchCompat)findViewById(R.id.swAspect)).setChecked(getConfigBoolean(KeepAspectRatio, true));
         ((SwitchCompat)findViewById(R.id.swSurround)).setChecked(getConfigBoolean(UseSurroundOPL, true));
@@ -207,7 +209,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, true), CDFormats, 1));     // OGG
         ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, true), MusicFormats, 1));    // RIX
         ((AppCompatSpinner)findViewById(R.id.spOPL)).setSelection(findMatchedStringIndex(getConfigString(OPLFormat, true), OPLFormats, 1));       // MAME
-        ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, true), OPLSampleRates, 2));  // 49716Hz
+        ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, true), OPLSampleRates, 5));  // 49716Hz
     }
 
 
@@ -230,6 +232,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((SwitchCompat)findViewById(R.id.swMsgFile)).setChecked(msgFile != null && !msgFile.isEmpty());
         ((SwitchCompat)findViewById(R.id.swFontFile)).setChecked(fontFile != null && !fontFile.isEmpty());
         ((SwitchCompat)findViewById(R.id.swLogFile)).setChecked(logFile != null && !logFile.isEmpty());
+        ((SwitchCompat)findViewById(R.id.swAVI)).setChecked(getConfigBoolean(EnableAviPlay, false));
         ((SwitchCompat)findViewById(R.id.swTouch)).setChecked(getConfigBoolean(UseTouchOverlay, false));
         ((SwitchCompat)findViewById(R.id.swAspect)).setChecked(getConfigBoolean(KeepAspectRatio, false));
         ((SwitchCompat)findViewById(R.id.swSurround)).setChecked(getConfigBoolean(UseSurroundOPL, false));
@@ -241,7 +244,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, false), CDFormats, 1));     // OGG
         ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, false), MusicFormats, 1));    // RIX
         ((AppCompatSpinner)findViewById(R.id.spOPL)).setSelection(findMatchedStringIndex(getConfigString(OPLFormat, false), OPLFormats, 1));       // MAME
-        ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, false), OPLSampleRates, 2));  // 49716Hz
+        ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, false), OPLSampleRates, 5));  // 49716Hz
     }
 
     protected boolean setConfigs() {
