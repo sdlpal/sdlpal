@@ -381,6 +381,7 @@
     <ClCompile Include="..\..\liboggvorbis\src\window.c" />
     <ClCompile Include="..\..\magicmenu.c" />
     <ClCompile Include="..\..\main.c" />
+    <ClCompile Include="..\..\aviplay.c" />
     <ClCompile Include="..\..\map.c" />
     <ClCompile Include="..\..\midi.c" />
     <ClCompile Include="..\..\mp3play.c" />
