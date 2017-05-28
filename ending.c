@@ -414,91 +414,97 @@ PAL_EndingScreen(
 {
     //
     // Use AVI if we can
-    //
-    if (PAL_PlayAVI("4.avi") && PAL_PlayAVI("5.avi") && PAL_PlayAVI("6.avi"))
-    {
-        return;
-    }
+	// Otherwise, simulate the ending of DOS version
+	//
+	PAL_PlayAVI("4.avi");
 
-    //
-    // Otherwise, simulate the ending of DOS version
-    //
-	AUDIO_PlayMusic(0x1a, TRUE, 0);
-	PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 110, 150, 7);
-	PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 151, 999, 9);
-
-	PAL_FadeOut(2);
-
-	AUDIO_PlayMusic(0x19, TRUE, 0);
-
-	PAL_ShowFBP(75, 0);
-	PAL_FadeIn(5, FALSE, 1);
-	PAL_ScrollFBP(74, 0xf, TRUE);
-
-	PAL_FadeOut(1);
-
-	SDL_FillRect(gpScreen, NULL, 0);
-	gpGlobals->wNumPalette = 4;
-	gpGlobals->fNeedToFadeIn = TRUE;
-	PAL_EndingAnimation();
-
-	AUDIO_PlayMusic(0, FALSE, 2);
-	PAL_ColorFade(7, 15, FALSE);
-
-	if (!AUDIO_PlayCDTrack(2))
+	if (PAL_PlayAVI("5.avi"))
 	{
-		AUDIO_PlayMusic(0x11, TRUE, 0);
+		AUDIO_PlayMusic(0x1a, TRUE, 0);
+		PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 110, 150, 7);
+		PAL_RNGPlay(gpGlobals->iCurPlayingRNG, 151, 999, 9);
+
+		PAL_FadeOut(2);
+
+		AUDIO_PlayMusic(0x19, TRUE, 0);
+
+		PAL_ShowFBP(75, 0);
+		PAL_FadeIn(5, FALSE, 1);
+		PAL_ScrollFBP(74, 0xf, TRUE);
+
+		PAL_FadeOut(1);
+
+		SDL_FillRect(gpScreen, NULL, 0);
+		gpGlobals->wNumPalette = 4;
+		gpGlobals->fNeedToFadeIn = TRUE;
+		PAL_EndingAnimation();
+
+		AUDIO_PlayMusic(0, FALSE, 2);
+		PAL_ColorFade(7, 15, FALSE);
+
+		if (!AUDIO_PlayCDTrack(2))
+		{
+			AUDIO_PlayMusic(0x11, TRUE, 0);
+		}
+
+		SDL_FillRect(gpScreen, NULL, 0);
+		PAL_SetPalette(0, FALSE);
+		PAL_RNGPlay(0xb, 0, 999, 7);
+
+		PAL_FadeOut(2);
+
+		SDL_FillRect(gpScreen, NULL, 0);
+		gpGlobals->wNumPalette = 8;
+		gpGlobals->fNeedToFadeIn = TRUE;
+		PAL_RNGPlay(10, 0, 999, 6);
+
+		PAL_EndingSetEffectSprite(0);
+		PAL_ShowFBP(77, 10);
+
+		VIDEO_BackupScreen(gpScreen);
+
+		PAL_EndingSetEffectSprite(0x27b);
+		PAL_ShowFBP(76, 7);
+
+		PAL_SetPalette(5, FALSE);
+		PAL_ShowFBP(73, 7);
+		PAL_ScrollFBP(72, 0xf, TRUE);
+
+		PAL_ShowFBP(71, 7);
+		PAL_ShowFBP(68, 7);
+
+		PAL_EndingSetEffectSprite(0);
+		PAL_ShowFBP(68, 6);
+
+		PAL_WaitForKey(0);
+		AUDIO_PlayMusic(0, FALSE, 1);
+		UTIL_Delay(500);
+	}
+	else
+	{
+		gpGlobals->fNeedToFadeIn = FALSE;
+		PAL_SetPalette(5, FALSE);
+		PAL_EndingSetEffectSprite(0);
 	}
 
-	SDL_FillRect(gpScreen, NULL, 0);
-	PAL_SetPalette(0, FALSE);
-	PAL_RNGPlay(0xb, 0, 999, 7);
-
-	PAL_FadeOut(2);
-
-	SDL_FillRect(gpScreen, NULL, 0);
-	gpGlobals->wNumPalette = 8;
-	gpGlobals->fNeedToFadeIn = TRUE;
-	PAL_RNGPlay(10, 0, 999, 6);
-
-	PAL_EndingSetEffectSprite(0);
-	PAL_ShowFBP(77, 10);
-
-	VIDEO_BackupScreen(gpScreen);
-
-	PAL_EndingSetEffectSprite(0x27b);
-	PAL_ShowFBP(76, 7);
-
-	PAL_SetPalette(5, FALSE);
-	PAL_ShowFBP(73, 7);
-	PAL_ScrollFBP(72, 0xf, TRUE);
-
-	PAL_ShowFBP(71, 7);
-	PAL_ShowFBP(68, 7);
-
-	PAL_EndingSetEffectSprite(0);
-	PAL_ShowFBP(68, 6);
-
-	PAL_WaitForKey(0);
-	AUDIO_PlayMusic(0, FALSE, 1);
-	UTIL_Delay(500);
-
-	if (!AUDIO_PlayCDTrack(13))
+	if (PAL_PlayAVI("6.avi"))
 	{
-		AUDIO_PlayMusic(9, TRUE, 0);
+		if (!AUDIO_PlayCDTrack(13))
+		{
+			AUDIO_PlayMusic(9, TRUE, 0);
+		}
+
+		PAL_ScrollFBP(67, 0xf, TRUE);
+		PAL_ScrollFBP(66, 0xf, TRUE);
+		PAL_ScrollFBP(65, 0xf, TRUE);
+		PAL_ScrollFBP(64, 0xf, TRUE);
+		PAL_ScrollFBP(63, 0xf, TRUE);
+		PAL_ScrollFBP(62, 0xf, TRUE);
+		PAL_ScrollFBP(61, 0xf, TRUE);
+		PAL_ScrollFBP(60, 0xf, TRUE);
+		PAL_ScrollFBP(59, 0xf, TRUE);
+
+		AUDIO_PlayMusic(0, FALSE, 6);
+		PAL_FadeOut(3);
 	}
-
-	PAL_ScrollFBP(67, 0xf, TRUE);
-	PAL_ScrollFBP(66, 0xf, TRUE);
-	PAL_ScrollFBP(65, 0xf, TRUE);
-	PAL_ScrollFBP(64, 0xf, TRUE);
-	PAL_ScrollFBP(63, 0xf, TRUE);
-	PAL_ScrollFBP(62, 0xf, TRUE);
-	PAL_ScrollFBP(61, 0xf, TRUE);
-	PAL_ScrollFBP(60, 0xf, TRUE);
-	PAL_ScrollFBP(59, 0xf, TRUE);
-
-	AUDIO_PlayMusic(0, FALSE, 6);
-	PAL_FadeOut(3);
 }
-
