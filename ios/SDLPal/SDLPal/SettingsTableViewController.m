@@ -98,22 +98,25 @@
 typedef void(^SelectedBlock)(NSString *selected);
 
 - (void)showPickerWithTitle:(NSString *)title toLabel:(UILabel*)label inArray:(NSArray*)array {
-    [self showPickerWithTitle:title toLabel:label inArray:array allowEmpty:NO];
+    [self showPickerWithTitle:title toLabel:label inArray:array origin:self.navigationController.navigationBar allowEmpty:NO];
 }
-- (void)showPickerWithTitle:(NSString *)title toLabel:(UILabel*)label inArray:(NSArray*)array allowEmpty:(BOOL)allowEmpty {
-    [self showPickerWithTitle:title toLabel:label inArray:array allowEmpty:allowEmpty doneBlock:nil];
+- (void)showPickerWithTitle:(NSString *)title toLabel:(UILabel*)label inArray:(NSArray*)array origin:(UIView*)origin {
+    [self showPickerWithTitle:title toLabel:label inArray:array origin:origin allowEmpty:NO];
 }
-- (void)showPickerWithTitle:(NSString *)title toLabel:(UILabel*)label inArray:(NSArray*)array allowEmpty:(BOOL)allowEmpty doneBlock:(SelectedBlock)doneBlock {
-    NSArray *arrayWithEmpty = [array arrayByAddingObject:@""];
+- (void)showPickerWithTitle:(NSString *)title toLabel:(UILabel*)label inArray:(NSArray*)array origin:(UIView*)origin allowEmpty:(BOOL)allowEmpty {
+    [self showPickerWithTitle:title toLabel:label inArray:array origin:origin allowEmpty:allowEmpty doneBlock:nil];
+}
+- (void)showPickerWithTitle:(NSString *)title toLabel:(UILabel*)label inArray:(NSArray*)array origin:(UIView*)origin allowEmpty:(BOOL)allowEmpty doneBlock:(SelectedBlock)doneBlock {
+    array = allowEmpty ? [array arrayByAddingObject:@""] : array;
     picker = [ActionSheetStringPicker showPickerWithTitle:nil
-                                                     rows:arrayWithEmpty
+                                                     rows:array
                                          initialSelection:[array containsObject:label.text] ? [array indexOfObject:label.text] : 0
                                                 doneBlock:^(ActionSheetStringPicker *picker, NSInteger selectedIndex, id selectedValue) {
-                                                    label.text = arrayWithEmpty[selectedIndex];
+                                                    label.text = array[selectedIndex];
                                                     if(doneBlock) doneBlock(label.text);
                                                 }
                                               cancelBlock:nil
-                                                   origin:self.view];
+                                                   origin:origin];
 }
 
 //- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -129,30 +132,29 @@ typedef void(^SelectedBlock)(NSString *selected);
 //}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     if( indexPath.section == 1 && indexPath.row == 0 ) { //language file
-        [self showPickerWithTitle:nil toLabel:lblLanguageFile inArray:AvailFiles allowEmpty:YES];
+        [self showPickerWithTitle:nil toLabel:lblLanguageFile inArray:AvailFiles origin:cell allowEmpty:YES];
     }else if( indexPath.section == 1 && indexPath.row == 1 ) { //font file
-        [self showPickerWithTitle:nil toLabel:lblFontFile inArray:AvailFiles allowEmpty:YES];
+        [self showPickerWithTitle:nil toLabel:lblFontFile inArray:AvailFiles origin:cell allowEmpty:YES];
     }else if( indexPath.section == 3 && indexPath.row == 0 ) { //BGM
-        [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats allowEmpty:NO doneBlock:^(NSString *selected) {
-            [self.tableView reloadData];
-        }];
+        [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats origin:cell];
     }else if( indexPath.section == 3 && indexPath.row == 1 ) { //OPL Type
-        [self showPickerWithTitle:nil toLabel:lblOPLType inArray:OPLFormats];
+        [self showPickerWithTitle:nil toLabel:lblOPLType inArray:OPLFormats origin:cell];
     }else if( indexPath.section == 3 && indexPath.row == 2 ) { //OPL Rate
-        [self showPickerWithTitle:nil toLabel:lblOPLRate inArray:OPLSampleRates];
+        [self showPickerWithTitle:nil toLabel:lblOPLRate inArray:OPLSampleRates origin:cell];
     }else if( indexPath.section == 3 && indexPath.row == 3 ) { //CD Source
-        [self showPickerWithTitle:nil toLabel:lblCDAudioSource inArray:CDFormats];
+        [self showPickerWithTitle:nil toLabel:lblCDAudioSource inArray:CDFormats origin:cell];
     }else if( indexPath.section == 3 && indexPath.row == 4 ) { //Stereo
         toggleStereo.enabled = !toggleStereo.isEnabled;
     }else if( indexPath.section == 3 && indexPath.row == 5 ) { //Surround
         toggleSurroundOPL.enabled = !toggleSurroundOPL.isEnabled;
     }else if( indexPath.section == 3 && indexPath.row == 6 ) { //SampleRate
-        [self showPickerWithTitle:nil toLabel:lblResampleRate inArray:AudioSampleRates];
+        [self showPickerWithTitle:nil toLabel:lblResampleRate inArray:AudioSampleRates origin:cell];
     }else if( indexPath.section == 3 && indexPath.row == 7 ) { //Buffer size
-        [self showPickerWithTitle:nil toLabel:lblAudioBufferSize inArray:AudioBufferSizes];
+        [self showPickerWithTitle:nil toLabel:lblAudioBufferSize inArray:AudioBufferSizes origin:cell];
     }else if( indexPath.section == 4 && indexPath.row == 0 ) { //Log Level
-        [self showPickerWithTitle:nil toLabel:lblLogLevel inArray:LogLevels];
+        [self showPickerWithTitle:nil toLabel:lblLogLevel inArray:LogLevels origin:cell];
     }
 }
 

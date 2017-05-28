@@ -1171,6 +1171,7 @@
 					"-l\"ActionSheetPicker-3.0\"",
 					"-framework",
 					"\"UIKit\"",
+					"-Wl,-e,_sdlpal_main",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1211,6 +1212,7 @@
 					"-l\"ActionSheetPicker-3.0\"",
 					"-framework",
 					"\"UIKit\"",
+					"-Wl,-e,_sdlpal_main",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
