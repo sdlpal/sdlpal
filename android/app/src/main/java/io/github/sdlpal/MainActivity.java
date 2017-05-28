@@ -12,7 +12,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.provider.Settings;
 import android.net.Uri;
-import android.util.Log;
 
 import java.io.*;
 
@@ -23,10 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static boolean crashed = false;
 
-    private final static int REQUEST_STORAGE_PERMISSION = 1;
-    private final static int REQUEST_COUNT_SHIFT = 9;
-    private final static int REQUEST_CODE_MASK = 0x1ff;
-    private static int lastRequestCode = -1;
+    private final static int REQUEST_FILESYSTEM_ACCESS_CODE = 101;
     private final AppCompatActivity mActivity = this;
 
     interface RequestForPermissions {
@@ -34,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestForPermissions() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION | (++lastRequestCode << REQUEST_COUNT_SHIFT));
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILESYSTEM_ACCESS_CODE);
     }
 
     private void alertUser(int id, final RequestForPermissions req) {
@@ -59,14 +55,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode & REQUEST_CODE_MASK) {
-            case REQUEST_STORAGE_PERMISSION:
+        switch (requestCode) {
+            case REQUEST_FILESYSTEM_ACCESS_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     StartGame();
-                    break;
-                }
-                if ((requestCode >> REQUEST_COUNT_SHIFT) != lastRequestCode) {
-                    break;
+                    return;
                 }
                 if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     alertUser(R.string.toast_requestpermission, new RequestForPermissions() {
