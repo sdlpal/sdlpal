@@ -288,9 +288,9 @@ PAL_ReadAVIInfo(
 			else
 				avi->pChunkBuffer = NULL;
 			//
-			// Allocate audio buffer, the buffer size is at least one second long in destination format
+			// Allocate audio buffer, the buffer size is large enough to hold two-second audio data
 			//
-			avi->dwAudBufLen = max(wfe.format.nAvgBytesPerSec, aviHeader.dwSuggestedBufferSize) * avi->cvt.len_mult;
+			avi->dwAudBufLen = max(wfe.format.nAvgBytesPerSec * 2, aviHeader.dwSuggestedBufferSize) * avi->cvt.len_mult;
 			avi->pbAudioBuf = (uint8_t *)UTIL_malloc(avi->dwAudBufLen);
 			avi->dwAudioReadPos = avi->dwAudioWritePos = 0;
 			return avi;
