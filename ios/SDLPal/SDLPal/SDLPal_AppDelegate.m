@@ -44,7 +44,7 @@ static int forward_argc;
 static char **forward_argv;
 static int exit_status;
 
-int main(int argc, char **argv)
+int sdlpal_main(int argc, char **argv)
 {
     int i;
 

@@ -79,7 +79,6 @@ matrix:
         script:
           - cd ios/SDLPal
           - pod install
-          - sed -i '' 's/int main/int nomain/g' ../../3rd/SDL/src/video/uikit/SDL_uikitappdelegate.m # hackhack
           - xcodebuild -workspace SDLPal.xcworkspace -scheme SDLPal ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO -configuration Release CONFIGURATION_BUILD_DIR=/tmp/sdlpal-build
           - mkdir -p Payload
           - mv /tmp/sdlpal-build/SDLPal.app Payload
