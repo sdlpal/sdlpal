@@ -26,5 +26,6 @@
     <string name="action_usemsgfile">Customized message file</string>
     <string name="action_usefontfile">Customized font file</string>
     <string name="action_uselogfile">Log to file</string>
-    <string name="toast_requestpermission">Please approve sdcard access, or the app will not work properly.</string>
+    <string name="toast_requestpermission">This app requires storage permission to access game resources. Denying the request prevents the app running properly.</string>
+    <string name="toast_grantpermission">This app requires storage permission to access game resources. Please click \'OK\' and grant the permission manually.</string>
 </resources>

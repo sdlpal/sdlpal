@@ -26,5 +26,6 @@
     <string name="action_uselogfile">记录到文件</string>
     <string name="action_usemsgfile">自定义语言文件</string>
     <string name="action_usefontfile">自定义字体文件</string>
-    <string name="toast_requestpermission">请允许SD卡读写，否则程序无法正常运行</string>
+    <string name="toast_requestpermission">本应用需要存储设备读写权限以访问游戏资源。如拒绝授权，则本应用无法正常运行。</string>
+    <string name="toast_grantpermission">本应用需要存储设备读写权限以访问游戏资源。请点击“确定”后手动为本应用开启权限。</string>
 </resources>

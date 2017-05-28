@@ -25,30 +25,22 @@ public class MainActivity extends AppCompatActivity {
     private final static int REQUEST_FILESYSTEM_ACCESS_CODE = 101;
     private final AppCompatActivity mActivity = this;
 
-    private void requestForPermissions(boolean setupManuallyIfRequestForbidden) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILESYSTEM_ACCESS_CODE);
-        } else {
-            if (setupManuallyIfRequestForbidden) {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                intent.setData(uri);
-                startActivity(intent);
-            } else {
-                alertUser();
-            }
-        }
+    interface RequestForPermissions {
+        void request();
     }
 
-    private void alertUser() {
+    private void requestForPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILESYSTEM_ACCESS_CODE);
+    }
+
+    private void alertUser(int id, final RequestForPermissions req) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.toast_requestpermission);
+        builder.setMessage(id);
         builder.setCancelable(false);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                requestForPermissions(true);
+                req.request();
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -67,8 +59,26 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_FILESYSTEM_ACCESS_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     StartGame();
+                    return;
+                }
+                if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    alertUser(R.string.toast_requestpermission, new RequestForPermissions() {
+                        @Override
+                        public void request() {
+                            requestForPermissions();
+                        }
+                    });
                 } else {
-                    alertUser();
+                    alertUser(R.string.toast_grantpermission, new RequestForPermissions() {
+                        @Override
+                        public void request() {
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        }
+                    });
                 }
                 break;
         }
@@ -79,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED ) {
             StartGame();
         } else {
-            requestForPermissions(false);
+            requestForPermissions();
         }
     }
 
