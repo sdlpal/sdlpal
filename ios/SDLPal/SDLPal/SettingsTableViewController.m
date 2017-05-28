@@ -119,17 +119,30 @@ typedef void(^SelectedBlock)(NSString *selected);
                                                    origin:origin];
 }
 
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    float heightForRow = 40;
-//    
-//    if([lblMusicType.text isEqualToString:@"MIDI"] &&
-//      ((indexPath.row == 1 && indexPath.section == 3) ||
-//       (indexPath.row == 1 && indexPath.section == 3)))
-//        return 0;
-//    else
-//        return heightForRow;
-//}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    //need manually sync with storyboard...
+    int rows = 1;
+    switch(section) {
+        case 0:
+            rows = 1;
+            break;
+        case 1:
+            rows = 2;
+            break;
+       case 2:
+            rows = 2;
+            break;
+        case 3:
+            rows = [lblMusicType.text isEqualToString:@"RIX"] ? 11 : 4;
+            break;
+        case 4:
+            rows = 2;
+            break;
+        default:
+            break;
+    }
+    return rows;
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
@@ -138,17 +151,19 @@ typedef void(^SelectedBlock)(NSString *selected);
     }else if( indexPath.section == 1 && indexPath.row == 1 ) { //font file
         [self showPickerWithTitle:nil toLabel:lblFontFile inArray:AvailFiles origin:cell allowEmpty:YES];
     }else if( indexPath.section == 3 && indexPath.row == 0 ) { //BGM
-        [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats origin:cell];
-    }else if( indexPath.section == 3 && indexPath.row == 1 ) { //OPL Type
+        [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats origin:cell allowEmpty:NO doneBlock:^(NSString *selected) {
+            [self.tableView reloadData];
+        }];
+    }else if( indexPath.section == 3 && indexPath.row == 4 ) { //OPL Type
         [self showPickerWithTitle:nil toLabel:lblOPLType inArray:OPLFormats origin:cell];
-    }else if( indexPath.section == 3 && indexPath.row == 2 ) { //OPL Rate
+    }else if( indexPath.section == 3 && indexPath.row == 5 ) { //OPL Rate
         [self showPickerWithTitle:nil toLabel:lblOPLRate inArray:OPLSampleRates origin:cell];
-    }else if( indexPath.section == 3 && indexPath.row == 3 ) { //CD Source
+    }else if( indexPath.section == 3 && indexPath.row == 1 ) { //CD Source
         [self showPickerWithTitle:nil toLabel:lblCDAudioSource inArray:CDFormats origin:cell];
-    }else if( indexPath.section == 3 && indexPath.row == 4 ) { //Stereo
-        toggleStereo.enabled = !toggleStereo.isEnabled;
-    }else if( indexPath.section == 3 && indexPath.row == 5 ) { //Surround
-        toggleSurroundOPL.enabled = !toggleSurroundOPL.isEnabled;
+    }else if( indexPath.section == 3 && indexPath.row == 8 ) { //Stereo
+        toggleStereo.on = !toggleStereo.isOn;
+    }else if( indexPath.section == 3 && indexPath.row == 9 ) { //Surround
+        toggleSurroundOPL.on = !toggleSurroundOPL.isOn;
     }else if( indexPath.section == 3 && indexPath.row == 6 ) { //SampleRate
         [self showPickerWithTitle:nil toLabel:lblResampleRate inArray:AudioSampleRates origin:cell];
     }else if( indexPath.section == 3 && indexPath.row == 7 ) { //Buffer size
@@ -183,8 +198,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     lblFontFile.text        = [NSString stringWithUTF8String:gConfig.pszFontFile ? gConfig.pszFontFile : ""];
     textLogFile.text        = [NSString stringWithUTF8String:gConfig.pszLogFile  ? gConfig.pszLogFile  : ""];
     
-    toggleStereo.enabled        = gConfig.iAudioChannels == 2;
-    toggleSurroundOPL.enabled   = gConfig.fUseSurroundOPL;
+    toggleStereo.on         = gConfig.iAudioChannels == 2;
+    toggleSurroundOPL.on    = gConfig.fUseSurroundOPL;
     
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
     lblOPLType.text         = OPLFormats[gConfig.eOPLType];
@@ -198,6 +213,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     sliderResampleQuality.value = gConfig.iResampleQuality;
     
     lblLogLevel.text        = LogLevels[gConfig.iLogLevel];
+    
+    [self.tableView reloadData];
 }
 
 - (void)saveConfigs {
@@ -205,8 +222,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     gConfig.pszFontFile = [lblLanguageFile.text length] == 0 ? NULL : strdup([[lblFontFile      text] UTF8String]);
     gConfig.pszLogFile  = [lblLanguageFile.text length] == 0 ? NULL : strdup([[textLogFile      text] UTF8String]);
     
-    gConfig.iAudioChannels  = toggleStereo.isEnabled ? 2 : 1;
-    gConfig.fUseSurroundOPL = toggleSurroundOPL.isEnabled;
+    gConfig.iAudioChannels  = toggleStereo.isOn ? 2 : 1;
+    gConfig.fUseSurroundOPL = toggleSurroundOPL.isOn;
     
     gConfig.eMusicType  = (MUSICTYPE)[MusicFormats indexOfObject:lblMusicType.text];
     gConfig.eOPLType    = (OPLTYPE  )[OPLFormats   indexOfObject:lblOPLType.text];
