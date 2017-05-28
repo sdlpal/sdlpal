@@ -58,6 +58,7 @@
 #include "input.h"
 #include "video.h"
 #include "riff.h"
+#include "palcfg.h"
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
@@ -636,6 +637,8 @@ PAL_PlayAVI(
     LPCSTR     lpszPath
 )
 {
+	if (!gConfig.fEnableAviPlay) return FALSE;
+
 	//
 	// Open the file
 	//

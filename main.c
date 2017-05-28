@@ -171,13 +171,8 @@ PAL_TrademarkScreen(
 
 --*/
 {
-   if (gConfig.fIsWIN95)
-   {
-      if (PAL_PlayAVI("1.avi"))
-      {
-         return;
-      }
-   }
+   if (PAL_PlayAVI("1.avi")) return;
+
    PAL_SetPalette(3, FALSE);
    PAL_RNGPlay(6, 0, 1000, 25);
    UTIL_Delay(1000);
@@ -214,13 +209,7 @@ PAL_SplashScreen(
    DWORD          dwTime, dwBeginTime;
    BOOL           fUseCD = TRUE;
 
-   if (gConfig.fIsWIN95)
-   {
-      if (PAL_PlayAVI("2.avi"))
-      {
-         return;
-      }
-   }
+   if (PAL_PlayAVI("2.avi")) return;
 
    if (palette == NULL)
    {

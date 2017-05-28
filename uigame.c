@@ -156,7 +156,7 @@ PAL_OpeningMenu(
    AUDIO_PlayMusic(0, FALSE, 1);
    PAL_FadeOut(1);
 
-   if (gConfig.fIsWIN95 && wItemSelected == 0)
+   if (wItemSelected == 0)
    {
       PAL_PlayAVI("3.avi");
    }
