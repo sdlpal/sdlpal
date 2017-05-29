@@ -149,67 +149,56 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 		}
 	}
 
-	Event eventHandle;
-
-	// If the file belongs to so-called 'special files' (i.e., specified in configuration file), then return its object directly
-	if (g_specialFiles.find(_Filename) != g_specialFiles.end())
+	try
 	{
-		auto file = g_specialFiles[_Filename];
-		try
-		{
-			*pFile = new WRT_FILE(AWait(file->OpenAsync(w ? Windows::Storage::FileAccessMode::ReadWrite : Windows::Storage::FileAccessMode::Read), eventHandle), r, w, b);
-		}
-		catch (Platform::AccessDeniedException^)
-		{
-			return EACCES;
-		}
-		catch (Platform::Exception^)
-		{
-			return EIO;
-		}
-		return 0;
-	}
+		Event eventHandle;
 
-	auto directory = get_directory(_Filename);
-	auto filename = get_filename(_Filename);
-	Windows::Storage::StorageFolder^ folder = nullptr;
-
-	// If the file's folder belongs to so-called 'special folders' (i.e., specified in configuration file), then use the cache folder object
-	for (auto i = g_specialFolders.begin(); directory.length() > 0 && i != g_specialFolders.end(); i++)
-	{
-		if (_strnicmp(i->first.c_str(), directory.c_str(), i->first.size()) == 0)
+		// If the file belongs to so-called 'special files' (i.e., specified in configuration file), then return its object directly
+		if (g_specialFiles.find(_Filename) != g_specialFiles.end())
 		{
-			folder = i->second;
-			if (directory.length() > i->first.length())
+			*pFile = new WRT_FILE(AWait(g_specialFiles[_Filename]->OpenAsync(w ? Windows::Storage::FileAccessMode::ReadWrite : Windows::Storage::FileAccessMode::Read), eventHandle), r, w, b);
+			return 0;
+		}
+
+		auto directory = get_directory(_Filename);
+		auto filename = get_filename(_Filename);
+
+		Windows::Storage::StorageFolder^ folder = nullptr;
+
+		// If the file's folder belongs to so-called 'special folders' (i.e., specified in configuration file), then use the cache folder object
+		for (auto i = g_specialFolders.begin(); directory.length() > 0 && i != g_specialFolders.end(); i++)
+		{
+			if (_strnicmp(i->first.c_str(), directory.c_str(), i->first.size()) == 0)
 			{
-				size_t pos = i->first.length(), next = directory.find('\\', pos);
-				while (next != std::string::npos)
+				folder = i->second;
+				if (directory.length() > i->first.length())
 				{
-					folder = AWait(folder->GetFolderAsync(ConvertString(std::string(&directory[pos], next - pos))), eventHandle);
-					next = directory.find('\\', pos = next + 1);
-				}
-				if (pos < directory.length())
-				{
-					folder = AWait(folder->GetFolderAsync(ConvertString(std::string(&directory[pos], directory.length() - pos))), eventHandle);
+					size_t pos = i->first.length(), next = directory.find('\\', pos);
+					while (next != std::string::npos)
+					{
+						folder = AWait(folder->GetFolderAsync(ConvertString(std::string(&directory[pos], next - pos))), eventHandle);
+						next = directory.find('\\', pos = next + 1);
+					}
+					if (pos < directory.length())
+					{
+						folder = AWait(folder->GetFolderAsync(ConvertString(std::string(&directory[pos], directory.length() - pos))), eventHandle);
+					}
 				}
 			}
 		}
-	}
 
-	// The try get folder directly by its full path
-	if (!folder && directory.length())
-	{
-		folder = AWait(Windows::Storage::StorageFolder::GetFolderFromPathAsync(ConvertString(directory)), eventHandle);
-	}
+		// The try get folder directly by its full path
+		if (!folder && directory.length())
+		{
+			folder = AWait(Windows::Storage::StorageFolder::GetFolderFromPathAsync(ConvertString(directory)), eventHandle);
+		}
 
-	// As a last sort, use app's local folder
-	if (!folder)
-	{
-		folder = Windows::Storage::ApplicationData::Current->LocalFolder;
-	}
+		// As a last sort, use app's local folder
+		if (!folder)
+		{
+			folder = Windows::Storage::ApplicationData::Current->LocalFolder;
+		}
 
-	try
-	{
 		Windows::Storage::StorageFile^ file = nullptr;
 		switch (*_Mode)
 		{
