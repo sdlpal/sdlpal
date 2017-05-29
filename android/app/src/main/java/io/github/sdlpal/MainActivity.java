@@ -30,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestForPermissions() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILESYSTEM_ACCESS_CODE);
+        // Since granting writing permission implicitly grants reading permission, no need to explicitly add reading permission here
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILESYSTEM_ACCESS_CODE);
     }
 
     private void alertUser(int id, final RequestForPermissions req) {
@@ -57,28 +58,33 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case REQUEST_FILESYSTEM_ACCESS_CODE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    StartGame();
-                    return;
-                }
-                if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    alertUser(R.string.toast_requestpermission, new RequestForPermissions() {
-                        @Override
-                        public void request() {
-                            requestForPermissions();
-                        }
-                    });
-                } else {
-                    alertUser(R.string.toast_grantpermission, new RequestForPermissions() {
-                        @Override
-                        public void request() {
-                            Intent intent = new Intent();
-                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", getPackageName(), null);
-                            intent.setData(uri);
-                            startActivity(intent);
-                        }
-                    });
+                for(int i = 0; i < permissions.length; i++) {
+                    switch(permissions[i]) {
+                        case Manifest.permission.WRITE_EXTERNAL_STORAGE:
+                            if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                                StartGame();
+                                break;
+                            }
+                            if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, permissions[i])) {
+                                alertUser(R.string.toast_requestpermission, new RequestForPermissions() {
+                                    @Override
+                                    public void request() {
+                                        requestForPermissions();
+                                    }
+                                });
+                            } else {
+                                alertUser(R.string.toast_grantpermission, new RequestForPermissions() {
+                                    @Override
+                                    public void request() {
+                                        Intent intent = new Intent();
+                                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                        intent.setData(uri);
+                                        startActivity(intent);
+                                    }
+                                });
+                            }
+                    }
                 }
                 break;
         }
