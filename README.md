@@ -17,7 +17,7 @@ All rights reserved.
 ```
 SDLPAL is distributed under the terms of GNU General Public License, version 3 (or any later version) as published by the Free Software Foundation. See [gpl.txt](https://raw.githubusercontent.com/sdlpal/sdlpal/master/gpl.txt) for details.
 
-Many of the ideas of this program are based on documents from [PAL Research Project](https://github.com/palxex/palresearch). Portions of the code are based on the work done by Baldur and [louyihua](https://github.com/louyihua), and the resampler code is based on the code in [Kode54](https://github.com/kode54)'s [foo_input_adplug](https://github.com/kode54/foo_input_adplug) project.
+Many of the ideas of this program are based on documents from [PAL Research Project](https://github.com/palxex/palresearch), and portions of the code are based on the work done by Baldur and [louyihua](https://github.com/louyihua).
 
 This program made extensive use of the following libraries:
 * [SDL](http://www.libsdl.org/)
@@ -27,10 +27,12 @@ This program made extensive use of the following libraries:
 * [libogg & libvorbis](http://www.vorbis.com/)
 * [FLTK](http://www.fltk.org)
 * [DOSBOX project](http://www.dosbox.com) and [MAME project](http://mamedev.org/) for codes of some the OPL simulation cores
+* [foo_input_adplug](https://github.com/kode54/foo_input_adplug) for codes of the built-in resampler
+* [ffmpeg](https://ffmpeg.org/) for codes of the built-in AVI player
 
 Please see [AUTHORS.txt](https://raw.githubusercontent.com/sdlpal/sdlpal/master/AUTHORS.txt) for additional authors.
 
-This program does **NOT** include any code or data files of the original game, which are proprietary and copyrighted by SoftStar Inc.
+This program does **NOT** include any code or data files of the original game, which are proprietary and copyrighted by [SoftStar](http://www.softstar.com.tw/) Inc.
 
 ## Chat Room
 
