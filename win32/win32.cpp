@@ -26,17 +26,30 @@
 #define UNICODE
 #define _UNICODE
 #define _CRT_SECURE_NO_WARNINGS
+#define NO_DSHOW_STRSAFE
 
+#include <inttypes.h>
+#include <string>
 #include <tchar.h>
 #include <windows.h>
+#include <MMSystem.h>
 #include <commctrl.h>
 #include <shlobj.h>
-#include <string>
+#include <SDL_syswm.h>
+#include <d3d9.h>
+#include <dshow.h>
+#include <vmr9.h>
 #include "resource.h"
-#include "../global.h"
-#include "../util.h"
-#include "../palcfg.h"
-#include "../resampler.h"
+#include "global.h"
+#include "util.h"
+#include "palcfg.h"
+#include "resampler.h"
+#include "input.h"
+#include "video.h"
+
+#undef ComboBox_AddString
+#undef ComboBox_SetCurSel
+#undef ComboBox_GetCurSel
 
 #define ComboBox_AddString(hwndDlg, idCtrl, lpsz) \
             (BOOL)SNDMSG(GetDlgItem((hwndDlg), (idCtrl)), CB_ADDSTRING, (WPARAM)(0), (LPARAM)(lpsz))
@@ -296,7 +309,7 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 		if (pidl)
 		{
 			SHGetPathFromIDList(pidl, szName);
-			int n = _tcslen(szName);
+			size_t n = _tcslen(szName);
 			if (szName[n - 1] != '\\') _tcscat(szName, L"\\");
 			SetDlgItemText(hwndDlg, IDC_GAMEPATH, szName);
 		}
@@ -426,4 +439,147 @@ BOOL UTIL_IsAbsolutePath(LPCSTR  lpszFileName)
 		return (strlen(szDrive) > 0 && (szDir[0] == '\\' || szDir[0] == '/'));
 	else
 		return FALSE;
+}
+
+// DirectShow-based AVI player for Windows
+
+template<class T>
+class com_ptr
+{
+public:
+	com_ptr() : _obj(nullptr) {}
+	com_ptr(T* obj) : _obj(obj) {}
+	~com_ptr() { _obj && _obj->Release(); }
+
+	operator T*() { return _obj; }
+	T* operator->() { return _obj; }
+	T** operator&() { return &_obj; }
+
+	com_ptr& operator=(T* other)
+	{
+		if (_obj != other)
+		{
+			_obj && _obj->Release();
+			(_obj = other) && _obj->AddRef();
+		}
+		return *this;
+	}
+
+private:
+	T* _obj;
+};
+
+extern "C"
+BOOL PAL_PlayAVI_Native(const char* lpszPath)
+{
+	SDL_SysWMinfo info;
+	if (!VIDEO_GetWindowInfo(&info)) return FALSE;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	HWND hwnd = info.info.win.window;
+#else
+	HWND hwnd = info.window;
+#endif
+
+	RECT rc;
+	if (!GetClientRect(hwnd, &rc)) return FALSE;
+
+	int buf_len = MultiByteToWideChar(CP_ACP, 0, lpszPath, -1, nullptr, 0);
+	wchar_t* szPath = (wchar_t*)alloca(sizeof(wchar_t) * buf_len);
+	MultiByteToWideChar(CP_ACP, 0, lpszPath, -1, szPath, buf_len);
+
+	HANDLE hAviPlayEvent;
+	HRESULT hr;
+	
+	com_ptr<IGraphBuilder> pGraph;
+	com_ptr<IMediaControl> pControl;
+	com_ptr<IMediaEvent> pEvent;
+	com_ptr<IEnumFilters> pEnum;
+	com_ptr<IBaseFilter> pFilter;
+	com_ptr<IVMRWindowlessControl9> pWindow;
+
+	if (FAILED(hr = CoCreateInstance(CLSID_FilterGraph, nullptr, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void **)&pGraph))) return FALSE;
+	if (FAILED(hr = pGraph->QueryInterface(IID_IMediaControl, (void **)&pControl))) return FALSE;
+	if (FAILED(hr = pGraph->QueryInterface(IID_IMediaEvent, (void **)&pEvent))) return FALSE;
+	if (FAILED(hr = pGraph->RenderFile(szPath, nullptr))) return FALSE;
+	if (FAILED(hr = pGraph->EnumFilters(&pEnum))) return FALSE;
+	while (S_OK == pEnum->Next(1, &pFilter, nullptr))
+	{
+		FILTER_INFO fi;
+		pFilter->QueryFilterInfo(&fi);
+		if (lstrcmpW(fi.achName, L"Video Renderer") == 0)
+		{
+			com_ptr<IEnumPins> pEnumPins;
+			com_ptr<IPin> pOutputPin, pPin;
+			if (FAILED(hr = pFilter->EnumPins(&pEnumPins))) return FALSE;
+			while (S_OK == pEnumPins->Next(1, &pPin, nullptr))
+			{
+				PIN_DIRECTION dir;
+				if (SUCCEEDED(pPin->QueryDirection(&dir)) && dir == PINDIR_INPUT &&
+					SUCCEEDED(pPin->ConnectedTo(&pOutputPin)) && pOutputPin)
+					break;
+				else
+					pPin = nullptr;
+			}
+			if (!pOutputPin || FAILED(hr = pGraph->RemoveFilter(pFilter))) return FALSE;
+
+			pPin = nullptr;
+			pEnumPins = nullptr;
+			pFilter = nullptr;
+
+			com_ptr<IVMRFilterConfig9> pConfig;
+			if (FAILED(hr = CoCreateInstance(CLSID_VideoMixingRenderer9, nullptr, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void **)&pFilter))) return FALSE;
+			if (FAILED(hr = pFilter->QueryInterface(&pConfig))) return FALSE;
+			if (FAILED(hr = pConfig->SetRenderingMode(VMR9Mode_Windowless))) return FALSE;
+			if (FAILED(hr = pConfig->QueryInterface(&pWindow))) return FALSE;
+			if (FAILED(hr = pWindow->SetVideoClippingWindow(hwnd))) return FALSE;
+			if (FAILED(hr = pWindow->SetVideoPosition(nullptr, &rc))) return FALSE;
+			if (FAILED(hr = pGraph->AddFilter(pFilter, L"Video Renderer"))) return FALSE;
+			if (FAILED(hr = pFilter->EnumPins(&pEnumPins))) return FALSE;
+			while (S_OK == pEnumPins->Next(1, &pPin, nullptr))
+			{
+				PIN_DIRECTION dir;
+				if (SUCCEEDED(pPin->QueryDirection(&dir)) && dir == PINDIR_INPUT)
+					break;
+				else
+					pPin = nullptr;
+			}
+			if (!pPin || FAILED(hr = pGraph->Connect(pOutputPin, pPin))) return FALSE;
+
+			break;
+		}
+		pFilter = nullptr;
+	}
+	RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE);
+	PAL_ClearKeyState();
+
+	if (FAILED(hr = pEvent->GetEventHandle((OAEVENT*)&hAviPlayEvent))) return FALSE;
+	if (FAILED(hr = pControl->Run())) return FALSE;
+
+	BOOL looping = TRUE;
+	while (looping && !(g_InputState.dwKeyPress & (kKeyMenu | kKeySearch)))
+	{
+		if (WaitForSingleObject(hAviPlayEvent, 50) == WAIT_OBJECT_0)
+		{
+			long evCode;
+			LONG_PTR param1, param2;
+			while (S_OK == pEvent->GetEvent(&evCode, &param1, &param2, 0))
+			{
+				pEvent->FreeEventParams(evCode, param1, param2);
+				if (evCode == EC_COMPLETE)
+					looping = FALSE;
+			}
+		}
+		UTIL_Delay(1);
+	}
+	hr = pControl->Stop();
+
+	if (looping)
+	{
+		//
+		// Simulate a short delay (like the original game)
+		//
+		UTIL_Delay(500);
+	}
+
+	return TRUE;
 }

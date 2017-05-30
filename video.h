@@ -24,6 +24,7 @@
 #define VIDEO_H
 
 #include "common.h"
+#include <SDL_syswm.h>
 
 #define VIDEO_CopySurface(s, sr, t, tr) SDL_BlitSurface((s), (sr), (t), (tr))
 #define VIDEO_CopyEntireSurface(s, t)   SDL_BlitSurface((s), NULL, (t), NULL)
@@ -124,6 +125,11 @@ VIDEO_UpdateSurfacePalette(
 VOID
 VIDEO_DrawSurfaceToScreen(
     SDL_Surface    *pSurface
+);
+
+BOOL
+VIDEO_GetWindowInfo(
+	SDL_SysWMinfo  *pInfo
 );
 
 PAL_C_LINKAGE_END
