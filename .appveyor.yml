@@ -1,6 +1,23 @@
 version: 2.0.{build}
 image:
   - Visual Studio 2015
+skip_commits:
+  files:
+    - '*.md'
+    - '*.txt'
+    - .travis.yml
+    - .gitignore
+    - 3ds/
+    - android/
+    - dingux/
+    - emscripten/
+    - gph/
+    - incomplete_ports/
+    - ios/
+    - macos/
+    - psp/
+    - unix/
+    - wii/
 environment:
   matrix:
     - solution_name: win32/sdlpal.sln
