@@ -95,9 +95,9 @@
 		716552AE195BBE7D006E1227 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AD195BBE7D006E1227 /* AudioToolbox.framework */; };
 		716552B0195BBECE006E1227 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716552AF195BBECE006E1227 /* QuartzCore.framework */; };
 		71AA35801A0BCA4E00793FFF /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = 71AA357F1A0BCA4E00793FFF /* util.mm */; };
-		C60441781ED9AF3C006C7A7C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C604417A1ED9AF3C006C7A7C /* Settings.storyboard */; };
 		71DCB6961ED9CBB000F120DB /* aviplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 71DCB6941ED9CBB000F120DB /* aviplay.c */; };
 		71DCB6991ED9CCFE00F120DB /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE731E474CE2000C8970 /* GameController.framework */; };
+		C60441781ED9AF3C006C7A7C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C604417A1ED9AF3C006C7A7C /* Settings.storyboard */; };
 		C622BE661E474B5E000C8970 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE641E474B5E000C8970 /* audio.c */; };
 		C622BE6C1E474C01000C8970 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6A1E474C01000C8970 /* palcfg.c */; };
 		C622BE701E474CA9000C8970 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6F1E474CA9000C8970 /* overlay.c */; };
@@ -835,7 +835,6 @@
 				ORGANIZATIONNAME = "SDLPAL team";
 				TargetAttributes = {
 					7165505C195BB372006E1227 = {
-						DevelopmentTeam = 8M76ZZN98N;
 						ProvisioningStyle = Automatic;
 					};
 				};

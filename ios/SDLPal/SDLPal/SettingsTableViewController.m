@@ -61,6 +61,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [transitionView setFrame:self.view.frame];
     
     UILabel* tlabel=[[UILabel alloc] initWithFrame:CGRectMake(0,0, 300, 40)];
     tlabel.text=[NSString stringWithUTF8String:PAL_GIT_REVISION];
@@ -181,16 +182,21 @@ typedef void(^SelectedBlock)(NSString *selected);
 }
 
 - (IBAction)btnConfirmClicked:(id)sender {
-    [UIView transitionFromView:[self.navigationController view]
-                        toView:transitionView
-                      duration:0.65f
-                       options:UIViewAnimationOptionTransitionCurlDown
-                    completion:^(BOOL finished){
-                        [self saveConfigs];
-                        gConfig.fLaunchSetting = NO;
-                        PAL_SaveConfig();
-                        [[SDLPalAppDelegate sharedAppDelegate] launchGame];
-                    }];
+    [UIView animateWithDuration:0.65
+                          delay:0.0
+         usingSpringWithDamping:1.0
+          initialSpringVelocity:0.0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{
+                         CGPoint point = self.navigationController.view.center;
+                         point.y += self.navigationController.view.frame.size.height;
+                         [self.navigationController.view setCenter:point];
+                     } completion:^(BOOL finished) {
+                         [self saveConfigs];
+                         gConfig.fLaunchSetting = NO;
+                         PAL_SaveConfig();
+                         [[SDLPalAppDelegate sharedAppDelegate] launchGame];
+                     }];
 }
 
 - (void)readConfigs {
