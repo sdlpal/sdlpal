@@ -23,7 +23,7 @@
 // Copyright (c) 2006-2007, Lou Yihua.
 //
 // Ported to C from C++ and modified for compatibility with Big-Endian
-// by Wei Mingzhi <whistler@openoffice.org>.
+// by Wei Mingzhi <whistler_wmz@users.sf.net>.
 //
 
 #include "common.h"

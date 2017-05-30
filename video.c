@@ -508,6 +508,8 @@ VIDEO_SetPalette(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+   SDL_Rect rect;
+
    SDL_SetPaletteColors(gpPalette, rgPalette, 0, 256);
 
    SDL_SetSurfacePalette(gpScreen, gpPalette);
@@ -522,7 +524,12 @@ VIDEO_SetPalette(
    SDL_SetSurfaceColorMod(gpScreenBak, 0, 0, 0);
    SDL_SetSurfaceColorMod(gpScreenBak, 0xFF, 0xFF, 0xFF);
 
-   VIDEO_UpdateScreen(NULL);
+   rect.x = 0;
+   rect.y = 0;
+   rect.w = 320;
+   rect.h = 200;
+
+   VIDEO_UpdateScreen(&rect);
 #else
    SDL_SetPalette(gpScreen, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
    SDL_SetPalette(gpScreenBak, SDL_LOGPAL | SDL_PHYSPAL, rgPalette, 0, 256);
@@ -1059,7 +1066,7 @@ VIDEO_SetWindowTitle(
 
   Parameters:
 
-    [IN]  lpszTitle - the new caption of the window.
+    [IN]  pszTitle - the new caption of the window.
 
   Return value:
 
@@ -1070,7 +1077,7 @@ VIDEO_SetWindowTitle(
 #if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_SetWindowTitle(gpWindow, pszTitle);
 #else
-	SDL_WM_SetCaption(lpszCaption, NULL);
+	SDL_WM_SetCaption(pszTitle, NULL);
 #endif
 }
 
@@ -1175,5 +1182,55 @@ VIDEO_UpdateSurfacePalette(
 	SDL_SetSurfacePalette(pSurface, gpPalette);
 #else
 	SDL_SetPalette(pSurface, SDL_PHYSPAL | SDL_LOGPAL, gpPalette->colors, 0, 256);
+#endif
+}
+
+VOID
+VIDEO_DrawSurfaceToScreen(
+    SDL_Surface    *pSurface
+)
+/*++
+  Purpose:
+
+    Draw a surface directly to screen.
+
+  Parameters:
+
+    [IN]  pSurface - the surface which needs to be drawn to screen.
+
+  Return value:
+
+    None.
+
+--*/
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+   //
+   // Draw the surface to screen.
+   //
+   SDL_BlitScaled(pSurface, NULL, gpScreenReal, NULL);
+   VIDEO_RenderCopy();
+#else
+   SDL_Surface   *pCompatSurface;
+   SDL_Rect       rect;
+
+   rect.x = rect.y = 0;
+   rect.w = pSurface->w;
+   rect.h = pSurface->h;
+
+   pCompatSurface = VIDEO_CreateCompatibleSizedSurface(gpScreenReal, &rect);
+
+   //
+   // First convert the surface to compatible format.
+   //
+   SDL_BlitSurface(pSurface, NULL, pCompatSurface, NULL);
+
+   //
+   // Draw the surface to screen.
+   //
+   SDL_SoftStretch(pCompatSurface, NULL, gpScreenReal, NULL);
+
+   SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+   SDL_FreeSurface(pCompatSurface);
 #endif
 }

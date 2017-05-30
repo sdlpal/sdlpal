@@ -27,8 +27,11 @@
         <item>DOSBOXNEW</item>
     </string-array>
     <string-array name="opl_rate" translatable="false">
+        <item>11025</item>
         <item>12429</item>
+        <item>22050</item>
         <item>24858</item>
+        <item>44100</item>
         <item>49716</item>
     </string-array>
     <string-array name="log_level">

@@ -28,6 +28,7 @@
 #include "util.h"
 #include "resampler.h"
 #include "midi.h"
+#include "riff.h"
 #include <math.h>
 
 #if PAL_HAS_OGG
@@ -74,32 +75,6 @@ typedef struct tagSOUNDPLAYER
 	int                 cursounds;
 } SOUNDPLAYER, *LPSOUNDPLAYER;
 
-typedef struct tagRIFFHEADER
-{
-	DWORD   riff_sig;		/* 'RIFF' */
-	DWORD   data_length;	/* Total length minus eight, little-endian */
-	DWORD   riff_type;		/* 'WAVE' */
-} RIFFHEADER, *LPRIFFHEADER;
-typedef const RIFFHEADER *LPCRIFFHEADER;
-
-typedef struct tagRIFFCHUNK
-{
-	DWORD   chunk_type;		/* 'fmt ' and so on */
-	DWORD   chunk_length;	/* Total chunk length minus eight, little-endian */
-} RIFFCHUNK, *LPRIFFCHUNK;
-typedef const RIFFCHUNK *LPCRIFFCHUNK;
-
-typedef struct tagWAVEFORMATPCM
-{
-	WORD    wFormatTag;        /* format type */
-	WORD    nChannels;         /* number of channels (i.e. mono, stereo, etc.) */
-	DWORD   nSamplesPerSec;    /* sample rate */
-	DWORD   nAvgBytesPerSec;   /* for buffer estimation */
-	WORD    nBlockAlign;       /* block size of data */
-	WORD    wBitsPerSample;
-} WAVEFORMATPCM, *LPWAVEFORMATPCM;
-typedef const WAVEFORMATPCM *LPCWAVEFORMATPCM;
-
 static const void *
 SOUND_LoadWAVEData(
 	LPCBYTE                lpData,
@@ -125,54 +100,42 @@ SOUND_LoadWAVEData(
     Pointer to the WAVE data inside the input buffer, NULL if failed.
 --*/
 {
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#	define RIFF		0x52494646 // 'RIFF'
-#	define WAVE		0x57415645 // 'WAVE'
-#	define FMT		0x666D7420 // 'fmt '
-#	define DATA		0x64617461 // 'data'
-#	define PCM      0x0100
-#else
-#	define RIFF		0x46464952 // 'FFIR'
-#	define WAVE		0x45564157 // 'EVAW'
-#	define FMT		0x20746D66 // ' tmf'
-#	define DATA		0x61746164 // 'atad'
-#	define PCM      0x0001
-#endif
-	LPCRIFFHEADER lpRiff = (LPCRIFFHEADER)lpData;
-	LPCRIFFCHUNK lpChunk;
-	LPCWAVEFORMATPCM lpFormat = NULL;
-	LPCBYTE lpWaveData = NULL;
-	DWORD len;
+	const RIFFHeader      *lpRiff   = (const RIFFHeader *)lpData;
+	const RIFFChunkHeader *lpChunk  = NULL;
+	const WAVEFormatPCM   *lpFormat = NULL;
+	const uint8_t         *lpWaveData = NULL;
+	uint32_t len;
 
-	if (dwLen < sizeof(RIFFHEADER) || lpRiff->riff_sig != RIFF || lpRiff->riff_type != WAVE || dwLen < SDL_SwapLE32(lpRiff->data_length) + 8)
+	if (dwLen < sizeof(RIFFHeader) || lpRiff->signature != RIFF_RIFF ||
+		lpRiff->type != RIFF_WAVE || dwLen < SDL_SwapLE32(lpRiff->length) + 8)
 	{
 		return NULL;
 	}
 
-	lpChunk = (LPCRIFFCHUNK)(lpRiff + 1); dwLen -= sizeof(RIFFHEADER);
-	while (dwLen >= sizeof(RIFFCHUNK))
+	lpChunk = (const RIFFChunkHeader *)(lpRiff + 1); dwLen -= sizeof(RIFFHeader);
+	while (dwLen >= sizeof(RIFFChunkHeader))
 	{
-		len = SDL_SwapLE32(lpChunk->chunk_length);
-		if (dwLen >= sizeof(RIFFCHUNK) + len)
-			dwLen -= sizeof(RIFFCHUNK) + len;
+		len = SDL_SwapLE32(lpChunk->length);
+		if (dwLen >= sizeof(RIFFChunkHeader) + len)
+			dwLen -= sizeof(RIFFChunkHeader) + len;
 		else
 			return NULL;
 
-		switch (lpChunk->chunk_type)
+		switch (lpChunk->type)
 		{
-		case FMT:
-			lpFormat = (LPCWAVEFORMATPCM)(lpChunk + 1);
-			if (len != sizeof(WAVEFORMATPCM) || lpFormat->wFormatTag != PCM)
+		case WAVE_fmt:
+			lpFormat = (const WAVEFormatPCM *)(lpChunk + 1);
+			if (len != sizeof(WAVEFormatPCM) || lpFormat->wFormatTag != SDL_SwapLE16(0x0001))
 			{
 				return NULL;
 			}
 			break;
-		case DATA:
-			lpWaveData = (LPCBYTE)(lpChunk + 1);
+		case WAVE_data:
+			lpWaveData = (const uint8_t *)(lpChunk + 1);
 			dwLen = 0;
 			break;
 		}
-		lpChunk = (LPCRIFFCHUNK)((LPCBYTE)(lpChunk + 1) + len);
+		lpChunk = (const RIFFChunkHeader *)((const uint8_t *)(lpChunk + 1) + len);
 	}
 
 	if (lpFormat == NULL || lpWaveData == NULL)
@@ -187,10 +150,6 @@ SOUND_LoadWAVEData(
 	lpSpec->align = lpFormat->nChannels * lpFormat->wBitsPerSample >> 3;
 
 	return lpWaveData;
-
-#undef RIFF
-#undef WAVE
-#undef FMT
 }
 
 typedef struct tagVOCHEADER

@@ -13,6 +13,7 @@
     <string name="action_stereo">立體聲</string>
     <string name="action_suropl">環繞聲 OPL</string>
     <string name="action_touch">啟用觸屏輔助</string>
+    <string name="action_avi">啟用 AVI 過場動畫</string>
     <string name="title_settings">設定模式</string>
     <string name="label_sfxvol">音效音量</string>
     <string name="label_musvol">音樂音量</string>

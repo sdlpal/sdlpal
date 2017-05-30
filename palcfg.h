@@ -44,6 +44,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_STEREO,
 	PALCFG_USESURROUNDOPL,
 	PALCFG_USETOUCHOVERLAY,
+	PALCFG_ENABLEAVIPLAY,
 	/* Booleans */
 	PALCFG_BOOLEAN_MAX,
 
@@ -190,6 +191,7 @@ typedef struct tagCONFIGURATION
 	BOOL             fUseCustomScreenLayout;
 	BOOL             fLaunchSetting;
 	BOOL             fUseTouchOverlay;
+	BOOL             fEnableAviPlay;
 #if USE_RIX_EXTRA_INIT
 	uint32_t        *pExtraFMRegs;
 	uint8_t         *pExtraFMVals;

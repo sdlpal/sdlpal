@@ -150,6 +150,7 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 
 	gConfig.fFullScreen = IsDlgButtonChecked(hwndDlg, IDC_FULLSCREEN);
 	gConfig.fUseTouchOverlay = IsDlgButtonChecked(hwndDlg, IDC_TOUCHOVERLAY);
+	gConfig.fEnableAviPlay = IsDlgButtonChecked(hwndDlg, IDC_ENABLEAVI);
 	gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO);
 	gConfig.eCDType = (MUSICTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD) + MUSIC_MP3);
 	gConfig.eMusicType = (MUSICTYPE)ComboBox_GetCurSel(hwndDlg, IDC_BGM);
@@ -181,6 +182,7 @@ void ResetControls(HWND hwndDlg)
 
 	CheckDlgButton(hwndDlg, IDC_FULLSCREEN, gConfig.fFullScreen);
 	CheckDlgButton(hwndDlg, IDC_TOUCHOVERLAY, gConfig.fUseTouchOverlay);
+	CheckDlgButton(hwndDlg, IDC_ENABLEAVI, gConfig.fEnableAviPlay);
 	CheckDlgButton(hwndDlg, IDC_ASPECTRATIO, gConfig.fKeepAspectRatio);
 	CheckDlgButton(hwndDlg, IDC_SURROUNDOPL, gConfig.fUseSurroundOPL);
 	CheckDlgButton(hwndDlg, IDC_STEREO, gConfig.iAudioChannels == 2);

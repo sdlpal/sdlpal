@@ -65,35 +65,19 @@
                 android:ems="10"
                 android:inputType="textUri" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_loglevel" />
-
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/spLogLevel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/log_level" />
-
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/swLogFile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_uselogfile" />
-
-            <EditText
-                android:id="@+id/edLogFile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textUri" />
-
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/swTouch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/action_touch"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="228dp" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swAVI"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_avi"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="228dp" />
 
@@ -225,6 +209,30 @@
                     android:text="@string/action_suropl" />
 
             </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_loglevel" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/spLogLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/log_level" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swLogFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_uselogfile" />
+
+            <EditText
+                android:id="@+id/edLogFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textUri" />
 
             <android.support.v7.widget.GridLayout
                 app:columnCount="3"

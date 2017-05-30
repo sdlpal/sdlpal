@@ -5,6 +5,7 @@
     <string name="title_settings">设置模式</string>
     <string name="action_touch">启用触屏辅助</string>
     <string name="action_aspect">保持纵横比</string>
+    <string name="action_avi">启用 AVI 过场动画</string>
     <string name="action_default">默认设置</string>
     <string name="action_finish">完成设置</string>
     <string name="action_suropl">环绕声 OPL</string>

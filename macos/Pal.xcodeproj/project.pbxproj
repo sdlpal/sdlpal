@@ -66,6 +66,7 @@
 		7104FDB40D772FBC00A97E53 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FDA50D772FBC00A97E53 /* player.cpp */; };
 		7104FDB60D772FBC00A97E53 /* rix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FDA70D772FBC00A97E53 /* rix.cpp */; };
 		71147E4014085E31003FB2DB /* surroundopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71147E3E14085E31003FB2DB /* surroundopl.cpp */; };
+		713765641ED86C930084F495 /* aviplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 713765621ED86C930084F495 /* aviplay.c */; };
 		7138FD0F1424E4810060DE76 /* dosbox_opl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */; };
 		716EB9BC0D77318900D5DE1F /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD3F0D772F6300A97E53 /* game.c */; };
 		716EB9C70D77340300D5DE1F /* sdlpal.icns in Resources */ = {isa = PBXBuildFile; fileRef = 716EB9C60D77340300D5DE1F /* sdlpal.icns */; };
@@ -315,8 +316,11 @@
 		7104FDA60D772FBC00A97E53 /* player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = player.h; path = adplug/player.h; sourceTree = "<group>"; };
 		7104FDA70D772FBC00A97E53 /* rix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rix.cpp; path = adplug/rix.cpp; sourceTree = "<group>"; };
 		7104FDA80D772FBC00A97E53 /* rix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rix.h; path = adplug/rix.h; sourceTree = "<group>"; };
+		71110B6B1EDAFAC20002E505 /* riff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riff.h; sourceTree = "<group>"; };
 		71147E3E14085E31003FB2DB /* surroundopl.cpp */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.cpp.cpp; name = surroundopl.cpp; path = adplug/surroundopl.cpp; sourceTree = "<group>"; };
 		71147E3F14085E31003FB2DB /* surroundopl.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = surroundopl.h; path = adplug/surroundopl.h; sourceTree = "<group>"; };
+		713765621ED86C930084F495 /* aviplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aviplay.c; sourceTree = "<group>"; };
+		713765631ED86C930084F495 /* aviplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aviplay.h; sourceTree = "<group>"; };
 		7138FD0B1424E4810060DE76 /* demuopl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.c.h; name = demuopl.h; path = adplug/demuopl.h; sourceTree = "<group>"; };
 		7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.cpp.cpp; name = dosbox_opl.cpp; path = adplug/dosbox_opl.cpp; sourceTree = "<group>"; };
 		7138FD0D1424E4810060DE76 /* dosbox_opl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.c.h; name = dosbox_opl.h; path = adplug/dosbox_opl.h; sourceTree = "<group>"; };
@@ -469,6 +473,7 @@
 		29B97315FDCFA39411CA2CEA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				713765621ED86C930084F495 /* aviplay.c */,
 				7104FD3A0D772F6300A97E53 /* battle.c */,
 				71F0F6D10DAA63B400F88C16 /* ending.c */,
 				71E27E030D8C7E2F0048BA16 /* fight.c */,
@@ -780,6 +785,7 @@
 			children = (
 				C626FFC31E5BD49100E39DD9 /* pal_config.h */,
 				7104FD390D772F6300A97E53 /* ascii.h */,
+				713765631ED86C930084F495 /* aviplay.h */,
 				7104FD3B0D772F6300A97E53 /* battle.h */,
 				5757D2981B7A3E0300464A74 /* codepage.h */,
 				7104FD3C0D772F6300A97E53 /* common.h */,
@@ -800,6 +806,7 @@
 				5757D2921B7A3DCE00464A74 /* players.h */,
 				7104FD510D772F6300A97E53 /* res.h */,
 				5757D2941B7A3DCE00464A74 /* resampler.h */,
+				71110B6B1EDAFAC20002E505 /* riff.h */,
 				7104FD550D772F6300A97E53 /* rngplay.h */,
 				7104FD570D772F6300A97E53 /* scene.h */,
 				7104FD590D772F6300A97E53 /* script.h */,
@@ -1073,6 +1080,7 @@
 				C63DF68B1EC50B7300C778B8 /* util.mm in Sources */,
 				71E23EA913F6D1AD001287B6 /* stream.c in Sources */,
 				71E23EAB13F6D1AD001287B6 /* synth.c in Sources */,
+				713765641ED86C930084F495 /* aviplay.c in Sources */,
 				5757D2961B7A3DCE00464A74 /* oggplay.c in Sources */,
 				71E23EAD13F6D1AD001287B6 /* timer.c in Sources */,
 				5757D2741B7A3D5800464A74 /* codebook.c in Sources */,

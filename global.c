@@ -188,6 +188,11 @@ PAL_InitGlobals(
    if (!PAL_IsWINVersion(&gConfig.fIsWIN95)) return -1;
 
    //
+   // Enable AVI playing only when the resource is WIN95
+   //
+   gConfig.fEnableAviPlay = gConfig.fEnableAviPlay && gConfig.fIsWIN95;
+
+   //
    // Detect game language only when no message file specified
    //
    if (!gConfig.pszMsgFile) PAL_SetCodePage(PAL_DetectCodePage("word.dat"));

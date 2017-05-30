@@ -384,6 +384,12 @@
     <ClInclude Include="..\pal_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\aviplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\riff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\adplug\binfile.cpp">
@@ -426,6 +432,9 @@
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\audio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\aviplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\liboggvorbis\src\analysis.c">

@@ -162,6 +162,15 @@
   <data name="Debug.Content" xml:space="preserve">
     <value>Debug</value>
   </data>
+  <data name="EnableAVI.Header" xml:space="preserve">
+    <value>Enable AVI animation</value>
+  </data>
+  <data name="EnableAVI.OffContent" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="EnableAVI.OnContent" xml:space="preserve">
+    <value>Yes</value>
+  </data>
   <data name="Error.Content" xml:space="preserve">
     <value>Error</value>
   </data>

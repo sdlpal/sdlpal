@@ -28,6 +28,7 @@
 #include "util.h"
 #include "resampler.h"
 #include "midi.h"
+#include "aviplay.h"
 #include <math.h>
 
 #if PAL_HAS_OGG
@@ -166,6 +167,11 @@ AUDIO_FillBuffer(
 	   //
 	   AUDIO_MixNative((short *)stream, gAudioDevice.pSoundBuffer, len >> 1);
    }
+
+   //
+   // Play sound for AVI
+   //
+   AVI_FillAudioBuffer(AVI_GetPlayState(), (LPBYTE)stream, len);
 
    //
    // Convert audio from native byte-order to actual byte-order
