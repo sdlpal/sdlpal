@@ -3,18 +3,20 @@
 TARGET = sdlpal
 TEST_TARGET = ./sdlpal-tests
 
+INTER=.unix
+
 HOST =
 TEST_CCFLAGS =
 
 GENERATED = -DPAL_HAS_GIT_REVISION $(shell ../scripts/gengitrev)
 
-DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
+DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
 GTEST_DIR = ../3rd/googletest/googletest
 
 CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) 
 CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
-OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
+OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OBJFILES:.o=.d) 
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
@@ -26,7 +28,7 @@ CFLAGS = $(CCFLAGS) -std=gnu99 `fltk-config --cflags`
 LDFLAGS = `$(SDL_CONFIG) --libs` `fltk-config --ldflags` -lstdc++ -lm -pthread
 TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra -pthread
 
-POSTCOMPILE = @mv -f $*.Td $*.d && touch $@
+POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 
 .PHONY : all clean check
 
@@ -41,12 +43,12 @@ gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc %.d
 	@$(HOST)g++ $(DEPFLAGS) $(TEST_CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
-%.o: %.c %.d
+%$(INTER).o: %.c %$(INTER).d
 	@echo [CC] $<
 	@$(HOST)gcc $(DEPFLAGS) $(CFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
-%.o: %.cpp %.d
+%$(INTER).o: %.cpp %$(INTER).d
 	@echo [CC] $<
 	@$(HOST)g++ $(DEPFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)

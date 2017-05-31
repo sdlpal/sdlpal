@@ -46,8 +46,8 @@ matrix:
         script:
           - cd win32
           - make HOST=i686-w64-mingw32-
-          - i686-w64-mingw32-strip sdlpal.exe
-          - zip sdlpal-mingw32.zip sdlpal.exe
+          - i686-w64-mingw32-strip sdlpal-mingw.exe
+          - zip sdlpal-mingw32.zip sdlpal-mingw.exe
           - mv sdlpal-mingw32.zip ../deploy/
           - cd ..
 

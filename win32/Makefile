@@ -3,20 +3,22 @@
 TARGET = sdlpal.exe
 TEST_TARGET = sdlpal-tests.exe
 
+INTER=.msys
+
 HOST =
 TEST_CCFLAGS =
 
 GENERATED = -DPAL_HAS_GIT_REVISION $(shell ../scripts/gengitrev)
 
-DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
+DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
 GTEST_DIR = ../3rd/googletest/googletest
 
 CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) $(wildcard ../native_midi/*.c) $(wildcard ../win32/*.c)
 CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
 RCFILES = $(wildcard ./sdlpal.rc)
-OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o) $(RCFILES:.rc=.o)
-DEPFILES = $(CFILES:.c=.d) $(CPPFILES:.cpp=.d)
+OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o) $(RCFILES:.rc=$(INTER).o)
+DEPFILES = $(CFILES:.c=$(INTER).d) $(CPPFILES:.cpp=$(INTER).d)
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 
@@ -26,7 +28,7 @@ CFLAGS = $(CCFLAGS) -std=gnu99
 LDFLAGS = `sdl2-config --libs` -lm -lwinmm -lole32 -loleaut32 -limm32 -lcomctl32 -luuid -ldxguid -lversion -static -static-libgcc -static-libstdc++
 TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra -pthread
 
-POSTCOMPILE = @mv -f $*.Td $*.d && touch $@
+POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 
 .PHONY : all clean check
 
@@ -41,17 +43,17 @@ gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc %.d
 	@$(HOST)g++ $(DEPFLAGS) $(TEST_CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
-%.o: %.c %.d
+%$(INTER).o: %.c %$(INTER).d
 	@echo [CC] $<
 	@$(HOST)gcc $(DEPFLAGS) $(CFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
-%.o: %.cpp %.d
+%$(INTER).o: %.cpp %$(INTER).d
 	@echo [CC] $<
 	@$(HOST)g++ $(DEPFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
-%.o: %.rc
+%$(INTER).o: %.rc
 	@echo [RES] $^
 	@$(HOST)windres -i $^ -o $@
 

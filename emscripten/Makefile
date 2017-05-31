@@ -4,27 +4,29 @@
 TARGET = sdlpal.html
 EMFILES = sdlpal.{html,js,mem,data,bc,wast,wasm}
 
+INTER=.emscripten
+
 HOST =
 
-DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
+DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
 CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) em.c
 CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
-OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
+OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OBJFILES:.o=.d)
 
 CFLAGS = -I${EMSCRIPTEN_TOOLCHAIN}/include/SDL2 -g -Wall -Oz -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(DEPFLAGS) 
 CPPFLAGS = $(CFLAGS)
 override LDFLAGS += -Oz -L${EMSCRIPTEN_TOOLCHAIN}/lib -lSDL2 -lm -lstdc++ --preload-file data -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -s DEMANGLE_SUPPORT=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s 'EMTERPRETIFY_FILE="sdlpal.bc"' -s WASM=1
 
-POSTCOMPILE = @mv -f $*.Td $*.d && touch $@
+POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 
-%.o: %.c %.d
+%$(INTER).o: %.c %$(INTER).d
 	@echo [CC] $<
 	@emcc -c $(CFLAGS) -o $@ $<
 	$(POSTCOMPILE)
 
-%.o: %.cpp %.d
+%$(INTER).o: %.cpp %$(INTER).d
 	@echo [CC] $<
 	@em++ -c $(CPPFLAGS) -o $@ $<
 	$(POSTCOMPILE)

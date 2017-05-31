@@ -1,31 +1,33 @@
 TARGET = sdlpal.dge
 
+INTER=.dingux
+
 HOST = mipsel-linux-uclibc-
 
-DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
+DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
 SOURCES = . ./adplug
 CFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.c))
 CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp))
-OFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
+OFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OFILES:.o=.d) 
 
 CFLAGS = -g -Wall -O2 `sdl-config --cflags` -DDINGOO -DPAL_CLASSIC -DPAL_HAS_PLATFORM_SPECIFIC_UTILS  -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src $(DEPFLAGS) 
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = `sdl-config --libs`
 
-POSTCOMPILE = @mv -f $*.Td $*.d && touch $@
+POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 
 $(TARGET): $(OFILES)
 	@echo [LD] $@
 	@$(HOST)g++ $(OFILES) -o $@ $(LDFLAGS)
 
-%.o: %.c %.d
+%$(INTER).o: %.c %$(INTER).d
 	@echo [CC] $<
 	@$(HOST)gcc $(CFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
-%.o: %.cpp %.d
+%$(INTER).o: %.cpp %$(INTER).d
 	@echo [CC] $<
 	@$(HOST)g++ $(CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
