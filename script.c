@@ -1486,8 +1486,7 @@ PAL_InterpretInstruction(
       if (!gpGlobals->fInBattle &&
          gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wScriptOnTeleport != 0)
       {
-         gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wScriptOnTeleport =
-            PAL_RunTriggerScript(gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wScriptOnTeleport, 0xFFFF);
+         PAL_RunTriggerScript(gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wScriptOnTeleport, 0xFFFF);
       }
       else
       {
