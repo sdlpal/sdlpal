@@ -2101,9 +2101,6 @@ PAL_InterpretInstruction(
             gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex].wPlayerRole =
                pScript->rgwOperand[i] - 1;
 
-            g_Battle.rgPlayer[gpGlobals->wMaxPartyMemberIndex].action.ActionType =
-               kBattleActionAttack;
-
             gpGlobals->wMaxPartyMemberIndex++;
          }
       }
