@@ -70,6 +70,10 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setSubtitle(getResources().getString(R.string.title_settings) + " (" + getGitRevision() + ")");
 
+        findViewById(R.id.spMusFmt).setFocusable(true);
+        findViewById(R.id.spMusFmt).setFocusableInTouchMode(true);
+        findViewById(R.id.spMusFmt).requestFocus();
+
         ((SwitchCompat)findViewById(R.id.swMsgFile)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
