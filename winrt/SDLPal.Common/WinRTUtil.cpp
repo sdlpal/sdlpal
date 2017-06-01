@@ -6,6 +6,7 @@
 #include <list>
 #include <DXGI.h>
 #include <ppltasks.h>
+#include <mfapi.h>
 #include "../SDLPal.Common/AsyncHelper.h"
 #include "../SDLPal.Common/StringHelper.h"
 #include "../../main.h"
@@ -186,11 +187,15 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 	}
 	for (auto i = invalid_tokens.begin(); i != invalid_tokens.end(); fal->Remove(*i++));
 
+	MFStartup(MF_VERSION, MFSTARTUP_LITE);
+
 	return 0;
 }
 
 extern "C"
 VOID UTIL_Platform_Quit(VOID)
 {
+	MFShutdown();
+
 	DeleteRunningFile();
 }

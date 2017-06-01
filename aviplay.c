@@ -663,7 +663,7 @@ PAL_PlayAVI(
 		//
 		// Try play AVI through OS-native interface
 		//
-		return PAL_PlayAVI_Native(lpszPath);
+		return PAL_PlayAVI_Native(va("%s%s", gConfig.pszGamePath, lpszPath));
 	}
 
     PAL_ClearKeyState();

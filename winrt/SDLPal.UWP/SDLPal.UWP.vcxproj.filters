@@ -35,6 +35,7 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\native_midi.cpp" />
+    <ClCompile Include="..\SDLPal.Common\native_avi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
