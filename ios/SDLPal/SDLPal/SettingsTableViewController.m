@@ -211,6 +211,9 @@ typedef void(^SelectedBlock)(NSString *selected);
     toggleStereo.on         = gConfig.iAudioChannels == 2;
     toggleSurroundOPL.on    = gConfig.fUseSurroundOPL;
     
+    toggleTouchScreenOverlay.on = gConfig.fUseTouchOverlay;
+    toggleKeepAspect.on         = gConfig.fKeepAspectRatio;
+    
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
     lblOPLType.text         = OPLFormats[gConfig.eOPLType];
     lblOPLRate.text         = [NSString stringWithFormat:@"%d",gConfig.iOPLSampleRate];
@@ -234,6 +237,9 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     gConfig.iAudioChannels  = toggleStereo.isOn ? 2 : 1;
     gConfig.fUseSurroundOPL = toggleSurroundOPL.isOn;
+    
+    gConfig.fKeepAspectRatio = toggleKeepAspect.isOn;
+    gConfig.fUseTouchOverlay = toggleTouchScreenOverlay.isOn;
     
     gConfig.eMusicType  = (MUSICTYPE)[MusicFormats indexOfObject:lblMusicType.text];
     gConfig.eOPLType    = (OPLTYPE  )[OPLFormats   indexOfObject:lblOPLType.text];
