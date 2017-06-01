@@ -570,10 +570,17 @@ VIDEO_Resize(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-	if (gpTexture) SDL_DestroyTexture(gpTexture);
-	gpTexture = VIDEO_CreateTexture(w, h);
-	if (gpTexture == NULL)
-		TerminateOnError("Re-creating texture failed on window resize!\n");
+   if (gpTexture)
+   {
+      SDL_DestroyTexture(gpTexture);
+   }
+
+   gpTexture = VIDEO_CreateTexture(w, h);
+
+   if (gpTexture == NULL)
+   {
+      TerminateOnError("Re-creating texture failed on window resize!\n");
+   }
 #else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
@@ -605,6 +612,8 @@ VIDEO_Resize(
 
    SDL_SetPalette(gpScreenReal, SDL_PHYSPAL | SDL_LOGPAL, palette, 0, i);
    VIDEO_UpdateScreen(NULL);
+
+   gpPalette = gpScreenReal->format->palette;
 #endif
 }
 
