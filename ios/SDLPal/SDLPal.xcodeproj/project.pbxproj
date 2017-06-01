@@ -940,7 +940,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/bin/sh -x";
-			shellScript = "exec ../../scripts/gengitrev\nsed -i '' 's/int main/int nomain/g' ../../3rd/SDL/src/video/uikit/SDL_uikitappdelegate.m";
+			shellScript = "sh ../../scripts/gengitrev\n";
 		};
 		F6629F352CD0A33AD0B0EF80 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
