@@ -29,7 +29,7 @@
 #include "common.h"
 #include "palcommon.h"
 
-#define     PAL_MAX_SAMPLERATE           48000
+#define     PAL_MAX_SAMPLERATE           49716
 #define     PAL_MAX_VOLUME               100
 
 typedef enum tagPALCFG_ITEM

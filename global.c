@@ -575,7 +575,7 @@ PAL_LoadGame_Common(
 	//
 	// Try to open the specified file
 	//
-	FILE *fp = fopen(szFileName, "rb");
+	FILE *fp = UTIL_OpenRequiredFileForMode(szFileName, "rb");
 	//
 	// Read all data from the file and close.
 	//
@@ -921,7 +921,9 @@ PAL_InitGameData(
    //
    // try loading from the saved game file.
    //
-   if (iSaveSlot == 0 || PAL_LoadGame(va("%s%d%s", gConfig.pszSavePath, iSaveSlot, ".rpg")) != 0)
+   char saveFileName[PAL_MAX_PATH];
+   snprintf(saveFileName, PAL_MAX_PATH, "%d%s", iSaveSlot, ".rpg");
+   if (iSaveSlot == 0 || PAL_LoadGame(saveFileName) != 0)
    {
       //
       // Cannot load the saved game file. Load the defaults.
