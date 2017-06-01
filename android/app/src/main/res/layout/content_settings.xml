@@ -17,9 +17,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:focusable="true" 
+            android:focusableInTouchMode="true"
             >
 
             <TextView
+                android:id="@+id/autotext"
+                android:nextFocusUp="@id/autotext" 
+                android:nextFocusLeft="@id/autotext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_folder"
