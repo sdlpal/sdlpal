@@ -76,3 +76,6 @@
 
 /* Class = "UILabel"; text = "日志记录级别"; ObjectID = "yup-CB-6Rc"; */
 "yup-CB-6Rc.text" = "日志记录级别";
+
+/* Class = "UILabel"; text = "SmoothScaling"; ObjectID = "VQA-I8-2Wf"; */
+"VQA-I8-2Wf.text" = "平滑缩放";
