@@ -101,7 +101,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone</AdditionalLibraryDirectories>
     </Link>
@@ -114,7 +114,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone</AdditionalLibraryDirectories>
     </Link>
@@ -127,7 +127,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone</AdditionalLibraryDirectories>
     </Link>
@@ -140,7 +140,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone</AdditionalLibraryDirectories>
     </Link>

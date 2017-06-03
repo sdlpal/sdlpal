@@ -214,7 +214,7 @@ public:
 		: m_event(CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS))
 		, m_playing(false)
 	{
-		InitializeCriticalSection(&m_cs);
+		InitializeCriticalSectionEx(&m_cs, 4000, 0);
 	}
 
 	~CAVIPlayer()
@@ -287,7 +287,7 @@ public:
 			FAIL_RETURN(m_engine->Load());
 
 			bool abort = false, ready = false;
-			while (WaitForSingleObject(m_event, INFINITE) == WAIT_OBJECT_0 && !abort && !ready)
+			while (WaitForSingleObjectEx(m_event, INFINITE, FALSE) == WAIT_OBJECT_0 && !abort && !ready)
 			{
 				EnterCriticalSection(&m_cs);
 				for (auto i = m_events.begin(); i != m_events.end(); i = m_events.erase(i))
@@ -362,7 +362,7 @@ public:
 					m_context->Unmap(m_reader.Get(), 0);
 				}
 
-				if (WaitForSingleObject(m_event, 0) == WAIT_OBJECT_0)
+				if (WaitForSingleObjectEx(m_event, 0, FALSE) == WAIT_OBJECT_0)
 				{
 					EnterCriticalSection(&m_cs);
 					for (auto i = m_events.begin(); i != m_events.end(); i = m_events.erase(i))

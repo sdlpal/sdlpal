@@ -136,7 +136,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.Windows;$(OutDir)../SDLPal.Core.Windows</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -149,7 +149,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.Windows;$(OutDir)../SDLPal.Core.Windows</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -162,7 +162,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.Windows;$(OutDir)../SDLPal.Core.Windows</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -175,7 +175,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.Windows;$(OutDir)../SDLPal.Core.Windows</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -188,7 +188,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.Windows;$(OutDir)../SDLPal.Core.Windows</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -201,7 +201,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.Windows;$(OutDir)../SDLPal.Core.Windows</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OleAut32.lib;D3D11.lib;Mf.lib;Mfuuid.lib;Mfplat.lib;dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
