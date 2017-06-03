@@ -42,8 +42,25 @@ using namespace Microsoft::WRL;
 class bstr_t
 {
 public:
+#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+	struct _bstr
+	{
+		DWORD   length;
+		OLECHAR string[2];
+	};
+	bstr_t(const wchar_t* s) : m_bstr(nullptr)
+	{
+		DWORD length = (DWORD)wcslen(s);
+		auto p = (_bstr*)CoTaskMemAlloc(length * sizeof(wchar_t) + sizeof(_bstr));
+		wcsncpy(m_bstr = p->string, s, length);
+		p->string[length] = p->string[length + 1] = L'\0';
+		p->length = length * sizeof(wchar_t);
+	}
+	~bstr_t() { CoTaskMemFree((LPBYTE)m_bstr - offsetof(_bstr, string)); }
+#else
 	bstr_t(const wchar_t* s) : m_bstr(SysAllocString(s)) {}
 	~bstr_t() { SysFreeString(m_bstr); }
+#endif
 
 	operator BSTR() { return m_bstr; }
 
