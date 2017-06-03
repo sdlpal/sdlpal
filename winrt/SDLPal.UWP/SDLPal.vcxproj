@@ -237,7 +237,7 @@
     <None Include="SDLPal_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\native_midi.cpp" />
+    <ClCompile Include="..\SDLPal.Common\native_midi.cpp" />
     <ClCompile Include="..\SDLPal.Common\native_avi.cpp" />
     <ClCompile Include="..\SDLPal.Common\SDLPal.cpp" />
     <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp" />

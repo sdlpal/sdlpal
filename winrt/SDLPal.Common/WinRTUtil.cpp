@@ -9,7 +9,10 @@
 #include <mfapi.h>
 #include "../SDLPal.Common/AsyncHelper.h"
 #include "../SDLPal.Common/StringHelper.h"
-#include "../../main.h"
+#include "util.h"
+#include "palcfg.h"
+#include "global.h"
+#include "main.h"
 
 #include "SDL.h"
 #include "SDL_endian.h"

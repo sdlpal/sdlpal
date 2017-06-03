@@ -34,6 +34,9 @@
     <ClCompile Include="..\SDLPal.Common\SDLPal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\SDLPal.Common\native_avi.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

@@ -32,7 +32,7 @@
 #include <string>
 #include <tchar.h>
 #include <windows.h>
-#include <MMSystem.h>
+#include <mmsystem.h>
 #include <commctrl.h>
 #include <shlobj.h>
 #include <SDL_syswm.h>
