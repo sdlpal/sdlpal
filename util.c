@@ -654,7 +654,7 @@ UTIL_LogOutput(
 	va_list    va;
 	time_t     tv = time(NULL);
 	struct tm *tmval = localtime(&tv);
-	int        id;
+	int        id, n;
 
 	if (level < gConfig.iLogLevel || !_log_callbacks[0]) return;
 	if (level > LOGLEVEL_MAX) level = LOGLEVEL_MAX;
@@ -666,8 +666,11 @@ UTIL_LogOutput(
 		_loglevel_str[level]);
 
 	va_start(va, fmt);
-	vsnprintf(_log_buffer + PAL_LOG_BUFFER_EXTRA_SIZE - 1, PAL_LOG_BUFFER_SIZE + 1, fmt, va);
+	n = vsnprintf(_log_buffer + PAL_LOG_BUFFER_EXTRA_SIZE - 1, PAL_LOG_BUFFER_SIZE, fmt, va);
 	va_end(va);
+	n = (n == -1) ? PAL_LOG_BUFFER_EXTRA_SIZE + PAL_LOG_BUFFER_SIZE - 1 : n + PAL_LOG_BUFFER_EXTRA_SIZE;
+	_log_buffer[n--] = '\0';
+	if (_log_buffer[n] != '\n') _log_buffer[n] = '\n';
 
 	for(id = 0; id < PAL_LOG_MAX_OUTPUTS && _log_callbacks[id]; id++)
 	{
