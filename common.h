@@ -100,6 +100,7 @@
 #   define snprintf _snprintf
 #  endif
 #  define strdup _strdup
+#  define access _access
 #  pragma warning (disable:4244)
 # endif
 
