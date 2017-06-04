@@ -46,6 +46,7 @@ char *
 UTIL_GlobalBuffer(
 	int         index
 );
+#define PAL_BUFFER_SIZE_ARGS(i) UTIL_GlobalBuffer(i), PAL_GLOBAL_BUFFER_SIZE
 
 /*++
   Purpose:
@@ -129,6 +130,36 @@ UTIL_OpenFileForMode(
    LPCSTR               szMode
 );
 
+FILE *
+UTIL_OpenFileAtPath(
+	LPCSTR              lpszPath,
+	LPCSTR              lpszFileName
+);
+
+/*++
+  Purpose:
+
+    Open a file in desired mode at the specific path.
+	If fails, return NULL.
+
+  Parameters:
+
+    [IN]  lpszPath - path to locate the file.
+    [IN]  lpszFileName - file name to open.
+    [IN]  szMode - file open mode.
+
+  Return value:
+
+    Pointer to the file.
+
+--*/
+FILE *
+UTIL_OpenFileAtPathForMode(
+	LPCSTR              lpszPath,
+	LPCSTR              lpszFileName,
+	LPCSTR              szMode
+);
+
 VOID
 UTIL_CloseFile(
    FILE                *fp
@@ -156,11 +187,19 @@ UTIL_CloseFile(
 const char *
 UTIL_CombinePath(
 	char       *buffer,
-	int         buflen,
+	size_t      buflen,
 	int         numentry,
 	...
 );
 #define PAL_CombinePath(i, d, f) UTIL_CombinePath(UTIL_GlobalBuffer(i), PAL_GLOBAL_BUFFER_SIZE, 2, (d), (f))
+
+const char *
+UTIL_GetFullPathName(
+	char       *buffer,
+	size_t      buflen,
+	const char *basepath,
+	const char *subpath
+);
 
 /*
  * Platform-specific utilities

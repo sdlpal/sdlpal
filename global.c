@@ -202,7 +202,7 @@ PAL_InitGlobals(
    //
    Decompress = gConfig.fIsWIN95 ? YJ2_Decompress : YJ1_Decompress;
 
-   gpGlobals->lpObjectDesc = gConfig.fIsWIN95 ? NULL : PAL_LoadObjectDesc(PAL_CombinePath(0, gConfig.pszGamePath, "desc.dat"));
+   gpGlobals->lpObjectDesc = gConfig.fIsWIN95 ? NULL : PAL_LoadObjectDesc("desc.dat");
    gpGlobals->bCurrentSaveSlot = 1;
 
    return 0;
@@ -567,7 +567,7 @@ typedef struct tagSAVEDGAME_WIN
 
 static BOOL
 PAL_LoadGame_Common(
-	const char         *szFileName,
+	int                 iSaveSlot,
 	LPSAVEDGAME_COMMON  s,
 	size_t              size
 )
@@ -575,7 +575,7 @@ PAL_LoadGame_Common(
 	//
 	// Try to open the specified file
 	//
-	FILE *fp = fopen(szFileName, "rb");
+	FILE *fp = UTIL_OpenFileAtPath(gConfig.pszSavePath, PAL_va(1, "%d.rpg", iSaveSlot));
 	//
 	// Read all data from the file and close.
 	//
@@ -647,7 +647,7 @@ PAL_LoadGame_Common(
 
 static INT
 PAL_LoadGame_DOS(
-   LPCSTR         szFileName
+   int            iSaveSlot
 )
 /*++
   Purpose:
@@ -670,7 +670,7 @@ PAL_LoadGame_DOS(
    //
    // Get all the data from the saved game struct.
    //
-   if (!PAL_LoadGame_Common(szFileName, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_DOS)))
+   if (!PAL_LoadGame_Common(iSaveSlot, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_DOS)))
 	   return -1;
 
    //
@@ -699,7 +699,7 @@ PAL_LoadGame_DOS(
 
 static INT
 PAL_LoadGame_WIN(
-   LPCSTR         szFileName
+   int            iSaveSlot
 )
 /*++
   Purpose:
@@ -721,7 +721,7 @@ PAL_LoadGame_WIN(
    //
    // Get all the data from the saved game struct.
    //
-   if (!PAL_LoadGame_Common(szFileName, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_WIN)))
+   if (!PAL_LoadGame_Common(iSaveSlot, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_WIN)))
 	   return -1;
 
    memcpy(gpGlobals->g.rgObject, s.rgObject, sizeof(gpGlobals->g.rgObject));
@@ -735,15 +735,15 @@ PAL_LoadGame_WIN(
 
 static INT
 PAL_LoadGame(
-   LPCSTR         szFileName
+   int            iSaveSlot
 )
 {
-	return gConfig.fIsWIN95 ? PAL_LoadGame_WIN(szFileName) : PAL_LoadGame_DOS(szFileName);
+	return gConfig.fIsWIN95 ? PAL_LoadGame_WIN(iSaveSlot) : PAL_LoadGame_DOS(iSaveSlot);
 }
 
 static VOID
 PAL_SaveGame_Common(
-	LPCSTR             szFileName,
+	int                iSaveSlot,
 	WORD               wSavedTimes,
 	LPSAVEDGAME_COMMON s,
 	size_t             size
@@ -798,7 +798,7 @@ PAL_SaveGame_Common(
 	//
 	// Try writing to file
 	//
-	if ((fp = fopen(szFileName, "wb")) == NULL)
+	if ((fp = UTIL_OpenFileAtPathForMode(gConfig.pszSavePath, PAL_va(1, "%d.rpg", iSaveSlot), "wb")) == NULL)
 	{
 		return;
 	}
@@ -812,7 +812,7 @@ PAL_SaveGame_Common(
 
 static VOID
 PAL_SaveGame_DOS(
-   LPCSTR         szFileName,
+   int            iSaveSlot,
    WORD           wSavedTimes
 )
 /*++
@@ -849,12 +849,12 @@ PAL_SaveGame_DOS(
    //
    // Put all the data to the saved game struct.
    //
-   PAL_SaveGame_Common(szFileName, wSavedTimes, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_DOS));
+   PAL_SaveGame_Common(iSaveSlot, wSavedTimes, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_DOS));
 }
 
 static VOID
 PAL_SaveGame_WIN(
-   LPCSTR         szFileName,
+   int            iSaveSlot,
    WORD           wSavedTimes
 )
 /*++
@@ -880,19 +880,19 @@ PAL_SaveGame_WIN(
    memcpy(s.rgObject, gpGlobals->g.rgObject, sizeof(gpGlobals->g.rgObject));
    memcpy(s.rgEventObject, gpGlobals->g.lprgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
-   PAL_SaveGame_Common(szFileName, wSavedTimes, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_WIN));
+   PAL_SaveGame_Common(iSaveSlot, wSavedTimes, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_WIN));
 }
 
 VOID
 PAL_SaveGame(
-   LPCSTR         szFileName,
+   int            iSaveSlot,
    WORD           wSavedTimes
 )
 {
 	if (gConfig.fIsWIN95)
-		PAL_SaveGame_WIN(szFileName, wSavedTimes);
+		PAL_SaveGame_WIN(iSaveSlot, wSavedTimes);
 	else
-		PAL_SaveGame_DOS(szFileName, wSavedTimes);
+		PAL_SaveGame_DOS(iSaveSlot, wSavedTimes);
 }
 
 VOID
@@ -921,7 +921,7 @@ PAL_InitGameData(
    //
    // try loading from the saved game file.
    //
-   if (iSaveSlot == 0 || PAL_LoadGame(PAL_CombinePath(0, gConfig.pszSavePath, PAL_va(1, "%d.rpg", iSaveSlot))) != 0)
+   if (iSaveSlot == 0 || PAL_LoadGame(iSaveSlot) != 0)
    {
       //
       // Cannot load the saved game file. Load the defaults.

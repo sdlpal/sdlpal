@@ -24,7 +24,7 @@
 
 static WORD GetSavedTimes(int iSaveSlot)
 {
-	FILE *fp = fopen(PAL_CombinePath(0, gConfig.pszSavePath, PAL_va(1, "%d.rpg", iSaveSlot)), "rb");
+	FILE *fp = UTIL_OpenFileAtPath(gConfig.pszSavePath, PAL_va(0, "%d.rpg", iSaveSlot));
 	WORD wSavedTimes = 0;
 	if (fp != NULL)
 	{
@@ -599,7 +599,7 @@ PAL_SystemMenu(
                wSavedTimes = curSavedTimes;
             }
          }
-         PAL_SaveGame(PAL_CombinePath(0, gConfig.pszSavePath, PAL_va(1, "%d.rpg", iSlot)), wSavedTimes + 1);
+         PAL_SaveGame(iSlot, wSavedTimes + 1);
       }
       break;
 

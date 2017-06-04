@@ -33,6 +33,13 @@
 #endif
 
 static char internal_buffer[PAL_MAX_GLOBAL_BUFFERS + 1][PAL_GLOBAL_BUFFER_SIZE];
+#ifdef _WIN32
+static const char * const path_separators = "/\\";
+# define isseparator(x) ((x) == '/' || (x) == '\\')
+#else
+static const char * const path_separators = "/";
+# define isseparator(x) ((x) == '/')
+#endif
 
 void UTIL_MsgBox(char *string)
 {
@@ -483,32 +490,47 @@ UTIL_OpenFileForMode(
 
 --*/
 {
-	FILE         *fp;
-
+	//
+	// If lpszFileName is an absolute path, use its last element as filename
+	//
 	if (UTIL_IsAbsolutePath(lpszFileName))
-		fp = fopen(lpszFileName, szMode);
-	else
-		fp = fopen(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, gConfig.pszGamePath, lpszFileName), szMode);
-
-#if !defined(PAL_FILESYSTEM_IGNORE_CASE) || !PAL_FILESYSTEM_IGNORE_CASE
-	if (fp == NULL)
 	{
-		//
-		// try to find the matching file in the directory.
-		//
-		struct dirent **list;
-		int n = scandir(gConfig.pszGamePath, &list, 0, alphasort);
-		while (n-- > 0)
+		char *temp = strdup(lpszFileName), *filename = temp;
+		FILE *fp = NULL;
+		for (char *next = strpbrk(filename, path_separators); next; next = strpbrk(filename = next + 1, path_separators));
+		if (*filename)
 		{
-			if (!fp && strcasecmp(list[n]->d_name, lpszFileName) == 0)
-				fp = fopen(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, gConfig.pszGamePath, list[n]->d_name), szMode);
-			free(list[n]);
+			filename[-1] = '\0';
+			fp = UTIL_OpenFileAtPathForMode(*temp ? temp : "/", filename, szMode);
 		}
-		free(list);
+		free(temp);
+		return fp;
 	}
-#endif
 
-	return fp;
+	return UTIL_OpenFileAtPathForMode(gConfig.pszGamePath, lpszFileName, szMode);
+}
+
+FILE *
+UTIL_OpenFileAtPath(
+	LPCSTR              lpszPath,
+	LPCSTR              lpszFileName
+)
+{
+	return UTIL_OpenFileAtPathForMode(lpszPath, lpszFileName, "rb");
+}
+
+FILE *
+UTIL_OpenFileAtPathForMode(
+	LPCSTR              lpszPath,
+	LPCSTR              lpszFileName,
+	LPCSTR              szMode
+)
+{
+	//
+	// Construct full path according to lpszPath and lpszFileName
+	//
+	const char *path = UTIL_GetFullPathName(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, lpszPath, lpszFileName);
+	return path ? fopen(path, szMode) : NULL;
 }
 
 VOID
@@ -538,18 +560,77 @@ UTIL_CloseFile(
 
 
 const char *
+UTIL_GetFullPathName(
+	char       *buffer,
+	size_t      buflen,
+	const char *basepath,
+	const char *subpath
+)
+{
+	if (!buffer || !basepath || !subpath || buflen == 0) return NULL;
+
+	int baselen = strlen(basepath), sublen = strlen(subpath);
+	if (sublen == 0) return NULL;
+
+	char *_base = strdup(basepath), *_sub = strdup(subpath);
+	const char *result = NULL;
+
+	if (access(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, _base, _sub), 0) == 0)
+	{
+		result = internal_buffer[PAL_MAX_GLOBAL_BUFFERS];
+	}
+
+#if !defined(PAL_FILESYSTEM_IGNORE_CASE) || !PAL_FILESYSTEM_IGNORE_CASE
+	if (result == NULL)
+	{
+		size_t pos = strspn(_sub, path_separators);
+
+		if (pos < sublen)
+		{
+			char *start = _sub + pos;
+			char *end = strpbrk(start, path_separators);
+			if (end) *end = '\0';
+
+			//
+			// try to find the matching file in the directory.
+			//
+			struct dirent **list;
+			int n = scandir(_base, &list, 0, alphasort);
+			while (n-- > 0)
+			{
+				if (!result && strcasecmp(list[n]->d_name, start) == 0)
+				{
+					result = UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, _base, list[n]->d_name);
+					if (end)
+						result = UTIL_GetFullPathName(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, result, end + 1);
+					else if (access(result, 0) != 0)
+						result = NULL;
+				}
+				free(list[n]);
+			}
+			free(list);
+		}
+	}
+#endif
+	if (result != NULL)
+	{
+		result = (char *)memmove(buffer, result, min(buflen, strlen(result)));
+	}
+
+	free(_base);
+	free(_sub);
+
+	return result;
+}
+
+const char *
 UTIL_CombinePath(
 	char       *buffer,
-	int         buflen,
+	size_t      buflen,
 	int         numentry,
 	...
 )
 {
-#ifdef _WIN32
-#define isseparator(x) ((x) == '/' || (x) == '\\')
-#else
-#define isseparator(x) ((x) == '/')
-#endif
 	if (buffer && buflen > 0 && numentry > 0)
 	{
 		const char *retval = buffer;
@@ -562,7 +643,7 @@ UTIL_CombinePath(
 			int path_len = path ? strlen(path) : 0;
 			int append_delim = (i < numentry - 1 && path_len > 0 && !isseparator(path[path_len - 1]));
 			
-			for (int is_sep = 0, j = 0; j < path_len && buflen > append_delim + 1; j++)
+			for (int is_sep = 0, j = 0; j < path_len && buflen > (size_t)append_delim + 1; j++)
 			{
 				//
 				// Skip continuous path separators
@@ -600,7 +681,6 @@ UTIL_CombinePath(
 	{
 		return NULL;
 	}
-#undef isseparator
 }
 
 

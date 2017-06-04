@@ -857,7 +857,7 @@ PAL_LoadObjectDesc(
    LPOBJECTDESC               lpDesc = NULL, pNew = NULL;
    unsigned int               i;
 
-   fp = fopen(lpszFileName, "r");
+   fp = UTIL_OpenFileForMode(lpszFileName, "r");
 
    if (fp == NULL)
    {

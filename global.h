@@ -571,7 +571,7 @@ PAL_FreeGlobals(
 
 VOID
 PAL_SaveGame(
-   LPCSTR        szFileName,
+   int           iSaveSlot,
    WORD          wSavedTimes
 );
 

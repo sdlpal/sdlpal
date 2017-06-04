@@ -386,6 +386,8 @@ RIX_Init(
     0 if success, -1 if cannot allocate memory, -2 if file not found.
 --*/
 {
+	if (!szFileName) return NULL;
+
 	LPRIXPLAYER pRixPlayer = new RIXPLAYER;
 	if (pRixPlayer == NULL)
 	{
