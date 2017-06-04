@@ -128,6 +128,7 @@ static void PAL_LoadEmbeddedFont(void)
 			unicode_font[w][30] = 0;
 			unicode_font[w][31] = 0;
 		}
+		font_width[w] = 32;
 	}
 	free(wchar_buf);
 
