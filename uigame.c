@@ -24,8 +24,11 @@
 
 static WORD GetSavedTimes(int saveslot)
 {
-	FILE *fp = fopen(va("%s/%d%s", gConfig.pszSavePath, saveslot, ".rpg"), "rb");
+	FILE *fp;
 	WORD wSavedTimes = 0;
+	char buf[1024];
+	sprintf(buf, "%d%s", saveslot, ".rpg");
+	fp = UTIL_OpenFileForMode(buf, "rb");
 	if (fp != NULL)
 	{
 		if (fread(&wSavedTimes, sizeof(WORD), 1, fp) == 1)

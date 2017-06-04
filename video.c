@@ -783,13 +783,13 @@ VIDEO_SaveScreenshot(
 #ifdef _WIN32
 	SYSTEMTIME st;
 	GetLocalTime(&st);
-	sprintf(filename, "%s%04d%02d%02d%02d%02d%02d%03d.bmp", gConfig.pszSavePath, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+	sprintf(filename, "%s/%04d%02d%02d%02d%02d%02d%03d.bmp", gConfig.pszSavePath, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
 #else
 	struct timeval tv;
 	struct tm *ptm;
 	gettimeofday(&tv, NULL);
 	ptm = localtime(&tv.tv_sec);
-	sprintf(filename, "%s%04d%02d%02d%02d%02d%02d%03d.bmp", gConfig.pszSavePath, ptm->tm_year + 1900, ptm->tm_mon, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, (int)(tv.tv_usec / 1000));
+	sprintf(filename, "%s/%04d%02d%02d%02d%02d%02d%03d.bmp", gConfig.pszSavePath, ptm->tm_year + 1900, ptm->tm_mon, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, (int)(tv.tv_usec / 1000));
 #endif
 	
 	//
