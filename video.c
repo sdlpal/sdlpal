@@ -1218,6 +1218,10 @@ VIDEO_DrawSurfaceToScreen(
    //
    // Draw the surface to screen.
    //
+   if (g_bRenderPaused)
+   {
+      return;
+   }
    SDL_BlitScaled(pSurface, NULL, gpScreenReal, NULL);
    VIDEO_RenderCopy();
 #else

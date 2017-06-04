@@ -466,17 +466,16 @@ PAL_AVIFeedAudio(
     uint32_t        size
 )
 {
-	//
-	// Convert audio in-place at the original buffer
-	// This makes filling process much more simpler
-	//
-	avi->cvt.buf = buffer;
-	avi->cvt.len = size;
-	SDL_ConvertAudio(&avi->cvt);
-	size = avi->cvt.len_cvt;
+    //
+    // Convert audio in-place at the original buffer
+    // This makes filling process much more simpler
+    //
+    avi->cvt.buf = buffer;
+    avi->cvt.len = size;
+    SDL_ConvertAudio(&avi->cvt);
+    size = avi->cvt.len_cvt;
 
-	SDL_mutexP(avi->selfMutex);
-
+    SDL_mutexP(avi->selfMutex);
     while (size > 0)
     {
         uint32_t feed_size = (avi->dwAudioWritePos + size > avi->dwAudBufLen) ? avi->dwAudBufLen - avi->dwAudioWritePos : size;
@@ -485,7 +484,7 @@ PAL_AVIFeedAudio(
 
         avi->dwAudioWritePos = (avi->dwAudioWritePos + feed_size) % avi->dwAudBufLen;
 
-		buffer += feed_size;
+        buffer += feed_size;
         size -= feed_size;
     }
     SDL_mutexV(avi->selfMutex);
@@ -662,16 +661,13 @@ PAL_PlayAVI(
 	RIFFChunk *buf = (RIFFChunk *)avi->pChunkBuffer;
 	uint32_t   len = avi->dwBufferSize;
 	uint32_t   dwMicroSecChange = 0;
+	uint32_t   dwCurrentTime = SDL_GetTicks();
+	uint32_t   dwNextFrameTime;
+	uint32_t   dwFrameStartTime = dwCurrentTime;
 
     while (!fEndPlay)
     {
 		RIFFChunk *chunk = PAL_ReadDataChunk(fp, avi->lVideoEndPos, buf, len, avi->cvt.len_mult);
-		uint32_t   dwCurrentTime = SDL_GetTicks();
-		uint32_t   dwNextFrameTime = dwCurrentTime + (avi->dwMicroSecPerFrame / 1000);
-
-		dwMicroSecChange += avi->dwMicroSecPerFrame % 1000;
-		dwNextFrameTime += dwMicroSecChange / 1000;
-		dwMicroSecChange %= 1000;
 
 		if (chunk == NULL) break;
 
@@ -682,13 +678,20 @@ PAL_PlayAVI(
             //
             // Video frame
             //
-            PAL_RenderAVIFrameToSurface(avi->surface, chunk);
+			dwNextFrameTime = dwFrameStartTime + (avi->dwMicroSecPerFrame / 1000);
+
+			dwMicroSecChange += avi->dwMicroSecPerFrame % 1000;
+			dwNextFrameTime += dwMicroSecChange / 1000;
+			dwMicroSecChange %= 1000;
+
+			PAL_RenderAVIFrameToSurface(avi->surface, chunk);
             VIDEO_DrawSurfaceToScreen(avi->surface);
 
             dwCurrentTime = SDL_GetTicks();
 
             // Check input states here
             UTIL_Delay(dwCurrentTime >= dwNextFrameTime ? 1 : dwNextFrameTime - dwCurrentTime);
+            dwFrameStartTime = SDL_GetTicks();
 
             if (g_InputState.dwKeyPress & (kKeyMenu | kKeySearch))
             {
