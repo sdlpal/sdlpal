@@ -92,7 +92,7 @@ typedef struct AVIPlayState
     SDL_Surface   *surface;            // video buffer
 
     long           lVideoEndPos;
-	uint32_t       dwMillisPerFrame;       // milliseconds per frame
+	uint32_t       dwMicroSecPerFrame;       // microseconds per frame
 	uint32_t       dwBufferSize;
     SDL_AudioCVT   cvt;
 
@@ -262,7 +262,7 @@ PAL_ReadAVIInfo(
 			//
 			fseek(fp, pos - sizeof(RIFFChunkHeader), SEEK_SET);
 			avi->lVideoEndPos = next_pos[current_level - 1];
-			avi->dwMillisPerFrame = aviHeader.dwMicroSecPerFrame / 1000;
+			avi->dwMicroSecPerFrame = aviHeader.dwMicroSecPerFrame;
 			//
 			// Create surface
 			//
@@ -488,7 +488,6 @@ PAL_AVIFeedAudio(
 		buffer += feed_size;
         size -= feed_size;
     }
-
     SDL_mutexV(avi->selfMutex);
 }
 
@@ -662,12 +661,17 @@ PAL_PlayAVI(
 	BOOL       fEndPlay = FALSE;
 	RIFFChunk *buf = (RIFFChunk *)avi->pChunkBuffer;
 	uint32_t   len = avi->dwBufferSize;
+	uint32_t   dwMicroSecChange = 0;
 
     while (!fEndPlay)
     {
 		RIFFChunk *chunk = PAL_ReadDataChunk(fp, avi->lVideoEndPos, buf, len, avi->cvt.len_mult);
 		uint32_t   dwCurrentTime = SDL_GetTicks();
-		uint32_t   dwNextFrameTime = dwCurrentTime + avi->dwMillisPerFrame;
+		uint32_t   dwNextFrameTime = dwCurrentTime + (avi->dwMicroSecPerFrame / 1000);
+
+		dwMicroSecChange += avi->dwMicroSecPerFrame % 1000;
+		dwNextFrameTime += dwMicroSecChange / 1000;
+		dwMicroSecChange %= 1000;
 
 		if (chunk == NULL) break;
 
@@ -678,12 +682,13 @@ PAL_PlayAVI(
             //
             // Video frame
             //
-			PAL_RenderAVIFrameToSurface(avi->surface, chunk);
+            PAL_RenderAVIFrameToSurface(avi->surface, chunk);
             VIDEO_DrawSurfaceToScreen(avi->surface);
 
             dwCurrentTime = SDL_GetTicks();
-			// Check input states here
-			UTIL_Delay(dwCurrentTime >= dwNextFrameTime ? 1 : dwNextFrameTime - dwCurrentTime);
+
+            // Check input states here
+            UTIL_Delay(dwCurrentTime >= dwNextFrameTime ? 1 : dwNextFrameTime - dwCurrentTime);
 
             if (g_InputState.dwKeyPress & (kKeyMenu | kKeySearch))
             {
@@ -743,7 +748,7 @@ PAL_PlayAVI(
 	}
 
 	fclose(fp);
-	
+
 	return TRUE;
 }
 
@@ -754,22 +759,26 @@ AVI_FillAudioBuffer(
 	int         len
 )
 {
-	AVIPlayState *avi = (AVIPlayState *)udata;
+    AVIPlayState *avi = (AVIPlayState *)udata;
+
     SDL_mutexP(avi->selfMutex);
-	//
-	// We do not check whether Read pointer & Write pointer overlaps like DSound does
-	//
-	while (avi->fp != NULL && len > 0)
-	{
-		uint32_t fill_size = (avi->dwAudioReadPos + len > avi->dwAudBufLen) ? avi->dwAudBufLen - avi->dwAudioReadPos : len;
+    while (avi->fp != NULL && len > 0 && avi->dwAudioWritePos != avi->dwAudioReadPos)
+    {
+        uint32_t fill_size = (avi->dwAudioReadPos + len > avi->dwAudBufLen) ? avi->dwAudBufLen - avi->dwAudioReadPos : len;
 
-		memcpy(stream, avi->pbAudioBuf + avi->dwAudioReadPos, fill_size);
+        if (avi->dwAudioWritePos > avi->dwAudioReadPos &&
+            fill_size > avi->dwAudioWritePos - avi->dwAudioReadPos)
+        {
+            fill_size = avi->dwAudioWritePos - avi->dwAudioReadPos;
+        }
 
-		avi->dwAudioReadPos = (avi->dwAudioReadPos + fill_size) % avi->dwAudBufLen;
+        memcpy(stream, avi->pbAudioBuf + avi->dwAudioReadPos, fill_size);
 
-		stream += fill_size;
-		len -= fill_size;
-	}
+        avi->dwAudioReadPos = (avi->dwAudioReadPos + fill_size) % avi->dwAudBufLen;
+
+        stream += fill_size;
+        len -= fill_size;
+    }
     SDL_mutexV(avi->selfMutex);
 }
 
