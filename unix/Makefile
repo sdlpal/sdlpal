@@ -22,6 +22,8 @@ TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 SDL_CONFIG = sdl2-config
 
+CC = $(HOST)gcc
+CXX = $(HOST)g++
 CCFLAGS = `$(SDL_CONFIG) --cflags` -g -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS) $(GENERATED)
 CXXFLAGS = $(CCFLAGS) -std=c++11 `fltk-config --cxxflags`
 CFLAGS = $(CCFLAGS) -std=gnu99 `fltk-config --cflags`
@@ -36,26 +38,26 @@ all: $(TARGET)
 
 $(TARGET): $(OBJFILES)
 	@echo [LD] $@
-	@$(HOST)gcc $^ -o $@ $(LDFLAGS)
+	@$(CXX) $^ -o $@ $(LDFLAGS)
 
 gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc %.d
 	@echo [CC] $<
-	@$(HOST)g++ $(DEPFLAGS) $(TEST_CXXFLAGS) -c $< -o $@
+	@$(CXX) $(DEPFLAGS) $(TEST_CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
 %$(INTER).o: %.c %$(INTER).d
 	@echo [CC] $<
-	@$(HOST)gcc $(DEPFLAGS) $(CFLAGS) -c $< -o $@
+	@$(CC) $(DEPFLAGS) $(CFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
 %$(INTER).o: %.cpp %$(INTER).d
 	@echo [CC] $<
-	@$(HOST)g++ $(DEPFLAGS) $(CXXFLAGS) -c $< -o $@
+	@$(CXX) $(DEPFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
 $(TEST_TARGET): $(OBJFILES) $(TEST_OBJFILES) gtest-all.o
 	@echo [LD] $@
-	@$(HOST)g++ $^ -o $@ $(LDFLAGS) -lpthread
+	@$(CXX) $^ -o $@ $(LDFLAGS) -lpthread
 
 clean:
 	-rm -f $(TARGET) $(TEST_TARGET) $(OBJFILES) $(TEST_OBJFILES) $(DEPFILES)

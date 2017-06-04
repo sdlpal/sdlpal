@@ -493,7 +493,7 @@ UTIL_OpenFileForMode(
 	if (UTIL_IsAbsolutePath(lpszFileName))
 		fp = fopen(lpszFileName, szMode);
 	else
-		fp = fopen(va("%s%s", gConfig.pszGamePath, lpszFileName), szMode);
+		fp = fopen(va("%s/%s", gConfig.pszGamePath, lpszFileName), szMode);
 
 #if !defined(PAL_FILESYSTEM_IGNORE_CASE) || !PAL_FILESYSTEM_IGNORE_CASE
 	if (fp == NULL)
@@ -506,7 +506,7 @@ UTIL_OpenFileForMode(
 		while (n-- > 0)
 		{
 			if (!fp && strcasecmp(list[n]->d_name, lpszFileName) == 0)
-				fp = fopen(va("%s%s", gConfig.pszGamePath, list[n]->d_name), szMode);
+				fp = fopen(va("%s/%s", gConfig.pszGamePath, list[n]->d_name), szMode);
 			free(list[n]);
 		}
 		free(list);

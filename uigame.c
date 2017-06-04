@@ -24,7 +24,7 @@
 
 static WORD GetSavedTimes(int saveslot)
 {
-	FILE *fp = fopen(va("%s%d%s", gConfig.pszSavePath, saveslot, ".rpg"), "rb");
+	FILE *fp = fopen(va("%s/%d%s", gConfig.pszSavePath, saveslot, ".rpg"), "rb");
 	WORD wSavedTimes = 0;
 	if (fp != NULL)
 	{
@@ -599,7 +599,7 @@ PAL_SystemMenu(
                wSavedTimes = curSavedTimes;
             }
          }
-         PAL_SaveGame(va("%s%d%s", gConfig.pszSavePath, iSlot, ".rpg"), wSavedTimes + 1);
+         PAL_SaveGame(va("%s/%d%s", gConfig.pszSavePath, iSlot, ".rpg"), wSavedTimes + 1);
       }
       break;
 
