@@ -40,7 +40,6 @@ MIDI_Play(
 		return;
 	}
 
-	AUDIO_PlayCDTrack(-1);
 	native_midi_stop(g_pMidi);
 	native_midi_freesong(g_pMidi);
 	g_pMidi = NULL;
@@ -53,7 +52,7 @@ MIDI_Play(
 
 	if (gConfig.fIsWIN95)
 	{
-		g_pMidi = native_midi_loadsong(va("%sMusics/%.3d.mid", gConfig.pszGamePath, iNumRIX));
+		g_pMidi = native_midi_loadsong(PAL_CombinePath(0, gConfig.pszGamePath, PAL_va(1, "Musics/%.3d.mid", iNumRIX)));
 	}
 
 	if (!g_pMidi)

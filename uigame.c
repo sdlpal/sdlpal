@@ -22,13 +22,10 @@
 
 #include "main.h"
 
-static WORD GetSavedTimes(int saveslot)
+static WORD GetSavedTimes(int iSaveSlot)
 {
-	FILE *fp;
+	FILE *fp = fopen(PAL_CombinePath(0, gConfig.pszSavePath, PAL_va(1, "%d.rpg", iSaveSlot)), "rb");
 	WORD wSavedTimes = 0;
-	char buf[1024];
-	sprintf(buf, "%d%s", saveslot, ".rpg");
-	fp = UTIL_OpenFileForMode(buf, "rb");
 	if (fp != NULL)
 	{
 		if (fread(&wSavedTimes, sizeof(WORD), 1, fp) == 1)
@@ -602,7 +599,7 @@ PAL_SystemMenu(
                wSavedTimes = curSavedTimes;
             }
          }
-         PAL_SaveGame(va("%s/%d%s", gConfig.pszSavePath, iSlot, ".rpg"), wSavedTimes + 1);
+         PAL_SaveGame(PAL_CombinePath(0, gConfig.pszSavePath, PAL_va(1, "%d.rpg", iSlot)), wSavedTimes + 1);
       }
       break;
 

@@ -113,9 +113,9 @@ MP3_Play(
 
 	if (iNum > 0)
 	{
-		if ((player->pMP3 = mad_openFile(va("%smp3/%.2d.mp3", gConfig.pszGamePath, iNum), AUDIO_GetDeviceSpec(), gConfig.iResampleQuality)) == NULL)
+		if ((player->pMP3 = mad_openFile(PAL_CombinePath(0, gConfig.pszGamePath, PAL_va(1, "mp3/%.2d.mp3", iNum)), AUDIO_GetDeviceSpec(), gConfig.iResampleQuality)) == NULL)
 		{
-			player->pMP3 = mad_openFile(va("%sMP3/%.2d.MP3", gConfig.pszGamePath, iNum), AUDIO_GetDeviceSpec(), gConfig.iResampleQuality);
+			player->pMP3 = mad_openFile(PAL_CombinePath(0, gConfig.pszGamePath, PAL_va(1, "MP3/%.2d.MP3", iNum)), AUDIO_GetDeviceSpec(), gConfig.iResampleQuality);
 		}
 
 		if (player->pMP3)

@@ -259,9 +259,9 @@ AUDIO_OpenDevice(
    switch (gConfig.eMusicType)
    {
    case MUSIC_RIX:
-       if (!(gAudioDevice.pMusPlayer = RIX_Init(va("%s/%s", gConfig.pszGamePath, "mus.mkf"))))
+       if (!(gAudioDevice.pMusPlayer = RIX_Init(PAL_CombinePath(0, gConfig.pszGamePath, "mus.mkf"))))
        {
-           gAudioDevice.pMusPlayer = RIX_Init(va("%s/%s", gConfig.pszGamePath, "MUS.MKF"));
+           gAudioDevice.pMusPlayer = RIX_Init(PAL_CombinePath(0, gConfig.pszGamePath, "MUS.MKF"));
        }
 	   break;
    case MUSIC_MP3:
@@ -495,6 +495,14 @@ AUDIO_PlayMusic(
    FLOAT     flFadeTime
 )
 {
+	if (iNumRIX > 0)
+	{
+		//
+		// Stop the current CD music.
+		//
+		AUDIO_PlayCDTrack(-1);
+	}
+
    if (gConfig.eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(iNumRIX, fLoop);
@@ -529,6 +537,10 @@ AUDIO_PlayCDTrack(
 --*/
 {
 	BOOL ret = FALSE;
+	if (iNumTrack > 0)
+	{
+		AUDIO_PlayMusic(-1, FALSE, 0);
+	}
 #if PAL_HAS_SDLCD
    if (gAudioDevice.pCD != NULL)
    {
@@ -538,8 +550,6 @@ AUDIO_PlayCDTrack(
 
          if (iNumTrack != -1)
          {
-            AUDIO_PlayMusic(-1, FALSE, 0);
-
             if (SDL_CDPlayTracks(gAudioDevice.pCD, iNumTrack - 1, 0, 1, 0) == 0)
             {
                return TRUE;
@@ -553,7 +563,6 @@ AUDIO_PlayCDTrack(
    {
 	   if (iNumTrack != -1)
 	   {
-		   AUDIO_PlayMusic(-1, FALSE, 0);
 		   ret = gAudioDevice.pCDPlayer->Play(gAudioDevice.pCDPlayer, PAL_CDTRACK_BASE + iNumTrack, TRUE, 0);
 	   }
 	   else

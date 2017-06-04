@@ -333,11 +333,6 @@ RIX_Play(
 		return FALSE;
 	}
 
-	//
-	// Stop the current CD music.
-	//
-	AUDIO_PlayCDTrack(-1);
-
 	if (iNumRIX == pRixPlayer->iCurrentMusic && pRixPlayer->iNextMusic == -1)
 	{
 		/* Will play the same music without any pending play changes,

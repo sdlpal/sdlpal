@@ -246,4 +246,7 @@ typedef enum tagLOGLEVEL
 # define PAL_HAS_CONFIG_PAGE   FALSE
 #endif
 
+#define PAL_MAX_GLOBAL_BUFFERS 4
+#define PAL_GLOBAL_BUFFER_SIZE 1024
+
 #endif

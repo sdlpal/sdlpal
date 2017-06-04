@@ -779,26 +779,26 @@ VIDEO_SaveScreenshot(
 
 --*/
 {
-	char filename[1024];
+	char filename[32];
 #ifdef _WIN32
 	SYSTEMTIME st;
 	GetLocalTime(&st);
-	sprintf(filename, "%s/%04d%02d%02d%02d%02d%02d%03d.bmp", gConfig.pszSavePath, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+	sprintf(filename, "%04d%02d%02d%02d%02d%02d%03d.bmp", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
 #else
 	struct timeval tv;
 	struct tm *ptm;
 	gettimeofday(&tv, NULL);
 	ptm = localtime(&tv.tv_sec);
-	sprintf(filename, "%s/%04d%02d%02d%02d%02d%02d%03d.bmp", gConfig.pszSavePath, ptm->tm_year + 1900, ptm->tm_mon, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, (int)(tv.tv_usec / 1000));
+	sprintf(filename, "%04d%02d%02d%02d%02d%02d%03d.bmp", ptm->tm_year + 1900, ptm->tm_mon, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, (int)(tv.tv_usec / 1000));
 #endif
 	
 	//
 	// Save the screenshot.
 	//
 #if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_SaveBMP(gpScreen, filename);
+	SDL_SaveBMP(gpScreen, PAL_CombinePath(0, gConfig.pszSavePath, filename));
 #else
-	SDL_SaveBMP(gpScreenReal, filename);
+	SDL_SaveBMP(gpScreenReal, PAL_CombinePath(0, gConfig.pszSavePath, filename));
 #endif
 }
 

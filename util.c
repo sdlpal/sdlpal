@@ -32,6 +32,8 @@
 #include "SDL_messagebox.h"
 #endif
 
+static char internal_buffer[PAL_MAX_GLOBAL_BUFFERS + 1][PAL_GLOBAL_BUFFER_SIZE];
+
 void UTIL_MsgBox(char *string)
 {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -101,34 +103,27 @@ trim(
 }
 
 char *
-va(
-   const char *format,
-   ...
+UTIL_va(
+	char       *buffer,
+	int         buflen,
+	const char *format,
+	...
 )
-/*++
-  Purpose:
-
-    Does a varargs printf into a temp buffer, so we don't need to have
-    varargs versions of all text functions.
-
-  Parameters:
-
-    format - the format string.
-
-  Return value:
-
-    Pointer to the result string.
-
---*/
 {
-   static char string[1024];
-   va_list     argptr;
+   if (buflen > 0 && buffer)
+   {
+	   va_list     argptr;
 
-   va_start(argptr, format);
-   vsnprintf(string, sizeof(string), format, argptr);
-   va_end(argptr);
+	   va_start(argptr, format);
+	   vsnprintf(buffer, buflen, format, argptr);
+	   va_end(argptr);
 
-   return string;
+	   return buffer;
+   }
+   else
+   {
+	   return NULL;
+   }
 }
 
 /*
@@ -493,7 +488,7 @@ UTIL_OpenFileForMode(
 	if (UTIL_IsAbsolutePath(lpszFileName))
 		fp = fopen(lpszFileName, szMode);
 	else
-		fp = fopen(va("%s/%s", gConfig.pszGamePath, lpszFileName), szMode);
+		fp = fopen(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, gConfig.pszGamePath, lpszFileName), szMode);
 
 #if !defined(PAL_FILESYSTEM_IGNORE_CASE) || !PAL_FILESYSTEM_IGNORE_CASE
 	if (fp == NULL)
@@ -506,7 +501,7 @@ UTIL_OpenFileForMode(
 		while (n-- > 0)
 		{
 			if (!fp && strcasecmp(list[n]->d_name, lpszFileName) == 0)
-				fp = fopen(va("%s/%s", gConfig.pszGamePath, list[n]->d_name), szMode);
+				fp = fopen(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, gConfig.pszGamePath, list[n]->d_name), szMode);
 			free(list[n]);
 		}
 		free(list);
@@ -540,6 +535,83 @@ UTIL_CloseFile(
       fclose(fp);
    }
 }
+
+
+const char *
+UTIL_CombinePath(
+	char       *buffer,
+	int         buflen,
+	int         numentry,
+	...
+)
+{
+#ifdef _WIN32
+#define isseparator(x) ((x) == '/' || (x) == '\\')
+#else
+#define isseparator(x) ((x) == '/')
+#endif
+	if (buffer && buflen > 0 && numentry > 0)
+	{
+		const char *retval = buffer;
+		va_list argptr;
+
+		va_start(argptr, numentry);
+		for (int i = 0; i < numentry && buflen > 1; i++)
+		{
+			const char *path = va_arg(argptr, const char *);
+			int path_len = path ? strlen(path) : 0;
+			int append_delim = (i < numentry - 1 && path_len > 0 && !isseparator(path[path_len - 1]));
+			
+			for (int is_sep = 0, j = 0; j < path_len && buflen > append_delim + 1; j++)
+			{
+				//
+				// Skip continuous path separators
+				// 
+				if (isseparator(path[j]))
+				{
+					if (is_sep)
+						continue;
+					else
+						is_sep = 1;
+				}
+				else
+				{
+					is_sep = 0;
+				}
+				*buffer++ = path[j];
+				buflen--;
+			}
+			//
+			// Make sure a path delimeter is append to the destination if this is not the last entry
+			// 
+			if (append_delim)
+			{
+				*buffer++ = '/';
+				buflen--;
+			}
+		}
+		va_end(argptr);
+
+		*buffer = '\0';
+
+		return retval;
+	}
+	else
+	{
+		return NULL;
+	}
+#undef isseparator
+}
+
+
+char *
+UTIL_GlobalBuffer(
+	int         index
+)
+{
+	return (index >= 0 && index < PAL_MAX_GLOBAL_BUFFERS) ? internal_buffer[index] : NULL;
+}
+
 
 #if !defined(PAL_HAS_PLATFORM_SPECIFIC_UTILS)
 
@@ -578,6 +650,7 @@ UTIL_Platform_Quit(
 }
 
 #endif
+
 
 /*
 * Logging utilities

@@ -42,10 +42,36 @@ trim(
    char *str
 );
 
-char *va(
-   const char *format,
-   ...
+char *
+UTIL_GlobalBuffer(
+	int         index
 );
+
+/*++
+  Purpose:
+
+    Does a varargs printf into the user-supplied buffer,
+	so we don't need to have varargs versions of all text functions.
+
+  Parameters:
+
+    buffer - user-supplied buffer.
+	buflen - size of the buffer, including null-terminator.
+    format - the format string.
+
+  Return value:
+
+    The value of buffer if buffer is non-NULL and buflen > 0, otherwise NULL.
+
+--*/
+char *
+UTIL_va(
+	char       *buffer,
+	int         buflen,
+	const char *format,
+	...
+);
+#define PAL_va(i, fmt, ...) UTIL_va(UTIL_GlobalBuffer(i), PAL_GLOBAL_BUFFER_SIZE, fmt, __VA_ARGS__)
 
 int
 RandomLong(
@@ -108,6 +134,33 @@ UTIL_CloseFile(
    FILE                *fp
 );
 
+/*++
+  Purpose:
+
+    Combine the 'dir' and 'file' part into a single path string.
+	If 'dir' is non-NULL, then it ensures that the output string contains
+	'/' between 'dir' and 'file' (no matter whether 'file' is NULL or not).
+
+  Parameters:
+
+    buffer - user-supplied buffer.
+	buflen - size of the buffer, including null-terminator.
+    dir    - the directory path.
+	file   - the file path.
+
+  Return value:
+
+    The value of buffer if buffer is non-NULL and buflen > 0, otherwise NULL.
+
+--*/
+const char *
+UTIL_CombinePath(
+	char       *buffer,
+	int         buflen,
+	int         numentry,
+	...
+);
+#define PAL_CombinePath(i, d, f) UTIL_CombinePath(UTIL_GlobalBuffer(i), PAL_GLOBAL_BUFFER_SIZE, 2, (d), (f))
 
 /*
  * Platform-specific utilities

@@ -297,7 +297,7 @@ PAL_LoadConfig(
 
 	for (PALCFG_ITEM i = PALCFG_ALL_MIN; i < PALCFG_ALL_MAX; i++) values[i] = gConfigItems[i].DefaultValue;
 
-	if (fFromFile && (fp = fopen(va("%ssdlpal.cfg", PAL_CONFIG_PREFIX), "r")))
+	if (fFromFile && (fp = fopen(PAL_CombinePath(0, PAL_CONFIG_PREFIX, "sdlpal.cfg"), "r")))
 	{
 		PAL_LARGE char buf[512];
 
@@ -477,7 +477,7 @@ PAL_SaveConfig(
 )
 {
 	char buf[512];
-	FILE *fp = fopen(va("%ssdlpal.cfg", PAL_CONFIG_PREFIX), "w");
+	FILE *fp = fopen(PAL_CombinePath(0, PAL_CONFIG_PREFIX, "sdlpal.cfg"), "w");
 
 	if (fp)
 	{

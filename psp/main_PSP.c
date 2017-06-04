@@ -71,7 +71,7 @@ int PSPSuspendCallback(int arg1, int pwrflags, void *common)
     gpGlobals->f.fpDATA = UTIL_OpenRequiredFile("data.mkf");
     gpGlobals->f.fpFIRE = UTIL_OpenRequiredFile("fire.mkf");
     gpGlobals->f.fpSSS = UTIL_OpenRequiredFile("sss.mkf");
-    gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
+    gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(PAL_CombinePath(0, PAL_PREFIX, "desc.dat"));
     SOUND_Reload();
   }
   int cbid;

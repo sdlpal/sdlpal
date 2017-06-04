@@ -405,7 +405,6 @@ OGG_Play(
 	FLOAT       flFadeTime
 	)
 {
-	char filename[256];
 	LPOGGPLAYER player = (LPOGGPLAYER)object;
 
 	//
@@ -436,7 +435,7 @@ OGG_Play(
 		return TRUE;
 	}
 
-	player->fp = UTIL_OpenFile(strcpy(filename, va("ogg/%.2d.ogg", iNum)));
+	player->fp = UTIL_OpenFile(PAL_va(0, "ogg/%.2d.ogg", iNum));
 	if (player->fp == NULL)
 	{
 		return FALSE;

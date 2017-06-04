@@ -35,7 +35,7 @@ char* cliplayer = nullptr;
 static char *which(const char *cmd)
 {
 	static char path[PATH_MAX] = { '\0' };
-    FILE *fp = popen(va("which %s", cmd), "r");
+    FILE *fp = popen(PAL_va(0, "which %s", cmd), "r");
     if (fp == NULL) {
         return NULL;
     }else{

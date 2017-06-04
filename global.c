@@ -202,7 +202,7 @@ PAL_InitGlobals(
    //
    Decompress = gConfig.fIsWIN95 ? YJ2_Decompress : YJ1_Decompress;
 
-   gpGlobals->lpObjectDesc = gConfig.fIsWIN95 ? NULL : PAL_LoadObjectDesc(va("%s%s", gConfig.pszGamePath, "desc.dat"));
+   gpGlobals->lpObjectDesc = gConfig.fIsWIN95 ? NULL : PAL_LoadObjectDesc(PAL_CombinePath(0, gConfig.pszGamePath, "desc.dat"));
    gpGlobals->bCurrentSaveSlot = 1;
 
    return 0;
@@ -575,7 +575,7 @@ PAL_LoadGame_Common(
 	//
 	// Try to open the specified file
 	//
-	FILE *fp = UTIL_OpenFileForMode(szFileName, "rb");
+	FILE *fp = fopen(szFileName, "rb");
 	//
 	// Read all data from the file and close.
 	//
@@ -921,9 +921,7 @@ PAL_InitGameData(
    //
    // try loading from the saved game file.
    //
-   char saveFileName[PAL_MAX_PATH];
-   snprintf(saveFileName, PAL_MAX_PATH, "%d%s", iSaveSlot, ".rpg");
-   if (iSaveSlot == 0 || PAL_LoadGame(saveFileName) != 0)
+   if (iSaveSlot == 0 || PAL_LoadGame(PAL_CombinePath(0, gConfig.pszSavePath, PAL_va(1, "%d.rpg", iSaveSlot))) != 0)
    {
       //
       // Cannot load the saved game file. Load the defaults.

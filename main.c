@@ -102,7 +102,8 @@ PAL_Init(
    AUDIO_OpenDevice();
    PAL_AVIInit();
 
-   VIDEO_SetWindowTitle(va("Pal %s%s%s",
+   VIDEO_SetWindowTitle(UTIL_va(UTIL_GlobalBuffer(0), PAL_GLOBAL_BUFFER_SIZE,
+	   "Pal %s%s%s",
 	   gConfig.fIsWIN95 ? "Win95" : "DOS",
 #if defined(_DEBUG) || defined(DEBUG)
 	   " (Debug) ",
