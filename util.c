@@ -33,13 +33,6 @@
 #endif
 
 static char internal_buffer[PAL_MAX_GLOBAL_BUFFERS + 1][PAL_GLOBAL_BUFFER_SIZE];
-#ifdef _WIN32
-static const char * const path_separators = "/\\";
-# define isseparator(x) ((x) == '/' || (x) == '\\')
-#else
-static const char * const path_separators = "/";
-# define isseparator(x) ((x) == '/')
-#endif
 
 void UTIL_MsgBox(char *string)
 {
@@ -497,7 +490,7 @@ UTIL_OpenFileForMode(
 	{
 		char *temp = strdup(lpszFileName), *filename = temp;
 		FILE *fp = NULL;
-		for (char *next = strpbrk(filename, path_separators); next; next = strpbrk(filename = next + 1, path_separators));
+		for (char *next = strpbrk(filename, PAL_PATH_SEPARATORS); next; next = strpbrk(filename = next + 1, PAL_PATH_SEPARATORS));
 		if (*filename)
 		{
 			filename[-1] = '\0';
@@ -583,12 +576,12 @@ UTIL_GetFullPathName(
 #if !defined(PAL_FILESYSTEM_IGNORE_CASE) || !PAL_FILESYSTEM_IGNORE_CASE
 	if (result == NULL)
 	{
-		size_t pos = strspn(_sub, path_separators);
+		size_t pos = strspn(_sub, PAL_PATH_SEPARATORS);
 
 		if (pos < sublen)
 		{
 			char *start = _sub + pos;
-			char *end = strpbrk(start, path_separators);
+			char *end = strpbrk(start, PAL_PATH_SEPARATORS);
 			if (end) *end = '\0';
 
 			//
@@ -641,14 +634,14 @@ UTIL_CombinePath(
 		{
 			const char *path = va_arg(argptr, const char *);
 			int path_len = path ? strlen(path) : 0;
-			int append_delim = (i < numentry - 1 && path_len > 0 && !isseparator(path[path_len - 1]));
+			int append_delim = (i < numentry - 1 && path_len > 0 && !PAL_IS_PATH_SEPARATOR(path[path_len - 1]));
 			
 			for (int is_sep = 0, j = 0; j < path_len && buflen > (size_t)append_delim + 1; j++)
 			{
 				//
 				// Skip continuous path separators
 				// 
-				if (isseparator(path[j]))
+				if (PAL_IS_PATH_SEPARATOR(path[j]))
 				{
 					if (is_sep)
 						continue;
@@ -667,7 +660,7 @@ UTIL_CombinePath(
 			// 
 			if (append_delim)
 			{
-				*buffer++ = '/';
+				*buffer++ = PAL_PATH_SEPARATORS[0];
 				buflen--;
 			}
 		}

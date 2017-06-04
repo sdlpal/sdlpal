@@ -249,4 +249,16 @@ typedef enum tagLOGLEVEL
 #define PAL_MAX_GLOBAL_BUFFERS 4
 #define PAL_GLOBAL_BUFFER_SIZE 1024
 
+//
+// PAL_PATH_SEPARATORS contains all vaild path separators under a specific OS
+// If you define this constant, please put the default separator at first.
+//
+#ifndef PAL_PATH_SEPARATORS
+# define PAL_PATH_SEPARATORS "/"
+#endif
+
+#ifndef PAL_IS_PATH_SEPARATOR
+# define PAL_IS_PATH_SEPARATOR(x) ((x) == '/')
+#endif
+
 #endif

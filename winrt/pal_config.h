@@ -53,6 +53,10 @@
 
 #define PAL_FILESYSTEM_IGNORE_CASE 1
 
+#define PAL_PATH_SEPARATORS "\\/"
+
+#define PAL_IS_PATH_SEPARATOR(x) ((x) == '\\' || (x) == '/')
+
 PAL_C_LINKAGE_BEGIN
 
 LPCSTR
