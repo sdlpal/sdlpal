@@ -575,7 +575,7 @@ PAL_LoadGame_Common(
 	//
 	// Try to open the specified file
 	//
-	FILE *fp = UTIL_OpenRequiredFileForMode(szFileName, "rb");
+	FILE *fp = UTIL_OpenFileForMode(szFileName, "rb");
 	//
 	// Read all data from the file and close.
 	//
