@@ -259,10 +259,10 @@ AUDIO_OpenDevice(
    switch (gConfig.eMusicType)
    {
    case MUSIC_RIX:
-	   if (!(gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "mus.mkf"))))
-	   {
-		   gAudioDevice.pMusPlayer = RIX_Init(va("%s%s", gConfig.pszGamePath, "MUS.MKF"));
-	   }
+       if (!(gAudioDevice.pMusPlayer = RIX_Init(va("%s/%s", gConfig.pszGamePath, "mus.mkf"))))
+       {
+           gAudioDevice.pMusPlayer = RIX_Init(va("%s/%s", gConfig.pszGamePath, "MUS.MKF"));
+       }
 	   break;
    case MUSIC_MP3:
 	   gAudioDevice.pMusPlayer = MP3_Init();
