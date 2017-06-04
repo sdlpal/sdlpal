@@ -80,6 +80,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_LOGFILE,
 	PALCFG_RIXEXTRAINIT,
 	PALCFG_CLIMIDIPLAYER,
+    PALCFG_SCALEQUALITY,
 	/* Strings */
 	PALCFG_STRING_MAX,
 
@@ -168,6 +169,7 @@ typedef struct tagCONFIGURATION
 	char            *pszFontFile;
 	char            *pszCLIMIDIPlayerPath;
 	char            *pszLogFile;
+    char            *pszScaleQuality;
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;
 	DWORD            dwScreenHeight;

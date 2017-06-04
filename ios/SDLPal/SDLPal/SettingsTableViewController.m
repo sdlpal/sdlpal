@@ -34,6 +34,7 @@
     
     IBOutlet UISwitch *toggleTouchScreenOverlay;
     IBOutlet UISwitch *toggleKeepAspect;
+    IBOutlet UISwitch *toggleSmoothScaling;
     
     IBOutlet UILabel *lblMusicType;
     IBOutlet UILabel *lblOPLType;
@@ -132,8 +133,8 @@ typedef void(^SelectedBlock)(NSString *selected);
         case 1:
             rows = 2;
             break;
-       case 2:
-            rows = 2;
+        case 2:
+            rows = 3;
             break;
         case 3:
             rows = [lblMusicType.text isEqualToString:@"RIX"] ? 11 : 4;
@@ -153,6 +154,12 @@ typedef void(^SelectedBlock)(NSString *selected);
         [self showPickerWithTitle:nil toLabel:lblLanguageFile inArray:AvailFiles origin:cell allowEmpty:YES];
     }else if( indexPath.section == 1 && indexPath.row == 1 ) { //font file
         [self showPickerWithTitle:nil toLabel:lblFontFile inArray:AvailFiles origin:cell allowEmpty:YES];
+    }else if( indexPath.section == 2 && indexPath.row == 0 ) { //touch overlay
+        toggleTouchScreenOverlay.on = !toggleTouchScreenOverlay.isOn;
+    }else if( indexPath.section == 2 && indexPath.row == 1 ) { //keep aspect
+        toggleKeepAspect.on = !toggleKeepAspect.isOn;
+    }else if( indexPath.section == 2 && indexPath.row == 2 ) { //smooth scaling
+        toggleSmoothScaling.on = !toggleSmoothScaling.isOn;
     }else if( indexPath.section == 3 && indexPath.row == 0 ) { //BGM
         [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats origin:cell allowEmpty:NO doneBlock:^(NSString *selected) {
             [self.tableView reloadData];
@@ -213,6 +220,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     toggleTouchScreenOverlay.on = gConfig.fUseTouchOverlay;
     toggleKeepAspect.on         = gConfig.fKeepAspectRatio;
+    toggleSmoothScaling.on      = strncmp(gConfig.pszScaleQuality, "0", sizeof(char)) != 0;
     
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
     lblOPLType.text         = OPLFormats[gConfig.eOPLType];
@@ -224,6 +232,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     sliderMusicVolume.value     = gConfig.iMusicVolume;
     sliderSFXVolume.value       = gConfig.iSoundVolume;
     sliderResampleQuality.value = gConfig.iResampleQuality;
+    
     
     lblLogLevel.text        = LogLevels[gConfig.iLogLevel];
     
@@ -240,7 +249,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     gConfig.fKeepAspectRatio = toggleKeepAspect.isOn;
     gConfig.fUseTouchOverlay = toggleTouchScreenOverlay.isOn;
-    
+    gConfig.pszScaleQuality  = strdup(toggleSmoothScaling.on ? "1" : "0");
+   
     gConfig.eMusicType  = (MUSICTYPE)[MusicFormats indexOfObject:lblMusicType.text];
     gConfig.eOPLType    = (OPLTYPE  )[OPLFormats   indexOfObject:lblOPLType.text];
     gConfig.iOPLSampleRate = [lblOPLRate.text intValue];

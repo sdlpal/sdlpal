@@ -66,6 +66,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_LOGFILE,           PALCFG_STRING,   "LogFileName",       11, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_CLIMIDIPLAYER,     PALCFG_STRING,   "CLIMIDIPlayer",     13, MAKE_VALUE(NULL,     NULL, NULL) },
+    { PALCFG_SCALEQUALITY,      PALCFG_STRING,   "ScaleQuality",      12, MAKE_VALUE("0",      NULL, NULL) },
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
@@ -255,7 +256,8 @@ PAL_FreeConfig(
 	free(gConfig.pszMsgFile);
 	free(gConfig.pszFontFile);
 	free(gConfig.pszGamePath);
-	free(gConfig.pszSavePath);
+    free(gConfig.pszSavePath);
+    free(gConfig.pszScaleQuality);
 	free(gConfig.pszLogFile);
 
 	memset(&gConfig, 0, sizeof(CONFIGURATION));
@@ -413,6 +415,9 @@ PAL_LoadConfig(
 				case PALCFG_CLIMIDIPLAYER:
 					gConfig.pszCLIMIDIPlayerPath = ParseStringValue(value.sValue, gConfig.pszCLIMIDIPlayerPath);
 					break;
+                case PALCFG_SCALEQUALITY:
+                    gConfig.pszScaleQuality = ParseStringValue(value.sValue, gConfig.pszScaleQuality);
+                    break;
 				default:
 					values[item->Item] = value;
 					break;
@@ -505,7 +510,8 @@ PAL_SaveConfig(
 		if (gConfig.pszMsgFile && *gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 		if (gConfig.pszFontFile && *gConfig.pszFontFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_FONTFILE), gConfig.pszFontFile); fputs(buf, fp); }
 		if (gConfig.pszLogFile && *gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
-		if (gConfig.pszCLIMIDIPlayerPath && *gConfig.pszCLIMIDIPlayerPath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CLIMIDIPLAYER), gConfig.pszCLIMIDIPlayerPath); fputs(buf, fp); }
+        if (gConfig.pszCLIMIDIPlayerPath && *gConfig.pszCLIMIDIPlayerPath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CLIMIDIPLAYER), gConfig.pszCLIMIDIPlayerPath); fputs(buf, fp); }
+        if (gConfig.pszScaleQuality && *gConfig.pszScaleQuality) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SCALEQUALITY), gConfig.pszScaleQuality); fputs(buf, fp); }
 
 		fclose(fp);
 
@@ -551,6 +557,7 @@ PAL_GetConfigItem(
 		case PALCFG_FONTFILE:          value.sValue = gConfig.pszFontFile; break;
 		case PALCFG_LOGFILE:           value.sValue = gConfig.pszLogFile; break;
 		case PALCFG_CLIMIDIPLAYER:     value.sValue = gConfig.pszCLIMIDIPlayerPath; break;
+		case PALCFG_SCALEQUALITY:      value.sValue = gConfig.pszScaleQuality; break;
 		case PALCFG_MUSIC:             value.sValue = music_types[gConfig.eMusicType]; break;
 		case PALCFG_OPL:               value.sValue = opl_types[gConfig.eOPLType]; break;
 		default:                       break;
@@ -608,6 +615,10 @@ PAL_SetConfigItem(
 	case PALCFG_CLIMIDIPLAYER:
 		if (gConfig.pszCLIMIDIPlayerPath) free(gConfig.pszCLIMIDIPlayerPath);
 		gConfig.pszCLIMIDIPlayerPath = value.sValue && value.sValue[0] ? strdup(value.sValue) : NULL;
+		break;
+	case PALCFG_SCALEQUALITY:
+		if (gConfig.pszScaleQuality) free(gConfig.pszScaleQuality);
+		gConfig.pszScaleQuality = value.sValue && value.sValue[0] ? strdup(value.sValue) : NULL;
 		break;
 	case PALCFG_CD:
 		for (int i = 0; i < sizeof(music_types) / sizeof(music_types[0]); i++)
