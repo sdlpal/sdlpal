@@ -535,7 +535,7 @@ UTIL_OpenFileAtPathForMode(
 	}
 	else if (szMode[0] != 'r')
 	{
-		return fopen(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, lpszPath, lpszFileName), szMode);
+		return fopen(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, lpszPath, lpszFileName), szMode);
 	}
 	else
 	{
