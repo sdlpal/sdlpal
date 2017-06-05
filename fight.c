@@ -1388,9 +1388,13 @@ PAL_BattleStartFrame(
             //
             // Backup all actions once not repeating.
             //
-            if(!g_Battle.fRepeat)
+            if (!g_Battle.fRepeat)
+            {
                for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
-                  g_Battle.rgPlayer[i].action_backup = g_Battle.rgPlayer[i].action;
+               {
+                  g_Battle.rgPlayer[i].prevAction = g_Battle.rgPlayer[i].action;
+               }
+            }
 
             //
             // actions for all players are decided. fill in the action queue.
@@ -1398,6 +1402,7 @@ PAL_BattleStartFrame(
             g_Battle.fRepeat = FALSE;
             g_Battle.fForce = FALSE;
             g_Battle.fFlee = FALSE;
+            g_Battle.fPrevAutoAtk = g_Battle.UI.fAutoAttack;
 
             g_Battle.iCurAction = 0;
 
@@ -1701,6 +1706,7 @@ PAL_BattleStartFrame(
       if (g_InputState.dwKeyPress & kKeyRepeat)
       {
          g_Battle.fRepeat = TRUE;
+         g_Battle.UI.fAutoAttack = g_Battle.fPrevAutoAtk;
       }
       else if (g_InputState.dwKeyPress & kKeyForce)
       {
@@ -1711,7 +1717,6 @@ PAL_BattleStartFrame(
    if (g_Battle.fRepeat)
    {
       g_InputState.dwKeyPress = kKeyRepeat;
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action = g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action_backup;
    }
    else if (g_Battle.fForce)
    {
@@ -1759,11 +1764,20 @@ PAL_BattleCommitAction(
          (SHORT)g_Battle.UI.wSelectedIndex;
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
          g_Battle.UI.wObjectID;
+#ifndef PAL_CLASSIC
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].prevAction =
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action;
+#endif
    }
    else if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionPass)
    {
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType = kBattleActionAttack;
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = -1;
+   }
+   else
+   {
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action =
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].prevAction;
    }
 
    //

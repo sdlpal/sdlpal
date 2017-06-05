@@ -107,7 +107,7 @@ typedef struct tagBATTLEPLAYER
    WORD               wCurrentFrame;        // current frame number
    FIGHTERSTATE       state;                // state of this player
    BATTLEACTION       action;               // action to perform
-   BATTLEACTION       action_backup;        // backuped action
+   BATTLEACTION       prevAction;           // action of the previous turn
    BOOL               fDefending;           // TRUE if player is defending
    WORD               wPrevHP;              // HP value prior to action
    WORD               wPrevMP;              // MP value prior to action
@@ -188,6 +188,7 @@ typedef struct tagBATTLE
    BOOL             fRepeat;              // TRUE if player pressed Repeat
    BOOL             fForce;               // TRUE if player pressed Force
    BOOL             fFlee;                // TRUE if player pressed Flee
+   BOOL             fPrevAutoAtk;         // TRUE if auto-attack was used in the previous turn
 #endif
 } BATTLE;
 

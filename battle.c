@@ -1376,6 +1376,7 @@ PAL_StartBattle(
    g_Battle.fRepeat = FALSE;
    g_Battle.fForce = FALSE;
    g_Battle.fFlee = FALSE;
+   g_Battle.fPrevAutoAtk = FALSE;
 #endif
 
 #ifdef PAL_ALLOW_KEYREPEAT
