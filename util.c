@@ -519,11 +519,28 @@ UTIL_OpenFileAtPathForMode(
 	LPCSTR              szMode
 )
 {
+	if (!lpszPath || !lpszFileName || !szMode) return NULL;
+
 	//
 	// Construct full path according to lpszPath and lpszFileName
 	//
 	const char *path = UTIL_GetFullPathName(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, lpszPath, lpszFileName);
-	return path ? fopen(path, szMode) : NULL;
+
+	//
+	// If no matching path, check the open mode
+	//
+	if (path)
+	{
+		return fopen(path, szMode);
+	}
+	else if (szMode[0] != 'r')
+	{
+		return fopen(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, lpszPath, lpszFileName), szMode);
+	}
+	else
+	{
+		return NULL;
+	}
 }
 
 VOID
