@@ -355,7 +355,7 @@
 		71E23E8C13F6D1AD001287B6 /* synth.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = synth.h; path = libmad/synth.h; sourceTree = "<group>"; };
 		71E23E8D13F6D1AD001287B6 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.c; name = timer.c; path = libmad/timer.c; sourceTree = "<group>"; };
 		71E23E8E13F6D1AD001287B6 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = timer.h; path = libmad/timer.h; sourceTree = "<group>"; };
-		71E27E030D8C7E2F0048BA16 /* fight.c */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.c; path = fight.c; sourceTree = "<group>"; };
+		71E27E030D8C7E2F0048BA16 /* fight.c */ = {isa = PBXFileReference; fileEncoding = 0; indentWidth = 3; lastKnownFileType = sourcecode.c.c; path = fight.c; sourceTree = "<group>"; tabWidth = 3; usesTabs = 0; };
 		71E27E040D8C7E2F0048BA16 /* fight.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = fight.h; sourceTree = "<group>"; };
 		71F0F6D10DAA63B400F88C16 /* ending.c */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.c; path = ending.c; sourceTree = "<group>"; };
 		71F0F6D20DAA63B400F88C16 /* ending.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = ending.h; sourceTree = "<group>"; };

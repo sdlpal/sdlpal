@@ -1386,6 +1386,13 @@ PAL_BattleStartFrame(
          if (i > gpGlobals->wMaxPartyMemberIndex)
          {
             //
+            // Backup all actions once not repeating.
+            //
+            if(!g_Battle.fRepeat)
+               for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+                  g_Battle.rgPlayer[i].action_backup = g_Battle.rgPlayer[i].action;
+
+            //
             // actions for all players are decided. fill in the action queue.
             //
             g_Battle.fRepeat = FALSE;
@@ -1704,6 +1711,7 @@ PAL_BattleStartFrame(
    if (g_Battle.fRepeat)
    {
       g_InputState.dwKeyPress = kKeyRepeat;
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action = g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action_backup;
    }
    else if (g_Battle.fForce)
    {
