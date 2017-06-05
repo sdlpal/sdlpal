@@ -1769,15 +1769,16 @@ PAL_BattleCommitAction(
          g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action;
 #endif
    }
-   else if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionPass)
-   {
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType = kBattleActionAttack;
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = -1;
-   }
    else
    {
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action =
          g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].prevAction;
+
+      if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionPass)
+      {
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType = kBattleActionAttack;
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = -1;
+      }
    }
 
    //
