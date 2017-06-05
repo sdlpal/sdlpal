@@ -222,7 +222,10 @@ PAL_LoadUserFont(
             if (wc[0] != 0)
             {
                wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + unicode_lower_top) : wc[0];
-               memcpy(unicode_font[w], bFontGlyph, sizeof(bFontGlyph));
+               if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
+               {
+                  memcpy(unicode_font[w], bFontGlyph, sizeof(bFontGlyph));
+               }
             }
 
             state = 0;
