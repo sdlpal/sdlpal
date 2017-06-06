@@ -1936,8 +1936,7 @@ PAL_InterpretInstruction(
       // Throw weapon to enemy
       //
       w = pScript->rgwOperand[1] * 5;
-      w += gpGlobals->g.PlayerRoles.rgwAttackStrength[gpGlobals->rgParty[g_Battle.wMovingPlayerIndex].wPlayerRole];
-      w += RandomLong(0, 4);
+      w += gpGlobals->g.PlayerRoles.rgwAttackStrength[gpGlobals->rgParty[g_Battle.wMovingPlayerIndex].wPlayerRole] * RandomFloat(0, 4);
       PAL_BattleSimulateMagic((SHORT)wEventObjectID, pScript->rgwOperand[0], w);
       break;
 
