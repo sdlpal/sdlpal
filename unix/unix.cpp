@@ -128,6 +128,7 @@ void SaveControls()
    free(gConfig.pszLogFile);
 
    gConfig.pszGamePath = *gWidgets.gamepath->value() ? strdup(gWidgets.gamepath->value()) : nullptr;
+   gConfig.pszSavePath = *gWidgets.gamepath->value() ? strdup(gWidgets.gamepath->value()) : nullptr;
    gConfig.pszMsgFile = *gWidgets.msgfile->value() ? strdup(gWidgets.msgfile->value()) : nullptr;
    gConfig.pszFontFile = *gWidgets.fontfile->value() ? strdup(gWidgets.fontfile->value()) : nullptr;
    gConfig.pszLogFile = *gWidgets.logfile->value() ? strdup(gWidgets.logfile->value()) : nullptr;
