@@ -1403,6 +1403,7 @@ PAL_BattleStartFrame(
             g_Battle.fForce = FALSE;
             g_Battle.fFlee = FALSE;
             g_Battle.fPrevAutoAtk = g_Battle.UI.fAutoAttack;
+            g_Battle.fPrevPlayerAutoAtk = FALSE;
 
             g_Battle.iCurAction = 0;
 
@@ -1685,6 +1686,18 @@ PAL_BattleStartFrame(
             {
                g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttackMate;
             }
+            else if (g_Battle.rgPlayer[i].action.ActionType == kBattleActionAttack &&
+               g_Battle.rgPlayer[i].action.wActionID != 0)
+            {
+               g_Battle.fPrevPlayerAutoAtk = TRUE;
+            }
+            else if (g_Battle.fPrevPlayerAutoAtk)
+            {
+               g_Battle.UI.wCurPlayerIndex = i;
+               g_Battle.UI.wSelectedIndex = g_Battle.rgPlayer[i].action.sTarget;
+               g_Battle.UI.wActionType = kBattleActionAttack;
+               PAL_BattleCommitAction(FALSE);
+            }
 
             //
             // Perform the action for this player.
@@ -1762,8 +1775,17 @@ PAL_BattleCommitAction(
          g_Battle.UI.wActionType;
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget =
          (SHORT)g_Battle.UI.wSelectedIndex;
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
-         g_Battle.UI.wObjectID;
+
+      if (g_Battle.UI.wActionType == kBattleActionAttack)
+      {
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
+            (g_Battle.UI.fAutoAttack ? 1 : 0);
+      }
+      else
+      {
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
+            g_Battle.UI.wObjectID;
+	  }
 #ifndef PAL_CLASSIC
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].prevAction =
          g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action;

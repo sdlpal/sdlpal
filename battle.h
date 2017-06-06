@@ -189,6 +189,7 @@ typedef struct tagBATTLE
    BOOL             fForce;               // TRUE if player pressed Force
    BOOL             fFlee;                // TRUE if player pressed Flee
    BOOL             fPrevAutoAtk;         // TRUE if auto-attack was used in the previous turn
+   BOOL             fPrevPlayerAutoAtk;   // TRUE if auto-attack was used by previous player in the same turn
 #endif
 } BATTLE;
 
