@@ -303,7 +303,7 @@ size_t WRT_fread(void * _DstBuf, size_t _ElementSize, size_t _Count, WRT_FILE * 
 
 	CriticalSection cs(_File->cs);
 	unsigned long cbRead;
-	return SUCCEEDED(_File->stream->Read(_DstBuf, _ElementSize * _Count, &cbRead)) ? cbRead / _ElementSize : 0;
+	return SUCCEEDED(_File->stream->Read(_DstBuf, (ULONG)(_ElementSize * _Count), &cbRead)) ? cbRead / _ElementSize : 0;
 }
 
 extern "C"
@@ -314,7 +314,7 @@ size_t WRT_fwrite(const void * _Str, size_t _Size, size_t _Count, WRT_FILE * _Fi
 
 	CriticalSection cs(_File->cs);
 	unsigned long cbWrite;
-	return SUCCEEDED(_File->stream->Write(_Str, _Size * _Count, &cbWrite)) ? cbWrite / _Size : 0;
+	return SUCCEEDED(_File->stream->Write(_Str, (ULONG)(_Size * _Count), &cbWrite)) ? cbWrite / _Size : 0;
 }
 
 extern "C"
@@ -393,7 +393,7 @@ int WRT_fputs(const char * _Str, WRT_FILE * _File)
 	if (!_File->writable || !_Str) return EOF;
 
 	const char *start = _Str;
-	int length = strlen(_Str);
+	size_t length = strlen(_Str);
 	unsigned long cbWrite;
 	const char crlf[] = { '\r', '\n' };
 	CriticalSection cs(_File->cs);
@@ -401,7 +401,7 @@ int WRT_fputs(const char * _Str, WRT_FILE * _File)
 	{
 		const char *ptr = start;
 		while (*ptr && *ptr != '\n') ptr++;
-		if (_File->stream->Write(start, ptr - start, &cbWrite) != S_OK)
+		if (_File->stream->Write(start, (ULONG)(ptr - start), &cbWrite) != S_OK)
 			return EOF;
 		if (*ptr == '\n')
 		{
@@ -411,7 +411,33 @@ int WRT_fputs(const char * _Str, WRT_FILE * _File)
 				start = ptr + 1;
 		}
 		else
-			break;
+			return (int)length;
 	}
-	return length;
+}
+
+extern "C"
+int WRT_access(const char * const _FileName, int _AccessMode)
+{
+	if (!_FileName || (_AccessMode & ~0x6) != 0)
+	{
+		_set_errno(EINVAL);
+		return -1;
+	}
+
+	auto file = AWait(Windows::Storage::StorageFile::GetFileFromPathAsync(ConvertString(_FileName)));
+	if (!file->IsAvailable)
+	{
+		_set_errno(ENOENT);
+		return -1;
+	}
+
+	if ((file->Attributes & Windows::Storage::FileAttributes::Directory) != Windows::Storage::FileAttributes::Directory &&
+		(file->Attributes & Windows::Storage::FileAttributes::ReadOnly) == Windows::Storage::FileAttributes::ReadOnly &&
+		(_AccessMode & 0x2) != 0)
+	{
+		_set_errno(EACCES);
+		return -1;
+	}
+
+	return 0;
 }
