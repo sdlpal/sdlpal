@@ -54,12 +54,12 @@ static JNIEnv* getJNIEnv()
 }
 
 /*
- * Class:     io_github_sdlpal_MainActivity
+ * Class:     com_sdlpal_sdlpal_MainActivity
  * Method:    setAppPath
  * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
  */
 EXTERN_C_LINKAGE
-JNIEXPORT void JNICALL Java_io_github_sdlpal_MainActivity_setAppPath(JNIEnv *env, jclass cls, jstring base_path, jstring data_path, jstring cache_path)
+JNIEXPORT void JNICALL Java_com_sdlpal_sdlpal_MainActivity_setAppPath(JNIEnv *env, jclass cls, jstring base_path, jstring data_path, jstring cache_path)
 {
     g_basepath = jstring_to_utf8(env, base_path);
     g_configpath = jstring_to_utf8(env, data_path);
@@ -73,118 +73,118 @@ JNIEXPORT void JNICALL Java_io_github_sdlpal_MainActivity_setAppPath(JNIEnv *env
 }
 
 /*
- * Class:     io_github_sdlpal_PalActivity
+ * Class:     com_sdlpal_sdlpal_PalActivity
  * Method:    setScreenSize
  * Signature: (II)V
  */
 EXTERN_C_LINKAGE
-JNIEXPORT void JNICALL Java_io_github_sdlpal_PalActivity_setScreenSize(JNIEnv *env, jclass cls, int width, int height)
+JNIEXPORT void JNICALL Java_com_sdlpal_sdlpal_PalActivity_setScreenSize(JNIEnv *env, jclass cls, int width, int height)
 {
     g_screenWidth = width;
     g_screenHeight = height;
 }
 
 /*
- * Class:     io_github_sdlpal_SettingsActivity
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
  * Method:    getGitRevision
  * Signature: (V)Ljava/lang/String;
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jstring JNICALL Java_io_github_sdlpal_SettingsActivity_getGitRevision(JNIEnv *env, jclass cls)
+JNIEXPORT jstring JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_getGitRevision(JNIEnv *env, jclass cls)
 {
     return env->NewStringUTF(PAL_GIT_REVISION);
 }
 
 /*
- * Class:     io_github_sdlpal_SettingsActivity
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
  * Method:    loadConfigFile
  * Signature: (V)Z
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_loadConfigFile(JNIEnv *env, jclass cls)
+JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_loadConfigFile(JNIEnv *env, jclass cls)
 {
     PAL_LoadConfig(TRUE);
     return gConfig.fLaunchSetting ? JNI_TRUE : JNI_FALSE;
 }
 
 /*
- * Class:     io_github_sdlpal_SettingsActivity
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
  * Method:    saveConfigFile
  * Signature: (V)Z
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_saveConfigFile(JNIEnv *env, jclass cls)
+JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_saveConfigFile(JNIEnv *env, jclass cls)
 {
     return PAL_SaveConfig() ? JNI_TRUE : JNI_FALSE;
 }
 
 /*
- * Class:     io_github_sdlpal_SettingsActivity
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
  * Method:    getConfigBoolean
  * Signature: (Ljava/lang/String;Z)Z
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigBoolean(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
+JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_getConfigBoolean(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
 {
     PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
     return item >= 0 ? PAL_GetConfigBoolean(item, defval) : JNI_FALSE;
 }
 
 /*
- * Class:     io_github_sdlpal_SettingsActivity
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
  * Method:    getConfigInt
  * Signature: (Ljava/lang/String;Z)I
  */
 EXTERN_C_LINKAGE
-JNIEXPORT int JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigInt(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
+JNIEXPORT int JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_getConfigInt(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
 {
     PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
     return item >= 0 ? (int)PAL_GetConfigNumber(item, defval) : 0;
 }
 
 /*
- * Class:     io_github_sdlpal_SettingsActivity
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
  * Method:    getConfigString
  * Signature: (Ljava/lang/String;Z)ILjava/lang/String;
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jstring JNICALL Java_io_github_sdlpal_SettingsActivity_getConfigString(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
+JNIEXPORT jstring JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_getConfigString(JNIEnv *env, jclass cls, jstring j_str, jboolean defval)
 {
     PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
     return item >= 0 ? env->NewStringUTF(PAL_GetConfigString(item, defval)) : nullptr;
 }
 
 /*
- * Class:     io_github_sdlpal_SettingsActivity
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
  * Method:    setConfigBoolean
  * Signature: (Ljava/lang/String;Z)Z
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigBoolean(JNIEnv *env, jclass cls, jstring j_str, jboolean val)
+JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_setConfigBoolean(JNIEnv *env, jclass cls, jstring j_str, jboolean val)
 {
     PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
     return item >= 0 ? PAL_SetConfigBoolean(item, val ? TRUE : FALSE) : JNI_FALSE;
 }
 
 /*
- * Class:     io_github_sdlpal_SettingsActivity
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
  * Method:    setConfigInt
  * Signature: (Ljava/lang/String;I)Z
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigInt(JNIEnv *env, jclass cls, jstring j_str, int val)
+JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_setConfigInt(JNIEnv *env, jclass cls, jstring j_str, int val)
 {
     PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
     return item >= 0 ? PAL_SetConfigNumber(item, (long)val) : JNI_FALSE;
 }
 
 /*
- * Class:     io_github_sdlpal_SettingsActivity
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
  * Method:    setConfigString
  * Signature: (Ljava/lang/String;Ljava/lang/String;)I
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jboolean JNICALL Java_io_github_sdlpal_SettingsActivity_setConfigString(JNIEnv *env, jclass cls, jstring j_str, jstring v_str)
+JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_setConfigString(JNIEnv *env, jclass cls, jstring j_str, jstring v_str)
 {
     PALCFG_ITEM item = PAL_ConfigIndex(jstring_to_utf8(env, j_str).c_str());
     return item >= 0 ? PAL_SetConfigString(item, v_str ? jstring_to_utf8(env, v_str).c_str() : nullptr) : JNI_FALSE;
@@ -194,7 +194,7 @@ EXTERN_C_LINKAGE
 void* JNI_mediaplayer_load(const char *filename)
 {
     JNIEnv* env = getJNIEnv();
-    jclass clazz = env->FindClass("io/github/sdlpal/PalActivity");
+    jclass clazz = env->FindClass("com/sdlpal/sdlpal/PalActivity");
     jmethodID mid = env->GetStaticMethodID(clazz, "JNI_mediaplayer_load", "(Ljava/lang/String;)Landroid/media/MediaPlayer;");
     jstring str = env->NewStringUTF(filename);
     jobject player = env->CallStaticObjectMethod(clazz, mid, str);

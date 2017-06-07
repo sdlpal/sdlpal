@@ -1,4 +1,4 @@
-package io.github.sdlpal;
+package com.sdlpal.sdlpal;
 
 import android.content.DialogInterface;
 import android.content.Intent;
