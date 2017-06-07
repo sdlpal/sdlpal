@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">SDLPal</string>
+    <string name="app_name" translatable="false">Pal</string>
     <string name="label_folder">Game resource folder:</string>
     <string name="action_browse">Browse</string>
     <string name="title_settings">Settings</string>
