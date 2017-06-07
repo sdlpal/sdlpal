@@ -424,20 +424,34 @@ int WRT_access(const char * const _FileName, int _AccessMode)
 		return -1;
 	}
 
-	auto file = AWait(Windows::Storage::StorageFile::GetFileFromPathAsync(ConvertString(_FileName)));
-	if (!file->IsAvailable)
+	try
 	{
-		_set_errno(ENOENT);
-		return -1;
-	}
+		auto file = AWait(Windows::Storage::StorageFile::GetFileFromPathAsync(ConvertString(_FileName)));
 
-	if ((file->Attributes & Windows::Storage::FileAttributes::Directory) != Windows::Storage::FileAttributes::Directory &&
-		(file->Attributes & Windows::Storage::FileAttributes::ReadOnly) == Windows::Storage::FileAttributes::ReadOnly &&
-		(_AccessMode & 0x2) != 0)
+		if ((file->Attributes & Windows::Storage::FileAttributes::Directory) != Windows::Storage::FileAttributes::Directory &&
+			(file->Attributes & Windows::Storage::FileAttributes::ReadOnly) == Windows::Storage::FileAttributes::ReadOnly &&
+			(_AccessMode & 0x2) != 0)
+		{
+			throw ref new Platform::AccessDeniedException();
+		}
+
+		return 0;
+	}
+	catch (AccessDeniedException^ e)
 	{
 		_set_errno(EACCES);
 		return -1;
 	}
-
-	return 0;
+	catch (Exception^ e)
+	{
+		if (e->HResult == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+		{
+			_set_errno(ENOENT);
+		}
+		else
+		{
+			_set_errno(EINVAL);
+		}
+		return -1;
+	}
 }
