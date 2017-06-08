@@ -48,7 +48,7 @@ MainPage::MainPage()
 
 	tbGitRevision->Text = "  " PAL_GIT_REVISION;
 
-	LoadControlContents();
+	LoadControlContents(false);
 
 	m_resLdr = Windows::ApplicationModel::Resources::ResourceLoader::GetForCurrentView();
 	if (static_cast<App^>(Application::Current)->LastCrashed)
@@ -177,7 +177,7 @@ void SDLPal::MainPage::btnDefault_Click(Platform::Object^ sender, Windows::UI::X
 void SDLPal::MainPage::btnReset_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	PAL_LoadConfig(TRUE);
-	LoadControlContents();
+	LoadControlContents(false);
 }
 
 void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)

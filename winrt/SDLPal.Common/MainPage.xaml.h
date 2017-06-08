@@ -54,7 +54,7 @@ namespace SDLPal
 		void SetFile(Windows::UI::Xaml::Controls::TextBox^ target, Windows::Storage::StorageFile^ file);
 
 	protected:
-		void LoadControlContents(bool loadDefault = false);
+		void LoadControlContents(bool loadDefault);
 		void SaveControlContents();
 
 	private:
