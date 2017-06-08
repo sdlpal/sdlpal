@@ -142,7 +142,9 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 {
 	// Defaults log to debug output
 	UTIL_LogAddOutputCallback([](LOGLEVEL, const char* str, const char*)->void {
+#if WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
 		OutputDebugStringA(str);
+#endif
 	}, PAL_DEFAULT_LOGLEVEL);
 
 	CreateRunningFile();

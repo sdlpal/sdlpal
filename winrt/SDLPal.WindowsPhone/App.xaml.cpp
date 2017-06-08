@@ -131,8 +131,9 @@ void SDLPal::App::OnActivated(Windows::ApplicationModel::Activation::IActivatedE
 	if (dynamic_cast<IContinuationActivatedEventArgs^>(args) != nullptr)
 	{
 		auto contdata = dynamic_cast<IContinuationActivatedEventArgs^>(args)->ContinuationData;
-		auto page = dynamic_cast<SDLPal::MainPage^>(contdata->Lookup("Page"));
-		auto target = contdata->HasKey("Target") ? dynamic_cast<Windows::UI::Xaml::Controls::TextBox^>(contdata->Lookup("Target")) : nullptr;
+		auto page = MainPage::Current;
+		auto target = contdata->HasKey("Target") ?
+			dynamic_cast<Windows::UI::Xaml::Controls::TextBox ^>(page->FindName(dynamic_cast<Platform::String ^>(contdata->Lookup("Target")))) : nullptr;
 		switch (args->Kind)
 		{
 		case ActivationKind::PickFolderContinuation:

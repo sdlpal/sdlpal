@@ -28,9 +28,13 @@ static Platform::String^ msg_file_exts[] = { ".msg" };
 static Platform::String^ font_file_exts[] = { ".bdf" };
 static Platform::String^ log_file_exts[] = { ".log" };
 
+MainPage^ MainPage::Current = nullptr;
+
 MainPage::MainPage()
 {
 	InitializeComponent();
+
+	Current = this;
 
 	m_controls = ref new Platform::Collections::Map<Platform::String^, ButtonAttribute^>();
 	m_controls->Insert(btnBrowseMsgFile->Name, ref new ButtonAttribute(tbMsgFile, ref new Platform::Array<Platform::String^>(msg_file_exts, sizeof(msg_file_exts) / sizeof(msg_file_exts[0]))));
@@ -240,7 +244,6 @@ void SDLPal::MainPage::btnBrowseFolder_Click(Platform::Object^ sender, Windows::
 	auto picker = ref new Windows::Storage::Pickers::FolderPicker();
 	picker->FileTypeFilter->Append("*");
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
-	picker->ContinuationData->Insert("Page", this);
 	picker->PickFolderAndContinue();
 #else
 	concurrency::create_task(picker->PickSingleFolderAsync()).then([this](Windows::Storage::StorageFolder^ folder) { SetPath(folder); });
@@ -254,8 +257,7 @@ void SDLPal::MainPage::btnBrowseFileOpen_Click(Platform::Object^ sender, Windows
 	auto picker = ref new Windows::Storage::Pickers::FileOpenPicker();
 	picker->FileTypeFilter->ReplaceAll(target->Filter);
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
-	picker->ContinuationData->Insert("Page", this);
-	picker->ContinuationData->Insert("Target", target->Object);
+	picker->ContinuationData->Insert("Target", button->Name);
 	picker->PickSingleFileAndContinue();
 #else
 	concurrency::create_task(picker->PickSingleFileAsync()).then(
@@ -273,8 +275,7 @@ void SDLPal::MainPage::btnBrowseFileSave_Click(Platform::Object^ sender, Windows
 	auto picker = ref new Windows::Storage::Pickers::FileSavePicker();
 	picker->FileTypeChoices->Insert(m_resLdr->GetString("LogFileType"), ref new Platform::Collections::Vector<Platform::String^>(target->Filter));
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
-	picker->ContinuationData->Insert("Page", this);
-	picker->ContinuationData->Insert("Target", target->Object);
+	picker->ContinuationData->Insert("Target", button->Name);
 	picker->PickSaveFileAndContinue();
 #else
 	concurrency::create_task(picker->PickSaveFileAsync()).then(
