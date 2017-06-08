@@ -31,15 +31,25 @@
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="-1dp" />
 
-            <EditText
-                android:id="@+id/edFolder"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textUri"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="16dp" />
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/edFolder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="textUri"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="16dp" />
+                <Button
+                    android:id="@+id/btnBrowseFolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/action_browse" />
+            </LinearLayout>
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/swMsgFile"

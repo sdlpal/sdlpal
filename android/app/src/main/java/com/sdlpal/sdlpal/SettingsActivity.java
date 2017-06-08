@@ -1,23 +1,26 @@
 package com.sdlpal.sdlpal;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import  android.support.v7.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import com.nononsenseapps.filepicker.*;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -61,6 +64,8 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String OPLFormats[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
 
     private SettingsActivity mInstance = this;
+
+    private static final int FILE_CODE = 30001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +146,19 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.btnBrowseFolder).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(mInstance, FilePickerActivity.class);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
+                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
+                i.putExtra(FilePickerActivity.EXTRA_START_PATH, ((EditText)findViewById(R.id.edFolder)).getText());
+
+                startActivityForResult(i, FILE_CODE);
+            }
+        });
+
         resetConfigs();
 
         if (PalActivity.crashed) {
@@ -154,6 +172,18 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
             builder.create().show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
+            List<Uri> files = Utils.getSelectedFilesFromResult(intent);
+            for (Uri uri: files) {
+                File file = Utils.getFileForUri(uri);
+                ((EditText)findViewById(R.id.edFolder)).setText(file.getAbsolutePath());
+                break;
+            }
         }
     }
 
