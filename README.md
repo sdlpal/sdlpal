@@ -5,7 +5,7 @@ SDLPAL
 
 ***SDLPAL*** is an SDL-based open-source cross-platform reimplementation of the classic Chinese RPG game *Xiān jiàn Qí Xiá Zhuàn (Chinese: 仙剑奇侠传/仙劍奇俠傳)* (also known as *Chinese Paladin* or *Legend of Sword and Fairy*, or *PAL* for short).
 
-[![Google Play](https://5kichq-bn1305.files.1drv.com/y4pslnZNYdVAeO4SXxyAB_bolRwPEp9Oz5982hKA_h2AaQ8k5jMowmBkZ6lCG-1KbAHw8VjLpEA_0miVdAkbqZ1K9y_PocuxUGqefdWfRjrnja6vTx90DJ2v97Iy7ZwjAJrEmGM_lXI066xgdQttQ6z5LlLuUIdi1KuCnwtVz5h1BEuAMShPVAEFfUleokxGpTZZsTIY5a4eJ3OxHYaS8Vm1Q/badge_new.png?psid=1)](https://play.google.com/store/apps/details?id=com.sdlpal.sdlpal)
+[![Google Play](https://sdlpal.github.io/images/googleplay.png)](https://play.google.com/store/apps/details?id=com.sdlpal.sdlpal)
 
 LICENSE
 =======

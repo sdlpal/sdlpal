@@ -536,7 +536,7 @@ PAL_AdditionalCredits(
    };
 
    LPCWSTR rgszStrings[] = {
-      L"  SDLPAL (http://sdlpal.codeplex.com/)",
+      L"  SDLPAL (http://sdlpal.github.io/)",
 #ifdef PAL_CLASSIC
 	  L"%ls(" WIDETEXT(__DATE__) L")",
 #else
