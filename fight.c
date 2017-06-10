@@ -1386,11 +1386,24 @@ PAL_BattleStartFrame(
          if (i > gpGlobals->wMaxPartyMemberIndex)
          {
             //
+            // Backup all actions once not repeating.
+            //
+            if (!g_Battle.fRepeat)
+            {
+               for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+               {
+                  g_Battle.rgPlayer[i].prevAction = g_Battle.rgPlayer[i].action;
+               }
+            }
+
+            //
             // actions for all players are decided. fill in the action queue.
             //
             g_Battle.fRepeat = FALSE;
             g_Battle.fForce = FALSE;
             g_Battle.fFlee = FALSE;
+            g_Battle.fPrevAutoAtk = g_Battle.UI.fAutoAttack;
+            g_Battle.fPrevPlayerAutoAtk = FALSE;
 
             g_Battle.iCurAction = 0;
 
@@ -1673,6 +1686,18 @@ PAL_BattleStartFrame(
             {
                g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttackMate;
             }
+            else if (g_Battle.rgPlayer[i].action.ActionType == kBattleActionAttack &&
+               g_Battle.rgPlayer[i].action.wActionID != 0)
+            {
+               g_Battle.fPrevPlayerAutoAtk = TRUE;
+            }
+            else if (g_Battle.fPrevPlayerAutoAtk)
+            {
+               g_Battle.UI.wCurPlayerIndex = i;
+               g_Battle.UI.wSelectedIndex = g_Battle.rgPlayer[i].action.sTarget;
+               g_Battle.UI.wActionType = kBattleActionAttack;
+               PAL_BattleCommitAction(FALSE);
+            }
 
             //
             // Perform the action for this player.
@@ -1694,6 +1719,7 @@ PAL_BattleStartFrame(
       if (g_InputState.dwKeyPress & kKeyRepeat)
       {
          g_Battle.fRepeat = TRUE;
+         g_Battle.UI.fAutoAttack = g_Battle.fPrevAutoAtk;
       }
       else if (g_InputState.dwKeyPress & kKeyForce)
       {
@@ -1749,13 +1775,32 @@ PAL_BattleCommitAction(
          g_Battle.UI.wActionType;
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget =
          (SHORT)g_Battle.UI.wSelectedIndex;
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
-         g_Battle.UI.wObjectID;
+
+      if (g_Battle.UI.wActionType == kBattleActionAttack)
+      {
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
+            (g_Battle.UI.fAutoAttack ? 1 : 0);
+      }
+      else
+      {
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID =
+            g_Battle.UI.wObjectID;
+	  }
+#ifndef PAL_CLASSIC
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].prevAction =
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action;
+#endif
    }
-   else if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionPass)
+   else
    {
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType = kBattleActionAttack;
-      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = -1;
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action =
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].prevAction;
+
+      if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionPass)
+      {
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType = kBattleActionAttack;
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = -1;
+      }
    }
 
    //
