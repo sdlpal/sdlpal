@@ -180,9 +180,9 @@ The configuration GUI provides options for you to change the most common configu
 
 Currently, the configuration GUI is available under the following platforms:
 * Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*) and *Linux*
-* Mobile platforms: *Android* and *Windows*
+* Mobile platforms: *Android*, *Windows* and *iOS*
 
-Configuration GUIs for *iOS* and *macOS* are still unavailable for now and we welcome contributions to implement them.
+Configuration GUIs for *macOS* is still unavailable for now and we welcome contributions to implement them.
 
 Manually
 --------
