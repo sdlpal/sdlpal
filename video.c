@@ -582,6 +582,8 @@ VIDEO_Resize(
    {
       TerminateOnError("Re-creating texture failed on window resize!\n");
    }
+
+   VIDEO_RenderCopy();
 #else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
