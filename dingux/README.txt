@@ -1,1 +1,0 @@
-This port should be updated for SDL2 and newly changes in source code.
