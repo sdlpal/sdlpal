@@ -571,6 +571,8 @@ VIDEO_Resize(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+   SDL_Rect rect;
+
    if (gpTexture)
    {
       SDL_DestroyTexture(gpTexture);
@@ -583,7 +585,12 @@ VIDEO_Resize(
       TerminateOnError("Re-creating texture failed on window resize!\n");
    }
 
-   VIDEO_RenderCopy();
+   rect.x = 0;
+   rect.y = 0;
+   rect.w = 320;
+   rect.h = 200;
+
+   VIDEO_UpdateScreen(&rect);
 #else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
