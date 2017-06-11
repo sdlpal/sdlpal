@@ -311,5 +311,4 @@ UTIL_Platform_Quit(
 )
 {
     unlink((g_cachepath + "running").c_str());
-    exit(0);
 }
