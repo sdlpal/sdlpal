@@ -65,7 +65,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private SettingsActivity mInstance = this;
 
-    private static final int FILE_CODE = 30001;
+    private static final int BROWSE_GAMEDIR_CODE = 30001;
+    private static final int BROWSE_MSGFILE_CODE = 30002;
+    private static final int BROWSE_FONTFILE_CODE = 30003;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 findViewById(R.id.edMsgFile).setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                findViewById(R.id.btnBrowseMsgFile).setVisibility(isChecked ? View.VISIBLE : View.GONE);
             }
         });
 
@@ -86,6 +89,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 findViewById(R.id.edFontFile).setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                findViewById(R.id.btnBrowseFontFile).setVisibility(isChecked ? View.VISIBLE : View.GONE);
             }
         });
 
@@ -155,7 +159,33 @@ public class SettingsActivity extends AppCompatActivity {
                 i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
                 i.putExtra(FilePickerActivity.EXTRA_START_PATH, ((EditText)findViewById(R.id.edFolder)).getText());
 
-                startActivityForResult(i, FILE_CODE);
+                startActivityForResult(i, BROWSE_GAMEDIR_CODE);
+            }
+        });
+
+        findViewById(R.id.btnBrowseMsgFile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(mInstance, FilePickerActivity.class);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
+                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+                i.putExtra(FilePickerActivity.EXTRA_START_PATH, ((EditText)findViewById(R.id.edFolder)).getText());
+
+                startActivityForResult(i, BROWSE_MSGFILE_CODE);
+            }
+        });
+
+        findViewById(R.id.btnBrowseFontFile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(mInstance, FilePickerActivity.class);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
+                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+                i.putExtra(FilePickerActivity.EXTRA_START_PATH, ((EditText)findViewById(R.id.edFolder)).getText());
+
+                startActivityForResult(i, BROWSE_FONTFILE_CODE);
             }
         });
 
@@ -177,12 +207,26 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
-            List<Uri> files = Utils.getSelectedFilesFromResult(intent);
-            for (Uri uri: files) {
-                File file = Utils.getFileForUri(uri);
-                ((EditText)findViewById(R.id.edFolder)).setText(file.getAbsolutePath());
-                break;
+        if (resultCode == Activity.RESULT_OK) {
+            String filePath = null;
+            try {
+                List<Uri> files = Utils.getSelectedFilesFromResult(intent);
+                for (Uri uri : files) {
+                    File file = Utils.getFileForUri(uri);
+                    filePath = file.getAbsolutePath();
+                    break;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (filePath != null) {
+                if (requestCode == BROWSE_GAMEDIR_CODE) {
+                    ((EditText) findViewById(R.id.edFolder)).setText(filePath);
+                } else if (requestCode == BROWSE_MSGFILE_CODE) {
+                    ((EditText) findViewById(R.id.edMsgFile)).setText(filePath);
+                } else if (requestCode == BROWSE_FONTFILE_CODE) {
+                    ((EditText) findViewById(R.id.edFontFile)).setText(filePath);
+                }
             }
         }
     }
@@ -207,7 +251,9 @@ public class SettingsActivity extends AppCompatActivity {
         String sdcardState = Environment.getExternalStorageState();
 
         findViewById(R.id.edMsgFile).setVisibility(View.GONE);
+        findViewById(R.id.btnBrowseMsgFile).setVisibility(View.GONE);
         findViewById(R.id.edFontFile).setVisibility(View.GONE);
+        findViewById(R.id.btnBrowseFontFile).setVisibility(View.GONE);
         findViewById(R.id.edLogFile).setVisibility(View.GONE);
         findViewById(R.id.layoutOPL).setVisibility(View.VISIBLE);
 
@@ -245,7 +291,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     protected void resetConfigs() {
         findViewById(R.id.edMsgFile).setVisibility(View.GONE);
+        findViewById(R.id.btnBrowseMsgFile).setVisibility(View.GONE);
         findViewById(R.id.edFontFile).setVisibility(View.GONE);
+        findViewById(R.id.btnBrowseFontFile).setVisibility(View.GONE);
         findViewById(R.id.edLogFile).setVisibility(View.GONE);
         findViewById(R.id.layoutOPL).setVisibility(View.VISIBLE);
 

@@ -37,7 +37,7 @@
                 android:orientation="horizontal">
                 <EditText
                     android:id="@+id/edFolder"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
@@ -59,13 +59,24 @@
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="191dp" />
 
-            <EditText
-                android:id="@+id/edMsgFile"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textUri" />
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/edMsgFile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="textUri" />
+
+                <Button
+                    android:id="@+id/btnBrowseMsgFile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/action_browse" />
+            </LinearLayout>
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/swFontFile"
@@ -73,12 +84,23 @@
                 android:layout_height="wrap_content"
                 android:text="@string/action_usefontfile" />
 
-            <EditText
-                android:id="@+id/edFontFile"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textUri" />
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/edFontFile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:layout_weight="1"
+                    android:inputType="textUri" />
+                <Button
+                    android:id="@+id/btnBrowseFontFile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/action_browse" />
+            </LinearLayout>
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/swTouch"
