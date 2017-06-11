@@ -7,3 +7,6 @@
 [submodule "3rd/mingw-std-threads"]
 	path = 3rd/mingw-std-threads
 	url = https://github.com/sdlpal/mingw-std-threads.git
+[submodule "3rd/zlib"]
+	path = 3rd/zlib
+	url = https://github.com/sdlpal/zlib.git

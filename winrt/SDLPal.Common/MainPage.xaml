@@ -27,6 +27,18 @@
                     <TextBox x:Name="tbGamePath" x:Uid="GamePath" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" Header="游戏资源文件夹" IsReadOnly="True" PlaceholderText="未选择游戏资源文件夹"/>
                     <Button x:Name="btnBrowseGame" x:Uid="ButtonBrowse" Grid.Column="1" Content="浏览" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="btnBrowseFolder_Click" />
                 </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton x:Name="rbDownloadLink1" x:Uid="DownloadLink1" Grid.Column="0" GroupName="DownloadLink" Content="地址 1" Tag="http://pal5q.baiyou100.com/pal5/download/98xjrq.html" />
+                    <RadioButton x:Name="rbDownloadLink2" x:Uid="DownloadLink2" Grid.Column="1" GroupName="DownloadLink" Content="地址 2" Tag="http://pal5q.baiyou100.com/pal5/download/98xjrq.html" />
+                    <RadioButton x:Name="rbDownloadLink3" x:Uid="DownloadLink3" Grid.Column="2" GroupName="DownloadLink" Content="地址 3" Tag="http://pal5q.baiyou100.com/pal5/download/98xjrq.html" />
+                    <Button x:Name="btnDownloadGame" x:Uid="ButtonDownload" Grid.Column="3" Content="下载游戏" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnDownloadGame_Click" IsEnabled="False" />
+                </Grid>
                 <CheckBox x:Name="cbUseMsgFile" x:Uid="UseMessageFile" Content="自定义语言文件" Checked="cbUseFile_CheckChanged" Unchecked="cbUseFile_CheckChanged" />
                 <Grid x:Name="gridMsgFile">
                     <Grid.ColumnDefinitions>

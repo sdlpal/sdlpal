@@ -48,6 +48,7 @@
     <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\SDLPal.Common\DownloadDialog.xaml.cpp" />
     <ClCompile Include="..\SDLPal.Common\MainPage.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +101,7 @@
     <ClInclude Include="..\SDLPal.Common\StringHelper.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\SDLPal.Common\DownloadDialog.xaml.h" />
     <ClInclude Include="..\SDLPal.Common\MainPage.xaml.h" />
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +119,7 @@
     </PRIResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="..\SDLPal.Common\DownloadDialog.xaml" />
     <Page Include="..\SDLPal.Common\MainPage.xaml" />
   </ItemGroup>
 </Project>

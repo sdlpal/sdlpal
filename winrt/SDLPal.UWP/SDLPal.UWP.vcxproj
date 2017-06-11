@@ -108,29 +108,29 @@
     <PackageCertificateThumbprint>9B6928946F268F65424754A037F1F924B819C954</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -141,8 +141,8 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core;$(OutDir)../zlib.uwp</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;zlib.uwp.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -154,8 +154,8 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core;$(OutDir)../zlib.uwp</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;zlib.uwp.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -167,8 +167,8 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core;$(OutDir)../zlib.uwp</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;zlib.uwp.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -180,8 +180,8 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core;$(OutDir)../zlib.uwp</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;zlib.uwp.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -193,8 +193,8 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core;$(OutDir)../zlib.uwp</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;zlib.uwp.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -206,13 +206,16 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common;$(OutDir)../SDLPal.Core;$(OutDir)../zlib.uwp</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.common.lib;sdlpal.core.lib;zlib.uwp.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\SDLPal.Common\AsyncHelper.h" />
+    <ClInclude Include="..\SDLPal.Common\DownloadDialog.xaml.h">
+      <DependentUpon>..\SDLPal.Common\DownloadDialog.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="..\SDLPal.Common\StringHelper.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
@@ -229,6 +232,9 @@
     <Page Include="..\SDLPal.Common\MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="..\SDLPal.Common\DownloadDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -238,6 +244,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\native_midi.cpp" />
+    <ClCompile Include="..\SDLPal.Common\DownloadDialog.xaml.cpp">
+      <DependentUpon>..\SDLPal.Common\DownloadDialog.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="..\SDLPal.Common\SDLPal.cpp" />
     <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp" />
     <ClCompile Include="App.xaml.cpp">

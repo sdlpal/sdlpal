@@ -1,6 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{4844f59c-c0f1-4395-9e5b-0b0ab0ff70e5}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1a7b7589-37a9-4516-b280-45eb081680b6}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
     <Filter Include="adplug">
       <UniqueIdentifier>{e0154447-2329-47d7-8713-a66a8cc6b0c8}</UniqueIdentifier>
     </Filter>
@@ -20,17 +28,17 @@
     <Filter Include="liboggvorbis\src">
       <UniqueIdentifier>{f0c1a2b5-d532-48df-8882-61310afb9699}</UniqueIdentifier>
     </Filter>
-    <Filter Include="liboggvorbis\include\vorbis">
-      <UniqueIdentifier>{672e9674-8ef1-40e1-b7c1-61e38e95cb3f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="liboggvorbis\include\ogg">
       <UniqueIdentifier>{1cfbe453-cd2e-4cc6-8fe7-697858f695e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="liboggvorbis\src\modes">
-      <UniqueIdentifier>{ae768a83-ddd4-4d80-820f-2152ac4a561b}</UniqueIdentifier>
+    <Filter Include="liboggvorbis\include\vorbis">
+      <UniqueIdentifier>{672e9674-8ef1-40e1-b7c1-61e38e95cb3f}</UniqueIdentifier>
     </Filter>
     <Filter Include="liboggvorbis\src\books">
       <UniqueIdentifier>{a6026f32-f75b-4d0b-b2c1-061ee818d7db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="liboggvorbis\src\modes">
+      <UniqueIdentifier>{ae768a83-ddd4-4d80-820f-2152ac4a561b}</UniqueIdentifier>
     </Filter>
     <Filter Include="liboggvorbis\src\books\coupled">
       <UniqueIdentifier>{27265bac-1f69-4fe3-bfe4-ae319e4821c7}</UniqueIdentifier>
@@ -40,14 +48,6 @@
     </Filter>
     <Filter Include="liboggvorbis\src\books\uncoupled">
       <UniqueIdentifier>{004a5ad8-1fcb-4c4b-bbf7-809256e2eefe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{4844f59c-c0f1-4395-9e5b-0b0ab0ff70e5}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl</Extensions>
-    </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{1a7b7589-37a9-4516-b280-45eb081680b6}</UniqueIdentifier>
-      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -575,7 +575,7 @@
     <ClCompile Include="..\..\map.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\map.c">
+    <ClCompile Include="..\..\midi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\palcommon.c">

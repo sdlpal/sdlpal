@@ -1,0 +1,19 @@
+﻿<ContentDialog
+    x:Uid="Downloading"
+    x:Class="SDLPal.DownloadDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SDLPal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="正在下载……"
+    PrimaryButtonText="停止"
+    PrimaryButtonClick="OnPrimaryButtonClick"
+    MinHeight="0" MinWidth="0" Closing="OnClosing" Opened="OnOpened">
+
+    <StackPanel Orientation="Vertical">
+        <ProgressBar x:Name="pbDownload" HorizontalAlignment="Stretch" Height="10" VerticalAlignment="Top" />
+        <TextBlock x:Name="tbProgress" HorizontalAlignment="Right" Text="0 / 0" />
+    </StackPanel>
+</ContentDialog>

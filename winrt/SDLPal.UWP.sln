@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDLPal.Core", "SDLPal.UWP\SDLPal.Core.vcxproj", "{96D34C5D-CE4D-43F7-822C-C34775AAFEA8}"
 EndProject
@@ -9,6 +9,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDLPal.Common", "SDLPal.UWP
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDLPal", "SDLPal.UWP\SDLPal.UWP.vcxproj", "{B1809B68-0D9A-4E0E-ADDB-272CA1C9FA38}"
 	ProjectSection(ProjectDependencies) = postProject
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198} = {CA32282B-2122-4BEC-AFB1-2F3103FB9198}
 		{89E9B32E-A86A-47C3-A948-D2B1622925CE} = {89E9B32E-A86A-47C3-A948-D2B1622925CE}
 		{96D34C5D-CE4D-43F7-822C-C34775AAFEA8} = {96D34C5D-CE4D-43F7-822C-C34775AAFEA8}
 		{0425A2D9-BB80-4C35-8C69-1DA6E3494FA6} = {0425A2D9-BB80-4C35-8C69-1DA6E3494FA6}
@@ -18,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDL2-UWP", "..\3rd\SDL\Visu
 	ProjectSection(ProjectDependencies) = postProject
 		{0425A2D9-BB80-4C35-8C69-1DA6E3494FA6} = {0425A2D9-BB80-4C35-8C69-1DA6E3494FA6}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "..\3rd\zlib\zlib.uwp.vcxproj", "{CA32282B-2122-4BEC-AFB1-2F3103FB9198}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +86,18 @@ Global
 		{89E9B32E-A86A-47C3-A948-D2B1622925CE}.Release|x64.Build.0 = Release|x64
 		{89E9B32E-A86A-47C3-A948-D2B1622925CE}.Release|x86.ActiveCfg = Release|Win32
 		{89E9B32E-A86A-47C3-A948-D2B1622925CE}.Release|x86.Build.0 = Release|Win32
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Debug|ARM.ActiveCfg = Debug|ARM
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Debug|ARM.Build.0 = Debug|ARM
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Debug|x64.ActiveCfg = Debug|x64
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Debug|x64.Build.0 = Debug|x64
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Debug|x86.ActiveCfg = Debug|Win32
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Debug|x86.Build.0 = Debug|Win32
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Release|ARM.ActiveCfg = Release|ARM
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Release|ARM.Build.0 = Release|ARM
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Release|x64.ActiveCfg = Release|x64
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Release|x64.Build.0 = Release|x64
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Release|x86.ActiveCfg = Release|Win32
+		{CA32282B-2122-4BEC-AFB1-2F3103FB9198}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

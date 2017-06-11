@@ -5,17 +5,20 @@
 
 #include "pch.h"
 #include "MainPage.xaml.h"
+#include "DownloadDialog.xaml.h"
 #include "StringHelper.h"
 #include "AsyncHelper.h"
-#include "../../global.h"
-#include "../../palcfg.h"
-#include "../../generated.h"
+#include "global.h"
+#include "palcfg.h"
+#include "util.h"
+#include "generated.h"
 
 using namespace SDLPal;
 
 using namespace Platform;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
+using namespace Windows::UI::Popups;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Controls::Primitives;
@@ -54,10 +57,25 @@ MainPage::MainPage()
 
 	LoadControlContents(false);
 
+	btnDownloadGame->IsEnabled = (tbGamePath->Text->Length() > 0);
+
+	RadioButton^ links[] = { rbDownloadLink1, rbDownloadLink2, rbDownloadLink3 };
+	srand(time(NULL));
+	links[rand() % 3]->IsChecked = true;
+
 	m_resLdr = Windows::ApplicationModel::Resources::ResourceLoader::GetForCurrentView();
 	if (static_cast<App^>(Application::Current)->LastCrashed)
 	{
-		(ref new Windows::UI::Popups::MessageDialog(m_resLdr->GetString("MBCrashContent")))->ShowAsync();
+		(ref new MessageDialog(m_resLdr->GetString("MBCrashContent")))->ShowAsync();
+	}
+
+	try
+	{
+		delete AWait(Windows::Storage::ApplicationData::Current->LocalFolder->GetFileAsync("sdlpal.cfg"));
+	}
+	catch (Exception^)
+	{
+		(ref new MessageDialog(m_resLdr->GetString("MBStartupMessage"), m_resLdr->GetString("MBStartupTitle")))->ShowAsync();
 	}
 }
 
@@ -188,6 +206,15 @@ void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xa
 {
 	if (tbGamePath->Text->Length() > 0)
 	{
+		if (PAL_MISSING_REQUIRED(UTIL_CheckResourceFiles(ConvertString(tbGamePath->Text).c_str(), ConvertString(tbMsgFile->Text).c_str())))
+		{
+			auto msg = std::wstring(m_resLdr->GetString("MBRequired")->Data());
+			msg.replace(msg.find(L"{0}", 0), 3, tbGamePath->Text->Data());
+			(ref new MessageDialog(ref new Platform::String(msg.c_str())))->ShowAsync();
+			tbGamePath->Focus(Windows::UI::Xaml::FocusState::Programmatic);
+			return;
+		}
+
 		auto fal = Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList;
 		for (auto i = m_acl.begin(); i != m_acl.end(); i++)
 		{
@@ -203,15 +230,13 @@ void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xa
 		gConfig.fLaunchSetting = FALSE;
 		PAL_SaveConfig();
 
-		auto dlg = ref new Windows::UI::Popups::MessageDialog(m_resLdr->GetString("MBExitContent"));
-		dlg->Title = m_resLdr->GetString("MBExitTitle");
-		concurrency::create_task(dlg->ShowAsync()).then([] (Windows::UI::Popups::IUICommand^ command) {
+		concurrency::create_task((ref new MessageDialog(m_resLdr->GetString("MBExitContent"), m_resLdr->GetString("MBExitTitle")))->ShowAsync()).then([] (IUICommand^ command) {
 			Application::Current->Exit();
 		});
 	}
 	else
 	{
-		(ref new Windows::UI::Popups::MessageDialog(m_resLdr->GetString("MBEmptyContent")))->ShowAsync();
+		(ref new MessageDialog(m_resLdr->GetString("MBEmptyContent")))->ShowAsync();
 	}
 }
 
@@ -302,4 +327,71 @@ void SDLPal::MainPage::Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::
 	auto statusBar = Windows::UI::ViewManagement::StatusBar::GetForCurrentView();
 	concurrency::create_task(statusBar->ShowAsync()).then([statusBar]() { statusBar->BackgroundOpacity = 1.0; });
 #endif
+}
+
+
+void SDLPal::MainPage::btnDownloadGame_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	Platform::String^ link = nullptr;
+	Windows::UI::Xaml::Controls::RadioButton^ controls[] = {
+		this->rbDownloadLink1, this->rbDownloadLink2, this->rbDownloadLink3
+	};
+	for (int i = 0; i < 3; i++)
+	{
+		if (controls[i]->IsChecked->Value)
+		{
+			link = static_cast<Platform::String^>(controls[i]->Tag);
+			break;
+		}
+	}
+	auto folder = dynamic_cast<Windows::Storage::StorageFolder^>(tbGamePath->Tag);
+	auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadMessage"), m_resLdr->GetString("MBDownloadTitle"));
+	msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonOK"), nullptr, 1));
+	msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonCancel"), nullptr, nullptr));
+	msgbox->DefaultCommandIndex = 0;
+	msgbox->CancelCommandIndex = 1;
+	concurrency::create_task(msgbox->ShowAsync()).then([this](IUICommand^ command)->IAsyncOperation<IUICommand^>^ {
+		if (command->Id != nullptr)
+		{
+			if (UTIL_CheckResourceFiles(ConvertString(tbGamePath->Text).c_str(), ConvertString(tbMsgFile->Text).c_str()) != PALFILE_ALL_ORIGIN)
+			{
+				auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadOverwrite"), m_resLdr->GetString("MBDownloadTitle"));
+				msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonYes"), nullptr, 1));
+				msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonNo"), nullptr, nullptr));
+				msgbox->DefaultCommandIndex = 0;
+				msgbox->CancelCommandIndex = 1;
+				return msgbox->ShowAsync();
+			}
+			else
+			{
+				return concurrency::create_async([command]()->IUICommand^ { return command; });
+			}
+		}
+		else
+		{
+			return concurrency::create_async([command]()->IUICommand^ { return command; });
+		}
+	}).then([this, folder, link](IUICommand^ command) {
+		if (command->Id != nullptr)
+		{
+			HANDLE hEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
+			try
+			{
+				auto file = AWait(folder->CreateFileAsync("pal98.zip", Windows::Storage::CreationCollisionOption::ReplaceExisting), hEvent);
+				auto stream = AWait(file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite), hEvent);
+				concurrency::create_task((ref new DownloadDialog(link, m_resLdr, folder, stream))->ShowAsync()).then(
+					[this, file, stream, hEvent](ContentDialogResult result) {
+					delete stream;
+					AWait(file->DeleteAsync(), hEvent);
+					delete file;
+					CloseHandle(hEvent);
+				});
+			}
+			catch (Exception^ e)
+			{
+				(ref new MessageDialog(String::Concat(m_resLdr->GetString("MBDownloadError"), e)))->ShowAsync();
+				CloseHandle(hEvent);
+			}
+		}
+	});
 }

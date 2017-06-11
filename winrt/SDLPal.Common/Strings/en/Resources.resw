@@ -142,16 +142,19 @@
     <value>Choose format of BGM</value>
   </data>
   <data name="ButtonBrowse.Content" xml:space="preserve">
-    <value>Browse</value>
+    <value>browse</value>
   </data>
   <data name="ButtonDefault.Content" xml:space="preserve">
-    <value>Default setting</value>
+    <value>default setting</value>
+  </data>
+  <data name="ButtonDownload.Content" xml:space="preserve">
+    <value>download game</value>
   </data>
   <data name="ButtonFinish.Content" xml:space="preserve">
-    <value>Finish setting</value>
+    <value>finish setting</value>
   </data>
   <data name="ButtonReset.Content" xml:space="preserve">
-    <value>Reset setting</value>
+    <value>reset setting</value>
   </data>
   <data name="CD.Header" xml:space="preserve">
     <value>Format of CD track</value>
@@ -161,6 +164,21 @@
   </data>
   <data name="Debug.Content" xml:space="preserve">
     <value>Debug</value>
+  </data>
+  <data name="Downloading.PrimaryButtonText" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Downloading.Title" xml:space="preserve">
+    <value>Downloading...</value>
+  </data>
+  <data name="DownloadLink1.Content" xml:space="preserve">
+    <value>link 1</value>
+  </data>
+  <data name="DownloadLink2.Content" xml:space="preserve">
+    <value>link 2</value>
+  </data>
+  <data name="DownloadLink3.Content" xml:space="preserve">
+    <value>link 3</value>
   </data>
   <data name="EnableAVI.Header" xml:space="preserve">
     <value>Enable AVI animation</value>
@@ -173,6 +191,9 @@
   </data>
   <data name="Error.Content" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="Extracting" xml:space="preserve">
+    <value>Extracting...</value>
   </data>
   <data name="Fatal.Content" xml:space="preserve">
     <value>Fatal</value>
@@ -201,8 +222,31 @@
   <data name="LogLevel.PlaceholderText" xml:space="preserve">
     <value>Choose logging level</value>
   </data>
+  <data name="MBButtonCancel" xml:space="preserve">
+    <value>&amp;cancel</value>
+  </data>
+  <data name="MBButtonOK" xml:space="preserve">
+    <value>&amp;ok</value>
+  </data>
   <data name="MBCrashContent" xml:space="preserve">
     <value>The program is abnormally terminated last time. The setting page has been launched for you. Please check if there are any incorrect settings.</value>
+  </data>
+  <data name="MBDownloadCanceled" xml:space="preserve">
+    <value>Download aborted by user!</value>
+  </data>
+  <data name="MBDownloadError" xml:space="preserve">
+    <value>Download aborted due to error: </value>
+  </data>
+  <data name="MBDownloadMessage" xml:space="preserve">
+    <value>This App is about to download the free &amp; publicly available game resource from baiyou100.com to the folder you've just chosen.
+Please notice that all the copyright of the downloaded game resource belongs to its creator, Softstar, Inc. This App provides the download function here only for convenient purpose, and Softstar, Inc. may remove the download links at any time. Furthermore, you should take full responsibility for using the downloaded game resource which is completely irrelevant to the developers of this App.
+You have to agree the above declaration before you click 'ok' to start the downloading process. Otherwise, please click 'cancel' to return.</value>
+  </data>
+  <data name="MBDownloadOK" xml:space="preserve">
+    <value>Game resource has been successfully downloaded!</value>
+  </data>
+  <data name="MBDownloadTitle" xml:space="preserve">
+    <value>Download hint</value>
   </data>
   <data name="MBEmptyContent" xml:space="preserve">
     <value>The game resource folder must be specified!</value>
@@ -213,6 +257,13 @@ You can use the main menu option inside the game to return to this page.</value>
   </data>
   <data name="MBExitTitle" xml:space="preserve">
     <value>Setting finished</value>
+  </data>
+  <data name="MBStartupMessage" xml:space="preserve">
+    <value>You need to choose the game resource folder before you can start the game. And for anyone who doesn't have the game resource for now, you can download it from its publisher for free by clicking the 'downloading game' button.
+Once you've finished the setting process, you will be brought to the game directly at next launch.</value>
+  </data>
+  <data name="MBStartupTitle" xml:space="preserve">
+    <value>Welcome to SDLPal!</value>
   </data>
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
     <value>No customized message file</value>
@@ -291,5 +342,18 @@ You can use the main menu option inside the game to return to this page.</value>
   </data>
   <data name="Warning.Content" xml:space="preserve">
     <value>Warning</value>
+  </data>
+  <data name="MBButtonNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="MBButtonYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MBDownloadOverwrite" xml:space="preserve">
+    <value>The current game resource in destination folder will be overwrited on a successful download. Continue?</value>
+  </data>
+  <data name="MBRequired" xml:space="preserve">
+    <value>Missing required game resource in folder '{0}'.
+Please choose the correct folder or download game resource from the offical website!</value>
   </data>
 </root>

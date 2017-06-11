@@ -78,6 +78,21 @@ static Platform::String^ ConvertString(const char* src)
 		return "";
 }
 
+static Platform::String^ ConvertString(const char* src, int length)
+{
+	if (src)
+	{
+		int len = MultiByteToWideChar(CP_ACP, 0, src, length, nullptr, 0);
+		auto wc = new wchar_t[len];
+		MultiByteToWideChar(CP_ACP, 0, src, length, wc, len);
+		auto dst = ref new Platform::String(wc, len);
+		delete[] wc;
+		return dst;
+	}
+	else
+		return "";
+}
+
 static Platform::String^ ConvertString(const std::string& src)
 {
 	return ConvertString(src.c_str());

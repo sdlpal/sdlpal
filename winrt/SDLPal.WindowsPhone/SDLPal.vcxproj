@@ -74,22 +74,22 @@
     <AppxBundlePlatforms>arm</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>..\..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\3rd\SDL\include;..\..\3rd\zlib;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName).WindowsPhone\</OutDir>
   </PropertyGroup>
@@ -98,12 +98,12 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;shcore.lib;sdlpal.core.lib;sdlpal.common.lib;zlib.windowsphone.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone;$(OutDir)../zlib.windowsphone</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -111,12 +111,12 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;shcore.lib;sdlpal.core.lib;sdlpal.common.lib;zlib.windowsphone.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone;$(OutDir)../zlib.windowsphone</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -124,12 +124,12 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;shcore.lib;sdlpal.core.lib;sdlpal.common.lib;zlib.windowsphone.lib;vccorlibd.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlibd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone;$(OutDir)../zlib.windowsphone</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,12 +137,12 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\SDLPal.Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;sdlpal.core.lib;sdlpal.common.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;shcore.lib;sdlpal.core.lib;sdlpal.common.lib;zlib.windowsphone.lib;vccorlib.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>vccorlib.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir)../SDLPal.Common.WindowsPhone;$(OutDir)../SDLPal.Core.WindowsPhone;$(OutDir)../zlib.windowsphone</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -197,6 +197,9 @@
     <Image Include="Assets\WideLogo.scale-240.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\SDLPal.Common\DownloadDialog.xaml.cpp">
+      <DependentUpon>..\SDLPal.Common\DownloadDialog.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="..\SDLPal.Common\MainPage.xaml.cpp">
       <DependentUpon>..\SDLPal.Common\MainPage.xaml</DependentUpon>
     </ClCompile>
@@ -227,6 +230,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SDLPal.Common\AsyncHelper.h" />
+    <ClInclude Include="..\SDLPal.Common\DownloadDialog.xaml.h">
+      <DependentUpon>..\SDLPal.Common\DownloadDialog.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="..\SDLPal.Common\MainPage.xaml.h">
       <DependentUpon>..\SDLPal.Common\MainPage.xaml</DependentUpon>
     </ClInclude>
@@ -243,6 +249,7 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="..\SDLPal.Common\MainPage.xaml" />
+    <Page Include="..\SDLPal.Common\DownloadDialog.xaml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

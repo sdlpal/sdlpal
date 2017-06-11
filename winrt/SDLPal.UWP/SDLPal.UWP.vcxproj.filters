@@ -35,6 +35,7 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\native_midi.cpp" />
+    <ClCompile Include="..\SDLPal.Common\DownloadDialog.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -46,6 +47,7 @@
     <ClInclude Include="..\SDLPal.Common\StringHelper.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\SDLPal.Common\DownloadDialog.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -55,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="..\SDLPal.Common\MainPage.xaml" />
+    <Page Include="..\SDLPal.Common\DownloadDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Badge.scale-100.png">

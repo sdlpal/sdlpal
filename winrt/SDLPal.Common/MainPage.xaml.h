@@ -75,5 +75,7 @@ namespace SDLPal
 
 	internal:
 		static MainPage^ Current;
+	private:
+		void btnDownloadGame_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

@@ -77,10 +77,10 @@ public:
 		return S_OK;
 	}
 
-	static Windows::Storage::Streams::IBuffer^ GetIBuffer(byte *buffer, uint32_t totalSize)
+	static Windows::Storage::Streams::IBuffer^ GetIBuffer(void *buffer, uint32_t totalSize)
 	{
 		Microsoft::WRL::ComPtr<NativeBuffer> nativeBuffer;
-		Microsoft::WRL::Details::MakeAndInitialize<NativeBuffer>(&nativeBuffer, buffer, totalSize);
+		Microsoft::WRL::Details::MakeAndInitialize<NativeBuffer>(&nativeBuffer, (byte*)buffer, totalSize);
 		auto obj = reinterpret_cast<IInspectable*>(nativeBuffer.Get());
 		return reinterpret_cast<Windows::Storage::Streams::IBuffer^>(obj);
 	}

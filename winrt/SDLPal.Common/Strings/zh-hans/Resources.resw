@@ -147,6 +147,9 @@
   <data name="ButtonDefault.Content" xml:space="preserve">
     <value>默认设置</value>
   </data>
+  <data name="ButtonDownload.Content" xml:space="preserve">
+    <value>下载游戏资源</value>
+  </data>
   <data name="ButtonFinish.Content" xml:space="preserve">
     <value>完成设置</value>
   </data>
@@ -162,6 +165,21 @@
   <data name="Debug.Content" xml:space="preserve">
     <value>调试信息</value>
   </data>
+  <data name="Downloading.PrimaryButtonText" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Downloading.Title" xml:space="preserve">
+    <value>正在下载……</value>
+  </data>
+  <data name="DownloadLink1.Content" xml:space="preserve">
+    <value>地址 1</value>
+  </data>
+  <data name="DownloadLink2.Content" xml:space="preserve">
+    <value>地址 2</value>
+  </data>
+  <data name="DownloadLink3.Content" xml:space="preserve">
+    <value>地址 3</value>
+  </data>
   <data name="EnableAVI.Header" xml:space="preserve">
     <value>启用 AVI 过场动画</value>
   </data>
@@ -173,6 +191,9 @@
   </data>
   <data name="Error.Content" xml:space="preserve">
     <value>严重错误</value>
+  </data>
+  <data name="Extracting" xml:space="preserve">
+    <value>正在解压缩……</value>
   </data>
   <data name="Fatal.Content" xml:space="preserve">
     <value>致命错误</value>
@@ -201,8 +222,31 @@
   <data name="LogLevel.PlaceholderText" xml:space="preserve">
     <value>选择日志记录级别</value>
   </data>
+  <data name="MBButtonCancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="MBButtonOK" xml:space="preserve">
+    <value>确定(&amp;O)</value>
+  </data>
   <data name="MBCrashContent" xml:space="preserve">
     <value>上次程序异常退出，已显示设置页供您检查设置是否正确。</value>
+  </data>
+  <data name="MBDownloadCanceled" xml:space="preserve">
+    <value>下载已被用户中止！</value>
+  </data>
+  <data name="MBDownloadError" xml:space="preserve">
+    <value>下载已被如下错误中止：</value>
+  </data>
+  <data name="MBDownloadMessage" xml:space="preserve">
+    <value>本应用即将为您从baiyou100.com网站下载免费的《仙剑奇侠传 98柔情篇》游戏资源文件并保存于您所选择的文件夹中。
+您应知晓，该数据文件的版权归游戏开发方大宇资讯所有，本应用仅出于方便您进行游戏的目的在此提供下载功能，游戏开发方可能会随时移除相关下载链接。您同意，您对下载资源文件的使用仅代表您个人意愿，与本应用的开发者无关。
+如您同意此约定，请点击“确定”按钮开始下载，否则请点击“取消”返回设置页面。</value>
+  </data>
+  <data name="MBDownloadOK" xml:space="preserve">
+    <value>游戏资源下载已成功完成！</value>
+  </data>
+  <data name="MBDownloadTitle" xml:space="preserve">
+    <value>下载提示</value>
   </data>
   <data name="MBEmptyContent" xml:space="preserve">
     <value>必须指定游戏资源文件夹！</value>
@@ -213,6 +257,13 @@
   </data>
   <data name="MBExitTitle" xml:space="preserve">
     <value>设置已完成</value>
+  </data>
+  <data name="MBStartupMessage" xml:space="preserve">
+    <value>请您首先在设置页面中选择游戏资源所在文件夹后方可进入游戏；如您尚未拥有可执行的游戏资源，您也可以在选择文件夹后点击“下载游戏”按钮从游戏发行方网站下载免费游戏资源。
+一旦您完成设置，在您下一次启动本应用时将直接开始游戏进程。</value>
+  </data>
+  <data name="MBStartupTitle" xml:space="preserve">
+    <value>欢迎您使用 SDLPal！</value>
   </data>
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
     <value>无自定义语言文件</value>
@@ -291,5 +342,17 @@
   </data>
   <data name="Warning.Content" xml:space="preserve">
     <value>普通警告</value>
+  </data>
+  <data name="MBButtonNo" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="MBButtonYes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="MBDownloadOverwrite" xml:space="preserve">
+    <value>检测到目标文件夹中已存在游戏资源，下载成功后将会覆盖现有的资源文件，是否继续？</value>
+  </data>
+  <data name="MBRequired" xml:space="preserve">
+    <value>在文件夹“{0}”中缺少必需的游戏资源文件，请选择正确的文件夹或从官方网站下载游戏数据文件！</value>
   </data>
 </root>
