@@ -20,13 +20,15 @@
     <string name="label_opl">OPL模擬器</string>
     <string name="label_oplrate">OPL模擬器取樣速率</string>
     <string name="msg_crash">上次程式異常退出，已顯示設定頁供您檢查設定是否正確。</string>
-    <string name="msg_empty">必須指定遊戲資源檔案夾！</string>
+    <string name="msg_empty">必須指定遊戲資料檔所在資料夾！</string>
     <string name="msg_exit">您的設定已保存，下次開啟時將直接開始遊戲。在遊戲中，您可以通過「系統」功能表的「返回設定」項回到本設定頁。</string>
     <string name="action_restore">撤銷修改</string>
     <string name="label_loglevel">日誌記錄級別</string>
     <string name="action_usefontfile">自訂字體檔案</string>
     <string name="action_usemsgfile">自訂語言檔案</string>
     <string name="action_uselogfile">記錄到檔案</string>
-    <string name="toast_requestpermission">本應用需要存儲裝置讀寫許可權以訪問遊戲資料檔。如拒絕授權，則本app無法正常執行。</string>
-    <string name="toast_grantpermission">本應用需要存儲裝置讀寫許可權以訪問遊戲資料檔。請按「確定」後手動為本應用開啟許可權。</string>
+    <string name="toast_requestpermission">本app需要存儲裝置讀寫許可權以訪問遊戲資料檔。如拒絕授權，則本app無法正常執行。</string>
+    <string name="toast_grantpermission">本app需要存儲裝置讀寫許可權以訪問遊戲資料檔。請按「確定」後手動為本app開啟許可權。</string>
+    <string name="msg_data_not_found_header">無法在以下資料夾中找到遊戲資料檔:</string>
+    <string name="msg_data_not_found_footer">說明：為防止侵害大宇公司版權，恕不提供遊戲資料檔。请自行將正版PAL的資料檔復製到手機中。</string>
 </resources>

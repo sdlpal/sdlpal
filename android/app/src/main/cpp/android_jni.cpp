@@ -190,6 +190,41 @@ JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_setConfigStri
     return item >= 0 ? PAL_SetConfigString(item, v_str ? jstring_to_utf8(env, v_str).c_str() : nullptr) : JNI_FALSE;
 }
 
+/*
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
+ * Method:    checkDataFile
+ * Signature: (Ljava/lang/String;)Z
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_checkDataFiles(JNIEnv *env, jclass cls, jstring j_str)
+{
+    std::string path = jstring_to_utf8(env, j_str);
+    FILE *fp;
+
+#define checkFile(filename) \
+    fp = fopen((path + "/" + filename).c_str(), "rb"); \
+    if (fp == nullptr) return JNI_FALSE; \
+    fclose(fp);
+
+    checkFile("abc.mkf");
+    checkFile("ball.mkf");
+    checkFile("data.mkf");
+    checkFile("f.mkf");
+    checkFile("fbp.mkf");
+    checkFile("fire.mkf");
+    checkFile("gop.mkf");
+    checkFile("m.msg");
+    checkFile("map.mkf");
+    checkFile("mgo.mkf");
+    checkFile("rgm.mkf");
+    checkFile("rng.mkf");
+    checkFile("sss.mkf");
+    checkFile("word.dat");
+
+    return JNI_TRUE;
+}
+
+
 EXTERN_C_LINKAGE
 void* JNI_mediaplayer_load(const char *filename)
 {

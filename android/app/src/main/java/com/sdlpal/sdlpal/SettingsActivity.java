@@ -32,6 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static native boolean setConfigBoolean(String item, boolean value);
     public static native boolean setConfigInt(String item, int value);
     public static native boolean setConfigString(String item, String value);
+    public static native boolean checkDataFiles(String path);
     public static native String getGitRevision();
 
     private static final String KeepAspectRatio = "KeepAspectRatio";
@@ -129,6 +130,18 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.btnFinish).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String gamePath = ((EditText)findViewById(R.id.edFolder)).getText().toString();
+                if (!checkDataFiles(gamePath)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mInstance);
+                    builder.setMessage(getString(R.string.msg_data_not_found_header) + "\n" +
+                            gamePath + "\n\n" +
+                            getString(R.string.msg_data_not_found_footer));
+                    builder.setCancelable(true);
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.create().show();
+                    return;
+                }
+
                 if (!setConfigs()) return;
                 setConfigBoolean(LaunchSetting, false);
                 saveConfigFile();
