@@ -34,8 +34,6 @@
 
 #pragma comment(lib, "ShCore.lib")
 
-#define PAL_PATH_NAME	"SDLPAL"
-
 static const LARGE_INTEGER liZero = { 0 };
 static const void* const _SIGNATURE = &liZero;
 

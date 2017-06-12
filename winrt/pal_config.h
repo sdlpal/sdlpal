@@ -46,10 +46,10 @@
 #define PAL_PORTYEAR         "2015"
 
 #define PAL_HAS_CONFIG_PAGE  1
-
 #if NTDDI_VERSION >= NTDDI_WIN10
 # define PAL_HAS_NATIVEMIDI  1
 #endif
+#define PAL_HAS_NATIVEAVI    1
 
 #define PAL_FILESYSTEM_IGNORE_CASE 1
 

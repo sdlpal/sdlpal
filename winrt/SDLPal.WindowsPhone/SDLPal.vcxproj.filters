@@ -42,13 +42,16 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="App.xaml.cpp" />
+    <ClCompile Include="..\SDLPal.Common\MainPage.xaml.cpp" />
     <ClCompile Include="..\SDLPal.Common\SDLPal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\SDLPal.Common\WinRTUtil.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\SDLPal.Common\MainPage.xaml.cpp" />
+    <ClCompile Include="..\SDLPal.Common\native_avi.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

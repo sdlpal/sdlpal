@@ -1257,3 +1257,18 @@ VIDEO_DrawSurfaceToScreen(
    SDL_FreeSurface(pCompatSurface);
 #endif
 }
+
+BOOL
+VIDEO_GetWindowInfo(
+	SDL_SysWMinfo  *pInfo
+)
+{
+	if (NULL == pInfo) return FALSE;
+
+	SDL_VERSION(&pInfo->version);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return SDL_GetWindowWMInfo(gpWindow, pInfo);
+#else
+	return SDL_GetWMInfo(pInfo);
+#endif
+}

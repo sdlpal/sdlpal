@@ -60,6 +60,12 @@
 #include "riff.h"
 #include "palcfg.h"
 
+#if PAL_HAS_NATIVEAVI
+BOOL PAL_PlayAVI_Native(const char *lpszPath);
+#else
+static BOOL PAL_PlayAVI_Native(const char *lpszPath) { return FALSE; }
+#endif
+
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
 # define SwapStruct32(v, s) \
@@ -632,7 +638,7 @@ PAL_RenderAVIFrameToSurface(
 
 BOOL
 PAL_PlayAVI(
-    LPCSTR     lpszPath
+	const char *lpszPath
 )
 {
 	if (!gConfig.fEnableAviPlay) return FALSE;
@@ -652,7 +658,10 @@ PAL_PlayAVI(
 	{
 		UTIL_LogOutput(LOGLEVEL_WARNING, "Failed to parse AVI file or its format not supported!\n");
 		fclose(fp);
-		return FALSE;
+		//
+		// Try play AVI through OS-native interface
+		//
+		return PAL_PlayAVI_Native(va("%s%s", gConfig.pszGamePath, lpszPath));
 	}
 
     PAL_ClearKeyState();
