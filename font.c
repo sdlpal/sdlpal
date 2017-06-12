@@ -253,7 +253,7 @@ PAL_InitFont(
 	const CONFIGURATION* cfg
 )
 {
-	if (!cfg->fIsWIN95)
+	if (!cfg->fIsWIN95 && !cfg->pszMsgFile)
 	{
 		PAL_LoadEmbeddedFont();
 	}
