@@ -24,6 +24,7 @@
 #define UTIL_H
 
 #include "common.h"
+#include "palcommon.h"
 
 PAL_C_LINKAGE_BEGIN
 
@@ -199,6 +200,12 @@ UTIL_GetFullPathName(
 	size_t      buflen,
 	const char *basepath,
 	const char *subpath
+);
+
+PALFILE
+UTIL_CheckResourceFiles(
+	const char *path,
+	const char *msgfile
 );
 
 /*

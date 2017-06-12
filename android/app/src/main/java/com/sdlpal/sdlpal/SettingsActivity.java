@@ -32,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static native boolean setConfigBoolean(String item, boolean value);
     public static native boolean setConfigInt(String item, int value);
     public static native boolean setConfigString(String item, String value);
-    public static native boolean checkDataFiles(String path);
+    public static native boolean checkResourceFiles(String path, String msgfile);
     public static native String getGitRevision();
 
     private static final String KeepAspectRatio = "KeepAspectRatio";
@@ -131,7 +131,8 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String gamePath = ((EditText)findViewById(R.id.edFolder)).getText().toString();
-                if (!checkDataFiles(gamePath)) {
+                String msgFile = ((EditText)findViewById(R.id.edMsgFile)).getText().toString();
+                if (!checkResourceFiles(gamePath, msgFile)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(mInstance);
                     builder.setMessage(getString(R.string.msg_data_not_found_header) + "\n" +
                             gamePath + "\n\n" +

@@ -33,6 +33,7 @@
 #endif
 
 static char internal_buffer[PAL_MAX_GLOBAL_BUFFERS + 1][PAL_GLOBAL_BUFFER_SIZE];
+#define INTERNAL_BUFFER_SIZE_ARGS internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE
 
 void UTIL_MsgBox(char *string)
 {
@@ -524,7 +525,7 @@ UTIL_OpenFileAtPathForMode(
 	//
 	// Construct full path according to lpszPath and lpszFileName
 	//
-	const char *path = UTIL_GetFullPathName(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, lpszPath, lpszFileName);
+	const char *path = UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, lpszPath, lpszFileName);
 
 	//
 	// If no matching path, check the open mode
@@ -535,7 +536,7 @@ UTIL_OpenFileAtPathForMode(
 	}
 	else if (szMode[0] != 'r')
 	{
-		return fopen(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, lpszPath, lpszFileName), szMode);
+		return fopen(UTIL_CombinePath(INTERNAL_BUFFER_SIZE_ARGS, 2, lpszPath, lpszFileName), szMode);
 	}
 	else
 	{
@@ -585,7 +586,7 @@ UTIL_GetFullPathName(
 	char *_base = strdup(basepath), *_sub = strdup(subpath);
 	const char *result = NULL;
 
-	if (access(UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, _base, _sub), 0) == 0)
+	if (access(UTIL_CombinePath(INTERNAL_BUFFER_SIZE_ARGS, 2, _base, _sub), 0) == 0)
 	{
 		result = internal_buffer[PAL_MAX_GLOBAL_BUFFERS];
 	}
@@ -610,9 +611,9 @@ UTIL_GetFullPathName(
 			{
 				if (!result && strcasecmp(list[n]->d_name, start) == 0)
 				{
-					result = UTIL_CombinePath(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, 2, _base, list[n]->d_name);
+					result = UTIL_CombinePath(INTERNAL_BUFFER_SIZE_ARGS, 2, _base, list[n]->d_name);
 					if (end)
-						result = UTIL_GetFullPathName(internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE, result, end + 1);
+						result = UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, result, end + 1);
 					else if (access(result, 0) != 0)
 						result = NULL;
 				}
@@ -700,6 +701,63 @@ UTIL_GlobalBuffer(
 )
 {
 	return (index >= 0 && index < PAL_MAX_GLOBAL_BUFFERS) ? internal_buffer[index] : NULL;
+}
+
+
+PALFILE
+UTIL_CheckResourceFiles(
+	const char *path,
+	const char *msgfile
+)
+{
+	const char *common_files[] = {
+		"abc.mkf", "ball.mkf", "data.mkf", "f.mkf",
+		"fbp.mkf", "fire.mkf", "gop.mkf",  "map.mkf",
+		"mgo.mkf", "pat.mkf",  "rgm.mkf",  "rng.mkf",
+		"sss.mkf"
+	};
+	const char *msg_files[][2] = {
+		{ msgfile, "m.msg"    },
+		{ msgfile, "word.dat" }
+	};
+	const char *sound_files[2] = { "voc.mkf", "sounds.mkf" };
+	const char *music_files[2] = { "midi.mkf", "mus.mkf" };
+	int msgidx = !(msgfile && *msgfile);
+	PALFILE retval = (PALFILE)0;
+
+	for (int i = 0; i < sizeof(common_files) / sizeof(common_files[0]); i++)
+	{
+		if (!UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, path, common_files[i]))
+		{
+			retval |= (PALFILE)(1 << i);
+		}
+	}
+
+	for (int i = 0; i < sizeof(msg_files[0]) / sizeof(msg_files[0][0]); i++)
+	{
+		if (!UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, path, msg_files[i][msgidx]))
+		{
+			retval |= (PALFILE)(1 << ((i + 1) * msgidx + 13));
+		}
+	}
+
+	for (int i = 0; i < sizeof(sound_files) / sizeof(sound_files[0]); i++)
+	{
+		if (!UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, path, sound_files[i]))
+		{
+			retval |= (PALFILE)(1 << (i + 16));
+		}
+	}
+
+	for (int i = 0; i < sizeof(music_files) / sizeof(music_files[0]); i++)
+	{
+		if (!UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, path, music_files[i]))
+		{
+			retval |= (PALFILE)(1 << (i + 18));
+		}
+	}
+
+	return retval;
 }
 
 

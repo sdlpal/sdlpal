@@ -192,36 +192,16 @@ JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_setConfigStri
 
 /*
  * Class:     com_sdlpal_sdlpal_SettingsActivity
- * Method:    checkDataFile
- * Signature: (Ljava/lang/String;)Z
+ * Method:    checkResourceFiles
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)Z
  */
 EXTERN_C_LINKAGE
-JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_checkDataFiles(JNIEnv *env, jclass cls, jstring j_str)
+JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_checkResourceFiles(JNIEnv *env, jclass cls, jstring path_str, jstring msg_str)
 {
-    std::string path = jstring_to_utf8(env, j_str);
-    FILE *fp;
-
-#define checkFile(filename) \
-    fp = fopen((path + "/" + filename).c_str(), "rb"); \
-    if (fp == nullptr) return JNI_FALSE; \
-    fclose(fp);
-
-    checkFile("abc.mkf");
-    checkFile("ball.mkf");
-    checkFile("data.mkf");
-    checkFile("f.mkf");
-    checkFile("fbp.mkf");
-    checkFile("fire.mkf");
-    checkFile("gop.mkf");
-    checkFile("m.msg");
-    checkFile("map.mkf");
-    checkFile("mgo.mkf");
-    checkFile("rgm.mkf");
-    checkFile("rng.mkf");
-    checkFile("sss.mkf");
-    checkFile("word.dat");
-
-    return JNI_TRUE;
+    return PAL_MISSING_REQUIRED(UTIL_CheckResourceFiles(
+        jstring_to_utf8(env, path_str).c_str(),
+        jstring_to_utf8(env, msg_str).c_str()
+    )) ? JNI_FALSE : JNI_TRUE;
 }
 
 
