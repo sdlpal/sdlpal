@@ -12,6 +12,8 @@
 
 #include "palcfg.h"
 
+#define UIKitLocalizedString(key) [[NSBundle bundleWithIdentifier:@"com.apple.UIKit"] localizedStringForKey:key value:@"" table:nil]
+
 @implementation SettingsTableViewController {
     NSArray *AudioSampleRates;
     NSArray *AudioBufferSizes;
@@ -22,6 +24,8 @@
     NSArray *LogLevels;
     NSArray *allFiles;
     NSMutableArray *AvailFiles;
+    BOOL checkAllFilesIncluded;
+    NSString *resourceStatus;
     
     AbstractActionSheetPicker *picker;
     
@@ -78,27 +82,50 @@
     OPLFormats = @[ @"DOSBOX", @"MAME", @"DOSBOXNEW" ];
     LogLevels = @[ @"VERBOSE", @"DEBUG", @"INFO", @"WARNING", @"ERROR", @"FATAL" ];
     
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    tap.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:tap];
+    
+    UIRefreshControl *refreshController = [[UIRefreshControl alloc] init];
+    [refreshController addTarget:self action:@selector(handleRefresh:) forControlEvents:UIControlEventValueChanged];
+    [self.tableView addSubview:refreshController];
+
+    [self recheckSharingFolder];
+    [self readConfigs];
+}
+-(void)dismissKeyboard
+{
+    [self.view endEditing:YES];
+}
+-(void)handleRefresh : (id)sender
+{
+    UIRefreshControl *refreshController = sender;
+    [self recheckSharingFolder];
+    [refreshController endRefreshing];
+}
+
+- (void)recheckSharingFolder {
     AvailFiles = [NSMutableArray new];
     NSArray *builtinList = @[ @"wor16.fon", @"wor16.asc", @"m.msg"];
     NSArray *builtinExtensionList = @[@"exe",@"drv",@"dll",@"rpg",@"mkf",@"avi",@"dat",@"cfg",@"ini"];
     allFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[NSString stringWithUTF8String:UTIL_BasePath()] error:nil];
     for( NSString *filename in allFiles ) {
         if( ![self includedInList:builtinExtensionList name:filename.pathExtension] &&
-            ![self includedInList:builtinList name:filename] ) {
+           ![self includedInList:builtinList name:filename] ) {
             [AvailFiles addObject:filename];
         }
     }
-    
-    [self readConfigs];
-    
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-    tap.cancelsTouchesInView = NO;
-    [self.view addGestureRecognizer:tap];
+    checkAllFilesIncluded = YES;
+    for( NSString *checkFile in @[@"abc.mkf", @"ball.mkf", @"data.mkf", @"f.mkf", @"fbp.mkf", @"fire.mkf", @"gop.mkf", @"m.msg", @"map.mkf", @"mgo.mkf", @"rgm.mkf", @"rng.mkf", @"sss.mkf", @"word.dat"] ) {
+        if( ![self includedInList:allFiles name:checkFile] ) {
+            checkAllFilesIncluded = NO;
+            break;
+        }
+    }
+    if(!resourceStatus) resourceStatus = lblResourceStatus.text;
+    lblResourceStatus.text  = [NSString stringWithFormat:@"%@%@", resourceStatus, checkAllFilesIncluded ? @"✅" : @"❌" ];
 }
--(void)dismissKeyboard
-{
-    [self.view endEditing:YES];
-}
+
 typedef void(^SelectedBlock)(NSString *selected);
 
 - (void)showPickerWithTitle:(NSString *)title toLabel:(UILabel*)label inArray:(NSArray*)array {
@@ -189,6 +216,15 @@ typedef void(^SelectedBlock)(NSString *selected);
 }
 
 - (IBAction)btnConfirmClicked:(id)sender {
+    if(!checkAllFilesIncluded){
+        UIAlertController  *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Cannot find data file in the iTunes File Sharing directory",nil)
+                                                                        message:NSLocalizedString(@"NOTE: For copyright reasons data files required to run the game are NOT included.",nil)
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cacelAction = [UIAlertAction actionWithTitle:UIKitLocalizedString(@"OK") style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:cacelAction];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+    }
     [UIView animateWithDuration:0.65
                           delay:0.0
          usingSpringWithDamping:1.0
@@ -209,8 +245,6 @@ typedef void(^SelectedBlock)(NSString *selected);
 - (void)readConfigs {
     gConfig.fFullScreen = YES; //iOS specific; need this to make sure statusbar hidden in game completely
     
-    lblResourceStatus.text  = [NSString stringWithFormat:@"%@%@",lblResourceStatus.text, [self includedInList:allFiles name:@"fbp.mkf"] ? @"✅" : @"❌" ];
-    
     lblLanguageFile.text    = [NSString stringWithUTF8String:gConfig.pszMsgFile  ? gConfig.pszMsgFile  : ""];
     lblFontFile.text        = [NSString stringWithUTF8String:gConfig.pszFontFile ? gConfig.pszFontFile : ""];
     textLogFile.text        = [NSString stringWithUTF8String:gConfig.pszLogFile  ? gConfig.pszLogFile  : ""];
@@ -220,7 +254,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     toggleTouchScreenOverlay.on = gConfig.fUseTouchOverlay;
     toggleKeepAspect.on         = gConfig.fKeepAspectRatio;
-    toggleSmoothScaling.on      = strncmp(gConfig.pszScaleQuality, "0", sizeof(char)) != 0;
+    toggleSmoothScaling.on      = gConfig.pszScaleQuality ? strncmp(gConfig.pszScaleQuality, "0", sizeof(char)) != 0 : NO;
     
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
     lblOPLType.text         = OPLFormats[gConfig.eOPLType];

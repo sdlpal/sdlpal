@@ -98,6 +98,7 @@
 		71DCB6961ED9CBB000F120DB /* aviplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 71DCB6941ED9CBB000F120DB /* aviplay.c */; };
 		71DCB6991ED9CCFE00F120DB /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE731E474CE2000C8970 /* GameController.framework */; };
 		C60441781ED9AF3C006C7A7C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C604417A1ED9AF3C006C7A7C /* Settings.storyboard */; };
+		C6153B9D1EEE2ECD00DFFCAA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C6153B9F1EEE2ECD00DFFCAA /* Localizable.strings */; };
 		C622BE661E474B5E000C8970 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE641E474B5E000C8970 /* audio.c */; };
 		C622BE6C1E474C01000C8970 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6A1E474C01000C8970 /* palcfg.c */; };
 		C622BE701E474CA9000C8970 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6F1E474CA9000C8970 /* overlay.c */; };
@@ -348,6 +349,9 @@
 		C604417B1ED9B500006C7A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		C604417D1ED9B521006C7A7C /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Settings.strings"; sourceTree = "<group>"; };
 		C604417E1ED9B60C006C7A7C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings.strings"; sourceTree = "<group>"; };
+		C6153B9E1EEE2ECD00DFFCAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C6153BA01EEE2ED300DFFCAA /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		C6153BA11EEE2ED600DFFCAA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = "../../3rd/SDL/Xcode-iOS/SDL/SDL.xcodeproj"; sourceTree = "<group>"; };
 		C622BE641E474B5E000C8970 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = audio.c; path = ../../../audio.c; sourceTree = "<group>"; };
 		C622BE651E474B5E000C8970 /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio.h; path = ../../../audio.h; sourceTree = "<group>"; };
@@ -660,6 +664,7 @@
 				C604417A1ED9AF3C006C7A7C /* Settings.storyboard */,
 				C6743A851ECCAFC600AEF782 /* SettingsTableViewController.h */,
 				C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */,
+				C6153B9F1EEE2ECD00DFFCAA /* Localizable.strings */,
 			);
 			name = "Supporting Files";
 			path = SDLPal;
@@ -887,6 +892,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6153B9D1EEE2ECD00DFFCAA /* Localizable.strings in Resources */,
 				71655073195BB372006E1227 /* Default.png in Resources */,
 				71655075195BB372006E1227 /* Default@2x.png in Resources */,
 				71655077195BB372006E1227 /* Default-568h@2x.png in Resources */,
@@ -1074,6 +1080,16 @@
 				C604417E1ED9B60C006C7A7C /* zh-Hans */,
 			);
 			name = Settings.storyboard;
+			sourceTree = "<group>";
+		};
+		C6153B9F1EEE2ECD00DFFCAA /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C6153B9E1EEE2ECD00DFFCAA /* Base */,
+				C6153BA01EEE2ED300DFFCAA /* zh-Hant */,
+				C6153BA11EEE2ED600DFFCAA /* zh-Hans */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
