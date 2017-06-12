@@ -3843,8 +3843,8 @@ PAL_BattlePlayerPerformAction(
             continue;
          }
 
-         def += (SHORT)(g_Battle.rgEnemy[i].e.wFleeRate);
-         def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 2;
+         def += (SHORT)(g_Battle.rgEnemy[i].e.wDexterity);
+         def += (g_Battle.rgEnemy[i].e.wLevel + 6) * 4;
       }
 
       if ((SHORT)def < 0)
@@ -3852,7 +3852,7 @@ PAL_BattlePlayerPerformAction(
          def = 0;
       }
 
-      if (RandomLong(0, str) >= RandomLong(0, def) && !g_Battle.fIsBoss)
+      if (str >= RandomLong(0, def) && !g_Battle.fIsBoss)
       {
          //
          // Successful escape
