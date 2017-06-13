@@ -81,11 +81,6 @@ typedef DWORD           PAL_POS;
 // maximum number of level
 #define     MAX_LEVELS                   99
 
-#define     OBJECT_ITEM_START            0x3D
-#define     OBJECT_ITEM_END              0x126
-#define     OBJECT_MAGIC_START           0x127
-#define     OBJECT_MAGIC_END             0x18D
-
 #define     MINIMAL_WORD_COUNT           (MAX_OBJECTS + 13)
 
 typedef enum tagPALDIRECTION

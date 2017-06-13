@@ -420,15 +420,8 @@ PAL_LoadDefaultGame(
       for (i = 0; i < MAX_OBJECTS; i++)
       {
          memcpy(&p->rgObject[i], &objects[i], sizeof(OBJECT_DOS));
-	     if (i >= OBJECT_ITEM_START && i <= OBJECT_MAGIC_END)
-         {
-            p->rgObject[i].rgwData[6] = objects[i].rgwData[5];     // wFlags
-			p->rgObject[i].rgwData[5] = 0;                         // wScriptDesc or wReserved2
-         }
-         else
-         {
-            p->rgObject[i].rgwData[6] = 0;
-         }
+         p->rgObject[i].rgwData[6] = objects[i].rgwData[5];     // wFlags
+         p->rgObject[i].rgwData[5] = 0;                         // wScriptDesc or wReserved2
       }
    }
 
@@ -679,15 +672,8 @@ PAL_LoadGame_DOS(
    for (i = 0; i < MAX_OBJECTS; i++)
    {
       memcpy(&gpGlobals->g.rgObject[i], &s.rgObject[i], sizeof(OBJECT_DOS));
-	  if (i >= OBJECT_ITEM_START && i <= OBJECT_MAGIC_END)
-	  {
-         gpGlobals->g.rgObject[i].rgwData[6] = s.rgObject[i].rgwData[5];     // wFlags
-         gpGlobals->g.rgObject[i].rgwData[5] = 0;                            // wScriptDesc or wReserved2
-	  }
-	  else
-	  {
-         gpGlobals->g.rgObject[i].rgwData[6] = 0;
-      }
+      gpGlobals->g.rgObject[i].rgwData[6] = s.rgObject[i].rgwData[5];     // wFlags
+      gpGlobals->g.rgObject[i].rgwData[5] = 0;                            // wScriptDesc or wReserved2
    }
    memcpy(gpGlobals->g.lprgEventObject, s.rgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
@@ -839,10 +825,7 @@ PAL_SaveGame_DOS(
    for (i = 0; i < MAX_OBJECTS; i++)
    {
       memcpy(&s.rgObject[i], &gpGlobals->g.rgObject[i], sizeof(OBJECT_DOS));
-	  if (i >= OBJECT_ITEM_START && i <= OBJECT_MAGIC_END)
-	  {
-         s.rgObject[i].rgwData[5] = gpGlobals->g.rgObject[i].rgwData[6];     // wFlags
-	  }
+      s.rgObject[i].rgwData[5] = gpGlobals->g.rgObject[i].rgwData[6];     // wFlags
    }
    memcpy(s.rgEventObject, gpGlobals->g.lprgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
