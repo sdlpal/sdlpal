@@ -3342,6 +3342,47 @@ PAL_BattlePlayerValidateAction(
    }
 }
 
+static VOID
+PAL_BattleCheckHidingEffect(
+   VOID
+)
+/*++
+  Purpose:
+
+    Check if we should enter hiding state after using items or magics.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   if (g_Battle.iHidingTime < 0)
+   {
+#ifdef PAL_CLASSIC
+      g_Battle.iHidingTime = -g_Battle.iHidingTime;
+#else
+      g_Battle.iHidingTime = -g_Battle.iHidingTime * 20;
+
+      if (gpGlobals->bBattleSpeed > 1)
+      {
+         g_Battle.iHidingTime *= 1 + (gpGlobals->bBattleSpeed - 1) * 0.5;
+      }
+      else
+      {
+         g_Battle.iHidingTime *= 1.2;
+      }
+#endif
+      VIDEO_BackupScreen(g_Battle.lpSceneBuf);
+      PAL_BattleMakeScene();
+      PAL_BattleFadeScene();
+   }
+}
+
 VOID
 PAL_BattlePlayerPerformAction(
    WORD         wPlayerIndex
@@ -4029,6 +4070,8 @@ PAL_BattlePlayerPerformAction(
       PAL_BattleShowPostMagicAnim();
       PAL_BattleDelay(5, 0, TRUE);
 
+      PAL_BattleCheckHidingEffect();
+
       gpGlobals->Exp.rgMagicExp[wPlayerRole].wCount += RandomLong(2, 3);
       gpGlobals->Exp.rgMagicPowerExp[wPlayerRole].wCount++;
       break;
@@ -4071,6 +4114,8 @@ PAL_BattlePlayerPerformAction(
       PAL_BattleUpdateFighters();
       PAL_BattleDelay(4, 0, TRUE);
 
+      PAL_BattleCheckHidingEffect();
+
       break;
 
    case kBattleActionUseItem:
@@ -4093,26 +4138,7 @@ PAL_BattlePlayerPerformAction(
          PAL_AddItemToInventory(wObject, -1);
       }
 
-      if (g_Battle.iHidingTime < 0)
-      {
-#ifdef PAL_CLASSIC
-         g_Battle.iHidingTime = -g_Battle.iHidingTime;
-#else
-         g_Battle.iHidingTime = -g_Battle.iHidingTime * 20;
-
-         if (gpGlobals->bBattleSpeed > 1)
-         {
-            g_Battle.iHidingTime *= 1 + (gpGlobals->bBattleSpeed - 1) * 0.5;
-         }
-         else
-         {
-            g_Battle.iHidingTime *= 1.2;
-         }
-#endif
-         VIDEO_BackupScreen(g_Battle.lpSceneBuf);
-         PAL_BattleMakeScene();
-         PAL_BattleFadeScene();
-      }
+      PAL_BattleCheckHidingEffect();
 
       PAL_BattleUpdateFighters();
       PAL_BattleDisplayStatChange();
