@@ -24,8 +24,6 @@ environment:
       APPX_OPTIONS:
     - solution_name: winrt/SDLPal.UWP.sln
       APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
-    - solution_name: winrt/SDLPal.Windows.sln
-      APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
     - solution_name: winrt/SDLPal.WindowsPhone.sln
       APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="ARM";AppxPackageDir="AppPackages"
 build_script:
@@ -39,7 +37,6 @@ after_build:
   - |-
     if exist win32\Win32\Release\sdlpal.exe ( cd win32\Win32\Release & 7z a ..\..\..\sdlpal-win32.zip sdlpal.exe & cd ..\..\..\ )
     for /d %%d in ("winrt\SDLPal.UWP\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-uwp.zip * & cd ..\..\..\..\ )
-    for /d %%d in ("winrt\SDLPal.Windows\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-ws81.zip * & cd ..\..\..\..\ )
     for /d %%d in ("winrt\SDLPal.WindowsPhone\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-wp81.zip * & cd ..\..\..\..\ )
 
 deploy:
@@ -54,8 +51,6 @@ artifacts:
     name: Win32
   - path: sdlpal-uwp.zip
     name: UWP
-  - path: sdlpal-ws81.zip
-    name: WindowsStore
   - path: sdlpal-wp81.zip
     name: WindowsPhone
 
