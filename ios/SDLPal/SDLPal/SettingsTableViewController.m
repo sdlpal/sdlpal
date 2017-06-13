@@ -231,7 +231,7 @@ typedef void(^SelectedBlock)(NSString *selected);
                                       [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
                                       if( error ) {
                                           [alert dismissViewControllerAnimated:YES completion:nil];
-                                          UIAlertController  *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                          UIAlertController  *alert = [UIAlertController alertControllerWithTitle:nil
                                                                                                           message:[error localizedDescription]
                                                                                                    preferredStyle:UIAlertControllerStyleAlert];
                                           UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:UIKitLocalizedString(@"OK") style:UIAlertActionStyleDefault handler:nil];
@@ -250,7 +250,7 @@ typedef void(^SelectedBlock)(NSString *selected);
                                                       completionHandler:^(NSString * _Nonnull path, BOOL succeeded, NSError * _Nonnull error) {
                                                           [alert dismissViewControllerAnimated:YES completion:nil];
                                                           if( error ) {
-                                                              UIAlertController  *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                                              UIAlertController  *alert = [UIAlertController alertControllerWithTitle:nil
                                                                                                                               message:[error localizedDescription]
                                                                                                                        preferredStyle:UIAlertControllerStyleAlert];
                                                               UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:UIKitLocalizedString(@"OK") style:UIAlertActionStyleDefault handler:nil];

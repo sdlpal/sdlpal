@@ -9,7 +9,9 @@
 #import "SPWebViewController.h"
 #define UIKitLocalizedString(key) [[NSBundle bundleWithIdentifier:@"com.apple.UIKit"] localizedStringForKey:key value:@"" table:nil]
 
-@interface SPWebViewController ()<UIWebViewDelegate>
+@interface SPWebViewController ()<UIWebViewDelegate> {
+    BOOL finished;
+}
 
 @property (strong, nonatomic) IBOutlet UIWebView *webView;
 
@@ -30,15 +32,16 @@
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
-    if( [request.URL.path containsString:self.signature] ) {
+    if( [request.URL.path hasSuffix:self.signature] ) {
         [self.navigationController popViewControllerAnimated:YES];
         [self.delegate capturedURL:request.URL];
         return NO;
     }
-    return YES;
+    return !finished;
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
+    finished = YES;
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     [self setTitle:[self.webView stringByEvaluatingJavaScriptFromString:@"document.title"]];
 }
