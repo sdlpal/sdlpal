@@ -97,8 +97,10 @@
 		71AA35801A0BCA4E00793FFF /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = 71AA357F1A0BCA4E00793FFF /* util.mm */; };
 		71DCB6961ED9CBB000F120DB /* aviplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 71DCB6941ED9CBB000F120DB /* aviplay.c */; };
 		71DCB6991ED9CCFE00F120DB /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE731E474CE2000C8970 /* GameController.framework */; };
+		AF3C0D1876FE5963AEC8C171 /* Pods_SDLPal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CE88E13A6D270C55171A0A6 /* Pods_SDLPal.framework */; };
 		C60441781ED9AF3C006C7A7C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C604417A1ED9AF3C006C7A7C /* Settings.storyboard */; };
 		C6153B9D1EEE2ECD00DFFCAA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C6153B9F1EEE2ECD00DFFCAA /* Localizable.strings */; };
+		C6153BAA1EEFB98500DFFCAA /* SPWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C6153BA91EEFB98500DFFCAA /* SPWebViewController.m */; };
 		C622BE661E474B5E000C8970 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE641E474B5E000C8970 /* audio.c */; };
 		C622BE6C1E474C01000C8970 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6A1E474C01000C8970 /* palcfg.c */; };
 		C622BE701E474CA9000C8970 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6F1E474CA9000C8970 /* overlay.c */; };
@@ -113,7 +115,6 @@
 		C6743A841ECCAFA700AEF782 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */; };
 		C694CF871EB6197C0006F937 /* gs_instruments.dls in Resources */ = {isa = PBXBuildFile; fileRef = C694CF861EB619660006F937 /* gs_instruments.dls */; };
 		C6E974A21E49C24500F76B17 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E9749D1E49C22D00F76B17 /* libSDL2.a */; };
-		F9BC4A0C6F1B983EB45414F3 /* libPods-SDLPal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,7 +142,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SDLPal.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2CE88E13A6D270C55171A0A6 /* Pods_SDLPal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SDLPal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		57FB00E81B7A4FEA005FCF4C /* dbemuopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbemuopl.cpp; sourceTree = "<group>"; };
 		57FB00E91B7A4FEA005FCF4C /* dbemuopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbemuopl.h; sourceTree = "<group>"; };
 		57FB00EA1B7A4FEA005FCF4C /* dbopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbopl.cpp; sourceTree = "<group>"; };
@@ -352,6 +353,8 @@
 		C6153B9E1EEE2ECD00DFFCAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C6153BA01EEE2ED300DFFCAA /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C6153BA11EEE2ED600DFFCAA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		C6153BA81EEFB98500DFFCAA /* SPWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPWebViewController.h; sourceTree = "<group>"; };
+		C6153BA91EEFB98500DFFCAA /* SPWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPWebViewController.m; sourceTree = "<group>"; };
 		C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = "../../3rd/SDL/Xcode-iOS/SDL/SDL.xcodeproj"; sourceTree = "<group>"; };
 		C622BE641E474B5E000C8970 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = audio.c; path = ../../../audio.c; sourceTree = "<group>"; };
 		C622BE651E474B5E000C8970 /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio.h; path = ../../../audio.h; sourceTree = "<group>"; };
@@ -394,7 +397,7 @@
 				71655061195BB372006E1227 /* UIKit.framework in Frameworks */,
 				71655063195BB372006E1227 /* Foundation.framework in Frameworks */,
 				71655065195BB372006E1227 /* CoreGraphics.framework in Frameworks */,
-				F9BC4A0C6F1B983EB45414F3 /* libPods-SDLPal.a in Frameworks */,
+				AF3C0D1876FE5963AEC8C171 /* Pods_SDLPal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -600,7 +603,7 @@
 				71655060195BB372006E1227 /* UIKit.framework */,
 				71655062195BB372006E1227 /* Foundation.framework */,
 				71655064195BB372006E1227 /* CoreGraphics.framework */,
-				2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */,
+				2CE88E13A6D270C55171A0A6 /* Pods_SDLPal.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -665,6 +668,8 @@
 				C6743A851ECCAFC600AEF782 /* SettingsTableViewController.h */,
 				C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */,
 				C6153B9F1EEE2ECD00DFFCAA /* Localizable.strings */,
+				C6153BA81EEFB98500DFFCAA /* SPWebViewController.h */,
+				C6153BA91EEFB98500DFFCAA /* SPWebViewController.m */,
 			);
 			name = "Supporting Files";
 			path = SDLPal;
@@ -1043,6 +1048,7 @@
 				57FB01491B7A50B0005FCF4C /* floor1.c in Sources */,
 				71655281195BB6DB006E1227 /* play.c in Sources */,
 				71655282195BB6DB006E1227 /* res.c in Sources */,
+				C6153BAA1EEFB98500DFFCAA /* SPWebViewController.m in Sources */,
 				71655283195BB6DB006E1227 /* rixplay.cpp in Sources */,
 				71655284195BB6DB006E1227 /* rngplay.c in Sources */,
 				71655285195BB6DB006E1227 /* scene.c in Sources */,
@@ -1177,6 +1183,7 @@
 					../../,
 					../../liboggvorbis/include,
 					../../liboggvorbis/src,
+					"\"${PODS_ROOT}\"/**",
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
 				INIT_ROUTINE = "";
@@ -1184,7 +1191,6 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
-					"-l\"ActionSheetPicker-3.0\"",
 					"-framework",
 					"\"UIKit\"",
 					"-Wl,-e,_sdlpal_main",
@@ -1219,6 +1225,7 @@
 					../../,
 					../../liboggvorbis/include,
 					../../liboggvorbis/src,
+					"\"${PODS_ROOT}\"/**",
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
 				INIT_ROUTINE = "";
@@ -1226,7 +1233,6 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
-					"-l\"ActionSheetPicker-3.0\"",
 					"-framework",
 					"\"UIKit\"",
 					"-Wl,-e,_sdlpal_main",

@@ -11,7 +11,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SettingsTableViewController : UITableViewController {
+@protocol WebCaptureProtocol
+
+- (void)capturedURL:(NSURL *)url;
+
+@end
+
+@interface SettingsTableViewController : UITableViewController<WebCaptureProtocol> {
     
 }
 @end

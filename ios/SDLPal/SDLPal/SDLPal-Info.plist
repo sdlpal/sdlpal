@@ -24,6 +24,11 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<false/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIRequiresFullScreen</key>

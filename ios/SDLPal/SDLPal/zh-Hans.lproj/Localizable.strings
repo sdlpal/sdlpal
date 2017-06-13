@@ -7,4 +7,15 @@
 */
 "Cannot find data file in the iTunes File Sharing directory" = "无法在iTunes共享文件夹中找到游戏数据文件";
 
-"NOTE: For copyright reasons data files required to run the game are NOT included." = "注意：由于版权问题，数据文件无法提供。请自行从百游官方下载并解压拷贝到手机中。";
+"NOTE: For copyright reasons data files required to run the game are NOT included. You can obtain them by visiting official links, or copy them via iTunes File Sharing. Which do you prefer?" = "注意：由于版权问题，数据文件无法提供。请从下列官方链接下载，或将自己合法授权的数据文件拷贝至iTunes共享文件夹。";
+
+"BAIYOU" = "百游";
+"ROO GAMES" = "袋鼠游戏";
+"CUBE GAME" = "方块游戏";
+
+"Custom URL" = "自定义URL";
+"Downloading" = "正在下载";
+
+"Copyright Claim" = "版权声明";
+
+"This App is about to download the free & publicly available game resource from %@ to the iTunes File Sharing folder.\nPlease notice that all the copyright of the downloaded game resource belongs to its creator, Softstar, Inc. This App provides the download function here only for convenient purpose, and Softstar, Inc. may remove the download links at any time. Furthermore, you should take full responsibility for using the downloaded game resource which is completely irrelevant to the developers of this App.\nYou have to agree the above declaration before you click 'ok' to start the downloading process. Otherwise, please click 'cancel' to return." = "本应用即将为您从%@网站下载免费的《仙剑奇侠传 98柔情篇》游戏资源文件并保存于iTunes共享文件夹中。\n您应知晓，该数据文件的版权归游戏开发方大宇资讯所有，本应用仅出于方便您进行游戏的目的在此提供下载功能，游戏开发方可能会随时移除相关下载链接。您同意，您对下载资源文件的使用仅代表您个人意愿，与本应用的开发者无关。\n如您同意此约定，请点击“确定”按钮开始下载，否则请点击“取消”返回设置页面。";

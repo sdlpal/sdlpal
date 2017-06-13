@@ -616,6 +616,7 @@
                         <outlet property="toggleSurroundOPL" destination="YBD-8I-fzH" id="fbs-J6-e6Z"/>
                         <outlet property="toggleTouchScreenOverlay" destination="ko1-dc-Oae" id="Z2D-hm-7Ax"/>
                         <outlet property="transitionView" destination="Pwb-Li-avz" id="ZFM-WI-3U5"/>
+                        <segue destination="tAk-RF-FG0" kind="show" identifier="showWebView" id="qS3-4k-aBG"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hs4-N9-FQA" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -625,7 +626,27 @@
                     <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </view>
             </objects>
-            <point key="canvasLocation" x="-160.1449275362319" y="17.52717391304348"/>
+            <point key="canvasLocation" x="-94" y="18"/>
+        </scene>
+        <!--Web View Controller-->
+        <scene sceneID="glU-yY-Ydv">
+            <objects>
+                <viewController id="tAk-RF-FG0" customClass="SPWebViewController" sceneMemberID="viewController">
+                    <webView key="view" contentMode="scaleToFill" id="ocs-cb-56O">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <connections>
+                            <outlet property="delegate" destination="tAk-RF-FG0" id="BnT-Jw-nOU"/>
+                        </connections>
+                    </webView>
+                    <connections>
+                        <outlet property="webView" destination="ocs-cb-56O" id="8w7-UK-yG2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="f0c-K7-tMQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="698" y="18"/>
         </scene>
     </scenes>
 </document>

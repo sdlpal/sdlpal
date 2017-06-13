@@ -7,4 +7,15 @@
 */
 "Cannot find data file in the iTunes File Sharing directory" = "無法在iTunes檔案共享資料夾中找到遊戲資料檔";
 
-"NOTE: For copyright reasons data files required to run the game are NOT included." = "說明：為防止侵害大宇公司版權，恕不提供遊戲資料檔。请自行將正版PAL的資料檔復製到手機中。";
+"NOTE: For copyright reasons data files required to run the game are NOT included. You can obtain them by visiting official links, or copy them via iTunes File Sharing. Which do you prefer?" = "說明：為防止侵害大宇公司版權，恕不提供遊戲資料檔。请點擊下列官方鏈接下載，或或將自己合法授權的遊戲資料檔拷貝至iTunes檔案共享資料夾。";
+
+"BAIYOU" = "百遊";
+"ROO GAMES" = "袋鼠遊戲";
+"CUBE GAME" = "方塊遊戲";
+
+"Custom URL" = "自訂URL";
+"Downloading" = "正在下載";
+
+"Copyright Claim" = "智慧財產權申明";
+
+"This App is about to download the free & publicly available game resource from %@ to the iTunes File Sharing folder.\nPlease notice that all the copyright of the downloaded game resource belongs to its creator, Softstar, Inc. This App provides the download function here only for convenient purpose, and Softstar, Inc. may remove the download links at any time. Furthermore, you should take full responsibility for using the downloaded game resource which is completely irrelevant to the developers of this App.\nYou have to agree the above declaration before you click 'ok' to start the downloading process. Otherwise, please click 'cancel' to return." = "本應用即將為您從%@網站下載免費的《仙劍奇俠傳 98柔情篇》遊戲資源檔並保存於iTunes檔案共享資料夾中。\n您應知曉，該資源檔的版權歸遊戲開發方大宇資訊所有，本應用僅出於方便您進行遊戲的目的在此提供下載功能，遊戲開發方可能會隨時移除相關下載連結。您同意，您對下載資源檔的使用僅代表您個人意願，與本應用的開發者無關。\n如您同意此約定，請點擊「確定」按鈕開始下載，否則請點擊「取消」返回設置頁面。";
