@@ -1270,7 +1270,8 @@ PAL_BattleStartFrame(
          }
          else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
          {
-            g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttackMate;
+            g_Battle.rgPlayer[i].action.ActionType =
+               (PAL_IsPlayerDying(wPlayerRole) ? kBattleActionPass : kBattleActionAttackMate);
             g_Battle.rgPlayer[i].action.flRemainingTime = 0;
          }
          else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] > 0 &&
@@ -1687,7 +1688,8 @@ PAL_BattleStartFrame(
             }
             else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
             {
-               g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttackMate;
+               g_Battle.rgPlayer[i].action.ActionType =
+                  (PAL_IsPlayerDying(wPlayerRole) ? kBattleActionPass : kBattleActionAttackMate);
             }
             else if (g_Battle.rgPlayer[i].action.ActionType == kBattleActionAttack &&
                g_Battle.rgPlayer[i].action.wActionID != 0)
