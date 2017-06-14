@@ -16,7 +16,7 @@ Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
 Copyright (c) 2011-2017, SDLPAL development team.
 All rights reserved.
 ```
-SDLPAL is distributed under the terms of GNU General Public License, version 3 (or any later version) as published by the Free Software Foundation. See [gpl.txt](https://raw.githubusercontent.com/sdlpal/sdlpal/master/gpl.txt) for details.
+SDLPAL is distributed under the terms of GNU General Public License, version 3 (or any later version) as published by the Free Software Foundation. See [gpl.txt](gpl.txt) for details.
 
 Many of the ideas of this program are based on documents from [PAL Research Project](https://github.com/palxex/palresearch), and portions of the code are based on the work done by Baldur and [louyihua](https://github.com/louyihua).
 
@@ -31,7 +31,7 @@ This program made extensive use of the following libraries:
 * [foo_input_adplug](https://github.com/kode54/foo_input_adplug) for codes of the built-in resampler
 * [ffmpeg](https://ffmpeg.org/) for codes of the built-in AVI player
 
-Please see [AUTHORS.txt](https://raw.githubusercontent.com/sdlpal/sdlpal/master/AUTHORS.txt) for additional authors.
+Please see [AUTHORS.txt](AUTHORS.txt) for additional authors.
 
 This program does **NOT** include any code or data files of the original game, which are proprietary and copyrighted by [SoftStar](http://www.softstar.com.tw/) Inc.
 
@@ -186,7 +186,7 @@ Configuration GUIs for *macOS* is still unavailable for now and we welcome contr
 
 Manually
 --------
-To set the configuration options manually, create a file named as *`sdlpal.cfg`* (make sure to use lower-case file name in case-sensitive filesystems) in the game directory created by the above step. Please refer to the file [sdlpal.cfg.example](https://raw.githubusercontent.com/sdlpal/sdlpal/master/sdlpal.cfg.example) for format specfication.
+To set the configuration options manually, create a file named as *`sdlpal.cfg`* (make sure to use lower-case file name in case-sensitive filesystems) in the game directory created by the above step. Please refer to the file [sdlpal.cfg.example](sdlpal.cfg.example) for format specfication.
 
 
 Reporting issues
@@ -198,4 +198,4 @@ If you find any issues of SDLPAL, please feel free to report them to the develop
 Contributing to the game
 ========================
 
-Any original code & documentation contributions are welcomed as long as the contributed code & documentation is licensed under GPL. You can use Github's pull request system to submit your changes to the main repository here. But remember, as a step to keep the quality of code, you should write corresponding unit tests before your changes can be merged. The guidance of writting unit tests can be found [here](https://github.com/sdlpal/sdlpal/tree/master/tests).
+Any original code & documentation contributions are welcomed as long as the contributed code & documentation is licensed under GPL. You can use Github's pull request system to submit your changes to the main repository here. But remember, as a step to keep the quality of code, you should write corresponding unit tests before your changes can be merged. The guidance of writting unit tests can be found [here](tests).
