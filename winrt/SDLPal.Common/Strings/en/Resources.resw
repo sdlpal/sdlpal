@@ -121,25 +121,25 @@
     <value>SDL-based reimplementation of classic Chinese RPG "Xian Jian Qi Xia Zhuan".</value>
   </data>
   <data name="AspectRatio.Header" xml:space="preserve">
-    <value>Keep aspect ratio</value>
+    <value>keep aspect ratio</value>
   </data>
   <data name="AspectRatio.OffContent" xml:space="preserve">
-    <value>No</value>
+    <value>no</value>
   </data>
   <data name="AspectRatio.OnContent" xml:space="preserve">
-    <value>Yes</value>
+    <value>yes</value>
   </data>
   <data name="AudioBuffer.Header" xml:space="preserve">
-    <value>Audio buffer size</value>
+    <value>audio buffer size</value>
   </data>
   <data name="AudioBuffer.PlaceholderText" xml:space="preserve">
-    <value>Choose audio buffer size</value>
+    <value>choose audio buffer size</value>
   </data>
   <data name="BGM.Header" xml:space="preserve">
-    <value>Format of BGM</value>
+    <value>format of BGM</value>
   </data>
   <data name="BGM.PlaceholderText" xml:space="preserve">
-    <value>Choose format of BGM</value>
+    <value>choose format of BGM</value>
   </data>
   <data name="ButtonBrowse.Content" xml:space="preserve">
     <value>browse</value>
@@ -148,7 +148,7 @@
     <value>default setting</value>
   </data>
   <data name="ButtonDownload.Content" xml:space="preserve">
-    <value>download game</value>
+    <value>download a licensed copy of game resource</value>
   </data>
   <data name="ButtonFinish.Content" xml:space="preserve">
     <value>finish setting</value>
@@ -157,76 +157,67 @@
     <value>reset setting</value>
   </data>
   <data name="CD.Header" xml:space="preserve">
-    <value>Format of CD track</value>
+    <value>format of CD track</value>
   </data>
   <data name="CD.PlaceholderText" xml:space="preserve">
-    <value>Choose format of CD track</value>
+    <value>choose format of CD track</value>
   </data>
   <data name="Debug.Content" xml:space="preserve">
-    <value>Debug</value>
+    <value>debug</value>
   </data>
   <data name="Downloading.PrimaryButtonText" xml:space="preserve">
-    <value>Stop</value>
+    <value>stop</value>
   </data>
   <data name="Downloading.Title" xml:space="preserve">
-    <value>Downloading...</value>
-  </data>
-  <data name="DownloadLink1.Content" xml:space="preserve">
-    <value>link 1</value>
-  </data>
-  <data name="DownloadLink2.Content" xml:space="preserve">
-    <value>link 2</value>
-  </data>
-  <data name="DownloadLink3.Content" xml:space="preserve">
-    <value>link 3</value>
+    <value>downloading...</value>
   </data>
   <data name="EnableAVI.Header" xml:space="preserve">
-    <value>Enable AVI animation</value>
+    <value>enable AVI animation</value>
   </data>
   <data name="EnableAVI.OffContent" xml:space="preserve">
-    <value>No</value>
+    <value>no</value>
   </data>
   <data name="EnableAVI.OnContent" xml:space="preserve">
-    <value>Yes</value>
+    <value>yes</value>
   </data>
   <data name="Error.Content" xml:space="preserve">
-    <value>Error</value>
+    <value>error</value>
   </data>
   <data name="Extracting" xml:space="preserve">
-    <value>Extracting...</value>
+    <value>extracting...</value>
   </data>
   <data name="Fatal.Content" xml:space="preserve">
-    <value>Fatal</value>
+    <value>fatal</value>
   </data>
   <data name="FontFile.PlaceholderText" xml:space="preserve">
-    <value>No customized font file</value>
+    <value>no customized font file</value>
   </data>
   <data name="GamePath.Header" xml:space="preserve">
-    <value>Folder of game resource</value>
+    <value>folder of game resource files</value>
   </data>
   <data name="GamePath.PlaceholderText" xml:space="preserve">
-    <value>No folder selected</value>
+    <value>no folder selected</value>
   </data>
   <data name="Information.Content" xml:space="preserve">
-    <value>Informational</value>
+    <value>informational</value>
   </data>
   <data name="LogFile.PlaceholderText" xml:space="preserve">
-    <value>No logging file</value>
+    <value>no logging file</value>
   </data>
   <data name="LogFileType" xml:space="preserve">
-    <value>Log files</value>
+    <value>log files</value>
   </data>
   <data name="LogLevel.Header" xml:space="preserve">
-    <value>Logging level</value>
+    <value>logging level</value>
   </data>
   <data name="LogLevel.PlaceholderText" xml:space="preserve">
-    <value>Choose logging level</value>
+    <value>choose logging level</value>
   </data>
   <data name="MBButtonCancel" xml:space="preserve">
-    <value>&amp;cancel</value>
+    <value>cancel</value>
   </data>
   <data name="MBButtonOK" xml:space="preserve">
-    <value>&amp;ok</value>
+    <value>ok</value>
   </data>
   <data name="MBCrashContent" xml:space="preserve">
     <value>The program is abnormally terminated last time. The setting page has been launched for you. Please check if there are any incorrect settings.</value>
@@ -238,9 +229,9 @@
     <value>Download aborted due to error: </value>
   </data>
   <data name="MBDownloadMessage" xml:space="preserve">
-    <value>This App is about to download the free &amp; publicly available game resource from baiyou100.com to the folder you've just chosen.
-Please notice that all the copyright of the downloaded game resource belongs to its creator, Softstar, Inc. This App provides the download function here only for convenient purpose, and Softstar, Inc. may remove the download links at any time. Furthermore, you should take full responsibility for using the downloaded game resource which is completely irrelevant to the developers of this App.
-You have to agree the above declaration before you click 'ok' to start the downloading process. Otherwise, please click 'cancel' to return.</value>
+    <value>You're going to be brought to the download page provided by baiyou100.com, from where you can download the game resource to the folder you've just chosen. The download link will be automatically centered so that anyone who don't understand Chinese can download it without trouble.
+Please note that this download page is not provided by this App's creator, so we can't guarantee the availablity of the donwload link.
+Click 'ok' to continue or click 'cancel' to return.</value>
   </data>
   <data name="MBDownloadOK" xml:space="preserve">
     <value>Game resource has been successfully downloaded!</value>
@@ -259,95 +250,96 @@ You can use the main menu option inside the game to return to this page.</value>
     <value>Setting finished</value>
   </data>
   <data name="MBStartupMessage" xml:space="preserve">
-    <value>You need to choose the game resource folder before you can start the game. And for anyone who doesn't have the game resource for now, you can download it from its publisher for free by clicking the 'downloading game' button.
+    <value>You need to choose the folder that contains game resource files before you can start the game, because such files are NOT bundled due to copyright restrictions.
+But fortunately, these files can be downloaded freely from baiyou100.com, the publisher's website.  You'll be brought to this website by clicking the 'download' button after you've chosen a folder to save the downloaded files.
 Once you've finished the setting process, you will be brought to the game directly at next launch.</value>
   </data>
   <data name="MBStartupTitle" xml:space="preserve">
     <value>Welcome to SDLPal!</value>
   </data>
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
-    <value>No customized message file</value>
+    <value>no customized message file</value>
   </data>
   <data name="MusicVolume.Header" xml:space="preserve">
-    <value>Music volume</value>
+    <value>music volume</value>
   </data>
   <data name="OPL.Header" xml:space="preserve">
-    <value>Type of OPL emulator</value>
+    <value>type of OPL emulator</value>
   </data>
   <data name="OPL.PlaceholderText" xml:space="preserve">
-    <value>Choose type of OPL emulator</value>
+    <value>choose type of OPL emulator</value>
   </data>
   <data name="OPLSR.Header" xml:space="preserve">
-    <value>Sample rate of OPL emulator</value>
+    <value>sample rate of OPL emulator</value>
   </data>
   <data name="OPLSR.PlaceholderText" xml:space="preserve">
-    <value>Choose sample rate of OPL emulator</value>
+    <value>choose sample rate of OPL emulator</value>
   </data>
   <data name="Publisher" xml:space="preserve">
     <value>SDLPAL development team</value>
   </data>
   <data name="Quality.Header" xml:space="preserve">
-    <value>Audio quality</value>
+    <value>audio quality</value>
   </data>
   <data name="Samplerate.Header" xml:space="preserve">
-    <value>Sample rate of audio output</value>
+    <value>sample rate of audio output</value>
   </data>
   <data name="Samplerate.PlaceholderText" xml:space="preserve">
-    <value>Choose sample rate of audio output</value>
+    <value>choose sample rate of audio output</value>
   </data>
   <data name="SoundVolume.Header" xml:space="preserve">
-    <value>Sound volume</value>
+    <value>sound volume</value>
   </data>
   <data name="Stereo.Header" xml:space="preserve">
-    <value>Stereo</value>
+    <value>stereo</value>
   </data>
   <data name="Stereo.OffContent" xml:space="preserve">
-    <value>No</value>
+    <value>no</value>
   </data>
   <data name="Stereo.OnContent" xml:space="preserve">
-    <value>Yes</value>
+    <value>yes</value>
   </data>
   <data name="SurroundOPL.Header" xml:space="preserve">
-    <value>Use surround OPL</value>
+    <value>use surround OPL</value>
   </data>
   <data name="SurroundOPL.OffContent" xml:space="preserve">
-    <value>No</value>
+    <value>no</value>
   </data>
   <data name="SurroundOPL.OnContent" xml:space="preserve">
-    <value>Yes</value>
+    <value>yes</value>
   </data>
   <data name="Title.Text" xml:space="preserve">
-    <value>Setting mode</value>
+    <value>setting mode</value>
   </data>
   <data name="TouchOverlay.Header" xml:space="preserve">
-    <value>Use touch overlay</value>
+    <value>use touch overlay</value>
   </data>
   <data name="TouchOverlay.OffContent" xml:space="preserve">
-    <value>No</value>
+    <value>no</value>
   </data>
   <data name="TouchOverlay.OnContent" xml:space="preserve">
-    <value>Yes</value>
+    <value>yes</value>
   </data>
   <data name="UseFontFile.Content" xml:space="preserve">
-    <value>Use customized font file</value>
+    <value>use customized font file</value>
   </data>
   <data name="UseLogFile.Content" xml:space="preserve">
-    <value>Log to file</value>
+    <value>log to file</value>
   </data>
   <data name="UseMessageFile.Content" xml:space="preserve">
-    <value>Customized message file</value>
+    <value>customized message file</value>
   </data>
   <data name="Verbose.Content" xml:space="preserve">
-    <value>Verbose</value>
+    <value>verbose</value>
   </data>
   <data name="Warning.Content" xml:space="preserve">
-    <value>Warning</value>
+    <value>warning</value>
   </data>
   <data name="MBButtonNo" xml:space="preserve">
-    <value>No</value>
+    <value>no</value>
   </data>
   <data name="MBButtonYes" xml:space="preserve">
-    <value>Yes</value>
+    <value>yes</value>
   </data>
   <data name="MBDownloadOverwrite" xml:space="preserve">
     <value>The current game resource in destination folder will be overwrited on a successful download. Continue?</value>
@@ -355,5 +347,8 @@ Once you've finished the setting process, you will be brought to the game direct
   <data name="MBRequired" xml:space="preserve">
     <value>Missing required game resource in folder '{0}'.
 Please choose the correct folder or download game resource from the offical website!</value>
+  </data>
+  <data name="ButtonBack" xml:space="preserve">
+    <value>back</value>
   </data>
 </root>

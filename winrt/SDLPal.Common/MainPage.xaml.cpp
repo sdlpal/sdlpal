@@ -18,6 +18,7 @@ using namespace SDLPal;
 using namespace Platform;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
+using namespace Windows::UI::Core;
 using namespace Windows::UI::Popups;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
@@ -34,6 +35,7 @@ static Platform::String^ log_file_exts[] = { ".log" };
 MainPage^ MainPage::Current = nullptr;
 
 MainPage::MainPage()
+	: m_dlg(nullptr)
 {
 	InitializeComponent();
 
@@ -58,10 +60,6 @@ MainPage::MainPage()
 	LoadControlContents(false);
 
 	btnDownloadGame->IsEnabled = (tbGamePath->Text->Length() > 0);
-
-	RadioButton^ links[] = { rbDownloadLink1, rbDownloadLink2, rbDownloadLink3 };
-	srand(time(NULL));
-	links[rand() % 3]->IsChecked = true;
 
 	m_resLdr = Windows::ApplicationModel::Resources::ResourceLoader::GetForCurrentView();
 	if (static_cast<App^>(Application::Current)->LastCrashed)
@@ -252,6 +250,7 @@ void SDLPal::MainPage::SetPath(Windows::Storage::StorageFolder^ folder)
 	{
 		tbGamePath->Text = folder->Path;
 		tbGamePath->Tag = folder;
+		btnDownloadGame->IsEnabled = true;
 	}
 }
 
@@ -332,18 +331,6 @@ void SDLPal::MainPage::Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::
 
 void SDLPal::MainPage::btnDownloadGame_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	Platform::String^ link = nullptr;
-	Windows::UI::Xaml::Controls::RadioButton^ controls[] = {
-		this->rbDownloadLink1, this->rbDownloadLink2, this->rbDownloadLink3
-	};
-	for (int i = 0; i < 3; i++)
-	{
-		if (controls[i]->IsChecked->Value)
-		{
-			link = static_cast<Platform::String^>(controls[i]->Tag);
-			break;
-		}
-	}
 	auto folder = dynamic_cast<Windows::Storage::StorageFolder^>(tbGamePath->Tag);
 	auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadMessage"), m_resLdr->GetString("MBDownloadTitle"));
 	msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonOK"), nullptr, 1));
@@ -371,7 +358,7 @@ void SDLPal::MainPage::btnDownloadGame_Click(Platform::Object^ sender, Windows::
 		{
 			return concurrency::create_async([command]()->IUICommand^ { return command; });
 		}
-	}).then([this, folder, link](IUICommand^ command) {
+	}).then([this, folder](IUICommand^ command) {
 		if (command->Id != nullptr)
 		{
 			HANDLE hEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
@@ -379,8 +366,11 @@ void SDLPal::MainPage::btnDownloadGame_Click(Platform::Object^ sender, Windows::
 			{
 				auto file = AWait(folder->CreateFileAsync("pal98.zip", Windows::Storage::CreationCollisionOption::ReplaceExisting), hEvent);
 				auto stream = AWait(file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite), hEvent);
-				concurrency::create_task((ref new DownloadDialog(link, m_resLdr, folder, stream))->ShowAsync()).then(
-					[this, file, stream, hEvent](ContentDialogResult result) {
+				concurrency::create_task(this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, folder, file, stream]() {
+					m_dlg = ref new DownloadDialog(m_resLdr, folder, stream, ActualWidth, ActualHeight);
+				}))).then([this]()->IAsyncOperation<ContentDialogResult>^{
+					return m_dlg->ShowAsync();
+				}).then([this, file, stream, hEvent](ContentDialogResult result) {
 					delete stream;
 					AWait(file->DeleteAsync(), hEvent);
 					delete file;
@@ -394,4 +384,16 @@ void SDLPal::MainPage::btnDownloadGame_Click(Platform::Object^ sender, Windows::
 			}
 		}
 	});
+}
+
+
+void SDLPal::MainPage::OnSizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
+{
+	if (m_dlg)
+	{
+		m_dlg->MaxWidth = e->NewSize.Width;
+		if (m_dlg->MaxHeight == e->PreviousSize.Height)
+			m_dlg->MaxHeight = e->NewSize.Height;
+		m_dlg->UpdateLayout();
+	}
 }

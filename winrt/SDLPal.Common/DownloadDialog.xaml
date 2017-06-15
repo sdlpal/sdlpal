@@ -10,10 +10,12 @@
     Title="正在下载……"
     PrimaryButtonText="停止"
     PrimaryButtonClick="OnPrimaryButtonClick"
-    MinHeight="0" MinWidth="0" Closing="OnClosing" Opened="OnOpened">
+    MinHeight="0" MinWidth="0"
+    Closing="OnClosing" Opened="OnOpened" SizeChanged="OnSizeChanged">
 
     <StackPanel Orientation="Vertical">
-        <ProgressBar x:Name="pbDownload" HorizontalAlignment="Stretch" Height="10" VerticalAlignment="Top" />
-        <TextBlock x:Name="tbProgress" HorizontalAlignment="Right" Text="0 / 0" />
+        <WebView x:Name="DownloadPage" NavigationStarting="OnNavigateStart" DOMContentLoaded="OnDOMContentLoaded" ScrollViewer.HorizontalScrollMode="Auto" ScrollViewer.VerticalScrollMode="Auto" />
+        <ProgressBar x:Name="pbDownload" HorizontalAlignment="Stretch" Height="12" Margin="0,8,0,4" />
+        <TextBlock x:Name="tbProgress" HorizontalAlignment="Right" Height="20" Margin="0,4,0,0" Text="0 / 0" />
     </StackPanel>
 </ContentDialog>

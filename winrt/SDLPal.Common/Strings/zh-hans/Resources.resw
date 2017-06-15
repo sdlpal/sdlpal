@@ -148,7 +148,7 @@
     <value>默认设置</value>
   </data>
   <data name="ButtonDownload.Content" xml:space="preserve">
-    <value>下载游戏资源</value>
+    <value>下载正版游戏资源</value>
   </data>
   <data name="ButtonFinish.Content" xml:space="preserve">
     <value>完成设置</value>
@@ -166,19 +166,10 @@
     <value>调试信息</value>
   </data>
   <data name="Downloading.PrimaryButtonText" xml:space="preserve">
-    <value>停止</value>
+    <value>返回</value>
   </data>
   <data name="Downloading.Title" xml:space="preserve">
     <value>正在下载……</value>
-  </data>
-  <data name="DownloadLink1.Content" xml:space="preserve">
-    <value>地址 1</value>
-  </data>
-  <data name="DownloadLink2.Content" xml:space="preserve">
-    <value>地址 2</value>
-  </data>
-  <data name="DownloadLink3.Content" xml:space="preserve">
-    <value>地址 3</value>
   </data>
   <data name="EnableAVI.Header" xml:space="preserve">
     <value>启用 AVI 过场动画</value>
@@ -226,7 +217,7 @@
     <value>取消</value>
   </data>
   <data name="MBButtonOK" xml:space="preserve">
-    <value>确定(&amp;O)</value>
+    <value>确定</value>
   </data>
   <data name="MBCrashContent" xml:space="preserve">
     <value>上次程序异常退出，已显示设置页供您检查设置是否正确。</value>
@@ -238,9 +229,9 @@
     <value>下载已被如下错误中止：</value>
   </data>
   <data name="MBDownloadMessage" xml:space="preserve">
-    <value>本应用即将为您从baiyou100.com网站下载免费的《仙剑奇侠传 98柔情篇》游戏资源文件并保存于您所选择的文件夹中。
-您应知晓，该数据文件的版权归游戏开发方大宇资讯所有，本应用仅出于方便您进行游戏的目的在此提供下载功能，游戏开发方可能会随时移除相关下载链接。您同意，您对下载资源文件的使用仅代表您个人意愿，与本应用的开发者无关。
-如您同意此约定，请点击“确定”按钮开始下载，否则请点击“取消”返回设置页面。</value>
+    <value>您即将进入由baiyou100.com提供的游戏资源文件下载页，您可从该页面下载免费的正版游戏资源文件并保存于您所选择的文件夹中。
+您应知晓，上述资源文件并非由本应用的开发方提供，故我们无法保证上述下载链接的可用性。
+请点击“确定”按钮开始下载，或点击“取消”返回设置页面。</value>
   </data>
   <data name="MBDownloadOK" xml:space="preserve">
     <value>游戏资源下载已成功完成！</value>
@@ -259,7 +250,8 @@
     <value>设置已完成</value>
   </data>
   <data name="MBStartupMessage" xml:space="preserve">
-    <value>请您首先在设置页面中选择游戏资源所在文件夹后方可进入游戏；如您尚未拥有可执行的游戏资源，您也可以在选择文件夹后点击“下载游戏”按钮从游戏发行方网站下载免费游戏资源。
+    <value>由于受版权限制，游戏资源文件并未包含在本应用当中，您需要首先在设置页面中选择游戏资源所在文件夹后方可进入游戏。
+对于尚未拥有游戏资源者，目前可从baiyou100.com上下载免费的正版游戏资源，请在选择文件夹后点击“下载”按钮进入下载页面。
 一旦您完成设置，在您下一次启动本应用时将直接开始游戏进程。</value>
   </data>
   <data name="MBStartupTitle" xml:space="preserve">
@@ -354,5 +346,8 @@
   </data>
   <data name="MBRequired" xml:space="preserve">
     <value>在文件夹“{0}”中缺少必需的游戏资源文件，请选择正确的文件夹或从官方网站下载游戏数据文件！</value>
+  </data>
+  <data name="ButtonBack" xml:space="preserve">
+    <value>停止</value>
   </data>
 </root>

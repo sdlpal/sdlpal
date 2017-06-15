@@ -61,6 +61,7 @@ namespace SDLPal
 		Platform::Collections::Map<Platform::String^, ButtonAttribute^>^ m_controls;
 		Windows::ApplicationModel::Resources::ResourceLoader^ m_resLdr;
 		std::map<PALCFG_ITEM, AccessListEntry^> m_acl;
+		Windows::UI::Xaml::Controls::ContentDialog^ m_dlg;
 
 		void btnBrowseFolder_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void cbBGM_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
@@ -77,5 +78,6 @@ namespace SDLPal
 		static MainPage^ Current;
 	private:
 		void btnDownloadGame_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnSizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
 	};
 }
