@@ -107,6 +107,7 @@ void SDLPal::MainPage::LoadControlContents(bool loadDefault)
 			{
 				auto item = AWait(fal->GetItemAsync(entry.Token), g_eventHandle);
 				auto& ace = m_acl[PAL_ConfigIndex(ConvertString(entry.Token).c_str())];
+				StorageApplicationPermissions::MostRecentlyUsedList->AddOrReplace(entry.Token, item, entry.Metadata);
 				ace->text->Text = entry.Metadata;
 				if (ace->check)
 				{
@@ -232,16 +233,13 @@ void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xa
 		for (auto i = m_acl.begin(); i != m_acl.end(); i++)
 		{
 			auto entry = i->second;
-			try
+			if (mru->ContainsItem(entry->token))
 			{
 				auto item = AWait(mru->GetItemAsync(entry->token), g_eventHandle);
 				if ((!entry->check || entry->check->IsChecked->Value) && item)
 				{
 					fal->AddOrReplace(entry->token, item, entry->text->Text);
 				}
-			}
-			catch (Exception ^)
-			{
 			}
 		}
 		mru->Clear();
