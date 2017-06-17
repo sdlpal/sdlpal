@@ -566,20 +566,25 @@ PAL_JoystickEventFilter(
 
 #if PAL_HAS_TOUCH
 
-#define  TOUCH_NONE     0
-#define    TOUCH_UP      1
-#define    TOUCH_DOWN      2
-#define    TOUCH_LEFT      3
-#define    TOUCH_RIGHT   4
-#define    TOUCH_BUTTON1   5
-#define    TOUCH_BUTTON2   6
-#define  TOUCH_BUTTON3  7
-#define  TOUCH_BUTTON4  8
+#define  TOUCH_NONE    0
+#define  TOUCH_UP      1
+#define  TOUCH_DOWN    2
+#define  TOUCH_LEFT    3
+#define  TOUCH_RIGHT   4
+#define  TOUCH_BUTTON1 5
+#define  TOUCH_BUTTON2 6
+#define  TOUCH_BUTTON3 7
+#define  TOUCH_BUTTON4 8
 
 static float gfTouchXMin = 0.0f;
 static float gfTouchXMax = 1.0f;
 static float gfTouchYMin = 0.0f;
 static float gfTouchYMax = 1.0f;
+
+static SDL_TouchID gFinger1 = -1, gFinger2 = -1;
+static DWORD g_dwFinger1Time = 0, g_dwFinger2Time = 0;
+static int g_iPrevTouch1 = TOUCH_NONE;
+static int g_iPrevTouch2 = TOUCH_NONE;
 
 VOID
 PAL_SetTouchBounds(
@@ -665,7 +670,7 @@ PAL_GetTouchArea(
 
 static VOID
 PAL_SetTouchAction(
-  int area
+   int area
 )
 {
    switch (area)
@@ -691,14 +696,7 @@ PAL_SetTouchAction(
       break;
 
    case TOUCH_BUTTON1:
-      if (gpGlobals->fInBattle)
-      {
-         g_InputState.dwKeyPress |= kKeyRepeat;
-      }
-      else
-      {
-         g_InputState.dwKeyPress |= kKeyForce;
-      }
+      g_InputState.dwKeyPress |= kKeyForce;
       break;
 
    case TOUCH_BUTTON2:
@@ -706,7 +704,14 @@ PAL_SetTouchAction(
       break;
 
    case TOUCH_BUTTON3:
-      g_InputState.dwKeyPress |= kKeyUseItem;
+      if (gpGlobals->fInBattle)
+      {
+         g_InputState.dwKeyPress |= kKeyRepeat;
+      }
+      else
+      {
+         g_InputState.dwKeyPress |= kKeyUseItem;
+      }
       break;
 
    case TOUCH_BUTTON4:
@@ -728,6 +733,26 @@ PAL_UnsetTouchAction(
    case TOUCH_RIGHT:
       g_InputState.dir = kDirUnknown;
       break;
+   }
+}
+
+static VOID
+PAL_TouchRepeatCheck(
+   VOID
+)
+{
+   if (gFinger1 != -1 && SDL_GetTicks() > g_dwFinger1Time)
+   {
+      PAL_UnsetTouchAction(g_iPrevTouch1);
+      PAL_SetTouchAction(g_iPrevTouch1);
+      g_dwFinger1Time = SDL_GetTicks() + 120;
+   }
+
+   if (gFinger2 != -1 && SDL_GetTicks() > g_dwFinger2Time)
+   {
+      PAL_UnsetTouchAction(g_iPrevTouch2);
+      PAL_SetTouchAction(g_iPrevTouch2);
+      g_dwFinger2Time = SDL_GetTicks() + 120;
    }
 }
 
@@ -753,65 +778,63 @@ PAL_TouchEventFilter(
 --*/
 {
 #if PAL_HAS_TOUCH
-   static SDL_TouchID finger1 = -1, finger2 = -1;
-   static int prev_touch1 = TOUCH_NONE;
-   static int prev_touch2 = TOUCH_NONE;
-
    switch (lpEvent->type)
    {
    case SDL_FINGERDOWN:
-     if (finger1 == -1)
+     if (gFinger1 == -1)
      {
         int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-
-        finger1 = lpEvent->tfinger.fingerId;
-        prev_touch1 = area;
+        gFinger1 = lpEvent->tfinger.fingerId;
+        g_iPrevTouch1 = area;
         PAL_SetTouchAction(area);
+        g_dwFinger1Time = SDL_GetTicks() + 500;
      }
-     else if (finger2 == -1)
+     else if (gFinger2 == -1)
      {
         int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-
-        finger2 = lpEvent->tfinger.fingerId;
-        prev_touch2 = area;
+        gFinger2 = lpEvent->tfinger.fingerId;
+        g_iPrevTouch2 = area;
         PAL_SetTouchAction(area);
+        g_dwFinger2Time = SDL_GetTicks() + 500;
      }
      break;
 
    case SDL_FINGERUP:
-     if (lpEvent->tfinger.fingerId == finger1)
+     if (lpEvent->tfinger.fingerId == gFinger1)
      {
-        PAL_UnsetTouchAction(prev_touch1);
-        finger1 = -1;
-        prev_touch1 = TOUCH_NONE;
+        PAL_UnsetTouchAction(g_iPrevTouch1);
+        gFinger1 = -1;
+        g_iPrevTouch1 = TOUCH_NONE;
      }
-     else if (lpEvent->tfinger.fingerId == finger2)
+     else if (lpEvent->tfinger.fingerId == gFinger2)
      {
-        PAL_UnsetTouchAction(prev_touch2);
-        finger2 = -1;
-        prev_touch2 = TOUCH_NONE;
+        PAL_UnsetTouchAction(g_iPrevTouch2);
+        gFinger2 = -1;
+        g_iPrevTouch2 = TOUCH_NONE;
      }
      break;
 
    case SDL_FINGERMOTION:
-      if (lpEvent->tfinger.fingerId == finger1)
+      if (lpEvent->tfinger.fingerId == gFinger1)
       {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-         if (prev_touch1 != area && area != TOUCH_NONE)
+         if (g_iPrevTouch1 != area && area != TOUCH_NONE)
          {
-            PAL_UnsetTouchAction(prev_touch1);
-            prev_touch1 = area;
+            PAL_UnsetTouchAction(g_iPrevTouch1);
+            g_iPrevTouch1 = area;
             PAL_SetTouchAction(area);
+            g_dwFinger1Time = SDL_GetTicks() + 500;
          }
       }
-      else if (lpEvent->tfinger.fingerId == finger2)
+      else if (lpEvent->tfinger.fingerId == gFinger2)
       {
          int area = PAL_GetTouchArea(lpEvent->tfinger.x, lpEvent->tfinger.y);
-         if (prev_touch2 != area && area != TOUCH_NONE)
+         if (g_iPrevTouch2 != area && area != TOUCH_NONE)
          {
-            PAL_UnsetTouchAction(prev_touch2);
-            prev_touch2 = area;
+            PAL_UnsetTouchAction(g_iPrevTouch2);
+            g_iPrevTouch2 = area;
             PAL_SetTouchAction(area);
+            g_dwFinger2Time = SDL_GetTicks() + 500;
          }
       }
       break;
@@ -1012,6 +1035,9 @@ PAL_ProcessEvent(
 --*/
 {
    while (PAL_PollEvent(NULL));
+#ifdef PAL_HAS_TOUCH
+   PAL_TouchRepeatCheck();
+#endif
 }
 
 int
