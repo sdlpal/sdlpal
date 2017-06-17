@@ -172,8 +172,8 @@ PAL_KeyboardEventFilter(
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
             g_InputState.dir = kDirNorth;
-            g_InputState.dwKeyPress |= kKeyUp;
          }
+         g_InputState.dwKeyPress |= kKeyUp;
          break;
 
       case kKeyDown:
@@ -181,8 +181,8 @@ PAL_KeyboardEventFilter(
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
             g_InputState.dir = kDirSouth;
-            g_InputState.dwKeyPress |= kKeyDown;
          }
+         g_InputState.dwKeyPress |= kKeyDown;
          break;
 
       case kKeyLeft:
@@ -190,8 +190,8 @@ PAL_KeyboardEventFilter(
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
             g_InputState.dir = kDirWest;
-            g_InputState.dwKeyPress |= kKeyLeft;
          }
+         g_InputState.dwKeyPress |= kKeyLeft;
          break;
 
      case kKeyRight:
@@ -199,8 +199,8 @@ PAL_KeyboardEventFilter(
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
             g_InputState.dir = kDirEast;
-            g_InputState.dwKeyPress |= kKeyRight;
          }
+         g_InputState.dwKeyPress |= kKeyRight;
          break;
 
       case SDLK_HASH: //# for mobile device
@@ -957,7 +957,7 @@ PAL_InitInput(
 #endif
 
 #ifdef PAL_ALLOW_KEYREPEAT
-   SDL_EnableKeyRepeat(0, 0);
+   SDL_EnableKeyRepeat(120, 75);
 #endif
 
    input_init_filter();
