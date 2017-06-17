@@ -34,6 +34,7 @@ typedef struct tagPALINPUTSTATE
 
 enum PALKEY
 {
+   kKeyNone        = 0,
    kKeyMenu        = (1 << 0),
    kKeySearch      = (1 << 1),
    kKeyDown        = (1 << 2),

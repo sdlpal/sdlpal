@@ -53,6 +53,70 @@ static void (*input_init_filter)() = _default_init_filter;
 static int (*input_event_filter)(const SDL_Event *, volatile PALINPUTSTATE *) = _default_input_event_filter;
 static void (*input_shutdown_filter)() = _default_input_shutdown_filter;
 
+static const int g_KeyMap[][2] = {
+   { SDLK_UP,        kKeyUp },
+   { SDLK_KP_8,      kKeyUp },
+   { SDLK_DOWN,      kKeyDown },
+   { SDLK_KP_2,      kKeyDown },
+   { SDLK_LEFT,      kKeyLeft },
+   { SDLK_KP_4,      kKeyLeft },
+   { SDLK_RIGHT,     kKeyRight },
+   { SDLK_KP_6,      kKeyRight },
+   { SDLK_ESCAPE,    kKeyMenu },
+   { SDLK_INSERT,    kKeyMenu },
+   { SDLK_LALT,      kKeyMenu },
+   { SDLK_RALT,      kKeyMenu },
+   { SDLK_KP_0,      kKeyMenu },
+   { SDLK_RETURN,    kKeySearch },
+   { SDLK_SPACE,     kKeySearch },
+   { SDLK_KP_ENTER,  kKeySearch },
+   { SDLK_LCTRL,     kKeySearch },
+   { SDLK_PAGEUP,    kKeyPgUp },
+   { SDLK_KP_9,      kKeyPgUp },
+   { SDLK_PAGEDOWN,  kKeyPgDn },
+   { SDLK_KP_3,      kKeyPgDn },
+   { SDLK_HOME,      kKeyHome },
+   { SDLK_END,       kKeyEnd },
+   { SDLK_r,         kKeyRepeat },
+   { SDLK_a,         kKeyAuto },
+   { SDLK_d,         kKeyDefend },
+   { SDLK_e,         kKeyUseItem },
+   { SDLK_w,         kKeyThrowItem },
+   { SDLK_q,         kKeyFlee },
+   { SDLK_f,         kKeyForce }
+};
+
+static INT
+PAL_ConvertKey(
+   INT      keySym
+)
+/*++
+  Purpose:
+
+    Convert SDL key code to our internal key code.
+
+  Parameters:
+
+    [IN]  keySym - SDL key code.
+
+  Return value:
+
+    Internal key code.
+
+--*/
+{
+   int i;
+
+   for (i = 0; i < sizeof(g_KeyMap) / sizeof(g_KeyMap[0]); i++)
+   {
+      if (g_KeyMap[i][0] == keySym)
+      {
+         return g_KeyMap[i][1];
+      }
+   }
+
+   return kKeyNone;
+}
 
 static VOID
 PAL_KeyboardEventFilter(
@@ -73,6 +137,8 @@ PAL_KeyboardEventFilter(
 
 --*/
 {
+   int   key;
+
    switch (lpEvent->type)
    {
    case SDL_KEYDOWN:
@@ -98,10 +164,10 @@ PAL_KeyboardEventFilter(
          }
       }
 
-      switch (lpEvent->key.keysym.sym)
+      key = PAL_ConvertKey(lpEvent->key.keysym.sym);
+      switch (key)
       {
-      case SDLK_UP:
-      case SDLK_KP_8:
+      case kKeyUp:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirNorth)
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -110,8 +176,7 @@ PAL_KeyboardEventFilter(
          }
          break;
 
-      case SDLK_DOWN:
-      case SDLK_KP_2:
+      case kKeyDown:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirSouth)
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -120,8 +185,7 @@ PAL_KeyboardEventFilter(
          }
          break;
 
-      case SDLK_LEFT:
-      case SDLK_KP_4:
+      case kKeyLeft:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirWest)
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -130,8 +194,7 @@ PAL_KeyboardEventFilter(
          }
          break;
 
-     case SDLK_RIGHT:
-     case SDLK_KP_6:
+     case kKeyRight:
          if (gpGlobals->fInBattle || g_InputState.dir != kDirEast)
          {
             g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
@@ -140,80 +203,13 @@ PAL_KeyboardEventFilter(
          }
          break;
 
-      case SDLK_ESCAPE:
-      case SDLK_INSERT:
-      case SDLK_LALT:
-      case SDLK_RALT:
-      case SDLK_KP_0:
-         g_InputState.dwKeyPress |= kKeyMenu;
-         break;
-
-      case SDLK_RETURN:
-      case SDLK_SPACE:
-      case SDLK_KP_ENTER:
-      case SDLK_LCTRL:
-         g_InputState.dwKeyPress |= kKeySearch;
-         break;
-
-      case SDLK_PAGEUP:
-      case SDLK_KP_9:
-         g_InputState.dwKeyPress |= kKeyPgUp;
-         break;
-
-      case SDLK_PAGEDOWN:
-      case SDLK_KP_3:
-         g_InputState.dwKeyPress |= kKeyPgDn;
-         break;
-
-      case SDLK_HOME:
-         g_InputState.dwKeyPress |= kKeyHome;
-         break;
-
-      case SDLK_END:
-         g_InputState.dwKeyPress |= kKeyEnd;
-         break;
-
-      case SDLK_7: //7 for mobile device
-      case SDLK_r:
-         g_InputState.dwKeyPress |= kKeyRepeat;
-         break;
-
-      case SDLK_2: //2 for mobile device
-      case SDLK_a:
-         g_InputState.dwKeyPress |= kKeyAuto;
-         break;
-
-      case SDLK_d:
-         g_InputState.dwKeyPress |= kKeyDefend;
-         break;
-
-      case SDLK_e:
-         g_InputState.dwKeyPress |= kKeyUseItem;
-         break;
-
-      case SDLK_w:
-         g_InputState.dwKeyPress |= kKeyThrowItem;
-         break;
-
-      case SDLK_q:
-         g_InputState.dwKeyPress |= kKeyFlee;
-         break;
-
-      case SDLK_s:
-         g_InputState.dwKeyPress |= kKeyStatus;
-         break;
-
-      case SDLK_f:
-      case SDLK_5: // 5 for mobile device
-         g_InputState.dwKeyPress |= kKeyForce;
-         break;
-
       case SDLK_HASH: //# for mobile device
       case SDLK_p:
          VIDEO_SaveScreenshot();
          break;
 
       default:
+         g_InputState.dwKeyPress |= key;
          break;
       }
       break;
@@ -222,10 +218,10 @@ PAL_KeyboardEventFilter(
       //
       // Released a key
       //
-      switch (lpEvent->key.keysym.sym)
+      key = PAL_ConvertKey(lpEvent->key.keysym.sym);
+      switch (key)
       {
-      case SDLK_UP:
-      case SDLK_KP_8:
+      case kKeyUp:
          if (g_InputState.dir == kDirNorth)
          {
             g_InputState.dir = g_InputState.prevdir;
@@ -233,8 +229,7 @@ PAL_KeyboardEventFilter(
          g_InputState.prevdir = kDirUnknown;
          break;
 
-      case SDLK_DOWN:
-      case SDLK_KP_2:
+      case kKeyDown:
          if (g_InputState.dir == kDirSouth)
          {
             g_InputState.dir = g_InputState.prevdir;
@@ -242,8 +237,7 @@ PAL_KeyboardEventFilter(
          g_InputState.prevdir = kDirUnknown;
          break;
 
-      case SDLK_LEFT:
-      case SDLK_KP_4:
+      case kKeyLeft:
          if (g_InputState.dir == kDirWest)
          {
             g_InputState.dir = g_InputState.prevdir;
@@ -251,8 +245,7 @@ PAL_KeyboardEventFilter(
          g_InputState.prevdir = kDirUnknown;
          break;
 
-      case SDLK_RIGHT:
-      case SDLK_KP_6:
+      case kKeyRight:
          if (g_InputState.dir == kDirEast)
          {
             g_InputState.dir = g_InputState.prevdir;
