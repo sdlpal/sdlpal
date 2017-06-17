@@ -41,7 +41,6 @@
 #else
 # define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_RESIZABLE | (gConfig.fFullScreen ? SDL_FULLSCREEN : 0))
 # define PAL_FATAL_OUTPUT(s)   MessageBoxA(0, (s), "FATAL ERROR", MB_ICONERROR)
-# define PAL_ALLOW_KEYREPEAT   1
 # define PAL_HAS_SDLCD         1
 #endif
 

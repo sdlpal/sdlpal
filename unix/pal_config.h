@@ -31,7 +31,6 @@
 # endif
 
 # if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION <= 2
-#  define PAL_ALLOW_KEYREPEAT   1
 #  define PAL_HAS_SDLCD         1
 # endif
 

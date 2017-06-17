@@ -77,11 +77,6 @@ PAL_ShutdownInput(
    VOID
 );
 
-int
-PAL_PollEvent(
-   SDL_Event *event
-);
-
 VOID
 PAL_SetTouchBounds(
    DWORD dwScreenWidth,

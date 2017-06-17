@@ -40,7 +40,9 @@ static SDL_Joystick     *g_pJoy = NULL;
 # define SDLK_KP_9     SDLK_KP9
 # define SDLK_KP_0     SDLK_KP0
 
-# define SDL_JoystickNameForIndex SDL_JoystickName
+# define SDL_JoystickNameForIndex    SDL_JoystickName
+# define SDL_GetKeyboardState        SDL_GetKeyState
+# define SDL_GetScancodeFromKey(x)   (x)
 #endif
 
 BOOL                     g_fUseJoystick = TRUE;
@@ -86,41 +88,10 @@ static const int g_KeyMap[][2] = {
    { SDLK_f,         kKeyForce }
 };
 
-static INT
-PAL_ConvertKey(
-   INT      keySym
-)
-/*++
-  Purpose:
-
-    Convert SDL key code to our internal key code.
-
-  Parameters:
-
-    [IN]  keySym - SDL key code.
-
-  Return value:
-
-    Internal key code.
-
---*/
-{
-   int i;
-
-   for (i = 0; i < sizeof(g_KeyMap) / sizeof(g_KeyMap[0]); i++)
-   {
-      if (g_KeyMap[i][0] == keySym)
-      {
-         return g_KeyMap[i][1];
-      }
-   }
-
-   return kKeyNone;
-}
-
 static VOID
 PAL_KeyDown(
-   INT         key
+   INT         key,
+   BOOL        fRepeat
 )
 /*++
   Purpose:
@@ -140,7 +111,7 @@ PAL_KeyDown(
    switch (key)
    {
    case kKeyUp:
-      if (gpGlobals->fInBattle || g_InputState.dir != kDirNorth)
+      if (g_InputState.dir != kDirNorth && !fRepeat)
       {
          g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
          g_InputState.dir = kDirNorth;
@@ -149,7 +120,7 @@ PAL_KeyDown(
       break;
 
    case kKeyDown:
-      if (gpGlobals->fInBattle || g_InputState.dir != kDirSouth)
+      if (g_InputState.dir != kDirSouth && !fRepeat)
       {
          g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
          g_InputState.dir = kDirSouth;
@@ -158,7 +129,7 @@ PAL_KeyDown(
       break;
 
    case kKeyLeft:
-      if (gpGlobals->fInBattle || g_InputState.dir != kDirWest)
+      if (g_InputState.dir != kDirWest && !fRepeat)
       {
          g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
          g_InputState.dir = kDirWest;
@@ -167,7 +138,7 @@ PAL_KeyDown(
       break;
 
    case kKeyRight:
-      if (gpGlobals->fInBattle || g_InputState.dir != kDirEast)
+      if (g_InputState.dir != kDirEast && !fRepeat)
       {
          g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
          g_InputState.dir = kDirEast;
@@ -203,39 +174,84 @@ PAL_KeyUp(
    switch (key)
    {
    case kKeyUp:
-     if (g_InputState.dir == kDirNorth)
-     {
-        g_InputState.dir = g_InputState.prevdir;
-     }
-     g_InputState.prevdir = kDirUnknown;
-     break;
+      if (g_InputState.dir == kDirNorth)
+      {
+         g_InputState.dir = g_InputState.prevdir;
+      }
+      g_InputState.prevdir = kDirUnknown;
+      break;
 
    case kKeyDown:
-     if (g_InputState.dir == kDirSouth)
-     {
-        g_InputState.dir = g_InputState.prevdir;
-     }
-     g_InputState.prevdir = kDirUnknown;
-     break;
+      if (g_InputState.dir == kDirSouth)
+      {
+         g_InputState.dir = g_InputState.prevdir;
+      }
+      g_InputState.prevdir = kDirUnknown;
+      break;
 
    case kKeyLeft:
-     if (g_InputState.dir == kDirWest)
-     {
-        g_InputState.dir = g_InputState.prevdir;
-     }
-     g_InputState.prevdir = kDirUnknown;
-     break;
+      if (g_InputState.dir == kDirWest)
+      {
+         g_InputState.dir = g_InputState.prevdir;
+      }
+      g_InputState.prevdir = kDirUnknown;
+      break;
 
    case kKeyRight:
-     if (g_InputState.dir == kDirEast)
-     {
-        g_InputState.dir = g_InputState.prevdir;
-     }
-     g_InputState.prevdir = kDirUnknown;
-     break;
+      if (g_InputState.dir == kDirEast)
+      {
+         g_InputState.dir = g_InputState.prevdir;
+      }
+      g_InputState.prevdir = kDirUnknown;
+      break;
 
    default:
       break;
+   }
+}
+
+static VOID
+PAL_UpdateKeyboardState(
+   VOID
+)
+/*++
+  Purpose:
+
+    Poll & update keyboard state.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   static DWORD   rgdwKeyLastTime[sizeof(g_KeyMap) / sizeof(g_KeyMap[0])] = {0};
+   LPCBYTE        keyState = (LPCBYTE)SDL_GetKeyboardState(NULL);
+   int            i;
+   DWORD          dwCurrentTime = SDL_GetTicks();
+
+   for (i = 0; i < sizeof(g_KeyMap) / sizeof(g_KeyMap[0]); i++)
+   {
+      if (keyState[SDL_GetScancodeFromKey(g_KeyMap[i][0])])
+      {
+         if (dwCurrentTime > rgdwKeyLastTime[i])
+         {
+            PAL_KeyDown(g_KeyMap[i][1], (rgdwKeyLastTime[i] != 0));
+            rgdwKeyLastTime[i] = dwCurrentTime + (rgdwKeyLastTime[i] == 0 ? 200 : 75);
+         }
+      }
+      else
+      {
+         if (rgdwKeyLastTime[i] != 0)
+         {
+            PAL_KeyUp(g_KeyMap[i][1]);
+            rgdwKeyLastTime[i] = 0;
+         }
+      }
    }
 }
 
@@ -258,9 +274,8 @@ PAL_KeyboardEventFilter(
 
 --*/
 {
-   switch (lpEvent->type)
+   if (lpEvent->type == SDL_KEYDOWN)
    {
-   case SDL_KEYDOWN:
       //
       // Pressed a key
       //
@@ -286,18 +301,6 @@ PAL_KeyboardEventFilter(
       {
          VIDEO_SaveScreenshot();
       }
-      else
-      {
-         PAL_KeyDown(PAL_ConvertKey(lpEvent->key.keysym.sym));
-      }
-      break;
-
-   case SDL_KEYUP:
-      //
-      // Released a key
-      //
-      PAL_KeyUp(PAL_ConvertKey(lpEvent->key.keysym.sym));
-      break;
    }
 }
 
@@ -1020,10 +1023,6 @@ PAL_InitInput(
    }
 #endif
 
-#ifdef PAL_ALLOW_KEYREPEAT
-   SDL_EnableKeyRepeat(120, 75);
-#endif
-
    input_init_filter();
 }
 
@@ -1056,32 +1055,7 @@ PAL_ShutdownInput(
    input_shutdown_filter();
 }
 
-VOID
-PAL_ProcessEvent(
-   VOID
-)
-/*++
-  Purpose:
-
-    Process all events.
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    None.
-
---*/
-{
-   while (PAL_PollEvent(NULL));
-#ifdef PAL_HAS_TOUCH
-   PAL_TouchRepeatCheck();
-#endif
-}
-
-int
+static int
 PAL_PollEvent(
    SDL_Event *event
 )
@@ -1114,6 +1088,33 @@ PAL_PollEvent(
    }
 
    return ret;
+}
+
+VOID
+PAL_ProcessEvent(
+   VOID
+)
+/*++
+  Purpose:
+
+    Process all events.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   while (PAL_PollEvent(NULL));
+
+   PAL_UpdateKeyboardState();
+#ifdef PAL_HAS_TOUCH
+   PAL_TouchRepeatCheck();
+#endif
 }
 
 VOID

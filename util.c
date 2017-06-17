@@ -288,12 +288,12 @@ UTIL_Delay(
 {
    unsigned int t = SDL_GetTicks() + ms;
 
-   while (PAL_PollEvent(NULL));
+   PAL_ProcessEvent();
 
    while (!SDL_TICKS_PASSED(SDL_GetTicks(), t))
    {
       SDL_Delay(1);
-      while (PAL_PollEvent(NULL));
+      PAL_ProcessEvent();
    }
 }
 
