@@ -85,7 +85,8 @@ static const int g_KeyMap[][2] = {
    { SDLK_e,         kKeyUseItem },
    { SDLK_w,         kKeyThrowItem },
    { SDLK_q,         kKeyFlee },
-   { SDLK_f,         kKeyForce }
+   { SDLK_f,         kKeyForce },
+   { SDLK_s,         kKeyStatus }
 };
 
 static VOID
