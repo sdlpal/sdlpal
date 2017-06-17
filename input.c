@@ -119,6 +119,127 @@ PAL_ConvertKey(
 }
 
 static VOID
+PAL_KeyDown(
+   INT         key
+)
+/*++
+  Purpose:
+
+    Called when user pressed a key.
+
+  Parameters:
+
+    [IN]  key - keycode of the pressed key.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   switch (key)
+   {
+   case kKeyUp:
+      if (gpGlobals->fInBattle || g_InputState.dir != kDirNorth)
+      {
+         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+         g_InputState.dir = kDirNorth;
+      }
+      g_InputState.dwKeyPress |= kKeyUp;
+      break;
+
+   case kKeyDown:
+      if (gpGlobals->fInBattle || g_InputState.dir != kDirSouth)
+      {
+         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+         g_InputState.dir = kDirSouth;
+      }
+      g_InputState.dwKeyPress |= kKeyDown;
+      break;
+
+   case kKeyLeft:
+      if (gpGlobals->fInBattle || g_InputState.dir != kDirWest)
+      {
+         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+         g_InputState.dir = kDirWest;
+      }
+      g_InputState.dwKeyPress |= kKeyLeft;
+      break;
+
+   case kKeyRight:
+      if (gpGlobals->fInBattle || g_InputState.dir != kDirEast)
+      {
+         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+         g_InputState.dir = kDirEast;
+      }
+      g_InputState.dwKeyPress |= kKeyRight;
+      break;
+
+   default:
+      g_InputState.dwKeyPress |= key;
+      break;
+   }
+}
+
+static VOID
+PAL_KeyUp(
+   INT         key
+)
+/*++
+  Purpose:
+
+    Called when user released a key.
+
+  Parameters:
+
+    [IN]  key - keycode of the released key.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   switch (key)
+   {
+   case kKeyUp:
+     if (g_InputState.dir == kDirNorth)
+     {
+        g_InputState.dir = g_InputState.prevdir;
+     }
+     g_InputState.prevdir = kDirUnknown;
+     break;
+
+   case kKeyDown:
+     if (g_InputState.dir == kDirSouth)
+     {
+        g_InputState.dir = g_InputState.prevdir;
+     }
+     g_InputState.prevdir = kDirUnknown;
+     break;
+
+   case kKeyLeft:
+     if (g_InputState.dir == kDirWest)
+     {
+        g_InputState.dir = g_InputState.prevdir;
+     }
+     g_InputState.prevdir = kDirUnknown;
+     break;
+
+   case kKeyRight:
+     if (g_InputState.dir == kDirEast)
+     {
+        g_InputState.dir = g_InputState.prevdir;
+     }
+     g_InputState.prevdir = kDirUnknown;
+     break;
+
+   default:
+      break;
+   }
+}
+
+static VOID
 PAL_KeyboardEventFilter(
    const SDL_Event       *lpEvent
 )
@@ -137,8 +258,6 @@ PAL_KeyboardEventFilter(
 
 --*/
 {
-   int   key;
-
    switch (lpEvent->type)
    {
    case SDL_KEYDOWN:
@@ -163,54 +282,13 @@ PAL_KeyboardEventFilter(
             PAL_Shutdown(0);
          }
       }
-
-      key = PAL_ConvertKey(lpEvent->key.keysym.sym);
-      switch (key)
+      else if (lpEvent->key.keysym.sym == SDLK_p)
       {
-      case kKeyUp:
-         if (gpGlobals->fInBattle || g_InputState.dir != kDirNorth)
-         {
-            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-            g_InputState.dir = kDirNorth;
-         }
-         g_InputState.dwKeyPress |= kKeyUp;
-         break;
-
-      case kKeyDown:
-         if (gpGlobals->fInBattle || g_InputState.dir != kDirSouth)
-         {
-            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-            g_InputState.dir = kDirSouth;
-         }
-         g_InputState.dwKeyPress |= kKeyDown;
-         break;
-
-      case kKeyLeft:
-         if (gpGlobals->fInBattle || g_InputState.dir != kDirWest)
-         {
-            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-            g_InputState.dir = kDirWest;
-         }
-         g_InputState.dwKeyPress |= kKeyLeft;
-         break;
-
-     case kKeyRight:
-         if (gpGlobals->fInBattle || g_InputState.dir != kDirEast)
-         {
-            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-            g_InputState.dir = kDirEast;
-         }
-         g_InputState.dwKeyPress |= kKeyRight;
-         break;
-
-      case SDLK_HASH: //# for mobile device
-      case SDLK_p:
          VIDEO_SaveScreenshot();
-         break;
-
-      default:
-         g_InputState.dwKeyPress |= key;
-         break;
+      }
+      else
+      {
+         PAL_KeyDown(PAL_ConvertKey(lpEvent->key.keysym.sym));
       }
       break;
 
@@ -218,44 +296,7 @@ PAL_KeyboardEventFilter(
       //
       // Released a key
       //
-      key = PAL_ConvertKey(lpEvent->key.keysym.sym);
-      switch (key)
-      {
-      case kKeyUp:
-         if (g_InputState.dir == kDirNorth)
-         {
-            g_InputState.dir = g_InputState.prevdir;
-         }
-         g_InputState.prevdir = kDirUnknown;
-         break;
-
-      case kKeyDown:
-         if (g_InputState.dir == kDirSouth)
-         {
-            g_InputState.dir = g_InputState.prevdir;
-         }
-         g_InputState.prevdir = kDirUnknown;
-         break;
-
-      case kKeyLeft:
-         if (g_InputState.dir == kDirWest)
-         {
-            g_InputState.dir = g_InputState.prevdir;
-         }
-         g_InputState.prevdir = kDirUnknown;
-         break;
-
-      case kKeyRight:
-         if (g_InputState.dir == kDirEast)
-         {
-            g_InputState.dir = g_InputState.prevdir;
-         }
-         g_InputState.prevdir = kDirUnknown;
-         break;
-
-      default:
-         break;
-      }
+      PAL_KeyUp(PAL_ConvertKey(lpEvent->key.keysym.sym));
       break;
    }
 }
