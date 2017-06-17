@@ -78,6 +78,192 @@ Platform::String^ SDLPal::DownloadDialog::FormatProgress()
 	return ref new Platform::String(buf);
 }
 
+void SDLPal::DownloadDialog::DoDownload(Platform::String^ url)
+{
+	DownloadPage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	gridURL->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	pbDownload->Visibility = Windows::UI::Xaml::Visibility::Visible;
+	tbProgress->Visibility = Windows::UI::Xaml::Visibility::Visible;
+	this->MaxHeight -= DownloadPage->ActualHeight + gridURL->ActualHeight - 48;
+	this->PrimaryButtonText = m_resLdr->GetString("ButtonBack");
+	this->Title = m_title;
+	this->UpdateLayout();
+
+	concurrency::create_task([this, url]() {
+		Exception^ ex = nullptr;
+		auto client = ref new HttpClient();
+		try
+		{
+			concurrency::create_task(client->GetAsync(ref new Uri(url), HttpCompletionOption::ResponseHeadersRead)).then(
+				[this](HttpResponseMessage^ response)->IAsyncOperationWithProgress<IInputStream^, uint64_t>^ {
+				response->EnsureSuccessStatusCode();
+
+				bool determinate = response->Content->Headers->HasKey("Content-Length");
+				if (determinate)
+				{
+					m_totalBytes = wcstoull(response->Content->Headers->Lookup("Content-Length")->Data(), nullptr, 10);
+				}
+				this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, determinate]() {
+					pbDownload->Maximum = (double)m_totalBytes;
+					pbDownload->IsIndeterminate = !determinate;
+				}));
+				return response->Content->ReadAsInputStreamAsync();
+			}).then([this, client](IInputStream^ input) {
+				auto buffer = ref new Buffer(_buffer_size);
+				uint64_t bytes = 0;
+				HANDLE hEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
+				for (bool looping = true; looping; )
+				{
+					concurrency::create_task(input->ReadAsync(buffer, _buffer_size, InputStreamOptions::None)).then(
+						[this, &bytes, &looping](IBuffer^ result)->IAsyncOperationWithProgress<uint32_t, uint32_t>^ {
+						looping = (result->Length == _buffer_size) && !m_Closable;
+						bytes += result->Length;
+						this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, bytes]() {
+							pbDownload->Value = (double)bytes;
+							tbProgress->Text = FormatProgress();
+							UpdateLayout();
+						}));
+						return m_stream->WriteAsync(result);
+					}).then([this](uint32_t)->IAsyncOperation<bool>^ {
+						return m_stream->FlushAsync();
+					}).wait();
+				}
+				delete buffer;
+				delete client;
+				delete input;
+
+				this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, bytes]() {
+					this->Title = m_resLdr->GetString("Extracting");
+					pbDownload->Value = 0.0;
+					UpdateLayout();
+				}));
+
+				m_stream->Seek(0);
+
+				Microsoft::WRL::ComPtr<IStream> strm;
+				HRESULT hr;
+				if (FAILED(hr = CreateStreamOverRandomAccessStream(m_stream, IID_PPV_ARGS(&strm)))) throw ref new Platform::Exception(hr);
+
+				zlib_filefunc_def funcs = {
+					/* open  */ [](voidpf opaque, const char* filename, int mode)->voidpf { return new zip_file((IStream*)opaque); },
+					/* read  */ [](voidpf opaque, voidpf stream, void* buf, uLong size)->uLong {
+					auto zip = (zip_file*)stream;
+					return SUCCEEDED(zip->hr = zip->stream->Read(buf, size, &zip->cbBytes)) ? zip->cbBytes : 0;
+				},
+					/* write */ [](voidpf opaque, voidpf stream, const void* buf, uLong size)->uLong {
+					auto zip = (zip_file*)stream;
+					return SUCCEEDED(zip->hr = zip->stream->Write(buf, size, &zip->cbBytes)) ? zip->cbBytes : 0;
+				},
+					/* tell  */ [](voidpf opaque, voidpf stream)->long {
+					auto zip = (zip_file*)stream;
+					LARGE_INTEGER liPos = { 0 };
+					ULARGE_INTEGER uliPos;
+					return SUCCEEDED(zip->hr = zip->stream->Seek(liPos, STREAM_SEEK_CUR, &uliPos)) ? uliPos.LowPart : UNZ_ERRNO;
+				},
+					/* seek  */ [](voidpf opaque, voidpf stream, uLong offset, int origin)->long {
+					auto zip = (zip_file*)stream;
+					LARGE_INTEGER liPos = { offset };
+					ULARGE_INTEGER uliPos;
+					return SUCCEEDED(zip->hr = zip->stream->Seek(liPos, origin, &uliPos)) ? 0 : UNZ_ERRNO;
+				},
+					/* close */ [](voidpf opaque, voidpf stream)->int { delete (zip_file*)stream; return 0; },
+					/* error */ [](voidpf opaque, voidpf stream)->int { return reinterpret_cast<zip_file*>(stream)->hr; },
+					strm.Get()
+				};
+				unz_global_info ugi;
+				char szFilename[65536];
+				uLong filenum = 0;
+				bool success = true;
+
+				auto uzf = unzOpen2("", &funcs);
+				unzGetGlobalInfo(uzf, &ugi);
+				this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, ugi]() { pbDownload->Maximum = ugi.number_entry; UpdateLayout(); }));
+				for (auto ret = unzGoToFirstFile(uzf); ret == UNZ_OK; ret = unzGoToNextFile(uzf))
+				{
+					unz_file_info ufi;
+					if (UNZ_OK == unzGetCurrentFileInfo(uzf, &ufi, szFilename, sizeof(szFilename), nullptr, 0, nullptr, 0) &&
+						UNZ_OK == unzOpenCurrentFile(uzf))
+					{
+						std::auto_ptr<uint8_t> buf(new uint8_t[ufi.uncompressed_size]);
+						auto len = unzReadCurrentFile(uzf, buf.get(), ufi.uncompressed_size);
+						unzCloseCurrentFile(uzf);
+						if (len != ufi.uncompressed_size)
+						{
+							success = false;
+							break;
+						}
+
+						auto local = m_folder;
+						uLong prev = 0;
+						for (uLong i = 0; i < ufi.size_filename; i++)
+						{
+							if (szFilename[i] != '/') continue;
+							try
+							{
+								concurrency::create_task(local->GetFolderAsync(ConvertString(szFilename + prev, i - prev))).then([&local](StorageFolder^ sub) { local = sub; }).wait();
+							}
+							catch (Exception^ e)
+							{
+								concurrency::create_task(local->CreateFolderAsync(ConvertString(szFilename + prev, i - prev))).then([&local](StorageFolder^ sub) { local = sub; }).wait();
+							}
+							prev = i + 1;
+						}
+						if (prev < ufi.size_filename)
+						{
+							IRandomAccessStream^ stm = nullptr;
+							StorageFile^ file = nullptr;
+							auto filename = ConvertString(szFilename + prev, ufi.size_filename - prev);
+							concurrency::create_task(local->CreateFileAsync(filename, CreationCollisionOption::ReplaceExisting)).then([&](StorageFile^ f)->IAsyncOperation<IRandomAccessStream^>^ {
+								return (file = f)->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite);
+							}).then([&](IRandomAccessStream^ s)->IAsyncOperationWithProgress<uint32_t, uint32_t>^ {
+								return (stm = s)->WriteAsync(NativeBuffer::GetIBuffer(buf.get(), ufi.uncompressed_size));
+							}).then([&](uint32_t size)->IAsyncOperation<bool>^ {
+								if (size < ufi.uncompressed_size) throw ref new Exception(E_FAIL);
+								return stm->FlushAsync();
+							}).wait();
+							delete stm;
+							delete file;
+						}
+					}
+					else
+					{
+						success = false;
+						break;
+					}
+					filenum++;
+					this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, filenum, &ugi]() {
+						wchar_t buf[64];
+						swprintf_s(buf, L"%lu/%lu", filenum, ugi.number_entry);
+						pbDownload->Value = (double)filenum;
+						tbProgress->Text = ref new Platform::String(buf);
+						UpdateLayout();
+					}));
+				}
+				unzClose(uzf);
+
+				if (!success) throw ref new Exception(E_FAIL);
+			}).wait();
+		}
+		catch (Exception^ e)
+		{
+			ex = e;
+		}
+
+		this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, ex]() {
+			Platform::String^ string;
+			if (m_Closable)
+				string = m_resLdr->GetString("MBDownloadCanceled");
+			else if (ex)
+				string = String::Concat(m_resLdr->GetString("MBDownloadError"), ex->Message);
+			else
+				string = m_resLdr->GetString("MBDownloadOK");
+			(ref new MessageDialog(string, m_resLdr->GetString("MBDownloadTitle")))->ShowAsync();
+			m_Closable = true;
+			Hide();
+		}));
+	});
+}
+
 void SDLPal::DownloadDialog::OnPrimaryButtonClick(Windows::UI::Xaml::Controls::ContentDialog^ sender, Windows::UI::Xaml::Controls::ContentDialogButtonClickEventArgs^ args)
 {
 	m_Closable = true;
@@ -93,7 +279,7 @@ void SDLPal::DownloadDialog::OnClosing(Windows::UI::Xaml::Controls::ContentDialo
 void SDLPal::DownloadDialog::OnOpened(Windows::UI::Xaml::Controls::ContentDialog^ sender, Windows::UI::Xaml::Controls::ContentDialogOpenedEventArgs^ args)
 {
 	DownloadPage->Width = m_width - 48;
-	DownloadPage->Height = m_height - 128;
+	DownloadPage->Height = m_height - 128 - gridURL->ActualHeight;
 	UpdateLayout();
 	DownloadPage->Navigate(ref new Uri(_url));
 }
@@ -106,187 +292,7 @@ void SDLPal::DownloadDialog::OnNavigateStart(Windows::UI::Xaml::Controls::WebVie
 
 	if (url->Length() >= _countof(_postfix) - 1 && _wcsicmp(url->Data() + url->Length() - (_countof(_postfix) - 1), _postfix) == 0)
 	{
-		DownloadPage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-		pbDownload->Visibility = Windows::UI::Xaml::Visibility::Visible;
-		tbProgress->Visibility = Windows::UI::Xaml::Visibility::Visible;
-		this->MaxHeight -= DownloadPage->ActualHeight - 48;
-		this->PrimaryButtonText = m_resLdr->GetString("ButtonBack");
-		this->Title = m_title;
-		this->UpdateLayout();
-		
-		concurrency::create_task([this, url]() {
-			Exception^ ex = nullptr;
-			auto client = ref new HttpClient();
-			try
-			{
-				concurrency::create_task(client->GetAsync(ref new Uri(url), HttpCompletionOption::ResponseHeadersRead)).then(
-					[this](HttpResponseMessage^ response)->IAsyncOperationWithProgress<IInputStream^, uint64_t>^ {
-					response->EnsureSuccessStatusCode();
-
-					bool determinate = response->Content->Headers->HasKey("Content-Length");
-					if (determinate)
-					{
-						m_totalBytes = wcstoull(response->Content->Headers->Lookup("Content-Length")->Data(), nullptr, 10);
-					}
-					this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, determinate]() {
-						pbDownload->Maximum = (double)m_totalBytes;
-						pbDownload->IsIndeterminate = !determinate;
-					}));
-					return response->Content->ReadAsInputStreamAsync();
-				}).then([this, client](IInputStream^ input) {
-					auto buffer = ref new Buffer(_buffer_size);
-					uint64_t bytes = 0;
-					HANDLE hEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
-					for (bool looping = true; looping; )
-					{
-						concurrency::create_task(input->ReadAsync(buffer, _buffer_size, InputStreamOptions::None)).then(
-							[this, &bytes, &looping](IBuffer^ result)->IAsyncOperationWithProgress<uint32_t, uint32_t>^ {
-							looping = (result->Length == _buffer_size) && !m_Closable;
-							bytes += result->Length;
-							this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, bytes]() {
-								pbDownload->Value = (double)bytes;
-								tbProgress->Text = FormatProgress();
-								UpdateLayout();
-							}));
-							return m_stream->WriteAsync(result);
-						}).then([this](uint32_t)->IAsyncOperation<bool>^ {
-							return m_stream->FlushAsync();
-						}).wait();
-					}
-					delete buffer;
-					delete client;
-					delete input;
-
-					this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, bytes]() {
-						this->Title = m_resLdr->GetString("Extracting");
-						pbDownload->Value = 0.0;
-						UpdateLayout();
-					}));
-
-					m_stream->Seek(0);
-
-					Microsoft::WRL::ComPtr<IStream> strm;
-					HRESULT hr;
-					if (FAILED(hr = CreateStreamOverRandomAccessStream(m_stream, IID_PPV_ARGS(&strm)))) throw ref new Platform::Exception(hr);
-
-					zlib_filefunc_def funcs = {
-						/* open  */ [](voidpf opaque, const char* filename, int mode)->voidpf { return new zip_file((IStream*)opaque); },
-						/* read  */ [](voidpf opaque, voidpf stream, void* buf, uLong size)->uLong {
-						auto zip = (zip_file*)stream;
-						return SUCCEEDED(zip->hr = zip->stream->Read(buf, size, &zip->cbBytes)) ? zip->cbBytes : 0;
-					},
-						/* write */ [](voidpf opaque, voidpf stream, const void* buf, uLong size)->uLong {
-						auto zip = (zip_file*)stream;
-						return SUCCEEDED(zip->hr = zip->stream->Write(buf, size, &zip->cbBytes)) ? zip->cbBytes : 0;
-					},
-						/* tell  */ [](voidpf opaque, voidpf stream)->long {
-						auto zip = (zip_file*)stream;
-						LARGE_INTEGER liPos = { 0 };
-						ULARGE_INTEGER uliPos;
-						return SUCCEEDED(zip->hr = zip->stream->Seek(liPos, STREAM_SEEK_CUR, &uliPos)) ? uliPos.LowPart : UNZ_ERRNO;
-					},
-						/* seek  */ [](voidpf opaque, voidpf stream, uLong offset, int origin)->long {
-						auto zip = (zip_file*)stream;
-						LARGE_INTEGER liPos = { offset };
-						ULARGE_INTEGER uliPos;
-						return SUCCEEDED(zip->hr = zip->stream->Seek(liPos, origin, &uliPos)) ? 0 : UNZ_ERRNO;
-					},
-						/* close */ [](voidpf opaque, voidpf stream)->int { delete (zip_file*)stream; return 0; },
-						/* error */ [](voidpf opaque, voidpf stream)->int { return reinterpret_cast<zip_file*>(stream)->hr; },
-						strm.Get()
-					};
-					unz_global_info ugi;
-					char szFilename[65536];
-					uLong filenum = 0;
-					bool success = true;
-
-					auto uzf = unzOpen2("", &funcs);
-					unzGetGlobalInfo(uzf, &ugi);
-					this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, ugi]() { pbDownload->Maximum = ugi.number_entry; UpdateLayout(); }));
-					for (auto ret = unzGoToFirstFile(uzf); ret == UNZ_OK; ret = unzGoToNextFile(uzf))
-					{
-						unz_file_info ufi;
-						if (UNZ_OK == unzGetCurrentFileInfo(uzf, &ufi, szFilename, sizeof(szFilename), nullptr, 0, nullptr, 0) &&
-							UNZ_OK == unzOpenCurrentFile(uzf))
-						{
-							std::auto_ptr<uint8_t> buf(new uint8_t[ufi.uncompressed_size]);
-							auto len = unzReadCurrentFile(uzf, buf.get(), ufi.uncompressed_size);
-							unzCloseCurrentFile(uzf);
-							if (len != ufi.uncompressed_size)
-							{
-								success = false;
-								break;
-							}
-
-							auto local = m_folder;
-							uLong prev = 0;
-							for (uLong i = 0; i < ufi.size_filename; i++)
-							{
-								if (szFilename[i] != '/') continue;
-								try
-								{
-									concurrency::create_task(local->GetFolderAsync(ConvertString(szFilename + prev, i - prev))).then([&local](StorageFolder^ sub) { local = sub; }).wait();
-								}
-								catch (Exception^ e)
-								{
-									concurrency::create_task(local->CreateFolderAsync(ConvertString(szFilename + prev, i - prev))).then([&local](StorageFolder^ sub) { local = sub; }).wait();
-								}
-								prev = i + 1;
-							}
-							if (prev < ufi.size_filename)
-							{
-								IRandomAccessStream^ stm = nullptr;
-								StorageFile^ file = nullptr;
-								auto filename = ConvertString(szFilename + prev, ufi.size_filename - prev);
-								concurrency::create_task(local->CreateFileAsync(filename, CreationCollisionOption::ReplaceExisting)).then([&](StorageFile^ f)->IAsyncOperation<IRandomAccessStream^>^ {
-									return (file = f)->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite);
-								}).then([&](IRandomAccessStream^ s)->IAsyncOperationWithProgress<uint32_t, uint32_t>^ {
-									return (stm = s)->WriteAsync(NativeBuffer::GetIBuffer(buf.get(), ufi.uncompressed_size));
-								}).then([&](uint32_t size)->IAsyncOperation<bool>^ {
-									if (size < ufi.uncompressed_size) throw ref new Exception(E_FAIL);
-									return stm->FlushAsync();
-								}).wait();
-								delete stm;
-								delete file;
-							}
-						}
-						else
-						{
-							success = false;
-							break;
-						}
-						filenum++;
-						this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, filenum, &ugi]() {
-							wchar_t buf[64];
-							swprintf_s(buf, L"%lu/%lu", filenum, ugi.number_entry);
-							pbDownload->Value = (double)filenum;
-							tbProgress->Text = ref new Platform::String(buf);
-							UpdateLayout();
-						}));
-					}
-					unzClose(uzf);
-
-					if (!success) throw ref new Exception(E_FAIL);
-				}).wait();
-			}
-			catch (Exception^ e)
-			{
-				ex = e; 
-			}
-
-			this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, ex]() {
-				Platform::String^ string;
-				if (m_Closable)
-					string = m_resLdr->GetString("MBDownloadCanceled");
-				else if (ex)
-					string = String::Concat(m_resLdr->GetString("MBDownloadError"), ex->Message);
-				else
-					string = m_resLdr->GetString("MBDownloadOK");
-				(ref new MessageDialog(string, m_resLdr->GetString("MBDownloadTitle")))->ShowAsync();
-				m_Closable = true;
-				Hide();
-			}));
-		});
+		DoDownload(url);
 	}
 }
 
@@ -306,8 +312,8 @@ void SDLPal::DownloadDialog::OnDOMContentLoaded(Windows::UI::Xaml::Controls::Web
 				elems[i].target = '';
 				elems[i].focus();
 				var r = elems[i].getBoundingClientRect();
-				var y = (r.top + r.bottom - window.innerHeight) / 2 + window.scrollY;
-				var x = (r.left + r.right - window.innerWidth) / 2 + window.scrollX;
+				var y = (r.top + r.bottom - window.innerHeight) / 2 + window.pageYOffset;
+				var x = (r.left + r.right - window.innerWidth) / 2 + window.pageXOffset;
 				window.scroll(x, y);
 			}
 			else
@@ -325,6 +331,15 @@ void SDLPal::DownloadDialog::OnSizeChanged(Platform::Object^ sender, Windows::UI
 	if (DownloadPage->Visibility == Windows::UI::Xaml::Visibility::Visible)
 	{
 		DownloadPage->Width = e->NewSize.Width - 48;
-		DownloadPage->Height = e->NewSize.Height - 128;
+		DownloadPage->Height = e->NewSize.Height - 128 - gridURL->ActualHeight;
+	}
+}
+
+
+void SDLPal::DownloadDialog::OnClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	if (tbURL->Text->Length() > 0)
+	{
+		DoDownload(tbURL->Text);
 	}
 }

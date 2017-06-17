@@ -16,18 +16,6 @@
 
 namespace SDLPal
 {
-	ref struct ButtonAttribute sealed
-	{
-		property Windows::UI::Xaml::FrameworkElement^ Object;
-		property Platform::Array<Platform::String^>^  Filter;
-
-		ButtonAttribute(Windows::UI::Xaml::FrameworkElement^ o, const Platform::Array<Platform::String^>^ f)
-		{
-			Object = o;
-			Filter = f;
-		}
-	};
-
 	ref struct AccessListEntry sealed
 	{
 		property Windows::UI::Xaml::Controls::TextBox^  text;
@@ -58,7 +46,7 @@ namespace SDLPal
 		void SaveControlContents();
 
 	private:
-		Platform::Collections::Map<Platform::String^, ButtonAttribute^>^ m_controls;
+		Platform::Collections::Map<Platform::String^, Windows::UI::Xaml::FrameworkElement^>^ m_controls;
 		Windows::ApplicationModel::Resources::ResourceLoader^ m_resLdr;
 		std::map<PALCFG_ITEM, AccessListEntry^> m_acl;
 		Windows::UI::Xaml::Controls::ContentDialog^ m_dlg;

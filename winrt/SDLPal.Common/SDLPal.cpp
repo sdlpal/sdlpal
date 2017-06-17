@@ -17,7 +17,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	if (FAILED(Windows::Foundation::Initialize(RO_INIT_MULTITHREADED))) {
 		return 1;
 	}
-
+	
 	PAL_LoadConfig(TRUE);
 
 	bool last_crashed = false;

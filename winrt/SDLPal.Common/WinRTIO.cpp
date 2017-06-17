@@ -32,6 +32,9 @@
 #include "AsyncHelper.h"
 #include "StringHelper.h"
 
+using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
+
 #pragma comment(lib, "ShCore.lib")
 
 #define PAL_PATH_NAME	"SDLPAL"
@@ -53,7 +56,7 @@ struct WRT_FILE
 	bool binary;
 
 	WRT_FILE() : sig(&liZero), stream(nullptr), readable(false), writable(false), binary(false) { InitializeCriticalSectionEx(&cs, 4000, 0); }
-	WRT_FILE(Windows::Storage::Streams::IRandomAccessStream^ s, bool r, bool w, bool b)
+	WRT_FILE(IRandomAccessStream^ s, bool r, bool w, bool b)
 		: sig(&liZero), stream(nullptr), readable(r), writable(w), binary(b)
 	{
 		HRESULT hr;
@@ -64,8 +67,8 @@ struct WRT_FILE
 	~WRT_FILE() { if (stream) stream->Release(); DeleteCriticalSection(&cs); }
 };
 
-static std::map<std::string, Windows::Storage::StorageFile^> g_specialFiles;
-static std::map<std::string, Windows::Storage::StorageFolder^> g_specialFolders;
+static std::map<std::string, StorageFile^> g_specialFiles;
+static std::map<std::string, StorageFolder^> g_specialFolders;
 
 class CriticalSection
 {
@@ -120,8 +123,8 @@ static const std::string get_filename(const char* _Filename)
 	return ptr;
 }
 
-extern "C" std::map<std::string, Windows::Storage::StorageFile^>* get_special_files_map() { return &g_specialFiles; }
-extern "C" std::map<std::string, Windows::Storage::StorageFolder^>* get_special_folders_map() { return &g_specialFolders; }
+extern "C" std::map<std::string, StorageFile^>* get_special_files_map() { return &g_specialFiles; }
+extern "C" std::map<std::string, StorageFolder^>* get_special_folders_map() { return &g_specialFolders; }
 
 extern "C"
 errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mode)
@@ -156,14 +159,14 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 		// If the file belongs to so-called 'special files' (i.e., specified in configuration file), then return its object directly
 		if (g_specialFiles.find(_Filename) != g_specialFiles.end())
 		{
-			*pFile = new WRT_FILE(AWait(g_specialFiles[_Filename]->OpenAsync(w ? Windows::Storage::FileAccessMode::ReadWrite : Windows::Storage::FileAccessMode::Read), eventHandle), r, w, b);
+			*pFile = new WRT_FILE(AWait(g_specialFiles[_Filename]->OpenAsync(w ? FileAccessMode::ReadWrite : FileAccessMode::Read), eventHandle), r, w, b);
 			return 0;
 		}
 
 		auto directory = get_directory(_Filename);
 		auto filename = get_filename(_Filename);
 
-		Windows::Storage::StorageFolder^ folder = nullptr;
+		StorageFolder^ folder = nullptr;
 
 		// If the file's folder belongs to so-called 'special folders' (i.e., specified in configuration file), then use the cache folder object
 		for (auto i = g_specialFolders.begin(); directory.length() > 0 && i != g_specialFolders.end(); i++)
@@ -190,23 +193,23 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 		// The try get folder directly by its full path
 		if (!folder && directory.length())
 		{
-			folder = AWait(Windows::Storage::StorageFolder::GetFolderFromPathAsync(ConvertString(directory)), eventHandle);
+			folder = AWait(StorageFolder::GetFolderFromPathAsync(ConvertString(directory)), eventHandle);
 		}
 
 		// As a last sort, use app's local folder
 		if (!folder)
 		{
-			folder = Windows::Storage::ApplicationData::Current->LocalFolder;
+			folder = ApplicationData::Current->LocalFolder;
 		}
 
-		Windows::Storage::StorageFile^ file = nullptr;
+		StorageFile^ file = nullptr;
 		switch (*_Mode)
 		{
 		case 'a':
-			file = AWait(folder->CreateFileAsync(ConvertString(filename), Windows::Storage::CreationCollisionOption::OpenIfExists), eventHandle);
+			file = AWait(folder->CreateFileAsync(ConvertString(filename), CreationCollisionOption::OpenIfExists), eventHandle);
 			break;
 		case 'w':
-			file = AWait(folder->CreateFileAsync(ConvertString(filename), Windows::Storage::CreationCollisionOption::ReplaceExisting), eventHandle);
+			file = AWait(folder->CreateFileAsync(ConvertString(filename), CreationCollisionOption::ReplaceExisting), eventHandle);
 			break;
 		case 'r':
 			file = AWait(folder->GetFileAsync(ConvertString(filename)), eventHandle);
@@ -214,7 +217,7 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 		}
 		if (file)
 		{
-			*pFile = new WRT_FILE(AWait(file->OpenAsync(w ? Windows::Storage::FileAccessMode::ReadWrite : Windows::Storage::FileAccessMode::Read), eventHandle), r, w, b);
+			*pFile = new WRT_FILE(AWait(file->OpenAsync(w ? FileAccessMode::ReadWrite : FileAccessMode::Read), eventHandle), r, w, b);
 		}
 	}
 	catch (Platform::AccessDeniedException^)
@@ -426,10 +429,10 @@ int WRT_access(const char * const _FileName, int _AccessMode)
 
 	try
 	{
-		auto file = AWait(Windows::Storage::StorageFile::GetFileFromPathAsync(ConvertString(_FileName)));
+		auto file = AWait(StorageFile::GetFileFromPathAsync(ConvertString(_FileName)));
 
-		if ((file->Attributes & Windows::Storage::FileAttributes::Directory) != Windows::Storage::FileAttributes::Directory &&
-			(file->Attributes & Windows::Storage::FileAttributes::ReadOnly) == Windows::Storage::FileAttributes::ReadOnly &&
+		if ((file->Attributes & FileAttributes::Directory) != FileAttributes::Directory &&
+			(file->Attributes & FileAttributes::ReadOnly) == FileAttributes::ReadOnly &&
 			(_AccessMode & 0x2) != 0)
 		{
 			throw ref new Platform::AccessDeniedException();

@@ -8,7 +8,8 @@
 #include <ppltasks.h>
 #include "../SDLPal.Common/AsyncHelper.h"
 #include "../SDLPal.Common/StringHelper.h"
-#include "../../main.h"
+#include "input.h"
+#include "main.h"
 
 #include "SDL.h"
 #include "SDL_endian.h"
@@ -126,13 +127,19 @@ static int SDLCALL WinRT_EventFilter(void *userdata, SDL_Event * event)
 	return 0;
 }
 
-static int input_event_filter(const SDL_Event *lpEvent, PALINPUTSTATE *state)
+static int input_event_filter(const SDL_Event *lpEvent, volatile PALINPUTSTATE *state)
 {
 	if (lpEvent->type == SDL_KEYDOWN &&
-		lpEvent->key.keysym.sym == SDLK_AC_BACK &&
-		!gpGlobals->fInMainGame)
+		lpEvent->key.keysym.sym == SDLK_AC_BACK)
 	{
-		PAL_Shutdown(0);
+		if (gpGlobals->fInMainGame)
+		{
+			state->dwKeyPress |= kKeyFlee;
+		}
+		else
+		{
+			PAL_Shutdown(0);
+		}
 	}
 	return 0;
 }
@@ -160,33 +167,35 @@ INT UTIL_Platform_Init(int argc, char* argv[])
 	auto fal = Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList;
 	for each (auto entry in fal->Entries)
 	{
-		Windows::Storage::IStorageItem^ item = nullptr;
-		try { item = AWait(fal->GetItemAsync(entry.Token), g_eventHandle); } catch (Exception^) {}
-		if (!item)
+		try
+		{
+			auto item = AWait(fal->GetItemAsync(entry.Token), g_eventHandle);
+			if (dynamic_cast<Windows::Storage::StorageFolder^>(item) != nullptr)
+			{
+				auto localfolder = entry.Metadata;
+				if (localfolder->End()[-1] != L'\\') localfolder += "\\";
+				auto folder = ConvertString(localfolder);
+				folders[folder] = dynamic_cast<Windows::Storage::StorageFolder^>(item);
+				PAL_SetConfigItem(PAL_ConfigIndex(ConvertString(entry.Token).c_str()), ConfigValue{ folder.c_str() });
+				continue;
+			}
+
+			if (dynamic_cast<Windows::Storage::StorageFile^>(item) != nullptr)
+			{
+				auto file = ConvertString(entry.Metadata);
+				files[file] = dynamic_cast<Windows::Storage::StorageFile^>(item);
+				PAL_SetConfigItem(PAL_ConfigIndex(ConvertString(entry.Token).c_str()), ConfigValue{ file.c_str() });
+				continue;
+			}
+		}
+		catch (Exception^ e)
 		{
 			invalid_tokens.push_back(entry.Token);
-			continue;
-		}
-
-		if (dynamic_cast<Windows::Storage::StorageFolder^>(item) != nullptr)
-		{
-			auto localfolder = entry.Metadata;
-			if (localfolder->End()[-1] != L'\\') localfolder += "\\";
-			auto folder = ConvertString(localfolder);
-			folders[folder] = dynamic_cast<Windows::Storage::StorageFolder^>(item);
-			PAL_SetConfigItem(PAL_ConfigIndex(ConvertString(entry.Token).c_str()), ConfigValue{ folder.c_str() });
-			continue;
-		}
-
-		if (dynamic_cast<Windows::Storage::StorageFile^>(item) != nullptr)
-		{
-			auto file = ConvertString(entry.Metadata);
-			files[file] = dynamic_cast<Windows::Storage::StorageFile^>(item);
-			PAL_SetConfigItem(PAL_ConfigIndex(ConvertString(entry.Token).c_str()), ConfigValue{ file.c_str() });
-			continue;
 		}
 	}
 	for (auto i = invalid_tokens.begin(); i != invalid_tokens.end(); fal->Remove(*i++));
+
+	PAL_RegisterInputFilter(nullptr, input_event_filter, nullptr);
 
 	return 0;
 }

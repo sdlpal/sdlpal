@@ -229,8 +229,8 @@
     <value>下載已被如下錯誤中止：</value>
   </data>
   <data name="MBDownloadMessage" xml:space="preserve">
-    <value>您即將進入由baiyou100.com提供的遊戲資源檔下載頁，您可從該頁面下載免費的正版遊戲資源檔並保存於您所選擇的資料夾中。
-您應知曉，上述資源檔並非由本應用的開發方提供，故我們無法保證上述下載連結的可用性。
+    <value>您即將進入由遊戲發行商提供的遊戲資源檔下載頁，您可從該頁面（或任何您輸入的URL）下載免費的正版遊戲資源檔並保存於您所選擇的資料夾中。
+您應知曉，上述資源檔並非由本應用的開發方提供，故我們無法保證下載連結的可用性，也不對您的行為承擔任何責任。
 請點擊「確定」按鈕開始下載，或點擊「取消」返回設置頁面。</value>
   </data>
   <data name="MBDownloadOK" xml:space="preserve">
@@ -251,7 +251,7 @@
   </data>
   <data name="MBStartupMessage" xml:space="preserve">
     <value>由於受智慧產權限制，遊戲資源檔並未包含在本應用當中，您需要首先在設置頁面中選擇遊戲資源所在資料夾後方可進入遊戲。
-對於尚未擁有遊戲資源者，目前可從baiyou100.com上下載免費的正版遊戲資源，請在選擇資料夾後點擊「下載」按鈕進入下載頁面。
+對於尚未擁有遊戲資源者，目前可從Internet上下載免費的正版遊戲資源，請在選擇資料夾後點擊「下載」按鈕進入下載頁面。
 一旦您完成設置，在您下一次啟動本應用時將直接開始遊戲進程。</value>
   </data>
   <data name="MBStartupTitle" xml:space="preserve">

@@ -16,8 +16,11 @@
 using namespace SDLPal;
 
 using namespace Platform;
+using namespace Platform::Collections;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
+using namespace Windows::Storage;
+using namespace Windows::Storage::AccessCache;
 using namespace Windows::UI::Core;
 using namespace Windows::UI::Popups;
 using namespace Windows::UI::Xaml;
@@ -28,10 +31,6 @@ using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 
-static Platform::String^ msg_file_exts[] = { ".msg" };
-static Platform::String^ font_file_exts[] = { ".bdf" };
-static Platform::String^ log_file_exts[] = { ".log" };
-
 MainPage^ MainPage::Current = nullptr;
 
 MainPage::MainPage()
@@ -41,19 +40,23 @@ MainPage::MainPage()
 
 	Current = this;
 
-	m_controls = ref new Platform::Collections::Map<Platform::String^, ButtonAttribute^>();
-	m_controls->Insert(btnBrowseMsgFile->Name, ref new ButtonAttribute(tbMsgFile, ref new Platform::Array<Platform::String^>(msg_file_exts, sizeof(msg_file_exts) / sizeof(msg_file_exts[0]))));
-	m_controls->Insert(btnBrowseFontFile->Name, ref new ButtonAttribute(tbFontFile, ref new Platform::Array<Platform::String^>(font_file_exts, sizeof(font_file_exts) / sizeof(font_file_exts[0]))));
-	m_controls->Insert(btnBrowseLogFile->Name, ref new ButtonAttribute(tbLogFile, ref new Platform::Array<Platform::String^>(log_file_exts, sizeof(log_file_exts) / sizeof(log_file_exts[0]))));
-	m_controls->Insert(cbUseMsgFile->Name, ref new ButtonAttribute(gridMsgFile, nullptr));
-	m_controls->Insert(cbUseFontFile->Name, ref new ButtonAttribute(gridFontFile, nullptr));
-	m_controls->Insert(cbUseLogFile->Name, ref new ButtonAttribute(gridLogFile, nullptr));
+	m_controls = ref new Map<String^, FrameworkElement^>();
+	m_controls->Insert(btnBrowseMsgFile->Name, tbMsgFile);
+	m_controls->Insert(btnBrowseFontFile->Name, tbFontFile);
+	m_controls->Insert(btnBrowseLogFile->Name, tbLogFile);
+	m_controls->Insert(cbUseMsgFile->Name, gridMsgFile);
+	m_controls->Insert(cbUseFontFile->Name, gridFontFile);
+	m_controls->Insert(cbUseLogFile->Name, gridLogFile);
 
 	m_acl[PALCFG_GAMEPATH] = ref new AccessListEntry(tbGamePath, nullptr, ConvertString(PAL_ConfigName(PALCFG_GAMEPATH)));
 	m_acl[PALCFG_SAVEPATH] = ref new AccessListEntry(tbGamePath, nullptr, ConvertString(PAL_ConfigName(PALCFG_SAVEPATH)));
 	m_acl[PALCFG_MESSAGEFILE] = ref new AccessListEntry(tbMsgFile, cbUseMsgFile, ConvertString(PAL_ConfigName(PALCFG_MESSAGEFILE)));
 	m_acl[PALCFG_FONTFILE] = ref new AccessListEntry(tbFontFile, cbUseFontFile, ConvertString(PAL_ConfigName(PALCFG_FONTFILE)));
 	m_acl[PALCFG_LOGFILE] = ref new AccessListEntry(tbLogFile, cbUseLogFile, ConvertString(PAL_ConfigName(PALCFG_LOGFILE)));
+
+	tbMsgFile->Tag = ConvertString(PAL_ConfigName(PALCFG_MESSAGEFILE));
+	tbFontFile->Tag = ConvertString(PAL_ConfigName(PALCFG_MESSAGEFILE));
+	tbLogFile->Tag = ConvertString(PAL_ConfigName(PALCFG_MESSAGEFILE));
 
 	tbGitRevision->Text = "  " PAL_GIT_REVISION;
 
@@ -69,7 +72,7 @@ MainPage::MainPage()
 
 	try
 	{
-		delete AWait(Windows::Storage::ApplicationData::Current->LocalFolder->GetFileAsync("sdlpal.cfg"));
+		delete AWait(ApplicationData::Current->LocalFolder->GetFileAsync("sdlpal.cfg"), g_eventHandle);
 	}
 	catch (Exception^)
 	{
@@ -83,32 +86,42 @@ void SDLPal::MainPage::LoadControlContents(bool loadDefault)
 	{
 		auto item = i->second;
 		item->text->Text = "";
-		item->text->Tag = nullptr;
 		if (item->check)
 		{
 			item->check->IsChecked = false;
-			m_controls->Lookup(item->check->Name)->Object->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+			m_controls->Lookup(item->check->Name)->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 		}
 	}
+
+	// Clear MRU list
+	StorageApplicationPermissions::MostRecentlyUsedList->Clear();
 
 	if (!loadDefault)
 	{
 		// Always load folder/files from FutureAccessList
 		std::list<Platform::String^> invalid_tokens;
-		auto fal = Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList;
+		auto fal = StorageApplicationPermissions::FutureAccessList;
 		for each (auto entry in fal->Entries)
 		{
-			auto& ace = m_acl[PAL_ConfigIndex(ConvertString(entry.Token).c_str())];
-			ace->text->Tag = AWait(fal->GetItemAsync(entry.Token), g_eventHandle);
-			if (ace->text->Tag)
-				ace->text->Text = entry.Metadata;
-			else
-				invalid_tokens.push_back(entry.Token);
-			if (ace->check)
+			try
 			{
-				auto grid = m_controls->Lookup(ace->check->Name)->Object;
-				ace->check->IsChecked = (ace->text->Tag != nullptr);
-				grid->Visibility = ace->check->IsChecked->Value ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
+				auto item = AWait(fal->GetItemAsync(entry.Token), g_eventHandle);
+				auto& ace = m_acl[PAL_ConfigIndex(ConvertString(entry.Token).c_str())];
+				ace->text->Text = entry.Metadata;
+				if (ace->check)
+				{
+					auto grid = m_controls->Lookup(ace->check->Name);
+					ace->check->IsChecked = (item != nullptr);
+					grid->Visibility = ace->check->IsChecked->Value ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
+				}
+				else
+				{
+					ace->text->Tag = item;
+				}
+			}
+			catch (Exception ^)
+			{
+				invalid_tokens.push_back(entry.Token);
 			}
 		}
 		for (auto i = invalid_tokens.begin(); i != invalid_tokens.end(); fal->Remove(*i++));
@@ -213,16 +226,25 @@ void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xa
 			return;
 		}
 
-		auto fal = Windows::Storage::AccessCache::StorageApplicationPermissions::FutureAccessList;
+		auto fal = StorageApplicationPermissions::FutureAccessList;
+		auto mru = StorageApplicationPermissions::MostRecentlyUsedList;
+		fal->Clear();
 		for (auto i = m_acl.begin(); i != m_acl.end(); i++)
 		{
-			auto item = i->second;
-			auto check = item->check ? item->check->IsChecked->Value : true;
-			if (check && item->text->Tag)
-				fal->AddOrReplace(item->token, safe_cast<Windows::Storage::IStorageItem^>(item->text->Tag), item->text->Text);
-			else if (fal->ContainsItem(item->token))
-				fal->Remove(item->token);
+			auto entry = i->second;
+			try
+			{
+				auto item = AWait(mru->GetItemAsync(entry->token), g_eventHandle);
+				if ((!entry->check || entry->check->IsChecked->Value) && item)
+				{
+					fal->AddOrReplace(entry->token, item, entry->text->Text);
+				}
+			}
+			catch (Exception ^)
+			{
+			}
 		}
+		mru->Clear();
 
 		SaveControlContents();
 		gConfig.fLaunchSetting = FALSE;
@@ -241,36 +263,37 @@ void SDLPal::MainPage::btnFinish_Click(Platform::Object^ sender, Windows::UI::Xa
 void SDLPal::MainPage::btnClearFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	tbMsgFile->Text = "";
-	tbMsgFile->Tag = nullptr;
 }
 
-void SDLPal::MainPage::SetPath(Windows::Storage::StorageFolder^ folder)
+void SDLPal::MainPage::SetPath(StorageFolder^ folder)
 {
 	if (folder)
 	{
 		tbGamePath->Text = folder->Path;
 		tbGamePath->Tag = folder;
 		btnDownloadGame->IsEnabled = true;
+		StorageApplicationPermissions::MostRecentlyUsedList->AddOrReplace(m_acl[PALCFG_GAMEPATH]->token, folder, folder->Path);
+		StorageApplicationPermissions::MostRecentlyUsedList->AddOrReplace(m_acl[PALCFG_SAVEPATH]->token, folder, folder->Path);
 	}
 }
 
-void SDLPal::MainPage::SetFile(Windows::UI::Xaml::Controls::TextBox^ target, Windows::Storage::StorageFile^ file)
+void SDLPal::MainPage::SetFile(Windows::UI::Xaml::Controls::TextBox^ target, StorageFile^ file)
 {
 	if (target && file)
 	{
 		target->Text = file->Path;
-		target->Tag = file;
+		StorageApplicationPermissions::MostRecentlyUsedList->AddOrReplace(static_cast<String^>(target->Tag), file, file->Path);
 	}
 }
 
 void SDLPal::MainPage::btnBrowseFolder_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	auto picker = ref new Windows::Storage::Pickers::FolderPicker();
+	auto picker = ref new Pickers::FolderPicker();
 	picker->FileTypeFilter->Append("*");
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 	picker->PickFolderAndContinue();
 #else
-	concurrency::create_task(picker->PickSingleFolderAsync()).then([this](Windows::Storage::StorageFolder^ folder) { SetPath(folder); });
+	concurrency::create_task(picker->PickSingleFolderAsync()).then([this](StorageFolder^ folder) { SetPath(folder); });
 #endif
 }
 
@@ -278,17 +301,13 @@ void SDLPal::MainPage::btnBrowseFileOpen_Click(Platform::Object^ sender, Windows
 {
 	auto button = static_cast<Windows::UI::Xaml::Controls::Button^>(sender);
 	auto target = m_controls->Lookup(button->Name);
-	auto picker = ref new Windows::Storage::Pickers::FileOpenPicker();
-	picker->FileTypeFilter->ReplaceAll(target->Filter);
+	auto picker = ref new Pickers::FileOpenPicker();
+	picker->FileTypeFilter->Append("*");
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 	picker->ContinuationData->Insert("Target", button->Name);
 	picker->PickSingleFileAndContinue();
 #else
-	concurrency::create_task(picker->PickSingleFileAsync()).then(
-		[this, target](Windows::Storage::StorageFile^ file) {
-			SetFile(static_cast<Windows::UI::Xaml::Controls::TextBox^>(target->Object), file);
-		}
-	);
+	concurrency::create_task(picker->PickSingleFileAsync()).then([this, target](StorageFile^ file) { SetFile(static_cast<TextBox^>(target), file); });
 #endif
 }
 
@@ -296,25 +315,20 @@ void SDLPal::MainPage::btnBrowseFileSave_Click(Platform::Object^ sender, Windows
 {
 	auto button = static_cast<Windows::UI::Xaml::Controls::Button^>(sender);
 	auto target = m_controls->Lookup(button->Name);
-	auto picker = ref new Windows::Storage::Pickers::FileSavePicker();
-	picker->FileTypeChoices->Insert(m_resLdr->GetString("LogFileType"), ref new Platform::Collections::Vector<Platform::String^>(target->Filter));
+	auto picker = ref new Pickers::FileSavePicker();
+	picker->FileTypeChoices->Insert(m_resLdr->GetString("LogFileType"), ref new Vector<String^>(1, ref new String(L".log")));
 #if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 	picker->ContinuationData->Insert("Target", button->Name);
 	picker->PickSaveFileAndContinue();
 #else
-	concurrency::create_task(picker->PickSaveFileAsync()).then(
-		[this, target](Windows::Storage::StorageFile^ file) {
-		SetFile(static_cast<Windows::UI::Xaml::Controls::TextBox^>(target->Object), file);
-	}
-	);
+	concurrency::create_task(picker->PickSaveFileAsync()).then([this, target](StorageFile^ file) { SetFile(static_cast<TextBox^>(target), file); });
 #endif
 }
 
 void SDLPal::MainPage::cbUseFile_CheckChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	auto checker = static_cast<Windows::UI::Xaml::Controls::CheckBox^>(sender);
-	auto attr = m_controls->Lookup(checker->Name);
-	attr->Object->Visibility = checker->IsChecked->Value ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
+	m_controls->Lookup(checker->Name)->Visibility = checker->IsChecked->Value ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 void SDLPal::MainPage::Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -328,10 +342,9 @@ void SDLPal::MainPage::Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::
 #endif
 }
 
-
 void SDLPal::MainPage::btnDownloadGame_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	auto folder = dynamic_cast<Windows::Storage::StorageFolder^>(tbGamePath->Tag);
+	auto folder = dynamic_cast<StorageFolder^>(tbGamePath->Tag);
 	auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadMessage"), m_resLdr->GetString("MBDownloadTitle"));
 	msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonOK"), nullptr, 1));
 	msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonCancel"), nullptr, nullptr));
@@ -361,26 +374,23 @@ void SDLPal::MainPage::btnDownloadGame_Click(Platform::Object^ sender, Windows::
 	}).then([this, folder](IUICommand^ command) {
 		if (command->Id != nullptr)
 		{
-			HANDLE hEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
 			try
 			{
-				auto file = AWait(folder->CreateFileAsync("pal98.zip", Windows::Storage::CreationCollisionOption::ReplaceExisting), hEvent);
-				auto stream = AWait(file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite), hEvent);
+				auto file = AWait(folder->CreateFileAsync("pal98.zip", CreationCollisionOption::ReplaceExisting), g_eventHandle);
+				auto stream = AWait(file->OpenAsync(FileAccessMode::ReadWrite), g_eventHandle);
 				concurrency::create_task(this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, folder, file, stream]() {
 					m_dlg = ref new DownloadDialog(m_resLdr, folder, stream, ActualWidth, ActualHeight);
 				}))).then([this]()->IAsyncOperation<ContentDialogResult>^{
 					return m_dlg->ShowAsync();
-				}).then([this, file, stream, hEvent](ContentDialogResult result) {
+				}).then([this, file, stream](ContentDialogResult result) {
 					delete stream;
-					AWait(file->DeleteAsync(), hEvent);
+					AWait(file->DeleteAsync(), g_eventHandle);
 					delete file;
-					CloseHandle(hEvent);
 				});
 			}
 			catch (Exception^ e)
 			{
 				(ref new MessageDialog(String::Concat(m_resLdr->GetString("MBDownloadError"), e)))->ShowAsync();
-				CloseHandle(hEvent);
 			}
 		}
 	});

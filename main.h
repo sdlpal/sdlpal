@@ -53,9 +53,13 @@
 #include "midi.h"
 #include "aviplay.h"
 
+PAL_C_LINKAGE_BEGIN
+
 VOID
 PAL_Shutdown(
    int exit_code
 );
+
+PAL_C_LINKAGE_END
 
 #endif

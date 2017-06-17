@@ -24,7 +24,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="tbGamePath" x:Uid="GamePath" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" Header="游戏资源文件夹" IsReadOnly="True" PlaceholderText="未选择游戏资源文件夹"/>
+                    <TextBox x:Name="tbGamePath" x:Uid="GamePath" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" Header="游戏资源文件夹" IsReadOnly="True" PlaceholderText="未选择游戏资源文件夹" />
                     <Button x:Name="btnBrowseGame" x:Uid="ButtonBrowse" Grid.Column="1" Content="浏览" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="btnBrowseFolder_Click" />
                 </Grid>
                 <Button x:Name="btnDownloadGame" x:Uid="ButtonDownload" Content="下载正版游戏资源" HorizontalAlignment="Center" Click="btnDownloadGame_Click" IsEnabled="False" />
@@ -34,7 +34,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="tbMsgFile" x:Uid="MessageFile" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="无自定义语言文件" IsReadOnly="True"/>
+                    <TextBox x:Name="tbMsgFile" x:Uid="MessageFile" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="无自定义语言文件" IsReadOnly="True" />
                     <Button x:Name="btnBrowseMsgFile" x:Uid="ButtonBrowse" Grid.Column="1" Content="浏览" HorizontalAlignment="Right" Click="btnBrowseFileOpen_Click" />
                 </Grid>
                 <CheckBox x:Name="cbUseFontFile" x:Uid="UseFontFile" Content="自定义字体文件" Checked="cbUseFile_CheckChanged" Unchecked="cbUseFile_CheckChanged" />
@@ -43,7 +43,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="tbFontFile" x:Uid="FontFile" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="无自定义字体文件" IsReadOnly="True"/>
+                    <TextBox x:Name="tbFontFile" x:Uid="FontFile" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="无自定义字体文件" IsReadOnly="True" />
                     <Button x:Name="btnBrowseFontFile" x:Uid="ButtonBrowse" Grid.Column="1" Content="浏览" HorizontalAlignment="Right" Click="btnBrowseFileOpen_Click" />
                 </Grid>
                 <ToggleSwitch x:Name="tsTouchOverlay" x:Uid="TouchOverlay" Header="启用触屏辅助" OffContent="否" OnContent="是" />
@@ -100,7 +100,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="tbLogFile" x:Uid="LogFile" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="无日志文件" IsReadOnly="True"/>
+                    <TextBox x:Name="tbLogFile" x:Uid="LogFile" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="无日志文件" IsReadOnly="True" />
                     <Button x:Name="btnBrowseLogFile" x:Uid="ButtonBrowse" Grid.Column="1" Content="浏览" HorizontalAlignment="Right" Click="btnBrowseFileSave_Click" />
                 </Grid>
                 <Grid VerticalAlignment="Top">

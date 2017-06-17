@@ -578,12 +578,12 @@ UTIL_GetFullPathName(
 	const char *subpath
 )
 {
-	if (!buffer || !basepath || !subpath || buflen == 0) return NULL;
+	if (!buffer || !(basepath || subpath) || buflen == 0) return NULL;
 
-	int baselen = strlen(basepath), sublen = strlen(subpath);
-	if (sublen == 0) return NULL;
+	int baselen = basepath ? strlen(basepath) : 0, sublen = subpath ? strlen(subpath) : 0;
+	if (baselen + sublen == 0) return NULL;
 
-	char *_base = strdup(basepath), *_sub = strdup(subpath);
+	char *_base = basepath ? strdup(basepath) : NULL, *_sub = subpath ? strdup(subpath) : NULL;
 	const char *result = NULL;
 
 	if (access(UTIL_CombinePath(INTERNAL_BUFFER_SIZE_ARGS, 2, _base, _sub), 0) == 0)
@@ -592,7 +592,7 @@ UTIL_GetFullPathName(
 	}
 
 #if !defined(PAL_FILESYSTEM_IGNORE_CASE) || !PAL_FILESYSTEM_IGNORE_CASE
-	if (result == NULL)
+	if (result == NULL && _sub != NULL)
 	{
 		size_t pos = strspn(_sub, PAL_PATH_SEPARATORS);
 
@@ -606,7 +606,7 @@ UTIL_GetFullPathName(
 			// try to find the matching file in the directory.
 			//
 			struct dirent **list;
-			int n = scandir(_base, &list, 0, alphasort);
+			int n = scandir(_base ? _base : ".", &list, 0, alphasort);
 			while (n-- > 0)
 			{
 				if (!result && strcasecmp(list[n]->d_name, start) == 0)
@@ -735,7 +735,7 @@ UTIL_CheckResourceFiles(
 
 	for (int i = 0; i < sizeof(msg_files[0]) / sizeof(msg_files[0][0]); i++)
 	{
-		if (!UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, path, msg_files[i][msgidx]))
+		if (!UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, msgidx ? path : NULL, msg_files[i][msgidx]))
 		{
 			retval |= (PALFILE)(1 << ((i + 1) * msgidx + 13));
 		}

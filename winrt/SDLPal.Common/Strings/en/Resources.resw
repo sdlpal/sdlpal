@@ -229,8 +229,8 @@
     <value>Download aborted due to error: </value>
   </data>
   <data name="MBDownloadMessage" xml:space="preserve">
-    <value>You're going to be brought to the download page provided by baiyou100.com, from where you can download the game resource to the folder you've just chosen. The download link will be automatically centered so that anyone who don't understand Chinese can download it without trouble.
-Please note that this download page is not provided by this App's creator, so we can't guarantee the availablity of the donwload link.
+    <value>You're going to be brought to the download page, from where you can download the game resource to the folder you've just chosen. The download link will be automatically centered so that anyone who don't understand Chinese can download it without trouble.  You also have the opportunity to enter any direct download URL you know.
+Please note that this download page is not provided by this App's creator, so we can't guarantee the availablity of the donwload link or take responsibility for any consequences.
 Click 'ok' to continue or click 'cancel' to return.</value>
   </data>
   <data name="MBDownloadOK" xml:space="preserve">
@@ -251,7 +251,7 @@ You can use the main menu option inside the game to return to this page.</value>
   </data>
   <data name="MBStartupMessage" xml:space="preserve">
     <value>You need to choose the folder that contains game resource files before you can start the game, because such files are NOT bundled due to copyright restrictions.
-But fortunately, these files can be downloaded freely from baiyou100.com, the publisher's website.  You'll be brought to this website by clicking the 'download' button after you've chosen a folder to save the downloaded files.
+But fortunately, a licensed copy of such files can be downloaded freely from Internet.  You'll be brought to this website by clicking the 'download' button after you've chosen a folder to save the downloaded files.
 Once you've finished the setting process, you will be brought to the game directly at next launch.</value>
   </data>
   <data name="MBStartupTitle" xml:space="preserve">
