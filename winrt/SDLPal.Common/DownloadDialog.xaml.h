@@ -13,7 +13,9 @@ namespace SDLPal
 	public ref class DownloadDialog sealed
 	{
 	public:
-		DownloadDialog(Windows::ApplicationModel::Resources::ResourceLoader^ ldr, Windows::Storage::StorageFolder^ folder, Windows::Storage::Streams::IRandomAccessStream^ stream, double w, double h);
+		DownloadDialog(Windows::ApplicationModel::Resources::ResourceLoader^ ldr, Windows::Storage::StorageFolder^ folder, Windows::Storage::Streams::IRandomAccessStream^ stream, double w, double h, bool from_url);
+
+		property Windows::UI::Xaml::Controls::ContentDialogResult Result;
 
 	private:
 		Windows::ApplicationModel::Resources::ResourceLoader^ m_resLdr;

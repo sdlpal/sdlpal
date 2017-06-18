@@ -62,8 +62,6 @@ MainPage::MainPage()
 
 	LoadControlContents(false);
 
-	btnDownloadGame->IsEnabled = (tbGamePath->Text->Length() > 0);
-
 	m_resLdr = Windows::ApplicationModel::Resources::ResourceLoader::GetForCurrentView();
 	if (static_cast<App^>(Application::Current)->LastCrashed)
 	{
@@ -194,6 +192,81 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.wAudioBufferSize = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbAudioBuffer->SelectedItem)->Content)->Data(), nullptr, 10);
 }
 
+void SDLPal::MainPage::CheckResourceFolder()
+{
+	if (tbGamePath->Text->Length() > 0 && PAL_MISSING_REQUIRED(UTIL_CheckResourceFiles(ConvertString(tbGamePath->Text).c_str(), ConvertString(tbMsgFile->Text).c_str())))
+	{
+		auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadRequiredText"), m_resLdr->GetString("MBDownloadRequiredTitle"));
+		msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonYes"), nullptr, 1));
+		msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonNo"), nullptr, nullptr));
+		msgbox->DefaultCommandIndex = 0;
+		msgbox->CancelCommandIndex = 1;
+		concurrency::create_task(msgbox->ShowAsync()).then([this](IUICommand^ command)->IAsyncOperation<IUICommand^>^ {
+			if (command->Id == nullptr)
+			{
+				return concurrency::create_async([]()->IUICommand^ { return nullptr; });
+			}
+
+			auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadOption"), m_resLdr->GetString("MBDownloadTitle"));
+			msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonFromURL"), nullptr, 1));
+			msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonFromBaiyou"), nullptr, nullptr));
+			msgbox->DefaultCommandIndex = 0;
+			msgbox->CancelCommandIndex = 1;
+			return msgbox->ShowAsync();
+		}).then([this](IUICommand^ command)->IAsyncOperation<IUICommand^>^ {
+			if (command && !command->Id)
+			{
+				auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadMessage"), m_resLdr->GetString("MBDownloadTitle"));
+				msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonOK")));
+				return msgbox->ShowAsync();
+			}
+			else
+			{
+				return concurrency::create_async([command]()->IUICommand^ { return command; });
+			}
+		}).then([this](IUICommand^ command) {
+			if (!command)
+			{
+				ClearResourceFolder();
+				return;
+			}
+
+			auto folder = dynamic_cast<StorageFolder^>(tbGamePath->Tag);
+			try
+			{
+				auto file = AWait(folder->CreateFileAsync("pal98.zip", CreationCollisionOption::ReplaceExisting), g_eventHandle);
+				auto stream = AWait(file->OpenAsync(FileAccessMode::ReadWrite), g_eventHandle);
+				bool from_url = (command->Id != nullptr);
+				concurrency::create_task(this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, folder, file, stream, from_url]() {
+					m_dlg = ref new DownloadDialog(m_resLdr, folder, stream, ActualWidth, ActualHeight, from_url);
+				}))).then([this]()->IAsyncOperation<ContentDialogResult>^ {
+					return m_dlg->ShowAsync();
+				}).then([this, file, stream](ContentDialogResult result) {
+					delete stream;
+					try { AWait(file->DeleteAsync(), g_eventHandle); }
+					catch (Exception^) {}
+					delete file;
+					if (m_dlg->Result != ContentDialogResult::None)
+					{
+						ClearResourceFolder();
+					}
+				});
+			}
+			catch (Exception^ e)
+			{
+				(ref new MessageDialog(String::Concat(m_resLdr->GetString("MBDownloadError"), e)))->ShowAsync();
+				ClearResourceFolder();
+			}
+		});
+	}
+}
+
+void SDLPal::MainPage::ClearResourceFolder()
+{
+	tbGamePath->Text = "";
+	tbGamePath->Tag = nullptr;
+}
+
 void SDLPal::MainPage::cbBGM_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
 	auto visibility = (cbBGM->SelectedIndex == MUSIC_RIX) ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
@@ -269,9 +342,9 @@ void SDLPal::MainPage::SetPath(StorageFolder^ folder)
 	{
 		tbGamePath->Text = folder->Path;
 		tbGamePath->Tag = folder;
-		btnDownloadGame->IsEnabled = true;
 		StorageApplicationPermissions::MostRecentlyUsedList->AddOrReplace(m_acl[PALCFG_GAMEPATH]->token, folder, folder->Path);
 		StorageApplicationPermissions::MostRecentlyUsedList->AddOrReplace(m_acl[PALCFG_SAVEPATH]->token, folder, folder->Path);
+		CheckResourceFolder();
 	}
 }
 
@@ -338,60 +411,7 @@ void SDLPal::MainPage::Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::
 	auto statusBar = Windows::UI::ViewManagement::StatusBar::GetForCurrentView();
 	concurrency::create_task(statusBar->ShowAsync()).then([statusBar]() { statusBar->BackgroundOpacity = 1.0; });
 #endif
-}
-
-void SDLPal::MainPage::btnDownloadGame_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	auto folder = dynamic_cast<StorageFolder^>(tbGamePath->Tag);
-	auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadMessage"), m_resLdr->GetString("MBDownloadTitle"));
-	msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonOK"), nullptr, 1));
-	msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonCancel"), nullptr, nullptr));
-	msgbox->DefaultCommandIndex = 0;
-	msgbox->CancelCommandIndex = 1;
-	concurrency::create_task(msgbox->ShowAsync()).then([this](IUICommand^ command)->IAsyncOperation<IUICommand^>^ {
-		if (command->Id != nullptr)
-		{
-			if (UTIL_CheckResourceFiles(ConvertString(tbGamePath->Text).c_str(), ConvertString(tbMsgFile->Text).c_str()) != PALFILE_ALL_ORIGIN)
-			{
-				auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadOverwrite"), m_resLdr->GetString("MBDownloadTitle"));
-				msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonYes"), nullptr, 1));
-				msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonNo"), nullptr, nullptr));
-				msgbox->DefaultCommandIndex = 0;
-				msgbox->CancelCommandIndex = 1;
-				return msgbox->ShowAsync();
-			}
-			else
-			{
-				return concurrency::create_async([command]()->IUICommand^ { return command; });
-			}
-		}
-		else
-		{
-			return concurrency::create_async([command]()->IUICommand^ { return command; });
-		}
-	}).then([this, folder](IUICommand^ command) {
-		if (command->Id != nullptr)
-		{
-			try
-			{
-				auto file = AWait(folder->CreateFileAsync("pal98.zip", CreationCollisionOption::ReplaceExisting), g_eventHandle);
-				auto stream = AWait(file->OpenAsync(FileAccessMode::ReadWrite), g_eventHandle);
-				concurrency::create_task(this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, folder, file, stream]() {
-					m_dlg = ref new DownloadDialog(m_resLdr, folder, stream, ActualWidth, ActualHeight);
-				}))).then([this]()->IAsyncOperation<ContentDialogResult>^{
-					return m_dlg->ShowAsync();
-				}).then([this, file, stream](ContentDialogResult result) {
-					delete stream;
-					AWait(file->DeleteAsync(), g_eventHandle);
-					delete file;
-				});
-			}
-			catch (Exception^ e)
-			{
-				(ref new MessageDialog(String::Concat(m_resLdr->GetString("MBDownloadError"), e)))->ShowAsync();
-			}
-		}
-	});
+	CheckResourceFolder();
 }
 
 

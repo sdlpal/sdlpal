@@ -6,8 +6,9 @@
 #pragma once
 
 #include "MainPage.g.h"
+#include "DownloadDialog.g.h"
 #include <map>
-#include "../../palcfg.h"
+#include "palcfg.h"
 
 #ifdef main
 # undef main
@@ -45,11 +46,17 @@ namespace SDLPal
 		void LoadControlContents(bool loadDefault);
 		void SaveControlContents();
 
+	internal:
+		static MainPage^ Current;
+
 	private:
 		Platform::Collections::Map<Platform::String^, Windows::UI::Xaml::FrameworkElement^>^ m_controls;
 		Windows::ApplicationModel::Resources::ResourceLoader^ m_resLdr;
 		std::map<PALCFG_ITEM, AccessListEntry^> m_acl;
-		Windows::UI::Xaml::Controls::ContentDialog^ m_dlg;
+		DownloadDialog^ m_dlg;
+
+		void CheckResourceFolder();
+		void ClearResourceFolder();
 
 		void btnBrowseFolder_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void cbBGM_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
@@ -61,11 +68,6 @@ namespace SDLPal
 		void btnClearFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void cbUseFile_CheckChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-
-	internal:
-		static MainPage^ Current;
-	private:
-		void btnDownloadGame_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnSizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
 	};
 }

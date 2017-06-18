@@ -47,7 +47,7 @@ struct zip_file
 	zip_file(IStream* s) : stream(s), hr(S_OK), cbBytes(0) {}
 };
 
-SDLPal::DownloadDialog::DownloadDialog(Windows::ApplicationModel::Resources::ResourceLoader^ ldr, StorageFolder^ folder, IRandomAccessStream^ stream, double w, double h)
+SDLPal::DownloadDialog::DownloadDialog(Windows::ApplicationModel::Resources::ResourceLoader^ ldr, StorageFolder^ folder, IRandomAccessStream^ stream, double w, double h, bool from_url)
 	: m_stream(stream), m_Closable(false), m_InitialPhase(true), m_totalBytes(0), m_resLdr(ldr), m_folder(folder), m_width(w), m_height(h)
 {
 	InitializeComponent();
@@ -57,6 +57,14 @@ SDLPal::DownloadDialog::DownloadDialog(Windows::ApplicationModel::Resources::Res
 	this->MaxHeight = h;
 	pbDownload->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 	tbProgress->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	if (from_url)
+	{
+		wvDownloadPage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	}
+	else
+	{
+		gridURL->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	}
 }
 
 Platform::String^ SDLPal::DownloadDialog::FormatProgress()
@@ -80,12 +88,12 @@ Platform::String^ SDLPal::DownloadDialog::FormatProgress()
 
 void SDLPal::DownloadDialog::DoDownload(Platform::String^ url)
 {
-	DownloadPage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	wvDownloadPage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 	gridURL->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 	pbDownload->Visibility = Windows::UI::Xaml::Visibility::Visible;
 	tbProgress->Visibility = Windows::UI::Xaml::Visibility::Visible;
-	this->MaxHeight -= DownloadPage->ActualHeight + gridURL->ActualHeight - 48;
-	this->PrimaryButtonText = m_resLdr->GetString("ButtonBack");
+	this->MaxHeight -= wvDownloadPage->ActualHeight + gridURL->ActualHeight - 48;
+	this->PrimaryButtonText = m_resLdr->GetString("ButtonStop");
 	this->Title = m_title;
 	this->UpdateLayout();
 
@@ -250,14 +258,21 @@ void SDLPal::DownloadDialog::DoDownload(Platform::String^ url)
 		}
 
 		this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, ex]() {
-			Platform::String^ string;
-			if (m_Closable)
-				string = m_resLdr->GetString("MBDownloadCanceled");
-			else if (ex)
-				string = String::Concat(m_resLdr->GetString("MBDownloadError"), ex->Message);
-			else
-				string = m_resLdr->GetString("MBDownloadOK");
-			(ref new MessageDialog(string, m_resLdr->GetString("MBDownloadTitle")))->ShowAsync();
+			if (!m_Closable)
+			{
+				String^ string;
+				if (ex)
+				{
+					string = String::Concat(m_resLdr->GetString("MBDownloadError"), ex->Message);
+					Result = ContentDialogResult::Secondary;
+				}
+				else
+				{
+					string = m_resLdr->GetString("MBDownloadOK");
+					Result = ContentDialogResult::None;
+				}
+				(ref new MessageDialog(string, m_resLdr->GetString("MBDownloadTitle")))->ShowAsync();
+			}
 			m_Closable = true;
 			Hide();
 		}));
@@ -266,6 +281,8 @@ void SDLPal::DownloadDialog::DoDownload(Platform::String^ url)
 
 void SDLPal::DownloadDialog::OnPrimaryButtonClick(Windows::UI::Xaml::Controls::ContentDialog^ sender, Windows::UI::Xaml::Controls::ContentDialogButtonClickEventArgs^ args)
 {
+	(ref new MessageDialog(m_resLdr->GetString("MBDownloadCanceled"), m_resLdr->GetString("MBDownloadTitle")))->ShowAsync();
+	Result = ContentDialogResult::Primary;
 	m_Closable = true;
 }
 
@@ -278,10 +295,18 @@ void SDLPal::DownloadDialog::OnClosing(Windows::UI::Xaml::Controls::ContentDialo
 
 void SDLPal::DownloadDialog::OnOpened(Windows::UI::Xaml::Controls::ContentDialog^ sender, Windows::UI::Xaml::Controls::ContentDialogOpenedEventArgs^ args)
 {
-	DownloadPage->Width = m_width - 48;
-	DownloadPage->Height = m_height - 128 - gridURL->ActualHeight;
-	UpdateLayout();
-	DownloadPage->Navigate(ref new Uri(_url));
+	m_title = this->Title;
+	if (wvDownloadPage->Visibility == Windows::UI::Xaml::Visibility::Visible)
+	{
+		wvDownloadPage->Width = m_width - 48;
+		wvDownloadPage->Height = m_height - 128 - gridURL->ActualHeight;
+		UpdateLayout();
+		wvDownloadPage->Navigate(ref new Uri(_url));
+	}
+	else
+	{
+		this->Title = " ";
+	}
 }
 
 
@@ -299,7 +324,6 @@ void SDLPal::DownloadDialog::OnNavigateStart(Windows::UI::Xaml::Controls::WebVie
 
 void SDLPal::DownloadDialog::OnDOMContentLoaded(Windows::UI::Xaml::Controls::WebView^ sender, Windows::UI::Xaml::Controls::WebViewDOMContentLoadedEventArgs^ args)
 {
-	m_title = this->Title;
 	this->Title = sender->DocumentTitle;
 	sender->InvokeScriptAsync(ref new String(L"eval"), ref new Vector<String^>(1, ref new String(LR"rs(
 	var elems = document.getElementsByTagName('a');
@@ -328,10 +352,10 @@ void SDLPal::DownloadDialog::OnDOMContentLoaded(Windows::UI::Xaml::Controls::Web
 
 void SDLPal::DownloadDialog::OnSizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
 {
-	if (DownloadPage->Visibility == Windows::UI::Xaml::Visibility::Visible)
+	if (wvDownloadPage->Visibility == Windows::UI::Xaml::Visibility::Visible)
 	{
-		DownloadPage->Width = e->NewSize.Width - 48;
-		DownloadPage->Height = e->NewSize.Height - 128 - gridURL->ActualHeight;
+		wvDownloadPage->Width = e->NewSize.Width - 48;
+		wvDownloadPage->Height = e->NewSize.Height - 128 - gridURL->ActualHeight;
 	}
 }
 

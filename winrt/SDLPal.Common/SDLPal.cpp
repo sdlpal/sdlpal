@@ -3,11 +3,11 @@
 #include <wrl.h>
 #include <windows.h>
 #include "../SDLPal.Common/AsyncHelper.h"
-#include "../../global.h"
-#include "../../palcfg.h"
+#include "global.h"
+#include "palcfg.h"
 #include "App.xaml.h"
 extern "C" {
-#include "../../native_midi/native_midi.h"
+#include "native_midi/native_midi.h"
 }
 
 HANDLE g_eventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);

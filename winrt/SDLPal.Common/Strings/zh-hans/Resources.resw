@@ -147,9 +147,6 @@
   <data name="ButtonDefault.Content" xml:space="preserve">
     <value>默认设置</value>
   </data>
-  <data name="ButtonDownload.Content" xml:space="preserve">
-    <value>下载正版游戏资源</value>
-  </data>
   <data name="ButtonFinish.Content" xml:space="preserve">
     <value>完成设置</value>
   </data>
@@ -229,9 +226,8 @@
     <value>下载已被如下错误中止：</value>
   </data>
   <data name="MBDownloadMessage" xml:space="preserve">
-    <value>您即将进入游戏发行商提供的游戏资源文件下载页，您可从该页面（或任何您输入的URL）下载免费的正版游戏资源文件并保存于您所选择的文件夹中。
-您应知晓，上述资源文件并非由本应用的开发方提供，故我们无法保证下载链接的可用性，也不对您的行为承担任何责任。
-请点击“确定”按钮开始下载，或点击“取消”返回设置页面。</value>
+    <value>您即将进入游戏发行商提供的游戏资源文件下载页，您可从该页面下载免费的正版游戏资源文件并保存于您所选择的文件夹中。
+您应知晓，上述资源文件并非由本应用的开发方提供，故我们无法保证下载链接的可用性，也不对您的行为承担任何责任。</value>
   </data>
   <data name="MBDownloadOK" xml:space="preserve">
     <value>游戏资源下载已成功完成！</value>
@@ -251,7 +247,7 @@
   </data>
   <data name="MBStartupMessage" xml:space="preserve">
     <value>由于受版权限制，游戏资源文件并未包含在本应用当中，您需要首先在设置页面中选择游戏资源所在文件夹后方可进入游戏。
-对于尚未拥有游戏资源者，目前可从Internet上下载免费的正版游戏资源，请在选择文件夹后点击“下载”按钮进入下载页面。
+如您尚未拥有游戏资源，也可从Internet上下载免费的正版游戏资源，请在选择文件夹后根据提示进行操作。
 一旦您完成设置，在您下一次启动本应用时将直接开始游戏进程。</value>
   </data>
   <data name="MBStartupTitle" xml:space="preserve">
@@ -341,13 +337,28 @@
   <data name="MBButtonYes" xml:space="preserve">
     <value>是</value>
   </data>
-  <data name="MBDownloadOverwrite" xml:space="preserve">
-    <value>检测到目标文件夹中已存在游戏资源，下载成功后将会覆盖现有的资源文件，是否继续？</value>
+  <data name="MBDownloadRequiredText" xml:space="preserve">
+    <value>您所选择的目标文件夹不包含游戏资源，是否需要本应用协助您从Internet上下载免费的正版游戏资源？</value>
   </data>
   <data name="MBRequired" xml:space="preserve">
     <value>在文件夹“{0}”中缺少必需的游戏资源文件，请选择正确的文件夹或从官方网站下载游戏数据文件！</value>
   </data>
-  <data name="ButtonBack" xml:space="preserve">
+  <data name="ButtonStop" xml:space="preserve">
     <value>停止</value>
+  </data>
+  <data name="MBButtonFromBaiyou" xml:space="preserve">
+    <value>百游</value>
+  </data>
+  <data name="MBButtonFromURL" xml:space="preserve">
+    <value>自定义 URL</value>
+  </data>
+  <data name="MBDownloadOption" xml:space="preserve">
+    <value>请点击相应的按钮以选择下载来源</value>
+  </data>
+  <data name="MBDownloadRequiredTitle" xml:space="preserve">
+    <value>目标文件夹中无游戏资源</value>
+  </data>
+  <data name="URL.Header" xml:space="preserve">
+    <value>游戏资源 Zip 压缩包地址</value>
   </data>
 </root>

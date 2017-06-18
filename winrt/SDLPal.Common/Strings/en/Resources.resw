@@ -145,16 +145,13 @@
     <value>browse</value>
   </data>
   <data name="ButtonDefault.Content" xml:space="preserve">
-    <value>default setting</value>
-  </data>
-  <data name="ButtonDownload.Content" xml:space="preserve">
-    <value>download a licensed copy of game resource</value>
+    <value>default</value>
   </data>
   <data name="ButtonFinish.Content" xml:space="preserve">
-    <value>finish setting</value>
+    <value>finish</value>
   </data>
   <data name="ButtonReset.Content" xml:space="preserve">
-    <value>reset setting</value>
+    <value>reset</value>
   </data>
   <data name="CD.Header" xml:space="preserve">
     <value>format of CD track</value>
@@ -166,7 +163,7 @@
     <value>debug</value>
   </data>
   <data name="Downloading.PrimaryButtonText" xml:space="preserve">
-    <value>stop</value>
+    <value>back</value>
   </data>
   <data name="Downloading.Title" xml:space="preserve">
     <value>downloading...</value>
@@ -229,9 +226,8 @@
     <value>Download aborted due to error: </value>
   </data>
   <data name="MBDownloadMessage" xml:space="preserve">
-    <value>You're going to be brought to the download page, from where you can download the game resource to the folder you've just chosen. The download link will be automatically centered so that anyone who don't understand Chinese can download it without trouble.  You also have the opportunity to enter any direct download URL you know.
-Please note that this download page is not provided by this App's creator, so we can't guarantee the availablity of the donwload link or take responsibility for any consequences.
-Click 'ok' to continue or click 'cancel' to return.</value>
+    <value>You're going to be brought to the download page provided by the game's publisher, and the download link will be automatically centered so that anyone who don't understand Chinese can download it without trouble. The downloaded files will be put into the folder you've just chosen.
+Please note that this download page is not provided by this App's developer, so we can't guarantee the availablity of the donwload link or take responsibility for any consequences.</value>
   </data>
   <data name="MBDownloadOK" xml:space="preserve">
     <value>Game resource has been successfully downloaded!</value>
@@ -251,7 +247,7 @@ You can use the main menu option inside the game to return to this page.</value>
   </data>
   <data name="MBStartupMessage" xml:space="preserve">
     <value>You need to choose the folder that contains game resource files before you can start the game, because such files are NOT bundled due to copyright restrictions.
-But fortunately, a licensed copy of such files can be downloaded freely from Internet.  You'll be brought to this website by clicking the 'download' button after you've chosen a folder to save the downloaded files.
+But fortunately, you have the opportunity to download a licensed copy of the game resource files from Internet for free. To download them, please follow the instructions after you've chosen the folder.
 Once you've finished the setting process, you will be brought to the game directly at next launch.</value>
   </data>
   <data name="MBStartupTitle" xml:space="preserve">
@@ -309,7 +305,7 @@ Once you've finished the setting process, you will be brought to the game direct
     <value>yes</value>
   </data>
   <data name="Title.Text" xml:space="preserve">
-    <value>setting mode</value>
+    <value>setting</value>
   </data>
   <data name="TouchOverlay.Header" xml:space="preserve">
     <value>use touch overlay</value>
@@ -341,14 +337,29 @@ Once you've finished the setting process, you will be brought to the game direct
   <data name="MBButtonYes" xml:space="preserve">
     <value>yes</value>
   </data>
-  <data name="MBDownloadOverwrite" xml:space="preserve">
-    <value>The current game resource in destination folder will be overwrited on a successful download. Continue?</value>
+  <data name="MBDownloadRequiredText" xml:space="preserve">
+    <value>The folder you chose doesn't contain necessary game resource files. Do you wish to download a lincensed copy of them from Internet?</value>
   </data>
   <data name="MBRequired" xml:space="preserve">
     <value>Missing required game resource in folder '{0}'.
 Please choose the correct folder or download game resource from the offical website!</value>
   </data>
-  <data name="ButtonBack" xml:space="preserve">
-    <value>back</value>
+  <data name="ButtonStop" xml:space="preserve">
+    <value>stop</value>
+  </data>
+  <data name="MBButtonFromBaiyou" xml:space="preserve">
+    <value>baiyou100.com</value>
+  </data>
+  <data name="MBButtonFromURL" xml:space="preserve">
+    <value>customized URL</value>
+  </data>
+  <data name="MBDownloadOption" xml:space="preserve">
+    <value>please choose the download location</value>
+  </data>
+  <data name="MBDownloadRequiredTitle" xml:space="preserve">
+    <value>missing necessary game resource in folder</value>
+  </data>
+  <data name="URL.Header" xml:space="preserve">
+    <value>URL of the game resource's Zip archive</value>
   </data>
 </root>

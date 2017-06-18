@@ -147,9 +147,6 @@
   <data name="ButtonDefault.Content" xml:space="preserve">
     <value>默認設定</value>
   </data>
-  <data name="ButtonDownload.Content" xml:space="preserve">
-    <value>下載正版遊戲資源</value>
-  </data>
   <data name="ButtonFinish.Content" xml:space="preserve">
     <value>完成設定</value>
   </data>
@@ -166,7 +163,7 @@
     <value>調試信息</value>
   </data>
   <data name="Downloading.PrimaryButtonText" xml:space="preserve">
-    <value>停止</value>
+    <value>返回</value>
   </data>
   <data name="Downloading.Title" xml:space="preserve">
     <value>正在下載……</value>
@@ -193,10 +190,10 @@
     <value>無自訂字體檔案</value>
   </data>
   <data name="GamePath.Header" xml:space="preserve">
-    <value>遊戲資源檔案夾</value>
+    <value>遊戲資源資料夾</value>
   </data>
   <data name="GamePath.PlaceholderText" xml:space="preserve">
-    <value>未選擇檔案夾</value>
+    <value>未選擇資料夾</value>
   </data>
   <data name="Information.Content" xml:space="preserve">
     <value>運行信息</value>
@@ -229,9 +226,8 @@
     <value>下載已被如下錯誤中止：</value>
   </data>
   <data name="MBDownloadMessage" xml:space="preserve">
-    <value>您即將進入由遊戲發行商提供的遊戲資源檔下載頁，您可從該頁面（或任何您輸入的URL）下載免費的正版遊戲資源檔並保存於您所選擇的資料夾中。
-您應知曉，上述資源檔並非由本應用的開發方提供，故我們無法保證下載連結的可用性，也不對您的行為承擔任何責任。
-請點擊「確定」按鈕開始下載，或點擊「取消」返回設置頁面。</value>
+    <value>您即將進入由遊戲發行商提供的遊戲資源檔下載頁，您可從該頁面下載免費的正版遊戲資源檔並保存於您所選擇的資料夾中。
+您應知曉，上述資源檔並非由本應用的開發方提供，故我們無法保證下載連結的可用性，也不對您的行為承擔任何責任。</value>
   </data>
   <data name="MBDownloadOK" xml:space="preserve">
     <value>遊戲資源下載已成功完成！</value>
@@ -240,7 +236,7 @@
     <value>下載提示</value>
   </data>
   <data name="MBEmptyContent" xml:space="preserve">
-    <value>必須指定遊戲資源檔案夾！</value>
+    <value>必須指定遊戲資源資料夾！</value>
   </data>
   <data name="MBExitContent" xml:space="preserve">
     <value>您的設定已保存，下次啟動時將直接開始遊戲。
@@ -251,7 +247,7 @@
   </data>
   <data name="MBStartupMessage" xml:space="preserve">
     <value>由於受智慧產權限制，遊戲資源檔並未包含在本應用當中，您需要首先在設置頁面中選擇遊戲資源所在資料夾後方可進入遊戲。
-對於尚未擁有遊戲資源者，目前可從Internet上下載免費的正版遊戲資源，請在選擇資料夾後點擊「下載」按鈕進入下載頁面。
+如您尚未擁有遊戲資源，亦可從Internet上下載免費的正版遊戲資源，請在選擇資料夾後根據提示進行操作。
 一旦您完成設置，在您下一次啟動本應用時將直接開始遊戲進程。</value>
   </data>
   <data name="MBStartupTitle" xml:space="preserve">
@@ -341,13 +337,28 @@
   <data name="MBButtonYes" xml:space="preserve">
     <value>是</value>
   </data>
-  <data name="MBDownloadOverwrite" xml:space="preserve">
-    <value>檢測到目的檔案夾中已存在遊戲資源，下載成功後將會覆蓋現有的資源檔，是否繼續？</value>
+  <data name="MBDownloadRequiredText" xml:space="preserve">
+    <value>您所選擇的目的資料夾不包含遊戲資源，是否需要本應用協助您從Internet上下載免費的正版遊戲資源？</value>
   </data>
   <data name="MBRequired" xml:space="preserve">
-    <value>在檔案夾「{0}」中缺少必需的遊戲資源檔，請選擇正確的檔案夾或從官方網站下載遊戲資料檔案！</value>
+    <value>在資料夾「{0}」中缺少必需的遊戲資源檔，請選擇正確的檔案夾或從官方網站下載遊戲資料檔案！</value>
   </data>
-  <data name="ButtonBack" xml:space="preserve">
-    <value>返回</value>
+  <data name="ButtonStop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="MBButtonFromBaiyou" xml:space="preserve">
+    <value>百遊</value>
+  </data>
+  <data name="MBButtonFromURL" xml:space="preserve">
+    <value>自訂 URL</value>
+  </data>
+  <data name="MBDownloadOption" xml:space="preserve">
+    <value>請點擊相應的按鈕以選擇下載來源</value>
+  </data>
+  <data name="MBDownloadRequiredTitle" xml:space="preserve">
+    <value>目的資料夾無遊戲資源</value>
+  </data>
+  <data name="URL.Header" xml:space="preserve">
+    <value>遊戲資源 Zip 壓縮包地址</value>
   </data>
 </root>

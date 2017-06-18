@@ -14,14 +14,14 @@
     Closing="OnClosing" Opened="OnOpened" SizeChanged="OnSizeChanged">
 
     <StackPanel Orientation="Vertical">
-        <WebView x:Name="DownloadPage" NavigationStarting="OnNavigateStart" DOMContentLoaded="OnDOMContentLoaded" ScrollViewer.HorizontalScrollMode="Auto" ScrollViewer.VerticalScrollMode="Auto" />
+        <WebView x:Name="wvDownloadPage" NavigationStarting="OnNavigateStart" DOMContentLoaded="OnDOMContentLoaded" ScrollViewer.HorizontalScrollMode="Auto" ScrollViewer.VerticalScrollMode="Auto" />
         <Grid x:Name="gridURL" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="tbURL" Grid.Column="0" HorizontalAlignment="Stretch" />
-            <Button x:Name="btnGoTo" Grid.Column="1" Content="->" Click="OnClick" />
+            <TextBox x:Name="tbURL" x:Uid="URL" Header="游戏资源 Zip 压缩包地址" Grid.Column="0" HorizontalAlignment="Stretch" PlaceholderText="http://host.name/path/to/archive.zip" />
+            <Button x:Name="btnGoTo" Grid.Column="1" VerticalAlignment="Bottom" Content="->" Click="OnClick" />
         </Grid>
         <ProgressBar x:Name="pbDownload" HorizontalAlignment="Stretch" Height="12" Margin="0,8,0,4" />
         <TextBlock x:Name="tbProgress" HorizontalAlignment="Right" Height="20" Margin="0,4,0,0" Text="0 / 0" />
