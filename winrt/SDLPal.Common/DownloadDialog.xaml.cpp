@@ -11,6 +11,7 @@
 #include "NativeBuffer.h"
 #include "StringHelper.h"
 #include "minizip/unzip.h"
+#include "util.h"
 
 using namespace SDLPal;
 
@@ -47,8 +48,8 @@ struct zip_file
 	zip_file(IStream* s) : stream(s), hr(S_OK), cbBytes(0) {}
 };
 
-SDLPal::DownloadDialog::DownloadDialog(Windows::ApplicationModel::Resources::ResourceLoader^ ldr, StorageFolder^ folder, IRandomAccessStream^ stream, double w, double h, bool from_url)
-	: m_stream(stream), m_Closable(false), m_InitialPhase(true), m_totalBytes(0), m_resLdr(ldr), m_folder(folder), m_width(w), m_height(h)
+SDLPal::DownloadDialog::DownloadDialog(Windows::ApplicationModel::Resources::ResourceLoader^ ldr, StorageFolder^ folder, IRandomAccessStream^ stream, Platform::String^ msgfile, double w, double h, bool from_url)
+	: m_stream(stream), m_Closable(false), m_InitialPhase(true), m_totalBytes(0), m_resLdr(ldr), m_folder(folder), m_width(w), m_height(h), m_msgfile(msgfile)
 {
 	InitializeComponent();
 
@@ -264,6 +265,11 @@ void SDLPal::DownloadDialog::DoDownload(Platform::String^ url)
 				if (ex)
 				{
 					string = String::Concat(m_resLdr->GetString("MBDownloadError"), ex->Message);
+					Result = ContentDialogResult::Secondary;
+				}
+				else if (PAL_MISSING_REQUIRED(UTIL_CheckResourceFiles(ConvertString(m_folder->Path).c_str(), ConvertString(m_msgfile).c_str())))
+				{
+					string = String::Concat(m_resLdr->GetString("MBDownloadError"), m_resLdr->GetString("MBDownloadIncomplete"));
 					Result = ContentDialogResult::Secondary;
 				}
 				else

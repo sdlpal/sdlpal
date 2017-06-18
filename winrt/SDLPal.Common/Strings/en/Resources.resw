@@ -365,4 +365,7 @@ Please choose the correct folder or download game resource from the offical webs
   <data name="MBFolderManually" xml:space="preserve">
     <value>Please put game resource files into the folder before you select it.</value>
   </data>
+  <data name="MBDownloadIncomplete" xml:space="preserve">
+    <value>The downloaded archive does not contain necessary game resource files!</value>
+  </data>
 </root>

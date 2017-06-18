@@ -238,7 +238,7 @@ void SDLPal::MainPage::CheckResourceFolder()
 				auto stream = AWait(file->OpenAsync(FileAccessMode::ReadWrite), g_eventHandle);
 				bool from_url = ((int)command->Id == 1);
 				concurrency::create_task(this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, folder, file, stream, from_url]() {
-					m_dlg = ref new DownloadDialog(m_resLdr, folder, stream, ActualWidth, ActualHeight, from_url);
+					m_dlg = ref new DownloadDialog(m_resLdr, folder, stream, tbMsgFile->Text, ActualWidth, ActualHeight, from_url);
 				}))).then([this]()->IAsyncOperation<ContentDialogResult>^ {
 					return m_dlg->ShowAsync();
 				}).then([this, file, stream](ContentDialogResult result) {

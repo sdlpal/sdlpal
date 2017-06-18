@@ -364,4 +364,7 @@
   <data name="MBFolderManually" xml:space="preserve">
     <value>請先將遊戲資源檔放入後再選取該資料夾！</value>
   </data>
+  <data name="MBDownloadIncomplete" xml:space="preserve">
+    <value>已下載的壓縮包中未包含全部必備的遊戲資源檔！</value>
+  </data>
 </root>
