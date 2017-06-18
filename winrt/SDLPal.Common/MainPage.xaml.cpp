@@ -204,20 +204,20 @@ void SDLPal::MainPage::CheckResourceFolder()
 		concurrency::create_task(msgbox->ShowAsync()).then([this](IUICommand^ command)->IAsyncOperation<IUICommand^>^ {
 			if (command->Id == nullptr)
 			{
-				return concurrency::create_async([]()->IUICommand^ { return nullptr; });
+				return (ref new MessageDialog(m_resLdr->GetString("MBFolderManually")))->ShowAsync();
 			}
 
 			auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadOption"), m_resLdr->GetString("MBDownloadTitle"));
 			msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonFromURL"), nullptr, 1));
-			msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonFromBaiyou"), nullptr, nullptr));
+			msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonFromBaiyou"), nullptr, -1));
 			msgbox->DefaultCommandIndex = 0;
 			msgbox->CancelCommandIndex = 1;
 			return msgbox->ShowAsync();
 		}).then([this](IUICommand^ command)->IAsyncOperation<IUICommand^>^ {
-			if (command && !command->Id)
+			if (command && command->Id && (int)command->Id == -1)
 			{
 				auto msgbox = ref new MessageDialog(m_resLdr->GetString("MBDownloadMessage"), m_resLdr->GetString("MBDownloadTitle"));
-				msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonOK")));
+				msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonOK"), nullptr, -1));
 				return msgbox->ShowAsync();
 			}
 			else
@@ -225,7 +225,7 @@ void SDLPal::MainPage::CheckResourceFolder()
 				return concurrency::create_async([command]()->IUICommand^ { return command; });
 			}
 		}).then([this](IUICommand^ command) {
-			if (!command)
+			if (!command || !command->Id)
 			{
 				ClearResourceFolder();
 				return;
@@ -236,7 +236,7 @@ void SDLPal::MainPage::CheckResourceFolder()
 			{
 				auto file = AWait(folder->CreateFileAsync("pal98.zip", CreationCollisionOption::ReplaceExisting), g_eventHandle);
 				auto stream = AWait(file->OpenAsync(FileAccessMode::ReadWrite), g_eventHandle);
-				bool from_url = (command->Id != nullptr);
+				bool from_url = ((int)command->Id == 1);
 				concurrency::create_task(this->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([this, folder, file, stream, from_url]() {
 					m_dlg = ref new DownloadDialog(m_resLdr, folder, stream, ActualWidth, ActualHeight, from_url);
 				}))).then([this]()->IAsyncOperation<ContentDialogResult>^ {

@@ -361,4 +361,7 @@
   <data name="URL.Header" xml:space="preserve">
     <value>游戏资源 Zip 压缩包地址</value>
   </data>
+  <data name="MBFolderManually" xml:space="preserve">
+    <value>请先将游戏资源文件放入后再选取该文件夹！</value>
+  </data>
 </root>
