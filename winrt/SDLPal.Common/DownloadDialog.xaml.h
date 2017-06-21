@@ -21,11 +21,10 @@ namespace SDLPal
 		Windows::ApplicationModel::Resources::ResourceLoader^ m_resLdr;
 		Windows::Storage::StorageFolder^ m_folder;
 		Windows::Storage::Streams::IRandomAccessStream^ m_stream;
-		Platform::Object^ m_title;
 		Platform::String^ m_msgfile;
 		double m_width, m_height;
 		uint64_t m_totalBytes;
-		bool m_Closable, m_InitialPhase;
+		bool m_Closable, m_Downloading;
 
 		Platform::String^ FormatProgress();
 		void DoDownload(Platform::String^ url);

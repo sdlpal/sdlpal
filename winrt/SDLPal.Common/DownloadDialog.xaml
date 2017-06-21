@@ -7,23 +7,29 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="正在下载……"
-    PrimaryButtonText="停止"
+    Title=" "
+    PrimaryButtonText=" "
     PrimaryButtonClick="OnPrimaryButtonClick"
     MinHeight="0" MinWidth="0"
     Closing="OnClosing" Opened="OnOpened" SizeChanged="OnSizeChanged">
 
-    <StackPanel Orientation="Vertical">
-        <WebView x:Name="wvDownloadPage" NavigationStarting="OnNavigateStart" DOMContentLoaded="OnDOMContentLoaded" ScrollViewer.HorizontalScrollMode="Auto" ScrollViewer.VerticalScrollMode="Auto" />
-        <Grid x:Name="gridURL" HorizontalAlignment="Stretch">
+    <Grid x:Name="gridMain">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="gridRow1" />
+            <RowDefinition Height="48" />
+        </Grid.RowDefinitions>
+        <WebView x:Name="wvDownloadPage" Grid.Row="0" NavigationStarting="OnNavigateStart" DOMContentLoaded="OnDOMContentLoaded" ScrollViewer.HorizontalScrollMode="Auto" ScrollViewer.VerticalScrollMode="Auto" />
+        <Grid x:Name="gridURL" HorizontalAlignment="Stretch" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox x:Name="tbURL" x:Uid="URL" Header="游戏资源 Zip 压缩包地址" Grid.Column="0" HorizontalAlignment="Stretch" PlaceholderText="http://host.name/path/to/archive.zip" />
-            <Button x:Name="btnGoTo" Grid.Column="1" VerticalAlignment="Bottom" Content="->" Click="OnClick" />
+            <Button x:Name="btnGoTo" Grid.Column="1" VerticalAlignment="Bottom" Content="=>" Click="OnClick" />
         </Grid>
-        <ProgressBar x:Name="pbDownload" HorizontalAlignment="Stretch" Height="12" Margin="0,8,0,4" />
-        <TextBlock x:Name="tbProgress" HorizontalAlignment="Right" Height="20" Margin="0,4,0,0" Text="0 / 0" />
-    </StackPanel>
+        <StackPanel x:Name="spProgress" Orientation="Vertical" Grid.Row="1" Padding="0,4,0,4">
+            <ProgressBar x:Name="pbDownload" HorizontalAlignment="Stretch" Height="12" Margin="0,4,0,0" />
+            <TextBlock x:Name="tbProgress" HorizontalAlignment="Right" Height="20" Text="0 / 0" />
+        </StackPanel>
+    </Grid>
 </ContentDialog>

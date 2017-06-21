@@ -162,10 +162,10 @@
   <data name="Debug.Content" xml:space="preserve">
     <value>debug</value>
   </data>
-  <data name="Downloading.PrimaryButtonText" xml:space="preserve">
+  <data name="ButtonBack" xml:space="preserve">
     <value>back</value>
   </data>
-  <data name="Downloading.Title" xml:space="preserve">
+  <data name="DialogTitle" xml:space="preserve">
     <value>downloading...</value>
   </data>
   <data name="EnableAVI.Header" xml:space="preserve">
