@@ -200,7 +200,7 @@ void SDLPal::MainPage::CheckResourceFolder()
 		msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonYes"), nullptr, 1));
 		msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonNo"), nullptr, nullptr));
 		msgbox->DefaultCommandIndex = 0;
-		msgbox->CancelCommandIndex = 1;
+		msgbox->CancelCommandIndex = 0;
 		concurrency::create_task(msgbox->ShowAsync()).then([this](IUICommand^ command)->IAsyncOperation<IUICommand^>^ {
 			if (command->Id == nullptr)
 			{
@@ -211,7 +211,7 @@ void SDLPal::MainPage::CheckResourceFolder()
 			msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonFromURL"), nullptr, 1));
 			msgbox->Commands->Append(ref new UICommand(m_resLdr->GetString("MBButtonFromBaiyou"), nullptr, -1));
 			msgbox->DefaultCommandIndex = 0;
-			msgbox->CancelCommandIndex = 1;
+			msgbox->CancelCommandIndex = 0;
 			return msgbox->ShowAsync();
 		}).then([this](IUICommand^ command)->IAsyncOperation<IUICommand^>^ {
 			if (command && command->Id && (int)command->Id == -1)

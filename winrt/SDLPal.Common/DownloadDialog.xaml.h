@@ -24,7 +24,7 @@ namespace SDLPal
 		Platform::String^ m_msgfile;
 		double m_width, m_height;
 		uint64_t m_totalBytes;
-		bool m_Closable, m_Downloading;
+		bool m_Closable, m_Downloading, m_FromURL;
 
 		Platform::String^ FormatProgress();
 		void DoDownload(Platform::String^ url);

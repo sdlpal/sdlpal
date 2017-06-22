@@ -360,7 +360,7 @@ Please choose the correct folder or download game resource from the offical webs
     <value>missing necessary game resource in folder</value>
   </data>
   <data name="URL.Header" xml:space="preserve">
-    <value>URL of the game resource's Zip archive</value>
+    <value>URL of game resource's Zip archive</value>
   </data>
   <data name="MBFolderManually" xml:space="preserve">
     <value>Please put game resource files into the folder before you select it.</value>

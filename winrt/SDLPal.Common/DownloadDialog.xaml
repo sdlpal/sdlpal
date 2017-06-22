@@ -13,13 +13,9 @@
     MinHeight="0" MinWidth="0"
     Closing="OnClosing" Opened="OnOpened" SizeChanged="OnSizeChanged">
 
-    <Grid x:Name="gridMain">
-        <Grid.RowDefinitions>
-            <RowDefinition x:Name="gridRow1" />
-            <RowDefinition Height="48" />
-        </Grid.RowDefinitions>
-        <WebView x:Name="wvDownloadPage" Grid.Row="0" NavigationStarting="OnNavigateStart" DOMContentLoaded="OnDOMContentLoaded" ScrollViewer.HorizontalScrollMode="Auto" ScrollViewer.VerticalScrollMode="Auto" />
-        <Grid x:Name="gridURL" HorizontalAlignment="Stretch" Grid.Row="0">
+    <StackPanel Orientation="Vertical">
+        <WebView x:Name="wvDownloadPage" NavigationStarting="OnNavigateStart" DOMContentLoaded="OnDOMContentLoaded" ScrollViewer.HorizontalScrollMode="Auto" ScrollViewer.VerticalScrollMode="Auto" />
+        <Grid x:Name="gridURL" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
@@ -27,9 +23,7 @@
             <TextBox x:Name="tbURL" x:Uid="URL" Header="游戏资源 Zip 压缩包地址" Grid.Column="0" HorizontalAlignment="Stretch" PlaceholderText="http://host.name/path/to/archive.zip" />
             <Button x:Name="btnGoTo" Grid.Column="1" VerticalAlignment="Bottom" Content="=>" Click="OnClick" />
         </Grid>
-        <StackPanel x:Name="spProgress" Orientation="Vertical" Grid.Row="1" Padding="0,4,0,4">
-            <ProgressBar x:Name="pbDownload" HorizontalAlignment="Stretch" Height="12" Margin="0,4,0,0" />
-            <TextBlock x:Name="tbProgress" HorizontalAlignment="Right" Height="20" Text="0 / 0" />
-        </StackPanel>
-    </Grid>
+        <ProgressBar x:Name="pbDownload" HorizontalAlignment="Stretch" Height="12" Margin="0,8,0,4" />
+        <TextBlock x:Name="tbProgress" HorizontalAlignment="Right" Height="20" Text="0 / 0" Margin="0,4,0,4" />
+    </StackPanel>
 </ContentDialog>
