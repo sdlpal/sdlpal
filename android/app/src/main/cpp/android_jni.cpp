@@ -211,10 +211,13 @@ void* JNI_mediaplayer_load(const char *filename)
     JNIEnv* env = getJNIEnv();
     jclass clazz = env->FindClass("com/sdlpal/sdlpal/PalActivity");
     jmethodID mid = env->GetStaticMethodID(clazz, "JNI_mediaplayer_load", "(Ljava/lang/String;)Landroid/media/MediaPlayer;");
-    // str & player are local references so that they will be released automatically by JVM on return
     jstring str = env->NewStringUTF(filename);
-    jobject player = env->CallStaticObjectMethod(clazz, mid, str);
-    return env->NewGlobalRef(player);
+    jobject player_local = env->CallStaticObjectMethod(clazz, mid, str);
+    jobject player = env->NewGlobalRef(player_local);
+    env->DeleteLocalRef(str);
+    env->DeleteLocalRef(player_local);
+    env->DeleteLocalRef(clazz);
+    return player;
 }
 
 EXTERN_C_LINKAGE
@@ -224,6 +227,7 @@ void JNI_mediaplayer_free(void *player)
     jclass clazz = env->FindClass("android/media/MediaPlayer");
     // The MediaPlayer object should be placed to the 'End' state before freed
     env->CallVoidMethod((jobject)player, env->GetMethodID(clazz, "release", "()V"));
+    env->DeleteLocalRef(clazz);
     env->DeleteGlobalRef((jobject)player);
 }
 
@@ -234,6 +238,7 @@ void JNI_mediaplayer_play(void *player, int looping)
     jclass clazz = env->FindClass("android/media/MediaPlayer");
     env->CallVoidMethod((jobject)player, env->GetMethodID(clazz, "setLooping", "(Z)V"), looping ? JNI_TRUE : JNI_FALSE);
     env->CallVoidMethod((jobject)player, env->GetMethodID(clazz, "start", "()V"));
+    env->DeleteLocalRef(clazz);
 }
 
 EXTERN_C_LINKAGE
@@ -242,6 +247,7 @@ void JNI_mediaplayer_stop(void *player)
     JNIEnv* env = getJNIEnv();
     jclass clazz = env->FindClass("android/media/MediaPlayer");
     env->CallVoidMethod((jobject)player, env->GetMethodID(clazz, "stop", "()V"));
+    env->DeleteLocalRef(clazz);
 }
 
 EXTERN_C_LINKAGE
@@ -249,7 +255,9 @@ int JNI_mediaplayer_isplaying(void *player)
 {
     JNIEnv* env = getJNIEnv();
     jclass clazz = env->FindClass("android/media/MediaPlayer");
-    return env->CallBooleanMethod((jobject)player, env->GetMethodID(clazz, "isPlaying", "()Z"));
+    int playing = env->CallBooleanMethod((jobject)player, env->GetMethodID(clazz, "isPlaying", "()Z"));
+    env->DeleteLocalRef(clazz);
+    return playing;
 }
 
 EXTERN_C_LINKAGE
@@ -259,6 +267,7 @@ void JNI_mediaplayer_setvolume(void *player, int volume)
     JNIEnv* env = getJNIEnv();
     jclass clazz = env->FindClass("android/media/MediaPlayer");
     env->CallVoidMethod((jobject)player, env->GetMethodID(clazz, "setVolume", "(FF)V"), vol, vol);
+    env->DeleteLocalRef(clazz);
 }
 
 EXTERN_C_LINKAGE
