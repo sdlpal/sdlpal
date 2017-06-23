@@ -223,12 +223,7 @@ void* JNI_mediaplayer_load(const char *filename)
 EXTERN_C_LINKAGE
 void JNI_mediaplayer_free(void *player)
 {
-    JNIEnv* env = getJNIEnv();
-    jclass clazz = env->FindClass("android/media/MediaPlayer");
-    // The MediaPlayer object should be placed to the 'End' state before freed
-    env->CallVoidMethod((jobject)player, env->GetMethodID(clazz, "release", "()V"));
-    env->DeleteLocalRef(clazz);
-    env->DeleteGlobalRef((jobject)player);
+    getJNIEnv()->DeleteGlobalRef((jobject)player);
 }
 
 EXTERN_C_LINKAGE

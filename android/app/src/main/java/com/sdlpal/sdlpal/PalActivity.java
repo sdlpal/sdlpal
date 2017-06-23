@@ -19,15 +19,17 @@ public class PalActivity extends SDLActivity {
 
     private static MediaPlayer JNI_mediaplayer_load(String filename){
         Log.v(TAG, "loading midi:" + filename);
-        MediaPlayer mediaPlayer = new MediaPlayer();
+        if (mediaPlayer == null) {
+            mediaPlayer = new MediaPlayer();
+        }
         mediaPlayer.reset();
         try {
             mediaPlayer.setDataSource(mSingleton.getApplicationContext(), Uri.fromFile(new File(filename)));
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.prepare();
         } catch(IOException e) {
             Log.e(TAG, filename + " not available for playing, check");
         }
-        PalActivity.mediaPlayer = mediaPlayer;
         return mediaPlayer;
     }
 
