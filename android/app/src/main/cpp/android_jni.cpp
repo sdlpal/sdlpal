@@ -211,18 +211,20 @@ void* JNI_mediaplayer_load(const char *filename)
     JNIEnv* env = getJNIEnv();
     jclass clazz = env->FindClass("com/sdlpal/sdlpal/PalActivity");
     jmethodID mid = env->GetStaticMethodID(clazz, "JNI_mediaplayer_load", "(Ljava/lang/String;)Landroid/media/MediaPlayer;");
+    // str & player are local references so that they will be released automatically by JVM on return
     jstring str = env->NewStringUTF(filename);
     jobject player = env->CallStaticObjectMethod(clazz, mid, str);
-    env->DeleteLocalRef(str);
-    jobject ret = env->NewGlobalRef(player);
-    env->DeleteLocalRef(player);
-    return ret;
+    return env->NewGlobalRef(player);
 }
 
 EXTERN_C_LINKAGE
 void JNI_mediaplayer_free(void *player)
 {
-    getJNIEnv()->DeleteGlobalRef((jobject)player);
+    JNIEnv* env = getJNIEnv();
+    jclass clazz = env->FindClass("android/media/MediaPlayer");
+    // The MediaPlayer object should be placed to the 'End' state before freed
+    env->CallVoidMethod((jobject)player, env->GetMethodID(clazz, "release", "()V"));
+    env->DeleteGlobalRef((jobject)player);
 }
 
 EXTERN_C_LINKAGE
