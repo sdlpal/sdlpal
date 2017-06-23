@@ -214,7 +214,9 @@ void* JNI_mediaplayer_load(const char *filename)
     jstring str = env->NewStringUTF(filename);
     jobject player = env->CallStaticObjectMethod(clazz, mid, str);
     env->DeleteLocalRef(str);
-    return env->NewGlobalRef(player);
+    jobject ret = env->NewGlobalRef(player);
+    env->DeleteLocalRef(player);
+    return ret;
 }
 
 EXTERN_C_LINKAGE
