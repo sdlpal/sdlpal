@@ -10,6 +10,12 @@ import android.net.Uri;
 import java.io.*;
 
 public class PalActivity extends SDLActivity {
+
+    static {
+        System.loadLibrary("SDL2");
+        System.loadLibrary("main");
+    }
+
     private static final String TAG = "sdlpal-debug";
     private static MediaPlayer mediaPlayer;
 
