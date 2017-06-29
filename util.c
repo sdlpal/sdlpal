@@ -625,7 +625,9 @@ UTIL_GetFullPathName(
 #endif
 	if (result != NULL)
 	{
-		result = (char *)memmove(buffer, result, min(buflen, strlen(result)));
+		size_t dstlen = min(buflen - 1, strlen(result));
+		result = (char *)memmove(buffer, result, dstlen);
+		buffer[dstlen] = '\0';
 	}
 
 	free(_base);
