@@ -16,6 +16,12 @@ import android.net.Uri;
 import java.io.*;
 
 public class MainActivity extends AppCompatActivity {
+
+    static {
+        System.loadLibrary("SDL2");
+        System.loadLibrary("main");
+    }
+
     private static final String TAG = "sdlpal-debug";
 
     public static native void setAppPath(String basepath, String datapath, String cachepath);
@@ -100,10 +106,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void StartGame() {
-
-        System.loadLibrary("SDL2");
-        System.loadLibrary("main");
-
         String dataPath = getApplicationContext().getFilesDir().getPath();
         String cachePath = getApplicationContext().getCacheDir().getPath();
         String sdcardState = Environment.getExternalStorageState();

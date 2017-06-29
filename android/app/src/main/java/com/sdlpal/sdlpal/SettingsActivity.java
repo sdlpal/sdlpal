@@ -24,6 +24,11 @@ import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    static {
+        System.loadLibrary("SDL2");
+        System.loadLibrary("main");
+    }
+
     public static native boolean loadConfigFile();
     public static native boolean saveConfigFile();
     public static native boolean getConfigBoolean(String item, boolean defval);
