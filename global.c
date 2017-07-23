@@ -1031,6 +1031,11 @@ PAL_AddItemToInventory(
          }
 
          gpGlobals->rgInventory[index].nAmount -= iNum;
+         //
+         /// Need process last item
+         //
+         if(gpGlobals->rgInventory[index].nAmount == 0 && index == gpGlobals->iCurInvMenuItem)
+            gpGlobals->iCurInvMenuItem --;
          return TRUE;
       }
 

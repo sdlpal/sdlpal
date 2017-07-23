@@ -112,7 +112,7 @@ PAL_ItemSelectMenuUpdate(
    //
    // Redraw the box
    //
-   PAL_CreateBox(PAL_XY(2, 0), iLinesPerPage - 1, 17, 1, FALSE);
+   PAL_CreateBoxWithShadow(PAL_XY(2, 0), iLinesPerPage - 1, 17, 1, FALSE, 0);
 
    //
    // Draw the texts in the current page
