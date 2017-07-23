@@ -207,8 +207,10 @@ PAL_ItemSelectMenuUpdate(
    //
    // Draw the picture of current selected item
    //
+   PAL_RLEBlitToSurfaceWithShadow(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX), gpScreen,
+      PAL_XY(5, 145 - iPictureYOffset),TRUE);
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX), gpScreen,
-      PAL_XY(5, 140 - iPictureYOffset));
+      PAL_XY(0, 140 - iPictureYOffset));
 
    wObject = gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem;
 
