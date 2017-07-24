@@ -31,4 +31,5 @@
     <string name="toast_grantpermission">本应用需要存储设备读写权限以访问游戏资源。请点击“确定”后手动为本应用开启权限。</string>
     <string name="msg_data_not_found_header">无法在以下文件夹中找到游戏数据文件:</string>
     <string name="msg_data_not_found_footer">注意：由于版权问题，数据文件无法提供。请自行从百游官方下载并解压拷贝到手机中。</string>
+    <string name="label_aspectratio">纵横比</string>
 </resources>

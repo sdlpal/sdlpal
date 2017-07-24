@@ -31,4 +31,5 @@
     <string name="toast_grantpermission">本app需要存儲裝置讀寫許可權以訪問遊戲資料檔。請按「確定」後手動為本app開啟許可權。</string>
     <string name="msg_data_not_found_header">無法在以下資料夾中找到遊戲資料檔:</string>
     <string name="msg_data_not_found_footer">說明：為防止侵害大宇公司版權，恕不提供遊戲資料檔。请自行將正版PAL的資料檔復製到手機中。</string>
+    <string name="label_aspectratio">縱橫比</string>
 </resources>

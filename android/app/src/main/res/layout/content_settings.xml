@@ -126,6 +126,17 @@
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="269dp" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_aspectratio" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/spAspectRatio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/aspect_ratio" />
+
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/swStereo"
                 android:layout_width="match_parent"
