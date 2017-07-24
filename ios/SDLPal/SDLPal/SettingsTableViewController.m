@@ -22,6 +22,8 @@
     NSArray *MusicFormats;
     NSArray *OPLFormats;
     NSArray *LogLevels;
+    NSArray *AspectRatios;
+    
     NSArray *allFiles;
     NSMutableArray *AvailFiles;
     BOOL checkAllFilesIncluded;
@@ -38,6 +40,7 @@
     
     IBOutlet UISwitch *toggleTouchScreenOverlay;
     IBOutlet UISwitch *toggleKeepAspect;
+    IBOutlet UILabel *lblAspectRatio;
     IBOutlet UISwitch *toggleSmoothScaling;
     
     IBOutlet UILabel *lblMusicType;
@@ -81,6 +84,7 @@
     MusicFormats = @[ @"MIDI", @"RIX", @"MP3", @"OGG" ];
     OPLFormats = @[ @"DOSBOX", @"MAME", @"DOSBOXNEW" ];
     LogLevels = @[ @"VERBOSE", @"DEBUG", @"INFO", @"WARNING", @"ERROR", @"FATAL" ];
+    AspectRatios = @[ @"16:10", @"4:3" ];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     tap.cancelsTouchesInView = NO;
@@ -161,7 +165,7 @@ typedef void(^SelectedBlock)(NSString *selected);
             rows = 2;
             break;
         case 2:
-            rows = 3;
+            rows = 4;
             break;
         case 3:
             rows = [lblMusicType.text isEqualToString:@"RIX"] ? 11 : 4;
@@ -185,7 +189,9 @@ typedef void(^SelectedBlock)(NSString *selected);
         toggleTouchScreenOverlay.on = !toggleTouchScreenOverlay.isOn;
     }else if( indexPath.section == 2 && indexPath.row == 1 ) { //keep aspect
         toggleKeepAspect.on = !toggleKeepAspect.isOn;
-    }else if( indexPath.section == 2 && indexPath.row == 2 ) { //smooth scaling
+    }else if( indexPath.section == 2 && indexPath.row == 2 ) { //aspect ratio
+        [self showPickerWithTitle:nil toLabel:lblAspectRatio inArray:AspectRatios origin:cell allowEmpty:NO];
+    }else if( indexPath.section == 2 && indexPath.row == 3 ) { //smooth scaling
         toggleSmoothScaling.on = !toggleSmoothScaling.isOn;
     }else if( indexPath.section == 3 && indexPath.row == 0 ) { //BGM
         [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats origin:cell allowEmpty:NO doneBlock:^(NSString *selected) {
@@ -254,6 +260,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     toggleTouchScreenOverlay.on = gConfig.fUseTouchOverlay;
     toggleKeepAspect.on         = gConfig.fKeepAspectRatio;
+    lblAspectRatio.text         = [NSString stringWithFormat:@"%d:%d",gConfig.dwAspectX,gConfig.dwAspectY];
     toggleSmoothScaling.on      = gConfig.pszScaleQuality ? strncmp(gConfig.pszScaleQuality, "0", sizeof(char)) != 0 : NO;
     
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
@@ -282,6 +289,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     gConfig.fUseSurroundOPL = toggleSurroundOPL.isOn;
     
     gConfig.fKeepAspectRatio = toggleKeepAspect.isOn;
+    gConfig.dwAspectX = [[lblAspectRatio.text componentsSeparatedByString:@":"][0] intValue];
+    gConfig.dwAspectY = [[lblAspectRatio.text componentsSeparatedByString:@":"][1] intValue];
     gConfig.fUseTouchOverlay = toggleTouchScreenOverlay.isOn;
     gConfig.pszScaleQuality  = strdup(toggleSmoothScaling.on ? "1" : "0");
    
