@@ -229,7 +229,7 @@ PAL_ItemSelectMenuUpdate(
 
    if (wPrevImageIndex != 0xFFFF)
    {
-      PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(12, 148 - iPictureYOffset));
+      PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(7, 148 - iPictureYOffset));
    }
 
    //
