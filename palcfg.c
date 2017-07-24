@@ -67,6 +67,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_CLIMIDIPLAYER,     PALCFG_STRING,   "CLIMIDIPlayer",     13, MAKE_VALUE(NULL,     NULL, NULL) },
     { PALCFG_SCALEQUALITY,      PALCFG_STRING,   "ScaleQuality",      12, MAKE_VALUE("0",      NULL, NULL) },
+    { PALCFG_ASPECTRATIO,       PALCFG_STRING,   "AspectRatio",       11, MAKE_VALUE("16:10",  NULL, NULL) },
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
@@ -273,6 +274,8 @@ PAL_LoadConfig(
 	MUSICTYPE eMusicType = MUSIC_RIX;
 	MUSICTYPE eCDType = MUSIC_OGG;
 	OPLTYPE   eOPLType = OPL_DOSBOX;
+	INT dwAspectX = -1;
+	INT dwAspectY = -1;
 	SCREENLAYOUT screen_layout = {
 		// Equipment Screen
 		PAL_XY(8, 8), PAL_XY(2, 95), PAL_XY(5, 70), PAL_XY(51, 57),
@@ -418,6 +421,17 @@ PAL_LoadConfig(
                 case PALCFG_SCALEQUALITY:
                     gConfig.pszScaleQuality = ParseStringValue(value.sValue, gConfig.pszScaleQuality);
                     break;
+                case PALCFG_ASPECTRATIO:
+                {
+                    char *aspectRatio = ParseStringValue(value.sValue, gConfig.pszScaleQuality);
+                    char *lasts;
+					if( strchr(aspectRatio,':') == NULL ) {
+						aspectRatio = ParseStringValue(item->DefaultValue.sValue, gConfig.pszScaleQuality);
+					}
+					dwAspectX = atoi(strtok_r(aspectRatio,":",&lasts));
+					dwAspectY = atoi(strtok_r(NULL,       ":",&lasts));
+                    break;
+                }
 				default:
 					values[item->Item] = value;
 					break;
@@ -457,6 +471,9 @@ PAL_LoadConfig(
 	gConfig.wAudioBufferSize = (WORD)values[PALCFG_AUDIOBUFFERSIZE].uValue;
 	gConfig.iMusicVolume = values[PALCFG_MUSICVOLUME].uValue;
 	gConfig.iSoundVolume = values[PALCFG_SOUNDVOLUME].uValue;
+
+	gConfig.dwAspectX = dwAspectX <= 0 ? 16 : dwAspectX;
+	gConfig.dwAspectY = dwAspectY <= 0 ? 10 : dwAspectY;
 
 	if (UTIL_GetScreenSize(&values[PALCFG_WINDOWWIDTH].uValue, &values[PALCFG_WINDOWHEIGHT].uValue))
 	{
@@ -512,6 +529,7 @@ PAL_SaveConfig(
 		if (gConfig.pszLogFile && *gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
         if (gConfig.pszCLIMIDIPlayerPath && *gConfig.pszCLIMIDIPlayerPath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CLIMIDIPLAYER), gConfig.pszCLIMIDIPlayerPath); fputs(buf, fp); }
         if (gConfig.pszScaleQuality && *gConfig.pszScaleQuality) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SCALEQUALITY), gConfig.pszScaleQuality); fputs(buf, fp); }
+        if (gConfig.dwAspectX > 0 && gConfig.dwAspectY > 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_ASPECTRATIO), PAL_va(0,"%d:%d",gConfig.dwAspectX,gConfig.dwAspectY)); fputs(buf, fp); }
 
 		fclose(fp);
 
@@ -560,6 +578,7 @@ PAL_GetConfigItem(
 		case PALCFG_SCALEQUALITY:      value.sValue = gConfig.pszScaleQuality; break;
 		case PALCFG_MUSIC:             value.sValue = music_types[gConfig.eMusicType]; break;
 		case PALCFG_OPL:               value.sValue = opl_types[gConfig.eOPLType]; break;
+        case PALCFG_ASPECTRATIO:       value.sValue = PAL_va(0,"%d:%d",gConfig.dwAspectX,gConfig.dwAspectY); break;
 		default:                       break;
 		}
 	}
@@ -592,6 +611,18 @@ PAL_SetConfigItem(
 	case PALCFG_SOUNDVOLUME:       gConfig.iSoundVolume = value.uValue; break;
 	case PALCFG_WINDOWHEIGHT:      gConfig.dwScreenHeight = value.uValue; break;
 	case PALCFG_WINDOWWIDTH:       gConfig.dwScreenWidth = value.uValue; break;
+    case PALCFG_ASPECTRATIO:
+    {
+        char *lasts;
+        if( strchr(value.sValue,':') != NULL ) {
+            gConfig.dwAspectX = atoi(strtok_r((char*)value.sValue,":",&lasts));
+            gConfig.dwAspectY = atoi(strtok_r(NULL,               ":",&lasts));
+        }else{
+            gConfig.dwAspectX = 16;
+            gConfig.dwAspectY = 10;
+        }
+        break;
+    }
 	case PALCFG_GAMEPATH:
 		if (gConfig.pszGamePath) free(gConfig.pszGamePath);
 		gConfig.pszGamePath = value.sValue && value.sValue[0] ? strdup(value.sValue) : strdup(PAL_PREFIX);
