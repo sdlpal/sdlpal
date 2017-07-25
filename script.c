@@ -3455,7 +3455,7 @@ begin:
 	   if (gConfig.fIsWIN95)
 	   {
 		   int XBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 71 : 102;
-		   int YBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 150 - gConfig.ScreenLayout.ExtraItemDescLines * 16 : 3;
+		   int YBase = (wEventObjectID & PAL_ITEM_DESC_BOTTOM) ? 151 - gConfig.ScreenLayout.ExtraItemDescLines * 16 : 3;
 		   int iDescLine = (wEventObjectID & ~PAL_ITEM_DESC_BOTTOM);
 
 		   if (gConfig.pszMsgFile)

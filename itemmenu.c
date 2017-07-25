@@ -204,13 +204,14 @@ PAL_ItemSelectMenuUpdate(
       }
    }
 
+   int xBase = 0, yBase = 140;
    //
    // Draw the picture of current selected item
    //
    PAL_RLEBlitToSurfaceWithShadow(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX), gpScreen,
-      PAL_XY(5, 145 - iPictureYOffset),TRUE);
+      PAL_XY(xBase+5, yBase+5 - iPictureYOffset),TRUE);
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX), gpScreen,
-      PAL_XY(0, 140 - iPictureYOffset));
+      PAL_XY(xBase, yBase - iPictureYOffset));
 
    wObject = gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem;
 
@@ -229,7 +230,7 @@ PAL_ItemSelectMenuUpdate(
 
    if (wPrevImageIndex != 0xFFFF)
    {
-      PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(7, 148 - iPictureYOffset));
+      PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(xBase+8, yBase+7 - iPictureYOffset));
    }
 
    //
