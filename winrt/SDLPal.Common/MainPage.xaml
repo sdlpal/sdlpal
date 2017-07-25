@@ -47,6 +47,10 @@
                 </Grid>
                 <ToggleSwitch x:Name="tsTouchOverlay" x:Uid="TouchOverlay" Header="启用触屏辅助" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsKeepAspect" x:Uid="AspectRatio" Header="保持纵横比" OffContent="否" OnContent="是" />
+                <ComboBox x:Name="cbAspectRatio" x:Uid="Ratio" HorizontalAlignment="Stretch" Header="纵横比" PlaceholderText="选择纵横比">
+                    <ComboBoxItem Content="16:10"/>
+                    <ComboBoxItem Content="4:3"/>
+                </ComboBox>
                 <ToggleSwitch x:Name="tsEnableAVI" x:Uid="EnableAVI" Header="启用 AVI 过场动画" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsStereo" x:Uid="Stereo" Header="立体声" OffContent="否" OnContent="是" />
                 <Slider x:Name="slMusicVolume" x:Uid="MusicVolume" Header="音乐音量" TickPlacement="Inline" TickFrequency="10" />
