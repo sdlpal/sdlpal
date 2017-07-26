@@ -52,7 +52,7 @@ MIDI_Play(
 
 	if (gConfig.fIsWIN95)
 	{
-		g_pMidi = native_midi_loadsong(PAL_CombinePath(0, gConfig.pszGamePath, PAL_va(1, "Musics/%.3d.mid", iNumRIX)));
+		g_pMidi = native_midi_loadsong(UTIL_GetFullPathName(PAL_BUFFER_SIZE_ARGS(0), gConfig.pszGamePath, PAL_va(1, "Musics/%.3d.mid", iNumRIX)));
 	}
 
 	if (!g_pMidi)
@@ -63,7 +63,6 @@ MIDI_Play(
 
 		if ((fp = UTIL_OpenFile("midi.mkf")) != NULL)
 		{
-			
 			if ((size = PAL_MKFGetChunkSize(iNumRIX, fp)) > 0 &&
 				(buf = (uint8_t*)UTIL_malloc(size)))
 			{
