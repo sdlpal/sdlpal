@@ -112,6 +112,7 @@ void SDLPal::MainPage::LoadControlContents(bool loadDefault)
 	cbCD->SelectedIndex = (gConfig.eCDType == MUSIC_MP3) ? 0 : 1;
 	cbBGM->SelectedIndex = (gConfig.eMusicType <= MUSIC_OGG) ? gConfig.eMusicType : MUSIC_RIX;
 	cbOPL->SelectedIndex = (int)gConfig.eOPLType;
+	cbAspectRatio->SelectedIndex = gConfig.dwAspectY == 0 ? 0 : [](std::vector<float> &array, float toMatch) {return std::find_if(array.begin(), array.end(), [toMatch](float i)->bool { return fabs(toMatch - i) < FLT_EPSILON; }) - array.begin(); }(std::vector<float>({ 16.0f / 10.0f, 4.0f / 3.0f }), (float)gConfig.dwAspectX / gConfig.dwAspectY);
 
 	if (gConfig.iSampleRate <= 11025)
 		cbSampleRate->SelectedIndex = 0;
@@ -158,6 +159,13 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.eCDType = (MUSICTYPE)(MUSIC_MP3 + cbCD->SelectedIndex);
 	gConfig.eMusicType = (MUSICTYPE)cbBGM->SelectedIndex;
 	gConfig.eOPLType = (OPLTYPE)cbOPL->SelectedIndex;
+
+	wchar_t *lasts;
+	wchar_t *selectedAspectRatio = (wchar_t*)static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbAspectRatio->SelectedItem)->Content)->Data();
+	wchar_t *w=wcstok_s(selectedAspectRatio, L":", &lasts);
+	gConfig.dwAspectX = _wtoi(w);
+	w = wcstok_s(NULL, L":", &lasts);
+	gConfig.dwAspectY = _wtoi(w);
 
 	gConfig.iSampleRate = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbSampleRate->SelectedItem)->Content)->Data(), nullptr, 10);
 	gConfig.iOPLSampleRate = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbOPLSR->SelectedItem)->Content)->Data(), nullptr, 10);

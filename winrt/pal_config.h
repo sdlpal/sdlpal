@@ -57,6 +57,8 @@
 
 #define PAL_IS_PATH_SEPARATOR(x) ((x) == '\\' || (x) == '/')
 
+#define strtok_r strtok_s
+
 PAL_C_LINKAGE_BEGIN
 
 LPCSTR

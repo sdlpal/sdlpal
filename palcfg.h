@@ -81,6 +81,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_RIXEXTRAINIT,
 	PALCFG_CLIMIDIPLAYER,
     PALCFG_SCALEQUALITY,
+    PALCFG_ASPECTRATIO,
 	/* Strings */
 	PALCFG_STRING_MAX,
 
@@ -173,6 +174,8 @@ typedef struct tagCONFIGURATION
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;
 	DWORD            dwScreenHeight;
+    DWORD            dwAspectX;
+    DWORD            dwAspectY;
 	INT              iSurroundOPLOffset;
 	INT              iAudioChannels;
 	INT              iSampleRate;

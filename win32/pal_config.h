@@ -59,3 +59,7 @@
 #define PAL_PATH_SEPARATORS "\\/"
 
 #define PAL_IS_PATH_SEPARATOR(x) ((x) == '\\' || (x) == '/')
+
+#ifndef __MINGW__
+#define strtok_r strtok_s
+#endif

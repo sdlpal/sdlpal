@@ -41,6 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static native String getGitRevision();
 
     private static final String KeepAspectRatio = "KeepAspectRatio";
+    private static final String AspectRatio = "AspectRatio";
     private static final String LaunchSetting = "LaunchSetting";
     private static final String Stereo = "Stereo";
     private static final String UseSurroundOPL = "UseSurroundOPL";
@@ -68,6 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String CDFormats[] = { "MP3", "OGG" };
     private static final String MusicFormats[] = { "MIDI", "RIX", "MP3", "OGG" };
     private static final String OPLFormats[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
+    private static final String AspectRatios[] = { "16:10", "4:3" };
 
     private SettingsActivity mInstance = this;
 
@@ -305,6 +307,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, true), MusicFormats, 1));    // RIX
         ((AppCompatSpinner)findViewById(R.id.spOPL)).setSelection(findMatchedStringIndex(getConfigString(OPLFormat, true), OPLFormats, 1));       // MAME
         ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, true), OPLSampleRates, 5));  // 49716Hz
+        ((AppCompatSpinner)findViewById(R.id.spAspectRatio)).setSelection(findMatchedStringIndex(getConfigString(AspectRatio, true), AspectRatios, 0));  // 16:10
     }
 
 
@@ -342,6 +345,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, false), MusicFormats, 1));    // RIX
         ((AppCompatSpinner)findViewById(R.id.spOPL)).setSelection(findMatchedStringIndex(getConfigString(OPLFormat, false), OPLFormats, 1));       // MAME
         ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, false), OPLSampleRates, 5));  // 49716Hz
+        ((AppCompatSpinner)findViewById(R.id.spAspectRatio)).setSelection(findMatchedStringIndex(getConfigString(AspectRatio, false), AspectRatios, 0));  // 16:10
     }
 
     protected boolean setConfigs() {
@@ -380,6 +384,7 @@ public class SettingsActivity extends AppCompatActivity {
         setConfigString(MusicFormat, (String)((AppCompatSpinner)findViewById(R.id.spMusFmt)).getSelectedItem());
         setConfigString(OPLFormat, (String)((AppCompatSpinner)findViewById(R.id.spOPL)).getSelectedItem());
         setConfigInt(OPLSampleRate, Integer.parseInt((String)((AppCompatSpinner)findViewById(R.id.spOPLRate)).getSelectedItem()));
+        setConfigString(AspectRatio, (String)((AppCompatSpinner)findViewById(R.id.spAspectRatio)).getSelectedItem());
 
         return true;
     }
