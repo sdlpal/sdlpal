@@ -878,6 +878,9 @@ PAL_DrawText(
    urect.h = (fUse8x8Font ? 8 : PAL_FontHeight()) + (fShadow ? 1 : 0);
    urect.w = 0;
 
+   // Handle text overflow
+   if (rect.x >= 320) return;
+
    while (*lpszText)
    {
       //
@@ -1914,7 +1917,7 @@ PAL_swprintf(
   Purpose:
 
     Formatted wide-character output conversion that output Chinese characters correctly.
-	This function supported a subset of format strings that are commonly supported by 
+	This function supported a subset of format strings that are commonly supported by
 	various C libraries, which can be formalized as following:
 
 	%[flags] [width] [.precision] [{h | l | ll}] type
