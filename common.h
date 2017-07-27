@@ -138,7 +138,7 @@ typedef unsigned char       UCHAR, *PUCHAR;
 typedef unsigned short      WORD, *LPWORD;
 typedef unsigned int        DWORD, *LPDWORD;
 typedef int                 INT, *LPINT;
-# ifndef __APPLE__
+# if !defined( __APPLE__ ) && !defined( GEKKO )
 typedef int                 BOOL, *LPBOOL;
 # endif
 typedef unsigned int        UINT, *PUINT, UINT32, *PUINT32;

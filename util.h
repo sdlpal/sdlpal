@@ -224,6 +224,12 @@ UTIL_IsAbsolutePath(
 );
 
 int
+UTIL_Platform_Startup(
+	int   argc,
+	char *argv[]
+);
+
+int
 UTIL_Platform_Init(
 	int   argc,
 	char *argv[]

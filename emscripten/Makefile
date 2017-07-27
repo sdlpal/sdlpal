@@ -17,7 +17,7 @@ DEPFILES = $(OBJFILES:.o=.d)
 
 CFLAGS = -I${EMSCRIPTEN_TOOLCHAIN}/include/SDL2 -g -Wall -Oz -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(DEPFLAGS) 
 CPPFLAGS = $(CFLAGS)
-override LDFLAGS += -Oz -L${EMSCRIPTEN_TOOLCHAIN}/lib -lSDL2 -lm -lstdc++ --preload-file data -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -s DEMANGLE_SUPPORT=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s 'EMTERPRETIFY_FILE="sdlpal.bc"' -s WASM=1
+override LDFLAGS += -Oz -L${EMSCRIPTEN_TOOLCHAIN}/lib -lSDL2 -lm -lstdc++ --preload-file data -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -s DEMANGLE_SUPPORT=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s 'EMTERPRETIFY_FILE="sdlpal.bc"' -s WASM=1 -s NO_EXIT_RUNTIME=1
 
 POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 

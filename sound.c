@@ -31,10 +31,6 @@
 #include "riff.h"
 #include <math.h>
 
-#if PAL_HAS_OGG
-#include <vorbis/codec.h>
-#endif
-
 #define PAL_CDTRACK_BASE    10000
 
 typedef struct tagWAVESPEC

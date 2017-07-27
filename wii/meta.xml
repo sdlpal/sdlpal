@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app version="1">
+<name>sdlpal</name>
+<coder>palxex</coder>
+<version>2.0</version>
+<release_date>2017.07.27</release_date>
+<short_description>Chinese Paladin</short_description>
+<long_description>SDL-based reimplementation of the classic Chinese-language RPG "Xiān jiàn Qí Xiá Zhuàn" (also known as PAL).</long_description>
+</app>

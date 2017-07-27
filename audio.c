@@ -31,10 +31,6 @@
 #include "aviplay.h"
 #include <math.h>
 
-#if PAL_HAS_OGG
-#include <vorbis/codec.h>
-#endif
-
 #define PAL_CDTRACK_BASE    10000
 
 typedef void(*ResampleMixFunction)(void *, const void *, int, void *, int, int, uint8_t);
@@ -207,7 +203,7 @@ AUDIO_OpenDevice(
       //
       return -1;
    }
-#ifdef __EMSCRIPTEN__ // Now either music/sound enabled will makes whole app crash in emscripten. Disabled until a solution is found.
+#if defined( __EMSCRIPTEN__ ) // Now either music/sound enabled will makes whole app crash in emscripten. Disabled until a solution is found.
    return -1;
 #endif
 

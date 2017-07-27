@@ -587,7 +587,7 @@ PAL_LoadGame_Common(
 	//
 	// Adjust endianness
 	//
-	DO_BYTESWAP(&s, size);
+	DO_BYTESWAP(s, size);
 
 	//
 	// Cash amount is in DWORD, so do a wordswap in Big-Endian.
@@ -657,13 +657,13 @@ PAL_LoadGame_DOS(
 
 --*/
 {
-   PAL_LARGE SAVEDGAME_DOS   s;
+   SAVEDGAME_DOS   *s = (SAVEDGAME_DOS*)malloc(sizeof(SAVEDGAME_DOS));
    int                       i;
 
    //
    // Get all the data from the saved game struct.
    //
-   if (!PAL_LoadGame_Common(iSaveSlot, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_DOS)))
+   if (!PAL_LoadGame_Common(iSaveSlot, (LPSAVEDGAME_COMMON)s, sizeof(SAVEDGAME_DOS)))
 	   return -1;
 
    //
@@ -671,11 +671,13 @@ PAL_LoadGame_DOS(
    //
    for (i = 0; i < MAX_OBJECTS; i++)
    {
-      memcpy(&gpGlobals->g.rgObject[i], &s.rgObject[i], sizeof(OBJECT_DOS));
-      gpGlobals->g.rgObject[i].rgwData[6] = s.rgObject[i].rgwData[5];     // wFlags
+      memcpy(&gpGlobals->g.rgObject[i], &s->rgObject[i], sizeof(OBJECT_DOS));
+      gpGlobals->g.rgObject[i].rgwData[6] = s->rgObject[i].rgwData[5];     // wFlags
       gpGlobals->g.rgObject[i].rgwData[5] = 0;                            // wScriptDesc or wReserved2
    }
-   memcpy(gpGlobals->g.lprgEventObject, s.rgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
+   memcpy(gpGlobals->g.lprgEventObject, s->rgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
+
+   free(s);
 
    //
    // Success
@@ -702,16 +704,18 @@ PAL_LoadGame_WIN(
 
 --*/
 {
-   PAL_LARGE SAVEDGAME_WIN   s;
+   SAVEDGAME_WIN   *s = (SAVEDGAME_WIN*)malloc(sizeof(SAVEDGAME_WIN));
 
    //
    // Get all the data from the saved game struct.
    //
-   if (!PAL_LoadGame_Common(iSaveSlot, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_WIN)))
+   if (!PAL_LoadGame_Common(iSaveSlot, (LPSAVEDGAME_COMMON)s, sizeof(SAVEDGAME_WIN)))
 	   return -1;
 
-   memcpy(gpGlobals->g.rgObject, s.rgObject, sizeof(gpGlobals->g.rgObject));
-   memcpy(gpGlobals->g.lprgEventObject, s.rgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
+   memcpy(gpGlobals->g.rgObject, s->rgObject, sizeof(gpGlobals->g.rgObject));
+   memcpy(gpGlobals->g.lprgEventObject, s->rgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
+    
+   free(s);
 
    //
    // Success
@@ -772,7 +776,7 @@ PAL_SaveGame_Common(
 	//
 	// Adjust endianness
 	//
-	DO_BYTESWAP(&s, size);
+	DO_BYTESWAP(s, size);
 
 	//
 	// Cash amount is in DWORD, so do a wordswap in Big-Endian.
@@ -816,7 +820,7 @@ PAL_SaveGame_DOS(
 
 --*/
 {
-   PAL_LARGE SAVEDGAME_DOS   s;
+   SAVEDGAME_DOS   *s = (SAVEDGAME_DOS*)malloc(sizeof(SAVEDGAME_DOS));
    UINT32                    i;
 
    //
@@ -824,15 +828,16 @@ PAL_SaveGame_DOS(
    //
    for (i = 0; i < MAX_OBJECTS; i++)
    {
-      memcpy(&s.rgObject[i], &gpGlobals->g.rgObject[i], sizeof(OBJECT_DOS));
-      s.rgObject[i].rgwData[5] = gpGlobals->g.rgObject[i].rgwData[6];     // wFlags
+      memcpy(&s->rgObject[i], &gpGlobals->g.rgObject[i], sizeof(OBJECT_DOS));
+      s->rgObject[i].rgwData[5] = gpGlobals->g.rgObject[i].rgwData[6];     // wFlags
    }
-   memcpy(s.rgEventObject, gpGlobals->g.lprgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
+   memcpy(s->rgEventObject, gpGlobals->g.lprgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
    //
    // Put all the data to the saved game struct.
    //
-   PAL_SaveGame_Common(iSaveSlot, wSavedTimes, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_DOS));
+   PAL_SaveGame_Common(iSaveSlot, wSavedTimes, (LPSAVEDGAME_COMMON)s, sizeof(SAVEDGAME_DOS));
+   free(s);
 }
 
 static VOID
@@ -855,15 +860,17 @@ PAL_SaveGame_WIN(
 
 --*/
 {
-   PAL_LARGE SAVEDGAME_WIN   s;
+   SAVEDGAME_WIN   *s = (SAVEDGAME_WIN*)malloc(sizeof(SAVEDGAME_WIN));
 
    //
    // Put all the data to the saved game struct.
    //
-   memcpy(s.rgObject, gpGlobals->g.rgObject, sizeof(gpGlobals->g.rgObject));
-   memcpy(s.rgEventObject, gpGlobals->g.lprgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
+   memcpy(&s->rgObject, gpGlobals->g.rgObject, sizeof(gpGlobals->g.rgObject));
+   memcpy(&s->rgEventObject, gpGlobals->g.lprgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
    PAL_SaveGame_Common(iSaveSlot, wSavedTimes, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_WIN));
+
+   free(s);
 }
 
 VOID

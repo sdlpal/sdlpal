@@ -455,16 +455,8 @@ main(
 
 --*/
 {
-#if defined(__APPLE__) && !defined(__IOS__) && !defined(DEBUG) //for ease of debugging(specify resource dir in xcode scheme)
-   char *p = strstr(argv[0], "/Pal.app/");
-
-   if (p != NULL)
-   {
-      char buf[4096];
-      strcpy(buf, argv[0]);
-      buf[p - argv[0]] = '\0';
-      chdir(buf);
-   }
+#if PAL_HAS_PLATFORM_STARTUP
+   UTIL_Platform_Startup(argc,argv);
 #endif
 
    if (setjmp(g_exit_jmp_buf) != 0)

@@ -26,7 +26,7 @@
 
 #include "dosbox_opl.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include <math.h>
 
 struct opl_chip_struct {
