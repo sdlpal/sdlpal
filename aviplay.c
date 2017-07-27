@@ -66,7 +66,7 @@
 	for(int s##_i = 0; s##_i < sizeof(s) / sizeof(uint32_t); s##_i++) \
 		((uint32_t *)&v)[s##_i] = SDL_Swap32(((uint32_t *)&v)[s##_i])
 
-# define SwapStructFields(v, f1, f2) v.##f1 ^= v.##f2, v.##f2 ^= v.##f1, v.##f1 ^= v.##f2
+# define SwapStructFields(v, f1, f2) v.f1 ^= v.f2, v.f2 ^= v.f1, v.f1 ^= v.f2
 
 
 #else
@@ -127,8 +127,15 @@ PAL_ReadAVIInfo(
     // Check RIFF file header
     //
 	fseek(fp, 0, SEEK_SET);
-	if (fread(&hdr, sizeof(RIFFHeader), 1, fp) != 1 ||
-		hdr.signature != RIFF_RIFF || hdr.type != RIFF_AVI ||
+	if(fread(&hdr, sizeof(RIFFHeader), 1, fp) != 1)
+	{
+		UTIL_LogOutput(LOGLEVEL_WARNING, "No RIFF header!");
+		return NULL;
+	}
+	hdr.signature = SDL_SwapLE32(hdr.signature);
+	hdr.type      = SDL_SwapLE32(hdr.type);
+	hdr.length    = SDL_SwapLE32(hdr.length);
+	if (hdr.signature != RIFF_RIFF || hdr.type != RIFF_AVI ||
 		hdr.length > (uint32_t)(file_length - sizeof(RIFFHeader) + sizeof(uint32_t)))
 	{
 		UTIL_LogOutput(LOGLEVEL_WARNING, "Illegal AVI RIFF header!");
@@ -362,8 +369,8 @@ PAL_ReadAVIInfo(
 						return NULL;
 					}
 					SwapStruct32(wfe, WAVEFormatPCM);
-					SwapStructFields(wfe, wFormatTag, nChannels);
-					SwapStructFields(wfe, nBlockAlign, wBitsPerSample);
+					SwapStructFields(wfe.format, wFormatTag, nChannels);
+					SwapStructFields(wfe.format, nBlockAlign, wBitsPerSample);
 					flags |= FLAGS_AVI_AUDIO_FORMAT;
 					break;
 				}
