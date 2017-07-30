@@ -1833,6 +1833,7 @@ PAL_BattleCommitAction(
             {
                g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = 0;
             }
+            g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID = 0;
          }
       }
       break;
