@@ -19,15 +19,18 @@ UTIL_IsAbsolutePath(
     return FALSE;
 }
 
+static void LogCallBack(LOGLEVEL, const char* str, const char*)
+{
+    NSLog(@"%s",str);
+}
+
 INT
 UTIL_Platform_Init(
                    int argc,
                    char* argv[]
                    )
 {
-    UTIL_LogAddOutputCallback([](LOGLEVEL, const char* str, const char*)->void {
-        NSLog(@"%s",str);
-    }, PAL_DEFAULT_LOGLEVEL);
+    UTIL_LogAddOutputCallback(LogCallBack, PAL_DEFAULT_LOGLEVEL);
     gConfig.fLaunchSetting = FALSE;
     return 0;
 }

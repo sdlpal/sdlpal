@@ -53,7 +53,9 @@
 # define PAL_CREDIT           NULL
 # define PAL_PORTYEAR         NULL
 
+#ifndef PAL_HAS_NATIVEMIDI
 #define PAL_HAS_NATIVEMIDI  1
+#endif
 
 #define PAL_HAS_CONFIG_PAGE 0
 
