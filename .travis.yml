@@ -91,7 +91,7 @@ matrix:
         language: c
         script:
           - cd macos
-          - xcodebuild -configuration Release
+          - xcodebuild -project Pal.xcodeproj -configuration Release
           - hdiutil create -srcfolder build/Release/Pal.app -volname "SDLPal" ../deploy/sdlpal-macos.dmg
           - #xcodebuild test -scheme PalTests #disabled since always fail in travis-ci
           - cd ..
