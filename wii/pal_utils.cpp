@@ -22,27 +22,37 @@ static int input_event_filter(const SDL_Event *lpEvent, volatile PALINPUTSTATE *
 		switch (lpEvent->jhat.value)
 		{
 		case SDL_HAT_LEFT:
+		case SDL_HAT_LEFTUP:
 			state->prevdir = (gpGlobals->fInBattle ? kDirUnknown : state->dir);
 			state->dir = kDirWest;
 			state->dwKeyPress = kKeyLeft;
 			break;
 
 		case SDL_HAT_RIGHT:
+		case SDL_HAT_RIGHTDOWN:
 			state->prevdir = (gpGlobals->fInBattle ? kDirUnknown : state->dir);
 			state->dir = kDirEast;
 			state->dwKeyPress = kKeyRight;
 			break;
 
 		case SDL_HAT_UP:
+		case SDL_HAT_RIGHTUP:
 			state->prevdir = (gpGlobals->fInBattle ? kDirUnknown : state->dir);
 			state->dir = kDirNorth;
 			state->dwKeyPress = kKeyUp;
 			break;
 
 		case SDL_HAT_DOWN:
+		case SDL_HAT_LEFTDOWN:
 			state->prevdir = (gpGlobals->fInBattle ? kDirUnknown : state->dir);
 			state->dir = kDirSouth;
 			state->dwKeyPress = kKeyDown;
+			break;
+			
+		case SDL_HAT_CENTERED:
+			state->prevdir = (gpGlobals->fInBattle ? kDirUnknown : state->dir);
+			state->dir = kDirUnknown;
+			state->dwKeyPress = kKeyNone;
 			break;
 		}
 		return 1;
