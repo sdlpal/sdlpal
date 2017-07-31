@@ -868,7 +868,7 @@ PAL_SaveGame_WIN(
    memcpy(&s->rgObject, gpGlobals->g.rgObject, sizeof(gpGlobals->g.rgObject));
    memcpy(&s->rgEventObject, gpGlobals->g.lprgEventObject, sizeof(EVENTOBJECT) * gpGlobals->g.nEventObject);
 
-   PAL_SaveGame_Common(iSaveSlot, wSavedTimes, (LPSAVEDGAME_COMMON)&s, sizeof(SAVEDGAME_WIN));
+   PAL_SaveGame_Common(iSaveSlot, wSavedTimes, (LPSAVEDGAME_COMMON)s, sizeof(SAVEDGAME_WIN));
 
    free(s);
 }
