@@ -100,10 +100,10 @@ SOUND_LoadWAVEData(
 	const RIFFChunkHeader *lpChunk  = NULL;
 	const WAVEFormatPCM   *lpFormat = NULL;
 	const uint8_t         *lpWaveData = NULL;
-	uint32_t len;
+	uint32_t len,type;
 
-	if (dwLen < sizeof(RIFFHeader) || lpRiff->signature != RIFF_RIFF ||
-		lpRiff->type != RIFF_WAVE || dwLen < SDL_SwapLE32(lpRiff->length) + 8)
+	if (dwLen < sizeof(RIFFHeader) || SDL_SwapLE32(lpRiff->signature) != RIFF_RIFF ||
+		SDL_SwapLE32(lpRiff->type) != RIFF_WAVE || dwLen < SDL_SwapLE32(lpRiff->length) + 8)
 	{
 		return NULL;
 	}
@@ -111,13 +111,14 @@ SOUND_LoadWAVEData(
 	lpChunk = (const RIFFChunkHeader *)(lpRiff + 1); dwLen -= sizeof(RIFFHeader);
 	while (dwLen >= sizeof(RIFFChunkHeader))
 	{
-		len = SDL_SwapLE32(lpChunk->length);
+        len = SDL_SwapLE32(lpChunk->length);
+        type = SDL_SwapLE32(lpChunk->type);
 		if (dwLen >= sizeof(RIFFChunkHeader) + len)
 			dwLen -= sizeof(RIFFChunkHeader) + len;
 		else
 			return NULL;
 
-		switch (lpChunk->type)
+		switch (type)
 		{
 		case WAVE_fmt:
 			lpFormat = (const WAVEFormatPCM *)(lpChunk + 1);
@@ -139,11 +140,11 @@ SOUND_LoadWAVEData(
 		return NULL;
 	}
 
-	lpSpec->channels = lpFormat->nChannels;
-	lpSpec->format = (lpFormat->wBitsPerSample == 16) ? AUDIO_S16 : AUDIO_U8;
-	lpSpec->freq = lpFormat->nSamplesPerSec;
+	lpSpec->channels = SDL_SwapLE16(lpFormat->nChannels);
+	lpSpec->format = (SDL_SwapLE16(lpFormat->wBitsPerSample) == 16) ? AUDIO_S16 : AUDIO_U8;
+	lpSpec->freq = SDL_SwapLE32(lpFormat->nSamplesPerSec);
 	lpSpec->size = len;
-	lpSpec->align = lpFormat->nChannels * lpFormat->wBitsPerSample >> 3;
+	lpSpec->align = SDL_SwapLE16(lpFormat->nChannels) * SDL_SwapLE16(lpFormat->wBitsPerSample) >> 3;
 
 	return lpWaveData;
 }
