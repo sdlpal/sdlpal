@@ -74,6 +74,11 @@ VIDEO_ToggleFullscreen(
 );
 
 VOID
+VIDEO_ChangeDepth(
+   INT             bpp
+);
+
+VOID
 VIDEO_SaveScreenshot(
    VOID
 );

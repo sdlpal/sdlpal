@@ -637,6 +637,7 @@ PAL_RenderAVIFrameToSurface(
     }
 }
 
+
 BOOL
 PAL_PlayAVI(
     LPCSTR     lpszPath
@@ -663,6 +664,8 @@ PAL_PlayAVI(
 	}
 
     PAL_ClearKeyState();
+
+    VIDEO_ChangeDepth(avi->surface->format->BitsPerPixel);
 
 	BOOL       fEndPlay = FALSE;
 	RIFFChunk *buf = (RIFFChunk *)avi->pChunkBuffer;
@@ -738,6 +741,8 @@ PAL_PlayAVI(
         //
         UTIL_Delay(500);
     }
+
+    VIDEO_ChangeDepth(0);
 
 	if (avi->surface != NULL)
 	{
