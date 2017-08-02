@@ -595,30 +595,35 @@ VIDEO_Resize(
 #else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
-   int                      i;
+   int                      i, bpp;
 
    //
    // Get the original palette.
    //
-   for (i = 0; i < gpScreenReal->format->palette->ncolors; i++)
+   if (gpScreenReal->format->palette != NULL)
    {
-      palette[i] = gpScreenReal->format->palette->colors[i];
+      for (i = 0; i < gpScreenReal->format->palette->ncolors; i++)
+      {
+         palette[i] = gpScreenReal->format->palette->colors[i];
+      }
    }
+   else i = 0;
 
    //
    // Create the screen surface.
    //
    flags = gpScreenReal->flags;
+   bpp = gpScreenReal->format->BitsPerPixel;
 
    SDL_FreeSurface(gpScreenReal);
-   gpScreenReal = SDL_SetVideoMode(w, h, 8, flags);
+   gpScreenReal = SDL_SetVideoMode(w, h, bpp, flags);
 
    if (gpScreenReal == NULL)
    {
       //
       // Fall back to software windowed mode in default size.
       //
-      gpScreenReal = SDL_SetVideoMode(PAL_DEFAULT_WINDOW_WIDTH, PAL_DEFAULT_WINDOW_HEIGHT, 8, SDL_SWSURFACE);
+      gpScreenReal = SDL_SetVideoMode(PAL_DEFAULT_WINDOW_WIDTH, PAL_DEFAULT_WINDOW_HEIGHT, bpp, SDL_SWSURFACE);
    }
 
    SDL_SetPalette(gpScreenReal, SDL_PHYSPAL | SDL_LOGPAL, palette, 0, i);
@@ -707,20 +712,24 @@ VIDEO_ToggleFullscreen(
 #else
    DWORD                    flags;
    PAL_LARGE SDL_Color      palette[256];
-   int                      i;
+   int                      i, bpp;
 
    //
    // Get the original palette.
    //
-   for (i = 0; i < gpScreenReal->format->palette->ncolors; i++)
+   if (gpScreenReal->format->palette != NULL)
    {
-      palette[i] = gpScreenReal->format->palette->colors[i];
+      for (i = 0; i < gpScreenReal->format->palette->ncolors; i++)
+      {
+         palette[i] = gpScreenReal->format->palette->colors[i];
+      }
    }
 
    //
-   // Get the flags of the original screen surface
+   // Get the flags and bpp of the original screen surface
    //
    flags = gpScreenReal->flags;
+   bpp = gpScreenReal->format->BitsPerPixel;
 
    if (flags & SDL_FULLSCREEN)
    {
@@ -750,15 +759,15 @@ VIDEO_ToggleFullscreen(
    //
    if (gConfig.dwScreenWidth == 640 && gConfig.dwScreenHeight == 400 && (flags & SDL_FULLSCREEN))
    {
-      gpScreenReal = SDL_SetVideoMode(640, 480, 8, flags);
+      gpScreenReal = SDL_SetVideoMode(640, 480, bpp, flags);
    }
    else if (gConfig.dwScreenWidth == 640 && gConfig.dwScreenHeight == 480 && !(flags & SDL_FULLSCREEN))
    {
-      gpScreenReal = SDL_SetVideoMode(640, 400, 8, flags);
+      gpScreenReal = SDL_SetVideoMode(640, 400, bpp, flags);
    }
    else
    {
-      gpScreenReal = SDL_SetVideoMode(gConfig.dwScreenWidth, gConfig.dwScreenHeight, 8, flags);
+      gpScreenReal = SDL_SetVideoMode(gConfig.dwScreenWidth, gConfig.dwScreenHeight, bpp, flags);
    }
 
    VIDEO_SetPalette(palette);
@@ -767,6 +776,59 @@ VIDEO_ToggleFullscreen(
    // Update the screen
    //
    VIDEO_UpdateScreen(NULL);
+#endif
+}
+
+VOID
+VIDEO_ChangeDepth(
+   INT             bpp
+)
+/*++
+  Purpose:
+
+    Change screen color depth.
+
+  Parameters:
+
+    [IN]  bpp - bits per pixel (0 = default).
+
+  Return value:
+
+    None.
+
+--*/
+{
+#if !SDL_VERSION_ATLEAST(2,0,0)
+   DWORD                    flags;
+   int                      w, h;
+
+   //
+   // Get the flags and resolution of the original screen surface
+   //
+   flags = gpScreenReal->flags;
+   w = gpScreenReal->w;
+   h = gpScreenReal->h;
+
+   //
+   // Clear the screen surface.
+   //
+   SDL_FillRect(gpScreenReal, NULL, 0);
+
+   //
+   // Create the screen surface.
+   //
+   SDL_FreeSurface(gpScreenReal);
+   gpScreenReal = SDL_SetVideoMode(w, h, (bpp == 0)?8:bpp, flags);
+
+   if (gpScreenReal == NULL)
+   {
+      //
+      // Fall back to software windowed mode in default size.
+      //
+      gpScreenReal = SDL_SetVideoMode(PAL_DEFAULT_WINDOW_WIDTH, PAL_DEFAULT_WINDOW_HEIGHT, (bpp == 0)?8:bpp, SDL_SWSURFACE);
+   }
+
+   gpPalette = gpScreenReal->format->palette;
 #endif
 }
 
@@ -801,7 +863,7 @@ VIDEO_SaveScreenshot(
 	ptm = localtime(&tv.tv_sec);
 	sprintf(filename, "%04d%02d%02d%02d%02d%02d%03d.bmp", ptm->tm_year + 1900, ptm->tm_mon, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, (int)(tv.tv_usec / 1000));
 #endif
-	
+
 	//
 	// Save the screenshot.
 	//
@@ -1201,7 +1263,10 @@ VIDEO_UpdateSurfacePalette(
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetSurfacePalette(pSurface, gpPalette);
 #else
-	SDL_SetPalette(pSurface, SDL_PHYSPAL | SDL_LOGPAL, gpPalette->colors, 0, 256);
+	if (gpPalette != NULL)
+	{
+		SDL_SetPalette(pSurface, SDL_PHYSPAL | SDL_LOGPAL, gpPalette->colors, 0, 256);
+	}
 #endif
 }
 
