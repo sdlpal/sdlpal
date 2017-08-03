@@ -62,4 +62,5 @@
 
 #ifndef __MINGW__
 #define strtok_r strtok_s
+#define strncasecmp _strnicmp
 #endif
