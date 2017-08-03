@@ -58,31 +58,7 @@ static LPWSTR gc_rgszSDLPalWords[CP_MAX][SDLPAL_EXTRA_WORD_COUNT] = {
 
 LPWSTR g_rcCredits[12];
 
-typedef struct tagTEXTLIB
-{
-   LPWSTR         *lpWordBuf;
-   LPWSTR         *lpMsgBuf;
-   int           **lpIndexBuf;
-
-   int             nWords;
-   int             nMsgs;
-   int             nIndices;
-
-   int             nCurrentDialogLine;
-   BYTE            bCurrentFontColor;
-   PAL_POS         posIcon;
-   PAL_POS         posDialogTitle;
-   PAL_POS         posDialogText;
-   BYTE            bDialogPosition;
-   BYTE            bIcon;
-   int             iDelayTime;
-   BOOL            fUserSkip;
-   BOOL            fPlayingRNG;
-
-   BYTE            bufDialogIcons[282];
-} TEXTLIB, *LPTEXTLIB;
-
-static TEXTLIB         g_TextLib;
+TEXTLIB         g_TextLib;
 
 PAL_FORCE_INLINE int
 PAL_ParseLine(
@@ -199,6 +175,7 @@ PAL_ReadMessageFile(
 	enum _message_state
 	{
 		ST_OUTSIDE,
+		ST_SETTING,
 		ST_DIALOG,
 		ST_WORD,
 		ST_CREDIT,
@@ -239,6 +216,10 @@ PAL_ReadMessageFile(
 						item->value = NULL; item->index = sid;
 						item->count = 0; item->next = NULL; cur_val = NULL;
 						if (idx_cnt < item->index) idx_cnt = item->index;
+					}
+					else if (strncmp(buffer, "[BEGIN SETTING]", 15) == 0 && !witem)
+					{
+						state = ST_SETTING;
 					}
 					else if (strncmp(buffer, "[BEGIN WORDS]", 13) == 0 && !witem)
 					{
@@ -320,6 +301,51 @@ PAL_ReadMessageFile(
 						val->index = i; val->next = NULL;
 						witem->next = val; witem = witem->next;
 						if (word_cnt < i) word_cnt = i;
+					}
+				}
+				break;
+			case ST_SETTING:
+				//
+				// Check if to end setting list
+				//
+				if (strncmp(buffer, "[END SETTING]", 13) == 0)
+				{
+					// End setting list
+					state = ST_OUTSIDE;
+				}
+				else
+				{
+					char *line = buffer;
+					while (*buffer && iswspace(*buffer)) line++;
+					//
+					// Skip comments starting with '#'
+					//
+					if (*line && *line != '#')
+					{
+						//
+						// Split the index and value
+						//
+						LPSTR val = strchr(line, '=');
+						if (val)
+						{
+							char index[80];
+							*val = '\0';
+
+							//
+							// Remove the trailing spaces
+							//
+							LPSTR end = line + strlen(line);
+							if (end > line && end[-1] == '\n') *(--end) = 0;
+							if (FALSE) while (end > line && iswspace(end[-1])) *(--end) = 0;
+
+							//
+							// Parse the index and pass out value
+							//
+							if (sscanf(line, "%s", index) == 1 && strncasecmp(index, "UseISOFont", 10) == 0 )
+							{
+								g_TextLib.fUseISOFont = atoi(val + 1) == 1;
+							}
+						}
 					}
 				}
 				break;

@@ -41,6 +41,15 @@ static uint8_t reverseBits(uint8_t x) {
     return y;
 }
 
+static void PAL_LoadISOFont(void)
+{
+    for (int i = 0; i < 0x80; i++)
+    {
+        int j=-1;while(j++<16)unicode_font[i][j]=reverseBits(iso_font[i*15+j]);
+        unicode_font[i][15] = 0;
+    }
+}
+
 static void PAL_LoadEmbeddedFont(void)
 {
 	FILE *fp;
@@ -134,11 +143,7 @@ static void PAL_LoadEmbeddedFont(void)
 
 	fclose(fp);
 
-	for (i = 0; i < 0x80; i++)
-	{
-		int j=-1;while(j++<16)unicode_font[i][j]=reverseBits(iso_font[i*15+j]);
-		unicode_font[i][15] = 0;
-	}
+	PAL_LoadISOFont();
 	_font_height = 15;
 }
 
@@ -256,6 +261,11 @@ PAL_InitFont(
 	if (!cfg->fIsWIN95 && !cfg->pszMsgFile)
 	{
 		PAL_LoadEmbeddedFont();
+	}
+
+	if (g_TextLib.fUseISOFont)
+	{
+		PAL_LoadISOFont();
 	}
 
 	if (cfg->pszFontFile)
