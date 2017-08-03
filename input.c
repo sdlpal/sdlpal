@@ -1115,7 +1115,7 @@ PAL_ProcessEvent(
    while (PAL_PollEvent(NULL));
 
    PAL_UpdateKeyboardState();
-#ifdef PAL_HAS_TOUCH
+#if PAL_HAS_TOUCH
    PAL_TouchRepeatCheck();
 #endif
 }

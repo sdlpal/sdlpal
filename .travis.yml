@@ -52,6 +52,36 @@ matrix:
           - cd ..
 
       - os: linux
+        env: TARGET=wii
+        language: c
+        before_install:
+          - export DEVKITPRO=/home/travis/devkitPro
+          - export DEVKITPPC=${DEVKITPRO}/devkitPPC
+          - export PATH=$DEVKITPPC/bin:$PATH
+        install:
+          - export PUSHD="$(pwd)"
+          - mkdir $DEVKITPRO
+          - cd $DEVKITPRO
+          - wget https://sourceforge.net/projects/devkitpro/files/devkitPPC/devkitPPC_r27-x86_64-linux.tar.bz2
+          - tar xvf devkitPPC_r27-x86_64-linux.tar.bz2
+          - mkdir libogc
+          - cd libogc
+          - wget https://sourceforge.net/projects/devkitpro/files/libogc/libogc-1.8.12.tar.bz2
+          - tar xvf libogc-1.8.12.tar.bz2
+          - wget https://sourceforge.net/projects/devkitpro/files/libfat/libfat-ogc-1.0.13.tar.bz2
+          - tar xvf libfat-ogc-1.0.13.tar.bz2
+          - cd ..
+          - wget https://github.com/dborth/sdl-wii/releases/download/2013-10-28/SDL.Wii.10-28-2013.zip
+          - unzip SDL.Wii.10-28-2013.zip
+          - cd "${PUSHD}"
+        script:
+          - cd wii
+          - make
+          - tar cvjf ../deploy/sdlpal-wii.tar.bz2 icon.png meta.xml boot.dol
+          - make clean
+          - cd ..
+          
+      - os: linux
         env: TARGET=Android NDK_VERSION=r13b TERM=dumb
         android:
           components:

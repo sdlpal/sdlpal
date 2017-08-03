@@ -856,7 +856,7 @@ VIDEO_SaveScreenshot(
 	SYSTEMTIME st;
 	GetLocalTime(&st);
 	sprintf(filename, "%04d%02d%02d%02d%02d%02d%03d.bmp", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
-#else
+#elif !defined( GEKKO )
 	struct timeval tv;
 	struct tm *ptm;
 	gettimeofday(&tv, NULL);

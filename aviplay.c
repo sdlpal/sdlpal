@@ -453,6 +453,7 @@ PAL_ReadDataChunk(
 			// Only 'rec ' LIST is allowed here, if not, skip it completely
 			//
 			if (fread(&hdr.list.type, sizeof(uint32_t), 1, fp) != 1) return NULL;
+			hdr.list.type = SDL_SwapLE32(hdr.list.type);
 			if (hdr.list.type == AVI_rec) break;
 		case AVI_JUNK:
 		default:
