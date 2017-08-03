@@ -35,6 +35,33 @@ typedef enum tagDIALOGPOSITION
 
 PAL_C_LINKAGE_BEGIN
 
+typedef struct tagTEXTLIB
+{
+    LPWSTR         *lpWordBuf;
+    LPWSTR         *lpMsgBuf;
+    int           **lpIndexBuf;
+    BOOL            fUseISOFont;
+
+    int             nWords;
+    int             nMsgs;
+    int             nIndices;
+
+    int             nCurrentDialogLine;
+    BYTE            bCurrentFontColor;
+    PAL_POS         posIcon;
+    PAL_POS         posDialogTitle;
+    PAL_POS         posDialogText;
+    BYTE            bDialogPosition;
+    BYTE            bIcon;
+    int             iDelayTime;
+    BOOL            fUserSkip;
+    BOOL            fPlayingRNG;
+
+    BYTE            bufDialogIcons[282];
+} TEXTLIB, *LPTEXTLIB;
+
+extern TEXTLIB         g_TextLib;
+
 extern LPWSTR g_rcCredits[12];
 
 INT

@@ -79,12 +79,6 @@ PAL_Init(
 
    VIDEO_SetWindowTitle("Loading...");
 
-   e = PAL_InitFont(&gConfig);
-   if (e != 0)
-   {
-      TerminateOnError("Could not load fonts: %d.\n", e);
-   }
-
    e = PAL_InitUI();
    if (e != 0)
    {
@@ -95,6 +89,12 @@ PAL_Init(
    if (e != 0)
    {
       TerminateOnError("Could not initialize text subsystem: %d.\n", e);
+   }
+
+   e = PAL_InitFont(&gConfig);
+   if (e != 0)
+   {
+      TerminateOnError("Could not load fonts: %d.\n", e);
    }
 
    PAL_InitInput();
