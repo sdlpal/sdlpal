@@ -40,6 +40,40 @@ static uint8_t reverseBits(uint8_t x) {
     }
     return y;
 }
+static uint16_t reverseBits16(uint16_t x) {
+   //specified to unifont structure; not common means
+   uint8_t l=reverseBits(x);
+   uint8_t h=reverseBits(x>>8);
+   return h<<8|l;
+}
+
+#ifdef DEBUG
+void dump_font(BYTE *buf,int rows, int cols)
+{
+   for(int row=0;row<rows;row++)
+   {
+      for( int bit=0;bit<cols;bit++)
+         if( buf[row] & (uint8_t)pow(2,bit) )
+            printf("*");
+         else
+            printf(" ");
+      printf("\n");
+   }
+}
+
+void dump_font16(WORD *buf,int rows, int cols)
+{
+   for(int row=0;row<rows;row++)
+   {
+      for( int bit=0;bit<cols;bit++)
+         if( reverseBits16(buf[row]) & (uint16_t)pow(2,bit) )
+            printf("*");
+         else
+            printf(" ");
+      printf("\n");
+   }
+}
+#endif
 
 static void PAL_LoadISOFont(void)
 {
@@ -167,12 +201,13 @@ PAL_LoadUserFont(
 --*/
 {
    char buf[4096];
-   int state = 0;
+   int state = 0, fstate = 0;
    int codepage = -1;
 
    DWORD dwEncoding = 0;
    BYTE bFontGlyph[32] = {0};
    int iCurHeight = 0;
+   int bbw = 0, bbh = 0, bbox, bboy;
 
    FILE *fp = UTIL_OpenFileForMode(pszBdfFileName, "r");
 
@@ -187,27 +222,65 @@ PAL_LoadUserFont(
       {
          if (strncmp(buf, "CHARSET_REGISTRY", 16) == 0)
          {
-            if (strstr(buf, "Big5") != NULL)
+            if (strcasestr(buf, "Big5") != NULL)
             {
                codepage = CP_BIG5;
             }
-            else if (strstr(buf, "BIG5") != NULL)
+            else if (strcasestr(buf, "GBK") != NULL)
             {
-               codepage = CP_BIG5;
+               codepage = CP_GBK;
+            }
+            else if (strcasestr(buf, "ISO10646") != NULL)
+            {
+               codepage = CP_UCS;
             }
             //else if (strstr(buf, "JISX0208") != NULL)
             //
             //  codepage = CP_JISX0208;
             //}
+            else
+            {
+               TerminateOnError("Charset of %s is %s, which is not a supported yet.",pszBdfFileName,buf);
+            }
          }
          else if (strncmp(buf, "ENCODING", 8) == 0)
          {
             dwEncoding = atoi(buf + 8);
          }
+         else if (strncmp(buf, "SIZE", 3) == 0)
+         {
+            int bytes_consumed = 0, bytes_now;
+            int got_size;
+            BOOL got_expected = FALSE;
+            char size[10];
+            sscanf(buf+bytes_consumed,"%s%n",size,&bytes_now);bytes_consumed += bytes_now;
+            while(sscanf(buf+bytes_consumed,"%d%n",&got_size,&bytes_now))
+            {
+               bytes_consumed += bytes_now;
+               if( got_size == 16 )
+                  got_expected = TRUE;
+            }
+            if(!got_expected)
+               TerminateOnError("%s not contains expected font size 16!",pszBdfFileName);
+         }
+         else if (strncmp(buf, "BBX", 3) == 0)
+         {
+            int bytes_consumed = 0, bytes_now;
+            char bbx[10];
+            sscanf(buf+bytes_consumed,"%s%n",bbx,&bytes_now);bytes_consumed += bytes_now;
+            sscanf(buf+bytes_consumed,"%d%n",&bbw,&bytes_now);bytes_consumed += bytes_now;
+            sscanf(buf+bytes_consumed,"%d%n",&bbh,&bytes_now);bytes_consumed += bytes_now;
+            sscanf(buf+bytes_consumed,"%d%n",&bbox,&bytes_now);bytes_consumed += bytes_now;
+            sscanf(buf+bytes_consumed,"%d%n",&bboy,&bytes_now);bytes_consumed += bytes_now;
+         }
          else if (strncmp(buf, "BITMAP", 6) == 0)
          {
             state = 1;
             iCurHeight = 0;
+            for(iCurHeight=0;iCurHeight<bboy;iCurHeight++){
+               bFontGlyph[iCurHeight * 2] = 0;
+               bFontGlyph[iCurHeight * 2 + 1] = 0;
+            }
             memset(bFontGlyph, 0, sizeof(bFontGlyph));
          }
       }
@@ -237,12 +310,28 @@ PAL_LoadUserFont(
          }
          else
          {
-            if (iCurHeight < 16)
+            if (iCurHeight < bbh )
             {
                WORD wCode = strtoul(buf, NULL, 16);
-               bFontGlyph[iCurHeight * 2] = (wCode >> 8);
-               bFontGlyph[iCurHeight * 2 + 1] = (wCode & 0xFF);
-               iCurHeight++;
+               if(bbw <= 8)
+               {
+                  switch(fstate)
+                  {
+                     case 0:
+                        bFontGlyph[iCurHeight * 2] = wCode;
+                        fstate = 1;
+                        break;
+                     case 1:
+                        bFontGlyph[iCurHeight * 2+1] = wCode;
+                        fstate = 0;
+                        iCurHeight++;
+                        break;
+                  }
+               }else{
+                  bFontGlyph[iCurHeight * 2] = (wCode >> 8);
+                  bFontGlyph[iCurHeight * 2 + 1] = (wCode & 0xFF);
+                  iCurHeight++;
+               }
             }
          }
       }

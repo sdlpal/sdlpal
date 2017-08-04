@@ -64,3 +64,5 @@
 #define strtok_r strtok_s
 #define strncasecmp _strnicmp
 #endif
+
+#define strcasestr(a,b) strstr(_strupr((a)),_strupr((b)))

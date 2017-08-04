@@ -324,12 +324,18 @@ TerminateOnError(
 	  SDL_MessageBoxButtonData buttons[2] = { { 0, 0, "Yes" },{ 0, 1, "No" } };
 	  SDL_MessageBoxData mbd = { SDL_MESSAGEBOX_ERROR, gpWindow, "FATAL ERROR", buffer, 2, buttons, NULL };
 	  int btnid;
+#if PAL_HAS_CONFIG_PAGE
 	  sprintf(buffer, "%sLaunch setting dialog on next start?\n", string);
 	  if (SDL_ShowMessageBox(&mbd, &btnid) == 0 && btnid == 0)
 	  {
 		  gConfig.fLaunchSetting = TRUE;
 		  PAL_SaveConfig();
 	  }
+#else
+	  sprintf(buffer, "%s\n", string);
+	  mbd.numbuttons=1;
+	  SDL_ShowMessageBox(&mbd, &btnid);
+#endif
 	  PAL_Shutdown(255);
    }
 #else

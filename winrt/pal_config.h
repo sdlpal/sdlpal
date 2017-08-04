@@ -60,6 +60,8 @@
 #define strtok_r strtok_s
 #define strncasecmp _strnicmp
 
+#define strcasestr(a,b) strstr(_strupr((a)),_strupr((b)))
+
 PAL_C_LINKAGE_BEGIN
 
 LPCSTR

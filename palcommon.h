@@ -115,7 +115,8 @@ typedef enum tagCODEPAGE {
 	//CP_SHIFTJIS = 2,
 	//CP_JISX0208 = 3,
 	CP_MAX = CP_GBK + 1,
-	CP_UTF_8 = CP_MAX + 1
+	CP_UTF_8 = CP_MAX + 1,
+    CP_UCS = CP_UTF_8 + 1,
 } CODEPAGE;
 
 typedef enum tagPALFILE {

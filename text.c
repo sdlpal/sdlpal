@@ -1556,6 +1556,7 @@ PAL_GetInvalidChar(
 	case CP_GBK:      return 0x3f;
 		//case CP_SHIFTJIS: return 0x30fb;
 	case CP_UTF_8:    return 0x3f;
+	case CP_UCS:      return 0x3f;
 	default:          return 0;
 	}
 }
@@ -1752,6 +1753,10 @@ PAL_MultiByteToWideCharCP(
 				}
 			}
 			break;
+        case CP_UCS:
+            i = mbslength;
+            wlen = mbslength/2;
+            break;
 		default:
 			return -1;
 		}
@@ -1883,6 +1888,13 @@ PAL_MultiByteToWideCharCP(
 				}
 			}
 			break;
+        case CP_UCS:
+            for (i = 0; i < mbslength && wlen < wcslength; i+=2){
+                uint8_t *ptr = (uint8_t*)&wcs[wlen++];
+                *(ptr+1)=mbs[i];
+                *ptr    =mbs[i+1];
+            }
+            break;
 		default:
 			return -1;
 		}
