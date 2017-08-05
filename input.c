@@ -528,32 +528,17 @@ PAL_JoystickEventFilter(
          //
          // X axis
          //
-         if (lpEvent->jaxis.value > 20000)
+         if (lpEvent->jaxis.value > 3200)
          {
-            if (g_InputState.dir != kDirEast)
-            {
-               g_InputState.dwKeyPress |= kKeyRight;
-            }
-            g_InputState.prevdir = g_InputState.dir;
-            g_InputState.dir = kDirEast;
+            g_InputState.axisX = 1;
          }
-         else if (lpEvent->jaxis.value < -20000)
+         else if (lpEvent->jaxis.value < -3200)
          {
-            if (g_InputState.dir != kDirWest)
-            {
-               g_InputState.dwKeyPress |= kKeyLeft;
-            }
-            g_InputState.prevdir = g_InputState.dir;
-            g_InputState.dir = kDirWest;
+            g_InputState.axisX = -1;
          }
          else
          {
-            if (g_InputState.prevdir != kDirEast &&
-               g_InputState.prevdir != kDirWest)
-            {
-               g_InputState.dir = g_InputState.prevdir;
-            }
-            g_InputState.prevdir = kDirUnknown;
+            g_InputState.axisX = 0;
          }
          break;
 
@@ -561,34 +546,61 @@ PAL_JoystickEventFilter(
          //
          // Y axis
          //
-         if (lpEvent->jaxis.value > 20000)
+         if (lpEvent->jaxis.value > 3200)
          {
-            if (g_InputState.dir != kDirSouth)
-            {
-               g_InputState.dwKeyPress |= kKeyDown;
-            }
-            g_InputState.prevdir = g_InputState.dir;
-            g_InputState.dir = kDirSouth;
+            g_InputState.axisY = 1;
          }
-         else if (lpEvent->jaxis.value < -20000)
+         else if (lpEvent->jaxis.value < -3200)
          {
-            if (g_InputState.dir != kDirNorth)
-            {
-               g_InputState.dwKeyPress |= kKeyUp;
-            }
-            g_InputState.prevdir = g_InputState.dir;
-            g_InputState.dir = kDirNorth;
+            g_InputState.axisY = -1;
          }
          else
          {
-            if (g_InputState.prevdir != kDirNorth &&
-               g_InputState.prevdir != kDirSouth)
-            {
-               g_InputState.dir = g_InputState.prevdir;
-            }
-            g_InputState.prevdir = kDirUnknown;
+            g_InputState.axisY = 0;
          }
          break;
+      }
+      break;
+
+   case SDL_JOYHATMOTION:
+      //
+      // Pressed the joystick hat button
+      //
+      switch (lpEvent->jhat.value)
+      {
+         case SDL_HAT_LEFT:
+         case SDL_HAT_LEFTUP:
+            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+            g_InputState.dir = kDirWest;
+            g_InputState.dwKeyPress = kKeyLeft;
+            break;
+
+         case SDL_HAT_RIGHT:
+         case SDL_HAT_RIGHTDOWN:
+            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+            g_InputState.dir = kDirEast;
+            g_InputState.dwKeyPress = kKeyRight;
+            break;
+
+         case SDL_HAT_UP:
+         case SDL_HAT_RIGHTUP:
+            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+            g_InputState.dir = kDirNorth;
+            g_InputState.dwKeyPress = kKeyUp;
+            break;
+
+         case SDL_HAT_DOWN:
+         case SDL_HAT_LEFTDOWN:
+            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+            g_InputState.dir = kDirSouth;
+            g_InputState.dwKeyPress = kKeyDown;
+            break;
+
+         case SDL_HAT_CENTERED:
+            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
+            g_InputState.dir = kDirUnknown;
+            g_InputState.dwKeyPress = kKeyNone;
+            break;
       }
       break;
 
@@ -609,6 +621,58 @@ PAL_JoystickEventFilter(
       break;
    }
 #endif
+}
+
+static VOID
+PAL_UpdateJoyStickState(
+VOID
+)
+/*++
+ Purpose:
+ 
+ Poll & update joystick state.
+ 
+ Parameters:
+ 
+ None.
+ 
+ Return value:
+ 
+ None.
+ 
+ --*/
+{
+   if( g_InputState.axisX == 1 && g_InputState.axisY >= 0 )
+   {
+      g_InputState.prevdir = g_InputState.dir;
+      g_InputState.dir = kDirEast;
+      g_InputState.dwKeyPress |= kKeyRight;
+   }
+   else if( g_InputState.axisX == -1 && g_InputState.axisY <= 0 )
+   {
+      g_InputState.prevdir = g_InputState.dir;
+      g_InputState.dir = kDirWest;
+      g_InputState.dwKeyPress |= kKeyLeft;
+   }
+   else if( g_InputState.axisY == 1 && g_InputState.axisX <= 0 )
+   {
+      g_InputState.prevdir = g_InputState.dir;
+      g_InputState.dir = kDirSouth;
+      g_InputState.dwKeyPress |= kKeyDown;
+   }
+   else if( g_InputState.axisY == -1 && g_InputState.axisX >= 0 )
+   {
+      g_InputState.prevdir = g_InputState.dir;
+      g_InputState.dir = kDirNorth;
+      g_InputState.dwKeyPress |= kKeyUp;
+   }
+   else
+   {
+      g_InputState.prevdir = g_InputState.dir;
+      g_InputState.dir = kDirUnknown;
+      if(!input_event_filter)
+         g_InputState.dwKeyPress = kKeyNone;
+   }
 }
 
 #if PAL_HAS_TOUCH
@@ -1115,6 +1179,9 @@ PAL_ProcessEvent(
    while (PAL_PollEvent(NULL));
 
    PAL_UpdateKeyboardState();
+#if PAL_HAS_JOYSTICKS
+   PAL_UpdateJoyStickState();
+#endif
 #if PAL_HAS_TOUCH
    PAL_TouchRepeatCheck();
 #endif

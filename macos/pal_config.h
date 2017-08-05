@@ -58,7 +58,6 @@
 #endif
 
 #define PAL_HAS_MOUSE 0
-#define PAL_HAS_JOYSTICK 1
 
 #define PAL_HAS_CONFIG_PAGE 0
 

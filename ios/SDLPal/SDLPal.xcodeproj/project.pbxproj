@@ -269,7 +269,7 @@
 		71655209195BB6DA006E1227 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = game.h; path = ../../../game.h; sourceTree = "<group>"; };
 		7165520C195BB6DA006E1227 /* global.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = global.c; path = ../../../global.c; sourceTree = "<group>"; };
 		7165520D195BB6DA006E1227 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = global.h; path = ../../../global.h; sourceTree = "<group>"; };
-		7165520E195BB6DA006E1227 /* input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = input.c; path = ../../../input.c; sourceTree = "<group>"; };
+		7165520E195BB6DA006E1227 /* input.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.c; name = input.c; path = ../../../input.c; sourceTree = "<group>"; tabWidth = 3; };
 		7165520F195BB6DA006E1227 /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = input.h; path = ../../../input.h; sourceTree = "<group>"; };
 		71655210195BB6DA006E1227 /* itemmenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = itemmenu.c; path = ../../../itemmenu.c; sourceTree = "<group>"; };
 		71655211195BB6DA006E1227 /* itemmenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = itemmenu.h; path = ../../../itemmenu.h; sourceTree = "<group>"; };
