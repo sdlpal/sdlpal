@@ -2,6 +2,7 @@
 #include "main.h"
 #include <fat.h>
 #include <ogcsys.h>
+#include <wiiuse/wpad.h>
 #include <gccore.h>
 #include <fcntl.h>
 #include <network.h>
@@ -14,8 +15,20 @@ extern "C"{
 }
 #endif
 
+static BOOL isNunChuckConnected(int joystick)
+{
+	u32 exp_type;
+
+	if (WPAD_Probe(joystick, &exp_type) != 0)
+		exp_type = WPAD_EXP_NONE;
+
+	return exp_type == WPAD_EXP_NUNCHUK;
+}
+
+
 static int input_event_filter(const SDL_Event *lpEvent, volatile PALINPUTSTATE *state)
 {
+    int button, which;
 	switch (lpEvent->type)
 	{
 	case SDL_JOYHATMOTION:
@@ -58,14 +71,68 @@ static int input_event_filter(const SDL_Event *lpEvent, volatile PALINPUTSTATE *
 		return 1;
 
 	case SDL_JOYBUTTONDOWN:
-		switch (lpEvent->jbutton.button)
+		button = lpEvent->jbutton.button;
+		which = lpEvent->jbutton.which;
+reswitchbutton:
+		switch (button)
 		{
-		case 2:
+		case 1: //wiimote B
+			if( !isNunChuckConnected(which) ) { button = 14; goto reswitchbutton; }
+		case 9:  //wii classic A
 			state->dwKeyPress |= kKeyMenu;
 			return 1;
 
-		case 3:
+		case 0: //wiimote A
+			if( !isNunChuckConnected(which) ) { button = 13; goto reswitchbutton; }
+		case 10: //wii classic B
 			state->dwKeyPress |= kKeySearch;
+			return 1;
+
+		case 4: //wiimote -
+			if( isNunChuckConnected(which) ) { button = 14; goto reswitchbutton; }
+		case 7: //nunchuk z
+		case 11: //wii classic X
+			state->dwKeyPress |= kKeyRepeat;
+			return 1;
+
+		case 5: //wiimote +
+			if( isNunChuckConnected(which) ) { button = 13; goto reswitchbutton; }
+		case 8: //nunchuk c
+		case 12: //wii classic Y
+			state->dwKeyPress |= kKeyForce;
+			return 1;
+
+		case 13: //wii classic L1
+			state->dwKeyPress |= kKeyAuto;
+			return 1;
+
+		case 14: //wii classic R1
+			state->dwKeyPress |= kKeyDefend;
+			return 1;
+
+		case 15: //wii classic L2
+			state->dwKeyPress |= kKeyPgUp;
+			return 1;
+
+		case 16: //wii classic R2
+			state->dwKeyPress |= kKeyPgDn;
+			return 1;
+
+		case 2: //wiimote 1
+			if( !isNunChuckConnected(which) ) { button = 9; goto reswitchbutton; }
+		case 17: //wii classic select
+			state->dwKeyPress |= kKeyUseItem;
+			return 1;
+
+		case 3: //wiimote 2
+			if( !isNunChuckConnected(which) ) { button = 10; goto reswitchbutton; }
+		case 18: //wii classic start
+			state->dwKeyPress |= kKeyThrowItem;
+			return 1;
+
+		case 6: //wiimote home
+		case 19: //wii classic home
+			state->dwKeyPress |= kKeyFlee;
 			return 1;
 		}
 	}
@@ -132,7 +199,6 @@ UTIL_Platform_Init(
       net_print_string(__FILE__,__LINE__, "%s\n",str);
 	}, PAL_DEFAULT_LOGLEVEL);
 #endif
-	UTIL_LogOutput(LOGLEVEL_WARNING, "try net_print logout");
 	PAL_RegisterInputFilter(NULL, input_event_filter, NULL);
 	gConfig.fLaunchSetting = FALSE;
 	return 0;
