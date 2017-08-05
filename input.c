@@ -623,6 +623,8 @@ PAL_JoystickEventFilter(
 #endif
 }
 
+#if PAL_HAS_JOYSTICKS
+
 static VOID
 PAL_UpdateJoyStickState(
 VOID
@@ -674,6 +676,8 @@ VOID
          g_InputState.dwKeyPress = kKeyNone;
    }
 }
+
+#endif
 
 #if PAL_HAS_TOUCH
 
