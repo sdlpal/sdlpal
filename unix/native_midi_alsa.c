@@ -1,5 +1,6 @@
 #include "native_midi/native_midi.h"
 #include "native_midi/native_midi_common.h"
+#include "palcfg.h"
 
 #include <SDL_thread.h>
 #include <alsa/asoundlib.h>
@@ -83,7 +84,7 @@ static int find_dst_port(NativeMidiSong *song, const char *midi_client)
     snd_seq_port_info_t *pinfo;
     int client_id, port_id;
 
-    if (midi_client != NULL)
+    if ((midi_client != NULL) && (*midi_client != 0))
     {
         snd_seq_addr_t addr;
         if (snd_seq_parse_address(song->sequencer, &addr, midi_client) < 0) return -1;
@@ -179,7 +180,7 @@ static int open_alsa_port(NativeMidiSong *song)
 
     if (dst_client_id == 0)
     {
-        if (find_dst_port(song, getenv("MIDI_CLIENT")) < 0)
+        if (find_dst_port(song, gConfig.pszMIDIClient) < 0)
         {
             snd_seq_close(song->sequencer);
             song->sequencer = NULL;

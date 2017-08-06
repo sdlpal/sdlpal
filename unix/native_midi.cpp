@@ -56,7 +56,7 @@ extern "C" int native_midi_detect()
         free(cliplayer);
         cliplayer = nullptr;
     }
-    char *path = (gConfig.pszCLIMIDIPlayerPath ? gConfig.pszCLIMIDIPlayerPath : CLIPLAYER_EXECUTABLE);
+    char *path = (gConfig.pszMIDIClient ? gConfig.pszMIDIClient : CLIPLAYER_EXECUTABLE);
     if (path && access(path,F_OK) == 0)
     {
         cliplayer = strdup(path);
@@ -105,7 +105,7 @@ extern "C" void native_midi_freesong(NativeMidiSong *song)
 {
     if (song)
     {
-	if (native_midi_active(song)) 
+	if (native_midi_active(song))
 		native_midi_stop(song);
         if (song->file) delete []song->file;
         delete song;

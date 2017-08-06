@@ -14,7 +14,9 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
 GTEST_DIR = ../3rd/googletest/googletest
 
-ifeq ($(NATIVE_MIDI),alsa)
+
+ALSA_INSTALLED := $(shell echo "int main(){}" | gcc -o /dev/null -x c - -lasound 2>/dev/null && echo found)
+ifdef ALSA_INSTALLED
 	MIDI_CFILES = $(wildcard ../native_midi/*.c) native_midi_alsa.c
 	MIDI_CPPFILES =
 	MIDI_LDFLAGS = -lasound
@@ -32,7 +34,9 @@ TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 SDL_CONFIG = sdl2-config
 
-ifneq ($(GUI),no)
+
+FLTK_INSTALLED := $(shell command -v fltk-config 2> /dev/null)
+ifdef FLTK_INSTALLED
 	FLTK_CXXFLAGS = `fltk-config --cxxflags`
 	FLTK_CFLAGS = `fltk-config --cflags`
 	FLTK_LDFLAGS = `fltk-config --ldflags`

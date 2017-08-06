@@ -79,7 +79,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_OPL,
 	PALCFG_LOGFILE,
 	PALCFG_RIXEXTRAINIT,
-	PALCFG_CLIMIDIPLAYER,
+	PALCFG_MIDICLIENT,
     PALCFG_SCALEQUALITY,
     PALCFG_ASPECTRATIO,
 	/* Strings */
@@ -168,7 +168,7 @@ typedef struct tagCONFIGURATION
 	char            *pszSavePath;
 	char            *pszMsgFile;
 	char            *pszFontFile;
-	char            *pszCLIMIDIPlayerPath;
+	char            *pszMIDIClient;
 	char            *pszLogFile;
     char            *pszScaleQuality;
 	DWORD            dwWordLength;

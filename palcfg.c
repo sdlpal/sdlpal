@@ -65,7 +65,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_OPL,               PALCFG_STRING,   "OPL",                3, MAKE_VALUE("DOSBOX", NULL, NULL) },
 	{ PALCFG_LOGFILE,           PALCFG_STRING,   "LogFileName",       11, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_VALUE(NULL,     NULL, NULL) },
-	{ PALCFG_CLIMIDIPLAYER,     PALCFG_STRING,   "CLIMIDIPlayer",     13, MAKE_VALUE(NULL,     NULL, NULL) },
+	{ PALCFG_MIDICLIENT,        PALCFG_STRING,   "MIDIClient",        10, MAKE_VALUE(NULL,     NULL, NULL) },
     { PALCFG_SCALEQUALITY,      PALCFG_STRING,   "ScaleQuality",      12, MAKE_VALUE("0",      NULL, NULL) },
     { PALCFG_ASPECTRATIO,       PALCFG_STRING,   "AspectRatio",       11, MAKE_VALUE("16:10",  NULL, NULL) },
 };
@@ -415,8 +415,8 @@ PAL_LoadConfig(
 #endif
 					break;
 				}
-				case PALCFG_CLIMIDIPLAYER:
-					gConfig.pszCLIMIDIPlayerPath = ParseStringValue(value.sValue, gConfig.pszCLIMIDIPlayerPath);
+				case PALCFG_MIDICLIENT:
+					gConfig.pszMIDIClient = ParseStringValue(value.sValue, gConfig.pszMIDIClient);
 					break;
                 case PALCFG_SCALEQUALITY:
                     gConfig.pszScaleQuality = ParseStringValue(value.sValue, gConfig.pszScaleQuality);
@@ -527,7 +527,7 @@ PAL_SaveConfig(
 		if (gConfig.pszMsgFile && *gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 		if (gConfig.pszFontFile && *gConfig.pszFontFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_FONTFILE), gConfig.pszFontFile); fputs(buf, fp); }
 		if (gConfig.pszLogFile && *gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
-        if (gConfig.pszCLIMIDIPlayerPath && *gConfig.pszCLIMIDIPlayerPath) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CLIMIDIPLAYER), gConfig.pszCLIMIDIPlayerPath); fputs(buf, fp); }
+        if (gConfig.pszMIDIClient && *gConfig.pszMIDIClient) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MIDICLIENT), gConfig.pszMIDIClient); fputs(buf, fp); }
         if (gConfig.pszScaleQuality && *gConfig.pszScaleQuality) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SCALEQUALITY), gConfig.pszScaleQuality); fputs(buf, fp); }
         if (gConfig.dwAspectX > 0 && gConfig.dwAspectY > 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_ASPECTRATIO), PAL_va(0,"%d:%d",gConfig.dwAspectX,gConfig.dwAspectY)); fputs(buf, fp); }
 
@@ -574,7 +574,7 @@ PAL_GetConfigItem(
 		case PALCFG_MESSAGEFILE:       value.sValue = gConfig.pszMsgFile; break;
 		case PALCFG_FONTFILE:          value.sValue = gConfig.pszFontFile; break;
 		case PALCFG_LOGFILE:           value.sValue = gConfig.pszLogFile; break;
-		case PALCFG_CLIMIDIPLAYER:     value.sValue = gConfig.pszCLIMIDIPlayerPath; break;
+		case PALCFG_MIDICLIENT:        value.sValue = gConfig.pszMIDIClient; break;
 		case PALCFG_SCALEQUALITY:      value.sValue = gConfig.pszScaleQuality; break;
 		case PALCFG_MUSIC:             value.sValue = music_types[gConfig.eMusicType]; break;
 		case PALCFG_OPL:               value.sValue = opl_types[gConfig.eOPLType]; break;
@@ -643,9 +643,9 @@ PAL_SetConfigItem(
 		if (gConfig.pszLogFile) free(gConfig.pszLogFile);
 		gConfig.pszLogFile = value.sValue && value.sValue[0] ? strdup(value.sValue) : NULL;
 		break;
-	case PALCFG_CLIMIDIPLAYER:
-		if (gConfig.pszCLIMIDIPlayerPath) free(gConfig.pszCLIMIDIPlayerPath);
-		gConfig.pszCLIMIDIPlayerPath = value.sValue && value.sValue[0] ? strdup(value.sValue) : NULL;
+	case PALCFG_MIDICLIENT:
+		if (gConfig.pszMIDIClient) free(gConfig.pszMIDIClient);
+		gConfig.pszMIDIClient = value.sValue && value.sValue[0] ? strdup(value.sValue) : NULL;
 		break;
 	case PALCFG_SCALEQUALITY:
 		if (gConfig.pszScaleQuality) free(gConfig.pszScaleQuality);
