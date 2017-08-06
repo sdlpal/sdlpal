@@ -14,20 +14,45 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
 GTEST_DIR = ../3rd/googletest/googletest
 
-CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) 
-CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
+
+ALSA_INSTALLED := $(shell echo "int main(){}" | gcc -o /dev/null -x c - -lasound 2>/dev/null && echo found)
+ifdef ALSA_INSTALLED
+	MIDI_CFILES = $(wildcard ../native_midi/*.c) native_midi_alsa.c
+	MIDI_CPPFILES =
+	MIDI_LDFLAGS = -lasound
+else
+	MIDI_CFILES =
+	MIDI_CPPFILES = native_midi.cpp
+	MIDI_LDFLAGS =
+endif
+
+CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) $(MIDI_CFILES)
+CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) unix.cpp $(MIDI_CPPFILES)
 OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
-DEPFILES = $(OBJFILES:.o=.d) 
+DEPFILES = $(OBJFILES:.o=.d)
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 SDL_CONFIG = sdl2-config
 
+
+FLTK_INSTALLED := $(shell command -v fltk-config 2> /dev/null)
+ifdef FLTK_INSTALLED
+	FLTK_CXXFLAGS = `fltk-config --cxxflags`
+	FLTK_CFLAGS = `fltk-config --cflags`
+	FLTK_LDFLAGS = `fltk-config --ldflags`
+else
+	FLTK_CXXFLAGS = -DPAL_NO_LAUNCH_UI
+	FLTK_CFLAGS =
+	FLTK_LDFLAGS =
+endif
+
+
 CC = $(HOST)gcc
 CXX = $(HOST)g++
 CCFLAGS = `$(SDL_CONFIG) --cflags` -g -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS) $(GENERATED)
-CXXFLAGS = $(CCFLAGS) -std=c++11 `fltk-config --cxxflags`
-CFLAGS = $(CCFLAGS) -std=gnu99 `fltk-config --cflags`
-LDFLAGS = `$(SDL_CONFIG) --libs` `fltk-config --ldflags` -lstdc++ -lm -pthread
+CXXFLAGS = $(CCFLAGS) -std=c++11 $(FLTK_CXXFLAGS)
+CFLAGS = $(CCFLAGS) -std=gnu99 $(FLTK_CFLAGS)
+LDFLAGS = `$(SDL_CONFIG) --libs` $(FLTK_LDFLAGS) $(MIDI_LDFLAGS) -lstdc++ -lm -pthread
 TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra -pthread
 
 POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
