@@ -231,6 +231,11 @@ def main():
     for i in range(0, len(script_bytes) / 8):
         op, w1, w2, w3 = struct.unpack('<HHHH', script_bytes[i * 8 : (i + 1) * 8])
         if op == 0xFFFF:
+            if is_msg_group == 1 and last_index + 1 != w1:
+                is_msg_group = 0
+                temp = "%s %d\n\n" % ('[END MESSAGE]', last_index)
+                message += temp
+                output += comment + message
 
             if is_msg_group == 0:
                 is_msg_group = 1

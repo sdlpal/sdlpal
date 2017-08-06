@@ -3300,6 +3300,9 @@ PAL_RunTriggerScript(
 			   else
                   PAL_ShowDialogText(PAL_GetMsg(iMsg));
             }
+            if( gpGlobals->g.lprgScriptEntry[wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[wScriptEntry+1].rgwOperand[0] != pScript->rgwOperand[0] + 1)
+			   wScriptEntry++;
+            else
             while (gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF
                 || gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0x008E)
             {

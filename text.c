@@ -197,7 +197,7 @@ PAL_ReadMessageFile(
 				if (*buffer && *buffer != '#')
 				{
 					if (strncmp(buffer, "[BEGIN MESSAGE]", 15) == 0 &&
-						sscanf(buffer + 15, "%d", &sid) == 1 && sid > eid)
+						sscanf(buffer + 15, "%d", &sid) == 1)
 					{
 						state = ST_DIALOG;
 						//
