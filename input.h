@@ -32,6 +32,7 @@ typedef struct tagPALINPUTSTATE
    DWORD                  dwKeyPress;
 #if PAL_HAS_JOYSTICKS
    int                    axisX,axisY;
+   BOOL                   joystickNeedUpdate;
 #endif
 } PALINPUTSTATE;
 

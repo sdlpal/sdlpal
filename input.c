@@ -519,6 +519,7 @@ PAL_JoystickEventFilter(
    switch (lpEvent->type)
    {
    case SDL_JOYAXISMOTION:
+      g_InputState.joystickNeedUpdate = TRUE;
       //
       // Moved an axis on joystick
       //
@@ -1180,11 +1181,15 @@ PAL_ProcessEvent(
 
 --*/
 {
+#if PAL_HAS_JOYSTICKS
+   g_InputState.joystickNeedUpdate = FALSE;
+#endif
    while (PAL_PollEvent(NULL));
 
    PAL_UpdateKeyboardState();
 #if PAL_HAS_JOYSTICKS
-   PAL_UpdateJoyStickState();
+   if(g_InputState.joystickNeedUpdate)
+      PAL_UpdateJoyStickState();
 #endif
 #if PAL_HAS_TOUCH
    PAL_TouchRepeatCheck();
