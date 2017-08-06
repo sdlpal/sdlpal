@@ -212,6 +212,7 @@ AUDIO_OpenDevice(
    gAudioDevice.fSoundEnabled = TRUE;
    gAudioDevice.iMusicVolume = gConfig.iMusicVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
    gAudioDevice.iSoundVolume = gConfig.iSoundVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+   MIDI_SetVolume(gConfig.iMusicVolume);
 
    //
    // Initialize the resampler module
@@ -425,6 +426,7 @@ AUDIO_IncreaseVolume(
    AUDIO_ChangeVolumeByValue(&gConfig.iSoundVolume, 3);
    gAudioDevice.iMusicVolume = gConfig.iMusicVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
    gAudioDevice.iSoundVolume = gConfig.iSoundVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+   MIDI_SetVolume(gConfig.iMusicVolume);
 }
 
 VOID
@@ -450,6 +452,7 @@ AUDIO_DecreaseVolume(
    AUDIO_ChangeVolumeByValue(&gConfig.iSoundVolume, -3);
    gAudioDevice.iMusicVolume = gConfig.iMusicVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
    gAudioDevice.iSoundVolume = gConfig.iSoundVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+   MIDI_SetVolume(gConfig.iMusicVolume);
 }
 
 VOID

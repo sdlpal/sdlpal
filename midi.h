@@ -29,6 +29,26 @@
 /*++
   Purpose:
 
+    Set volume for MIDI music.
+
+  Parameters:
+
+    [IN]  iVolume - volume in range 0-PAL_MAX_VOLUME.
+
+  Return value:
+
+    None.
+
+--*/
+PAL_C_LINKAGE
+void
+MIDI_SetVolume(
+	int       iVolume
+);
+
+/*++
+  Purpose:
+
     Start playing the specified music in MIDI format.
 
   Parameters:
