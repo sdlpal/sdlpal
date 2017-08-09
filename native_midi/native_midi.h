@@ -156,6 +156,7 @@ int native_midi_active(NativeMidiSong *song);
   Parameters:
 
     [IN]  song - the NativeMidiSong object.
+    [IN]  volume - midi volume in range 0-127.
 
   Return value:
 

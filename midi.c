@@ -24,6 +24,21 @@
 
 static int  g_iMidiCurrent = -1;
 static NativeMidiSong *g_pMidi = NULL;
+static int  g_iMidiVolume = PAL_MAX_VOLUME;
+
+void
+MIDI_SetVolume(
+	int       iVolume
+)
+{
+#if PAL_HAS_NATIVEMIDI
+	g_iMidiVolume = iVolume;
+	if (g_pMidi)
+	{
+		native_midi_setvolume(g_pMidi, iVolume * 127 / PAL_MAX_VOLUME);
+	}
+#endif
+}
 
 void
 MIDI_Play(
@@ -82,6 +97,7 @@ MIDI_Play(
 
 	if (g_pMidi)
 	{
+		MIDI_SetVolume(g_iMidiVolume);
 		native_midi_start(g_pMidi, fLoop);
 		g_iMidiCurrent = iNumRIX;
 	}

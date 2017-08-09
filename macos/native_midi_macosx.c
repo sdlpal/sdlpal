@@ -45,7 +45,7 @@ struct _NativeMidiSong
 };
 
 static NativeMidiSong *currentsong = NULL;
-static int latched_volume = 128;
+static int latched_volume = 127;
 
 static OSStatus
 GetSequenceLength(MusicSequence sequence, MusicTimeStamp *_sequenceLength)
@@ -302,7 +302,7 @@ void native_midi_setvolume(NativeMidiSong *song, int volume)
 
     latched_volume = volume;
     if ((song) && (song->audiounit)) {
-        const float floatvol = ((float) volume) / ((float) 128);
+        const float floatvol = ((float) volume) / ((float) 127);
         AudioUnitSetParameter(song->audiounit, kHALOutputParam_Volume,
                               kAudioUnitScope_Global, 0, floatvol, 0);
     }
