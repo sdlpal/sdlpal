@@ -2940,12 +2940,8 @@ PAL_InterpretInstruction(
             // HACKHACK: to make the ending picture show correctly
             //
             PAL_ShowFBP(69, 0);
-            PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], TRUE);
          }
-         else
-         {
-            PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], pScript->rgwOperand[1]);
-         }
+         PAL_ScrollFBP(pScript->rgwOperand[0], pScript->rgwOperand[2], TRUE);
       }
       break;
 
