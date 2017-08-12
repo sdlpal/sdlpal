@@ -356,7 +356,7 @@ PAL_EndingAnimation(
       // Draw the beast
       //
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(buf, 0), gpScreen, PAL_XY(0, -400 + i));
-	  PAL_RLEBlitToSurface(gConfig.fIsWIN95 ? buf + 0x8444 : PAL_SpriteGetFrame(buf, 1), gpScreen, PAL_XY(0, -200 + i));
+	  PAL_RLEBlitToSurface(PAL_SpriteGetFrame(buf, 1), gpScreen, PAL_XY(0, -200 + i));
       //
       // Draw the girl
       //

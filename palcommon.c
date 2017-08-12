@@ -667,7 +667,7 @@ PAL_SpriteGetFrame(
    //
    iFrameNum <<= 1;
    offset = ((lpSprite[iFrameNum] | (lpSprite[iFrameNum + 1] << 8)) << 1);
-   if (!gConfig.fIsWIN95) offset = (WORD)offset;
+   if (offset == 0x18444) offset = (WORD)offset;
    return &lpSprite[offset];
 }
 
