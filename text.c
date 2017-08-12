@@ -178,6 +178,7 @@ PAL_ReadMessageFile(
 		ST_SETTING,
 		ST_DIALOG,
 		ST_WORD,
+		ST_DESC,
 		ST_CREDIT,
 		ST_LAYOUT
 	} state = ST_OUTSIDE;
@@ -228,6 +229,10 @@ PAL_ReadMessageFile(
 						// First save values (converted wide string) into a linked list
 						//
 						witem = &whead;
+					}
+					else if (strncmp(buffer, "[BEGIN DESCRIPTIONS]", 13) == 0 && !witem)
+					{
+						state = ST_DESC;
 					}
 					else if (strncmp(buffer, "[BEGIN CREDITS]", 15) == 0 && !witem)
 					{
@@ -301,6 +306,71 @@ PAL_ReadMessageFile(
 						val->index = i; val->next = NULL;
 						witem->next = val; witem = witem->next;
 						if (word_cnt < i) word_cnt = i;
+					}
+				}
+				break;
+			case ST_DESC:
+				//
+				// Check if to end setting list
+				//
+				if (strncmp(buffer, "[END DESCRIPTIONS]", 18) == 0)
+				{
+					// End setting list
+					state = ST_OUTSIDE;
+				}
+				else
+				{
+					char *line = buffer;
+					while (*buffer && iswspace(*buffer)) line++;
+					//
+					// Skip comments starting with '#'
+					//
+					if (*line && *line != '#')
+					{
+						//
+						// Split the index and value
+						//
+						LPSTR p = strchr(line, '=');
+						int wlen,strip_count=2;
+						if (p)
+						{
+							int index;
+
+							//
+							// Remove the trailing spaces
+							//
+							LPSTR end = line + strlen(line);
+							if (end > line && end[-1] == '\n') *(--end) = 0;
+							if (FALSE) while (end > line && iswspace(end[-1])) *(--end) = 0;
+
+							*p++ = '\0';
+							while(strip_count--){
+								if(p[strlen(p)-1]=='\r') p[strlen(p)-1]='\0';
+								if(p[strlen(p)-1]=='\n') p[strlen(p)-1]='\0';
+							}
+							wlen = PAL_MultiByteToWideCharCP(CP_UTF_8, p, -1, NULL, 0);
+
+							//
+							// Parse the index and pass out value
+							//
+							sscanf(line, "%x", &index);
+							LPOBJECTDESC lpObjectDesc = gpGlobals->lpObjectDesc;
+							while (lpObjectDesc != NULL)
+							{
+								if (lpObjectDesc->wObjectID == index)
+								{
+									break;
+								}
+
+								lpObjectDesc = lpObjectDesc->next;
+							}
+							if( lpObjectDesc )
+							{
+								lpObjectDesc->wObjectID = index;
+								lpObjectDesc->lpDesc = (LPWSTR)UTIL_calloc(1, wlen * sizeof(WCHAR));
+								PAL_MultiByteToWideCharCP(CP_UTF_8, p, -1, lpObjectDesc->lpDesc, wlen);
+							}
+						}
 					}
 				}
 				break;
