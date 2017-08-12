@@ -51,6 +51,8 @@
 
 #define PAL_FILESYSTEM_IGNORE_CASE 1
 
+#define PAL_HAS_JOYSTICKS 1
+
 # define PAL_IS_VALID_JOYSTICK(s)  (strcmp((s), "Android Accelerometer") != 0)
 
 PAL_C_LINKAGE_BEGIN

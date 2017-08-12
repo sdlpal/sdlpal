@@ -423,13 +423,15 @@ PAL_LoadConfig(
                     break;
                 case PALCFG_ASPECTRATIO:
                 {
-                    char *aspectRatio = ParseStringValue(value.sValue, gConfig.pszScaleQuality);
+                    char *origAspectRatio = strdup(value.sValue);
+                    char *aspectRatio = ParseStringValue(value.sValue, origAspectRatio);
                     char *lasts;
 					if( strchr(aspectRatio,':') == NULL ) {
-						aspectRatio = ParseStringValue(item->DefaultValue.sValue, gConfig.pszScaleQuality);
+						aspectRatio = ParseStringValue(item->DefaultValue.sValue, origAspectRatio);
 					}
 					dwAspectX = atoi(strtok_r(aspectRatio,":",&lasts));
 					dwAspectY = atoi(strtok_r(NULL,       ":",&lasts));
+                    free(origAspectRatio);
                     break;
                 }
 				default:
