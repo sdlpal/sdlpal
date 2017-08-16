@@ -53,7 +53,6 @@ static WORD               g_wShakeLevel      = 0;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #define SDL_SoftStretch SDL_UpperBlit
-#include <float.h>
 static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 {
 	int texture_width, texture_height;

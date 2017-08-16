@@ -115,6 +115,7 @@ typedef const BYTE *LPCBYTE;
 
 # include <unistd.h>
 # include <dirent.h>
+# include <float.h>
 # ifdef __APPLE__
 #  include <objc/objc.h>
 # endif
