@@ -230,7 +230,7 @@ PAL_ReadMessageFile(
 						//
 						witem = &whead;
 					}
-					else if (strncmp(buffer, "[BEGIN DESCRIPTIONS]", 13) == 0 && !witem)
+					else if (strncmp(buffer, "[BEGIN DESCRIPTIONS]", 13) == 0)
 					{
 						state = ST_DESC;
 					}
@@ -355,6 +355,8 @@ PAL_ReadMessageFile(
 							//
 							sscanf(line, "%x", &index);
 							LPOBJECTDESC lpObjectDesc = gpGlobals->lpObjectDesc;
+                     LPOBJECTDESC prevObjectDesc = lpObjectDesc;
+                     BOOL isFirst = gpGlobals->lpObjectDesc == NULL;
 							while (lpObjectDesc != NULL)
 							{
 								if (lpObjectDesc->wObjectID == index)
@@ -362,14 +364,22 @@ PAL_ReadMessageFile(
 									break;
 								}
 
+                        prevObjectDesc = lpObjectDesc;
 								lpObjectDesc = lpObjectDesc->next;
 							}
-							if( lpObjectDesc )
-							{
-								lpObjectDesc->wObjectID = index;
-								lpObjectDesc->lpDesc = (LPWSTR)UTIL_calloc(1, wlen * sizeof(WCHAR));
-								PAL_MultiByteToWideCharCP(CP_UTF_8, p, -1, lpObjectDesc->lpDesc, wlen);
-							}
+							if( !lpObjectDesc )
+                     {
+                        lpObjectDesc = UTIL_calloc(1, sizeof(OBJECTDESC));
+                        memset(lpObjectDesc,0,sizeof(OBJECTDESC));
+                        if( prevObjectDesc )
+                           prevObjectDesc->next = lpObjectDesc;
+                     }
+                     if( isFirst )
+                        gpGlobals->lpObjectDesc = lpObjectDesc;
+
+                     lpObjectDesc->wObjectID = index;
+                     lpObjectDesc->lpDesc = (LPWSTR)UTIL_calloc(1, wlen * sizeof(WCHAR));
+                     PAL_MultiByteToWideCharCP(CP_UTF_8, p, -1, lpObjectDesc->lpDesc, wlen);
 						}
 					}
 				}
