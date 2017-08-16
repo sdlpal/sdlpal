@@ -418,22 +418,25 @@ PAL_LoadConfig(
 				case PALCFG_MIDICLIENT:
 					gConfig.pszMIDIClient = ParseStringValue(value.sValue, gConfig.pszMIDIClient);
 					break;
-                case PALCFG_SCALEQUALITY:
-                    gConfig.pszScaleQuality = ParseStringValue(value.sValue, gConfig.pszScaleQuality);
-                    break;
-                case PALCFG_ASPECTRATIO:
-                {
-                    char *origAspectRatio = strdup(value.sValue);
-                    char *aspectRatio = ParseStringValue(value.sValue, origAspectRatio);
-                    char *lasts;
+				case PALCFG_SCALEQUALITY:
+					gConfig.pszScaleQuality = ParseStringValue(value.sValue, gConfig.pszScaleQuality);
+					break;
+				case PALCFG_ASPECTRATIO:
+				{
+					size_t len = strlen(value.sValue) + 1;
+					char *origAspectRatio = (char*)malloc(len);
+					memset(origAspectRatio, 0, len);
+					strncpy(origAspectRatio, value.sValue, strlen(value.sValue));
+					char *aspectRatio = ParseStringValue(value.sValue, origAspectRatio);
+					char *lasts;
 					if( strchr(aspectRatio,':') == NULL ) {
 						aspectRatio = ParseStringValue(item->DefaultValue.sValue, origAspectRatio);
 					}
 					dwAspectX = atoi(strtok_r(aspectRatio,":",&lasts));
 					dwAspectY = atoi(strtok_r(NULL,       ":",&lasts));
-                    free(origAspectRatio);
-                    break;
-                }
+					free(aspectRatio);
+					break;
+				}
 				default:
 					values[item->Item] = value;
 					break;

@@ -63,6 +63,8 @@
 #ifndef __MINGW__
 #define strtok_r strtok_s
 #define strncasecmp _strnicmp
+#define strdup _strdup //https://msdn.microsoft.com/en-us/library/ms235454(v=vs.140).aspx 
 #endif
 
-#define strcasestr(a,b) strstr(_strupr((a)),_strupr((b)))
+PAL_C_LINKAGE char* stoupper(char* s);
+#define strcasestr(a,b) strstr(stoupper((a)),stoupper((b)))

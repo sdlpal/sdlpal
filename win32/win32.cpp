@@ -38,6 +38,13 @@
 #include "../palcfg.h"
 #include "../resampler.h"
 
+PAL_C_LINKAGE char* stoupper(char* s)
+{
+	char* p = strdup(s);
+	while (*p = toupper(*p)) p++;
+	return s;
+}
+
 #define ComboBox_AddString(hwndDlg, idCtrl, lpsz) \
             (BOOL)SNDMSG(GetDlgItem((hwndDlg), (idCtrl)), CB_ADDSTRING, (WPARAM)(0), (LPARAM)(lpsz))
 #define ComboBox_SetCurSel(hwndDlg, idCtrl, index) \

@@ -51,6 +51,8 @@
 # include <math.h>
 #endif
 
+#include <float.h>
+
 #ifndef max
 # define max fmax
 #endif
@@ -115,7 +117,6 @@ typedef const BYTE *LPCBYTE;
 
 # include <unistd.h>
 # include <dirent.h>
-# include <float.h>
 # ifdef __APPLE__
 #  include <objc/objc.h>
 # endif
