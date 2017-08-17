@@ -1172,8 +1172,8 @@ PAL_StartDialog(
 }
 
 static VOID
-PAL_DialogWaitForKeyWithinMinimalSeconds(
-   FLOAT fMinSeconds
+PAL_DialogWaitForKeyWithMaximumSeconds(
+   FLOAT fMaxSeconds
 )
 /*++
   Purpose:
@@ -1194,6 +1194,7 @@ PAL_DialogWaitForKeyWithinMinimalSeconds(
    SDL_Color   *pCurrentPalette, t;
    int         i;
    uint32_t    dwBeginningTicks = SDL_GetTicks();
+   int         iRepeatingKey;
 
    //
    // get the current palette
@@ -1244,13 +1245,12 @@ PAL_DialogWaitForKeyWithinMinimalSeconds(
          VIDEO_SetPalette(palette);
       }
       
-      if (SDL_GetTicks() - dwBeginningTicks < 1000 * fMinSeconds)
+      if (fabs(fMaxSeconds) > FLT_EPSILON && SDL_GetTicks() - dwBeginningTicks > 1000 * fMaxSeconds)
       {
-         PAL_ClearKeyState();
-         continue;
+         break;
       }
 
-      if (fabs(fMinSeconds) > FLT_EPSILON || g_InputState.dwKeyPress != 0)
+      if ((g_InputState.dwKeyPress & kKeySearch) || (g_InputState.dwKeyPress & kKeyMenu))
       {
          break;
       }
@@ -1272,7 +1272,7 @@ PAL_DialogWaitForKey(
    VOID
 )
 {
-   PAL_DialogWaitForKeyWithinMinimalSeconds(0);
+   PAL_DialogWaitForKeyWithMaximumSeconds(0);
 }
 
 VOID
@@ -1361,7 +1361,7 @@ PAL_ShowDialogText(
          PAL_DrawText(lpszText, pos, 0, FALSE, FALSE, FALSE);
          VIDEO_UpdateScreen(&rect);
 
-         PAL_DialogWaitForKeyWithinMinimalSeconds(1.4);
+         PAL_DialogWaitForKeyWithMaximumSeconds(1.4);
 
          //
          // Delete the box
