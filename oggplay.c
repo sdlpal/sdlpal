@@ -435,14 +435,12 @@ OGG_Play(
 		return TRUE;
 	}
 
+	player->iMusic = iNum;
+
 	player->fp = UTIL_OpenFile(PAL_va(0, "ogg/%.2d.ogg", iNum));
 	if (player->fp == NULL)
 	{
 		return FALSE;
-	}
-	else
-	{
-		player->iMusic = iNum;
 	}
 
 	if (!OGG_Rewind(player))

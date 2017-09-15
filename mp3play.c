@@ -111,13 +111,14 @@ MP3_Play(
 
 	MP3_Close(player);
 
+	player->iMusic = iNum;
+
 	if (iNum > 0)
 	{
 		player->pMP3 = mad_openFile(UTIL_GetFullPathName(PAL_BUFFER_SIZE_ARGS(0), gConfig.pszGamePath, PAL_va(1, "mp3/%.2d.mp3", iNum)), AUDIO_GetDeviceSpec(), gConfig.iResampleQuality);
 
 		if (player->pMP3)
 		{
-			player->iMusic = iNum;
 			mad_start(player->pMP3);
 			return TRUE;
 		}
