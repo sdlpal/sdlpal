@@ -1194,7 +1194,6 @@ PAL_DialogWaitForKeyWithMaximumSeconds(
    SDL_Color   *pCurrentPalette, t;
    int         i;
    uint32_t    dwBeginningTicks = SDL_GetTicks();
-   int         iRepeatingKey;
 
    //
    // get the current palette
@@ -1244,13 +1243,13 @@ PAL_DialogWaitForKeyWithMaximumSeconds(
 
          VIDEO_SetPalette(palette);
       }
-      
+
       if (fabs(fMaxSeconds) > FLT_EPSILON && SDL_GetTicks() - dwBeginningTicks > 1000 * fMaxSeconds)
       {
          break;
       }
 
-      if ((g_InputState.dwKeyPress & kKeySearch) || (g_InputState.dwKeyPress & kKeyMenu))
+      if (g_InputState.dwKeyPress != 0)
       {
          break;
       }
