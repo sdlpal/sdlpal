@@ -43,6 +43,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_LAUNCHSETTING,
 	PALCFG_STEREO,
 	PALCFG_USESURROUNDOPL,
+	PALCFG_ENABLEKEYREPEAT,
 	PALCFG_USETOUCHOVERLAY,
 	PALCFG_ENABLEAVIPLAY,
 	/* Booleans */
@@ -195,6 +196,7 @@ typedef struct tagCONFIGURATION
 	BOOL             fEnableJoyStick;
 	BOOL             fUseCustomScreenLayout;
 	BOOL             fLaunchSetting;
+	BOOL             fEnableKeyRepeat;
 	BOOL             fUseTouchOverlay;
 	BOOL             fEnableAviPlay;
 #if USE_RIX_EXTRA_INIT

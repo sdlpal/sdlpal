@@ -244,11 +244,14 @@ PAL_UpdateKeyboardState(
          if (dwCurrentTime > rgdwKeyLastTime[i])
          {
             PAL_KeyDown(g_KeyMap[i][1], (rgdwKeyLastTime[i] != 0));
-#ifdef PAL_ALLOW_KEYREPEAT
-            rgdwKeyLastTime[i] = dwCurrentTime + (rgdwKeyLastTime[i] == 0 ? 200 : 75);
-#else
-            rgdwKeyLastTime[i] = 0xFFFFFFFF;
-#endif
+            if (gConfig.fEnableKeyRepeat)
+            {
+               rgdwKeyLastTime[i] = dwCurrentTime + (rgdwKeyLastTime[i] == 0 ? 200 : 75);
+            }
+            else
+            {
+               rgdwKeyLastTime[i] = 0xFFFFFFFF;
+            }
          }
       }
       else
