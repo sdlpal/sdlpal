@@ -864,6 +864,10 @@ PAL_TouchRepeatCheck(
    VOID
 )
 {
+   if (!gConfig.fEnableKeyRepeat)
+   {
+      return;
+   }
    if (gFinger1 != -1 && SDL_GetTicks() > g_dwFinger1Time)
    {
       PAL_UnsetTouchAction(g_iPrevTouch1);
