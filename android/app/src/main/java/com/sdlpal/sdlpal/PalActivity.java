@@ -40,7 +40,7 @@ public class PalActivity extends SDLActivity {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {  
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         DisplayMetrics metrics = new DisplayMetrics();

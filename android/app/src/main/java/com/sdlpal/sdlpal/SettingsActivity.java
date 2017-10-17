@@ -39,6 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static native boolean setConfigString(String item, String value);
     public static native boolean checkResourceFiles(String path, String msgfile);
     public static native String getGitRevision();
+    public static native boolean isDirWritable(String path);
 
     private static final String KeepAspectRatio = "KeepAspectRatio";
     private static final String AspectRatio = "AspectRatio";
@@ -367,7 +368,17 @@ public class SettingsActivity extends AppCompatActivity {
         setConfigInt(ResampleQuality, ((SeekBar)findViewById(R.id.sbQuality)).getProgress());
 
         setConfigString(GamePath, ((EditText)findViewById(R.id.edFolder)).getText().toString());
-        setConfigString(SavePath, ((EditText)findViewById(R.id.edFolder)).getText().toString());
+        if (isDirWritable(((EditText)findViewById(R.id.edFolder)).getText().toString())) {
+            setConfigString(SavePath, ((EditText)findViewById(R.id.edFolder)).getText().toString());
+        } else {
+            String savePath = Environment.getExternalStorageDirectory().getPath() + "/sdlpal/";
+            if (isDirWritable(savePath)) {
+                setConfigString(SavePath, savePath);
+            } else {
+                savePath = getApplicationContext().getFilesDir().getPath();
+                setConfigString(SavePath, savePath);
+            }
+        }
         setConfigString(MessageFileName, ((SwitchCompat)findViewById(R.id.swMsgFile)).isChecked() ? ((EditText)findViewById(R.id.edMsgFile)).getText().toString() : null);
         setConfigString(FontFileName, ((SwitchCompat)findViewById(R.id.swFontFile)).isChecked() ? ((EditText)findViewById(R.id.edFontFile)).getText().toString() : null);
         setConfigString(LogFileName, ((SwitchCompat)findViewById(R.id.swLogFile)).isChecked() ? ((EditText)findViewById(R.id.edLogFile)).getText().toString() : null);

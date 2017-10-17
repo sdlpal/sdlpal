@@ -16,6 +16,8 @@
 #include "util.h"
 #include "generated.h"
 
+#include <unistd.h>
+#include <sys/stat.h>
 #include <string>
 
 static std::string g_basepath, g_configpath, g_cachepath, g_midipath;
@@ -204,6 +206,25 @@ JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_checkResource
     )) ? JNI_FALSE : JNI_TRUE;
 }
 
+/*
+ * Class:     com_sdlpal_sdlpal_SettingsActivity
+ * Method:    isDirWritable
+ * Signature: (Ljava/lang/String;)Z
+ */
+EXTERN_C_LINKAGE
+JNIEXPORT jboolean JNICALL Java_com_sdlpal_sdlpal_SettingsActivity_isDirWritable(JNIEnv *env, jclass cls, jstring path)
+{
+    std::string str_path = jstring_to_utf8(env, path);
+    mkdir(str_path.c_str(), 0755);
+    str_path += "/test";
+    FILE *fp = fopen(str_path.c_str(), "wb");
+    if (fp == NULL) {
+        return JNI_FALSE;
+    }
+    fclose(fp);
+    unlink(str_path.c_str());
+    return JNI_TRUE;
+}
 
 EXTERN_C_LINKAGE
 void* JNI_mediaplayer_load(const char *filename)
