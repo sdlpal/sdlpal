@@ -253,15 +253,16 @@ PAL_LoadUserFont(
             int got_size;
             BOOL got_expected = FALSE;
             char size[10];
-            sscanf(buf+bytes_consumed,"%s%n",size,&bytes_now);bytes_consumed += bytes_now;
-            while(sscanf(buf+bytes_consumed,"%d%n",&got_size,&bytes_now))
+            sscanf(buf + bytes_consumed, "%s%n", size, &bytes_now);
+            bytes_consumed += bytes_now;
+            while (sscanf(buf + bytes_consumed, "%d%n", &got_size, &bytes_now))
             {
                bytes_consumed += bytes_now;
-               if( got_size == 16 )
+               if (got_size == 16 || got_size == 15)
                   got_expected = TRUE;
             }
-            if(!got_expected)
-               TerminateOnError("%s not contains expected font size 16!",pszBdfFileName);
+            if (!got_expected)
+               TerminateOnError("%s not contains expected font size 15/16!", pszBdfFileName);
          }
          else if (strncmp(buf, "BBX", 3) == 0)
          {
