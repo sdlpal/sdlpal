@@ -382,6 +382,7 @@ typedef LANGID(__stdcall *GETLANGUAGEID)(void);
 
 extern "C" int UTIL_Platform_Init(int argc, char* argv[])
 {
+	SDL_setenv("SDL_AUDIODRIVER","directsound",1);
 	// Try to get Vista+ API at runtime, and falls back to XP's API if not found
 	GETLANGUAGEID GetLanguage = (GETLANGUAGEID)GetProcAddress(GetModuleHandle(TEXT("Kernel32.dll")), "GetThreadUILanguage");
 	if (!GetLanguage) GetLanguage = GetUserDefaultLangID;
