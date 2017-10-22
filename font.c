@@ -184,7 +184,6 @@ static void PAL_LoadEmbeddedFont(void)
 
 	fclose(fp);
 
-	PAL_LoadISOFont();
 	_font_height = 15;
 }
 
@@ -359,22 +358,22 @@ PAL_InitFont(
 	const CONFIGURATION* cfg
 )
 {
-	if (!cfg->fIsWIN95 && !cfg->pszMsgFile)
-	{
-		PAL_LoadEmbeddedFont();
-	}
+   if (!cfg->pszMsgFile)
+   {
+      PAL_LoadEmbeddedFont();
+   }
 
-	if (g_TextLib.fUseISOFont)
-	{
-		PAL_LoadISOFont();
-	}
+   if (g_TextLib.fUseISOFont)
+   {
+      PAL_LoadISOFont();
+   }
 
-	if (cfg->pszFontFile)
-	{
-		PAL_LoadUserFont(cfg->pszFontFile);
-	}
+   if (cfg->pszFontFile)
+   {
+      PAL_LoadUserFont(cfg->pszFontFile);
+   }
 
-	return 0;
+   return 0;
 }
 
 void
