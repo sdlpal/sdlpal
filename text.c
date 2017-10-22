@@ -603,6 +603,8 @@ PAL_InitText(
 
 --*/
 {
+   g_TextLib.fUseISOFont = TRUE;
+
    if (gConfig.pszMsgFile)
    {
 	   //

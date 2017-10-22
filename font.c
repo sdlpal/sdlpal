@@ -269,13 +269,12 @@ PAL_LoadUserFont(
                bytes_consumed += bytes_now;
                if (got_size == 16 || got_size == 15)
                {
+                  _font_height = got_size;
                   got_expected = TRUE;
                }
             }
             if (!got_expected)
                TerminateOnError("%s not contains expected font size 15/16!", pszBdfFileName);
-
-            _font_height = got_size;
          }
          else if (strncmp(buf, "BBX", 3) == 0)
          {
