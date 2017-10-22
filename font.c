@@ -77,10 +77,17 @@ void dump_font16(WORD *buf,int rows, int cols)
 
 static void PAL_LoadISOFont(void)
 {
-    for (int i = 0; i < 0x80; i++)
+    int         i, j;
+
+    for (i = 0; i < sizeof(iso_font) / 15; i++)
     {
-        int j=-1;while(j++<16)unicode_font[i][j]=reverseBits(iso_font[i*15+j]);
+        for (j = 0; j < 15; j++)
+        {
+            unicode_font[i][j] = reverseBits(iso_font[i * 15 + j]);
+        }
+
         unicode_font[i][15] = 0;
+        font_width[i] = 16;
     }
 }
 
@@ -216,6 +223,8 @@ PAL_LoadUserFont(
       return -1;
    }
 
+   _font_height = 16;
+
    while (fgets(buf, 4096, fp) != NULL)
    {
       if (state == 0)
@@ -259,10 +268,14 @@ PAL_LoadUserFont(
             {
                bytes_consumed += bytes_now;
                if (got_size == 16 || got_size == 15)
+               {
                   got_expected = TRUE;
+               }
             }
             if (!got_expected)
                TerminateOnError("%s not contains expected font size 15/16!", pszBdfFileName);
+
+            _font_height = got_size;
          }
          else if (strncmp(buf, "BBX", 3) == 0)
          {
@@ -338,7 +351,6 @@ PAL_LoadUserFont(
       }
    }
 
-   _font_height = 16;
    fclose(fp);
    return 0;
 }
