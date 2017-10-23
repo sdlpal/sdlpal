@@ -586,7 +586,7 @@ UTIL_GetFullPathName(
 {
 	if (!buffer || !basepath || !subpath || buflen == 0) return NULL;
 
-	int baselen = strlen(basepath), sublen = strlen(subpath);
+	int sublen = strlen(subpath);
 	if (sublen == 0) return NULL;
 
 	char *_base = strdup(basepath), *_sub = strdup(subpath);
