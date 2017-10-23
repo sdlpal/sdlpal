@@ -234,7 +234,7 @@ PAL_LoadUserFont(
             {
                codepage = CP_BIG5;
             }
-            else if (strcasestr(buf, "GBK") != NULL)
+            else if (strcasestr(buf, "GBK") != NULL || strcasestr(buf, "GB2312") != NULL)
             {
                codepage = CP_GBK;
             }
