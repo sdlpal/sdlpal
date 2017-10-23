@@ -209,7 +209,6 @@ PAL_LoadUserFont(
    char buf[4096];
    int state = 0, fstate = 0;
    int codepage = -1;
-
    DWORD dwEncoding = 0;
    BYTE bFontGlyph[32] = {0};
    int iCurHeight = 0;
@@ -307,6 +306,13 @@ PAL_LoadUserFont(
             szCp[0] = (dwEncoding >> 8) & 0xFF;
             szCp[1] = dwEncoding & 0xFF;
             szCp[2] = 0;
+
+            if (codepage == CP_GBK && dwEncoding > 0xFF)
+            {
+               szCp[0] |= 0x80;
+               szCp[1] |= 0x80;
+            }
+
             wchar_t wc[2] = { 0 };
             PAL_MultiByteToWideCharCP(codepage, (LPCSTR)szCp, 2, wc, 1);
             if (wc[0] != 0)
