@@ -143,8 +143,8 @@ PAL_ParseConfigLine(
 								pValue->iValue = gConfigItems[i].MaxValue.iValue;
 							break;
 						case PALCFG_BOOLEAN:
-							sscanf(ptr, "%d", &pValue->bValue);
-							pValue->bValue = pValue->bValue ? TRUE : FALSE;
+							sscanf(ptr, "%d", &pValue->iValue);
+							pValue->bValue = pValue->iValue ? TRUE : FALSE;
 							break;
 						case PALCFG_STRING:
 							//
