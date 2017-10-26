@@ -28,6 +28,8 @@
 
 #include "fontglyph.h"
 #include "ascii.h"
+#include "gbfont.h"
+#include "big5font.h"
 
 static int _font_height = 16;
 
@@ -89,6 +91,88 @@ static void PAL_LoadISOFont(void)
         unicode_font[i][15] = 0;
         font_width[i] = 16;
     }
+}
+
+static void PAL_LoadGBFont(void)
+{
+	int ch1, ch2;
+
+	for (ch1 = 0xa1; ch1 <= 0xfe; ch1++)
+	{
+		for (ch2 = 0xa1; ch2 <= 0xfe; ch2++)
+		{
+			//
+			// Replace the original fonts
+			//
+			BYTE szCp[3];
+			wchar_t wc[2] = { 0 };
+
+			szCp[0] = ch1;
+			szCp[1] = ch2;
+			szCp[2] = 0;
+
+			PAL_MultiByteToWideCharCP(CP_GBK, (LPCSTR)szCp, 2, wc, 1);
+
+			if (wc[0] != 0)
+			{
+				wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + unicode_lower_top) : wc[0];
+				if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
+				{
+					const unsigned char *pChar = &gbfont[((ch1 - 0xa1) * 94 + (ch2 - 0xa1)) * 32];
+					memcpy(unicode_font[w], pChar, 32);
+					font_width[w] = 32;
+				}
+			}
+		}
+	}
+}
+
+static void PAL_LoadBig5Font(void)
+{
+	int ch1, ch2;
+
+	for (ch1 = 0x81; ch1 <= 0xfe; ch1++)
+	{
+		for (ch2 = 0x40; ch2 <= 0xfe; ch2++)
+		{
+			if (ch2 == 0x7e + 1)
+			{
+				ch2 = 0xa1 - 1;
+				continue;
+			}
+ 
+			//
+			// Replace the original fonts
+			//
+			BYTE szCp[3];
+			wchar_t wc[2] = { 0 };
+
+			szCp[0] = ch1;
+			szCp[1] = ch2;
+			szCp[2] = 0;
+
+			PAL_MultiByteToWideCharCP(CP_BIG5, (LPCSTR)szCp, 2, wc, 1);
+
+			if (wc[0] != 0)
+			{
+				wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + unicode_lower_top) : wc[0];
+				if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
+				{
+					const unsigned char *pChar;
+
+					if (ch2 < 0xa1)
+						pChar = &big5font[((ch1 - 0xA1) * 157 + ch2 - 0x40) << 5] + 8;
+					else
+						pChar = &big5font[((ch1 - 0xA1) * 157 + 63 + ch2 - 0xA1) << 5] + 8;
+
+					memcpy(unicode_font[w], pChar, 32);
+					font_width[w] = 32;
+				}
+			}
+		}
+	}
+
+	_font_height = 15;
 }
 
 static void PAL_LoadEmbeddedFont(void)
@@ -377,6 +461,42 @@ PAL_InitFont(
    if (cfg->pszFontFile)
    {
       PAL_LoadUserFont(cfg->pszFontFile);
+   }
+   else
+   {
+      switch (g_TextLib.iFontFlavor)
+      {
+      case kFontFlavorAuto:
+         switch (PAL_GetCodePage())
+         {
+         case CP_GBK:
+            PAL_LoadGBFont();
+            break;
+
+         case CP_BIG5:
+            PAL_LoadBig5Font();
+            break;
+
+         default:
+            break;
+         }
+         break;
+
+      case kFontFlavorSimpChin:
+         PAL_LoadGBFont();
+         break;
+
+      case kFontFlavorTradChin:
+         PAL_LoadBig5Font();
+         break;
+
+      case kFontFlavorJapanese:
+         break;
+
+      case kFontFlavorUnifont:
+      default:
+         break;  
+      }
    }
 
    return 0;
