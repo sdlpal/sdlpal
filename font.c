@@ -433,7 +433,7 @@ PAL_InitFont(
    {
       PAL_LoadUserFont(cfg->pszFontFile);
    }
-   else
+   else if (_font_height != 15)
    {
       switch (g_TextLib.iFontFlavor)
       {
