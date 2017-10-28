@@ -138,12 +138,12 @@ static void PAL_LoadJPFont(void)
 		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
 		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
 		{
-			memcpy(unicode_font[w], fontglyph_jp[i].data, 30);
+			memcpy(unicode_font[w], fontglyph_jp[i].data, 32);
 			font_width[w] = 32;
 		}
 	}
 
-	_font_height = 15;
+	_font_height = 16;
 }
 
 static void PAL_LoadEmbeddedFont(void)
