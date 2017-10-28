@@ -27,9 +27,10 @@
 #define _FONT_C
 
 #include "fontglyph.h"
+#include "fontglyph_cn.h"
+#include "fontglyph_tw.h"
+#include "fontglyph_jp.h"
 #include "ascii.h"
-#include "gbfont.h"
-#include "big5font.h"
 
 static int _font_height = 16;
 
@@ -93,32 +94,49 @@ static void PAL_LoadISOFont(void)
     }
 }
 
-static void PAL_LoadGBFont(void)
+static void PAL_LoadCNFont(void)
 {
 	int         i;
 
-	for (i = 0; i < sizeof(gbfont) / sizeof(gbfont[0]); i++)
+	for (i = 0; i < sizeof(fontglyph_cn) / sizeof(fontglyph_cn[0]); i++)
 	{
-		wchar_t w = gbfont[i].code;
+		wchar_t w = fontglyph_cn[i].code;
 		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
 		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
 		{
-			memcpy(unicode_font[w], gbfont[i].data, 32);
+			memcpy(unicode_font[w], fontglyph_cn[i].data, 32);
 		}
 	}
 }
 
-static void PAL_LoadBig5Font(void)
+static void PAL_LoadTWFont(void)
 {
 	int         i;
 
-	for (i = 0; i < sizeof(big5font) / sizeof(big5font[0]); i++)
+	for (i = 0; i < sizeof(fontglyph_tw) / sizeof(fontglyph_tw[0]); i++)
 	{
-		wchar_t w = big5font[i].code;
+		wchar_t w = fontglyph_tw[i].code;
 		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
 		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
 		{
-			memcpy(unicode_font[w], big5font[i].data, 32);
+			memcpy(unicode_font[w], fontglyph_tw[i].data, 32);
+		}
+	}
+
+	_font_height = 15;
+}
+
+static void PAL_LoadJPFont(void)
+{
+	int         i;
+
+	for (i = 0; i < sizeof(fontglyph_jp) / sizeof(fontglyph_jp[0]); i++)
+	{
+		wchar_t w = fontglyph_jp[i].code;
+		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
+		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
+		{
+			memcpy(unicode_font[w], fontglyph_jp[i].data, 30);
 		}
 	}
 
@@ -420,11 +438,11 @@ PAL_InitFont(
          switch (PAL_GetCodePage())
          {
          case CP_GBK:
-            PAL_LoadGBFont();
+            PAL_LoadCNFont();
             break;
 
          case CP_BIG5:
-            PAL_LoadBig5Font();
+            PAL_LoadTWFont();
             break;
 
          default:
@@ -433,14 +451,15 @@ PAL_InitFont(
          break;
 
       case kFontFlavorSimpChin:
-         PAL_LoadGBFont();
+         PAL_LoadCNFont();
          break;
 
       case kFontFlavorTradChin:
-         PAL_LoadBig5Font();
+         PAL_LoadTWFont();
          break;
 
       case kFontFlavorJapanese:
+         PAL_LoadJPFont();
          break;
 
       case kFontFlavorUnifont:
