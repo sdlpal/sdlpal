@@ -1,5 +1,5 @@
 /*
- * This font is converted from:
+ * Based on:
  *
  * YH - Console Chinese Environment -
  * Copyright (C) 1999 Red Flag Linux (office@sonata.iscas.ac.cn)

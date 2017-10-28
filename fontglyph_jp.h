@@ -1,5 +1,5 @@
 //
-// Converted from Public Domain font in GNU intlfonts.
+// Based on Public Domain fonts from GNU intlfonts.
 //
 //  16x16 JIS X 0208-1990 Kanji Font, Version 0.97 (August 23, 1996)
 //  Rearranged and modified from JIS X 9051-1984 by
