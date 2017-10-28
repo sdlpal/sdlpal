@@ -105,6 +105,7 @@ static void PAL_LoadCNFont(void)
 		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
 		{
 			memcpy(unicode_font[w], fontglyph_cn[i].data, 32);
+			font_width[w] = 32;
 		}
 	}
 }
@@ -120,6 +121,7 @@ static void PAL_LoadTWFont(void)
 		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
 		{
 			memcpy(unicode_font[w], fontglyph_tw[i].data, 32);
+			font_width[w] = 32;
 		}
 	}
 
@@ -137,6 +139,7 @@ static void PAL_LoadJPFont(void)
 		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
 		{
 			memcpy(unicode_font[w], fontglyph_jp[i].data, 30);
+			font_width[w] = 32;
 		}
 	}
 
