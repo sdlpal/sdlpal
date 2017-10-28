@@ -33,6 +33,15 @@ typedef enum tagDIALOGPOSITION
    kDialogCenterWindow
 } DIALOGLOCATION;
 
+typedef enum tagFONTFLAVOR
+{
+   kFontFlavorAuto     = 0,
+   kFontFlavorUnifont,
+   kFontFlavorSimpChin,
+   kFontFlavorTradChin,
+   kFontFlavorJapanese,
+} FONTFLAVOR;
+
 PAL_C_LINKAGE_BEGIN
 
 typedef struct tagTEXTLIB
@@ -41,6 +50,7 @@ typedef struct tagTEXTLIB
     LPWSTR         *lpMsgBuf;
     int           **lpIndexBuf;
     BOOL            fUseISOFont;
+	int             iFontFlavor;
 
     int             nWords;
     int             nMsgs;

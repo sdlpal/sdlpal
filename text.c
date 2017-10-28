@@ -421,9 +421,33 @@ PAL_ReadMessageFile(
 							//
 							// Parse the index and pass out value
 							//
-							if (sscanf(line, "%s", index) == 1 && strncasecmp(index, "UseISOFont", 10) == 0 )
+							if (sscanf(line, "%s", index) == 1)
 							{
-								g_TextLib.fUseISOFont = atoi(val + 1) == 1;
+								if (strncasecmp(index, "UseISOFont", 10) == 0)
+								{
+									g_TextLib.fUseISOFont = atoi(val + 1) == 1;
+								}
+								else if (strncasecmp(index, "FontFlavor", 10) == 0)
+								{
+									const char *szFontFlavors[] = {
+										"Unifont",
+										"SimpChin",
+										"TradChin",
+										"Japanese",
+										NULL
+									};
+
+									int i = 1;
+									while (szFontFlavors[i - 1] != NULL)
+									{
+										if (strcmp(val + 1, szFontFlavors[i - 1]) == 0)
+										{
+											g_TextLib.iFontFlavor = i;
+											break;
+										}
+										i++;
+									}
+								}
 							}
 						}
 					}
@@ -604,6 +628,7 @@ PAL_InitText(
 --*/
 {
    g_TextLib.fUseISOFont = TRUE;
+   g_TextLib.iFontFlavor = kFontFlavorUnifont;
 
    if (gConfig.pszMsgFile)
    {
@@ -811,6 +836,8 @@ PAL_InitText(
 #ifndef PAL_CLASSIC
 	   memcpy(g_TextLib.lpWordBuf + SYSMENU_LABEL_BATTLEMODE, gc_rgszAdditionalWords[PAL_GetCodePage()], ATB_WORD_COUNT * sizeof(LPCWSTR));
 #endif
+
+       g_TextLib.iFontFlavor = kFontFlavorAuto;
    }
 
    g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;

@@ -27,6 +27,9 @@
 #define _FONT_C
 
 #include "fontglyph.h"
+#include "fontglyph_cn.h"
+#include "fontglyph_tw.h"
+#include "fontglyph_jp.h"
 #include "ascii.h"
 
 static int _font_height = 16;
@@ -89,6 +92,58 @@ static void PAL_LoadISOFont(void)
         unicode_font[i][15] = 0;
         font_width[i] = 16;
     }
+}
+
+static void PAL_LoadCNFont(void)
+{
+	int         i;
+
+	for (i = 0; i < sizeof(fontglyph_cn) / sizeof(fontglyph_cn[0]); i++)
+	{
+		wchar_t w = fontglyph_cn[i].code;
+		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
+		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
+		{
+			memcpy(unicode_font[w], fontglyph_cn[i].data, 32);
+			font_width[w] = 32;
+		}
+	}
+}
+
+static void PAL_LoadTWFont(void)
+{
+	int         i;
+
+	for (i = 0; i < sizeof(fontglyph_tw) / sizeof(fontglyph_tw[0]); i++)
+	{
+		wchar_t w = fontglyph_tw[i].code;
+		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
+		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
+		{
+			memcpy(unicode_font[w], fontglyph_tw[i].data, 32);
+			font_width[w] = 32;
+		}
+	}
+
+	_font_height = 15;
+}
+
+static void PAL_LoadJPFont(void)
+{
+	int         i;
+
+	for (i = 0; i < sizeof(fontglyph_jp) / sizeof(fontglyph_jp[0]); i++)
+	{
+		wchar_t w = fontglyph_jp[i].code;
+		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
+		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
+		{
+			memcpy(unicode_font[w], fontglyph_jp[i].data, 32);
+			font_width[w] = 32;
+		}
+	}
+
+	_font_height = 16;
 }
 
 static void PAL_LoadEmbeddedFont(void)
@@ -377,6 +432,43 @@ PAL_InitFont(
    if (cfg->pszFontFile)
    {
       PAL_LoadUserFont(cfg->pszFontFile);
+   }
+   else
+   {
+      switch (g_TextLib.iFontFlavor)
+      {
+      case kFontFlavorAuto:
+         switch (PAL_GetCodePage())
+         {
+         case CP_GBK:
+            PAL_LoadCNFont();
+            break;
+
+         case CP_BIG5:
+            PAL_LoadTWFont();
+            break;
+
+         default:
+            break;
+         }
+         break;
+
+      case kFontFlavorSimpChin:
+         PAL_LoadCNFont();
+         break;
+
+      case kFontFlavorTradChin:
+         PAL_LoadTWFont();
+         break;
+
+      case kFontFlavorJapanese:
+         PAL_LoadJPFont();
+         break;
+
+      case kFontFlavorUnifont:
+      default:
+         break;  
+      }
    }
 
    return 0;
