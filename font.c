@@ -95,80 +95,30 @@ static void PAL_LoadISOFont(void)
 
 static void PAL_LoadGBFont(void)
 {
-	int ch1, ch2;
+	int         i;
 
-	for (ch1 = 0xa1; ch1 <= 0xfe; ch1++)
+	for (i = 0; i < sizeof(gbfont) / sizeof(gbfont[0]); i++)
 	{
-		for (ch2 = 0xa1; ch2 <= 0xfe; ch2++)
+		wchar_t w = gbfont[i].code;
+		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
+		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
 		{
-			//
-			// Replace the original fonts
-			//
-			BYTE szCp[3];
-			wchar_t wc[2] = { 0 };
-
-			szCp[0] = ch1;
-			szCp[1] = ch2;
-			szCp[2] = 0;
-
-			PAL_MultiByteToWideCharCP(CP_GBK, (LPCSTR)szCp, 2, wc, 1);
-
-			if (wc[0] != 0)
-			{
-				wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + unicode_lower_top) : wc[0];
-				if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
-				{
-					const unsigned char *pChar = &gbfont[((ch1 - 0xa1) * 94 + (ch2 - 0xa1)) * 32];
-					memcpy(unicode_font[w], pChar, 32);
-					font_width[w] = 32;
-				}
-			}
+			memcpy(unicode_font[w], gbfont[i].data, 32);
 		}
 	}
 }
 
 static void PAL_LoadBig5Font(void)
 {
-	int ch1, ch2;
+	int         i;
 
-	for (ch1 = 0x81; ch1 <= 0xfe; ch1++)
+	for (i = 0; i < sizeof(big5font) / sizeof(big5font[0]); i++)
 	{
-		for (ch2 = 0x40; ch2 <= 0xfe; ch2++)
+		wchar_t w = big5font[i].code;
+		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
+		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
 		{
-			if (ch2 == 0x7e + 1)
-			{
-				ch2 = 0xa1 - 1;
-				continue;
-			}
- 
-			//
-			// Replace the original fonts
-			//
-			BYTE szCp[3];
-			wchar_t wc[2] = { 0 };
-
-			szCp[0] = ch1;
-			szCp[1] = ch2;
-			szCp[2] = 0;
-
-			PAL_MultiByteToWideCharCP(CP_BIG5, (LPCSTR)szCp, 2, wc, 1);
-
-			if (wc[0] != 0)
-			{
-				wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + unicode_lower_top) : wc[0];
-				if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
-				{
-					const unsigned char *pChar;
-
-					if (ch2 < 0xa1)
-						pChar = &big5font[((ch1 - 0xA1) * 157 + ch2 - 0x40) << 5] + 8;
-					else
-						pChar = &big5font[((ch1 - 0xA1) * 157 + 63 + ch2 - 0xA1) << 5] + 8;
-
-					memcpy(unicode_font[w], pChar, 32);
-					font_width[w] = 32;
-				}
-			}
+			memcpy(unicode_font[w], big5font[i].data, 32);
 		}
 	}
 
