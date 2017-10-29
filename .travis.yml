@@ -36,6 +36,7 @@ matrix:
             - gcc-mingw-w64-i686
             - g++-mingw-w64-i686
             - zip
+            - upx-ucl
         before_install:
           - cd win32
           - wget http://libsdl.org/release/SDL2-devel-2.0.5-mingw.tar.gz
@@ -46,7 +47,8 @@ matrix:
         script:
           - cd win32
           - make HOST=i686-w64-mingw32-
-          - i686-w64-mingw32-strip sdlpal.exe
+          - i686-w64-mingw32-strip -s sdlpal.exe
+          - upx --best sdlpal.exe
           - zip sdlpal-mingw32.zip sdlpal.exe
           - mv sdlpal-mingw32.zip ../deploy/
           - cd ..
