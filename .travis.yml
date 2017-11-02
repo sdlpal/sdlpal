@@ -48,7 +48,7 @@ matrix:
           - cd win32
           - make HOST=i686-w64-mingw32-
           - i686-w64-mingw32-strip -s sdlpal.exe
-          - upx --best sdlpal.exe
+          - upx --best --lzma sdlpal.exe
           - zip sdlpal-mingw32.zip sdlpal.exe
           - mv sdlpal-mingw32.zip ../deploy/
           - cd ..
