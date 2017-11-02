@@ -36,18 +36,12 @@ static int _font_height = 16;
 
 static uint8_t reverseBits(uint8_t x) {
     uint8_t y = 0;
-    for(int i = 0 ; i < 8; i++){
+    for (int i = 0 ; i < 8; i++){
         y <<= 1;
         y |= (x & 1);
         x >>= 1;
     }
     return y;
-}
-static uint16_t reverseBits16(uint16_t x) {
-   //specified to unifont structure; not common means
-   uint8_t l=reverseBits(x);
-   uint8_t h=reverseBits(x>>8);
-   return h<<8|l;
 }
 
 #ifdef DEBUG
@@ -62,6 +56,14 @@ void dump_font(BYTE *buf,int rows, int cols)
             printf(" ");
       printf("\n");
    }
+}
+
+static uint16_t reverseBits16(uint16_t x)
+{
+   //specified to unifont structure; not common means
+   uint8_t l = reverseBits(x);
+   uint8_t h = reverseBits(x >> 8);
+   return h << 8 | l;
 }
 
 void dump_font16(WORD *buf,int rows, int cols)
