@@ -295,19 +295,19 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *rw)
 	SDL_RWread(rw, &ID, 1, 4);
 	if (BE_LONG(ID) != 'MThd')
 		return 0;
-	
+
 	/* Header size must be 6 */
 	SDL_RWread(rw, &size, 1, 4);
 	size = BE_LONG(size);
 	if (size != 6)
 		return 0;
-	
+
 	/* We only support format 0 and 1, but not 2 */
 	SDL_RWread(rw, &format, 1, 2);
 	format = BE_SHORT(format);
 	if (format != 0 && format != 1)
 		return 0;
-	
+
 	SDL_RWread(rw, &tracks, 1, 2);
 	tracks = BE_SHORT(tracks);
 	mididata->nTracks = tracks;

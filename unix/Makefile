@@ -14,9 +14,8 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
 GTEST_DIR = ../3rd/googletest/googletest
 
-
-ALSA_INSTALLED := $(shell echo "int main(){}" | gcc -o /dev/null -x c - -lasound 2>/dev/null && echo found)
-ifdef ALSA_INSTALLED
+USE_ALSA ?= $(shell echo "int main(){}" | gcc -o /dev/null -x c - -lasound 2>/dev/null && echo 1)
+ifeq (${USE_ALSA},1)
 	MIDI_CFILES = $(wildcard ../native_midi/*.c) native_midi_alsa.c
 	MIDI_CPPFILES =
 	MIDI_LDFLAGS = -lasound
