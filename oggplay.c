@@ -31,6 +31,7 @@
 #include <math.h>
 
 #if PAL_HAS_OGG
+#define OV_EXCLUDE_STATIC_CALLBACKS
 #include <vorbis/vorbisfile.h>
 #include "resampler.h"
 

@@ -96,58 +96,6 @@ static void PAL_LoadISOFont(void)
     }
 }
 
-static void PAL_LoadCNFont(void)
-{
-	int         i;
-
-	for (i = 0; i < sizeof(fontglyph_cn) / sizeof(fontglyph_cn[0]); i++)
-	{
-		wchar_t w = fontglyph_cn[i].code;
-		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
-		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
-		{
-			memcpy(unicode_font[w], fontglyph_cn[i].data, 32);
-			font_width[w] = 32;
-		}
-	}
-}
-
-static void PAL_LoadTWFont(void)
-{
-	int         i;
-
-	for (i = 0; i < sizeof(fontglyph_tw) / sizeof(fontglyph_tw[0]); i++)
-	{
-		wchar_t w = fontglyph_tw[i].code;
-		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
-		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
-		{
-			memcpy(unicode_font[w], fontglyph_tw[i].data, 32);
-			font_width[w] = 32;
-		}
-	}
-
-	_font_height = 15;
-}
-
-static void PAL_LoadJPFont(void)
-{
-	int         i;
-
-	for (i = 0; i < sizeof(fontglyph_jp) / sizeof(fontglyph_jp[0]); i++)
-	{
-		wchar_t w = fontglyph_jp[i].code;
-		w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w;
-		if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
-		{
-			memcpy(unicode_font[w], fontglyph_jp[i].data, 32);
-			font_width[w] = 32;
-		}
-	}
-
-	_font_height = 16;
-}
-
 static void PAL_LoadEmbeddedFont(void)
 {
 	FILE *fp;
@@ -418,9 +366,24 @@ PAL_LoadUserFont(
 
 int
 PAL_InitFont(
-	const CONFIGURATION* cfg
+   const CONFIGURATION* cfg
 )
 {
+#define PAL_LOAD_INTERNAL_FONT(fontdata, height) \
+   { \
+      for (int i = 0; i < sizeof(fontdata) / sizeof(fontdata[0]); i++) \
+      { \
+         wchar_t w = fontdata[i].code; \
+         w = (w >= unicode_upper_base) ? (w - unicode_upper_base + unicode_lower_top) : w; \
+         if (w < sizeof(unicode_font) / sizeof(unicode_font[0])) \
+         { \
+            memcpy(unicode_font[w], fontdata[i].data, 32); \
+            font_width[w] = 32; \
+         } \
+      } \
+      _font_height = height; \
+   }
+
    if (!cfg->pszMsgFile)
    {
       PAL_LoadEmbeddedFont();
@@ -443,11 +406,11 @@ PAL_InitFont(
          switch (PAL_GetCodePage())
          {
          case CP_GBK:
-            PAL_LoadCNFont();
+            PAL_LOAD_INTERNAL_FONT(fontglyph_cn, 16);
             break;
 
          case CP_BIG5:
-            PAL_LoadTWFont();
+            PAL_LOAD_INTERNAL_FONT(fontglyph_tw, 15);
             break;
 
          default:
@@ -456,20 +419,20 @@ PAL_InitFont(
          break;
 
       case kFontFlavorSimpChin:
-         PAL_LoadCNFont();
+         PAL_LOAD_INTERNAL_FONT(fontglyph_cn, 16);
          break;
 
       case kFontFlavorTradChin:
-         PAL_LoadTWFont();
+         PAL_LOAD_INTERNAL_FONT(fontglyph_tw, 15);
          break;
 
       case kFontFlavorJapanese:
-         PAL_LoadJPFont();
+         PAL_LOAD_INTERNAL_FONT(fontglyph_jp, 16);
          break;
 
       case kFontFlavorUnifont:
       default:
-         break;  
+         break;
       }
    }
 
