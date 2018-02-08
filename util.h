@@ -357,6 +357,11 @@ UTIL_LogToFile(
 	const char    *__
 );
 
+void
+UTIL_LogSetPrelude(
+    const char    *prelude
+);
+
 PAL_C_LINKAGE_END
 
 #endif

@@ -263,7 +263,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     toggleTouchScreenOverlay.on = gConfig.fUseTouchOverlay;
     toggleKeepAspect.on         = gConfig.fKeepAspectRatio;
-    lblAspectRatio.text         = [NSString stringWithFormat:@"%d:%d",gConfig.dwAspectX,gConfig.dwAspectY];
+    lblAspectRatio.text         = [NSString stringWithFormat:@"%d:%d",gConfig.dwTextureWidth,gConfig.dwTextureHeight];
     toggleSmoothScaling.on      = gConfig.pszScaleQuality ? strncmp(gConfig.pszScaleQuality, "0", sizeof(char)) != 0 : NO;
     
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
@@ -293,8 +293,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     gConfig.fUseSurroundOPL = toggleSurroundOPL.isOn;
     
     gConfig.fKeepAspectRatio = toggleKeepAspect.isOn;
-    gConfig.dwAspectX = [[lblAspectRatio.text componentsSeparatedByString:@":"][0] intValue];
-    gConfig.dwAspectY = [[lblAspectRatio.text componentsSeparatedByString:@":"][1] intValue];
+    gConfig.dwTextureWidth = [[lblAspectRatio.text componentsSeparatedByString:@":"][0] intValue];
+    gConfig.dwTextureHeight = [[lblAspectRatio.text componentsSeparatedByString:@":"][1] intValue];
     gConfig.fUseTouchOverlay = toggleTouchScreenOverlay.isOn;
     gConfig.pszScaleQuality  = strdup(toggleSmoothScaling.on ? "1" : "0");
    

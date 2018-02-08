@@ -381,7 +381,9 @@ int main (int argc, char **argv)
     NSString *to_dir = [bundle_path stringByAppendingString:@"/../"];
 
     NSFileManager *fm = [NSFileManager defaultManager];
+#if !DEBUG
     [fm changeCurrentDirectoryPath: to_dir];
+#endif
 
     [fm release];
     [to_dir release];

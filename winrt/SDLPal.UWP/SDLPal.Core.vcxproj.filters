@@ -677,6 +677,12 @@
     <ClCompile Include="..\..\aviplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\..\..\Workspace\sdlpal\video_glsl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\..\..\Workspace\sdlpal\mini_glloader.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\adplug\dosbox_opls.cpp">
       <Filter>adplug</Filter>
     </ClCompile>

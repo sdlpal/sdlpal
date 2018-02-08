@@ -31,6 +31,8 @@
 # define PAL_HAS_TOUCH         1
 # define PAL_DEFAULT_WINDOW_WIDTH   320
 # define PAL_DEFAULT_WINDOW_HEIGHT  200
+# define PAL_DEFAULT_TEXTURE_WIDTH   1280
+# define PAL_DEFAULT_TEXTURE_HEIGHT  800
 
 # if SDL_VERSION_ATLEAST(2,0,0)
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
@@ -67,5 +69,7 @@ UTIL_SavePath(
 PAL_C_LINKAGE_END
 
 #include <sys/time.h>
+
+#define PAL_HAS_GLSL 1
 
 #endif
