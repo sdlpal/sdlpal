@@ -930,7 +930,7 @@ UTIL_LogToFile(
 	const char    *__
 )
 {
-	FILE *fp = fopen(gConfig.pszLogFile, "a");
+	FILE *fp = UTIL_OpenFileForMode(gConfig.pszLogFile, "a");
 	if (fp)
 	{
 		fputs(string, fp);
