@@ -8,6 +8,7 @@ android {
         applicationId "com.sdlpal.sdlpal"
         minSdkVersion 10
         targetSdkVersion 25
+        multiDexEnabled true
         externalNativeBuild {
             ndkBuild {
                 arguments "NDK_APPLICATION_MK:=src/main/cpp/Application.mk"
@@ -51,4 +52,7 @@ dependencies {
     compile 'com.android.support:gridlayout-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.nononsenseapps:filepicker:4.1.0'
+    compile 'com.android.support:multidex:1.0.2'
+    androidTestCompile 'com.android.support:multidex:1.0.2'
+    androidTestCompile 'com.android.support:multidex-instrumentation:1.0.2'
 }
