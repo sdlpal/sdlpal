@@ -1,0 +1,36 @@
+--- sdlpal.js	2018-02-12 02:53:15.000000000 +0800
++++ sdlpal.js	2018-02-12 02:53:32.000000000 +0800
+@@ -9938,7 +9938,7 @@
+ }
+ 
+ function _emscripten_set_mousedown_callback(target, userData, useCapture, callbackfunc) {
+-    JSEvents.registerMouseEventCallback(target, userData, useCapture, callbackfunc, 5, "mousedown");
++//     JSEvents.registerMouseEventCallback(target, userData, useCapture, callbackfunc, 5, "mousedown");
+     return 0
+ }
+ 
+@@ -9953,12 +9953,12 @@
+ }
+ 
+ function _emscripten_set_mousemove_callback(target, userData, useCapture, callbackfunc) {
+-    JSEvents.registerMouseEventCallback(target, userData, useCapture, callbackfunc, 8, "mousemove");
++//     JSEvents.registerMouseEventCallback(target, userData, useCapture, callbackfunc, 8, "mousemove");
+     return 0
+ }
+ 
+ function _emscripten_set_mouseup_callback(target, userData, useCapture, callbackfunc) {
+-    JSEvents.registerMouseEventCallback(target, userData, useCapture, callbackfunc, 6, "mouseup");
++//     JSEvents.registerMouseEventCallback(target, userData, useCapture, callbackfunc, 6, "mouseup");
+     return 0
+ }
+ 
+--- sdlpal.html	2018-02-12 02:54:14.000000000 +0800
++++ sdlpal.html	2018-02-12 02:54:26.000000000 +0800
+@@ -86,7 +86,6 @@
+ 
+       #output {
+         width: 100%;
+-        height: 200px;
+         margin: 0 auto;
+         margin-top: 10px;
+         border-left: 0px;
