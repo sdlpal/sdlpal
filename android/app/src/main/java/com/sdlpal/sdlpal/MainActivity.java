@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.provider.Settings;
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.*;
 
@@ -109,8 +110,15 @@ public class MainActivity extends AppCompatActivity {
         String dataPath = getApplicationContext().getFilesDir().getPath();
         String cachePath = getApplicationContext().getCacheDir().getPath();
         String sdcardState = Environment.getExternalStorageState();
+        String sdlpalPath = Environment.getExternalStorageDirectory().getPath() + "/sdlpal/";
+        String extPath = getApplicationContext().getExternalFilesDir(null).getPath();
+		File forceFile = new File(extPath + "/.force_external_data");
+		if( forceFile.exists() ) {
+			dataPath = sdlpalPath;
+			cachePath = sdlpalPath;
+		}
         if (sdcardState.equals(Environment.MEDIA_MOUNTED)){
-            setAppPath(Environment.getExternalStorageDirectory().getPath() + "/sdlpal/", dataPath, cachePath);
+            setAppPath(sdlpalPath, dataPath, cachePath);
         } else {
             setAppPath("/sdcard/sdlpal/", dataPath, cachePath);
         }
