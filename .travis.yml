@@ -1,4 +1,14 @@
-language: android
+language: c
+
+env:
+  global:
+    - CACHE=$HOME/.sdlpal-caches
+    - SDL2_VERSION=2.0.7
+
+cache:
+  branch: md5deep
+  directories:
+    - $CACHE
 
 before_script:
   - mkdir deploy
@@ -8,8 +18,6 @@ matrix:
     include:
       - os: linux
         env: TARGET=Linux
-        dist: trusty
-        language: c
         addons:
           apt:
             packages:
@@ -27,8 +35,6 @@ matrix:
 
       - os: linux
         env: TARGET=MinGW32
-        dist: trusty
-        language: c
         addons:
           apt:
             packages:
@@ -39,10 +45,21 @@ matrix:
             - upx-ucl
         before_install:
           - cd win32
-          - wget http://libsdl.org/release/SDL2-devel-2.0.5-mingw.tar.gz
-          - tar xvf SDL2-devel-2.0.5-mingw.tar.gz
-          - sed -i "s@/usr/local/cross-tools@$(pwd)/SDL2-2.0.5@g" SDL2-2.0.5/i686-w64-mingw32/bin/sdl2-config
-          - export PATH=$(pwd)/SDL2-2.0.5/i686-w64-mingw32/bin:$PATH
+          - |
+            if ! [ -d $CACHE/SDL2-$SDL2_VERSION ]
+            then
+                export PUSHD="$(pwd)"
+                mkdir -p "${CACHE}"
+                cd $CACHE
+                wget http://libsdl.org/release/SDL2-devel-$SDL2_VERSION-mingw.tar.gz
+                tar xvf SDL2-devel-$SDL2_VERSION-mingw.tar.gz
+                sed -i "s@/usr/local@$PUSHD/SDL2-$SDL2_VERSION@g" SDL2-$SDL2_VERSION/i686-w64-mingw32/bin/sdl2-config
+                rm *.gz
+                cd "${PUSHD}"
+            fi
+          - ln -sf $CACHE/SDL2-$SDL2_VERSION
+          - export PATH=$(pwd)/SDL2-$SDL2_VERSION/i686-w64-mingw32/bin:$PATH
+          - cat SDL2-$SDL2_VERSION/i686-w64-mingw32/bin/sdl2-config
           - cd ..
         script:
           - cd win32
@@ -55,27 +72,40 @@ matrix:
 
       - os: linux
         env: TARGET=wii
-        language: c
         before_install:
-          - export DEVKITPRO=/home/travis/devkitPro
+          - export DEVKITPRO=$CACHE/devkitPro
           - export DEVKITPPC=${DEVKITPRO}/devkitPPC
           - export PATH=$DEVKITPPC/bin:$PATH
-        install:
-          - export PUSHD="$(pwd)"
-          - mkdir $DEVKITPRO
-          - cd $DEVKITPRO
-          - wget https://sourceforge.net/projects/devkitpro/files/devkitPPC/devkitPPC_r27-x86_64-linux.tar.bz2
-          - tar xvf devkitPPC_r27-x86_64-linux.tar.bz2
-          - mkdir libogc
-          - cd libogc
-          - wget https://sourceforge.net/projects/devkitpro/files/libogc/libogc-1.8.12.tar.bz2
-          - tar xvf libogc-1.8.12.tar.bz2
-          - wget https://sourceforge.net/projects/devkitpro/files/libfat/libfat-ogc-1.0.13.tar.bz2
-          - tar xvf libfat-ogc-1.0.13.tar.bz2
-          - cd ..
-          - wget https://github.com/dborth/sdl-wii/releases/download/2013-10-28/SDL.Wii.10-28-2013.zip
-          - unzip SDL.Wii.10-28-2013.zip
-          - cd "${PUSHD}"
+          - |
+            if ! [ -f $DEVKITPRO/libogc/include/gctypes.h ]
+            then
+                rm -rfv $DEVKITPRO 
+            fi
+          - |
+            if ! [ -d $DEVKITPRO ]
+            then
+                export PUSHD="$(pwd)"
+                mkdir -p $DEVKITPRO
+                (
+                    cd $DEVKITPRO &&
+                    wget https://sourceforge.net/projects/devkitpro/files/devkitPPC/devkitPPC_r27-x86_64-linux.tar.bz2 &&
+                    wget https://sourceforge.net/projects/devkitpro/files/libogc/libogc-1.8.12.tar.bz2 &&
+                    wget https://sourceforge.net/projects/devkitpro/files/libfat/libfat-ogc-1.0.13.tar.bz2 &&
+                    wget https://github.com/dborth/sdl-wii/releases/download/2013-10-28/SDL.Wii.10-28-2013.zip
+                )&&(
+                    cd $DEVKITPRO
+                    tar xvf devkitPPC_r27-x86_64-linux.tar.bz2
+                    mkdir libogc
+                    tar xvf libogc-1.8.12.tar.bz2 -C libogc
+                    tar xvf libfat-ogc-1.0.13.tar.bz2 -C libogc
+                    unzip SDL.Wii.10-28-2013.zip
+                    rm -v *.zip *.bz2
+                    echo "cache finished!"
+                )||( 
+                    rm -rfv $DEVKITPRO 
+                    echo "download failed! clearing cache"
+                )
+            fi
         script:
           - cd wii
           - make
@@ -84,30 +114,42 @@ matrix:
           - cd ..
           
       - os: linux
-        env: TARGET=Android NDK_VERSION=r13b TERM=dumb
-        android:
-          components:
-            - platform-tools
-            - tools
-            - build-tools-25.0.3
-            - android-25
-            - extra-android-m2repository
-        jdk: oraclejdk8
+        language: android
+        env: TARGET=Android SDK_HASH=3859397 NDK_VERSION=r16 TERM=dumb
+        cache:
+          branch: md5deep
+          directories:
+            - $HOME/.gradle/caches/
+            - $HOME/.gradle/wrapper/dists/
         before_install:
-          - wget http://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip
-          - unzip android-ndk-$NDK_VERSION-linux-x86_64.zip > /dev/null
+          - export PUSHD="$(pwd)"
+          - mkdir -p $CACHE/
+          - cd $CACHE/
+          # After measuring, caching android SDK/NDK is more slow than direct download
+          - wget https://dl.google.com/android/repository/sdk-tools-linux-$SDK_HASH.zip -O sdk-tools.zip
+          - unzip -o sdk-tools.zip > /dev/null
+          - export PATH=$(pwd)/tools/bin:$PATH
+          # Due to latest Android Plugin for Gradle decides to ignores buildToolsVersion setting, 
+          # we cannot simply continue using travis-ci built-in android sdk tools(previous pairs), 
+          # since it uses fixed version and needs accept license, which varying times and times.
+          # Instead, we directly use latest sdkmanager and accept all available licenses.
+          - yes | sdkmanager --licenses > /dev/null
+          - cp -rv licenses $ANDROID_HOME
+          - wget http://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip -O ndk.zip
+          - unzip ndk.zip > /dev/null
           - export ANDROID_NDK_HOME=`pwd`/android-ndk-$NDK_VERSION
-          - export PATH=${PATH}:${ANDROID_NDK_HOME}
+          - cd "${PUSHD}"
         script:
           - cd android
           - ./gradlew assembleRelease
           - cd ..
-          - jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/app-release-unsigned.apk 5f85e55b-6e81-4b08-ac2d-c51f3dae22ae
+          - jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 5f85e55b-6e81-4b08-ac2d-c51f3dae22ae
 
       - os: osx
-        osx_image: xcode8.3
+        osx_image: xcode9.2
         env: TARGET=iOS
-        language: c
+        cache: cocoapods
+        podfile: ios/SDLPal/Podfile
         script:
           - cd ios/SDLPal
           - pod install
@@ -118,14 +160,40 @@ matrix:
           - cd ../..
 
       - os: osx
-        osx_image: xcode8.3
+        osx_image: xcode9.2
         env: TARGET=macOS
-        language: c
+        language: objective-c
         script:
           - cd macos
           - xcodebuild -project Pal.xcodeproj -configuration Release
           - hdiutil create -srcfolder build/Release/Pal.app -volname "SDLPal" ../deploy/sdlpal-macos.dmg
           - #xcodebuild test -scheme PalTests #disabled since always fail in travis-ci
+          - cd ..
+
+      - os: osx
+        osx_image: xcode9.2
+        env: TARGET=macOS SDL=1.2.15
+        before_install:
+          - |
+            if ! [ -d /Library/Frameworks/SDL.framework ]
+            then 
+              export PUSHD="$(pwd)"
+              mkdir -p "${CACHE}"
+              cd "${CACHE}"
+              if ! [ -f SDL-$SDL.dmg ]
+              then
+                curl -O -L https://www.libsdl.org/release/SDL-$SDL.dmg
+              fi
+              hdiutil attach SDL-$SDL.dmg
+              sudo cp -a /Volumes/SDL/SDL.framework /Library/Frameworks/
+              hdiutil detach /Volumes/SDL
+              rm *.dmg
+              cd "${PUSHD}"
+            fi
+        script:
+          - cd macos
+          - xcodebuild -project Pal_SDL12.xcodeproj -configuration Release
+          - hdiutil create -srcfolder build/Release/Pal.app -volname "SDLPal-SDL1" ../deploy/sdlpal-sdl1-macos.dmg
           - cd ..
 
 deploy:
