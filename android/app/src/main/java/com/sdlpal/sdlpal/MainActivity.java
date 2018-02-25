@@ -112,11 +112,17 @@ public class MainActivity extends AppCompatActivity {
         String sdcardState = Environment.getExternalStorageState();
         String sdlpalPath = Environment.getExternalStorageDirectory().getPath() + "/sdlpal/";
         String extPath = getApplicationContext().getExternalFilesDir(null).getPath();
+		File extFolder = new File(sdlpalPath);
+		if( !extFolder.exists() )
+			extFolder.mkdirs();
 		File forceFile = new File(extPath + "/.force_external_data");
+        Log.v(TAG,"checking redirect file path:"+forceFile.getPath());
 		if( forceFile.exists() ) {
+        	Log.v(TAG,"exist!");
 			dataPath = sdlpalPath;
 			cachePath = sdlpalPath;
-		}
+		}else
+        	Log.v(TAG,"not exist!");
         if (sdcardState.equals(Environment.MEDIA_MOUNTED)){
             setAppPath(sdlpalPath, dataPath, cachePath);
         } else {

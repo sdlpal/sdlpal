@@ -332,7 +332,7 @@ UTIL_Platform_Init(
    char* argv[]
 )
 {
-	UTIL_LogAddOutputCallback([](LOGLEVEL level, const char*, const char* str)->void {
+	UTIL_LogAddOutputCallback([](LOGLEVEL level, const char* str, const char*)->void {
 		const static int level_mapping[] = {
 			ANDROID_LOG_VERBOSE,
 			ANDROID_LOG_DEBUG,
