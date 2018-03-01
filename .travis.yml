@@ -193,7 +193,6 @@ matrix:
         script:
           - cd macos
           - xcodebuild -project Pal_SDL12.xcodeproj -configuration Release
-          - install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @loader_path/../Frameworks/SDL.framework/Versions/A/SDL build/Release/Pal.app/Contents/MacOS/Pal
           - hdiutil create -srcfolder build/Release/Pal.app -volname "SDLPal-SDL1" ../deploy/sdlpal-sdl1-macos.dmg
           - cd ..
 
