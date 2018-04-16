@@ -106,6 +106,7 @@ typedef enum tagOPLTYPE
 	OPL_DOSBOX,
 	OPL_MAME,
 	OPL_DOSBOX_NEW,
+	OPL_NUKED,
 } OPLTYPE, *LPOPLTYPE;
 
 typedef enum tagCODEPAGE {
