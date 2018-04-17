@@ -72,7 +72,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
-static const char *opl_types[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
+static const char *opl_types[] = { "DOSBOX", "MAME", "DOSBOXNEW", "NUKED" };
 
 
 static char * ParseStringValue(const char *sValue, char *original)
