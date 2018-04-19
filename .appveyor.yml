@@ -1,31 +1,12 @@
 version: 2.0.{build}
 image:
   - Visual Studio 2015
-skip_commits:
-  files:
-    - '*.md'
-    - '*.txt'
-    - .travis.yml
-    - .gitignore
-    - 3ds/
-    - android/
-    - dingux/
-    - emscripten/
-    - gph/
-    - incomplete_ports/
-    - ios/
-    - macos/
-    - psp/
-    - unix/
-    - wii/
 environment:
   matrix:
     - solution_name: win32/sdlpal.sln
       APPX_OPTIONS:
     - solution_name: winrt/SDLPal.UWP.sln
       APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
-    - solution_name: winrt/SDLPal.WindowsPhone.sln
-      APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="ARM";AppxPackageDir="AppPackages"
 build_script:
   - |-
     if "%APPVEYOR_REPO_TAG%" == "false" ( set APPX_OPTIONS= )
@@ -37,7 +18,6 @@ after_build:
   - |-
     if exist win32\Win32\Release\sdlpal.exe ( cd win32\Win32\Release & 7z a ..\..\..\sdlpal-win32.zip sdlpal.exe & cd ..\..\..\ )
     for /d %%d in ("winrt\SDLPal.UWP\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-uwp.zip * & cd ..\..\..\..\ )
-    for /d %%d in ("winrt\SDLPal.WindowsPhone\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-wp81.zip * & cd ..\..\..\..\ )
 
 deploy:
 - provider: GitHub
@@ -51,8 +31,6 @@ artifacts:
     name: Win32
   - path: sdlpal-uwp.zip
     name: UWP
-  - path: sdlpal-wp81.zip
-    name: WindowsPhone
 
 notifications:
 - provider: Webhook
