@@ -143,7 +143,7 @@ matrix:
           - cd android
           - ./gradlew assembleRelease
           - cd ..
-          - jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 5f85e55b-6e81-4b08-ac2d-c51f3dae22ae
+          - jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk bca4145d-30d4-4f88-9549-dc57a851a38a
 
       - os: osx
         osx_image: xcode9.2
