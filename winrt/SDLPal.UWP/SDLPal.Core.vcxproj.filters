@@ -75,7 +75,13 @@
     <ClInclude Include="..\..\adplug\fprovide.h">
       <Filter>adplug</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\adplug\nukedopl.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\adplug\opl.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\opl3.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\player.h">
@@ -417,6 +423,12 @@
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\adplug\fprovide.cpp">
+      <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\nukedopl.cpp">
+      <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\opl3.c">
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\adplug\player.cpp">

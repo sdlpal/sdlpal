@@ -82,6 +82,7 @@
                     <ComboBoxItem Content="DOSBOX"/>
                     <ComboBoxItem Content="MAME"/>
                     <ComboBoxItem Content="DOSBOXNEW"/>
+                    <ComboBoxItem Content="NUKED"/>
                 </ComboBox>
                 <ComboBox x:Name="cbOPLSR" x:Uid="OPLSR" HorizontalAlignment="Stretch" Header="OPL 模拟器采样率" PlaceholderText="选择 OPL 模拟器采样率">
                     <ComboBoxItem Content="12429"/>

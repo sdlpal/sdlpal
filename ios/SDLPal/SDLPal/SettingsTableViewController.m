@@ -82,7 +82,7 @@
     OPLSampleRates = @[ @"12429", @"24858", @"49716", @"11025", @"22050", @"44100" ];
     CDFormats = @[ @"MP3", @"OGG" ];
     MusicFormats = @[ @"MIDI", @"RIX", @"MP3", @"OGG" ];
-    OPLFormats = @[ @"DOSBOX", @"MAME", @"DOSBOXNEW" ];
+    OPLFormats = @[ @"DOSBOX", @"MAME", @"DOSBOXNEW", @"NUKED" ];
     LogLevels = @[ @"VERBOSE", @"DEBUG", @"INFO", @"WARNING", @"ERROR", @"FATAL" ];
     AspectRatios = @[ @"16:10", @"4:3" ];
     

@@ -193,7 +193,7 @@ Fl_Window* InitWindow()
    (gWidgets.bgm = new Fl_Choice(285, 239, 60, 22, gLabels[lang].bgm))->add("MIDI|RIX|MP3|OGG");
    gWidgets.stereo = new Fl_Check_Button(365, 240, 70, 20, gLabels[lang].stereo);
    gWidgets.samplerate = new Fl_Int_Input(570, 239, 60, 22, gLabels[lang].samplerate);
-   (gWidgets.opl = new Fl_Choice(84, 269, lang ? 100 : 120, 22, gLabels[lang].opl))->add("DOSBOX|MAME|DOSBOXNEW");
+   (gWidgets.opl = new Fl_Choice(84, 269, lang ? 100 : 120, 22, gLabels[lang].opl))->add("DOSBOX|MAME|DOSBOXNEW|NUKED");
    gWidgets.oplrate = new Fl_Int_Input(285, 269, 60, 22, gLabels[lang].oplrate);
    gWidgets.surround = new Fl_Check_Button(365, 270, 120, 20, gLabels[lang].surround);
    gWidgets.buffer = new Fl_Int_Input(570, 269, 60, 22, gLabels[lang].buffer);

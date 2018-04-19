@@ -221,7 +221,9 @@
     <ClInclude Include="..\..\adplug\emuopl.h" />
     <ClInclude Include="..\..\adplug\fmopl.h" />
     <ClInclude Include="..\..\adplug\fprovide.h" />
+    <ClInclude Include="..\..\adplug\nukedopl.h" />
     <ClInclude Include="..\..\adplug\opl.h" />
+    <ClInclude Include="..\..\adplug\opl3.h" />
     <ClInclude Include="..\..\adplug\player.h" />
     <ClInclude Include="..\..\adplug\rix.h" />
     <ClInclude Include="..\..\adplug\surroundopl.h" />
@@ -338,6 +340,8 @@
     <ClCompile Include="..\..\adplug\emuopl.cpp" />
     <ClCompile Include="..\..\adplug\fmopl.c" />
     <ClCompile Include="..\..\adplug\fprovide.cpp" />
+    <ClCompile Include="..\..\adplug\nukedopl.cpp" />
+    <ClCompile Include="..\..\adplug\opl3.c" />
     <ClCompile Include="..\..\adplug\player.cpp" />
     <ClCompile Include="..\..\adplug\rix.cpp" />
     <ClCompile Include="..\..\adplug\surroundopl.cpp" />

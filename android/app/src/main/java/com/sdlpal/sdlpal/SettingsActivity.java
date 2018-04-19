@@ -69,7 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int OPLSampleRates[] = { 11025, 12429, 22050, 24858, 44100, 49716 };
     private static final String CDFormats[] = { "MP3", "OGG" };
     private static final String MusicFormats[] = { "MIDI", "RIX", "MP3", "OGG" };
-    private static final String OPLFormats[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
+    private static final String OPLFormats[] = { "DOSBOX", "MAME", "DOSBOXNEW", "NUKED" };
     private static final String AspectRatios[] = { "16:10", "4:3" };
 
     private SettingsActivity mInstance = this;

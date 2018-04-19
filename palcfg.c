@@ -72,7 +72,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
-static const char *opl_types[] = { "DOSBOX", "MAME", "DOSBOXNEW" };
+static const char *opl_types[] = { "DOSBOX", "MAME", "DOSBOXNEW", "NUKED" };
 
 
 static char * ParseStringValue(const char *sValue, char *original)
@@ -371,6 +371,8 @@ PAL_LoadConfig(
 						eOPLType = OPL_DOSBOX;
 					else if (SDL_strncasecmp(value.sValue, "MAME", 4) == 0)
 						eOPLType = OPL_MAME;
+					else if (SDL_strncasecmp(value.sValue, "NUKED", 5) == 0)
+						eOPLType = OPL_NUKED;
 					break;
 				}
 				case PALCFG_RIXEXTRAINIT:

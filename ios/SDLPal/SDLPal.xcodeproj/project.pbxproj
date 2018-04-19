@@ -105,6 +105,8 @@
 		C622BE721E474CD5000C8970 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE711E474CD5000C8970 /* CoreMotion.framework */; };
 		C622BE761E474CFC000C8970 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE751E474CFC000C8970 /* AVFoundation.framework */; };
 		C622BE771E474DF5000C8970 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 71655251195BB6DB006E1227 /* util.c */; };
+		C629A56B208643D30015C93C /* opl3.c in Sources */ = {isa = PBXBuildFile; fileRef = C629A565208643D20015C93C /* opl3.c */; };
+		C629A56C208643D30015C93C /* nukedopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C629A56A208643D30015C93C /* nukedopl.cpp */; };
 		C63505731EA6570300186049 /* midi.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056B1EA6570300186049 /* midi.c */; };
 		C63505741EA6570300186049 /* private.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056C1EA6570300186049 /* private.c */; };
 		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
@@ -363,6 +365,10 @@
 		C622BE731E474CE2000C8970 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		C622BE751E474CFC000C8970 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C626FFBF1E5BCBE700E39DD9 /* pal_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pal_config.h; path = ../../pal_config.h; sourceTree = "<group>"; };
+		C629A565208643D20015C93C /* opl3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opl3.c; sourceTree = "<group>"; };
+		C629A568208643D20015C93C /* nukedopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nukedopl.h; sourceTree = "<group>"; };
+		C629A569208643D20015C93C /* opl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3.h; sourceTree = "<group>"; };
+		C629A56A208643D30015C93C /* nukedopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nukedopl.cpp; sourceTree = "<group>"; };
 		C635056A1EA6570300186049 /* midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = midi.h; path = ../../../midi.h; sourceTree = "<group>"; };
 		C635056B1EA6570300186049 /* midi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi.c; path = ../../../midi.c; sourceTree = "<group>"; };
 		C635056C1EA6570300186049 /* private.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = private.c; path = ../../../private.c; sourceTree = "<group>"; };
@@ -676,6 +682,10 @@
 		716551E4195BB6DA006E1227 /* adplug */ = {
 			isa = PBXGroup;
 			children = (
+				C629A56A208643D30015C93C /* nukedopl.cpp */,
+				C629A568208643D20015C93C /* nukedopl.h */,
+				C629A565208643D20015C93C /* opl3.c */,
+				C629A569208643D20015C93C /* opl3.h */,
 				57FB00E81B7A4FEA005FCF4C /* dbemuopl.cpp */,
 				57FB00E91B7A4FEA005FCF4C /* dbemuopl.h */,
 				57FB00EA1B7A4FEA005FCF4C /* dbopl.cpp */,
@@ -1065,6 +1075,8 @@
 				7165528E195BB6DB006E1227 /* yj1.c in Sources */,
 				57FB014D1B7A50B0005FCF4C /* lpc.c in Sources */,
 				71AA35801A0BCA4E00793FFF /* util.mm in Sources */,
+				C629A56B208643D30015C93C /* opl3.c in Sources */,
+				C629A56C208643D30015C93C /* nukedopl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

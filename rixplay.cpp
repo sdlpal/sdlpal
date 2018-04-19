@@ -30,6 +30,7 @@
 #include "adplug/opl.h"
 #include "adplug/demuopl.h"
 #include "adplug/dbemuopl.h"
+#include "adplug/nukedopl.h"
 #include "adplug/emuopl.h"
 #include "adplug/surroundopl.h"
 #include "adplug/rix.h"
@@ -423,6 +424,12 @@ RIX_Init(
 				new CEmuopl(gConfig.iOPLSampleRate, true, false),
 				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
 			break;
+		case OPL_NUKED:
+			pRixPlayer->opl = new CSurroundopl(
+				new CNukedopl(gConfig.iOPLSampleRate, true, false),
+				new CNukedopl(gConfig.iOPLSampleRate, true, false),
+				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
+			break;
 		}
 	}
 	else
@@ -437,6 +444,9 @@ RIX_Init(
 			break;
 		case OPL_MAME:
 			pRixPlayer->opl = new CEmuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
+			break;
+		case OPL_NUKED:
+			pRixPlayer->opl = new CNukedopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
 			break;
 		}
 	}

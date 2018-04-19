@@ -298,6 +298,8 @@
       <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</OmitFramePointers>
     </ClCompile>
     <ClCompile Include="..\adplug\demuopl.cpp" />
+    <ClCompile Include="..\adplug\nukedopl.cpp" />
+    <ClCompile Include="..\adplug\opl3.c" />
     <ClCompile Include="..\audio.c" />
     <ClCompile Include="..\aviplay.c" />
     <ClCompile Include="..\battle.c" />
@@ -398,6 +400,8 @@
     <ClInclude Include="..\adplug\dbemuopl.h" />
     <ClInclude Include="..\adplug\dbopl.h" />
     <ClInclude Include="..\adplug\kemuopl.h" />
+    <ClInclude Include="..\adplug\nukedopl.h" />
+    <ClInclude Include="..\adplug\opl3.h" />
     <ClInclude Include="..\ascii.h" />
     <ClInclude Include="..\aviplay.h" />
     <ClInclude Include="..\battle.h" />

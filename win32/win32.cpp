@@ -256,6 +256,7 @@ INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("DOSBOX"));
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("MAME"));
 	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("DOSBOXNEW"));
+	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("NUKED"));
 
 	TrackBar_SetRange(hwndDlg, IDC_QUALITY, RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX, FALSE);
 	TrackBar_SetRange(hwndDlg, IDC_MUSICVOLUME, 0, PAL_MAX_VOLUME, FALSE);

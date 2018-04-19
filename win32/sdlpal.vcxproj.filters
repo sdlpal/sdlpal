@@ -333,6 +333,12 @@
     <ClCompile Include="..\aviplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\adplug\opl3.c">
+      <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\adplug\nukedopl.cpp">
+      <Filter>adplug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ascii.h">
@@ -685,6 +691,12 @@
     </ClInclude>
     <ClInclude Include="..\riff.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\opl3.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\nukedopl.h">
+      <Filter>adplug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
