@@ -27,7 +27,7 @@ This program made extensive use of the following libraries:
 * [libmad](http://www.underbit.com/products/mad/)
 * [libogg & libvorbis](http://www.vorbis.com/)
 * [FLTK](http://www.fltk.org)
-* [DOSBOX project](http://www.dosbox.com) and [MAME project](http://mamedev.org/) for codes of some the OPL simulation cores
+* [DOSBOX project](http://www.dosbox.com), [MAME project](http://mamedev.org/) and [Chocolate Doom project](https://github.com/chocolate-doom/chocolate-doom) for codes of their OPL emulator cores
 * [foo_input_adplug](https://github.com/kode54/foo_input_adplug) for codes of the built-in resampler
 * [ffmpeg](https://ffmpeg.org/) for codes of the built-in AVI player
 
