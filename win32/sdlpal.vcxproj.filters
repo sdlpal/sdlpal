@@ -213,9 +213,6 @@
     <ClCompile Include="..\resampler.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\adplug\adlibemu.c">
-      <Filter>adplug</Filter>
-    </ClCompile>
     <ClCompile Include="..\adplug\demuopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
@@ -511,12 +508,6 @@
     </ClInclude>
     <ClInclude Include="..\resampler.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\adplug\adlibemu.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\adplug\kemuopl.h">
-      <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\liboggvorbis\src\modes\floor_all.h">
       <Filter>liboggvorbis\src\modes</Filter>

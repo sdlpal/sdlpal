@@ -93,9 +93,6 @@
     <ClInclude Include="..\..\adplug\surroundopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\adplug\adlibemu.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\adplug\dbemuopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
@@ -438,9 +435,6 @@
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\adplug\surroundopl.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\adplug\adlibemu.c">
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\adplug\dbemuopl.cpp">

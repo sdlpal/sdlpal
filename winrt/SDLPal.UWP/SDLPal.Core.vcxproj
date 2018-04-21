@@ -211,7 +211,6 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\adplug\adlibemu.h" />
     <ClInclude Include="..\..\adplug\binfile.h" />
     <ClInclude Include="..\..\adplug\binio.h" />
     <ClInclude Include="..\..\adplug\dbemuopl.h" />
@@ -330,7 +329,6 @@
     <ClInclude Include="..\pal_config.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\adplug\adlibemu.c" />
     <ClCompile Include="..\..\adplug\binfile.cpp" />
     <ClCompile Include="..\..\adplug\binio.cpp" />
     <ClCompile Include="..\..\adplug\dbemuopl.cpp" />

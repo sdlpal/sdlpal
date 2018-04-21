@@ -285,7 +285,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\adplug\adlibemu.c" />
     <ClCompile Include="..\adplug\dbemuopl.cpp" />
     <ClCompile Include="..\adplug\dbopl.cpp">
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnySuitable</InlineFunctionExpansion>
@@ -396,10 +395,8 @@
     <ClCompile Include="win32.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\adplug\adlibemu.h" />
     <ClInclude Include="..\adplug\dbemuopl.h" />
     <ClInclude Include="..\adplug\dbopl.h" />
-    <ClInclude Include="..\adplug\kemuopl.h" />
     <ClInclude Include="..\adplug\nukedopl.h" />
     <ClInclude Include="..\adplug\opl3.h" />
     <ClInclude Include="..\ascii.h" />

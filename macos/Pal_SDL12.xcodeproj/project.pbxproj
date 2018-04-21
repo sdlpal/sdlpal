@@ -107,8 +107,6 @@
 		7111D66A1F2D6362009312F0 /* synth.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D64C1F2D6362009312F0 /* synth.h */; };
 		7111D66B1F2D6362009312F0 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 7111D64D1F2D6362009312F0 /* timer.c */; };
 		7111D66C1F2D6362009312F0 /* timer.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D64E1F2D6362009312F0 /* timer.h */; };
-		7111D7241F2D63A5009312F0 /* adlibemu.c in Sources */ = {isa = PBXBuildFile; fileRef = 7111D7081F2D63A4009312F0 /* adlibemu.c */; };
-		7111D7251F2D63A5009312F0 /* adlibemu.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D7091F2D63A4009312F0 /* adlibemu.h */; };
 		7111D7261F2D63A5009312F0 /* binfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7111D70A1F2D63A4009312F0 /* binfile.cpp */; };
 		7111D7271F2D63A5009312F0 /* binfile.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D70B1F2D63A4009312F0 /* binfile.h */; };
 		7111D7281F2D63A5009312F0 /* binio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7111D70C1F2D63A4009312F0 /* binio.cpp */; };
@@ -127,7 +125,6 @@
 		7111D7351F2D63A5009312F0 /* fmopl.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D7191F2D63A4009312F0 /* fmopl.h */; };
 		7111D7361F2D63A5009312F0 /* fprovide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7111D71A1F2D63A4009312F0 /* fprovide.cpp */; };
 		7111D7371F2D63A5009312F0 /* fprovide.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D71B1F2D63A4009312F0 /* fprovide.h */; };
-		7111D7381F2D63A5009312F0 /* kemuopl.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D71C1F2D63A4009312F0 /* kemuopl.h */; };
 		7111D7391F2D63A5009312F0 /* opl.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D71D1F2D63A4009312F0 /* opl.h */; };
 		7111D73A1F2D63A5009312F0 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7111D71E1F2D63A4009312F0 /* player.cpp */; };
 		7111D73B1F2D63A5009312F0 /* player.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D71F1F2D63A4009312F0 /* player.h */; };
@@ -201,7 +198,6 @@
 				7111D6681F2D6362009312F0 /* stream.h in Copy Frameworks into .app bundle */,
 				7111D66A1F2D6362009312F0 /* synth.h in Copy Frameworks into .app bundle */,
 				7111D66C1F2D6362009312F0 /* timer.h in Copy Frameworks into .app bundle */,
-				7111D7251F2D63A5009312F0 /* adlibemu.h in Copy Frameworks into .app bundle */,
 				7111D7271F2D63A5009312F0 /* binfile.h in Copy Frameworks into .app bundle */,
 				7111D7291F2D63A5009312F0 /* binio.h in Copy Frameworks into .app bundle */,
 				7111D72B1F2D63A5009312F0 /* dbemuopl.h in Copy Frameworks into .app bundle */,
@@ -211,7 +207,6 @@
 				7111D7331F2D63A5009312F0 /* emuopl.h in Copy Frameworks into .app bundle */,
 				7111D7351F2D63A5009312F0 /* fmopl.h in Copy Frameworks into .app bundle */,
 				7111D7371F2D63A5009312F0 /* fprovide.h in Copy Frameworks into .app bundle */,
-				7111D7381F2D63A5009312F0 /* kemuopl.h in Copy Frameworks into .app bundle */,
 				7111D7391F2D63A5009312F0 /* opl.h in Copy Frameworks into .app bundle */,
 				7111D73B1F2D63A5009312F0 /* player.h in Copy Frameworks into .app bundle */,
 				7111D73D1F2D63A5009312F0 /* rix.h in Copy Frameworks into .app bundle */,
@@ -332,8 +327,6 @@
 		7111D64C1F2D6362009312F0 /* synth.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = synth.h; path = ../libmad/synth.h; sourceTree = SOURCE_ROOT; };
 		7111D64D1F2D6362009312F0 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = timer.c; path = ../libmad/timer.c; sourceTree = SOURCE_ROOT; };
 		7111D64E1F2D6362009312F0 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = timer.h; path = ../libmad/timer.h; sourceTree = SOURCE_ROOT; };
-		7111D7081F2D63A4009312F0 /* adlibemu.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = adlibemu.c; path = ../adplug/adlibemu.c; sourceTree = SOURCE_ROOT; };
-		7111D7091F2D63A4009312F0 /* adlibemu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = adlibemu.h; path = ../adplug/adlibemu.h; sourceTree = SOURCE_ROOT; };
 		7111D70A1F2D63A4009312F0 /* binfile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = binfile.cpp; path = ../adplug/binfile.cpp; sourceTree = SOURCE_ROOT; };
 		7111D70B1F2D63A4009312F0 /* binfile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = binfile.h; path = ../adplug/binfile.h; sourceTree = SOURCE_ROOT; };
 		7111D70C1F2D63A4009312F0 /* binio.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = binio.cpp; path = ../adplug/binio.cpp; sourceTree = SOURCE_ROOT; };
@@ -352,7 +345,6 @@
 		7111D7191F2D63A4009312F0 /* fmopl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = fmopl.h; path = ../adplug/fmopl.h; sourceTree = SOURCE_ROOT; };
 		7111D71A1F2D63A4009312F0 /* fprovide.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = fprovide.cpp; path = ../adplug/fprovide.cpp; sourceTree = SOURCE_ROOT; };
 		7111D71B1F2D63A4009312F0 /* fprovide.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = fprovide.h; path = ../adplug/fprovide.h; sourceTree = SOURCE_ROOT; };
-		7111D71C1F2D63A4009312F0 /* kemuopl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kemuopl.h; path = ../adplug/kemuopl.h; sourceTree = SOURCE_ROOT; };
 		7111D71D1F2D63A4009312F0 /* opl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = opl.h; path = ../adplug/opl.h; sourceTree = SOURCE_ROOT; };
 		7111D71E1F2D63A4009312F0 /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = player.cpp; path = ../adplug/player.cpp; sourceTree = SOURCE_ROOT; };
 		7111D71F1F2D63A4009312F0 /* player.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = player.h; path = ../adplug/player.h; sourceTree = SOURCE_ROOT; };
@@ -570,8 +562,6 @@
 		7111D7071F2D6390009312F0 /* adplug */ = {
 			isa = PBXGroup;
 			children = (
-				7111D7081F2D63A4009312F0 /* adlibemu.c */,
-				7111D7091F2D63A4009312F0 /* adlibemu.h */,
 				7111D70A1F2D63A4009312F0 /* binfile.cpp */,
 				7111D70B1F2D63A4009312F0 /* binfile.h */,
 				7111D70C1F2D63A4009312F0 /* binio.cpp */,
@@ -590,7 +580,6 @@
 				7111D7191F2D63A4009312F0 /* fmopl.h */,
 				7111D71A1F2D63A4009312F0 /* fprovide.cpp */,
 				7111D71B1F2D63A4009312F0 /* fprovide.h */,
-				7111D71C1F2D63A4009312F0 /* kemuopl.h */,
 				7111D71D1F2D63A4009312F0 /* opl.h */,
 				7111D71E1F2D63A4009312F0 /* player.cpp */,
 				7111D71F1F2D63A4009312F0 /* player.h */,
@@ -734,7 +723,6 @@
 				7111D6671F2D6362009312F0 /* stream.c in Sources */,
 				7111D6691F2D6362009312F0 /* synth.c in Sources */,
 				7111D66B1F2D6362009312F0 /* timer.c in Sources */,
-				7111D7241F2D63A5009312F0 /* adlibemu.c in Sources */,
 				7111D7261F2D63A5009312F0 /* binfile.cpp in Sources */,
 				7111D7281F2D63A5009312F0 /* binio.cpp in Sources */,
 				7111D72A1F2D63A5009312F0 /* dbemuopl.cpp in Sources */,
