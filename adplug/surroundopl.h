@@ -95,6 +95,7 @@ public:
 	void init() {
 		if (opls[0]) opls[0]->init();
 		if (opls[1]) opls[1]->init();
+		percussion = false;
 	}
 };
 #endif

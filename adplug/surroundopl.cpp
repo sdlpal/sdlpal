@@ -157,10 +157,11 @@ static bool TweakFMReg(double freq_offset, double opl_freq, int reg, int val, ui
 
 CSurroundopl::CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2)
 	: Copl(opl1->gettype() == TYPE_OPL3 ? TYPE_OPL3 : TYPE_DUAL_OPL2)
-	, buffer(NULL), rate(rate), offset(offset), bufsize(0)
+	, buffer(NULL), rate(rate), offset(offset), bufsize(0), percussion(false)
 {
 	opls[0] = opl1;
 	opls[1] = opl2;
+	init();
 
 	if (opl1->gettype() == TYPE_OPL3 || opl1->gettype() == TYPE_DUAL_OPL2)
 	{
