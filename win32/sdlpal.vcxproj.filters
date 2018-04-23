@@ -156,9 +156,6 @@
     <ClCompile Include="..\adplug\dosbox_opl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\adplug\emuopl.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
     <ClCompile Include="..\adplug\fmopl.c">
       <Filter>adplug</Filter>
     </ClCompile>
@@ -212,9 +209,6 @@
     </ClCompile>
     <ClCompile Include="..\resampler.c">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\adplug\demuopl.cpp">
-      <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\yj1.c">
       <Filter>Source Files</Filter>
@@ -300,9 +294,6 @@
     <ClCompile Include="..\adplug\dbopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\adplug\dbemuopl.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
     <ClCompile Include="win32.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -333,7 +324,7 @@
     <ClCompile Include="..\adplug\opl3.c">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\adplug\nukedopl.cpp">
+    <ClCompile Include="..\adplug\emuopls.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
   </ItemGroup>
@@ -425,13 +416,7 @@
     <ClInclude Include="..\adplug\binio.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="..\adplug\demuopl.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
     <ClInclude Include="..\adplug\dosbox_opl.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\adplug\emuopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\adplug\fmopl.h">
@@ -656,9 +641,6 @@
     <ClInclude Include="..\adplug\dbopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="..\adplug\dbemuopl.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
     <ClInclude Include="..\liboggvorbis\include\ogg\config_types.h">
       <Filter>liboggvorbis\include\ogg</Filter>
     </ClInclude>
@@ -686,7 +668,10 @@
     <ClInclude Include="..\adplug\opl3.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="..\adplug\nukedopl.h">
+    <ClInclude Include="..\adplug\emuopls.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\convertopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
   </ItemGroup>

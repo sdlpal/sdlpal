@@ -62,6 +62,7 @@
 
 #ifndef __MINGW__
 #define strtok_r strtok_s
+#define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #define strdup _strdup //https://msdn.microsoft.com/en-us/library/ms235454(v=vs.140).aspx 
 #endif

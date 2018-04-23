@@ -285,7 +285,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\adplug\dbemuopl.cpp" />
     <ClCompile Include="..\adplug\dbopl.cpp">
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnySuitable</InlineFunctionExpansion>
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AnySuitable</InlineFunctionExpansion>
@@ -296,8 +295,6 @@
       <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</OmitFramePointers>
       <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</OmitFramePointers>
     </ClCompile>
-    <ClCompile Include="..\adplug\demuopl.cpp" />
-    <ClCompile Include="..\adplug\nukedopl.cpp" />
     <ClCompile Include="..\adplug\opl3.c" />
     <ClCompile Include="..\audio.c" />
     <ClCompile Include="..\aviplay.c" />
@@ -373,11 +370,11 @@
     <ClCompile Include="..\adplug\binfile.cpp" />
     <ClCompile Include="..\adplug\binio.cpp" />
     <ClCompile Include="..\adplug\dosbox_opl.cpp" />
-    <ClCompile Include="..\adplug\emuopl.cpp" />
     <ClCompile Include="..\adplug\fmopl.c" />
     <ClCompile Include="..\adplug\fprovide.cpp" />
     <ClCompile Include="..\adplug\player.cpp" />
     <ClCompile Include="..\adplug\rix.cpp" />
+    <ClCompile Include="..\adplug\emuopls.cpp" />
     <ClCompile Include="..\adplug\surroundopl.cpp" />
     <ClCompile Include="..\native_midi\native_midi_common.c" />
     <ClCompile Include="..\libmad\bit.c" />
@@ -395,10 +392,10 @@
     <ClCompile Include="win32.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\adplug\dbemuopl.h" />
     <ClInclude Include="..\adplug\dbopl.h" />
-    <ClInclude Include="..\adplug\nukedopl.h" />
+    <ClInclude Include="..\adplug\emuopls.h" />
     <ClInclude Include="..\adplug\opl3.h" />
+    <ClInclude Include="..\adplug\convertopl.h" />
     <ClInclude Include="..\ascii.h" />
     <ClInclude Include="..\aviplay.h" />
     <ClInclude Include="..\battle.h" />
@@ -484,9 +481,7 @@
     <ClInclude Include="..\video.h" />
     <ClInclude Include="..\adplug\binfile.h" />
     <ClInclude Include="..\adplug\binio.h" />
-    <ClInclude Include="..\adplug\demuopl.h" />
     <ClInclude Include="..\adplug\dosbox_opl.h" />
-    <ClInclude Include="..\adplug\emuopl.h" />
     <ClInclude Include="..\adplug\fmopl.h" />
     <ClInclude Include="..\adplug\fprovide.h" />
     <ClInclude Include="..\adplug\opl.h" />

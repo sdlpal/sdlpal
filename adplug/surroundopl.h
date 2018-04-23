@@ -21,52 +21,80 @@
  *
  * Stereo harmonic algorithm by Adam Nielsen <malvineous@shikadi.net>
  * Please give credit if you use this algorithm elsewhere :-)
+ * -------------------------------------------------------------------------
+ * SDLPAL
+ * Copyright (c) 2011-2017, SDLPAL development team.
+ * All rights reserved.
+ *
+ * This file is part of SDLPAL.
+ *
+ * SDLPAL is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * -------------------------------------------------------------------------
+ *
+ * Adaptered for generic OPL2/OPL3 version by Lou Yihua <supermouselyh@hotmail.com>.
+ *
  */
 
 #ifndef H_ADPLUG_SURROUNDOPL
 #define H_ADPLUG_SURROUNDOPL
 
-//#include <stdint.h> // for uintxx_t
+#include <stdint.h>
 #include "opl.h"
 
-// The right-channel is increased in frequency by itself divided by this amount.
-// The right value should not noticeably change the pitch, but it should provide
-// a nice stereo harmonic effect.
-// This value should be well tuned to get best sound quality.
-// Currently, 384.0 is the best choice. (**sdlpal_tune, not used now**)
-#define FREQ_OFFSET 384.0//128.0//96.0
-
-// Number of FNums away from the upper/lower limit before switching to the next
-// block (octave.)  By rights it should be zero, but for some reason this seems
-// to cut it to close and the transposed OPL doesn't hit the right note all the
-// time.  Setting it higher means it will switch blocks sooner and that seems
-// to help.  Don't set it too high or it'll get stuck in an infinite loop if
-// one block is too high and the adjacent block is too low ;-)
-#define NEWBLOCK_LIMIT  32
-
-class CSurroundopl: public Copl
+class CSurroundopl : public Copl
 {
-	private:
-		Copl *a, *b;
-		short *lbuf, *rbuf;
-		double freq_offset, opl_freq;
-		unsigned char iFMReg[256];
-		unsigned char iTweakedFMReg[256];
-		unsigned char iCurrentTweakedBlock[9]; // Current value of the Block in the tweaked OPL chip
-		unsigned char iCurrentFNum[9];         // Current value of the FNum in the tweaked OPL chip
-		short bufsize;
-		bool use16bit;
+private:
+	typedef void (CSurroundopl::*Updater)(short* buf, int samples);
+	typedef void (CSurroundopl::*Writer)(int reg, int val);
 
-	public:
+	Copl*   opls[2];
+	Updater updater;
+	Writer  writer;
+	short*  buffer;
+	double  rate;
+	double  offset;            // 
+	int     bufsize;
+	uint8_t iFMReg[32];        // The original values of OPL registers Ax and Bx
+	uint8_t iTweakedFMReg[32]; // The modified values of OPL registers Ax and Bx
+	bool    percussion;        // Is the OPL chip worked at percussion mode?
 
-		CSurroundopl(Copl *a, Copl *b, bool use16bit, double opl_freq, double freq_offset);
-		~CSurroundopl();
+	void write_opl2(int reg, int val);
+	void write_dual_opl2(int reg, int val);
+	void write_opl3(int reg, int val);
 
-		void update(short *buf, int samples);
-		void write(int reg, int val);
+	void update_opl2_stereo_stereo(short *buf, int samples);
+	void update_opl2_stereo_mono(short *buf, int samples);
+	void update_opl2_mono_stereo(short *buf, int samples);
+	void update_opl2_mono_mono(short *buf, int samples);
 
-		void init();
+	void update_opl3(short *buf, int samples) { opls[0]->update(buf, samples); }
 
+public:
+	CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2 = NULL);
+	~CSurroundopl() {
+		if (opls[0]) delete opls[0];
+		if (opls[1]) delete opls[1];
+		if (buffer) delete[] buffer;
+	}
+
+	bool getstereo() { return true; }
+	void update(short *buf, int samples) { (this->*updater)(buf, samples); }
+	void write(int reg, int val) { (this->*writer)(reg, val); }
+
+	void init() {
+		if (opls[0]) opls[0]->init();
+		if (opls[1]) opls[1]->init();
+	}
 };
-
 #endif

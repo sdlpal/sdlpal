@@ -28,14 +28,16 @@ public:
       TYPE_OPL2, TYPE_OPL3, TYPE_DUAL_OPL2
    } ChipType;
 
-   Copl()
-         : currChip(0), currType(TYPE_OPL2) {
-   }
+   Copl() : currChip(0), currType(TYPE_OPL2) { }
+   Copl(ChipType type) : currChip(0), currType(type) { }
 
-   virtual ~Copl() {
-   }
+   virtual ~Copl() {}
 
-   virtual void write(int reg, int val) {} // combined register select + data write
+   virtual bool getstereo() = 0;	// return if this OPL chip output stereo
+   virtual void init(void) = 0; // reinitialize OPL chip(s)
+   virtual void write(int reg, int val) = 0; // combined register select + data write
+   virtual void update(short *buf, int samples) = 0; // Emulation only: fill buffer
+
    virtual void setchip(int n) { // select OPL chip
       if (n < 2)
          currChip = n;
@@ -45,15 +47,10 @@ public:
       return currChip;
    }
 
-   virtual void init(void) {} // reinitialize OPL chip(s)
-
    // return this OPL chip's type
    ChipType gettype() {
       return currType;
    }
-
-   // Emulation only: fill buffer
-   virtual void update(short *buf, int samples) {}
 
 protected:
    int		currChip;		// currently selected OPL chip number

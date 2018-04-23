@@ -60,22 +60,19 @@
     <ClInclude Include="..\..\adplug\binio.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\adplug\demuopl.h">
+    <ClInclude Include="..\..\adplug\convertopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\dosbox_opl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\adplug\emuopl.h">
+    <ClInclude Include="..\..\adplug\emuopls.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\fmopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\fprovide.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\adplug\nukedopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\opl.h">
@@ -91,9 +88,6 @@
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\surroundopl.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\adplug\dbemuopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\dbopl.h">
@@ -413,16 +407,13 @@
     <ClCompile Include="..\..\adplug\dosbox_opl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\adplug\emuopl.cpp">
+    <ClCompile Include="..\..\adplug\emuopls.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\adplug\fmopl.c">
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\adplug\fprovide.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\adplug\nukedopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\adplug\opl3.c">
@@ -437,13 +428,7 @@
     <ClCompile Include="..\..\adplug\surroundopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\adplug\dbemuopl.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\adplug\dbopl.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\adplug\demuopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\audio.c">

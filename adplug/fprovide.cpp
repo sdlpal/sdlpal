@@ -26,13 +26,6 @@
 
 #include "fprovide.h"
 
-#ifdef __SYMBIAN32__
-	#define stricmp strcasecmp
-#else 
-	#ifndef _WIN32
-		#define stricmp strcasecmp
-	#endif
-#endif
 /***** CFileProvider *****/
 
 bool CFileProvider::extension(const std::string &filename,
@@ -40,7 +33,7 @@ bool CFileProvider::extension(const std::string &filename,
    const char *fname = filename.c_str(), *ext = extension.c_str();
 
    if (strlen(fname) < strlen(ext) ||
-         stricmp(fname + strlen(fname) - strlen(ext), ext))
+         strcasecmp(fname + strlen(fname) - strlen(ext), ext))
       return false;
    else
       return true;

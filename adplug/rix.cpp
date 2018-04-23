@@ -28,10 +28,6 @@
 
 using namespace std;
 
-#if !defined(_WIN32) || defined(__SYMBIAN32__)
-   #define stricmp strcasecmp
-#endif
-
 #if defined(__hppa__) || \
    defined(__m68k__) || defined(mc68000) || defined(_M_M68K) || \
    (defined(__MIPS__) && defined(__MISPEB__)) || \
@@ -125,7 +121,7 @@ bool CrixPlayer::load(const std::string &filename, const CFileProvider &cfp)
 {
   fp = fopen(filename.c_str(),"rb"); if(!fp) return false;
 
-  if(stricmp(filename.substr(filename.length()-4,4).c_str(),".mkf")==0)
+  if(strcasecmp(filename.substr(filename.length()-4,4).c_str(),".mkf")==0)
   {
 	  flag_mkf=1;
 	  fseek(fp,0,SEEK_SET);

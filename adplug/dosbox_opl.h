@@ -54,7 +54,7 @@ typedef int16_t		Bit16s;
 typedef uint8_t		Bit8u;
 typedef int8_t		Bit8s;
 
-
+namespace DOSBOX_OPL {
 /*
  define attribution that inlines/forces inlining of a function (optional)
  */
@@ -192,3 +192,4 @@ void adlib_getsample(opl_chip* opl, Bit16s* sndptr, Bits numsamples);
 
 Bitu adlib_reg_read(opl_chip* opl, Bitu port);
 void adlib_write_index(opl_chip* opl, Bitu port, Bit8u val);
+}

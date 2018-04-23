@@ -29,6 +29,8 @@
 #include <string.h>
 #include <math.h>
 
+namespace DOSBOX_OPL {
+
 struct opl_chip_struct {
 
 	/*static*/ Bit32u generator_add;	// should be a chip parameter
@@ -1540,4 +1542,5 @@ void adlib_getsample(opl_chip* opl, Bit16s* sndptr, Bits numsamples) {
 #endif
 
 	}
+}
 }

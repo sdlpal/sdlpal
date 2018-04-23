@@ -48,6 +48,8 @@ typedef int16_t		Bit16s;
 typedef uint8_t		Bit8u;
 typedef int8_t		Bit8s;
 
+namespace DBOPL {
+
 /*
 define attribution that inlines/forces inlining of a function (optional)
 */
@@ -64,8 +66,6 @@ define attribution that inlines/forces inlining of a function (optional)
 
 //Select the type of wave generator routine
 #define DBOPL_WAVE WAVE_TABLEMUL
-
-namespace DBOPL {
 
 	struct Chip;
 	struct Operator;
