@@ -167,6 +167,7 @@ CSurroundopl::CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2)
 	{
 		updater = &CSurroundopl::update_opl3;
 		writer = opl1->gettype() == TYPE_OPL3 ? &CSurroundopl::write_opl3 : &CSurroundopl::write_dual_opl2;
+		opl1->setch(false, false); // Enable explicit channel control
 	}
 	else
 	{

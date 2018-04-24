@@ -53,7 +53,7 @@ extern "C" {
 }
 class CMAMEopl: public Copl {
 public:
-	CMAMEopl(int rate) : Copl(TYPE_OPL2), opl(NULL), rate(rate) { init(); }
+	CMAMEopl(int rate, ChipType type = TYPE_OPL2) : Copl(type), opl(NULL), rate(rate) { init(); }
 
 	~CMAMEopl() { OPLDestroy(opl); }
 
@@ -115,7 +115,8 @@ class CDBopl : public Copl
 {
 public:
 	CDBopl(int rate, Copl::ChipType type = TYPE_OPL2)
-		: Copl(type), buffer(NULL), rate(rate), len(0) {
+	: Copl(type), buffer(NULL), rate(rate), len(0)
+	, chv(type == TYPE_OPL3 ? 0x30 : 0x00) {
 		init();
 	}
 	~CDBopl() { delete[] buffer; }
@@ -145,7 +146,12 @@ public:
 	}
 
 	// template methods
-	void write(int reg, int val) { chip.WriteReg(reg, (Bit8u)val); }
+	void write(int reg, int val) {
+		if (currType == TYPE_OPL3 && reg >> 4 == 0xC) {
+			val |= chv;
+		}
+		chip.WriteReg(reg, (Bit8u)val);
+	}
 
 	void init() {
 		chip.Setup(rate);
@@ -155,10 +161,17 @@ public:
 		}
 	}
 
+	virtual void setch(bool left, bool right) {
+		if (currType == TYPE_OPL3) {
+			left ? (chv |= 0x10) : (chv &= 0xef);
+			right ? (chv |= 0x20) : (chv &= 0xdf);
+		}
+	}
+
 protected:
 	DBOPL::Chip chip;
 	int32_t* buffer;
-	int rate, len;
+	int rate, len, chv;
 
 	static bool _inited;
 
@@ -184,13 +197,21 @@ extern "C" {
 }
 class CNukedopl : public Copl {
 public:
-	CNukedopl(int rate, Copl::ChipType type = TYPE_OPL3) : Copl(type), rate(rate) { init(); }
+	CNukedopl(int rate, Copl::ChipType type = TYPE_OPL3)
+	: Copl(type), rate(rate), chv(type == TYPE_OPL3 ? 0x30 : 0x00) {
+		init();
+	}
 
 	bool getstereo() { return currType == TYPE_OPL3; }
 
 	void update(short *buf, int samples) { OPL3_GenerateStream(&opl, buf, samples); }
 
-	void write(int reg, int val) { OPL3_WriteRegBuffered(&opl, (Bit16u)reg, (Bit8u)val); }
+	void write(int reg, int val) {
+		if (currType == TYPE_OPL3 && reg >> 4 == 0xC) {
+			val |= chv;
+		}
+		OPL3_WriteRegBuffered(&opl, (Bit16u)reg, (Bit8u)val);
+	}
 
 	void init() {
 		OPL3_Reset(&opl, rate);
@@ -200,9 +221,16 @@ public:
 		}
 	}
 
+	virtual void setch(bool left, bool right) {
+		if (currType == TYPE_OPL3) {
+			left  ? (chv |= 0x10) : (chv &= 0xef);
+			right ? (chv |= 0x20) : (chv &= 0xdf);
+		}
+	}
+
 private:
 	opl3_chip  opl;		// OPL3 emulator data
-	int        rate;
+	int        rate, chv;
 };
 // ===========================================================================================
 

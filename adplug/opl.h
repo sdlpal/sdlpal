@@ -52,6 +52,8 @@ public:
       return currType;
    }
 
+   virtual void setch(bool left, bool right) {}
+
 protected:
    int		currChip;		// currently selected OPL chip number
    ChipType	currType;		// this OPL chip's type
