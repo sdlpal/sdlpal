@@ -43,6 +43,7 @@
 #ifndef SDLPAL_EMUOPLS_H
 #define SDLPAL_EMUOPLS_H
 
+#include "common.h"
 #include "opl.h"
 
 class OPLCORE {
