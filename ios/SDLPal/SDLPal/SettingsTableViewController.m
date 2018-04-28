@@ -20,7 +20,8 @@
     NSArray *OPLSampleRates;
     NSArray *CDFormats;
     NSArray *MusicFormats;
-    NSArray *OPLFormats;
+    NSArray *OPLCores;
+    //NSArray *OPLChips;
     NSArray *LogLevels;
     NSArray *AspectRatios;
     
@@ -44,7 +45,8 @@
     IBOutlet UISwitch *toggleSmoothScaling;
     
     IBOutlet UILabel *lblMusicType;
-    IBOutlet UILabel *lblOPLType;
+    IBOutlet UILabel *lblOPLCore;
+    //IBOutlet UILabel *lblOPLChip;
     IBOutlet UILabel *lblOPLRate;
     IBOutlet UILabel *lblCDAudioSource;
     IBOutlet UISwitch *toggleStereo;
@@ -82,7 +84,8 @@
     OPLSampleRates = @[ @"12429", @"24858", @"49716", @"11025", @"22050", @"44100" ];
     CDFormats = @[ @"MP3", @"OGG" ];
     MusicFormats = @[ @"MIDI", @"RIX", @"MP3", @"OGG" ];
-    OPLFormats = @[ @"DOSBOX", @"MAME", @"DOSBOXNEW", @"NUKED" ];
+    OPLCores = @[ @"MAME", @"DBFLT", @"DBINT", @"NUKED" ];
+    //OPLChips = @[ @"OPL2", @"OPL3" ];
     LogLevels = @[ @"VERBOSE", @"DEBUG", @"INFO", @"WARNING", @"ERROR", @"FATAL" ];
     AspectRatios = @[ @"16:10", @"4:3" ];
     
@@ -197,8 +200,8 @@ typedef void(^SelectedBlock)(NSString *selected);
         [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats origin:cell allowEmpty:NO doneBlock:^(NSString *selected) {
             [self.tableView reloadData];
         }];
-    }else if( indexPath.section == 3 && indexPath.row == 4 ) { //OPL Type
-        [self showPickerWithTitle:nil toLabel:lblOPLType inArray:OPLFormats origin:cell];
+    }else if( indexPath.section == 3 && indexPath.row == 4 ) { //OPL Core
+        [self showPickerWithTitle:nil toLabel:lblOPLCore inArray:OPLCores origin:cell];
     }else if( indexPath.section == 3 && indexPath.row == 5 ) { //OPL Rate
         [self showPickerWithTitle:nil toLabel:lblOPLRate inArray:OPLSampleRates origin:cell];
     }else if( indexPath.section == 3 && indexPath.row == 1 ) { //CD Source
@@ -264,7 +267,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     toggleSmoothScaling.on      = gConfig.pszScaleQuality ? strncmp(gConfig.pszScaleQuality, "0", sizeof(char)) != 0 : NO;
     
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
-    lblOPLType.text         = OPLFormats[gConfig.eOPLType];
+    lblOPLCore.text         = OPLCores[gConfig.eOPLCore];
+    //lblOPLChip.text         = OPLChips[gConfig.eOPLChip];
     lblOPLRate.text         = [NSString stringWithFormat:@"%d",gConfig.iOPLSampleRate];
     lblCDAudioSource.text   = CDFormats[gConfig.eCDType-MUSIC_OGG];
     lblResampleRate.text    = [NSString stringWithFormat:@"%d",gConfig.iSampleRate];
@@ -295,7 +299,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     gConfig.pszScaleQuality  = strdup(toggleSmoothScaling.on ? "1" : "0");
    
     gConfig.eMusicType  = (MUSICTYPE)[MusicFormats indexOfObject:lblMusicType.text];
-    gConfig.eOPLType    = (OPLTYPE  )[OPLFormats   indexOfObject:lblOPLType.text];
+    gConfig.eOPLCore    = (OPLCORE_TYPE)[OPLCores  indexOfObject:lblOPLCore.text];
+    //gConfig.eOPLChip    = gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : (OPLCHIP_TYPE)[OPLChips  indexOfObject:lblOPLChip.text];
     gConfig.iOPLSampleRate = [lblOPLRate.text intValue];
     gConfig.eCDType     = (MUSICTYPE)[CDFormats indexOfObject:lblCDAudioSource.text]+MUSIC_OGG;
     gConfig.iSampleRate = [lblResampleRate.text intValue];

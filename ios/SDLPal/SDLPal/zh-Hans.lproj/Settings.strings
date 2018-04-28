@@ -59,8 +59,8 @@
 /* Class = "UITableViewSection"; headerTitle = "音频设置"; ObjectID = "kPc-Yq-LOh"; */
 "kPc-Yq-LOh.headerTitle" = "音频设置";
 
-/* Class = "UILabel"; text = "OPL类型"; ObjectID = "lpD-tV-FRw"; */
-"lpD-tV-FRw.text" = "OPL类型";
+/* Class = "UILabel"; text = "OPL核心"; ObjectID = "lpD-tV-FRw"; */
+"lpD-tV-FRw.text" = "OPL核心";
 
 /* Class = "UILabel"; text = "SSRC质量"; ObjectID = "oQa-bR-CM1"; */
 "oQa-bR-CM1.text" = "SSRC质量";
