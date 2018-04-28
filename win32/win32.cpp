@@ -25,7 +25,6 @@
 
 #define UNICODE
 #define _UNICODE
-#define _CRT_SECURE_NO_WARNINGS
 
 #include <tchar.h>
 #include <windows.h>

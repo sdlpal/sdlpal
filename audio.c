@@ -61,7 +61,8 @@ static AUDIODEVICE gAudioDevice;
 #if SDL_VERSION_ATLEAST(2,0,0)
 # define SDL_CloseAudio() SDL_CloseAudioDevice(gAudioDevice.id)
 # define SDL_PauseAudio(pause_on) SDL_PauseAudioDevice(gAudioDevice.id, (pause_on))
-# define SDL_OpenAudio(desired, obtained) (gAudioDevice.id = SDL_OpenAudioDevice(SDL_GetAudioDeviceName(gConfig.iAudioDevice, 0), 0, (desired), (obtained), SDL_AUDIO_ALLOW_ANY_CHANGE))
+# define SDL_OpenAudio(desired, obtained) \
+	(gAudioDevice.id = SDL_OpenAudioDevice((gConfig.iAudioDevice >= 0 ? SDL_GetAudioDeviceName(gConfig.iAudioDevice, 0) : NULL), 0, (desired), (obtained), SDL_AUDIO_ALLOW_ANY_CHANGE))
 #endif
 
 PAL_FORCE_INLINE

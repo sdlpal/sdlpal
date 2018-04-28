@@ -47,6 +47,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 
 	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SurroundOPLOffset", 17, MAKE_VALUE(384,                           INT32_MIN,             INT32_MAX) },
 	{ PALCFG_LOGLEVEL,          PALCFG_INTEGER,  "LogLevel",           8, MAKE_VALUE(PAL_DEFAULT_LOGLEVEL,          LOGLEVEL_MIN,          LOGLEVEL_MAX) },
+	{ PALCFG_AUDIODEVICE,       PALCFG_INTEGER,  "AudioDevice",       11, MAKE_VALUE(-1,                            0,                     INT32_MAX) },
 
 	{ PALCFG_AUDIOBUFFERSIZE,   PALCFG_UNSIGNED, "AudioBufferSize",   15, MAKE_VALUE(PAL_AUDIO_DEFAULT_BUFFER_SIZE, 2,                     32768) },
 	{ PALCFG_OPLSAMPLERATE,     PALCFG_UNSIGNED, "OPLSampleRate",     13, MAKE_VALUE(49716,                         0,                     UINT32_MAX) },
@@ -56,7 +57,6 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_VALUE(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_VALUE(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
 	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WindowWidth",       11, MAKE_VALUE(PAL_DEFAULT_WINDOW_WIDTH,      0,                     UINT32_MAX) },
-	{ PALCFG_AUDIODEVICE,       PALCFG_UNSIGNED, "AudioDevice",       11, MAKE_VALUE(0,                             0,                     UINT32_MAX) },
 
 	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, MAKE_VALUE("OGG",    NULL, NULL) },
 	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GamePath",           8, MAKE_VALUE(NULL,     NULL, NULL) },
@@ -482,7 +482,7 @@ PAL_LoadConfig(
 	gConfig.fFullScreen = values[PALCFG_FULLSCREEN].bValue;
 	gConfig.fEnableAviPlay = values[PALCFG_ENABLEAVIPLAY].bValue;
 	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
-	gConfig.iAudioDevice = values[PALCFG_AUDIODEVICE].uValue;
+	gConfig.iAudioDevice = values[PALCFG_AUDIODEVICE].iValue;
 
 	gConfig.iSurroundOPLOffset = values[PALCFG_SURROUNDOPLOFFSET].iValue;
 	gConfig.iLogLevel = values[PALCFG_LOGLEVEL].iValue;
@@ -531,8 +531,8 @@ PAL_SaveConfig(
 
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_SURROUNDOPLOFFSET), gConfig.iSurroundOPLOffset); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_LOGLEVEL), gConfig.iLogLevel); fputs(buf, fp);
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_AUDIODEVICE), gConfig.iAudioDevice); fputs(buf, fp);
 
-		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_AUDIODEVICE), gConfig.iAudioDevice); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_AUDIOBUFFERSIZE), gConfig.wAudioBufferSize); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_OPLSAMPLERATE), gConfig.iOPLSampleRate); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_RESAMPLEQUALITY), gConfig.iResampleQuality); fputs(buf, fp);
