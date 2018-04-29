@@ -78,6 +78,15 @@ private:
 	DBOPL3::opl_chip chip;
 };
 
+static inline short clip_sample(int32_t sample) {
+	if (sample > 32767)
+		return 32767;
+	else if (sample < -32768)
+		return -32768;
+	else
+		return sample;
+}
+
 class DBINTOPL2 : public OPLCORE
 {
 public:
@@ -89,7 +98,9 @@ public:
 	{
 		auto buffer = (int32_t*)alloca(samples * sizeof(int32_t));
 		chip.GenerateBlock2(samples, buffer);
-		for (int i = 0; i < samples; i++) buf[i] = (buffer[i] < 32768) ? (buffer[i] > -32769 ? (int16_t)buffer[i] : -32768) : 32767;
+		for (int i = 0; i < samples; i++) {
+			buf[i] = clip_sample(buffer[i]);
+		}
 	}
 	OPLCORE* Duplicate() { return new DBINTOPL2(rate); }
 
@@ -106,9 +117,20 @@ public:
 	void Write(uint32_t reg, uint8_t val) { chip.WriteReg(reg, val); }
 	void Generate(short* buf, int samples)
 	{
-		auto buffer = (int32_t*)alloca(samples * sizeof(int32_t) * 2);
-		chip.GenerateBlock3(samples, buffer);
-		for (int i = 0; i < samples * 2; i++) buf[i] = (buffer[i] < 32768) ? (buffer[i] > -32769 ? (int16_t)buffer[i] : -32768) : 32767;
+		if (chip.opl3Active) {
+			auto buffer = (int32_t*)alloca(samples * sizeof(int32_t) * 2);
+			chip.GenerateBlock3(samples, buffer);
+			for (int i = 0; i < samples * 2; i++) {
+				buf[i] = clip_sample(buffer[i]);
+			}
+		}
+		else {
+			auto buffer = (int32_t*)alloca(samples * sizeof(int32_t));
+			chip.GenerateBlock2(samples, buffer);
+			for (int i = 0, j = 0; i < samples; i++, j += 2) {
+				buf[j + 1] = buf[j] = clip_sample(buffer[i]);
+			}
+		}
 	}
 	OPLCORE* Duplicate() { return new DBINTOPL3(rate); }
 

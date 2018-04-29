@@ -26,7 +26,8 @@
 
 #define SDLPAL_BUILD_OPL_CORE
 
-namespace MAME {
+namespace MAME
+{
 	namespace OPL2
 	{
 #		include "mame/fmopl.cpp"

@@ -39,4 +39,8 @@ typedef enum _OPLCHIP_TYPE {
 	OPLCHIP_DUAL_OPL2,
 } OPLCHIP_TYPE;
 
+#define OPL3_EXTREG_BASE    0x100
+#define OPL3_4OP_REGISTER   0x104
+#define OPL3_MODE_REGISTER  0x105
+
 #endif

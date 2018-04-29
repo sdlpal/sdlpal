@@ -39,7 +39,7 @@ public:
 
 	void Reset() { OPL3_Reset(&chip, rate); }
 	void Write(uint32_t reg, uint8_t val) {
-		if (reg == 0x104 || reg == 0x105) {
+		if (reg == OPL3_4OP_REGISTER || reg == OPL3_MODE_REGISTER) {
 			OPL3_WriteReg(&chip, (uint16_t)reg, val);
 		}
 		else {

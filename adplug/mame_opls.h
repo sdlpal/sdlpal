@@ -34,20 +34,19 @@ namespace MAME
 	namespace OPL2
 	{
 #		include "mame/fmopl.h"
+		const uint32_t INTERNAL_FREQ = 3579545;   // The OPL2 operates at 3.58MHz
 	}
 	namespace OPL3
 	{
 #		include "mame/ymf262.h"
+		const uint32_t INTERNAL_FREQ = 14318180;  // The OPL3 operates at 14.318MHz
 	}
-
-	const uint32_t OPL2_INTERNAL_FREQ = 3600000;   // The OPL2 operates at 3.6MHz
-	const uint32_t OPL3_INTERNAL_FREQ = 14400000;  // The OPL3 operates at 14.4MHz
 }
 
 class MAMEOPL2 : public OPLCORE
 {
 public:
-	MAMEOPL2(uint32_t samplerate) : OPLCORE(samplerate), chip(MAME::OPL2::ym3812_init(NULL, MAME::OPL2_INTERNAL_FREQ, samplerate)) { }
+	MAMEOPL2(uint32_t samplerate) : OPLCORE(samplerate), chip(MAME::OPL2::ym3812_init(NULL, MAME::OPL2::INTERNAL_FREQ, samplerate)) { }
 	~MAMEOPL2() { MAME::OPL2::ym3812_shutdown(chip); }
 
 	void Reset() { MAME::OPL2::ym3812_reset_chip(chip); }
@@ -62,7 +61,7 @@ private:
 class MAMEOPL3 : public OPLCORE
 {
 public:
-	MAMEOPL3(uint32_t samplerate) : OPLCORE(samplerate), chip(MAME::OPL3::ymf262_init(NULL, MAME::OPL3_INTERNAL_FREQ, samplerate)) { }
+	MAMEOPL3(uint32_t samplerate) : OPLCORE(samplerate), chip(MAME::OPL3::ymf262_init(NULL, MAME::OPL3::INTERNAL_FREQ, samplerate)) { }
 	~MAMEOPL3() { MAME::OPL3::ymf262_shutdown(chip); }
 
 	void Reset() { MAME::OPL3::ymf262_reset_chip(chip); }

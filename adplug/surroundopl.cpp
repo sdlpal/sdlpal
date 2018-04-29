@@ -169,7 +169,7 @@ CSurroundopl::CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2)
 		if (opl1->gettype() == TYPE_OPL3)
 		{
 			writer = &CSurroundopl::write_opl3;
-			opl1->write(0x105, 1);
+			opl1->write(OPL3_MODE_REGISTER, 1);
 		}
 		else
 		{
@@ -193,7 +193,7 @@ CSurroundopl::CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2)
 		// Disable opl2's OPL3 mode
 		if (opl2->gettype() == TYPE_OPL3)
 		{
-			opl2->write(0x105, 0);
+			opl2->write(OPL3_MODE_REGISTER, 0);
 		}
 	}
 }
@@ -287,22 +287,23 @@ void CSurroundopl::write_opl3(int reg, int val)
 		// so they should be treated separately.
 		if ((reg & 0xF) <= 5 || !percussion)
 		{
-			opls[0]->write(reg, val | 0x10);         // Lower channels goes to left
-			opls[0]->write(reg | 0x100, val | 0x20); // Higher channels goes to right
+			opls[0]->write(reg, val | 0x10);                    // Lower channels goes to left
+			opls[0]->write(reg | OPL3_EXTREG_BASE, val | 0x20); // Higher channels goes to right
 		}
 		else
 		{
-			opls[0]->write(reg, val | 0x30);         // Percussion channels goes to both
+			opls[0]->write(reg, val | 0x30);                    // Percussion channels goes to both
 		}
 	}
 	else
 	{
 		opls[0]->write(reg, val);                  // Write the original OPL data
-		if (reg != 0x04 && reg != 0x05 &&          // 0x104 & 0x105 has special meanings in OPL3
+		if (reg != (OPL3_4OP_REGISTER  & 0xFF) &&
+			reg != (OPL3_MODE_REGISTER & 0xFF) &&  // 0x104 & 0x105 has special meanings in OPL3
 			group != 0xA && group != 0xB &&        // Group 0xA & 0xB are the key to harmonic effect 
 			(!percussion || (group & 0x1) == 0x0)) // For groups 0x2-0x9 and 0xE-0xF, percussion channels
 		{                                          // resides in odd-group registers.
-			opls[0]->write(reg | 0x100, val);      // Write the same data into counterpart registers
+			opls[0]->write(reg | OPL3_EXTREG_BASE, val);      // Write the same data into counterpart registers
 		}
 	}
 
@@ -319,12 +320,12 @@ void CSurroundopl::write_opl3(int reg, int val)
 			// We need to adjust the upper/lower bits
 			// If current reg is within [0xA0, 0xA8], we should write to [0x1B0, 0x1B8]
 			// If current reg is within [0xB0, 0xB8], we should write to [0x1A0, 0x1A8]
-			int iRegister = (reg | 0x100) + ((reg >> 4 == 0xA) ? 0x10 : -0x10);
+			int iRegister = (reg | OPL3_EXTREG_BASE) + ((reg >> 4 == 0xA) ? 0x10 : -0x10);
 			opls[0]->write(iRegister, iTweakedFMReg[iRegister & 0x1F]);
 		}
 
 		// Now write to the counterpart with a possibly modified value
-		opls[0]->write(reg | 0x100, iTweakedFMReg[reg & 0x1F]);
+		opls[0]->write(reg | OPL3_EXTREG_BASE, iTweakedFMReg[reg & 0x1F]);
 	}
 }
 
