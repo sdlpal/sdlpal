@@ -22,6 +22,4 @@
  *
  */
 
-#define SDLPAL_BUILD_OPL_CORE
-
-#include "nuked/opl3.c"
+#include "nuked/opl3.c.h"

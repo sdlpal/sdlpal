@@ -297,13 +297,13 @@ void CSurroundopl::write_opl3(int reg, int val)
 	}
 	else
 	{
-		opls[0]->write(reg, val);                  // Write the original OPL data
+		opls[0]->write(reg, val);                               // Write the original OPL data
 		if (reg != (OPL3_4OP_REGISTER  & 0xFF) &&
-			reg != (OPL3_MODE_REGISTER & 0xFF) &&  // 0x104 & 0x105 has special meanings in OPL3
-			group != 0xA && group != 0xB &&        // Group 0xA & 0xB are the key to harmonic effect 
-			(!percussion || (group & 0x1) == 0x0)) // For groups 0x2-0x9 and 0xE-0xF, percussion channels
-		{                                          // resides in odd-group registers.
-			opls[0]->write(reg | OPL3_EXTREG_BASE, val);      // Write the same data into counterpart registers
+			reg != (OPL3_MODE_REGISTER & 0xFF) &&               // 0x104 & 0x105 has special meanings in OPL3
+			group != 0xA && group != 0xB &&                     // Group 0xA & 0xB are the key to harmonic effect 
+			(!percussion || (group & 0x1) == 0x0))              // For groups 0x2-0x9 and 0xE-0xF, percussion channels
+		{                                                       // resides in odd-group registers.
+			opls[0]->write(reg | OPL3_EXTREG_BASE, val);        // Write the same data into counterpart registers
 		}
 	}
 

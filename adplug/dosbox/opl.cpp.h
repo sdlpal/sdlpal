@@ -1,4 +1,3 @@
-#ifdef SDLPAL_BUILD_OPL_CORE
 /*
  *  Copyright (C) 2002-2017  The DOSBox Team
  *  OPL2/OPL3 emulation library
@@ -1435,4 +1434,3 @@ void adlib_getsample(opl_chip* chip, Bit16s* sndptr, Bits numsamples) {
 
 	}
 }
-#endif

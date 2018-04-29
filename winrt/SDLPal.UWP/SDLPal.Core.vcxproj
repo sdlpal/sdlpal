@@ -214,16 +214,21 @@
     <ClInclude Include="..\..\adplug\binfile.h" />
     <ClInclude Include="..\..\adplug\binio.h" />
     <ClInclude Include="..\..\adplug\convertopl.h" />
+    <ClInclude Include="..\..\adplug\dosbox\dbopl.cpp.h" />
     <ClInclude Include="..\..\adplug\dosbox\dbopl.h" />
     <ClInclude Include="..\..\adplug\dosbox\dosbox.h" />
+    <ClInclude Include="..\..\adplug\dosbox\opl.cpp.h" />
     <ClInclude Include="..\..\adplug\dosbox\opl.h" />
     <ClInclude Include="..\..\adplug\dosbox_opls.h" />
     <ClInclude Include="..\..\adplug\emuopls.h" />
     <ClInclude Include="..\..\adplug\fprovide.h" />
+    <ClInclude Include="..\..\adplug\mame\fmopl.cpp.h" />
     <ClInclude Include="..\..\adplug\mame\fmopl.h" />
     <ClInclude Include="..\..\adplug\mame\mame.h" />
+    <ClInclude Include="..\..\adplug\mame\ymf262.cpp.h" />
     <ClInclude Include="..\..\adplug\mame\ymf262.h" />
     <ClInclude Include="..\..\adplug\mame_opls.h" />
+    <ClInclude Include="..\..\adplug\nuked\opl3.c.h" />
     <ClInclude Include="..\..\adplug\nuked\opl3.h" />
     <ClInclude Include="..\..\adplug\nuked_opl.h" />
     <ClInclude Include="..\..\adplug\opl.h" />
@@ -336,15 +341,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\adplug\binfile.cpp" />
     <ClCompile Include="..\..\adplug\binio.cpp" />
-    <ClCompile Include="..\..\adplug\dosbox\dbopl.cpp" />
-    <ClCompile Include="..\..\adplug\dosbox\opl.cpp" />
     <ClCompile Include="..\..\adplug\dosbox_opls.cpp" />
     <ClCompile Include="..\..\adplug\emuopls.cpp" />
     <ClCompile Include="..\..\adplug\fprovide.cpp" />
-    <ClCompile Include="..\..\adplug\mame\fmopl.cpp" />
-    <ClCompile Include="..\..\adplug\mame\ymf262.cpp" />
     <ClCompile Include="..\..\adplug\mame_opls.cpp" />
-    <ClCompile Include="..\..\adplug\nuked\opl3.c" />
     <ClCompile Include="..\..\adplug\nuked_opl.c" />
     <ClCompile Include="..\..\adplug\player.cpp" />
     <ClCompile Include="..\..\adplug\rix.cpp" />

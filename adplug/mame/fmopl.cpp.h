@@ -1,4 +1,3 @@
-#ifdef SDLPAL_BUILD_OPL_CORE
 // license:GPL-2.0+
 // copyright-holders:Jarek Burczynski,Tatsuyuki Satoh
 /*
@@ -2587,7 +2586,5 @@ void y8950_set_keyboard_handler(void *chip,OPL_PORTHANDLER_W KeyboardHandler_w,O
 	OPL->keyboardhandler_r = KeyboardHandler_r;
 	OPL->keyboard_param = device;
 }
-
-#endif
 
 #endif

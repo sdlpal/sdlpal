@@ -1,4 +1,3 @@
-#ifdef SDLPAL_BUILD_OPL_CORE
 //
 // Copyright (C) 2013-2018 Alexey Khokholov (Nuke.YKT)
 //
@@ -1376,4 +1375,3 @@ void OPL3_GenerateStream(opl3_chip *chip, Bit16s *sndptr, Bit32u numsamples)
         sndptr += 2;
     }
 }
-#endif

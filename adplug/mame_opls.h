@@ -50,7 +50,10 @@ public:
 	~MAMEOPL2() { MAME::OPL2::ym3812_shutdown(chip); }
 
 	void Reset() { MAME::OPL2::ym3812_reset_chip(chip); }
-	void Write(uint32_t reg, uint8_t val) { MAME::OPL2::ym3812_write(chip, 0, reg); MAME::OPL2::ym3812_write(chip, 1, val); }
+	void Write(uint32_t reg, uint8_t val) {
+		MAME::OPL2::ym3812_write(chip, 0, reg);
+		MAME::OPL2::ym3812_write(chip, 1, val);
+	}
 	void Generate(short* buf, int samples) { MAME::OPL2::ym3812_update_one(chip, buf, samples); }
 	OPLCORE* Duplicate() { return new MAMEOPL2(rate); }
 
@@ -65,14 +68,15 @@ public:
 	~MAMEOPL3() { MAME::OPL3::ymf262_shutdown(chip); }
 
 	void Reset() { MAME::OPL3::ymf262_reset_chip(chip); }
-	void Write(uint32_t reg, uint8_t val) { MAME::OPL3::ymf262_write(chip, addr_port[reg >> 8], reg); MAME::OPL3::ymf262_write(chip, data_port[reg >> 8], val); }
+	void Write(uint32_t reg, uint8_t val) {
+		MAME::OPL3::ymf262_write(chip, ((reg >> 7) & 0x2)    , reg & 0xff);
+		MAME::OPL3::ymf262_write(chip, ((reg >> 7) & 0x2) + 1, val);
+	}
 	void Generate(short* buf, int samples) { MAME::OPL3::ymf262_update_one(chip, buf, samples); }
 	OPLCORE* Duplicate() { return new MAMEOPL3(rate); }
 
 private:
 	void* chip;
-	const int addr_port[2] = { 0, 2 };
-	const int data_port[2] = { 1, 3 };
 };
 
 #endif

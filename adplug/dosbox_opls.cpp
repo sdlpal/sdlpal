@@ -28,23 +28,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SDLPAL_BUILD_OPL_CORE
-
 namespace DBOPL2
 {
 #	undef OPLTYPE_IS_OPL3
-#	include "dosbox/opl.cpp"
+#	include "dosbox/opl.cpp.h"
 }
 
 namespace DBOPL3
 {
 #	define OPLTYPE_IS_OPL3
-#	include "dosbox/opl.cpp"
+#	include "dosbox/opl.cpp.h"
 #	undef OPLTYPE_IS_OPL3
 }
 
 namespace DBOPL
 {
-#	include "dosbox/dbopl.cpp"
+#	include "dosbox/dbopl.cpp.h"
 	static bool doneTables = InitTables();
 }

@@ -1,4 +1,3 @@
-#ifdef SDLPAL_BUILD_OPL_CORE
 /*
  *  Copyright (C) 2002-2017  The DOSBox Team
  *
@@ -1517,4 +1516,3 @@ void Handler::Init( Bitu rate ) {
 */
 
 //};		//Namespace DBOPL
-#endif

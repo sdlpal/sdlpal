@@ -324,21 +324,6 @@
     <ClCompile Include="..\adplug\emuopls.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\adplug\nuked\opl3.c">
-      <Filter>adplug\nuked</Filter>
-    </ClCompile>
-    <ClCompile Include="..\adplug\mame\fmopl.cpp">
-      <Filter>adplug\mame</Filter>
-    </ClCompile>
-    <ClCompile Include="..\adplug\mame\ymf262.cpp">
-      <Filter>adplug\mame</Filter>
-    </ClCompile>
-    <ClCompile Include="..\adplug\dosbox\dbopl.cpp">
-      <Filter>adplug\dosbox</Filter>
-    </ClCompile>
-    <ClCompile Include="..\adplug\dosbox\opl.cpp">
-      <Filter>adplug\dosbox</Filter>
-    </ClCompile>
     <ClCompile Include="..\adplug\dosbox_opls.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
@@ -715,6 +700,21 @@
     </ClInclude>
     <ClInclude Include="..\adplug\opltypes.h">
       <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\mame\fmopl.cpp.h">
+      <Filter>adplug\mame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\mame\ymf262.cpp.h">
+      <Filter>adplug\mame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\dosbox\dbopl.cpp.h">
+      <Filter>adplug\dosbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\dosbox\opl.cpp.h">
+      <Filter>adplug\dosbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\nuked\opl3.c.h">
+      <Filter>adplug\nuked</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

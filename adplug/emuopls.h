@@ -98,21 +98,24 @@ public:
 	}
 
 	void write(int reg, int val) {
-		if (reg == 0x105) {
-			opl3_enabled = ((val & 0x1) == 0x1);
+		if (reg == 0x105 && currType == TYPE_OPL3) {
+			opl3mode = ((val & 0x1) == 0x1);
+		}
+		else {
+			reg &= opl3mode ? 0x1FF : 0xFF;
 		}
 		opl[currChip]->Write(reg, (uint8_t)val);
 	}
 
 	void init() {
 		opl[currChip]->Reset();
-		if (opl3_enabled) {
+		if (opl3mode) {
 			opl[currChip]->Write(0x105, 1);
 		}
 	}
 
 protected:
-	CEmuopl(OPLCORE* core, ChipType type) : Copl(type), opl3_enabled(false) {
+	CEmuopl(OPLCORE* core, ChipType type) : Copl(type), opl3mode(false) {
 		opl[0] = core;
 		init();
 		if (type == TYPE_DUAL_OPL2) {
@@ -127,7 +130,7 @@ protected:
 	}
 
 	OPLCORE* opl[2];
-	bool     opl3_enabled;
+	bool     opl3mode;
 };
 
 #endif
