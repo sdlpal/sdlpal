@@ -89,6 +89,16 @@ AUDIO_SoundEnabled(
    VOID
 );
 
+void
+AUDIO_Lock(
+	void
+);
+
+void
+AUDIO_Unlock(
+	void
+);
+
 PAL_C_LINKAGE_END
 
 #define AUDIO_IsIntegerConversion(a) (((a) % gConfig.iSampleRate) == 0 || (gConfig.iSampleRate % (a)) == 0)

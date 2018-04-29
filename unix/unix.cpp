@@ -33,7 +33,8 @@ struct {
    Fl_Choice* loglevel;
    Fl_Choice* cd;
    Fl_Choice* bgm;
-   Fl_Choice* opl;
+   Fl_Choice* oplcore;
+   Fl_Choice* oplchip;
    Fl_Int_Input* samplerate;
    Fl_Check_Button* stereo;
    Fl_Int_Input* oplrate;
@@ -61,7 +62,8 @@ struct {
    const char* avi;
    const char* cd;
    const char* bgm;
-   const char* opl;
+   const char* oplcore;
+   const char* oplchip;
    const char* samplerate;
    const char* stereo;
    const char* oplrate;
@@ -75,24 +77,24 @@ struct {
    const char* def;
    const char* levels;
 } gLabels[3] = {
-   { "SDLPAL Launcher",     "Language & Font",    "Display",      "Audio",      "Logging",
-     "Game resource path:", "Message file:",      "Font file:",   "Log file:",  "Log level:",
-     "Use touc&h overlay",  "&Keep aspect ratio", "&Full screen", "Enable A&VI","&CD type:",
-     "&BGM type:",          "&OPL type:",         "Sample rate:", "Ste&reo",    "OPL rate:",
-     "Surround O&PL",       "Music volume:",      "Sound volume:","Buffer:",    "Quality:",
-     "E&xit",               "&Launch game",       "&Default",     "Verbose|Debug|Informational|Warning|Error|Fatal" },
-   { "SDLPAL 启动器",        "字体及语言设置",      "显示设置",      "音频设置",     "日志记录设置",
-     "游戏资源目录：",        "语言文件：",         "字体文件",      "日志文件",     "日志记录级别：",
-     "启用触屏辅助(&H)",      "保持纵横比(&K)",     "全屏模式(&F)",  "AVI 动画(&V)", "&CD 音源：",
-     "&BGM 音源：",          "&OPL 类型：",        "采样率：",      "立体声(&R)",   "OPL 采样率：",
-     "环绕声 O&PL",          "音乐音量：",         "音效音量：",     "缓冲区：",     "质量：",
-     "退出(&X)",             "启动游戏(&L)",       "默认设置(&D)",  "详细信息|调试信息|运行信息|普通警告|严重错误|致命错误" },
-   { "SDLPAL 啟動器",        "字體及語言設定",      "顯示設定",      "音訊設定",      "日誌記錄設定",
-     "遊戲資源檔夾：",        "語言檔：",           "字體檔：",      "日誌檔：",      "日誌記錄級別：",
-     "啟用觸屏輔助(&H)",      "保持縱橫比(&K)",     "全屏模式(&F)",  "AVI 動畫(&V)",  "&CD 音源：",
-     "&BGM 音源：",          "&OPL 類型：",        "取樣速率：",    "立體聲(&R)",    "OPL 取樣速率：",
-     "環繞聲 O&PL",          "音樂音量：",          "音效音量：",    "緩衝區：",      "品質：",
-     "退出(&X)",             "啟動遊戲(&L)",       "默認設定(&D)",  "詳細信息|調試信息|運行信息|普通警告|嚴重錯誤|致命錯誤" },
+   { "SDLPAL Launcher",     "Language & Font",    "Display",       "Audio",         "Logging",
+     "Game resource path:", "Message file:",      "Font file:",    "Log file:",     "Log level:",
+     "Use touc&h overlay",  "&Keep aspect ratio", "&Full screen",  "Enable A&VI",   "&CD src:",
+     "&BGM src:",           "&OPL core:",         "O&PL chip:",    "Sample rate:",  "Ste&reo",
+     "OPL rate:",           "S&urround OPL",      "Music volume:", "Sound volume:", "Buffer:",
+     "Quality:",            "E&xit",              "&Launch game",  "&Default",      "Verbose|Debug|Informational|Warning|Error|Fatal" },
+   { "SDLPAL 启动器",       "字体及语言设置",     "显示设置",      "音频设置",      "日志记录设置",
+     "游戏资源目录：",      "语言文件：",         "字体文件",      "日志文件",      "日志记录级别：",
+     "启用触屏辅助(&H)",    "保持纵横比(&K)",     "全屏模式(&F)",  "AVI 动画(&V)",  "&CD 源：",
+     "&BGM 源：",           "&OPL 核心：",        "O&PL 芯片：",   "采样率：",      "立体声(&R)",
+     "OPL 采样率：",        "环绕声 OPL(&U)",     "音乐音量：",    "音效音量：",    "缓冲区：",
+     "质量：",              "退出(&X)",           "启动游戏(&L)",  "默认设置(&D)",  "详细信息|调试信息|运行信息|普通警告|严重错误|致命错误" },
+   { "SDLPAL 啟動器",       "字體及語言設定",     "顯示設定",      "音訊設定",      "日誌記錄設定",
+     "遊戲資源檔夾：",      "語言檔：",           "字體檔：",      "日誌檔：",      "日誌記錄級別：",
+     "啟用觸屏輔助(&H)",    "保持縱橫比(&K)",     "全屏模式(&F)",  "AVI 動畫(&V)",  "&CD 源：",
+     "&BGM 源：",           "&OPL 核心：",        "O&PL 晶片：",   "取樣速率：",    "立體聲(&R)",
+     "OPL 取樣速率：",      "環繞聲 OPL(&U)",     "音樂音量：",    "音效音量：",    "緩衝區：",
+     "品質：",              "退出(&X)",           "啟動遊戲(&L)",  "默認設定(&D)",  "詳細信息|調試信息|運行信息|普通警告|嚴重錯誤|致命錯誤" },
 };
 
 void InitControls()
@@ -111,7 +113,8 @@ void InitControls()
    gWidgets.bgm->value(gConfig.eMusicType);
    gWidgets.stereo->value(gConfig.iAudioChannels == 2 ? 1 : 0);
    sprintf(buffer, "%d", gConfig.iSampleRate); gWidgets.samplerate->value(buffer);
-   gWidgets.opl->value(gConfig.eOPLType);
+   gWidgets.oplcore->value(gConfig.eOPLCore);
+   gWidgets.oplchip->value(gConfig.eOPLChip);
    sprintf(buffer, "%d", gConfig.iOPLSampleRate); gWidgets.oplrate->value(buffer);
    gWidgets.surround->value(gConfig.fUseSurroundOPL ? 1 : 0);
    sprintf(buffer, "%d", gConfig.wAudioBufferSize); gWidgets.buffer->value(buffer);
@@ -142,7 +145,8 @@ void SaveControls()
    gConfig.eMusicType = (MUSICTYPE)(gWidgets.bgm->value());
    gConfig.iAudioChannels = gWidgets.stereo->value() ? 2 : 1;
    gConfig.iSampleRate = atoi(gWidgets.samplerate->value());
-   gConfig.eOPLType = (OPLTYPE)gWidgets.opl->value();
+   gConfig.eOPLCore = (OPLCORE_TYPE)gWidgets.oplcore->value();
+   gConfig.eOPLChip = gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : (OPLCHIP_TYPE)gWidgets.oplchip->value();
    gConfig.iOPLSampleRate = atoi(gWidgets.oplrate->value());
    gConfig.fUseSurroundOPL = gWidgets.surround->value();
    gConfig.wAudioBufferSize = atoi(gWidgets.buffer->value());
@@ -179,7 +183,7 @@ Fl_Window* InitWindow()
    gWidgets.fontfile = new Fl_Input(109, 79, 516, 22, gLabels[lang].fontfile);
 
    (new Fl_Box(FL_BORDER_BOX, 5, 127, 630, 30, gLabels[lang].logging))->align(FL_ALIGN_TOP);
-   (gWidgets.loglevel = new Fl_Choice(85, 132, 120, 20, gLabels[lang].loglevel))->add(gLabels[lang].levels);
+   (gWidgets.loglevel = new Fl_Choice(lang ? 115 : 85, 132, lang ? 90 : 120, 20, gLabels[lang].loglevel))->add(gLabels[lang].levels);
    gWidgets.logfile = new Fl_Input(284, 131, 341, 22, gLabels[lang].logfile);
 
    (new Fl_Box(FL_BORDER_BOX, 5, 180, 630, 30, gLabels[lang].display))->align(FL_ALIGN_TOP);
@@ -189,13 +193,14 @@ Fl_Window* InitWindow()
    gWidgets.fullscreen = new Fl_Check_Button(530, 185, 100, 20, gLabels[lang].fullscreen);
 
    (new Fl_Box(FL_BORDER_BOX, 5, 230, 630, 130, gLabels[lang].audio))->align(FL_ALIGN_TOP);
-   (gWidgets.cd = new Fl_Choice(84, 239, lang ? 100 : 120, 22, gLabels[lang].cd))->add("MP3|OGG");
-   (gWidgets.bgm = new Fl_Choice(285, 239, 60, 22, gLabels[lang].bgm))->add("MIDI|RIX|MP3|OGG");
-   gWidgets.stereo = new Fl_Check_Button(365, 240, 70, 20, gLabels[lang].stereo);
+   (gWidgets.cd = new Fl_Choice(84, 239, 60, 22, gLabels[lang].cd))->add("MP3|OGG");
+   (gWidgets.bgm = new Fl_Choice(84, 269, 60, 22, gLabels[lang].bgm))->add("MIDI|RIX|MP3|OGG");
+   gWidgets.stereo = new Fl_Check_Button(lang ? 425 : 435, 270, 70, 20, gLabels[lang].stereo);
    gWidgets.samplerate = new Fl_Int_Input(570, 239, 60, 22, gLabels[lang].samplerate);
-   (gWidgets.opl = new Fl_Choice(84, 269, lang ? 100 : 120, 22, gLabels[lang].opl))->add("DOSBOX|MAME|DOSBOXNEW|NUKED");
-   gWidgets.oplrate = new Fl_Int_Input(285, 269, 60, 22, gLabels[lang].oplrate);
-   gWidgets.surround = new Fl_Check_Button(365, 270, 120, 20, gLabels[lang].surround);
+   (gWidgets.oplcore = new Fl_Choice(224, 239, 75, 22, gLabels[lang].oplcore))->add("MAME|DBFLT|DBINT|NUKED");
+   (gWidgets.oplchip = new Fl_Choice(224, 269, 75, 22, gLabels[lang].oplchip))->add("OPL2|OPL3");
+   gWidgets.oplrate = new Fl_Int_Input(lang ? 410 : 375, 239, 60, 22, gLabels[lang].oplrate);
+   gWidgets.surround = new Fl_Check_Button(305, 270, 120, 20, gLabels[lang].surround);
    gWidgets.buffer = new Fl_Int_Input(570, 269, 60, 22, gLabels[lang].buffer);
 
    gWidgets.quality = new Fl_Hor_Value_Slider(72, 299, 180, 22, gLabels[lang].quality);

@@ -264,4 +264,6 @@ typedef enum tagLOGLEVEL
 # define PAL_IS_PATH_SEPARATOR(x) ((x) == '/')
 #endif
 
+#include "adplug/opltypes.h"
+
 #endif

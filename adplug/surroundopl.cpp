@@ -166,8 +166,15 @@ CSurroundopl::CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2)
 	if (opl1->gettype() == TYPE_OPL3 || opl1->gettype() == TYPE_DUAL_OPL2)
 	{
 		updater = &CSurroundopl::update_opl3;
-		writer = opl1->gettype() == TYPE_OPL3 ? &CSurroundopl::write_opl3 : &CSurroundopl::write_dual_opl2;
-		opl1->setch(false, false); // Enable explicit channel control
+		if (opl1->gettype() == TYPE_OPL3)
+		{
+			writer = &CSurroundopl::write_opl3;
+			opl1->write(0x105, 1);
+		}
+		else
+		{
+			writer = &CSurroundopl::write_dual_opl2;
+		}
 	}
 	else
 	{
@@ -184,7 +191,7 @@ CSurroundopl::CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2)
 		writer = &CSurroundopl::write_opl2;
 
 		// Disable opl2's OPL3 mode
-		if (opl2 && opl2->gettype() == TYPE_OPL3)
+		if (opl2->gettype() == TYPE_OPL3)
 		{
 			opl2->write(0x105, 0);
 		}

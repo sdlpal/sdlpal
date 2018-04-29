@@ -111,7 +111,8 @@ void SDLPal::MainPage::LoadControlContents(bool loadDefault)
 
 	cbCD->SelectedIndex = (gConfig.eCDType == MUSIC_MP3) ? 0 : 1;
 	cbBGM->SelectedIndex = (gConfig.eMusicType <= MUSIC_OGG) ? gConfig.eMusicType : MUSIC_RIX;
-	cbOPL->SelectedIndex = (int)gConfig.eOPLType;
+	cbOPLCore->SelectedIndex = (int)gConfig.eOPLCore;
+	cbOPLChip->SelectedIndex = (int)gConfig.eOPLChip;
 	cbAspectRatio->SelectedIndex = gConfig.dwAspectY == 0 ? 0 : [](std::vector<float> &array, float toMatch) {return std::find_if(array.begin(), array.end(), [toMatch](float i)->bool { return fabs(toMatch - i) < FLT_EPSILON; }) - array.begin(); }(std::vector<float>({ 16.0f / 10.0f, 4.0f / 3.0f }), (float)gConfig.dwAspectX / gConfig.dwAspectY);
 
 	if (gConfig.iSampleRate <= 11025)
@@ -158,7 +159,8 @@ void SDLPal::MainPage::SaveControlContents()
 
 	gConfig.eCDType = (MUSICTYPE)(MUSIC_MP3 + cbCD->SelectedIndex);
 	gConfig.eMusicType = (MUSICTYPE)cbBGM->SelectedIndex;
-	gConfig.eOPLType = (OPLTYPE)cbOPL->SelectedIndex;
+	gConfig.eOPLCore = (OPLCORE_TYPE)cbOPLCore->SelectedIndex;
+	gConfig.eOPLChip = gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : (OPLCHIP_TYPE)cbOPLChip->SelectedIndex;
 
 	wchar_t *lasts;
 	wchar_t *selectedAspectRatio = (wchar_t*)static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbAspectRatio->SelectedItem)->Content)->Data();
@@ -175,7 +177,8 @@ void SDLPal::MainPage::SaveControlContents()
 void SDLPal::MainPage::cbBGM_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
 	auto visibility = (cbBGM->SelectedIndex == MUSIC_RIX) ? Windows::UI::Xaml::Visibility::Visible : Windows::UI::Xaml::Visibility::Collapsed;
-	cbOPL->Visibility = visibility;
+	cbOPLCore->Visibility = visibility;
+	cbOPLChip->Visibility = visibility;
 	cbOPLSR->Visibility = visibility;
 	tsSurroundOPL->Visibility = visibility;
 }

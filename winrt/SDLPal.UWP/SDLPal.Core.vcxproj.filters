@@ -52,6 +52,15 @@
       <UniqueIdentifier>{715380f7-416a-47aa-8162-46cc7696849d}</UniqueIdentifier>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="adplug\dosbox">
+      <UniqueIdentifier>{12e3b384-b9db-489c-8425-f9392e5075af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="adplug\mame">
+      <UniqueIdentifier>{69cff95b-9535-41fc-b862-ebaa718f2349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="adplug\nuked">
+      <UniqueIdentifier>{ac4cdbdc-c318-4396-9a4e-2dd9863eb751}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\adplug\binfile.h">
@@ -63,22 +72,13 @@
     <ClInclude Include="..\..\adplug\convertopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\adplug\dosbox_opl.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\adplug\emuopls.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\adplug\fmopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\fprovide.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\opl.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\adplug\opl3.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\player.h">
@@ -88,9 +88,6 @@
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\adplug\surroundopl.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\adplug\dbopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\liboggvorbis\include\ogg\config_types.h">
@@ -396,6 +393,39 @@
     <ClInclude Include="..\..\riff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\adplug\dosbox\dbopl.h">
+      <Filter>adplug\dosbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\dosbox\dosbox.h">
+      <Filter>adplug\dosbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\dosbox\opl.h">
+      <Filter>adplug\dosbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\mame\fmopl.h">
+      <Filter>adplug\mame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\mame\mame.h">
+      <Filter>adplug\mame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\mame\ymf262.h">
+      <Filter>adplug\mame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\nuked\opl3.h">
+      <Filter>adplug\nuked</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\dosbox_opls.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\mame_opls.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\nuked_opl.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\adplug\opltypes.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\adplug\binfile.cpp">
@@ -404,19 +434,10 @@
     <ClCompile Include="..\..\adplug\binio.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\adplug\dosbox_opl.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\adplug\emuopls.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\adplug\fmopl.c">
-      <Filter>adplug</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\adplug\fprovide.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\adplug\opl3.c">
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\adplug\player.cpp">
@@ -426,9 +447,6 @@
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\adplug\surroundopl.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\adplug\dbopl.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\audio.c">
@@ -643,6 +661,27 @@
     </ClCompile>
     <ClCompile Include="..\..\aviplay.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\dosbox\dbopl.cpp">
+      <Filter>adplug\dosbox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\dosbox\opl.cpp">
+      <Filter>adplug\dosbox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\mame\fmopl.cpp">
+      <Filter>adplug\mame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\mame\ymf262.cpp">
+      <Filter>adplug\mame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\nuked\opl3.c">
+      <Filter>adplug\nuked</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\dosbox_opls.cpp">
+      <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\mame_opls.cpp">
+      <Filter>adplug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

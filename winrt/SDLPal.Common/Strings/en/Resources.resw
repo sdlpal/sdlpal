@@ -220,11 +220,17 @@ You can use the main menu option inside the game to return to this page.</value>
   <data name="MusicVolume.Header" xml:space="preserve">
     <value>Music volume</value>
   </data>
-  <data name="OPL.Header" xml:space="preserve">
-    <value>Type of OPL emulator</value>
+  <data name="OPLChip.Header" xml:space="preserve">
+    <value>Type of OPL emulator chip</value>
   </data>
-  <data name="OPL.PlaceholderText" xml:space="preserve">
-    <value>Choose type of OPL emulator</value>
+  <data name="OPLChip.PlaceholderText" xml:space="preserve">
+    <value>Choose type of OPL emulator chip</value>
+  </data>
+  <data name="OPLCore.Header" xml:space="preserve">
+    <value>Type of OPL emulator core</value>
+  </data>
+  <data name="OPLCore.PlaceholderText" xml:space="preserve">
+    <value>Choose type of OPL emulator core</value>
   </data>
   <data name="OPLSR.Header" xml:space="preserve">
     <value>Sample rate of OPL emulator</value>

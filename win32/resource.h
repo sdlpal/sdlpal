@@ -5,7 +5,7 @@
 #define APP_MANIFEST                    1
 #define IDI_SDLPAL                      101
 #define IDD_LAUNCHER                    101
-#define IDS_CONFIRM                     103
+#define IDS_CONFIRM                     102
 #define IDC_DEFAULT                     1000
 #define IDC_BRGAME                      1001
 #define IDC_GAMEPATH                    1002
@@ -17,7 +17,7 @@
 #define IDC_MSGFILE                     1008
 #define IDC_CD                          1009
 #define IDC_BGM                         1010
-#define IDC_OPL                         1011
+#define IDC_OPL_CORE                    1011
 #define IDC_STEREO                      1012
 #define IDC_SURROUNDOPL                 1013
 #define IDC_SAMPLERATE                  1014
@@ -33,17 +33,17 @@
 #define IDC_USELOGFILE                  1024
 #define IDC_BRLOG                       1025
 #define IDC_LOGFILE                     1026
-#define IDC_CHECK1                      1027
 #define IDC_ENABLEAVI                   1027
+#define IDC_OPL_CHIP                    1028
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        104
+#define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1028
+#define _APS_NEXT_CONTROL_VALUE         1029
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

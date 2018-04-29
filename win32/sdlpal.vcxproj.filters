@@ -64,6 +64,15 @@
       <UniqueIdentifier>{85918901-0fba-453a-8dca-fd0665d789b3}</UniqueIdentifier>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="adplug\mame">
+      <UniqueIdentifier>{ecd0a2c8-523a-482d-b8a4-6ebd08aea825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="adplug\dosbox">
+      <UniqueIdentifier>{235eb646-1568-44f3-be0c-1771d9d4164e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="adplug\nuked">
+      <UniqueIdentifier>{fde4098f-ad55-43c6-a706-d34fea999c87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\battle.c">
@@ -151,12 +160,6 @@
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\adplug\binio.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\adplug\dosbox_opl.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\adplug\fmopl.c">
       <Filter>adplug</Filter>
     </ClCompile>
     <ClCompile Include="..\adplug\fprovide.cpp">
@@ -291,9 +294,6 @@
     <ClCompile Include="..\mp3play.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\adplug\dbopl.cpp">
-      <Filter>adplug</Filter>
-    </ClCompile>
     <ClCompile Include="win32.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -321,10 +321,31 @@
     <ClCompile Include="..\aviplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\adplug\opl3.c">
+    <ClCompile Include="..\adplug\emuopls.cpp">
       <Filter>adplug</Filter>
     </ClCompile>
-    <ClCompile Include="..\adplug\emuopls.cpp">
+    <ClCompile Include="..\adplug\nuked\opl3.c">
+      <Filter>adplug\nuked</Filter>
+    </ClCompile>
+    <ClCompile Include="..\adplug\mame\fmopl.cpp">
+      <Filter>adplug\mame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\adplug\mame\ymf262.cpp">
+      <Filter>adplug\mame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\adplug\dosbox\dbopl.cpp">
+      <Filter>adplug\dosbox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\adplug\dosbox\opl.cpp">
+      <Filter>adplug\dosbox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\adplug\dosbox_opls.cpp">
+      <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\adplug\mame_opls.cpp">
+      <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\adplug\nuked_opl.c">
       <Filter>adplug</Filter>
     </ClCompile>
   </ItemGroup>
@@ -414,12 +435,6 @@
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\adplug\binio.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\adplug\dosbox_opl.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\adplug\fmopl.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\adplug\fprovide.h">
@@ -638,9 +653,6 @@
     <ClInclude Include="..\players.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\adplug\dbopl.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
     <ClInclude Include="..\liboggvorbis\include\ogg\config_types.h">
       <Filter>liboggvorbis\include\ogg</Filter>
     </ClInclude>
@@ -665,13 +677,43 @@
     <ClInclude Include="..\riff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\adplug\opl3.h">
-      <Filter>adplug</Filter>
-    </ClInclude>
     <ClInclude Include="..\adplug\emuopls.h">
       <Filter>adplug</Filter>
     </ClInclude>
     <ClInclude Include="..\adplug\convertopl.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\nuked\opl3.h">
+      <Filter>adplug\nuked</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\mame\fmopl.h">
+      <Filter>adplug\mame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\mame\ymf262.h">
+      <Filter>adplug\mame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\dosbox\dbopl.h">
+      <Filter>adplug\dosbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\dosbox\opl.h">
+      <Filter>adplug\dosbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\dosbox\dosbox.h">
+      <Filter>adplug\dosbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\mame\mame.h">
+      <Filter>adplug\mame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\dosbox_opls.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\mame_opls.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\nuked_opl.h">
+      <Filter>adplug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\adplug\opltypes.h">
       <Filter>adplug</Filter>
     </ClInclude>
   </ItemGroup>

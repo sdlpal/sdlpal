@@ -15,7 +15,8 @@
     <string name="label_cdfmt">CD track format</string>
     <string name="label_musfmt">Music format</string>
     <string name="label_oplrate">OPL emulator\'s samplerate</string>
-    <string name="label_opl">OPL emulator</string>
+    <string name="label_oplcore">OPL emulator core</string>
+    <string name="label_oplchip">OPL emulator chip</string>
     <string name="label_aspectratio">Aspect Ratio</string>
     <string name="action_suropl">Surround OPL</string>
     <string name="action_default">Default</string>

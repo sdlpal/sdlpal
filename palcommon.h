@@ -101,14 +101,6 @@ typedef enum tagMUSICTYPE
 	MUSIC_SDLCD
 } MUSICTYPE, *LPMUSICTYPE;
 
-typedef enum tagOPLTYPE
-{
-	OPL_DOSBOX,
-	OPL_MAME,
-	OPL_DOSBOX_NEW,
-	OPL_NUKED,
-} OPLTYPE, *LPOPLTYPE;
-
 typedef enum tagCODEPAGE {
 	CP_MIN = 0,
 	CP_BIG5 = 0,

@@ -809,7 +809,7 @@ SOUND_Play(
 		return FALSE;
 	}
 
-	SDL_LockAudio();
+	AUDIO_Lock();
 
 	cursnd = &player->soundlist;
 	while (cursnd->next && cursnd->base)
@@ -839,7 +839,7 @@ SOUND_Play(
 	cursnd->ResampleMix = mixer;
 	player->cursounds++;
 
-	SDL_UnlockAudio();
+	AUDIO_Unlock();
 
 	return TRUE;
 }

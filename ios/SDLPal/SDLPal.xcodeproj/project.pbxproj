@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		57FB00EE1B7A4FEA005FCF4C /* dbopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57FB00EA1B7A4FEA005FCF4C /* dbopl.cpp */; };
+		57FB00ED1B7A4FEA005FCF4C /* mame_opls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57FB00E81B7A4FEA005FCF4C /* mame_opls.cpp */; };
 		57FB01421B7A50B0005FCF4C /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB00FB1B7A50B0005FCF4C /* analysis.c */; };
 		57FB01431B7A50B0005FCF4C /* bitrate.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB00FD1B7A50B0005FCF4C /* bitrate.c */; };
 		57FB01441B7A50B0005FCF4C /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB00FF1B7A50B0005FCF4C /* bitwise.c */; };
@@ -44,9 +44,8 @@
 		7165507F195BB3D8006E1227 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7165507D195BB3D8006E1227 /* Icon.png */; };
 		71655256195BB6DB006E1227 /* binfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551E5195BB6DA006E1227 /* binfile.cpp */; };
 		71655257195BB6DB006E1227 /* binio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551E7195BB6DA006E1227 /* binio.cpp */; };
-		71655258195BB6DB006E1227 /* dosbox_opl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551EA195BB6DA006E1227 /* dosbox_opl.cpp */; };
+		71655258195BB6DB006E1227 /* dosbox_opls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551EA195BB6DA006E1227 /* dosbox_opls.cpp */; };
 		71655259195BB6DB006E1227 /* emuopls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551EC195BB6DA006E1227 /* emuopls.cpp */; };
-		7165525A195BB6DB006E1227 /* fmopl.c in Sources */ = {isa = PBXBuildFile; fileRef = 716551EE195BB6DA006E1227 /* fmopl.c */; };
 		7165525B195BB6DB006E1227 /* fprovide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551F0195BB6DA006E1227 /* fprovide.cpp */; };
 		71655260195BB6DB006E1227 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551F8195BB6DA006E1227 /* player.cpp */; };
 		71655261195BB6DB006E1227 /* rix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551FA195BB6DA006E1227 /* rix.cpp */; };
@@ -103,7 +102,7 @@
 		C622BE721E474CD5000C8970 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE711E474CD5000C8970 /* CoreMotion.framework */; };
 		C622BE761E474CFC000C8970 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE751E474CFC000C8970 /* AVFoundation.framework */; };
 		C622BE771E474DF5000C8970 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 71655251195BB6DB006E1227 /* util.c */; };
-		C629A56B208643D30015C93C /* opl3.c in Sources */ = {isa = PBXBuildFile; fileRef = C629A565208643D20015C93C /* opl3.c */; };
+		C629A56B208643D30015C93C /* nuked_opl.c in Sources */ = {isa = PBXBuildFile; fileRef = C629A565208643D20015C93C /* nuked_opl.c */; };
 		C63505731EA6570300186049 /* midi.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056B1EA6570300186049 /* midi.c */; };
 		C63505741EA6570300186049 /* private.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056C1EA6570300186049 /* private.c */; };
 		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
@@ -142,8 +141,8 @@
 
 /* Begin PBXFileReference section */
 		2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SDLPal.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		57FB00EA1B7A4FEA005FCF4C /* dbopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbopl.cpp; sourceTree = "<group>"; };
-		57FB00EB1B7A4FEA005FCF4C /* dbopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbopl.h; sourceTree = "<group>"; };
+		57FB00E81B7A4FEA005FCF4C /* mame_opls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mame_opls.cpp; sourceTree = "<group>"; };
+		57FB00E91B7A4FEA005FCF4C /* mame_opls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mame_opls.h; sourceTree = "<group>"; };
 		57FB00F31B7A50B0005FCF4C /* config_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config_types.h; sourceTree = "<group>"; };
 		57FB00F41B7A50B0005FCF4C /* ogg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ogg.h; sourceTree = "<group>"; };
 		57FB00F51B7A50B0005FCF4C /* os_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os_types.h; sourceTree = "<group>"; };
@@ -236,13 +235,11 @@
 		716551E6195BB6DA006E1227 /* binfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binfile.h; sourceTree = "<group>"; };
 		716551E7195BB6DA006E1227 /* binio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = binio.cpp; sourceTree = "<group>"; };
 		716551E8195BB6DA006E1227 /* binio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binio.h; sourceTree = "<group>"; };
-		716551E9195BB6DA006E1227 /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convertopl.h; sourceTree = "<group>"; };
-		716551EA195BB6DA006E1227 /* dosbox_opl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dosbox_opl.cpp; sourceTree = "<group>"; };
-		716551EB195BB6DA006E1227 /* dosbox_opl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dosbox_opl.h; sourceTree = "<group>"; };
+		716551EA195BB6DA006E1227 /* dosbox_opls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dosbox_opls.cpp; sourceTree = "<group>"; };
+		716551EB195BB6DA006E1227 /* dosbox_opls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dosbox_opls.h; sourceTree = "<group>"; };
 		716551EC195BB6DA006E1227 /* emuopls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = emuopls.cpp; sourceTree = "<group>"; };
 		716551ED195BB6DA006E1227 /* emuopls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emuopls.h; sourceTree = "<group>"; };
-		716551EE195BB6DA006E1227 /* fmopl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fmopl.c; sourceTree = "<group>"; };
-		716551EF195BB6DA006E1227 /* fmopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmopl.h; sourceTree = "<group>"; };
+		716551EF195BB6DA006E1227 /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convertopl.h; sourceTree = "<group>"; };
 		716551F0195BB6DA006E1227 /* fprovide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fprovide.cpp; sourceTree = "<group>"; };
 		716551F1195BB6DA006E1227 /* fprovide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fprovide.h; sourceTree = "<group>"; };
 		716551F7195BB6DA006E1227 /* opl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl.h; sourceTree = "<group>"; };
@@ -359,8 +356,9 @@
 		C622BE731E474CE2000C8970 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		C622BE751E474CFC000C8970 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C626FFBF1E5BCBE700E39DD9 /* pal_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pal_config.h; path = ../../pal_config.h; sourceTree = "<group>"; };
-		C629A565208643D20015C93C /* opl3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opl3.c; sourceTree = "<group>"; };
-		C629A569208643D20015C93C /* opl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3.h; sourceTree = "<group>"; };
+		C629A568208643D20015C93C /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convertopl.h; sourceTree = "<group>"; };
+		C629A565208643D20015C93C /* nuked_opl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nuked_opl.c; sourceTree = "<group>"; };
+		C629A569208643D20015C93C /* nuked_opl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nuked_opl.h; sourceTree = "<group>"; };
 		C635056A1EA6570300186049 /* midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = midi.h; path = ../../../midi.h; sourceTree = "<group>"; };
 		C635056B1EA6570300186049 /* midi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi.c; path = ../../../midi.c; sourceTree = "<group>"; };
 		C635056C1EA6570300186049 /* private.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = private.c; path = ../../../private.c; sourceTree = "<group>"; };
@@ -674,21 +672,20 @@
 		716551E4195BB6DA006E1227 /* adplug */ = {
 			isa = PBXGroup;
 			children = (
-				C629A565208643D20015C93C /* opl3.c */,
-				C629A569208643D20015C93C /* opl3.h */,
-				57FB00EA1B7A4FEA005FCF4C /* dbopl.cpp */,
-				57FB00EB1B7A4FEA005FCF4C /* dbopl.h */,
+				C629A568208643D20015C93C /* convertopl.h */,
+				C629A565208643D20015C93C /* nuked_opl.c */,
+				C629A569208643D20015C93C /* nuked_opl.h */,
+				57FB00E81B7A4FEA005FCF4C /* mame_opls.cpp */,
+				57FB00E91B7A4FEA005FCF4C /* mame_opls.h */,
 				716551E5195BB6DA006E1227 /* binfile.cpp */,
 				716551E6195BB6DA006E1227 /* binfile.h */,
 				716551E7195BB6DA006E1227 /* binio.cpp */,
 				716551E8195BB6DA006E1227 /* binio.h */,
-				716551E9195BB6DA006E1227 /* convertopl.h */,
-				716551EA195BB6DA006E1227 /* dosbox_opl.cpp */,
-				716551EB195BB6DA006E1227 /* dosbox_opl.h */,
+				716551EA195BB6DA006E1227 /* dosbox_opls.cpp */,
+				716551EB195BB6DA006E1227 /* dosbox_opls.h */,
 				716551EC195BB6DA006E1227 /* emuopls.cpp */,
 				716551ED195BB6DA006E1227 /* emuopls.h */,
-				716551EE195BB6DA006E1227 /* fmopl.c */,
-				716551EF195BB6DA006E1227 /* fmopl.h */,
+				716551EF195BB6DA006E1227 /* convertopl.h */,
 				716551F0195BB6DA006E1227 /* fprovide.cpp */,
 				716551F1195BB6DA006E1227 /* fprovide.h */,
 				716551F7195BB6DA006E1227 /* opl.h */,
@@ -976,6 +973,7 @@
 			files = (
 				C622BE771E474DF5000C8970 /* util.c in Sources */,
 				C66C6CA41ECCB73100CE10C1 /* SDLPal_AppDelegate.m in Sources */,
+				57FB00ED1B7A4FEA005FCF4C /* mame_opls.cpp in Sources */,
 				57FB01591B7A50B0005FCF4C /* window.c in Sources */,
 				57FB01521B7A50B0005FCF4C /* registry.c in Sources */,
 				57FB014C1B7A50B0005FCF4C /* lookup.c in Sources */,
@@ -993,14 +991,12 @@
 				57FB01531B7A50B0005FCF4C /* res0.c in Sources */,
 				57FB01561B7A50B0005FCF4C /* synthesis.c in Sources */,
 				57FB01571B7A50B0005FCF4C /* vorbisenc.c in Sources */,
-				57FB00EE1B7A4FEA005FCF4C /* dbopl.cpp in Sources */,
 				57FB01631B7A50E0005FCF4C /* resampler.c in Sources */,
 				57FB01581B7A50B0005FCF4C /* vorbisfile.c in Sources */,
 				71655256195BB6DB006E1227 /* binfile.cpp in Sources */,
 				71655257195BB6DB006E1227 /* binio.cpp in Sources */,
-				71655258195BB6DB006E1227 /* dosbox_opl.cpp in Sources */,
+				71655258195BB6DB006E1227 /* dosbox_opls.cpp in Sources */,
 				71655259195BB6DB006E1227 /* emuopls.cpp in Sources */,
-				7165525A195BB6DB006E1227 /* fmopl.c in Sources */,
 				7165525B195BB6DB006E1227 /* fprovide.cpp in Sources */,
 				57FB014E1B7A50B0005FCF4C /* lsp.c in Sources */,
 				71655260195BB6DB006E1227 /* player.cpp in Sources */,
@@ -1060,7 +1056,7 @@
 				7165528E195BB6DB006E1227 /* yj1.c in Sources */,
 				57FB014D1B7A50B0005FCF4C /* lpc.c in Sources */,
 				71AA35801A0BCA4E00793FFF /* util.mm in Sources */,
-				C629A56B208643D30015C93C /* opl3.c in Sources */,
+				C629A56B208643D30015C93C /* nuked_opl.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

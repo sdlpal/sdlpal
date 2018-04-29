@@ -400,35 +400,29 @@ RIX_Init(
 		pRixPlayer->Play = RIX_Play;
 	}
 
-	const char* opl_type;
-	switch (gConfig.eOPLType)
+	auto chip = (Copl::ChipType)gConfig.eOPLChip;
+	if (chip == Copl::TYPE_OPL2 && gConfig.fUseSurroundOPL)
 	{
-	case OPL_DOSBOX:     opl_type = "DOSBOX"; break;
-	case OPL_DOSBOX_NEW: opl_type = "DOSBOX_NEW"; break;
-	case OPL_MAME:       opl_type = "MAME"; break;
-	case OPL_NUKED:      opl_type = "NUKED"; break;
-	default:             opl_type = NULL; break;
+		chip = Copl::TYPE_DUAL_OPL2;
 	}
 
-	Copl* opl1 = CreateOPLWrapper(opl_type, gConfig.iOPLSampleRate);
-	if (NULL == opl1)
+	Copl* opl = CEmuopl::CreateEmuopl((OPLCORE::TYPE)gConfig.eOPLCore, chip, gConfig.iOPLSampleRate);
+	if (NULL == opl)
 	{
 		delete pRixPlayer;
 		return NULL;
 	}
 
-	Copl* opl = opl1;
 	if (gConfig.fUseSurroundOPL)
 	{
-		Copl* opl2 = (opl1->gettype() == Copl::TYPE_OPL3 ? NULL : CreateOPLWrapper(opl_type, gConfig.iOPLSampleRate));
-		opl = new CSurroundopl(gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset, opl1, opl2);
-		if (NULL == opl)
+		Copl* tmpopl = new CSurroundopl(gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset, opl);
+		if (NULL == tmpopl)
 		{
-			delete opl2;
-			delete opl1;
+			delete opl;
 			delete pRixPlayer;
 			return NULL;
 		}
+		opl = tmpopl;
 	}
 
 	pRixPlayer->opl = new CConvertopl(opl, true, gConfig.iAudioChannels == 2);

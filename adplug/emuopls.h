@@ -40,11 +40,86 @@
  *
  */
 
-#ifndef H_ADPLUG_EMUOPLS
-#define H_ADPLUG_EMUOPLS
+#ifndef SDLPAL_EMUOPLS_H
+#define SDLPAL_EMUOPLS_H
 
 #include "opl.h"
 
-extern "C" Copl* CreateOPLWrapper(const char* type, int rate);
+class OPLCORE {
+public:
+	enum TYPE {
+		MAME  = OPLCORE_MAME,
+		DBFLT = OPLCORE_DBFLT,
+		DBINT = OPLCORE_DBINT,
+		NUKED = OPLCORE_NUKED,
+	};
+
+	OPLCORE(uint32_t rate) : rate(rate) {}
+	virtual ~OPLCORE() {}
+
+	virtual void Reset() = 0;
+	virtual void Write(uint32_t reg, uint8_t val) = 0;
+	virtual void Generate(short* buf, int samples) = 0;
+	virtual OPLCORE* Duplicate() = 0;
+
+protected:
+	uint32_t rate;
+};
+
+// CEmuopl implements the base class of a OPL wrapper
+// The DUALOPL2 mode should be implemented by a OPL3 core
+class CEmuopl : public Copl {
+public:
+	static Copl* CreateEmuopl(OPLCORE::TYPE core, ChipType type, int rate);
+
+	~CEmuopl() {
+		if (currType == TYPE_DUAL_OPL2) {
+			delete opl[1];
+		}
+		delete opl[0];
+	}
+
+	// Assumes a 16-bit, mono output sample buffer @ OPL2 mode
+	// Assumes a 16-bit, stereo output sample buffer @ OPL3/DUAL_OPL2 mode
+	void update(short *buf, int samples) {
+		if (currType == TYPE_DUAL_OPL2) {
+			auto lbuf = (short*)alloca(sizeof(short) * samples);
+			opl[0]->Generate(lbuf, samples);
+			opl[1]->Generate(buf + samples, samples);
+			for (int i = 0, j = 0; i < samples; i++) {
+				buf[j++] = lbuf[i];
+				buf[j++] = buf[i + samples];
+			}
+		}
+		else {
+			opl[0]->Generate(buf, samples);
+		}
+	}
+
+	void write(int reg, int val) {
+		opl[currChip]->Write(reg, (uint8_t)val);
+	}
+
+	void init() {
+		opl[currChip]->Reset();
+	}
+
+protected:
+	CEmuopl(OPLCORE* core, ChipType type) : Copl(type) {
+		opl[0] = core;
+		init();
+		if (type == TYPE_DUAL_OPL2) {
+			opl[1] = core->Duplicate();
+			setchip(1);
+			init();
+		}
+		else {
+			opl[1] = NULL;
+		}
+		setchip(0);
+	}
+
+	OPLCORE* opl[2];
+};
 
 #endif

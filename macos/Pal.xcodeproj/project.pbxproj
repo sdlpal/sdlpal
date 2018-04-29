@@ -32,7 +32,6 @@
 		5757D2851B7A3D5800464A74 /* vorbisenc.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D26C1B7A3D5800464A74 /* vorbisenc.c */; };
 		5757D2861B7A3D5800464A74 /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D26D1B7A3D5800464A74 /* vorbisfile.c */; };
 		5757D2871B7A3D5800464A74 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D26E1B7A3D5800464A74 /* window.c */; };
-		5757D28E1B7A3D8100464A74 /* dbopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5757D28A1B7A3D8100464A74 /* dbopl.cpp */; };
 		5757D2951B7A3DCE00464A74 /* mp3play.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D2901B7A3DCE00464A74 /* mp3play.c */; };
 		5757D2961B7A3DCE00464A74 /* oggplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D2911B7A3DCE00464A74 /* oggplay.c */; };
 		5757D2971B7A3DCE00464A74 /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D2931B7A3DCE00464A74 /* resampler.c */; };
@@ -59,13 +58,12 @@
 		7104FDA90D772FBC00A97E53 /* binfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD9A0D772FBC00A97E53 /* binfile.cpp */; };
 		7104FDAB0D772FBC00A97E53 /* binio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD9C0D772FBC00A97E53 /* binio.cpp */; };
 		7104FDAD0D772FBC00A97E53 /* emuopls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD9E0D772FBC00A97E53 /* emuopls.cpp */; };
-		7104FDAF0D772FBC00A97E53 /* fmopl.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FDA00D772FBC00A97E53 /* fmopl.c */; };
 		7104FDB10D772FBC00A97E53 /* fprovide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FDA20D772FBC00A97E53 /* fprovide.cpp */; };
 		7104FDB40D772FBC00A97E53 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FDA50D772FBC00A97E53 /* player.cpp */; };
 		7104FDB60D772FBC00A97E53 /* rix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7104FDA70D772FBC00A97E53 /* rix.cpp */; };
 		71147E4014085E31003FB2DB /* surroundopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71147E3E14085E31003FB2DB /* surroundopl.cpp */; };
 		713765641ED86C930084F495 /* aviplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 713765621ED86C930084F495 /* aviplay.c */; };
-		7138FD0F1424E4810060DE76 /* dosbox_opl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */; };
+		7138FD0F1424E4810060DE76 /* dosbox_opls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7138FD0C1424E4810060DE76 /* dosbox_opls.cpp */; };
 		716EB9BC0D77318900D5DE1F /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD3F0D772F6300A97E53 /* game.c */; };
 		716EB9C70D77340300D5DE1F /* sdlpal.icns in Resources */ = {isa = PBXBuildFile; fileRef = 716EB9C60D77340300D5DE1F /* sdlpal.icns */; };
 		716EB9CA0D77347B00D5DE1F /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD5E0D772F6300A97E53 /* ui.c */; };
@@ -103,7 +101,8 @@
 		C62600431E620CE700E39DD9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C62600421E620CE700E39DD9 /* Cocoa.framework */; };
 		C62600451E620F0500E39DD9 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = C62600441E620F0500E39DD9 /* GoogleTests.mm */; };
 		C62600491E62139C00E39DD9 /* test_swprintf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C62600461E62105500E39DD9 /* test_swprintf.cpp */; };
-		C629A55F208642580015C93C /* opl3.c in Sources */ = {isa = PBXBuildFile; fileRef = C629A55B208642460015C93C /* opl3.c */; };
+		C629A55F208642580015C93C /* nuked_opl.c in Sources */ = {isa = PBXBuildFile; fileRef = C629A55B208642460015C93C /* nuked_opl.c */; };
+		C629A560208642580015C93C /* mame_opls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C629A55E208642580015C93C /* mame_opls.cpp */; };
 		C63505C31EB4624B00186049 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505B51EB45F9A00186049 /* libSDL2.a */; };
 		C63505C71EB4627700186049 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505C61EB4627700186049 /* IOKit.framework */; };
 		C63505C91EB4629400186049 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505C81EB4629400186049 /* CoreAudio.framework */; };
@@ -244,8 +243,7 @@
 		5757D26D1B7A3D5800464A74 /* vorbisfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbisfile.c; sourceTree = "<group>"; };
 		5757D26E1B7A3D5800464A74 /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = window.c; sourceTree = "<group>"; };
 		5757D26F1B7A3D5800464A74 /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = window.h; sourceTree = "<group>"; };
-		5757D28A1B7A3D8100464A74 /* dbopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dbopl.cpp; path = adplug/dbopl.cpp; sourceTree = "<group>"; };
-		5757D28B1B7A3D8100464A74 /* dbopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dbopl.h; path = adplug/dbopl.h; sourceTree = "<group>"; };
+		5757D28B1B7A3D8100464A74 /* opltypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = opltypes.h; path = adplug/opltypes.h; sourceTree = "<group>"; };
 		5757D2901B7A3DCE00464A74 /* mp3play.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3play.c; sourceTree = "<group>"; };
 		5757D2911B7A3DCE00464A74 /* oggplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oggplay.c; sourceTree = "<group>"; };
 		5757D2921B7A3DCE00464A74 /* players.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = players.h; sourceTree = "<group>"; };
@@ -303,8 +301,7 @@
 		7104FD9D0D772FBC00A97E53 /* binio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = binio.h; path = adplug/binio.h; sourceTree = "<group>"; };
 		7104FD9E0D772FBC00A97E53 /* emuopls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = emuopls.cpp; path = adplug/emuopls.cpp; sourceTree = "<group>"; };
 		7104FD9F0D772FBC00A97E53 /* emuopls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emuopls.h; path = adplug/emuopls.h; sourceTree = "<group>"; };
-		7104FDA00D772FBC00A97E53 /* fmopl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fmopl.c; path = adplug/fmopl.c; sourceTree = "<group>"; };
-		7104FDA10D772FBC00A97E53 /* fmopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmopl.h; path = adplug/fmopl.h; sourceTree = "<group>"; };
+		7104FDA10D772FBC00A97E53 /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = convertopl.h; path = adplug/convertopl.h; sourceTree = "<group>"; };
 		7104FDA20D772FBC00A97E53 /* fprovide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fprovide.cpp; path = adplug/fprovide.cpp; sourceTree = "<group>"; };
 		7104FDA30D772FBC00A97E53 /* fprovide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fprovide.h; path = adplug/fprovide.h; sourceTree = "<group>"; };
 		7104FDA40D772FBC00A97E53 /* opl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = opl.h; path = adplug/opl.h; sourceTree = "<group>"; };
@@ -317,9 +314,8 @@
 		71147E3F14085E31003FB2DB /* surroundopl.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = surroundopl.h; path = adplug/surroundopl.h; sourceTree = "<group>"; };
 		713765621ED86C930084F495 /* aviplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aviplay.c; sourceTree = "<group>"; };
 		713765631ED86C930084F495 /* aviplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aviplay.h; sourceTree = "<group>"; };
-		7138FD0B1424E4810060DE76 /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.c.h; name = convertopl.h; path = adplug/convertopl.h; sourceTree = "<group>"; };
-		7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.cpp.cpp; name = dosbox_opl.cpp; path = adplug/dosbox_opl.cpp; sourceTree = "<group>"; };
-		7138FD0D1424E4810060DE76 /* dosbox_opl.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.c.h; name = dosbox_opl.h; path = adplug/dosbox_opl.h; sourceTree = "<group>"; };
+		7138FD0C1424E4810060DE76 /* dosbox_opls.cpp */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.cpp.cpp; name = dosbox_opls.cpp; path = adplug/dosbox_opls.cpp; sourceTree = "<group>"; };
+		7138FD0D1424E4810060DE76 /* dosbox_opls.h */ = {isa = PBXFileReference; fileEncoding = 18446744071562067968; lastKnownFileType = sourcecode.c.h; name = dosbox_opls.h; path = adplug/dosbox_opls.h; sourceTree = "<group>"; };
 		716EB9C60D77340300D5DE1F /* sdlpal.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sdlpal.icns; sourceTree = SOURCE_ROOT; };
 		71E23E7113F6D1AD001287B6 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.c; name = bit.c; path = libmad/bit.c; sourceTree = "<group>"; };
 		71E23E7213F6D1AD001287B6 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = bit.h; path = libmad/bit.h; sourceTree = "<group>"; };
@@ -381,8 +377,10 @@
 		C626FFC31E5BD49100E39DD9 /* pal_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pal_config.h; path = macos/pal_config.h; sourceTree = "<group>"; };
 		C626FFE21E6204BE00E39DD9 /* PalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C626FFE61E6204BE00E39DD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C629A55B208642460015C93C /* opl3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = opl3.c; path = adplug/opl3.c; sourceTree = "<group>"; };
-		C629A55D208642580015C93C /* opl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = opl3.h; path = adplug/opl3.h; sourceTree = "<group>"; };
+		C629A55B208642460015C93C /* nuked_opl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nuked_opl.c; path = adplug/nuked_opl.c; sourceTree = "<group>"; };
+		C629A55C208642570015C93C /* mame_opls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mame_opls.h; path = adplug/mame_opls.h; sourceTree = "<group>"; };
+		C629A55D208642580015C93C /* nuked_opl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nuked_opl.h; path = adplug/nuked_opl.h; sourceTree = "<group>"; };
+		C629A55E208642580015C93C /* mame_opls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mame_opls.cpp; path = adplug/mame_opls.cpp; sourceTree = "<group>"; };
 		C63505AB1EB45F9900186049 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = ../3rd/SDL/Xcode/SDL/SDL.xcodeproj; sourceTree = "<group>"; };
 		C63505C61EB4627700186049 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		C63505C81EB4629400186049 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -698,13 +696,13 @@
 		7104FD990D772FAA00A97E53 /* adplug */ = {
 			isa = PBXGroup;
 			children = (
-				C629A55B208642460015C93C /* opl3.c */,
-				C629A55D208642580015C93C /* opl3.h */,
-				5757D28A1B7A3D8100464A74 /* dbopl.cpp */,
-				5757D28B1B7A3D8100464A74 /* dbopl.h */,
-				7138FD0B1424E4810060DE76 /* convertopl.h */,
-				7138FD0C1424E4810060DE76 /* dosbox_opl.cpp */,
-				7138FD0D1424E4810060DE76 /* dosbox_opl.h */,
+				C629A55E208642580015C93C /* mame_opls.cpp */,
+				C629A55C208642570015C93C /* mame_opls.h */,
+				C629A55B208642460015C93C /* nuked_opl.c */,
+				C629A55D208642580015C93C /* nuked_opl.h */,
+				5757D28B1B7A3D8100464A74 /* opltypes.h */,
+				7138FD0C1424E4810060DE76 /* dosbox_opls.cpp */,
+				7138FD0D1424E4810060DE76 /* dosbox_opls.h */,
 				71147E3E14085E31003FB2DB /* surroundopl.cpp */,
 				71147E3F14085E31003FB2DB /* surroundopl.h */,
 				7104FD9A0D772FBC00A97E53 /* binfile.cpp */,
@@ -713,8 +711,7 @@
 				7104FD9D0D772FBC00A97E53 /* binio.h */,
 				7104FD9E0D772FBC00A97E53 /* emuopls.cpp */,
 				7104FD9F0D772FBC00A97E53 /* emuopls.h */,
-				7104FDA00D772FBC00A97E53 /* fmopl.c */,
-				7104FDA10D772FBC00A97E53 /* fmopl.h */,
+				7104FDA10D772FBC00A97E53 /* convertopl.h */,
 				7104FDA20D772FBC00A97E53 /* fprovide.cpp */,
 				7104FDA30D772FBC00A97E53 /* fprovide.h */,
 				7104FDA40D772FBC00A97E53 /* opl.h */,
@@ -1002,7 +999,7 @@
 				C602B0021CEF3E6C003A7B09 /* palcfg.c in Sources */,
 				002F3A3F09D088BA00EBEB88 /* main.c in Sources */,
 				5757D2841B7A3D5800464A74 /* synthesis.c in Sources */,
-				C629A55F208642580015C93C /* opl3.c in Sources */,
+				C629A55F208642580015C93C /* nuked_opl.c in Sources */,
 				5757D2831B7A3D5800464A74 /* smallft.c in Sources */,
 				5757D2971B7A3DCE00464A74 /* resampler.c in Sources */,
 				5757D2851B7A3D5800464A74 /* vorbisenc.c in Sources */,
@@ -1010,7 +1007,6 @@
 				7104FD6D0D772F6300A97E53 /* font.c in Sources */,
 				5757D2761B7A3D5800464A74 /* floor0.c in Sources */,
 				7104FD730D772F6300A97E53 /* global.c in Sources */,
-				5757D28E1B7A3D8100464A74 /* dbopl.cpp in Sources */,
 				C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */,
 				7104FD750D772F6300A97E53 /* input.c in Sources */,
 				7104FD780D772F6300A97E53 /* map.c in Sources */,
@@ -1041,10 +1037,10 @@
 				7104FDAD0D772FBC00A97E53 /* emuopls.cpp in Sources */,
 				5757D27D1B7A3D5800464A74 /* mapping0.c in Sources */,
 				5757D2861B7A3D5800464A74 /* vorbisfile.c in Sources */,
-				7104FDAF0D772FBC00A97E53 /* fmopl.c in Sources */,
 				5757D2771B7A3D5800464A74 /* floor1.c in Sources */,
 				7104FDB10D772FBC00A97E53 /* fprovide.cpp in Sources */,
 				7104FDB40D772FBC00A97E53 /* player.cpp in Sources */,
+				C629A560208642580015C93C /* mame_opls.cpp in Sources */,
 				C61464741EA643BD00A76CC9 /* midi.c in Sources */,
 				7104FDB60D772FBC00A97E53 /* rix.cpp in Sources */,
 				5757D27B1B7A3D5800464A74 /* lpc.c in Sources */,
@@ -1081,7 +1077,7 @@
 				71E23EAD13F6D1AD001287B6 /* timer.c in Sources */,
 				5757D2741B7A3D5800464A74 /* codebook.c in Sources */,
 				71147E4014085E31003FB2DB /* surroundopl.cpp in Sources */,
-				7138FD0F1424E4810060DE76 /* dosbox_opl.cpp in Sources */,
+				7138FD0F1424E4810060DE76 /* dosbox_opls.cpp in Sources */,
 				5757D2731B7A3D5800464A74 /* block.c in Sources */,
 				5757D2791B7A3D5800464A74 /* info.c in Sources */,
 			);

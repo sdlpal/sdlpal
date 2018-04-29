@@ -1,5 +1,6 @@
+#ifdef SDLPAL_BUILD_OPL_CORE
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,8 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- *  dbopl.cpp - Ported to SDLPAL by Lou Yihua <louyihua@21cn.com>, 2015-08-03.
  */
 
 /*
@@ -34,10 +33,12 @@
 	//DUNNO Keyon in 4op, switch to 2op without keyoff.
 */
 
+
+
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "dosbox.h"
+#include "dosbox.h"
 #include "dbopl.h"
 
 
@@ -45,7 +46,7 @@
 #define PI 3.14159265358979323846
 #endif
 
-namespace DBOPL {
+//namespace DBOPL {
 
 #define OPLRATE		((double)(14318180.0 / 288.0))
 #define TREMOLO_TABLE 52
@@ -372,7 +373,7 @@ void Operator::UpdateRates( const Chip* chip ) {
 	UpdateRelease( chip );
 }
 
-OPL_INLINE Bit32s Operator::RateForward( Bit32u add ) {
+INLINE Bit32s Operator::RateForward( Bit32u add ) {
 	rateIndex += add;
 	Bit32s ret = rateIndex >> RATE_SH;
 	rateIndex = rateIndex & RATE_MASK;
@@ -438,12 +439,12 @@ static const VolumeHandler VolumeHandlerTable[5] = {
 	&Operator::TemplateVolume< Operator::ATTACK >
 };
 
-OPL_INLINE Bitu Operator::ForwardVolume() {
+INLINE Bitu Operator::ForwardVolume() {
 	return currentLevel + (this->*volHandler)();
 }
 
 
-OPL_INLINE Bitu Operator::ForwardWave() {
+INLINE Bitu Operator::ForwardWave() {
 	waveIndex += waveCurrent;	
 	return waveIndex >> WAVE_SH;
 }
@@ -520,12 +521,12 @@ void Operator::WriteE0( const Chip* chip, Bit8u val ) {
 #endif
 }
 
-OPL_INLINE void Operator::SetState( Bit8u s ) {
+INLINE void Operator::SetState( Bit8u s ) {
 	state = s;
 	volHandler = VolumeHandlerTable[ s ];
 }
 
-OPL_INLINE bool Operator::Silent() const {
+INLINE bool Operator::Silent() const {
 	if ( !ENV_SILENT( totalLevel + volume ) )
 		return false;
 	if ( !(rateZero & ( 1 << state ) ) )
@@ -533,7 +534,7 @@ OPL_INLINE bool Operator::Silent() const {
 	return true;
 }
 
-OPL_INLINE void Operator::Prepare( const Chip* chip )  {
+INLINE void Operator::Prepare( const Chip* chip )  {
 	currentLevel = totalLevel + (chip->tremoloValue & tremoloMask);
 	waveCurrent = waveAdd;
 	if ( vibStrength >> chip->vibratoShift ) {
@@ -569,7 +570,7 @@ void Operator::KeyOff( Bit8u mask ) {
 	}
 }
 
-OPL_INLINE Bits Operator::GetWave( Bitu index, Bitu vol ) {
+INLINE Bits Operator::GetWave( Bitu index, Bitu vol ) {
 #if ( DBOPL_WAVE == WAVE_HANDLER )
 	return waveHandler( index, vol << ( 3 - ENV_EXTRA ) );
 #elif ( DBOPL_WAVE == WAVE_TABLEMUL )
@@ -586,7 +587,7 @@ OPL_INLINE Bits Operator::GetWave( Bitu index, Bitu vol ) {
 #endif
 }
 
-Bits OPL_INLINE Operator::GetSample( Bits modulation ) {
+Bits INLINE Operator::GetSample( Bits modulation ) {
 	Bitu vol = ForwardVolume();
 	if ( ENV_SILENT( vol ) ) {
 		//Simply forward the wave
@@ -716,18 +717,23 @@ void Channel::WriteB0( const Chip* chip, Bit8u val ) {
 	}
 }
 
-void Channel::WriteC0( const Chip* chip, Bit8u val ) {
+void Channel::WriteC0(const Chip* chip, Bit8u val) {
 	Bit8u change = val ^ regC0;
-	if ( !change )
+	if (!change)
 		return;
 	regC0 = val;
-	feedback = ( val >> 1 ) & 7;
-	if ( feedback ) {
+	feedback = (regC0 >> 1) & 7;
+	if (feedback) {
 		//We shift the input to the right 10 bit wave index value
 		feedback = 9 - feedback;
-	} else {
+	}
+	else {
 		feedback = 31;
 	}
+	UpdateSynth(chip);
+}
+
+void Channel::UpdateSynth( const Chip* chip ) {
 	//Select the new synth mode
 	if ( chip->opl3Active ) {
 		//4-op mode enabled for this channel
@@ -761,20 +767,20 @@ void Channel::WriteC0( const Chip* chip, Bit8u val ) {
 		} else if ((fourMask & 0x40) && ( chip->regBD & 0x20) ) {
 
 		//Regular dual op, am or fm
-		} else if ( val & 1 ) {
+		} else if (regC0 & 1 ) {
 			synthHandler = &Channel::BlockTemplate< sm3AM >;
 		} else {
 			synthHandler = &Channel::BlockTemplate< sm3FM >;
 		}
-		maskLeft = ( val & 0x10 ) ? -1 : 0;
-		maskRight = ( val & 0x20 ) ? -1 : 0;
+		maskLeft = (regC0 & 0x10 ) ? -1 : 0;
+		maskRight = (regC0 & 0x20 ) ? -1 : 0;
 	//opl2 active
 	} else { 
 		//Disable updating percussion channels
 		if ( (fourMask & 0x40) && ( chip->regBD & 0x20 ) ) {
 
 		//Regular dual op, am or fm
-		} else if ( val & 1 ) {
+		} else if (regC0 & 1 ) {
 			synthHandler = &Channel::BlockTemplate< sm2AM >;
 		} else {
 			synthHandler = &Channel::BlockTemplate< sm2FM >;
@@ -782,14 +788,8 @@ void Channel::WriteC0( const Chip* chip, Bit8u val ) {
 	}
 }
 
-void Channel::ResetC0( const Chip* chip ) {
-	Bit8u val = regC0;
-	regC0 ^= 0xff;
-	WriteC0( chip, val );
-};
-
 template< bool opl3Mode>
-OPL_INLINE void Channel::GeneratePercussion( Chip* chip, Bit32s* output ) {
+INLINE void Channel::GeneratePercussion( Chip* chip, Bit32s* output ) {
 	Channel* chan = this;
 
 	//BassDrum
@@ -883,8 +883,6 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 			return (this + 2);
 		}
 		break;
-	default:
-		break;
 	}
 	//Init the operators with the the current vibrato and tremolo values
 	Op( 0 )->Prepare( chip );
@@ -950,8 +948,6 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 			output[ i * 2 + 0 ] += sample & maskLeft;
 			output[ i * 2 + 1 ] += sample & maskRight;
 			break;
-		default:
-			break;
 		}
 	}
 	switch( mode ) {
@@ -984,7 +980,7 @@ Chip::Chip() {
 	opl3Active = 0;
 }
 
-OPL_INLINE Bit32u Chip::ForwardNoise() {
+INLINE Bit32u Chip::ForwardNoise() {
 	noiseCounter += noiseAdd;
 	Bitu count = noiseCounter >> LFO_SH;
 	noiseCounter &= WAVE_MASK;
@@ -996,7 +992,7 @@ OPL_INLINE Bit32u Chip::ForwardNoise() {
 	return noiseValue;
 }
 
-OPL_INLINE Bit32u Chip::ForwardLFO( Bit32u samples ) {
+INLINE Bit32u Chip::ForwardLFO( Bit32u samples ) {
 	//Current vibrato value, runs 4x slower than tremolo
 	vibratoSign = ( VibratoTable[ vibratoIndex >> 2] ) >> 7;
 	vibratoShift = ( VibratoTable[ vibratoIndex >> 2] & 7) + vibratoStrength; 
@@ -1075,7 +1071,8 @@ void Chip::WriteBD( Bit8u val ) {
 	//Toggle keyoffs when we turn off the percussion
 	} else if ( change & 0x20 ) {
 		//Trigger a reset to setup the original synth handler
-		chan[6].ResetC0( this );
+		//This makes it call
+		chan[6].UpdateSynth( this );
 		chan[6].op[0].KeyOff( 0x2 );
 		chan[6].op[1].KeyOff( 0x2 );
 		chan[7].op[0].KeyOff( 0x2 );
@@ -1100,6 +1097,14 @@ void Chip::WriteBD( Bit8u val ) {
 		regChan->_FUNC_( this, val );													\
 	}
 
+//Update the 0xc0 register for all channels to signal the switch to mono/stereo handlers
+void Chip::UpdateSynths() {
+	for (int i = 0; i < 18; i++) {
+		chan[i].UpdateSynth(this);
+	}
+}
+
+
 void Chip::WriteReg( Bit32u reg, Bit8u val ) {
 	Bitu index;
 	switch ( (reg & 0xf0) >> 4 ) {
@@ -1112,15 +1117,16 @@ void Chip::WriteReg( Bit32u reg, Bit8u val ) {
 				return;
 			//Always keep the highest bit enabled, for checking > 0x80
 			reg104 = 0x80 | ( val & 0x3f );
+			//Switch synths when changing the 4op combinations
+			UpdateSynths();
 		} else if ( reg == 0x105 ) {
 			//MAME says the real opl3 doesn't reset anything on opl3 disable/enable till the next write in another register
 			if ( !((opl3Active ^ val) & 1 ) )
 				return;
 			opl3Active = ( val & 1 ) ? 0xff : 0;
-			//Update the 0xc0 register for all channels to signal the switch to mono/stereo handlers
-			for ( int i = 0; i < 18;i++ ) {
-				chan[i].ResetC0( this );
-			}
+			//Just tupdate the synths now that opl3 most have been enabled
+			//This isn't how the real card handles it but need to switch to stereo generating handlers
+			UpdateSynths();
 		} else if ( reg == 0x08 ) {
 			reg08 = val;
 		}
@@ -1181,9 +1187,9 @@ void Chip::GenerateBlock2( Bitu total, Bit32s* output ) {
 	while ( total > 0 ) {
 		Bit32u samples = ForwardLFO( total );
 		memset(output, 0, sizeof(Bit32s) * samples);
-		int count = 0;
+//		int count = 0;
 		for( Channel* ch = chan; ch < chan + 9; ) {
-			count++;
+//			count++;
 			ch = (ch->*(ch->synthHandler))( this, samples, output );
 		}
 		total -= samples;
@@ -1195,9 +1201,9 @@ void Chip::GenerateBlock3( Bitu total, Bit32s* output  ) {
 	while ( total > 0 ) {
 		Bit32u samples = ForwardLFO( total );
 		memset(output, 0, sizeof(Bit32s) * samples *2);
-		int count = 0;
+//		int count = 0;
 		for( Channel* ch = chan; ch < chan + 18; ) {
-			count++;
+//			count++;
 			ch = (ch->*(ch->synthHandler))( this, samples, output );
 		}
 		total -= samples;
@@ -1241,6 +1247,7 @@ void Chip::Setup( Bit32u rate ) {
 		EnvelopeSelect( i, index, shift );
 		linearRates[i] = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH + ENV_EXTRA - shift - 3 )));
 	}
+//	Bit32s attackDiffs[62];
 	//Generate the best matching attack rate
 	for ( Bit8u i = 0; i < 62; i++ ) {
 		Bit8u index, shift;
@@ -1271,22 +1278,22 @@ void Chip::Setup( Bit32u rate ) {
 			if ( lDiff < bestDiff ) {
 				bestDiff = lDiff;
 				bestAdd = guessAdd;
+				//We hit an exactly matching sample count
 				if ( !bestDiff )
 					break;
 			}
+			//Linear correction factor, not exactly perfect but seems to work
+			double correct = (original - diff) / (double)original;
+			guessAdd = (Bit32u)(guessAdd * correct);
 			//Below our target
 			if ( diff < 0 ) {
-				//Better than the last time
-				Bit32s mul = ((original - diff) << 12) / original;
-				guessAdd = ((guessAdd * mul) >> 12);
+				//Always add one here for rounding, an overshoot will get corrected by another pass decreasing
 				guessAdd++;
-			} else if ( diff > 0 ) {
-				Bit32s mul = ((original - diff) << 12) / original;
-				guessAdd = (guessAdd * mul) >> 12;
-				guessAdd--;
 			}
 		}
 		attackRates[i] = bestAdd;
+		//Keep track of the diffs for some debugging
+//		attackDiffs[i] = bestDiff;
 	}
 	for ( Bit8u i = 62; i < 76; i++ ) {
 		//This should provide instant volume maximizing
@@ -1329,11 +1336,7 @@ void Chip::Setup( Bit32u rate ) {
 	}
 }
 
-static bool doneTables = false;
 bool InitTables( void ) {
-	if ( doneTables )
-		return true;
-	doneTables = true;
 #if ( DBOPL_WAVE == WAVE_HANDLER ) || ( DBOPL_WAVE == WAVE_TABLELOG )
 	//Exponential volume table, same as the real adlib
 	for ( int i = 0; i < 256; i++ ) {
@@ -1424,7 +1427,7 @@ bool InitTables( void ) {
 		TremoloTable[TREMOLO_TABLE - 1 - i] = val;
 	}
 	//Create a table with offsets of the channels from the start of the chip
-	DBOPL::Chip* chip = 0;
+	/*DBOPL::*/Chip* chip = 0;
 	for ( Bitu i = 0; i < 32; i++ ) {
 		Bitu index = i & 0xf;
 		if ( index >= 9 ) {
@@ -1452,7 +1455,7 @@ bool InitTables( void ) {
 		if ( chNum >= 12 )
 			chNum += 16 - 12;
 		Bitu opNum = ( i % 8 ) / 3;
-		DBOPL::Channel* chan = 0;
+		/*DBOPL::*/Channel* chan = 0;
 		Bitu blah = reinterpret_cast<Bitu>( &(chan->op[opNum]) );
 		OpOffsetTable[i] = ChanOffsetTable[ chNum ] + blah;
 	}
@@ -1485,4 +1488,33 @@ bool InitTables( void ) {
 #endif
 	return true;
 }
-};		//Namespace DBOPL
+/*
+Bit32u Handler::WriteAddr( Bit32u port, Bit8u val ) {
+	return chip.WriteAddr( port, val );
+
+}
+void Handler::WriteReg( Bit32u addr, Bit8u val ) {
+	chip.WriteReg( addr, val );
+}
+
+void Handler::Generate( MixerChannel* chan, Bitu samples ) {
+	Bit32s buffer[ 512 * 2 ];
+	if ( GCC_UNLIKELY(samples > 512) )
+		samples = 512;
+	if ( !chip.opl3Active ) {
+		chip.GenerateBlock2( samples, buffer );
+		chan->AddSamples_m32( samples, buffer );
+	} else {
+		chip.GenerateBlock3( samples, buffer );
+		chan->AddSamples_s32( samples, buffer );
+	}
+}
+
+void Handler::Init( Bitu rate ) {
+	InitTables();
+	chip.Setup( rate );
+}
+*/
+
+//};		//Namespace DBOPL
+#endif

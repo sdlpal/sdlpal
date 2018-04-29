@@ -56,6 +56,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_VALUE(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_VALUE(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
 	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WindowWidth",       11, MAKE_VALUE(PAL_DEFAULT_WINDOW_WIDTH,      0,                     UINT32_MAX) },
+	{ PALCFG_AUDIODEVICE,       PALCFG_UNSIGNED, "AudioDevice",       11, MAKE_VALUE(0,                             0,                     UINT32_MAX) },
 
 	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, MAKE_VALUE("OGG",    NULL, NULL) },
 	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GamePath",           8, MAKE_VALUE(NULL,     NULL, NULL) },
@@ -63,7 +64,8 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_MESSAGEFILE,       PALCFG_STRING,   "MessageFileName",   15, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_FONTFILE,          PALCFG_STRING,   "FontFileName",      12, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_MUSIC,             PALCFG_STRING,   "Music",              5, MAKE_VALUE("RIX",    NULL, NULL) },
-	{ PALCFG_OPL,               PALCFG_STRING,   "OPL",                3, MAKE_VALUE("DOSBOX", NULL, NULL) },
+	{ PALCFG_OPL_CORE,          PALCFG_STRING,   "OPLCore",            7, MAKE_VALUE("DBFLT",  NULL, NULL) },
+	{ PALCFG_OPL_CHIP,          PALCFG_STRING,   "OPLChip",            7, MAKE_VALUE("OPL2",   NULL, NULL) },
 	{ PALCFG_LOGFILE,           PALCFG_STRING,   "LogFileName",       11, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_VALUE(NULL,     NULL, NULL) },
 	{ PALCFG_MIDICLIENT,        PALCFG_STRING,   "MIDIClient",        10, MAKE_VALUE(NULL,     NULL, NULL) },
@@ -72,8 +74,8 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
-static const char *opl_types[] = { "DOSBOX", "MAME", "DOSBOXNEW", "NUKED" };
-
+static const char *opl_cores[] = { "MAME", "DBFLT", "DBINT", "NUKED" };
+static const char *opl_chips[] = { "OPL2", "OPL3" };
 
 static char * ParseStringValue(const char *sValue, char *original)
 {
@@ -274,7 +276,8 @@ PAL_LoadConfig(
 	ConfigValue  values[PALCFG_ALL_MAX];
 	MUSICTYPE eMusicType = MUSIC_RIX;
 	MUSICTYPE eCDType = MUSIC_OGG;
-	OPLTYPE   eOPLType = OPL_DOSBOX;
+	OPLCORE_TYPE eOPLCore = OPLCORE_DBFLT;
+	OPLCHIP_TYPE eOPLChip = OPLCHIP_OPL2;
 	INT dwAspectX = -1;
 	INT dwAspectY = -1;
 	SCREENLAYOUT screen_layout = {
@@ -363,16 +366,24 @@ PAL_LoadConfig(
 						eMusicType = MUSIC_RIX;
 					break;
 				}
-				case PALCFG_OPL:
+				case PALCFG_OPL_CORE:
 				{
-					if (SDL_strncasecmp(value.sValue, "DOSBOXNEW", 9) == 0)
-						eOPLType = OPL_DOSBOX_NEW;
-					else if (SDL_strncasecmp(value.sValue, "DOSBOX", 6) == 0)
-						eOPLType = OPL_DOSBOX;
+					if (SDL_strncasecmp(value.sValue, "DBINT", 5) == 0)
+						eOPLCore = OPLCORE_DBINT;
+					else if (SDL_strncasecmp(value.sValue, "DBFLT", 5) == 0)
+						eOPLCore = OPLCORE_DBFLT;
 					else if (SDL_strncasecmp(value.sValue, "MAME", 4) == 0)
-						eOPLType = OPL_MAME;
+						eOPLCore = OPLCORE_MAME;
 					else if (SDL_strncasecmp(value.sValue, "NUKED", 5) == 0)
-						eOPLType = OPL_NUKED;
+						eOPLCore = OPLCORE_NUKED;
+					break;
+				}
+				case PALCFG_OPL_CHIP:
+				{
+					if (SDL_strncasecmp(value.sValue, "OPL2", 4) == 0)
+						eOPLChip = OPLCHIP_OPL2;
+					else if (SDL_strncasecmp(value.sValue, "OPL3", 4) == 0)
+						eOPLChip = OPLCHIP_OPL3;
 					break;
 				}
 				case PALCFG_RIXEXTRAINIT:
@@ -457,7 +468,8 @@ PAL_LoadConfig(
 	if (!gConfig.pszGamePath) gConfig.pszGamePath = strdup(PAL_PREFIX);
 	gConfig.eMusicType = eMusicType;
 	gConfig.eCDType = eCDType;
-	gConfig.eOPLType = eOPLType;
+	gConfig.eOPLCore = eOPLCore;
+	gConfig.eOPLChip = (eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : eOPLChip);
 	gConfig.dwWordLength = 10;	// This is the default value for Chinese version
 	gConfig.ScreenLayout = screen_layout;
 
@@ -470,6 +482,7 @@ PAL_LoadConfig(
 	gConfig.fFullScreen = values[PALCFG_FULLSCREEN].bValue;
 	gConfig.fEnableAviPlay = values[PALCFG_ENABLEAVIPLAY].bValue;
 	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
+	gConfig.iAudioDevice = values[PALCFG_AUDIODEVICE].uValue;
 
 	gConfig.iSurroundOPLOffset = values[PALCFG_SURROUNDOPLOFFSET].iValue;
 	gConfig.iLogLevel = values[PALCFG_LOGLEVEL].iValue;
@@ -519,6 +532,7 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_SURROUNDOPLOFFSET), gConfig.iSurroundOPLOffset); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_LOGLEVEL), gConfig.iLogLevel); fputs(buf, fp);
 
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_AUDIODEVICE), gConfig.iAudioDevice); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_AUDIOBUFFERSIZE), gConfig.wAudioBufferSize); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_OPLSAMPLERATE), gConfig.iOPLSampleRate); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_RESAMPLEQUALITY), gConfig.iResampleQuality); fputs(buf, fp);
@@ -530,7 +544,8 @@ PAL_SaveConfig(
 
 		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CD), music_types[gConfig.eCDType]); fputs(buf, fp);
 		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MUSIC), music_types[gConfig.eMusicType]); fputs(buf, fp);
-		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_OPL), opl_types[gConfig.eOPLType]); fputs(buf, fp);
+		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_OPL_CORE), opl_cores[gConfig.eOPLCore]); fputs(buf, fp);
+		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_OPL_CHIP), opl_chips[gConfig.eOPLChip]); fputs(buf, fp);
 
 		if (gConfig.pszGamePath && *gConfig.pszGamePath && strcmp(gConfig.pszGamePath, PAL_PREFIX) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_GAMEPATH), gConfig.pszGamePath); fputs(buf, fp); }
 		if (gConfig.pszSavePath && *gConfig.pszSavePath && strcmp(gConfig.pszSavePath, PAL_SAVE_PREFIX) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
@@ -588,8 +603,9 @@ PAL_GetConfigItem(
 		case PALCFG_MIDICLIENT:        value.sValue = gConfig.pszMIDIClient; break;
 		case PALCFG_SCALEQUALITY:      value.sValue = gConfig.pszScaleQuality; break;
 		case PALCFG_MUSIC:             value.sValue = music_types[gConfig.eMusicType]; break;
-		case PALCFG_OPL:               value.sValue = opl_types[gConfig.eOPLType]; break;
-        case PALCFG_ASPECTRATIO:       value.sValue = PAL_va(0,"%d:%d",gConfig.dwAspectX,gConfig.dwAspectY); break;
+		case PALCFG_OPL_CORE:          value.sValue = opl_cores[gConfig.eOPLCore]; break;
+		case PALCFG_OPL_CHIP:          value.sValue = opl_chips[gConfig.eOPLChip]; break;
+		case PALCFG_ASPECTRATIO:       value.sValue = PAL_va(0,"%d:%d",gConfig.dwAspectX,gConfig.dwAspectY); break;
 		default:                       break;
 		}
 	}
@@ -683,12 +699,22 @@ PAL_SetConfigItem(
 			}
 		}
 		break;
-	case PALCFG_OPL:
-		for (int i = 0; i < sizeof(opl_types) / sizeof(opl_types[0]); i++)
+	case PALCFG_OPL_CORE:
+		for (int i = 0; i < sizeof(opl_cores) / sizeof(opl_cores[0]); i++)
 		{
-			if (SDL_strcasecmp(value.sValue, opl_types[i]) == 0)
+			if (SDL_strcasecmp(value.sValue, opl_cores[i]) == 0)
 			{
-				gConfig.eOPLType = (OPLTYPE)i;
+				gConfig.eOPLCore = (OPLCORE_TYPE)i;
+				return;
+			}
+		}
+		break;
+	case PALCFG_OPL_CHIP:
+		for (int i = 0; i < sizeof(opl_chips) / sizeof(opl_chips[0]); i++)
+		{
+			if (SDL_strcasecmp(value.sValue, opl_chips[i]) == 0)
+			{
+				gConfig.eOPLCore = (OPLCHIP_TYPE)i;
 				return;
 			}
 		}
