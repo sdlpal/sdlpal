@@ -38,7 +38,14 @@ public:
 	NUKEDOPL3(uint32_t samplerate) : OPLCORE(samplerate) {}
 
 	void Reset() { OPL3_Reset(&chip, rate); }
-	void Write(uint32_t reg, uint8_t val) { OPL3_WriteRegBuffered(&chip, (uint16_t)reg, val); }
+	void Write(uint32_t reg, uint8_t val) {
+		if (reg == 0x104 || reg == 0x105) {
+			OPL3_WriteReg(&chip, (uint16_t)reg, val);
+		}
+		else {
+			OPL3_WriteRegBuffered(&chip, (uint16_t)reg, val);
+		}
+	}
 	void Generate(short* buf, int samples) { OPL3_GenerateStream(&chip, buf, samples); }
 	OPLCORE* Duplicate() { return new NUKEDOPL3(rate); }
 

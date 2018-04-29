@@ -482,10 +482,10 @@ PAL_LoadConfig(
 	gConfig.fFullScreen = values[PALCFG_FULLSCREEN].bValue;
 	gConfig.fEnableAviPlay = values[PALCFG_ENABLEAVIPLAY].bValue;
 	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
-	gConfig.iAudioDevice = values[PALCFG_AUDIODEVICE].iValue;
 
 	gConfig.iSurroundOPLOffset = values[PALCFG_SURROUNDOPLOFFSET].iValue;
 	gConfig.iLogLevel = values[PALCFG_LOGLEVEL].iValue;
+	gConfig.iAudioDevice = values[PALCFG_AUDIODEVICE].iValue;
 
 	gConfig.iSampleRate = values[PALCFG_SAMPLERATE].uValue;
 	gConfig.iOPLSampleRate = values[PALCFG_OPLSAMPLERATE].uValue;
