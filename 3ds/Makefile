@@ -32,6 +32,7 @@ include $(DEVKITARM)/3ds_rules
 TARGET		:=	sdlpal
 BUILD		:=	build
 SOURCES		:=	. .. ../adplug ../libmad
+INCLUDES	:=	. .. ../adplug ../libmad
 
 APP_TITLE	:=	SDLPAL
 APP_DESCRIPTION :=	Pal DOS for 3DS

@@ -44,4 +44,5 @@ UTIL_Platform_Quit(
 	VOID
 )
 {
+  gfxExit();
 }
