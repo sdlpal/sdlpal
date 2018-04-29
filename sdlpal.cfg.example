@@ -18,11 +18,13 @@
 #        'MP3' means use files named as 'xx.mp3' inside the 'mp3' directory.
 #Music=RIX
 
-# OPL: Indicates which type of OPL emulator to use. Valid types include 'DOSBOX'
-#      (default), 'MAME' and 'DOSBOXNEW'. 'DOSBOXNEW' is the recommended OPL simulator
-#      on high-performance devices like PC or tablet. However, for lower-end phones,
-#      'DOSBOX' is the best choice for performance-quality balance.
-#OPL=DOSBOX
+# OPLCore: Indicates the OPL emulator core to use. Valid types include 'DBFLT'
+#          (default), 'MAME', 'DBINT' and 'NUKED'.
+#OPLCore=DBFLT
+
+# OPLChip: Indicates the kind of OPL chip to be emulated. Valid types include 'OPL2'
+#          (default) and 'OPL3'. Note: the 'NUKED' core does not support 'OPL2'.
+#OPLChip=OPL2
 
 # Stereo: Indicates whether to use mono audio or stereo audio. Non-zero means to use
 #         stereo audio (default), while zero means only use mono audio.
@@ -88,3 +90,7 @@
 
 # LogFileName: When set, the program's log will be output to this file as well.
 #LogFileName=sdlpal.log
+
+# AudioDevice: The ID of audio device to use. Only supported when compiled with SDL2. If this
+#              item is set to a negative value (default), the default audio device will be used.
+#AudioDevice=-1

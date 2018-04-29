@@ -23,13 +23,13 @@ Many of the ideas of this program are based on documents from [PAL Research Proj
 This program made extensive use of the following libraries:
 * [SDL](http://www.libsdl.org/)
 * [SDL_mixer](http://www.libsdl.org/projects/SDL_mixer/)
-* [Adplug](http://adplug.sourceforge.net/)
 * [libmad](http://www.underbit.com/products/mad/)
 * [libogg & libvorbis](http://www.vorbis.com/)
 * [FLTK](http://www.fltk.org)
-* [DOSBOX project](http://www.dosbox.com), [MAME project](http://mamedev.org/) and [Chocolate Doom project](https://github.com/chocolate-doom/chocolate-doom) for codes of their OPL emulator cores
-* [foo_input_adplug](https://github.com/kode54/foo_input_adplug) for codes of the built-in resampler
-* [ffmpeg](https://ffmpeg.org/) for codes of the built-in AVI player
+* OPL player from [Adplug](http://adplug.sourceforge.net/)
+* OPL emulation cores from [DOSBOX project](http://www.dosbox.com), [MAME project](http://mamedev.org/) and [Chocolate Doom project](https://github.com/chocolate-doom/chocolate-doom)
+* Audio resampler from [foo_input_adplug](https://github.com/kode54/foo_input_adplug)
+* AVI player from [ffmpeg](https://ffmpeg.org/)
 
 Please see [AUTHORS.txt](AUTHORS.txt) for additional authors.
 
@@ -142,6 +142,16 @@ make
 make cia
 ```
 You need to have *DevkitPro ARM* and *SDL 1.2* for 3DS portlib installed. The compiled executable should be generated with the filename *`sdlpal`* at the current directory.
+
+Nintendo Wii
+------------
+
+To build the game, please go to the root of the source code tree and type:
+```shell
+cd wii
+make
+```
+You need to have *DevkitPro PPC* and *SDL 1.2* for Wii portlib installed.
 
 Other platforms
 ---------------
