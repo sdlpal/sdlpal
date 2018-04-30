@@ -108,7 +108,6 @@
 		C629A56B208643D30015C93C /* opl3.c in Sources */ = {isa = PBXBuildFile; fileRef = C629A565208643D20015C93C /* opl3.c */; };
 		C629A56C208643D30015C93C /* nukedopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C629A56A208643D30015C93C /* nukedopl.cpp */; };
 		C63505731EA6570300186049 /* midi.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056B1EA6570300186049 /* midi.c */; };
-		C63505741EA6570300186049 /* private.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056C1EA6570300186049 /* private.c */; };
 		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
 		C63505801EA6578700186049 /* native_midi.m in Sources */ = {isa = PBXBuildFile; fileRef = C635057D1EA6578700186049 /* native_midi.m */; };
 		C66C6CA41ECCB73100CE10C1 /* SDLPal_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */; };
@@ -371,7 +370,6 @@
 		C629A56A208643D30015C93C /* nukedopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nukedopl.cpp; sourceTree = "<group>"; };
 		C635056A1EA6570300186049 /* midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = midi.h; path = ../../../midi.h; sourceTree = "<group>"; };
 		C635056B1EA6570300186049 /* midi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi.c; path = ../../../midi.c; sourceTree = "<group>"; };
-		C635056C1EA6570300186049 /* private.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = private.c; path = ../../../private.c; sourceTree = "<group>"; };
 		C635057A1EA6578700186049 /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		C635057B1EA6578700186049 /* native_midi_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_common.c; sourceTree = "<group>"; };
 		C635057C1EA6578700186049 /* native_midi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi_common.h; sourceTree = "<group>"; };
@@ -619,7 +617,6 @@
 				C63505771EA6575200186049 /* Headers */,
 				71DCB6941ED9CBB000F120DB /* aviplay.c */,
 				C635056B1EA6570300186049 /* midi.c */,
-				C635056C1EA6570300186049 /* private.c */,
 				57FB015C1B7A50E0005FCF4C /* mp3play.c */,
 				57FB015D1B7A50E0005FCF4C /* oggplay.c */,
 				57FB015F1B7A50E0005FCF4C /* resampler.c */,
@@ -1043,7 +1040,6 @@
 				71655270195BB6DB006E1227 /* frame.c in Sources */,
 				71655271195BB6DB006E1227 /* huffman.c in Sources */,
 				71655273195BB6DB006E1227 /* layer12.c in Sources */,
-				C63505741EA6570300186049 /* private.c in Sources */,
 				71655274195BB6DB006E1227 /* layer3.c in Sources */,
 				71655275195BB6DB006E1227 /* music_mad.c in Sources */,
 				71655279195BB6DB006E1227 /* stream.c in Sources */,
