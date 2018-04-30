@@ -91,11 +91,12 @@ static char * ParseStringValue(const char *sValue, char *original)
 	return original;
 }
 
-BOOL
+static BOOL
 PAL_ParseConfigLine(
 	const char * line,
 	const ConfigItem ** ppItem,
-	ConfigValue * pValue
+	ConfigValue * pValue,
+	int * sLength
 )
 {
 	//
@@ -154,6 +155,11 @@ PAL_ParseConfigLine(
 							//
 							while (*ptr && isspace(*ptr)) ptr++;
 							pValue->sValue = ptr;
+							//
+							// Get line length
+							//
+							while (*ptr && *ptr != '\r' && *ptr != '\n') ptr++;
+							if (sLength) *sLength = ptr - pValue->sValue;
 							break;
 						}
 						return TRUE;
@@ -315,7 +321,8 @@ PAL_LoadConfig(
 		{
 			ConfigValue value;
 			const ConfigItem * item;
-			if (PAL_ParseConfigLine(buf, &item, &value))
+			int slen;
+			if (PAL_ParseConfigLine(buf, &item, &value, &slen))
 			{
 				switch (item->Item)
 				{
@@ -346,43 +353,43 @@ PAL_LoadConfig(
 					break;
 				case PALCFG_CD:
 				{
-					if (PAL_HAS_MP3 && SDL_strncasecmp(value.sValue, "MP3", 3) == 0)
+					if (PAL_HAS_MP3 && SDL_strncasecmp(value.sValue, "MP3", slen) == 0)
 						eCDType = MUSIC_MP3;
-					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", 3) == 0)
+					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", slen) == 0)
 						eCDType = MUSIC_OGG;
-					else if (PAL_HAS_SDLCD && SDL_strncasecmp(value.sValue, "RAW", 3) == 0)
+					else if (PAL_HAS_SDLCD && SDL_strncasecmp(value.sValue, "RAW", slen) == 0)
 						eCDType = MUSIC_SDLCD;
 					break;
 				}
 				case PALCFG_MUSIC:
 				{
-					if (PAL_HAS_NATIVEMIDI && SDL_strncasecmp(value.sValue, "MIDI", 4) == 0)
+					if (PAL_HAS_NATIVEMIDI && SDL_strncasecmp(value.sValue, "MIDI", slen) == 0)
 						eMusicType = MUSIC_MIDI;
-					else if (PAL_HAS_MP3 && SDL_strncasecmp(value.sValue, "MP3", 3) == 0)
+					else if (PAL_HAS_MP3 && SDL_strncasecmp(value.sValue, "MP3", slen) == 0)
 						eMusicType = MUSIC_MP3;
-					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", 3) == 0)
+					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", slen) == 0)
 						eMusicType = MUSIC_OGG;
-					else if (SDL_strncasecmp(value.sValue, "RIX", 3) == 0)
+					else if (SDL_strncasecmp(value.sValue, "RIX", slen) == 0)
 						eMusicType = MUSIC_RIX;
 					break;
 				}
 				case PALCFG_OPL_CORE:
 				{
-					if (SDL_strncasecmp(value.sValue, "DBINT", 5) == 0)
+					if (SDL_strncasecmp(value.sValue, "DBINT", slen) == 0)
 						eOPLCore = OPLCORE_DBINT;
-					else if (SDL_strncasecmp(value.sValue, "DBFLT", 5) == 0)
+					else if (SDL_strncasecmp(value.sValue, "DBFLT", slen) == 0)
 						eOPLCore = OPLCORE_DBFLT;
-					else if (SDL_strncasecmp(value.sValue, "MAME", 4) == 0)
+					else if (SDL_strncasecmp(value.sValue, "MAME", slen) == 0)
 						eOPLCore = OPLCORE_MAME;
-					else if (SDL_strncasecmp(value.sValue, "NUKED", 5) == 0)
+					else if (SDL_strncasecmp(value.sValue, "NUKED", slen) == 0)
 						eOPLCore = OPLCORE_NUKED;
 					break;
 				}
 				case PALCFG_OPL_CHIP:
 				{
-					if (SDL_strncasecmp(value.sValue, "OPL2", 4) == 0)
+					if (SDL_strncasecmp(value.sValue, "OPL2", slen) == 0)
 						eOPLChip = OPLCHIP_OPL2;
-					else if (SDL_strncasecmp(value.sValue, "OPL3", 4) == 0)
+					else if (SDL_strncasecmp(value.sValue, "OPL3", slen) == 0)
 						eOPLChip = OPLCHIP_OPL3;
 					break;
 				}
@@ -586,6 +593,7 @@ PAL_GetConfigItem(
 		case PALCFG_ENABLEAVIPLAY:     value.bValue = gConfig.fEnableAviPlay; break;
 		case PALCFG_SURROUNDOPLOFFSET: value.iValue = gConfig.iSurroundOPLOffset; break;
 		case PALCFG_LOGLEVEL:          value.iValue = gConfig.iLogLevel; break;
+		case PALCFG_AUDIODEVICE:       value.iValue = gConfig.iAudioDevice; break;
 		case PALCFG_AUDIOBUFFERSIZE:   value.uValue = gConfig.wAudioBufferSize; break;
 		case PALCFG_OPLSAMPLERATE:     value.uValue = gConfig.iOPLSampleRate; break;
 		case PALCFG_RESAMPLEQUALITY:   value.uValue = gConfig.iResampleQuality; break;
@@ -631,6 +639,7 @@ PAL_SetConfigItem(
 	case PALCFG_ENABLEAVIPLAY:     gConfig.fEnableAviPlay = value.bValue; break;
 	case PALCFG_SURROUNDOPLOFFSET: gConfig.iSurroundOPLOffset = value.iValue; break;
 	case PALCFG_LOGLEVEL:          gConfig.iLogLevel = value.iValue; break;
+	case PALCFG_AUDIODEVICE:       gConfig.iAudioDevice = value.iValue; break;
 	case PALCFG_AUDIOBUFFERSIZE:   gConfig.wAudioBufferSize = value.uValue; break;
 	case PALCFG_OPLSAMPLERATE:     gConfig.iOPLSampleRate = value.uValue; break;
 	case PALCFG_RESAMPLEQUALITY:   gConfig.iResampleQuality = value.uValue; break;
@@ -714,7 +723,7 @@ PAL_SetConfigItem(
 		{
 			if (SDL_strcasecmp(value.sValue, opl_chips[i]) == 0)
 			{
-				gConfig.eOPLCore = (OPLCHIP_TYPE)i;
+				gConfig.eOPLChip = (OPLCHIP_TYPE)i;
 				return;
 			}
 		}

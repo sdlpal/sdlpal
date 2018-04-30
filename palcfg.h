@@ -229,13 +229,6 @@ PAL_FreeConfig(
 	void
 );
 
-BOOL
-PAL_ParseConfigLine(
-	const char * line,
-	const ConfigItem ** pItem,
-	ConfigValue * pValue
-);
-
 const char *
 PAL_ConfigName(
 	PALCFG_ITEM item
