@@ -108,25 +108,20 @@ public:
 	}
 
 	void init() {
-		opl[currChip]->Reset();
+		opl[0]->Reset();
+		if (currType == TYPE_DUAL_OPL2) {
+			opl[1]->Reset();
+		}
 		if (opl3mode) {
-			opl[currChip]->Write(0x105, 1);
+			opl[0]->Write(0x105, 1);
 		}
 	}
 
 protected:
 	CEmuopl(OPLCORE* core, ChipType type) : Copl(type), opl3mode(false) {
 		opl[0] = core;
+		opl[1] = (type == TYPE_DUAL_OPL2) ? core->Duplicate() : NULL;
 		init();
-		if (type == TYPE_DUAL_OPL2) {
-			opl[1] = core->Duplicate();
-			setchip(1);
-			init();
-		}
-		else {
-			opl[1] = NULL;
-		}
-		setchip(0);
 	}
 
 	OPLCORE* opl[2];
