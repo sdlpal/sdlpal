@@ -10,13 +10,13 @@ SDLPAL
 LICENSE
 =======
 
-SDLPAL is originally created by [Wei Mingzhi](https://github.com/CecilHarvey) from 2009. Now it is owned by the SDLPAL development team. Please see [AUTHORS](/docs/AUTHORS) for full author list.
+SDLPAL is originally created by [Wei Mingzhi](https://github.com/CecilHarvey) from 2009. Now it is owned by the SDLPAL development team. Please see [AUTHORS](AUTHORS) for full author list.
 ```
 Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
 Copyright (c) 2011-2018, SDLPAL development team.
 All rights reserved.
 ```
-SDLPAL is distributed under the terms of GNU General Public License, version 3 (or any later version) as published by the Free Software Foundation. See [gpl.txt](/gpl.txt) for details.
+SDLPAL is distributed under the terms of GNU General Public License, version 3 (or any later version) as published by the Free Software Foundation. See [gpl.txt](gpl.txt) for details.
 
 Many of the ideas of this program are based on documents from [PAL Research Project](https://github.com/palxex/palresearch), and portions of the code are based on the work done by Baldur and [louyihua](https://github.com/louyihua).
 
@@ -184,7 +184,7 @@ Configuration GUIs for *macOS* is still unavailable for now and we welcome contr
 
 Manually
 --------
-To set the configuration options manually, create a file named as *`sdlpal.cfg`* (make sure to use lower-case file name in case-sensitive filesystems) in the game directory created by the above step. Please refer to the [example file](/docs/sdlpal.cfg.example) for format specfication.
+To set the configuration options manually, create a file named as *`sdlpal.cfg`* (make sure to use lower-case file name in case-sensitive filesystems) in the game directory created by the above step. Please refer to the [example file](sdlpal.cfg.example) for format specfication.
 
 
 Reporting issues
