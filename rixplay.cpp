@@ -107,7 +107,7 @@ RIX_FillBuffer(
 			else
 			{
 				volume = (INT)(SDL_MIX_MAXVOLUME * (1.0 - (double)pRixPlayer->iRemainingFadeSamples / pRixPlayer->iTotalFadeInSamples));
-				delta_samples = pRixPlayer->iTotalFadeInSamples / SDL_MIX_MAXVOLUME; vol_delta = 1;
+				delta_samples = (pRixPlayer->iTotalFadeInSamples / SDL_MIX_MAXVOLUME) & ~(gConfig.iAudioChannels - 1); vol_delta = 1;
 			}
 			break;
 		case RIXPLAYER::FADE_OUT:
@@ -150,7 +150,7 @@ RIX_FillBuffer(
 			else
 			{
 				volume = (INT)(SDL_MIX_MAXVOLUME * ((double)pRixPlayer->iRemainingFadeSamples / pRixPlayer->iTotalFadeOutSamples));
-				delta_samples = pRixPlayer->iTotalFadeOutSamples / SDL_MIX_MAXVOLUME; vol_delta = -1;
+				delta_samples = (pRixPlayer->iTotalFadeOutSamples / SDL_MIX_MAXVOLUME) & ~(gConfig.iAudioChannels - 1); vol_delta = -1;
 			}
 			break;
 		default:
