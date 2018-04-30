@@ -514,7 +514,7 @@
     <ClInclude Include="..\generated.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\sdlpal.cfg.example" />
+    <None Include="..\docs\sdlpal.cfg.example" />
     <None Include="..\sdlpal.ico" />
     <None Include="..\libmad\D.dat" />
     <None Include="..\libmad\imdct_s.dat" />

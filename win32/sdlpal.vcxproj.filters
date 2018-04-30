@@ -709,7 +709,7 @@
     <None Include="..\libmad\sf_table.dat">
       <Filter>libmad</Filter>
     </None>
-    <None Include="..\sdlpal.cfg.example">
+    <None Include="..\docs\sdlpal.cfg.example">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
