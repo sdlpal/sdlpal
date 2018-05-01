@@ -1,1 +1,1 @@
-../../../../../../../../3rd/SDL/android-project/src/org/libsdl/app/SDLActivity.java
+../../../../../../../../3rd/SDL/android-project/app/src/main/java/org/libsdl/app/SDLActivity.java
