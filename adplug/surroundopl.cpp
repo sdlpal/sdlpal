@@ -281,7 +281,7 @@ void CSurroundopl::write_opl3(int reg, int val)
 		// [0x1C0, 0x1C8] controls wheter the data written to a FM channel
 		// generates waveforms to the left channel or the right channel on output
 
-		// Since a OPL3 chip has 36 channels, the higher 18 channels can act as
+		// Since a OPL3 chip has 18 channels, the higher 9 channels can act as
 		// another OPL2 chip on generateing the harmonic effect. However, the
 		// the percussion channels have no counterparts on higher channels,
 		// so they should be treated separately.
