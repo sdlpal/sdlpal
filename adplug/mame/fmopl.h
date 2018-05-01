@@ -2,7 +2,7 @@
 // copyright-holders:Jarek Burczynski,Tatsuyuki Satoh
 /*
  * SDLPAL
- * Copyright (c) 2011-2017, SDLPAL development team.
+ * Copyright (c) 2011-2018, SDLPAL development team.
  * All rights reserved.
  *
  * This file is part of SDLPAL.
