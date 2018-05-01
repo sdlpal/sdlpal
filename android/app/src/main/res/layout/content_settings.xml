@@ -242,13 +242,24 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_opl" />
+                    android:text="@string/label_oplcore" />
 
                 <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/spOPL"
+                    android:id="@+id/spOPLCore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:entries="@array/opl_type" />
+                    android:entries="@array/opl_core" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_oplchip" />
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/spOPLChip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/opl_chip" />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/swSurround"

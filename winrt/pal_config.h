@@ -58,6 +58,7 @@
 #define PAL_IS_PATH_SEPARATOR(x) ((x) == '\\' || (x) == '/')
 
 #define strtok_r strtok_s
+#define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 
 #define strcasestr(a,b) strstr(_strupr((a)),_strupr((b)))

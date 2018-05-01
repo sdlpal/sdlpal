@@ -10,7 +10,8 @@
     <string name="action_finish">完成设置</string>
     <string name="action_suropl">环绕声 OPL</string>
     <string name="label_oplrate">OPL 模拟器采样率</string>
-    <string name="label_opl">OPL 模拟器</string>
+    <string name="label_oplcore">OPL 模拟核心</string>
+    <string name="label_oplchip">OPL 模拟芯片</string>
     <string name="label_musfmt">背景音乐格式</string>
     <string name="label_cdfmt">CD 音轨格式</string>
     <string name="label_bufsize">音频缓冲区大小</string>

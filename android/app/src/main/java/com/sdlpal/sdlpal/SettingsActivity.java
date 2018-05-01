@@ -62,14 +62,16 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String LogFileName = "LogFileName";
     private static final String FontFileName = "FontFileName";
     private static final String MusicFormat = "Music";
-    private static final String OPLFormat = "OPL";
+    private static final String OPLCore = "OPLCore";
+    private static final String OPLChip = "OPLChip";
 
     private static final int AudioSampleRates[] = { 11025, 22050, 44100 };
     private static final int AudioBufferSizes[] = { 512, 1024, 2048, 4096, 8192 };
     private static final int OPLSampleRates[] = { 11025, 12429, 22050, 24858, 44100, 49716 };
     private static final String CDFormats[] = { "MP3", "OGG" };
     private static final String MusicFormats[] = { "MIDI", "RIX", "MP3", "OGG" };
-    private static final String OPLFormats[] = { "DOSBOX", "MAME", "DOSBOXNEW", "NUKED" };
+    private static final String OPLCores[] = { "MAME", "DBFLT", "DBINT", "NUKED" };
+    private static final String OPLChips[] = { "OPL2", "OPL3" };
     private static final String AspectRatios[] = { "16:10", "4:3" };
 
     private SettingsActivity mInstance = this;
@@ -306,7 +308,8 @@ public class SettingsActivity extends AppCompatActivity {
         ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, true), AudioBufferSizes, 1));    // 1024
         ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, true), CDFormats, 1));     // OGG
         ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, true), MusicFormats, 1));    // RIX
-        ((AppCompatSpinner)findViewById(R.id.spOPL)).setSelection(findMatchedStringIndex(getConfigString(OPLFormat, true), OPLFormats, 1));       // MAME
+        ((AppCompatSpinner)findViewById(R.id.spOPLCore)).setSelection(findMatchedStringIndex(getConfigString(OPLCore, true), OPLCores, 1));       // DBFLT
+        ((AppCompatSpinner)findViewById(R.id.spOPLChip)).setSelection(findMatchedStringIndex(getConfigString(OPLChip, true), OPLChips, 0));       // OPL2
         ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, true), OPLSampleRates, 5));  // 49716Hz
         ((AppCompatSpinner)findViewById(R.id.spAspectRatio)).setSelection(findMatchedStringIndex(getConfigString(AspectRatio, true), AspectRatios, 0));  // 16:10
     }
@@ -340,13 +343,18 @@ public class SettingsActivity extends AppCompatActivity {
         ((SwitchCompat)findViewById(R.id.swStereo)).setChecked(getConfigBoolean(Stereo, false));
 
         ((AppCompatSpinner)findViewById(R.id.spLogLevel)).setSelection(getConfigInt(LogLevel, false));
-        ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, false), AudioSampleRates, 2));    // 44100Hz
-        ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, false), AudioBufferSizes, 1));    // 1024
-        ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, false), CDFormats, 1));     // OGG
-        ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, false), MusicFormats, 1));    // RIX
-        ((AppCompatSpinner)findViewById(R.id.spOPL)).setSelection(findMatchedStringIndex(getConfigString(OPLFormat, false), OPLFormats, 1));       // MAME
-        ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, false), OPLSampleRates, 5));  // 49716Hz
-        ((AppCompatSpinner)findViewById(R.id.spAspectRatio)).setSelection(findMatchedStringIndex(getConfigString(AspectRatio, false), AspectRatios, 0));  // 16:10
+        ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, false), AudioSampleRates, 2));
+        ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, false), AudioBufferSizes, 1));
+        ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, false), CDFormats, 1));
+        ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, false), MusicFormats, 1));
+        ((AppCompatSpinner)findViewById(R.id.spOPLCore)).setSelection(findMatchedStringIndex(getConfigString(OPLCore, false), OPLCores, 1));
+        if (((AppCompatSpinner)findViewById(R.id.spOPLCore)).getSelectedItemId() == 3) {
+            ((AppCompatSpinner)findViewById(R.id.spOPLChip)).setSelection(1);       // OPL3
+        } else {
+            ((AppCompatSpinner)findViewById(R.id.spOPLChip)).setSelection(findMatchedStringIndex(getConfigString(OPLChip, false), OPLChips, 0));
+        }
+        ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, false), OPLSampleRates, 5));
+        ((AppCompatSpinner)findViewById(R.id.spAspectRatio)).setSelection(findMatchedStringIndex(getConfigString(AspectRatio, false), AspectRatios, 0));
     }
 
     protected boolean setConfigs() {
@@ -393,7 +401,12 @@ public class SettingsActivity extends AppCompatActivity {
         setConfigInt(AudioBufferSize, Integer.parseInt((String)((AppCompatSpinner)findViewById(R.id.spBuffer)).getSelectedItem()));
         setConfigString(CDFormat, (String)((AppCompatSpinner)findViewById(R.id.spCDFmt)).getSelectedItem());
         setConfigString(MusicFormat, (String)((AppCompatSpinner)findViewById(R.id.spMusFmt)).getSelectedItem());
-        setConfigString(OPLFormat, (String)((AppCompatSpinner)findViewById(R.id.spOPL)).getSelectedItem());
+        setConfigString(OPLCore, (String)((AppCompatSpinner)findViewById(R.id.spOPLCore)).getSelectedItem());
+        if (((AppCompatSpinner)findViewById(R.id.spOPLCore)).getSelectedItemId() == 3) {
+            setConfigString(OPLChip, OPLChips[1]);
+        } else {
+            setConfigString(OPLChip, (String) ((AppCompatSpinner) findViewById(R.id.spOPLChip)).getSelectedItem());
+        }
         setConfigInt(OPLSampleRate, Integer.parseInt((String)((AppCompatSpinner)findViewById(R.id.spOPLRate)).getSelectedItem()));
         setConfigString(AspectRatio, (String)((AppCompatSpinner)findViewById(R.id.spAspectRatio)).getSelectedItem());
 

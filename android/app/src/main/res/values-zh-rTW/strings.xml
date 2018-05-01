@@ -17,8 +17,9 @@
     <string name="title_settings">設定模式</string>
     <string name="label_sfxvol">音效音量</string>
     <string name="label_musvol">音樂音量</string>
-    <string name="label_opl">OPL模擬器</string>
-    <string name="label_oplrate">OPL模擬器取樣速率</string>
+    <string name="label_oplrate">OPL 模擬器取樣速率</string>
+    <string name="label_oplcore">OPL 模擬核心</string>
+    <string name="label_oplchip">OPL 模拟晶片</string>
     <string name="msg_crash">上次程式異常退出，已顯示設定頁供您檢查設定是否正確。</string>
     <string name="msg_empty">必須指定遊戲資料檔所在資料夾！</string>
     <string name="msg_exit">您的設定已保存，下次開啟時將直接開始遊戲。在遊戲中，您可以通過「系統」功能表的「返回設定」項回到本設定頁。</string>

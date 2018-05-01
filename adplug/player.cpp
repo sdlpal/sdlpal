@@ -22,6 +22,14 @@
 #include "player.h"
 #include "opl.h"
 
+class CFakeopl : public Copl {
+public:
+	void init() {}
+	void update(short* buf, int samples) {}
+	void write(int reg, int val) {}
+	bool getstereo() { return false; }
+};
+
 /***** CPlayer *****/
 
 const unsigned short CPlayer::note_table[12] =
@@ -38,9 +46,9 @@ CPlayer::~CPlayer() {
 }
 
 unsigned long CPlayer::songlength(int subsong) {
-   Copl    tempopl;
-   Copl   *saveopl = opl;
-   float   slength = 0.0f;
+   CFakeopl tempopl;
+   Copl    *saveopl = opl;
+   float    slength = 0.0f;
 
    // save original OPL from being overwritten
    opl = &tempopl;

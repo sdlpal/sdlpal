@@ -46,6 +46,9 @@ typedef struct tagAUDIODEVICE
 #endif
    AUDIOPLAYER              *pSoundPlayer;
    void                     *pSoundBuffer;	/* The output buffer for sound */
+#if SDL_VERSION_ATLEAST(2,0,0)
+   SDL_AudioDeviceID         id;
+#endif
    INT                       iMusicVolume;	/* The BGM volume ranged in [0, 128] for better performance */
    INT                       iSoundVolume;	/* The sound effect volume ranged in [0, 128] for better performance */
    BOOL                      fMusicEnabled; /* Is BGM enabled? */
@@ -54,6 +57,13 @@ typedef struct tagAUDIODEVICE
 } AUDIODEVICE;
 
 static AUDIODEVICE gAudioDevice;
+
+#if SDL_VERSION_ATLEAST(2,0,0)
+# define SDL_CloseAudio() SDL_CloseAudioDevice(gAudioDevice.id)
+# define SDL_PauseAudio(pause_on) SDL_PauseAudioDevice(gAudioDevice.id, (pause_on))
+# define SDL_OpenAudio(desired, obtained) \
+	(gAudioDevice.id = SDL_OpenAudioDevice((gConfig.iAudioDevice >= 0 ? SDL_GetAudioDeviceName(gConfig.iAudioDevice, 0) : NULL), 0, (desired), (obtained), SDL_AUDIO_ALLOW_ANY_CHANGE))
+#endif
 
 PAL_FORCE_INLINE
 void
@@ -505,12 +515,12 @@ AUDIO_PlayMusic(
       return;
    }
 
-   SDL_LockAudio();
+   AUDIO_Lock();
    if (gAudioDevice.pMusPlayer)
    {
       gAudioDevice.pMusPlayer->Play(gAudioDevice.pMusPlayer, iNumRIX, fLoop, flFadeTime);
    }
-   SDL_UnlockAudio();
+   AUDIO_Unlock();
 }
 
 BOOL
@@ -554,7 +564,7 @@ AUDIO_PlayCDTrack(
       }
    }
 #endif
-   SDL_LockAudio();
+   AUDIO_Lock();
    if (gAudioDevice.pCDPlayer)
    {
 	   if (iNumTrack != -1)
@@ -566,7 +576,7 @@ AUDIO_PlayCDTrack(
 		   ret = gAudioDevice.pCDPlayer->Play(gAudioDevice.pCDPlayer, -1, FALSE, 0);
 	   }
    }
-   SDL_UnlockAudio();
+   AUDIO_Unlock();
 
    return ret;
 }
@@ -601,4 +611,28 @@ AUDIO_SoundEnabled(
 )
 {
    return gAudioDevice.fSoundEnabled;
+}
+
+void
+AUDIO_Lock(
+	void
+)
+{
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_LockAudioDevice(gAudioDevice.id);
+#else
+	SDL_LockAudio();
+#endif
+}
+
+void
+AUDIO_Unlock(
+	void
+)
+{
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_UnlockAudioDevice(gAudioDevice.id);
+#else
+	SDL_UnlockAudio();
+#endif
 }

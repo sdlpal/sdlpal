@@ -53,6 +53,7 @@ typedef enum tagPALCFG_ITEM
 	/* Integers */
 	PALCFG_SURROUNDOPLOFFSET = PALCFG_INTEGER_MIN,
 	PALCFG_LOGLEVEL,
+	PALCFG_AUDIODEVICE,
 	/* Integers */
 	PALCFG_INTEGER_MAX,
 
@@ -77,7 +78,8 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_MESSAGEFILE,
 	PALCFG_FONTFILE,
 	PALCFG_MUSIC,
-	PALCFG_OPL,
+	PALCFG_OPL_CORE,
+	PALCFG_OPL_CHIP,
 	PALCFG_LOGFILE,
 	PALCFG_RIXEXTRAINIT,
 	PALCFG_MIDICLIENT,
@@ -177,6 +179,7 @@ typedef struct tagCONFIGURATION
 	DWORD            dwScreenHeight;
     DWORD            dwAspectX;
     DWORD            dwAspectY;
+	INT              iAudioDevice;
 	INT              iSurroundOPLOffset;
 	INT              iAudioChannels;
 	INT              iSampleRate;
@@ -187,7 +190,8 @@ typedef struct tagCONFIGURATION
 	LOGLEVEL         iLogLevel;
 	MUSICTYPE        eMusicType;
 	MUSICTYPE        eCDType;
-	OPLTYPE          eOPLType;
+	OPLCORE_TYPE     eOPLCore;
+	OPLCHIP_TYPE     eOPLChip;
 	WORD             wAudioBufferSize;
 	BOOL             fIsWIN95;
 	BOOL             fUseSurroundOPL;
@@ -223,13 +227,6 @@ PAL_SaveConfig(
 void
 PAL_FreeConfig(
 	void
-);
-
-BOOL
-PAL_ParseConfigLine(
-	const char * line,
-	const ConfigItem ** pItem,
-	ConfigValue * pValue
 );
 
 const char *

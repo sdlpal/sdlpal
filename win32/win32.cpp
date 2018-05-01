@@ -25,7 +25,6 @@
 
 #define UNICODE
 #define _UNICODE
-#define _CRT_SECURE_NO_WARNINGS
 
 #include <tchar.h>
 #include <windows.h>
@@ -161,7 +160,8 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO);
 	gConfig.eCDType = (MUSICTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD) + MUSIC_MP3);
 	gConfig.eMusicType = (MUSICTYPE)ComboBox_GetCurSel(hwndDlg, IDC_BGM);
-	gConfig.eOPLType = (OPLTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_OPL));
+	gConfig.eOPLCore = (OPLCORE_TYPE)(ComboBox_GetCurSel(hwndDlg, IDC_OPL_CORE));
+	gConfig.eOPLChip = (OPLCHIP_TYPE)(gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : ComboBox_GetCurSel(hwndDlg, IDC_OPL_CHIP));
 	gConfig.iLogLevel = (LOGLEVEL)(ComboBox_GetCurSel(hwndDlg, IDC_LOGLEVEL));
 	gConfig.iAudioChannels = IsDlgButtonChecked(hwndDlg, IDC_STEREO) ? 2 : 1;
 	gConfig.iSampleRate = GetDlgItemInt(hwndDlg, IDC_SAMPLERATE, nullptr, FALSE);
@@ -183,7 +183,8 @@ void ResetControls(HWND hwndDlg)
 {
 	TCHAR buffer[100];
 
-	EnableDlgItem(hwndDlg, IDC_OPL, gConfig.eMusicType == MUSIC_RIX);
+	EnableDlgItem(hwndDlg, IDC_OPL_CORE, gConfig.eMusicType == MUSIC_RIX);
+	EnableDlgItem(hwndDlg, IDC_OPL_CHIP, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, gConfig.eMusicType == MUSIC_RIX);
 	EnableDlgItem(hwndDlg, IDC_OPLSR, gConfig.eMusicType == MUSIC_RIX);
 
@@ -203,7 +204,8 @@ void ResetControls(HWND hwndDlg)
 
 	ComboBox_SetCurSel(hwndDlg, IDC_CD, gConfig.eCDType - MUSIC_MP3);
 	ComboBox_SetCurSel(hwndDlg, IDC_BGM, gConfig.eMusicType);
-	ComboBox_SetCurSel(hwndDlg, IDC_OPL, gConfig.eOPLType);
+	ComboBox_SetCurSel(hwndDlg, IDC_OPL_CORE, gConfig.eOPLCore);
+	ComboBox_SetCurSel(hwndDlg, IDC_OPL_CHIP, gConfig.eOPLChip);
 	ComboBox_SetCurSel(hwndDlg, IDC_LOGLEVEL, gConfig.iLogLevel);
 
 	SetDlgItemText(hwndDlg, IDC_SAMPLERATE, _itot(gConfig.iSampleRate, buffer, 10));
@@ -253,10 +255,14 @@ INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("MP3"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("OGG"));
 
-	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("DOSBOX"));
-	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("MAME"));
-	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("DOSBOXNEW"));
-	ComboBox_AddString(hwndDlg, IDC_OPL, TEXT("NUKED"));
+	ComboBox_AddString(hwndDlg, IDC_OPL_CORE, TEXT("MAME"));
+	ComboBox_AddString(hwndDlg, IDC_OPL_CORE, TEXT("DBFLT"));
+	ComboBox_AddString(hwndDlg, IDC_OPL_CORE, TEXT("DBINT"));
+	ComboBox_AddString(hwndDlg, IDC_OPL_CORE, TEXT("NUKED"));
+	ComboBox_SetCurSel(hwndDlg, IDC_OPL_CORE, 1);
+
+	ComboBox_AddString(hwndDlg, IDC_OPL_CHIP, TEXT("OPL2"));
+	ComboBox_AddString(hwndDlg, IDC_OPL_CHIP, TEXT("OPL3"));
 
 	TrackBar_SetRange(hwndDlg, IDC_QUALITY, RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX, FALSE);
 	TrackBar_SetRange(hwndDlg, IDC_MUSICVOLUME, 0, PAL_MAX_VOLUME, FALSE);
@@ -348,7 +354,8 @@ INT_PTR ComboBoxProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 	switch (idControl)
 	{
 	case IDC_BGM:
-		EnableDlgItem(hwndDlg, IDC_OPL, ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX);
+		EnableDlgItem(hwndDlg, IDC_OPL_CORE, ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX);
+		EnableDlgItem(hwndDlg, IDC_OPL_CHIP, ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX);
 		EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX);
 		EnableDlgItem(hwndDlg, IDC_OPLSR, ComboBox_GetCurSel(hwndDlg, IDC_BGM) == MUSIC_RIX);
 		return TRUE;

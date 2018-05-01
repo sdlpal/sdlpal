@@ -28,11 +28,9 @@
 
 #include "resampler.h"
 #include "adplug/opl.h"
-#include "adplug/demuopl.h"
-#include "adplug/dbemuopl.h"
-#include "adplug/nukedopl.h"
-#include "adplug/emuopl.h"
+#include "adplug/emuopls.h"
 #include "adplug/surroundopl.h"
+#include "adplug/convertopl.h"
 #include "adplug/rix.h"
 
 typedef struct tagRIXPLAYER :
@@ -402,57 +400,35 @@ RIX_Init(
 		pRixPlayer->Play = RIX_Play;
 	}
 
-	if (gConfig.fUseSurroundOPL)
+	auto chip = (Copl::ChipType)gConfig.eOPLChip;
+	if (chip == Copl::TYPE_OPL2 && gConfig.fUseSurroundOPL)
 	{
-		switch (gConfig.eOPLType)
-		{
-		case OPL_DOSBOX:
-			pRixPlayer->opl = new CSurroundopl(
-				new CDemuopl(gConfig.iOPLSampleRate, true, false),
-				new CDemuopl(gConfig.iOPLSampleRate, true, false),
-				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
-			break;
-		case OPL_DOSBOX_NEW:
-			pRixPlayer->opl = new CSurroundopl(
-				new CDBemuopl(gConfig.iOPLSampleRate, true, false),
-				new CDBemuopl(gConfig.iOPLSampleRate, true, false),
-				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
-			break;
-		case OPL_MAME:
-			pRixPlayer->opl = new CSurroundopl(
-				new CEmuopl(gConfig.iOPLSampleRate, true, false),
-				new CEmuopl(gConfig.iOPLSampleRate, true, false),
-				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
-			break;
-		case OPL_NUKED:
-			pRixPlayer->opl = new CSurroundopl(
-				new CNukedopl(gConfig.iOPLSampleRate, true, false),
-				new CNukedopl(gConfig.iOPLSampleRate, true, false),
-				true, gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset);
-			break;
-		}
-	}
-	else
-	{
-		switch (gConfig.eOPLType)
-		{
-		case OPL_DOSBOX:
-			pRixPlayer->opl = new CDemuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
-			break;
-		case OPL_DOSBOX_NEW:
-			pRixPlayer->opl = new CDBemuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
-			break;
-		case OPL_MAME:
-			pRixPlayer->opl = new CEmuopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
-			break;
-		case OPL_NUKED:
-			pRixPlayer->opl = new CNukedopl(gConfig.iOPLSampleRate, true, gConfig.iAudioChannels == 2);
-			break;
-		}
+		chip = Copl::TYPE_DUAL_OPL2;
 	}
 
+	Copl* opl = CEmuopl::CreateEmuopl((OPLCORE::TYPE)gConfig.eOPLCore, chip, gConfig.iOPLSampleRate);
+	if (NULL == opl)
+	{
+		delete pRixPlayer;
+		return NULL;
+	}
+
+	if (gConfig.fUseSurroundOPL)
+	{
+		Copl* tmpopl = new CSurroundopl(gConfig.iOPLSampleRate, gConfig.iSurroundOPLOffset, opl);
+		if (NULL == tmpopl)
+		{
+			delete opl;
+			delete pRixPlayer;
+			return NULL;
+		}
+		opl = tmpopl;
+	}
+
+	pRixPlayer->opl = new CConvertopl(opl, true, gConfig.iAudioChannels == 2);
 	if (pRixPlayer->opl == NULL)
 	{
+		delete opl;
 		delete pRixPlayer;
 		return NULL;
 	}

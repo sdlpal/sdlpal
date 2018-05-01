@@ -22,38 +22,41 @@
 #ifndef H_ADPLUG_OPL
 #define H_ADPLUG_OPL
 
+#include "opltypes.h"
+
 class Copl {
 public:
    typedef enum {
-      TYPE_OPL2, TYPE_OPL3, TYPE_DUAL_OPL2
+      TYPE_OPL2 = OPLCHIP_OPL2,
+	  TYPE_OPL3 = OPLCHIP_OPL3,
+	  TYPE_DUAL_OPL2 = OPLCHIP_DUAL_OPL2,
    } ChipType;
 
-   Copl()
-         : currChip(0), currType(TYPE_OPL2) {
-   }
+   Copl() : currChip(0), currType(TYPE_OPL2) { }
+   Copl(ChipType type) : currChip(0), currType(type) { }
 
-   virtual ~Copl() {
-   }
+   virtual ~Copl() {}
 
-   virtual void write(int reg, int val) {} // combined register select + data write
+   virtual void init(void) = 0; // reinitialize OPL chip(s)
+   virtual void write(int reg, int val) = 0; // combined register select + data write
+   virtual void update(short *buf, int samples) = 0; // Emulation only: fill buffer
+
    virtual void setchip(int n) { // select OPL chip
-      if (n < 2)
-         currChip = n;
+      currChip = (n < 2 && currType == TYPE_DUAL_OPL2) ? n : 0;
    }
 
    virtual int getchip() { // returns current OPL chip
       return currChip;
    }
 
-   virtual void init(void) {} // reinitialize OPL chip(s)
-
    // return this OPL chip's type
    ChipType gettype() {
       return currType;
    }
 
-   // Emulation only: fill buffer
-   virtual void update(short *buf, int samples) {}
+   virtual bool getstereo() {	// return if this OPL chip output stereo
+      return currType == TYPE_OPL3 || currType == TYPE_DUAL_OPL2;
+   }
 
 protected:
    int		currChip;		// currently selected OPL chip number

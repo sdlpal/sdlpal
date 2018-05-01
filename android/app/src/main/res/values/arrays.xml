@@ -21,10 +21,15 @@
         <item>MP3</item>
         <item>OGG</item>
     </string-array>
-    <string-array name="opl_type" translatable="false">
-        <item>DOSBOX</item>
+    <string-array name="opl_core" translatable="false">
         <item>MAME</item>
-        <item>DOSBOXNEW</item>
+        <item>DBFLT</item>
+        <item>DBINT</item>
+        <item>NUKED</item>
+    </string-array>
+    <string-array name="opl_chip" translatable="false">
+        <item>OPL2</item>
+        <item>OPL3</item>
     </string-array>
     <string-array name="opl_rate" translatable="false">
         <item>11025</item>

@@ -220,11 +220,17 @@
   <data name="MusicVolume.Header" xml:space="preserve">
     <value>音樂音量</value>
   </data>
-  <data name="OPL.Header" xml:space="preserve">
-    <value>OPL 模擬器</value>
+  <data name="OPLChip.Header" xml:space="preserve">
+    <value>OPL 模擬晶片</value>
   </data>
-  <data name="OPL.PlaceholderText" xml:space="preserve">
-    <value>選擇 OPL 模擬器</value>
+  <data name="OPLChip.PlaceholderText" xml:space="preserve">
+    <value>選擇 OPL 模擬晶片</value>
+  </data>
+  <data name="OPLCore.Header" xml:space="preserve">
+    <value>OPL 模擬核心</value>
+  </data>
+  <data name="OPLCore.PlaceholderText" xml:space="preserve">
+    <value>選擇 OPL 模擬核心</value>
   </data>
   <data name="OPLSR.Header" xml:space="preserve">
     <value>OPL 模擬器取樣速率</value>

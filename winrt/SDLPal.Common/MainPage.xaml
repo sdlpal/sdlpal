@@ -78,11 +78,15 @@
                     <ComboBoxItem Content="MP3"/>
                     <ComboBoxItem Content="OGG"/>
                 </ComboBox>
-                <ComboBox x:Name="cbOPL" x:Uid="OPL" HorizontalAlignment="Stretch" Header="OPL 模拟器" PlaceholderText="选择 OPL 模拟器">
-                    <ComboBoxItem Content="DOSBOX"/>
+                <ComboBox x:Name="cbOPLCore" x:Uid="OPLCORE" HorizontalAlignment="Stretch" Header="OPL 模拟核心" PlaceholderText="选择 OPL 模拟核心">
                     <ComboBoxItem Content="MAME"/>
-                    <ComboBoxItem Content="DOSBOXNEW"/>
+                    <ComboBoxItem Content="DBFLT"/>
+                    <ComboBoxItem Content="DBINT"/>
                     <ComboBoxItem Content="NUKED"/>
+                </ComboBox>
+                <ComboBox x:Name="cbOPLChip" x:Uid="OPLCHIP" HorizontalAlignment="Stretch" Header="OPL 模拟芯片" PlaceholderText="选择 OPL 模拟芯片">
+                    <ComboBoxItem Content="OPL2"/>
+                    <ComboBoxItem Content="OPL3"/>
                 </ComboBox>
                 <ComboBox x:Name="cbOPLSR" x:Uid="OPLSR" HorizontalAlignment="Stretch" Header="OPL 模拟器采样率" PlaceholderText="选择 OPL 模拟器采样率">
                     <ComboBoxItem Content="12429"/>
