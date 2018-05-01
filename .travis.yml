@@ -3,7 +3,6 @@ language: c
 env:
   global:
     - CACHE=$HOME/.sdlpal-caches
-    - SDL2_VERSION=2.0.7
 
 cache:
   branch: md5deep
@@ -34,7 +33,7 @@ matrix:
           - cd ..
 
       - os: linux
-        env: TARGET=MinGW32
+        env: TARGET=MinGW32 SDL2_VERSION=2.0.8
         addons:
           apt:
             packages:
