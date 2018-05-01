@@ -1141,6 +1141,9 @@
 				PRODUCT_NAME = Pal;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
+				OTHER_LDFLAGS = (
+					"-Wl,-weak_framework,Metal",
+				);
 			};
 			name = Debug;
 		};
@@ -1167,6 +1170,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = Pal;
 				WRAPPER_EXTENSION = app;
+				OTHER_LDFLAGS = (
+					"-Wl,-weak_framework,Metal",
+				);
 			};
 			name = Release;
 		};
@@ -1199,6 +1205,9 @@
 				HEADER_SEARCH_PATHS = (
 					/Library/Frameworks/SDL2.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-weak_framework,Metal",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
@@ -1234,6 +1243,9 @@
 				HEADER_SEARCH_PATHS = (
 					/Library/Frameworks/SDL2.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-weak_framework,Metal",
 				);
 				PREBINDING = NO;
 				SDKROOT = macosx;
@@ -1289,6 +1301,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pal.app/Contents/MacOS/Pal";
 				USER_HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL2.framework/Headers $(HEADER_SEARCH_PATHS)";
+				OTHER_LDFLAGS = (
+					"-Wl,-weak_framework,Metal",
+				);
 			};
 			name = Debug;
 		};
@@ -1336,6 +1351,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pal.app/Contents/MacOS/Pal";
 				USER_HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL2.framework/Headers $(HEADER_SEARCH_PATHS)";
+				OTHER_LDFLAGS = (
+					"-Wl,-weak_framework,Metal",
+				);
 			};
 			name = Release;
 		};
