@@ -33,44 +33,47 @@
 #define PAL_HAS_TOUCH     0
 #endif
 
-#define MAKE_VALUE(defv, minv, maxv) {(LPCSTR)(defv)}, {(LPCSTR)(minv)}, {(LPCSTR)(maxv)}
+#define MAKE_BOOLEAN(defv, minv, maxv)  { .bValue = defv }, { .bValue = minv }, { .bValue = maxv }
+#define MAKE_INTEGER(defv, minv, maxv)  { .iValue = defv }, { .iValue = minv }, { .iValue = maxv }
+#define MAKE_UNSIGNED(defv, minv, maxv) { .uValue = defv }, { .uValue = minv }, { .uValue = maxv }
+#define MAKE_STRING(defv)               { .sValue = defv }, { .sValue = NULL }, { .sValue = NULL }
 
 static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
-	{ PALCFG_FULLSCREEN,        PALCFG_BOOLEAN,  "FullScreen",        10, MAKE_VALUE(FALSE,                         FALSE,                 TRUE) },
-	{ PALCFG_KEEPASPECTRATIO,   PALCFG_BOOLEAN,  "KeepAspectRatio",   15, MAKE_VALUE(TRUE,                          FALSE,                 TRUE) },
-	{ PALCFG_LAUNCHSETTING,     PALCFG_BOOLEAN,  "LaunchSetting",     13, MAKE_VALUE(PAL_HAS_CONFIG_PAGE,           FALSE,                 TRUE) },
-	{ PALCFG_STEREO,            PALCFG_BOOLEAN,  "Stereo",             6, MAKE_VALUE(TRUE,                          FALSE,                 TRUE) },                  // Default for stereo audio
-	{ PALCFG_USESURROUNDOPL,    PALCFG_BOOLEAN,  "UseSurroundOPL",    14, MAKE_VALUE(TRUE,                          FALSE,                 TRUE) },                  // Default for using surround opl
-	{ PALCFG_ENABLEKEYREPEAT,   PALCFG_BOOLEAN,  "EnableKeyRepeat",   15, MAKE_VALUE(FALSE,                         FALSE,                 TRUE) },
-	{ PALCFG_USETOUCHOVERLAY,   PALCFG_BOOLEAN,  "UseTouchOverlay",   15, MAKE_VALUE(PAL_HAS_TOUCH,                 FALSE,                 TRUE) },
-	{ PALCFG_ENABLEAVIPLAY,     PALCFG_BOOLEAN,  "EnableAviPlay",     13, MAKE_VALUE(TRUE,                          FALSE,                 TRUE) },
+	{ PALCFG_FULLSCREEN,        PALCFG_BOOLEAN,  "FullScreen",        10, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
+	{ PALCFG_KEEPASPECTRATIO,   PALCFG_BOOLEAN,  "KeepAspectRatio",   15, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
+	{ PALCFG_LAUNCHSETTING,     PALCFG_BOOLEAN,  "LaunchSetting",     13, MAKE_BOOLEAN(PAL_HAS_CONFIG_PAGE,           FALSE,                 TRUE) },
+	{ PALCFG_STEREO,            PALCFG_BOOLEAN,  "Stereo",             6, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },                  // Default for stereo audio
+	{ PALCFG_USESURROUNDOPL,    PALCFG_BOOLEAN,  "UseSurroundOPL",    14, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },                  // Default for using surround opl
+	{ PALCFG_ENABLEKEYREPEAT,   PALCFG_BOOLEAN,  "EnableKeyRepeat",   15, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
+	{ PALCFG_USETOUCHOVERLAY,   PALCFG_BOOLEAN,  "UseTouchOverlay",   15, MAKE_BOOLEAN(PAL_HAS_TOUCH,                 FALSE,                 TRUE) },
+	{ PALCFG_ENABLEAVIPLAY,     PALCFG_BOOLEAN,  "EnableAviPlay",     13, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
 
-	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SurroundOPLOffset", 17, MAKE_VALUE(384,                           INT32_MIN,             INT32_MAX) },
-	{ PALCFG_LOGLEVEL,          PALCFG_INTEGER,  "LogLevel",           8, MAKE_VALUE(PAL_DEFAULT_LOGLEVEL,          LOGLEVEL_MIN,          LOGLEVEL_MAX) },
-	{ PALCFG_AUDIODEVICE,       PALCFG_INTEGER,  "AudioDevice",       11, MAKE_VALUE(-1,                            INT32_MIN,             INT32_MAX) },
+	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SurroundOPLOffset", 17, MAKE_INTEGER(384,                           INT32_MIN,             INT32_MAX) },
+	{ PALCFG_LOGLEVEL,          PALCFG_INTEGER,  "LogLevel",           8, MAKE_INTEGER(PAL_DEFAULT_LOGLEVEL,          LOGLEVEL_MIN,          LOGLEVEL_MAX) },
+	{ PALCFG_AUDIODEVICE,       PALCFG_INTEGER,  "AudioDevice",       11, MAKE_INTEGER(-1,                            INT32_MIN,             INT32_MAX) },
 
-	{ PALCFG_AUDIOBUFFERSIZE,   PALCFG_UNSIGNED, "AudioBufferSize",   15, MAKE_VALUE(PAL_AUDIO_DEFAULT_BUFFER_SIZE, 2,                     32768) },
-	{ PALCFG_OPLSAMPLERATE,     PALCFG_UNSIGNED, "OPLSampleRate",     13, MAKE_VALUE(49716,                         0,                     UINT32_MAX) },
-	{ PALCFG_RESAMPLEQUALITY,   PALCFG_UNSIGNED, "ResampleQuality",   15, MAKE_VALUE(RESAMPLER_QUALITY_MAX,         RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX) }, // Default for best quality
-	{ PALCFG_SAMPLERATE,        PALCFG_UNSIGNED, "SampleRate",        10, MAKE_VALUE(44100,                         0,                     PAL_MAX_SAMPLERATE) },
-	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MusicVolume",       11, MAKE_VALUE(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
-	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_VALUE(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
-	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_VALUE(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
-	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WindowWidth",       11, MAKE_VALUE(PAL_DEFAULT_WINDOW_WIDTH,      0,                     UINT32_MAX) },
+	{ PALCFG_AUDIOBUFFERSIZE,   PALCFG_UNSIGNED, "AudioBufferSize",   15, MAKE_UNSIGNED(PAL_AUDIO_DEFAULT_BUFFER_SIZE, 2,                     32768) },
+	{ PALCFG_OPLSAMPLERATE,     PALCFG_UNSIGNED, "OPLSampleRate",     13, MAKE_UNSIGNED(49716,                         0,                     UINT32_MAX) },
+	{ PALCFG_RESAMPLEQUALITY,   PALCFG_UNSIGNED, "ResampleQuality",   15, MAKE_UNSIGNED(RESAMPLER_QUALITY_MAX,         RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX) }, // Default for best quality
+	{ PALCFG_SAMPLERATE,        PALCFG_UNSIGNED, "SampleRate",        10, MAKE_UNSIGNED(44100,                         0,                     PAL_MAX_SAMPLERATE) },
+	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MusicVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
+	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
+	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
+	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WindowWidth",       11, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_WIDTH,      0,                     UINT32_MAX) },
 
-	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, MAKE_VALUE("OGG",    NULL, NULL) },
-	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GamePath",           8, MAKE_VALUE(NULL,     NULL, NULL) },
-	{ PALCFG_SAVEPATH,          PALCFG_STRING,   "SavePath",           8, MAKE_VALUE(NULL,     NULL, NULL) },
-	{ PALCFG_MESSAGEFILE,       PALCFG_STRING,   "MessageFileName",   15, MAKE_VALUE(NULL,     NULL, NULL) },
-	{ PALCFG_FONTFILE,          PALCFG_STRING,   "FontFileName",      12, MAKE_VALUE(NULL,     NULL, NULL) },
-	{ PALCFG_MUSIC,             PALCFG_STRING,   "Music",              5, MAKE_VALUE("RIX",    NULL, NULL) },
-	{ PALCFG_OPL_CORE,          PALCFG_STRING,   "OPLCore",            7, MAKE_VALUE("DBFLT",  NULL, NULL) },
-	{ PALCFG_OPL_CHIP,          PALCFG_STRING,   "OPLChip",            7, MAKE_VALUE("OPL2",   NULL, NULL) },
-	{ PALCFG_LOGFILE,           PALCFG_STRING,   "LogFileName",       11, MAKE_VALUE(NULL,     NULL, NULL) },
-	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_VALUE(NULL,     NULL, NULL) },
-	{ PALCFG_MIDICLIENT,        PALCFG_STRING,   "MIDIClient",        10, MAKE_VALUE(NULL,     NULL, NULL) },
-    { PALCFG_SCALEQUALITY,      PALCFG_STRING,   "ScaleQuality",      12, MAKE_VALUE("0",      NULL, NULL) },
-    { PALCFG_ASPECTRATIO,       PALCFG_STRING,   "AspectRatio",       11, MAKE_VALUE("16:10",  NULL, NULL) },
+	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, MAKE_STRING("OGG") },
+	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GamePath",           8, MAKE_STRING(NULL) },
+	{ PALCFG_SAVEPATH,          PALCFG_STRING,   "SavePath",           8, MAKE_STRING(NULL) },
+	{ PALCFG_MESSAGEFILE,       PALCFG_STRING,   "MessageFileName",   15, MAKE_STRING(NULL) },
+	{ PALCFG_FONTFILE,          PALCFG_STRING,   "FontFileName",      12, MAKE_STRING(NULL) },
+	{ PALCFG_MUSIC,             PALCFG_STRING,   "Music",              5, MAKE_STRING("RIX") },
+	{ PALCFG_OPL_CORE,          PALCFG_STRING,   "OPLCore",            7, MAKE_STRING("DBFLT") },
+	{ PALCFG_OPL_CHIP,          PALCFG_STRING,   "OPLChip",            7, MAKE_STRING("OPL2") },
+	{ PALCFG_LOGFILE,           PALCFG_STRING,   "LogFileName",       11, MAKE_STRING(NULL) },
+	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_STRING(NULL) },
+	{ PALCFG_MIDICLIENT,        PALCFG_STRING,   "MIDIClient",        10, MAKE_STRING(NULL) },
+	{ PALCFG_SCALEQUALITY,      PALCFG_STRING,   "ScaleQuality",      12, MAKE_STRING("0") },
+	{ PALCFG_ASPECTRATIO,       PALCFG_STRING,   "AspectRatio",       11, MAKE_STRING("16:10") },
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
@@ -286,26 +289,81 @@ PAL_LoadConfig(
 	OPLCHIP_TYPE eOPLChip = OPLCHIP_OPL2;
 	INT dwAspectX = -1;
 	INT dwAspectY = -1;
-	SCREENLAYOUT screen_layout = {
+	static const SCREENLAYOUT screen_layout = {
 		// Equipment Screen
-		PAL_XY(8, 8), PAL_XY(2, 95), PAL_XY(5, 70), PAL_XY(51, 57),
-		{ PAL_XY(92, 11), PAL_XY(92, 33), PAL_XY(92, 55), PAL_XY(92, 77), PAL_XY(92, 99), PAL_XY(92, 121) },
-		{ PAL_XY(130, 11), PAL_XY(130, 33), PAL_XY(130, 55), PAL_XY(130, 77), PAL_XY(130, 99), PAL_XY(130, 121) },
-		{ PAL_XY(226, 10), PAL_XY(226, 32), PAL_XY(226, 54), PAL_XY(226, 76), PAL_XY(226, 98) },
-		{ PAL_XY(260, 14), PAL_XY(260, 36), PAL_XY(260, 58), PAL_XY(260, 80), PAL_XY(260, 102) },
+		.EquipImageBox     = PAL_XY(8, 8),
+		.EquipRoleListBox  = PAL_XY(2, 95),
+		.EquipItemName     = PAL_XY(5, 70),
+		.EquipItemAmount   = PAL_XY(51, 57),
+		.EquipLabels       = {
+			PAL_XY(92, 11), PAL_XY(92, 33),
+			PAL_XY(92, 55), PAL_XY(92, 77),
+			PAL_XY(92, 99), PAL_XY(92, 121)
+		},
+		.EquipNames        = {
+			PAL_XY(130, 11), PAL_XY(130, 33),
+			PAL_XY(130, 55), PAL_XY(130, 77),
+			PAL_XY(130, 99), PAL_XY(130, 121)
+		},
+		.EquipStatusLabels = {
+			PAL_XY(226, 10), PAL_XY(226, 32),
+			PAL_XY(226, 54), PAL_XY(226, 76),
+			PAL_XY(226, 98)
+		},
+		.EquipStatusValues = {
+			PAL_XY(260, 14), PAL_XY(260, 36),
+			PAL_XY(260, 58), PAL_XY(260, 80),
+			PAL_XY(260, 102)
+		},
 
 		// Status Screen
-		PAL_XY(110, 8), PAL_XY(110, 30), PAL_XY(6, 6),  PAL_XY(6, 32),  PAL_XY(6, 54),  PAL_XY(6, 76),
-		{ PAL_XY(6, 98),   PAL_XY(6, 118),  PAL_XY(6, 138),  PAL_XY(6, 158),  PAL_XY(6, 178) },
-		PAL_XY(58, 6), PAL_XY(58, 15), PAL_XY(0, 0), PAL_XY(54, 35), PAL_XY(42, 56),
-		PAL_XY(63, 61), PAL_XY(65, 58), PAL_XY(42, 78), PAL_XY(63, 83), PAL_XY(65, 80),
-		{ PAL_XY(42, 102), PAL_XY(42, 122), PAL_XY(42, 142), PAL_XY(42, 162), PAL_XY(42, 182) },
-		{ PAL_XY(189, -1), PAL_XY(247, 39), PAL_XY(251, 101), PAL_XY(201, 133), PAL_XY(141, 141), PAL_XY(81, 125) },
-		{ PAL_XY(195, 38), PAL_XY(253, 78), PAL_XY(257, 140), PAL_XY(207, 172), PAL_XY(147, 180), PAL_XY(87, 164) },
-		{ PAL_XY(185, 58), PAL_XY(185, 76), PAL_XY(185, 94), PAL_XY(185, 112), PAL_XY(185, 130), PAL_XY(185, 148), PAL_XY(185, 166), PAL_XY(185, 184), PAL_XY(185, 184), PAL_XY(185, 184) },
+		.RoleName            = PAL_XY(110, 8),
+		.RoleImage           = PAL_XY(110, 30),
+		.RoleExpLabel        = PAL_XY(6, 6),
+		.RoleLevelLabel      = PAL_XY(6, 32),
+		.RoleHPLabel         = PAL_XY(6, 54),
+		.RoleMPLabel         = PAL_XY(6, 76),
+		.RoleStatusLabels    = {
+			PAL_XY(6, 98),  PAL_XY(6, 118),
+			PAL_XY(6, 138), PAL_XY(6, 158),
+			PAL_XY(6, 178)
+		},
+		.RoleCurrExp         = PAL_XY(58, 6),
+		.RoleNextExp         = PAL_XY(58, 15),
+		.RoleExpSlash        = PAL_XY(0, 0),
+		.RoleLevel           = PAL_XY(54, 35),
+		.RoleCurHP           = PAL_XY(42, 56),
+		.RoleMaxHP           = PAL_XY(63, 61),
+		.RoleHPSlash         = PAL_XY(65, 58),
+		.RoleCurMP           = PAL_XY(42, 78),
+		.RoleMaxMP           = PAL_XY(63, 83),
+		.RoleMPSlash         = PAL_XY(65, 80),
+		.RoleStatusValues    = {
+			PAL_XY(42, 102), PAL_XY(42, 122),
+			PAL_XY(42, 142), PAL_XY(42, 162),
+			PAL_XY(42, 182)
+		},
+		.RoleEquipImageBoxes = {
+			PAL_XY(189, -1),  PAL_XY(247, 39),
+			PAL_XY(251, 101), PAL_XY(201, 133),
+			PAL_XY(141, 141), PAL_XY(81, 125)
+		},
+		.RoleEquipNames      = {
+			PAL_XY(195, 38),  PAL_XY(253, 78),
+			PAL_XY(257, 140), PAL_XY(207, 172),
+			PAL_XY(147, 180), PAL_XY(87, 164)
+		},
+		.RolePoisonNames     = {
+			PAL_XY(185, 58),  PAL_XY(185, 76),
+			PAL_XY(185, 94),  PAL_XY(185, 112),
+			PAL_XY(185, 130), PAL_XY(185, 148),
+			PAL_XY(185, 166), PAL_XY(185, 184),
+			PAL_XY(185, 184), PAL_XY(185, 184)
+		},
 
 		// Extra Lines
-		PAL_XY(0, 0), PAL_XY(0, 0)
+		.ExtraItemDescLines  = PAL_XY(0, 0),
+		.ExtraMagicDescLines = PAL_XY(0, 0),
 	};
 
 	for (PALCFG_ITEM i = PALCFG_ALL_MIN; i < PALCFG_ALL_MAX; i++) values[i] = gConfigItems[i].DefaultValue;
@@ -591,9 +649,11 @@ PAL_GetConfigItem(
 		case PALCFG_ENABLEKEYREPEAT:   value.bValue = gConfig.fEnableKeyRepeat; break;
 		case PALCFG_USETOUCHOVERLAY:   value.bValue = gConfig.fUseTouchOverlay; break;
 		case PALCFG_ENABLEAVIPLAY:     value.bValue = gConfig.fEnableAviPlay; break;
+
 		case PALCFG_SURROUNDOPLOFFSET: value.iValue = gConfig.iSurroundOPLOffset; break;
 		case PALCFG_LOGLEVEL:          value.iValue = gConfig.iLogLevel; break;
 		case PALCFG_AUDIODEVICE:       value.iValue = gConfig.iAudioDevice; break;
+
 		case PALCFG_AUDIOBUFFERSIZE:   value.uValue = gConfig.wAudioBufferSize; break;
 		case PALCFG_OPLSAMPLERATE:     value.uValue = gConfig.iOPLSampleRate; break;
 		case PALCFG_RESAMPLEQUALITY:   value.uValue = gConfig.iResampleQuality; break;
@@ -602,6 +662,7 @@ PAL_GetConfigItem(
 		case PALCFG_SOUNDVOLUME:       value.uValue = gConfig.iSoundVolume; break;
 		case PALCFG_WINDOWHEIGHT:      value.uValue = gConfig.dwScreenHeight; break;
 		case PALCFG_WINDOWWIDTH:       value.uValue = gConfig.dwScreenWidth; break;
+
 		case PALCFG_CD:                value.sValue = music_types[gConfig.eCDType]; break;
 		case PALCFG_GAMEPATH:          value.sValue = gConfig.pszGamePath; break;
 		case PALCFG_SAVEPATH:          value.sValue = gConfig.pszSavePath; break;
@@ -637,9 +698,11 @@ PAL_SetConfigItem(
 	case PALCFG_ENABLEKEYREPEAT:   gConfig.fEnableKeyRepeat = value.bValue; break;
 	case PALCFG_USETOUCHOVERLAY:   gConfig.fUseTouchOverlay = value.bValue; break;
 	case PALCFG_ENABLEAVIPLAY:     gConfig.fEnableAviPlay = value.bValue; break;
+
 	case PALCFG_SURROUNDOPLOFFSET: gConfig.iSurroundOPLOffset = value.iValue; break;
 	case PALCFG_LOGLEVEL:          gConfig.iLogLevel = value.iValue; break;
 	case PALCFG_AUDIODEVICE:       gConfig.iAudioDevice = value.iValue; break;
+
 	case PALCFG_AUDIOBUFFERSIZE:   gConfig.wAudioBufferSize = value.uValue; break;
 	case PALCFG_OPLSAMPLERATE:     gConfig.iOPLSampleRate = value.uValue; break;
 	case PALCFG_RESAMPLEQUALITY:   gConfig.iResampleQuality = value.uValue; break;
@@ -648,6 +711,7 @@ PAL_SetConfigItem(
 	case PALCFG_SOUNDVOLUME:       gConfig.iSoundVolume = value.uValue; break;
 	case PALCFG_WINDOWHEIGHT:      gConfig.dwScreenHeight = value.uValue; break;
 	case PALCFG_WINDOWWIDTH:       gConfig.dwScreenWidth = value.uValue; break;
+
     case PALCFG_ASPECTRATIO:
     {
         char *lasts;
@@ -791,7 +855,7 @@ PAL_SetConfigBoolean(
 {
 	if (gConfigItems[item].Type == PALCFG_BOOLEAN)
 	{
-		ConfigValue val = { (const char *)(intptr_t)value };
+		ConfigValue val = { .bValue = value };
 		PAL_SetConfigItem(item, val);
 		return TRUE;
 	}
@@ -807,15 +871,11 @@ PAL_SetConfigNumber(
 	long        value
 )
 {
-	if (gConfigItems[item].Type == PALCFG_INTEGER || gConfigItems[item].Type == PALCFG_UNSIGNED)
+	switch (gConfigItems[item].Type)
 	{
-		ConfigValue val = { (const char *)(intptr_t)value };
-		PAL_SetConfigItem(item, val);
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
+	case PALCFG_UNSIGNED: return PAL_SetConfigUnsigned(item, (unsigned int)value);
+	case PALCFG_INTEGER:  return PAL_SetConfigInteger(item, (int)value);
+	default:              return FALSE;
 	}
 }
 
@@ -827,7 +887,7 @@ PAL_SetConfigInteger(
 {
 	if (gConfigItems[item].Type == PALCFG_INTEGER)
 	{
-		ConfigValue val = { (const char *)(intptr_t)value };
+		ConfigValue val = { .iValue = value };
 		PAL_SetConfigItem(item, val);
 		return TRUE;
 	}
@@ -845,7 +905,7 @@ PAL_SetConfigUnsigned(
 {
 	if (gConfigItems[item].Type == PALCFG_UNSIGNED)
 	{
-		ConfigValue val = { (const char *)(intptr_t)value };
+		ConfigValue val = { .uValue = value };
 		PAL_SetConfigItem(item, val);
 		return TRUE;
 	}
@@ -863,7 +923,7 @@ PAL_SetConfigString(
 {
 	if (gConfigItems[item].Type == PALCFG_STRING)
 	{
-		ConfigValue val = { value };
+		ConfigValue val = { .sValue = value };
 		PAL_SetConfigItem(item, val);
 		return TRUE;
 	}
