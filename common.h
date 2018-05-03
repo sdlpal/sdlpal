@@ -40,6 +40,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "SDL.h"
 #include "SDL_endian.h"
