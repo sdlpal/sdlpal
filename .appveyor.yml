@@ -1,6 +1,6 @@
 version: 2.0.{build}
 image:
-  - Visual Studio 2015
+  - Visual Studio 2017
 environment:
   matrix:
     - solution_name: win32/sdlpal.sln

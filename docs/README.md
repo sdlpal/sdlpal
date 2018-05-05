@@ -67,11 +67,9 @@ Windows
 
 ### Visual Studio
 
-To build SDLPAL as a Windows **desktop** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** to open the solution file *`sdlpal.sln`* under the *`win32`* directory.
+To build SDLPAL as a Windows **desktop** app, you can use ***Microsoft Visual Studio 2017*** to open the solution file *`sdlpal.sln`* under the *`win32`* directory.
 
-To build SDLPAL as a **Universal Windows Platform** app, you can use ***Microsoft Visual Studio 2015*** or ***Microsoft Visual Studio 2017*** to open the solution file *`SDLPal.UWP.sln`* under the *`winrt`* directory.
-
-There are also solution files for building traditional **Windows (phone) store app** under the *`winrt`* directory, but they are deprecated (which means there will be no further platform-specific feature update for these two platforms) and may be removed in future.
+To build SDLPAL as a **Universal Windows Platform** app, you can use ***Microsoft Visual Studio 2017*** to open the solution file *`SDLPal.UWP.sln`* under the *`winrt`* directory.
 
 ### MinGW
 
