@@ -220,6 +220,27 @@ You can use the main menu option inside the game to return to this page.</value>
   <data name="MusicVolume.Header" xml:space="preserve">
     <value>Music volume</value>
   </data>
+  <data name="EnableGLSL.Content" xml:space="preserve">
+    <value>Enable GLSL Filter</value>
+  </data>
+  <data name="ShaderFile.PlaceholderText" xml:space="preserve">
+    <value>No GLSL specified</value>
+  </data>
+  <data name="EnableHDR.Header" xml:space="preserve">
+    <value>Enable HDR</value>
+  </data>
+  <data name="EnableHDR.OffContent" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="EnableHDR.OnContent" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="TextureWidth.Header" xml:space="preserve">
+    <value>Render Texture Width</value>
+  </data>
+  <data name="TextureHeight.Header" xml:space="preserve">
+    <value>Render Texture Height</value>
+  </data>
   <data name="OPLChip.Header" xml:space="preserve">
     <value>Type of OPL emulator chip</value>
   </data>

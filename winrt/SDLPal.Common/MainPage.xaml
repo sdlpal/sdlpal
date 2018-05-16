@@ -47,11 +47,23 @@
                 </Grid>
                 <ToggleSwitch x:Name="tsTouchOverlay" x:Uid="TouchOverlay" Header="启用触屏辅助" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsKeepAspect" x:Uid="AspectRatio" Header="保持纵横比" OffContent="否" OnContent="是" />
-                <ComboBox x:Name="cbAspectRatio" x:Uid="Ratio" HorizontalAlignment="Stretch" Header="纵横比" PlaceholderText="选择纵横比">
-                    <ComboBoxItem Content="16:10"/>
-                    <ComboBoxItem Content="4:3"/>
-                </ComboBox>
+                <TextBox Grid.Row="2" x:Name="tbTextureWidth" x:Uid="TextureWidth" TextWrapping="Wrap" VerticalAlignment="Top" Header="纹理线宽" PlaceholderText="320" InputScope="Number"/>
+                <TextBox Grid.Row="3" x:Name="tbTextureHeight" x:Uid="TextureHeight" TextWrapping="Wrap" VerticalAlignment="Top" Header="纹理线长" PlaceholderText="200" InputScope="Number"/>
                 <ToggleSwitch x:Name="tsEnableAVI" x:Uid="EnableAVI" Header="启用 AVI 过场动画" OffContent="否" OnContent="是" />
+                <CheckBox x:Name="cbEnableGLSL" x:Uid="EnableGLSL" Content="启用GLSL滤镜" Checked="cbEnableGLSL_CheckChanged" Unchecked="cbEnableGLSL_CheckChanged" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                <Grid x:Name="gridGLSL">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="tbShaderFile" x:Uid="ShaderFile" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" PlaceholderText="无自定义Shader" IsReadOnly="True"/>
+                    <Button x:Name="btnBrowseShaderFile" x:Uid="ButtonBrowse" Grid.Column="1" Content="浏览" HorizontalAlignment="Right" Click="btnBrowseFileOpen_Click" />
+                    <ToggleSwitch Grid.Row="1" x:Name="tsEnableHDR" x:Uid="EnableHDR" Header="启用HDR" OffContent="否" OnContent="是" />
+                </Grid>
                 <ToggleSwitch x:Name="tsStereo" x:Uid="Stereo" Header="立体声" OffContent="否" OnContent="是" />
                 <Slider x:Name="slMusicVolume" x:Uid="MusicVolume" Header="音乐音量" TickPlacement="Inline" TickFrequency="10" />
                 <Slider x:Name="slSoundVolume" x:Uid="SoundVolume" Header="音效音量" TickPlacement="Inline" TickFrequency="10" />
