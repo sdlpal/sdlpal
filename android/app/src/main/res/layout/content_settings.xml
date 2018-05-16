@@ -127,15 +127,76 @@
                 tools:layout_editor_absoluteY="269dp" />
 
             <TextView
+                android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/label_aspectratio" />
+                android:text="@string/texture_width" />
 
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/spAspectRatio"
+            <EditText
+                android:id="@+id/edTextureWidth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/aspect_ratio" />
+                android:ems="10"
+                android:inputType="numberSigned" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/texture_height" />
+
+            <EditText
+                android:id="@+id/edTextureHeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="numberSigned" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swEnableGLSL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_glsl"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="228dp" />
+
+            <LinearLayout
+                android:id="@+id/glslBlock"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/edShader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="textUri" />
+
+                    <Button
+                        android:id="@+id/btnBrowseShader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_browse" />
+                </LinearLayout>
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/swEnableHDR"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enable_hdr"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="228dp" />
+
+            </LinearLayout>
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/swStereo"

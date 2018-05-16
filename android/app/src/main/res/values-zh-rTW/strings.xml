@@ -33,4 +33,8 @@
     <string name="msg_data_not_found_header">無法在以下資料夾中找到遊戲資料檔:</string>
     <string name="msg_data_not_found_footer">說明：為防止侵害大宇公司版權，恕不提供遊戲資料檔。请自行將正版PAL的資料檔復製到手機中。</string>
     <string name="label_aspectratio">縱橫比</string>
+    <string name="enable_glsl">啟用GLSL</string>
+    <string name="enable_hdr">啟用HDR</string>
+    <string name="texture_width">紋理寬度</string>
+    <string name="texture_height">紋理高度</string>
 </resources>

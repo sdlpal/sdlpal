@@ -33,4 +33,8 @@
     <string name="msg_data_not_found_header">无法在以下文件夹中找到游戏数据文件:</string>
     <string name="msg_data_not_found_footer">注意：由于版权问题，数据文件无法提供。请自行从百游官方下载并解压拷贝到手机中。</string>
     <string name="label_aspectratio">纵横比</string>
+    <string name="enable_glsl">启用GLSL</string>
+    <string name="enable_hdr">启用HDR</string>
+    <string name="texture_width">纹理宽度</string>
+    <string name="texture_height">纹理高度</string>
 </resources>
