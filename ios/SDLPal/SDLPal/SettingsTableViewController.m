@@ -21,9 +21,8 @@
     NSArray *CDFormats;
     NSArray *MusicFormats;
     NSArray *OPLCores;
-    //NSArray *OPLChips;
+    NSArray *OPLChips;
     NSArray *LogLevels;
-    NSArray *AspectRatios;
     
     NSArray *allFiles;
     NSMutableArray *AvailFiles;
@@ -41,12 +40,17 @@
     
     IBOutlet UISwitch *toggleTouchScreenOverlay;
     IBOutlet UISwitch *toggleKeepAspect;
-    IBOutlet UILabel *lblAspectRatio;
     IBOutlet UISwitch *toggleSmoothScaling;
+    
+    IBOutlet UISwitch *toggleGLSL;
+    IBOutlet UISwitch *toggleHDR;
+    IBOutlet UILabel *lblShader;
+    IBOutlet UITextField *textTextureWidth;
+    IBOutlet UITextField *textTextureHeight;
     
     IBOutlet UILabel *lblMusicType;
     IBOutlet UILabel *lblOPLCore;
-    //IBOutlet UILabel *lblOPLChip;
+    IBOutlet UILabel *lblOPLChip;
     IBOutlet UILabel *lblOPLRate;
     IBOutlet UILabel *lblCDAudioSource;
     IBOutlet UISwitch *toggleStereo;
@@ -85,9 +89,8 @@
     CDFormats = @[ @"MP3", @"OGG" ];
     MusicFormats = @[ @"MIDI", @"RIX", @"MP3", @"OGG" ];
     OPLCores = @[ @"MAME", @"DBFLT", @"DBINT", @"NUKED" ];
-    //OPLChips = @[ @"OPL2", @"OPL3" ];
+    OPLChips = @[ @"OPL2", @"OPL3" ];
     LogLevels = @[ @"VERBOSE", @"DEBUG", @"INFO", @"WARNING", @"ERROR", @"FATAL" ];
-    AspectRatios = @[ @"16:10", @"4:3" ];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     tap.cancelsTouchesInView = NO;
@@ -171,15 +174,21 @@ typedef void(^SelectedBlock)(NSString *selected);
             rows = 4;
             break;
         case 3:
-            rows = [lblMusicType.text isEqualToString:@"RIX"] ? 11 : 4;
+            rows = [toggleGLSL isOn] ? 3 : 1;
             break;
         case 4:
+            rows = [lblMusicType.text isEqualToString:@"RIX"] ? 11 : 4;
+            break;
+        case 5:
             rows = 2;
             break;
         default:
             break;
     }
     return rows;
+}
+- (IBAction)GLSLToggled:(id)sender {
+    [self.tableView reloadData];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -192,29 +201,35 @@ typedef void(^SelectedBlock)(NSString *selected);
         toggleTouchScreenOverlay.on = !toggleTouchScreenOverlay.isOn;
     }else if( indexPath.section == 2 && indexPath.row == 1 ) { //keep aspect
         toggleKeepAspect.on = !toggleKeepAspect.isOn;
-    }else if( indexPath.section == 2 && indexPath.row == 2 ) { //aspect ratio
-        [self showPickerWithTitle:nil toLabel:lblAspectRatio inArray:AspectRatios origin:cell allowEmpty:NO];
-    }else if( indexPath.section == 2 && indexPath.row == 3 ) { //smooth scaling
+    }else if( indexPath.section == 2 && indexPath.row == 2 ) { //smooth scaling
         toggleSmoothScaling.on = !toggleSmoothScaling.isOn;
-    }else if( indexPath.section == 3 && indexPath.row == 0 ) { //BGM
+    }else if( indexPath.section == 3 && indexPath.row == 0 ) { //Enable GLSL
+        toggleGLSL.on = !toggleGLSL.isOn;
+        [self.tableView reloadData];
+    }else if( indexPath.section == 3 && indexPath.row == 2 ) { //Shader
+        [self showPickerWithTitle:nil toLabel:lblShader inArray:AvailFiles origin:cell allowEmpty:YES];
+    }else if( indexPath.section == 4 && indexPath.row == 0 ) { //BGM
         [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats origin:cell allowEmpty:NO doneBlock:^(NSString *selected) {
             [self.tableView reloadData];
         }];
-    }else if( indexPath.section == 3 && indexPath.row == 4 ) { //OPL Core
-        [self showPickerWithTitle:nil toLabel:lblOPLCore inArray:OPLCores origin:cell];
-    }else if( indexPath.section == 3 && indexPath.row == 5 ) { //OPL Rate
-        [self showPickerWithTitle:nil toLabel:lblOPLRate inArray:OPLSampleRates origin:cell];
-    }else if( indexPath.section == 3 && indexPath.row == 1 ) { //CD Source
+    }else if( indexPath.section == 4 && indexPath.row == 1 ) { //CD Source
         [self showPickerWithTitle:nil toLabel:lblCDAudioSource inArray:CDFormats origin:cell];
-    }else if( indexPath.section == 3 && indexPath.row == 8 ) { //Stereo
-        toggleStereo.on = !toggleStereo.isOn;
-    }else if( indexPath.section == 3 && indexPath.row == 9 ) { //Surround
-        toggleSurroundOPL.on = !toggleSurroundOPL.isOn;
-    }else if( indexPath.section == 3 && indexPath.row == 6 ) { //SampleRate
+    }else if( indexPath.section == 4 && indexPath.row == 4 ) { //OPL Core
+        [self showPickerWithTitle:nil toLabel:lblOPLCore inArray:OPLCores origin:cell allowEmpty:NO doneBlock:^(NSString *selected) {
+            if( [selected isEqualToString:@"NUKED"] )
+                lblOPLChip.text = @"OPL3";
+        }];
+    }else if( indexPath.section == 4 && indexPath.row == 6 ) { //OPL Rate
+        [self showPickerWithTitle:nil toLabel:lblOPLRate inArray:OPLSampleRates origin:cell];
+    }else if( indexPath.section == 4 && indexPath.row == 7 ) { //SampleRate
         [self showPickerWithTitle:nil toLabel:lblResampleRate inArray:AudioSampleRates origin:cell];
-    }else if( indexPath.section == 3 && indexPath.row == 7 ) { //Buffer size
+    }else if( indexPath.section == 4 && indexPath.row == 8 ) { //Buffer size
         [self showPickerWithTitle:nil toLabel:lblAudioBufferSize inArray:AudioBufferSizes origin:cell];
-    }else if( indexPath.section == 4 && indexPath.row == 0 ) { //Log Level
+    }else if( indexPath.section == 4 && indexPath.row == 9 ) { //Stereo
+        toggleStereo.on = !toggleStereo.isOn;
+    }else if( indexPath.section == 4 && indexPath.row == 10 ) { //Surround
+        toggleSurroundOPL.on = !toggleSurroundOPL.isOn;
+    }else if( indexPath.section == 5 && indexPath.row == 0 ) { //Log Level
         [self showPickerWithTitle:nil toLabel:lblLogLevel inArray:LogLevels origin:cell];
     }
 }
@@ -234,6 +249,15 @@ typedef void(^SelectedBlock)(NSString *selected);
         [self presentViewController:alert animated:YES completion:nil];
         return;
     }
+    if(toggleGLSL.isOn && [[lblShader text] isEqualToString:@""]){
+        UIAlertController  *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Shader must be specified on GLSL enabled",nil)
+                                                                        message:nil
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cacelAction = [UIAlertAction actionWithTitle:UIKitLocalizedString(@"OK") style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:cacelAction];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+   }
     [UIView animateWithDuration:0.65
                           delay:0.0
          usingSpringWithDamping:1.0
@@ -260,19 +284,23 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     toggleStereo.on         = gConfig.iAudioChannels == 2;
     toggleSurroundOPL.on    = gConfig.fUseSurroundOPL;
+    toggleGLSL.on           = gConfig.fEnableGLSL;
+    toggleHDR.on            = gConfig.fEnableHDR;
     
     toggleTouchScreenOverlay.on = gConfig.fUseTouchOverlay;
     toggleKeepAspect.on         = gConfig.fKeepAspectRatio;
-    lblAspectRatio.text         = [NSString stringWithFormat:@"%d:%d",gConfig.dwTextureWidth,gConfig.dwTextureHeight];
+    textTextureWidth.text       = [NSString stringWithFormat:@"%d",gConfig.dwTextureWidth];
+    textTextureHeight.text       = [NSString stringWithFormat:@"%d",gConfig.dwTextureHeight];
     toggleSmoothScaling.on      = gConfig.pszScaleQuality ? strncmp(gConfig.pszScaleQuality, "0", sizeof(char)) != 0 : NO;
     
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
     lblOPLCore.text         = OPLCores[gConfig.eOPLCore];
-    //lblOPLChip.text         = OPLChips[gConfig.eOPLChip];
+    lblOPLChip.text         = OPLChips[gConfig.eOPLChip];
     lblOPLRate.text         = [NSString stringWithFormat:@"%d",gConfig.iOPLSampleRate];
     lblCDAudioSource.text   = CDFormats[gConfig.eCDType-MUSIC_OGG];
     lblResampleRate.text    = [NSString stringWithFormat:@"%d",gConfig.iSampleRate];
     lblAudioBufferSize.text = [NSString stringWithFormat:@"%d",gConfig.wAudioBufferSize];
+    lblShader.text          = [NSString stringWithFormat:@"%s",gConfig.pszShader];
     
     sliderMusicVolume.value     = gConfig.iMusicVolume;
     sliderSFXVolume.value       = gConfig.iSoundVolume;
@@ -286,21 +314,25 @@ typedef void(^SelectedBlock)(NSString *selected);
 
 - (void)saveConfigs {
     gConfig.pszMsgFile  = [lblLanguageFile.text length] == 0 ? NULL : strdup([[lblLanguageFile  text] UTF8String]);
-    gConfig.pszFontFile = [lblLanguageFile.text length] == 0 ? NULL : strdup([[lblFontFile      text] UTF8String]);
-    gConfig.pszLogFile  = [lblLanguageFile.text length] == 0 ? NULL : strdup([[textLogFile      text] UTF8String]);
+    gConfig.pszFontFile = [lblFontFile.text length] == 0 ? NULL : strdup([[lblFontFile      text] UTF8String]);
+    gConfig.pszLogFile  = [textLogFile.text length] == 0 ? NULL : strdup([[textLogFile      text] UTF8String]);
     
     gConfig.iAudioChannels  = toggleStereo.isOn ? 2 : 1;
     gConfig.fUseSurroundOPL = toggleSurroundOPL.isOn;
     
     gConfig.fKeepAspectRatio = toggleKeepAspect.isOn;
-    gConfig.dwTextureWidth = [[lblAspectRatio.text componentsSeparatedByString:@":"][0] intValue];
-    gConfig.dwTextureHeight = [[lblAspectRatio.text componentsSeparatedByString:@":"][1] intValue];
+    gConfig.dwTextureWidth = [textTextureWidth.text intValue];
+    gConfig.dwTextureHeight = [textTextureHeight.text intValue];
     gConfig.fUseTouchOverlay = toggleTouchScreenOverlay.isOn;
     gConfig.pszScaleQuality  = strdup(toggleSmoothScaling.on ? "1" : "0");
+    
+    gConfig.fEnableGLSL = toggleGLSL.isOn;
+    gConfig.fEnableHDR = toggleHDR.isOn;
+    gConfig.pszShader = [lblShader.text length] == 0 ? NULL :strdup([lblShader.text UTF8String]);
    
     gConfig.eMusicType  = (MUSICTYPE)[MusicFormats indexOfObject:lblMusicType.text];
     gConfig.eOPLCore    = (OPLCORE_TYPE)[OPLCores  indexOfObject:lblOPLCore.text];
-    //gConfig.eOPLChip    = gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : (OPLCHIP_TYPE)[OPLChips  indexOfObject:lblOPLChip.text];
+    gConfig.eOPLChip    = gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : (OPLCHIP_TYPE)[OPLChips  indexOfObject:lblOPLChip.text];
     gConfig.iOPLSampleRate = [lblOPLRate.text intValue];
     gConfig.eCDType     = (MUSICTYPE)[CDFormats indexOfObject:lblCDAudioSource.text]+MUSIC_OGG;
     gConfig.iSampleRate = [lblResampleRate.text intValue];

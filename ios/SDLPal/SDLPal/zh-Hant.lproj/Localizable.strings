@@ -8,3 +8,4 @@
 "Cannot find data file in the iTunes File Sharing directory" = "無法在iTunes檔案共享資料夾中找到遊戲資料檔";
 
 "NOTE: For copyright reasons data files required to run the game are NOT included." = "說明：為防止侵害大宇公司版權，恕不提供遊戲資料檔。请自行將正版PAL的資料檔復製到手機中。";
+"Shader must be specified on GLSL enabled" = "在啟用GLSL時必須選擇Shader文件";

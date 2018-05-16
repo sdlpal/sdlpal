@@ -80,4 +80,10 @@
 /* Class = "UILabel"; text = "SmoothScaling"; ObjectID = "VQA-I8-2Wf"; */
 "VQA-I8-2Wf.text" = "平滑縮放";
 
-"p6J-yg-lGj.text" = "縱橫比";
+"XwQ-GI-OlM.headerTitle" = "濾鏡";
+"ryw-EG-AOY.text" = "啟用GLSL";
+"Pnp-pv-bI9.text" = "啟用HDR";
+"xaO-G1-fJo.text" = "紋理寬度";
+"LhH-aH-hZI.text" = "紋理高度";
+"8di-p8-Xhn.text" = "OPL晶片";
+

@@ -566,6 +566,11 @@ PAL_LoadConfig(
 		gConfig.dwScreenHeight = PAL_DEFAULT_WINDOW_HEIGHT;
 	}
     
+    if( gConfig.dwTextureWidth == 0 && gConfig.dwTextureHeight == 0 ) {
+        gConfig.dwTextureWidth = PAL_DEFAULT_TEXTURE_WIDTH;
+        gConfig.dwTextureHeight = PAL_DEFAULT_TEXTURE_HEIGHT;
+    }
+    
     if(gConfig.fEnableGLSL && !gConfig.pszShader)
         gConfig.pszShader = strdup((char*)values[PALCFG_SHADER].sValue);
 }
