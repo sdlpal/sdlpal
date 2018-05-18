@@ -8,3 +8,4 @@
 "Cannot find data file in the iTunes File Sharing directory" = "无法在iTunes共享文件夹中找到游戏数据文件";
 
 "NOTE: For copyright reasons data files required to run the game are NOT included." = "注意：由于版权问题，数据文件无法提供。请自行从百游官方下载并解压拷贝到手机中。";
+"Shader must be specified on GLSL enabled" = "在启用GLSL时必须选择Shader文件";

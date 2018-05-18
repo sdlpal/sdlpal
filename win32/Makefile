@@ -23,10 +23,10 @@ TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 SDL_CONFIG = sdl2-config
 
-override CCFLAGS += `$(SDL_CONFIG) --cflags` -g -msse2 -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS) $(GENERATED)
+override CCFLAGS += `$(SDL_CONFIG) --cflags` -I../3rd/mingw-std-threads -g -msse2 -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS) $(GENERATED)
 CXXFLAGS = $(CCFLAGS) -std=c++11
 CFLAGS = $(CCFLAGS) -std=gnu99
-LDFLAGS = `$(SDL_CONFIG) --libs` -lm -lwinmm -lole32 -loleaut32 -limm32 -lcomctl32 -luuid -ldxguid -lversion -static -static-libgcc -static-libstdc++
+LDFLAGS = `$(SDL_CONFIG) --libs` -lopengl32 -lm -lwinmm -lole32 -loleaut32 -limm32 -lcomctl32 -luuid -ldxguid -lversion -static -static-libgcc -static-libstdc++
 TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra -pthread
 
 POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@

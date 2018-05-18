@@ -33,4 +33,8 @@
     <string name="toast_grantpermission">This app requires storage permission to access game resources. Please click \'OK\' and grant the permission manually.</string>
     <string name="msg_data_not_found_header">Cannot find data file in the following directory:</string>
     <string name="msg_data_not_found_footer">NOTE: For copyright reasons data files required to run the game are NOT included.</string>
+    <string name="enable_glsl">Enable GLSL</string>
+    <string name="enable_hdr">Enable HDR</string>
+    <string name="texture_width">Texture Width</string>
+    <string name="texture_height">Texture Height</string>
 </resources>

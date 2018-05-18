@@ -220,6 +220,27 @@
   <data name="MusicVolume.Header" xml:space="preserve">
     <value>音乐音量</value>
   </data>
+  <data name="EnableGLSL.Content" xml:space="preserve">
+    <value>启用GLSL滤镜</value>
+  </data>
+  <data name="ShaderFile.PlaceholderText" xml:space="preserve">
+    <value>无自定义Shader</value>
+  </data>
+  <data name="EnableHDR.Header" xml:space="preserve">
+    <value>启用HDR</value>
+  </data>
+  <data name="EnableHDR.OffContent" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="EnableHDR.OnContent" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="TextureWidth.Header" xml:space="preserve">
+    <value>纹理宽度</value>
+  </data>
+  <data name="TextureHeight.Header" xml:space="preserve">
+    <value>纹理高度</value>
+  </data>
   <data name="OPLChip.Header" xml:space="preserve">
     <value>OPL 模拟芯片</value>
   </data>

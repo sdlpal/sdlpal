@@ -114,7 +114,7 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 {
 	int textLen;
 
-	if (IsDlgButtonChecked(hwndDlg, IDC_USEMSGFILE) && (textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_MSGFILE))) > 0)
+	if (IsDlgButtonChecked(hwndDlg, IDC_USEMSGFILE) == BST_CHECKED && (textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_MSGFILE))) > 0)
 	{
 		gConfig.pszMsgFile = (char*)realloc(gConfig.pszMsgFile, textLen + 1);
 		GetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile, textLen + 1);
@@ -124,7 +124,7 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 		free(gConfig.pszMsgFile); gConfig.pszMsgFile = nullptr;
 	}
 
-	if (IsDlgButtonChecked(hwndDlg, IDC_USELOGFILE) && (textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_LOGFILE))) > 0)
+	if (IsDlgButtonChecked(hwndDlg, IDC_USELOGFILE) == BST_CHECKED && (textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_LOGFILE))) > 0)
 	{
 		gConfig.pszLogFile = (char*)realloc(gConfig.pszLogFile, textLen + 1);
 		GetDlgItemTextA(hwndDlg, IDC_LOGFILE, gConfig.pszLogFile, textLen + 1);
@@ -134,7 +134,7 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 		free(gConfig.pszLogFile); gConfig.pszLogFile = nullptr;
 	}
 
-	if (IsDlgButtonChecked(hwndDlg, IDC_USEFONTFILE) && (textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_FONTFILE))) > 0)
+	if (IsDlgButtonChecked(hwndDlg, IDC_USEFONTFILE) == BST_CHECKED && (textLen = GetWindowTextLengthA(GetDlgItem(hwndDlg, IDC_FONTFILE))) > 0)
 	{
 		gConfig.pszFontFile = (char*)realloc(gConfig.pszFontFile, textLen + 1);
 		GetDlgItemTextA(hwndDlg, IDC_FONTFILE, gConfig.pszFontFile, textLen + 1);
@@ -154,10 +154,24 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 		free(gConfig.pszGamePath); gConfig.pszGamePath = nullptr;
 	}
 
-	gConfig.fFullScreen = IsDlgButtonChecked(hwndDlg, IDC_FULLSCREEN);
-	gConfig.fUseTouchOverlay = IsDlgButtonChecked(hwndDlg, IDC_TOUCHOVERLAY);
-	gConfig.fEnableAviPlay = IsDlgButtonChecked(hwndDlg, IDC_ENABLEAVI);
-	gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO);
+	if (IsDlgButtonChecked(hwndDlg, IDC_GLSL) == BST_CHECKED && (textLen = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_SHADERFILE))) > 0)
+	{
+		gConfig.pszShader = (char*)realloc(gConfig.pszShader, textLen + 1);
+		GetDlgItemTextA(hwndDlg, IDC_SHADERFILE, gConfig.pszShader, textLen + 1);
+	}
+	else
+	{
+		free(gConfig.pszShader); gConfig.pszShader = nullptr;
+	}
+
+	gConfig.fFullScreen = IsDlgButtonChecked(hwndDlg, IDC_FULLSCREEN) == BST_CHECKED;
+	gConfig.fUseTouchOverlay = IsDlgButtonChecked(hwndDlg, IDC_TOUCHOVERLAY) == BST_CHECKED;
+	gConfig.fEnableAviPlay = IsDlgButtonChecked(hwndDlg, IDC_ENABLEAVI) == BST_CHECKED;
+	gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO) == BST_CHECKED;
+	gConfig.fEnableGLSL = IsDlgButtonChecked(hwndDlg, IDC_GLSL) == BST_CHECKED;
+	gConfig.fEnableHDR = IsDlgButtonChecked(hwndDlg, IDC_HDR) == BST_CHECKED;
+	gConfig.dwTextureWidth = GetDlgItemInt(hwndDlg, IDC_TEXTUREWIDTH, nullptr, FALSE);
+	gConfig.dwTextureHeight = GetDlgItemInt(hwndDlg, IDC_TEXTUREHEIGHT, nullptr, FALSE);
 	gConfig.eCDType = (MUSICTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD) + MUSIC_MP3);
 	gConfig.eMusicType = (MUSICTYPE)ComboBox_GetCurSel(hwndDlg, IDC_BGM);
 	gConfig.eOPLCore = (OPLCORE_TYPE)(ComboBox_GetCurSel(hwndDlg, IDC_OPL_CORE));
@@ -183,24 +197,33 @@ void ResetControls(HWND hwndDlg)
 {
 	TCHAR buffer[100];
 
-	EnableDlgItem(hwndDlg, IDC_OPL_CORE, gConfig.eMusicType == MUSIC_RIX);
-	EnableDlgItem(hwndDlg, IDC_OPL_CHIP, gConfig.eMusicType == MUSIC_RIX);
-	EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, gConfig.eMusicType == MUSIC_RIX);
-	EnableDlgItem(hwndDlg, IDC_OPLSR, gConfig.eMusicType == MUSIC_RIX);
+	EnableDlgItem(hwndDlg, IDC_OPL_CORE, gConfig.eMusicType == MUSIC_RIX ? TRUE : FALSE);
+	EnableDlgItem(hwndDlg, IDC_OPL_CHIP, gConfig.eMusicType == MUSIC_RIX ? TRUE : FALSE);
+	EnableDlgItem(hwndDlg, IDC_SURROUNDOPL, gConfig.eMusicType == MUSIC_RIX ? TRUE : FALSE);
+	EnableDlgItem(hwndDlg, IDC_OPLSR, gConfig.eMusicType == MUSIC_RIX ? TRUE : FALSE);
 
-	CheckDlgButton(hwndDlg, IDC_FULLSCREEN, gConfig.fFullScreen);
-	CheckDlgButton(hwndDlg, IDC_TOUCHOVERLAY, gConfig.fUseTouchOverlay);
-	CheckDlgButton(hwndDlg, IDC_ENABLEAVI, gConfig.fEnableAviPlay);
-	CheckDlgButton(hwndDlg, IDC_ASPECTRATIO, gConfig.fKeepAspectRatio);
-	CheckDlgButton(hwndDlg, IDC_SURROUNDOPL, gConfig.fUseSurroundOPL);
-	CheckDlgButton(hwndDlg, IDC_STEREO, gConfig.iAudioChannels == 2);
+	CheckDlgButton(hwndDlg, IDC_FULLSCREEN, gConfig.fFullScreen ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(hwndDlg, IDC_TOUCHOVERLAY, gConfig.fUseTouchOverlay ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(hwndDlg, IDC_ENABLEAVI, gConfig.fEnableAviPlay ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(hwndDlg, IDC_ASPECTRATIO, gConfig.fKeepAspectRatio ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(hwndDlg, IDC_SURROUNDOPL, gConfig.fUseSurroundOPL ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(hwndDlg, IDC_STEREO, gConfig.iAudioChannels == 2 ? BST_CHECKED : BST_UNCHECKED);
 
-	CheckDlgButton(hwndDlg, IDC_USEMSGFILE, gConfig.pszMsgFile != nullptr);
-	EnableDlgItem(hwndDlg, IDC_BRMSG, gConfig.pszMsgFile != nullptr);
-	CheckDlgButton(hwndDlg, IDC_USEFONTFILE, gConfig.pszFontFile != nullptr);
-	EnableDlgItem(hwndDlg, IDC_BRFONT, gConfig.pszFontFile != nullptr);
-	CheckDlgButton(hwndDlg, IDC_USELOGFILE, gConfig.pszLogFile != nullptr);
-	EnableDlgItem(hwndDlg, IDC_BRLOG, gConfig.pszLogFile != nullptr);
+	CheckDlgButton(hwndDlg, IDC_USEMSGFILE, gConfig.pszMsgFile ? BST_CHECKED : BST_UNCHECKED);
+	EnableDlgItem(hwndDlg, IDC_BRMSG, gConfig.pszMsgFile ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(hwndDlg, IDC_USEFONTFILE, gConfig.pszFontFile ? BST_CHECKED : BST_UNCHECKED);
+	EnableDlgItem(hwndDlg, IDC_BRFONT, gConfig.pszFontFile ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(hwndDlg, IDC_USELOGFILE, gConfig.pszLogFile ? BST_CHECKED : BST_UNCHECKED);
+	EnableDlgItem(hwndDlg, IDC_BRLOG, gConfig.pszLogFile ? BST_CHECKED : BST_UNCHECKED);
+
+	CheckDlgButton(hwndDlg, IDC_GLSL, gConfig.fEnableGLSL ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(hwndDlg, IDC_HDR, gConfig.fEnableHDR ? BST_CHECKED : BST_UNCHECKED);
+	SetDlgItemText(hwndDlg, IDC_TEXTUREWIDTH, _itot(gConfig.dwTextureWidth, buffer, 10));
+	SetDlgItemText(hwndDlg, IDC_TEXTUREHEIGHT, _itot(gConfig.dwTextureHeight, buffer, 10));
+	EnableDlgItem(hwndDlg, IDC_HDR, gConfig.fEnableGLSL ? TRUE : FALSE);
+	EnableDlgItem(hwndDlg, IDC_TEXTUREWIDTH, gConfig.fEnableGLSL ? TRUE : FALSE);
+	EnableDlgItem(hwndDlg, IDC_TEXTUREHEIGHT, gConfig.fEnableGLSL ? TRUE : FALSE);
+	EnableDlgItem(hwndDlg, IDC_BRSHADER, gConfig.fEnableGLSL ? TRUE : FALSE);
 
 	ComboBox_SetCurSel(hwndDlg, IDC_CD, gConfig.eCDType - MUSIC_MP3);
 	ComboBox_SetCurSel(hwndDlg, IDC_BGM, gConfig.eMusicType);
@@ -216,6 +239,7 @@ void ResetControls(HWND hwndDlg)
 	if (gConfig.pszMsgFile) SetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile);
 	if (gConfig.pszFontFile) SetDlgItemTextA(hwndDlg, IDC_FONTFILE, gConfig.pszFontFile);
 	if (gConfig.pszLogFile) SetDlgItemTextA(hwndDlg, IDC_LOGFILE, gConfig.pszLogFile);
+	if (gConfig.pszShader) SetDlgItemTextA(hwndDlg, IDC_SHADERFILE, gConfig.pszShader);
 
 	TrackBar_SetPos(hwndDlg, IDC_QUALITY, gConfig.iResampleQuality, TRUE);
 	TrackBar_SetPos(hwndDlg, IDC_MUSICVOLUME, gConfig.iMusicVolume, TRUE);
@@ -320,6 +344,7 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 	case IDC_BRFONT:
 	case IDC_BRMSG:
 	case IDC_BRLOG:
+	case IDC_BRSHADER:
 	{
 		TCHAR szFilePath[MAX_PATH * 2] = { 0 };
 		auto filter = LoadResourceString(idControl + 1);
@@ -342,7 +367,13 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 	case IDC_USEMSGFILE:
 	case IDC_USEFONTFILE:
 	case IDC_USELOGFILE:
-		EnableDlgItem(hwndDlg, idControl + 1, IsDlgButtonChecked(hwndDlg, idControl));
+		EnableDlgItem(hwndDlg, idControl + 1, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
+		return TRUE;
+
+	case IDC_GLSL:
+		EnableDlgItem(hwndDlg, IDC_HDR, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
+		EnableDlgItem(hwndDlg, IDC_TEXTUREWIDTH, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
+		EnableDlgItem(hwndDlg, IDC_TEXTUREHEIGHT, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
 		return TRUE;
 
 	default: return FALSE;

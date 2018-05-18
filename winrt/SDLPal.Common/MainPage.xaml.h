@@ -72,6 +72,7 @@ namespace SDLPal
 		void btnClearFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void cbUseFile_CheckChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void cbEnableGLSL_CheckChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 
 	internal:
 		static MainPage^ Current;

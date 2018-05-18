@@ -106,6 +106,7 @@
 		C63505731EA6570300186049 /* midi.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056B1EA6570300186049 /* midi.c */; };
 		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
 		C63505801EA6578700186049 /* native_midi.m in Sources */ = {isa = PBXBuildFile; fileRef = C635057D1EA6578700186049 /* native_midi.m */; };
+		C639993920459A8A005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639993820459A8A005B20CE /* video_glsl.c */; };
 		C66C6CA41ECCB73100CE10C1 /* SDLPal_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */; };
 		C66F6FD81FB16CB200F3F0DA /* iOS Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C66F6FD51FB16CB200F3F0DA /* iOS Launch Screen.storyboard */; };
 		C6743A841ECCAFA700AEF782 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */; };
@@ -355,8 +356,8 @@
 		C622BE731E474CE2000C8970 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		C622BE751E474CFC000C8970 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C626FFBF1E5BCBE700E39DD9 /* pal_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pal_config.h; path = ../../pal_config.h; sourceTree = "<group>"; };
-		C629A568208643D20015C93C /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convertopl.h; sourceTree = "<group>"; };
 		C629A565208643D20015C93C /* nuked_opl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nuked_opl.c; sourceTree = "<group>"; };
+		C629A568208643D20015C93C /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convertopl.h; sourceTree = "<group>"; };
 		C629A569208643D20015C93C /* nuked_opl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nuked_opl.h; sourceTree = "<group>"; };
 		C635056A1EA6570300186049 /* midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = midi.h; path = ../../../midi.h; sourceTree = "<group>"; };
 		C635056B1EA6570300186049 /* midi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi.c; path = ../../../midi.c; sourceTree = "<group>"; };
@@ -364,6 +365,8 @@
 		C635057B1EA6578700186049 /* native_midi_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_common.c; sourceTree = "<group>"; };
 		C635057C1EA6578700186049 /* native_midi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi_common.h; sourceTree = "<group>"; };
 		C635057D1EA6578700186049 /* native_midi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = native_midi.m; path = ../iOS/SDLPal/SDLPal/native_midi.m; sourceTree = "<group>"; };
+		C639993820459A8A005B20CE /* video_glsl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = video_glsl.c; path = ../../../video_glsl.c; sourceTree = "<group>"; };
+		C639993A20459A9A005B20CE /* video_glsl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = video_glsl.h; path = ../../../video_glsl.h; sourceTree = "<group>"; };
 		C66C6CA21ECCB73100CE10C1 /* SDLPal_AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLPal_AppDelegate.h; sourceTree = "<group>"; };
 		C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLPal_AppDelegate.m; sourceTree = "<group>"; };
 		C66F6FD51FB16CB200F3F0DA /* iOS Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "iOS Launch Screen.storyboard"; sourceTree = "<group>"; };
@@ -379,6 +382,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71655292195BBCD6006E1227 /* OpenGLES.framework in Frameworks */,
 				C6E974A21E49C24500F76B17 /* libSDL2.a in Frameworks */,
 				C622BE761E474CFC000C8970 /* AVFoundation.framework in Frameworks */,
 				C622BE721E474CD5000C8970 /* CoreMotion.framework in Frameworks */,
@@ -386,7 +390,6 @@
 				716552B0195BBECE006E1227 /* QuartzCore.framework in Frameworks */,
 				716552AE195BBE7D006E1227 /* AudioToolbox.framework in Frameworks */,
 				716552AA195BBE1B006E1227 /* CoreAudio.framework in Frameworks */,
-				71655292195BBCD6006E1227 /* OpenGLES.framework in Frameworks */,
 				71655061195BB372006E1227 /* UIKit.framework in Frameworks */,
 				71655063195BB372006E1227 /* Foundation.framework in Frameworks */,
 				71655065195BB372006E1227 /* CoreGraphics.framework in Frameworks */,
@@ -635,6 +638,7 @@
 				7165524F195BB6DB006E1227 /* uigame.c */,
 				71655251195BB6DB006E1227 /* util.c */,
 				71655253195BB6DB006E1227 /* video.c */,
+				C639993820459A8A005B20CE /* video_glsl.c */,
 				71655255195BB6DB006E1227 /* yj1.c */,
 				7165523F195BB6DB006E1227 /* rixplay.cpp */,
 				C622BE641E474B5E000C8970 /* audio.c */,
@@ -771,6 +775,7 @@
 				71655250195BB6DB006E1227 /* uigame.h */,
 				71655252195BB6DB006E1227 /* util.h */,
 				71655254195BB6DB006E1227 /* video.h */,
+				C639993A20459A9A005B20CE /* video_glsl.h */,
 				C622BE6B1E474C01000C8970 /* palcfg.h */,
 			);
 			name = Headers;
@@ -982,6 +987,7 @@
 				57FB01511B7A50B0005FCF4C /* psy.c in Sources */,
 				57FB01551B7A50B0005FCF4C /* smallft.c in Sources */,
 				57FB014B1B7A50B0005FCF4C /* info.c in Sources */,
+				C639993920459A8A005B20CE /* video_glsl.c in Sources */,
 				C6743A841ECCAFA700AEF782 /* SettingsTableViewController.m in Sources */,
 				57FB01421B7A50B0005FCF4C /* analysis.c in Sources */,
 				57FB014F1B7A50B0005FCF4C /* mapping0.c in Sources */,
@@ -1157,6 +1163,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -1200,6 +1207,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";

@@ -108,9 +108,14 @@
 		C63505CD1EB462D600186049 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505CC1EB462D600186049 /* CoreVideo.framework */; };
 		C63505D31EB4631100186049 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D21EB4631100186049 /* ForceFeedback.framework */; };
 		C63505D41EB4633000186049 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D01EB4630200186049 /* Carbon.framework */; };
+		C639992120455776005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639991F20455776005B20CE /* video_glsl.c */; };
+		C639992220455776005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639991F20455776005B20CE /* video_glsl.c */; };
+		C6399929204557B4005B20CE /* mini_glloader.c in Sources */ = {isa = PBXBuildFile; fileRef = C6399926204557B4005B20CE /* mini_glloader.c */; };
 		C63DF68B1EC50B7300C778B8 /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = C63DF68A1EC50B7300C778B8 /* util.mm */; };
 		C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11C1CFAF1780037E9A2 /* overlay.c */; };
 		C65BC11F1CFAF7790037E9A2 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11E1CFAF7790037E9A2 /* audio.c */; };
+		C6972640202E155C00293A73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C697263C202E155C00293A73 /* OpenGL.framework */; };
+		C6BF8C7420A1498A000AE188 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6BF8C7020A1498A000AE188 /* Metal.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -291,7 +296,7 @@
 		7104FD630D772F6300A97E53 /* uigame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uigame.h; sourceTree = "<group>"; };
 		7104FD640D772F6300A97E53 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
 		7104FD650D772F6300A97E53 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
-		7104FD660D772F6300A97E53 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
+		7104FD660D772F6300A97E53 /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; usesTabs = 1; };
 		7104FD670D772F6300A97E53 /* video.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
 		7104FD680D772F6300A97E53 /* yj1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yj1.c; sourceTree = "<group>"; };
 		7104FD9A0D772FBC00A97E53 /* binfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = binfile.cpp; path = adplug/binfile.cpp; sourceTree = "<group>"; };
@@ -387,9 +392,15 @@
 		C63505CE1EB462EB00186049 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		C63505D01EB4630200186049 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		C63505D21EB4631100186049 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
+		C639991F20455776005B20CE /* video_glsl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = video_glsl.c; sourceTree = "<group>"; };
+		C639992020455776005B20CE /* video_glsl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video_glsl.h; sourceTree = "<group>"; };
+		C6399926204557B4005B20CE /* mini_glloader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mini_glloader.c; sourceTree = "<group>"; };
+		C6399927204557B4005B20CE /* mini_glloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mini_glloader.h; sourceTree = "<group>"; };
 		C63DF68A1EC50B7300C778B8 /* util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = util.mm; sourceTree = "<group>"; };
 		C65BC11C1CFAF1780037E9A2 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay.c; sourceTree = "<group>"; };
 		C65BC11E1CFAF7790037E9A2 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
+		C697263C202E155C00293A73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		C6BF8C7020A1498A000AE188 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -397,6 +408,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6BF8C7420A1498A000AE188 /* Metal.framework in Frameworks */,
+				C6972640202E155C00293A73 /* OpenGL.framework in Frameworks */,
 				C63505D41EB4633000186049 /* Carbon.framework in Frameworks */,
 				C63505D31EB4631100186049 /* ForceFeedback.framework in Frameworks */,
 				C63505CD1EB462D600186049 /* CoreVideo.framework in Frameworks */,
@@ -496,6 +509,8 @@
 				7104FD620D772F6300A97E53 /* uigame.c */,
 				7104FD640D772F6300A97E53 /* util.c */,
 				7104FD660D772F6300A97E53 /* video.c */,
+				C639991F20455776005B20CE /* video_glsl.c */,
+				C6399926204557B4005B20CE /* mini_glloader.c */,
 				7104FD680D772F6300A97E53 /* yj1.c */,
 				7104FD520D772F6300A97E53 /* rixplay.cpp */,
 				C602B0011CEF3E6C003A7B09 /* palcfg.c */,
@@ -521,6 +536,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C6BF8C7020A1498A000AE188 /* Metal.framework */,
+				C697263C202E155C00293A73 /* OpenGL.framework */,
 				C63505D21EB4631100186049 /* ForceFeedback.framework */,
 				C63505D01EB4630200186049 /* Carbon.framework */,
 				C63505CE1EB462EB00186049 /* CoreFoundation.framework */,
@@ -810,6 +827,8 @@
 				C614646F1EA643BD00A76CC9 /* audio.h */,
 				C61464711EA643BD00A76CC9 /* midi.h */,
 				C61464721EA643BD00A76CC9 /* palcfg.h */,
+				C639992020455776005B20CE /* video_glsl.h */,
+				C6399927204557B4005B20CE /* mini_glloader.h */,
 			);
 			name = Headers;
 			path = ..;
@@ -1047,6 +1066,7 @@
 				71E27E050D8C7E2F0048BA16 /* fight.c in Sources */,
 				71F0F6D70DAA63B400F88C16 /* ending.c in Sources */,
 				5757D2751B7A3D5800464A74 /* envelope.c in Sources */,
+				C639992120455776005B20CE /* video_glsl.c in Sources */,
 				71F0F6D90DAA63B500F88C16 /* itemmenu.c in Sources */,
 				71F0F6DB0DAA63B500F88C16 /* magicmenu.c in Sources */,
 				71E23E9113F6D1AD001287B6 /* bit.c in Sources */,
@@ -1084,6 +1104,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C626003D1E62058F00E39DD9 /* gtest-all.cc in Sources */,
+				C639992220455776005B20CE /* video_glsl.c in Sources */,
+				C6399929204557B4005B20CE /* mini_glloader.c in Sources */,
 				C62600451E620F0500E39DD9 /* GoogleTests.mm in Sources */,
 				C62600491E62139C00E39DD9 /* test_swprintf.cpp in Sources */,
 			);

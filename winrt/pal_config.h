@@ -32,6 +32,8 @@
 #define PAL_AUDIO_DEFAULT_BUFFER_SIZE   4096
 #define PAL_DEFAULT_WINDOW_WIDTH   320
 #define PAL_DEFAULT_WINDOW_HEIGHT  200
+# define PAL_DEFAULT_TEXTURE_WIDTH   640
+# define PAL_DEFAULT_TEXTURE_HEIGHT  480
 
 #if SDL_VERSION_ATLEAST(2,0,0)
 # define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
@@ -62,6 +64,10 @@
 #define strncasecmp _strnicmp
 
 #define strcasestr(a,b) strstr(_strupr((a)),_strupr((b)))
+
+#if WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
+#define PAL_HAS_GLSL 1
+#endif
 
 PAL_C_LINKAGE_BEGIN
 

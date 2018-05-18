@@ -46,6 +46,8 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_ENABLEKEYREPEAT,
 	PALCFG_USETOUCHOVERLAY,
 	PALCFG_ENABLEAVIPLAY,
+    PALCFG_ENABLEGLSL,
+    PALCFG_ENABLEHDR,
 	/* Booleans */
 	PALCFG_BOOLEAN_MAX,
 
@@ -67,6 +69,8 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_SOUNDVOLUME,
 	PALCFG_WINDOWHEIGHT,
 	PALCFG_WINDOWWIDTH,
+    PALCFG_TEXTUREHEIGHT,
+    PALCFG_TEXTUREWIDTH,
 	/* Unsigneds */
 	PALCFG_UNSIGNED_MAX,
 
@@ -83,8 +87,8 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_LOGFILE,
 	PALCFG_RIXEXTRAINIT,
 	PALCFG_MIDICLIENT,
-    PALCFG_SCALEQUALITY,
-    PALCFG_ASPECTRATIO,
+	PALCFG_SCALEQUALITY,
+	PALCFG_SHADER,
 	/* Strings */
 	PALCFG_STRING_MAX,
 
@@ -173,12 +177,13 @@ typedef struct tagCONFIGURATION
 	char            *pszFontFile;
 	char            *pszMIDIClient;
 	char            *pszLogFile;
-    char            *pszScaleQuality;
+	char            *pszScaleQuality;
+	char            *pszShader;
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;
 	DWORD            dwScreenHeight;
-    DWORD            dwAspectX;
-    DWORD            dwAspectY;
+    DWORD            dwTextureWidth;
+    DWORD            dwTextureHeight;
 	INT              iAudioDevice;
 	INT              iSurroundOPLOffset;
 	INT              iAudioChannels;
@@ -203,6 +208,8 @@ typedef struct tagCONFIGURATION
 	BOOL             fEnableKeyRepeat;
 	BOOL             fUseTouchOverlay;
 	BOOL             fEnableAviPlay;
+	BOOL             fEnableGLSL;
+    BOOL             fEnableHDR;
 #if USE_RIX_EXTRA_INIT
 	uint32_t        *pExtraFMRegs;
 	uint8_t         *pExtraFMVals;

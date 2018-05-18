@@ -34,6 +34,8 @@
 
 #define PAL_DEFAULT_WINDOW_WIDTH   640
 #define PAL_DEFAULT_WINDOW_HEIGHT  400
+#define PAL_DEFAULT_TEXTURE_WIDTH   640
+#define PAL_DEFAULT_TEXTURE_HEIGHT  480
 #define PAL_DEFAULT_FULLSCREEN_HEIGHT 480
 
 #if SDL_VERSION_ATLEAST(2,0,0)
@@ -69,3 +71,7 @@
 
 PAL_C_LINKAGE char* stoupper(char* s);
 #define strcasestr(a,b) strstr(stoupper((a)),stoupper((b)))
+
+#define PAL_HAS_GLSL 1
+
+#include <stdbool.h>
