@@ -35,6 +35,12 @@
 #define IDC_LOGFILE                     1026
 #define IDC_ENABLEAVI                   1027
 #define IDC_OPL_CHIP                    1028
+#define IDC_GLSL                        1029
+#define IDC_HDR                         1030
+#define IDC_TEXTUREWIDTH                1031
+#define IDC_TEXTUREHEIGHT               1032
+#define IDC_BRSHADER                    1033
+#define IDC_SHADERFILE                  1034
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
