@@ -55,6 +55,11 @@ struct {
    Fl_Check_Button* aspect;
    Fl_Check_Button* fullscreen;
    Fl_Check_Button* avi;
+   Fl_Check_Button* glsl;
+   Fl_Check_Button* hdr;
+   Fl_Int_Input* texturewidth;
+   Fl_Int_Input* textureheight;
+   Fl_Input* shaderfile;
    Fl_Choice* loglevel;
    Fl_Choice* cd;
    Fl_Choice* bgm;
@@ -85,6 +90,11 @@ struct {
    const char* aspect;
    const char* fullscreen;
    const char* avi;
+   const char* glsl;
+   const char* hdr;
+   const char* texturewidth;
+   const char* textureheight;
+   const char* shaderfile;
    const char* cd;
    const char* bgm;
    const char* oplcore;
@@ -102,24 +112,27 @@ struct {
    const char* def;
    const char* levels;
 } gLabels[3] = {
-   { "SDLPAL Launcher",     "Language & Font",    "Display",       "Audio",         "Logging",
-     "Game resource path:", "Message file:",      "Font file:",    "Log file:",     "Log level:",
-     "Use touc&h overlay",  "&Keep aspect ratio", "&Full screen",  "Enable A&VI",   "&CD src:",
-     "&BGM src:",           "&OPL core:",         "O&PL chip:",    "Sample rate:",  "Ste&reo",
-     "OPL rate:",           "S&urround OPL",      "Music volume:", "Sound volume:", "Buffer:",
-     "Quality:",            "E&xit",              "&Launch game",  "&Default",      "Verbose|Debug|Informational|Warning|Error|Fatal" },
-   { "SDLPAL 启动器",       "字体及语言设置",     "显示设置",      "音频设置",      "日志记录设置",
-     "游戏资源目录：",      "语言文件：",         "字体文件",      "日志文件",      "日志记录级别：",
-     "启用触屏辅助(&H)",    "保持纵横比(&K)",     "全屏模式(&F)",  "AVI 动画(&V)",  "&CD 源：",
-     "&BGM 源：",           "&OPL 核心：",        "O&PL 芯片：",   "采样率：",      "立体声(&R)",
-     "OPL 采样率：",        "环绕声 OPL(&U)",     "音乐音量：",    "音效音量：",    "缓冲区：",
-     "质量：",              "退出(&X)",           "启动游戏(&L)",  "默认设置(&D)",  "详细信息|调试信息|运行信息|普通警告|严重错误|致命错误" },
-   { "SDLPAL 啟動器",       "字體及語言設定",     "顯示設定",      "音訊設定",      "日誌記錄設定",
-     "遊戲資源檔夾：",      "語言檔：",           "字體檔：",      "日誌檔：",      "日誌記錄級別：",
-     "啟用觸屏輔助(&H)",    "保持縱橫比(&K)",     "全屏模式(&F)",  "AVI 動畫(&V)",  "&CD 源：",
-     "&BGM 源：",           "&OPL 核心：",        "O&PL 晶片：",   "取樣速率：",    "立體聲(&R)",
-     "OPL 取樣速率：",      "環繞聲 OPL(&U)",     "音樂音量：",    "音效音量：",    "緩衝區：",
-     "品質：",              "退出(&X)",           "啟動遊戲(&L)",  "默認設定(&D)",  "詳細信息|調試信息|運行信息|普通警告|嚴重錯誤|致命錯誤" },
+   { "SDLPAL Launcher",     "Language & Font",    "Display",         "Audio",         "Logging",
+     "Game folder:",        "Message file:",      "Font file:",      "Log file:",     "Log level:",
+     "&Touch overlay",      "&Keep aspect ratio", "&Full screen",    "Enable A&VI",   "Enable &GLSL",
+     "Enable &HDR",         "Texture width:",     "Texture height:", "Shader file:",  "&CD src:",
+     "&BGM src:",           "&OPL core:",         "O&PL chip:",      "Sample rate:",  "Ste&reo",
+     "OPL rate:",           "S&urround OPL",      "Music volume:",   "Sound volume:", "Buffer:",
+     "Quality:",            "E&xit",              "&Launch game",    "&Default",      "Verbose|Debug|Informational|Warning|Error|Fatal" },
+   { "SDLPAL 启动器",       "字体及语言设置",     "显示设置",        "音频设置",      "日志记录设置",
+     "游戏资源目录：",      "语言文件：",         "字体文件：",      "日志文件：",    "日志记录级别：",
+     "启用触屏辅助(&H)",    "保持纵横比(&K)",     "全屏模式(&F)",    "AVI 动画(&V)",  "启用 GLSL (&G)",
+     "启用 HDR (&H)",       "纹理宽度：",         "纹理高度：",      "着色器代码：",  "&CD 源：",
+     "&BGM 源：",           "&OPL 核心：",        "O&PL 芯片：",     "采样率：",      "立体声(&R)",
+     "OPL 采样率：",        "环绕声 OPL(&U)",     "音乐音量：",      "音效音量：",    "缓冲区：",
+     "质量：",              "退出(&X)",           "启动游戏(&L)",    "默认设置(&D)",  "详细信息|调试信息|运行信息|普通警告|严重错误|致命错误" },
+   { "SDLPAL 啟動器",       "字體及語言設定",     "顯示設定",        "音訊設定",      "日誌記錄設定",
+     "遊戲資源檔夾：",      "語言檔：",           "字體檔：",        "日誌檔：",      "日誌記錄級別：",
+     "啟用觸屏輔助(&H)",    "保持縱橫比(&K)",     "全屏模式(&F)",    "AVI 動畫(&V)",  "啟用 GLSL (&G)",
+     "啟用 HDR (&H)",       "紋理寬度：",         "紋理高度：",      "著色器代碼：",  "&CD 源：",
+     "&BGM 源：",           "&OPL 核心：",        "O&PL 晶片：",     "取樣速率：",    "立體聲(&R)",
+     "OPL 取樣速率：",      "環繞聲 OPL(&U)",     "音樂音量：",      "音效音量：",    "緩衝區：",
+     "品質：",              "退出(&X)",           "啟動遊戲(&L)",    "默認設定(&D)",  "詳細信息|調試信息|運行信息|普通警告|嚴重錯誤|致命錯誤" },
 };
 
 void InitControls()
@@ -134,6 +147,11 @@ void InitControls()
    gWidgets.aspect->value(gConfig.fKeepAspectRatio ? 1 : 0);
    gWidgets.fullscreen->value(gConfig.fFullScreen ? 1 : 0);
    gWidgets.avi->value(gConfig.fEnableAviPlay ? 1 : 0);
+   gWidgets.glsl->value(gConfig.fEnableGLSL ? 1 : 0);
+   gWidgets.hdr->value(gConfig.fEnableHDR ? 1 : 0);
+   sprintf(buffer, "%u", gConfig.dwTextureWidth); gWidgets.texturewidth->value(buffer);
+   sprintf(buffer, "%u", gConfig.dwTextureHeight); gWidgets.textureheight->value(buffer);
+   gWidgets.shaderfile->value(gConfig.pszShader);
    gWidgets.cd->value(gConfig.eCDType - MUSIC_MP3);
    gWidgets.bgm->value(gConfig.eMusicType);
    gWidgets.stereo->value(gConfig.iAudioChannels == 2 ? 1 : 0);
@@ -160,12 +178,17 @@ void SaveControls()
    gConfig.pszMsgFile = *gWidgets.msgfile->value() ? strdup(gWidgets.msgfile->value()) : nullptr;
    gConfig.pszFontFile = *gWidgets.fontfile->value() ? strdup(gWidgets.fontfile->value()) : nullptr;
    gConfig.pszLogFile = *gWidgets.logfile->value() ? strdup(gWidgets.logfile->value()) : nullptr;
+   gConfig.pszShader = *gWidgets.shaderfile->value() ? strdup(gWidgets.shaderfile->value()) : nullptr;
 
    gConfig.iLogLevel = (LOGLEVEL)gWidgets.loglevel->value();
    gConfig.fUseTouchOverlay = gWidgets.touch->value();
    gConfig.fKeepAspectRatio = gWidgets.aspect->value();
    gConfig.fFullScreen = gWidgets.fullscreen->value();
    gConfig.fEnableAviPlay = gWidgets.avi->value();
+   gConfig.fEnableGLSL = gWidgets.glsl->value();
+   gConfig.fEnableHDR = gWidgets.hdr->value();
+   gConfig.dwTextureWidth = atoi(gWidgets.texturewidth->value());
+   gConfig.dwTextureHeight = atoi(gWidgets.textureheight->value());
    gConfig.eCDType = (MUSICTYPE)(gWidgets.cd->value() + MUSIC_MP3);
    gConfig.eMusicType = (MUSICTYPE)(gWidgets.bgm->value());
    gConfig.iAudioChannels = gWidgets.stereo->value() ? 2 : 1;
@@ -199,56 +222,61 @@ int GetLanguage()
 Fl_Window* InitWindow()
 {
    int lang = GetLanguage();
-   Fl_Window* window = new Fl_Window(640, 400, gLabels[lang].title);
+   Fl_Window* window = new Fl_Window(640, 450, gLabels[lang].title);
 
-   gWidgets.gamepath = new Fl_Input(160, 9, 475, 22, gLabels[lang].gamepath);
+   gWidgets.gamepath = new Fl_Input(110, 9, 520, 22, gLabels[lang].gamepath);
 
    (new Fl_Box(FL_BORDER_BOX, 5, 50, 630, 55, gLabels[lang].language))->align(FL_ALIGN_TOP);
-   gWidgets.msgfile = new Fl_Input(109, 54, 516, 22, gLabels[lang].msgfile);
-   gWidgets.fontfile = new Fl_Input(109, 79, 516, 22, gLabels[lang].fontfile);
+   gWidgets.msgfile = new Fl_Input(109, 54, 521, 22, gLabels[lang].msgfile);
+   gWidgets.fontfile = new Fl_Input(109, 79, 521, 22, gLabels[lang].fontfile);
 
    (new Fl_Box(FL_BORDER_BOX, 5, 127, 630, 30, gLabels[lang].logging))->align(FL_ALIGN_TOP);
    (gWidgets.loglevel = new Fl_Choice(lang ? 115 : 85, 132, lang ? 90 : 120, 20, gLabels[lang].loglevel))->add(gLabels[lang].levels);
-   gWidgets.logfile = new Fl_Input(284, 131, 341, 22, gLabels[lang].logfile);
+   gWidgets.logfile = new Fl_Input(284, 131, 346, 22, gLabels[lang].logfile);
 
-   (new Fl_Box(FL_BORDER_BOX, 5, 180, 630, 30, gLabels[lang].display))->align(FL_ALIGN_TOP);
-   gWidgets.touch = new Fl_Check_Button(10, 185, 150, 20, gLabels[lang].touch);
-   gWidgets.aspect = new Fl_Check_Button(200, 185, 150, 20, gLabels[lang].aspect);
-   gWidgets.avi = new Fl_Check_Button(390, 185, 100, 20, gLabels[lang].avi);
+   (new Fl_Box(FL_BORDER_BOX, 5, 180, 630, 80, gLabels[lang].display))->align(FL_ALIGN_TOP);
+   gWidgets.touch = new Fl_Check_Button(10, 185, 100, 20, gLabels[lang].touch);
+   gWidgets.aspect = new Fl_Check_Button(150, 185, 150, 20, gLabels[lang].aspect);
+   gWidgets.avi = new Fl_Check_Button(350, 185, 100, 20, gLabels[lang].avi);
    gWidgets.fullscreen = new Fl_Check_Button(530, 185, 100, 20, gLabels[lang].fullscreen);
+   gWidgets.glsl = new Fl_Check_Button(10, 210, 100, 20, gLabels[lang].glsl);
+   gWidgets.hdr = new Fl_Check_Button(150, 210, 100, 20, gLabels[lang].hdr);
+   gWidgets.texturewidth = new Fl_Int_Input(390, 210, 50, 20, gLabels[lang].texturewidth);
+   gWidgets.textureheight = new Fl_Int_Input(580, 210, 50, 20, gLabels[lang].textureheight);
+   gWidgets.shaderfile = new Fl_Input(100, 235, 530, 22, gLabels[lang].shaderfile);
 
-   (new Fl_Box(FL_BORDER_BOX, 5, 230, 630, 130, gLabels[lang].audio))->align(FL_ALIGN_TOP);
-   (gWidgets.cd = new Fl_Choice(84, 239, 60, 22, gLabels[lang].cd))->add("MP3|OGG");
-   (gWidgets.bgm = new Fl_Choice(84, 269, 60, 22, gLabels[lang].bgm))->add("MIDI|RIX|MP3|OGG");
-   gWidgets.stereo = new Fl_Check_Button(lang ? 425 : 435, 270, 70, 20, gLabels[lang].stereo);
-   gWidgets.samplerate = new Fl_Int_Input(570, 239, 60, 22, gLabels[lang].samplerate);
-   (gWidgets.oplcore = new Fl_Choice(224, 239, 75, 22, gLabels[lang].oplcore))->add("MAME|DBFLT|DBINT|NUKED");
-   (gWidgets.oplchip = new Fl_Choice(224, 269, 75, 22, gLabels[lang].oplchip))->add("OPL2|OPL3");
-   gWidgets.oplrate = new Fl_Int_Input(lang ? 410 : 375, 239, 60, 22, gLabels[lang].oplrate);
-   gWidgets.surround = new Fl_Check_Button(305, 270, 120, 20, gLabels[lang].surround);
-   gWidgets.buffer = new Fl_Int_Input(570, 269, 60, 22, gLabels[lang].buffer);
+   (new Fl_Box(FL_BORDER_BOX, 5, 280, 630, 130, gLabels[lang].audio))->align(FL_ALIGN_TOP);
+   (gWidgets.cd = new Fl_Choice(84, 289, 60, 22, gLabels[lang].cd))->add("MP3|OGG");
+   (gWidgets.bgm = new Fl_Choice(84, 319, 60, 22, gLabels[lang].bgm))->add("MIDI|RIX|MP3|OGG");
+   gWidgets.stereo = new Fl_Check_Button(lang ? 425 : 435, 320, 70, 20, gLabels[lang].stereo);
+   gWidgets.samplerate = new Fl_Int_Input(570, 289, 60, 22, gLabels[lang].samplerate);
+   (gWidgets.oplcore = new Fl_Choice(224, 289, 75, 22, gLabels[lang].oplcore))->add("MAME|DBFLT|DBINT|NUKED");
+   (gWidgets.oplchip = new Fl_Choice(224, 319, 75, 22, gLabels[lang].oplchip))->add("OPL2|OPL3");
+   gWidgets.oplrate = new Fl_Int_Input(lang ? 410 : 375, 289, 60, 22, gLabels[lang].oplrate);
+   gWidgets.surround = new Fl_Check_Button(305, 320, 120, 20, gLabels[lang].surround);
+   gWidgets.buffer = new Fl_Int_Input(570, 319, 60, 22, gLabels[lang].buffer);
 
-   gWidgets.quality = new Fl_Hor_Value_Slider(72, 299, 180, 22, gLabels[lang].quality);
+   gWidgets.quality = new Fl_Hor_Value_Slider(72, 349, 180, 22, gLabels[lang].quality);
    gWidgets.quality->align(FL_ALIGN_LEFT);
    gWidgets.quality->bounds(0, 4);
    gWidgets.quality->precision(0);
 
-   gWidgets.music = new Fl_Hor_Value_Slider(380, 299, 250, 22, gLabels[lang].musvol);
+   gWidgets.music = new Fl_Hor_Value_Slider(380, 349, 250, 22, gLabels[lang].musvol);
    gWidgets.music->align(FL_ALIGN_LEFT);
    gWidgets.music->bounds(0, 100);
    gWidgets.music->precision(0);
 
-   gWidgets.sound = new Fl_Hor_Value_Slider(380, 329, 250, 22, gLabels[lang].sndvol);
+   gWidgets.sound = new Fl_Hor_Value_Slider(380, 379, 250, 22, gLabels[lang].sndvol);
    gWidgets.sound->align(FL_ALIGN_LEFT);
    gWidgets.sound->bounds(0, 100);
    gWidgets.sound->precision(0);
 
-   (new Fl_Button(5, 370, 120, 24, gLabels[lang].exit))->callback([](Fl_Widget* ctrl, void* window) {
+   (new Fl_Button(5, 420, 120, 24, gLabels[lang].exit))->callback([](Fl_Widget* ctrl, void* window) {
       if (ctrl->when() == FL_WHEN_RELEASE)
          static_cast<Fl_Window*>(window)->hide();
    }, window);
 
-   (new Fl_Button(260, 370, 120, 24, gLabels[lang].launch))->callback([](Fl_Widget* ctrl, void* window) {
+   (new Fl_Button(260, 420, 120, 24, gLabels[lang].launch))->callback([](Fl_Widget* ctrl, void* window) {
       if (ctrl->when() == FL_WHEN_RELEASE) {
          SaveControls();
          PAL_SaveConfig();
@@ -256,7 +284,7 @@ Fl_Window* InitWindow()
       }
    }, window);
 
-   (new Fl_Button(515, 370, 120, 24, gLabels[lang].def))->callback([](Fl_Widget*) { PAL_LoadConfig(FALSE); InitControls(); });
+   (new Fl_Button(515, 420, 120, 24, gLabels[lang].def))->callback([](Fl_Widget*) { PAL_LoadConfig(FALSE); InitControls(); });
 
    window->end();
 
