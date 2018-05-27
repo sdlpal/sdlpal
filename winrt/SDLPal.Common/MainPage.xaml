@@ -47,8 +47,10 @@
                 </Grid>
                 <ToggleSwitch x:Name="tsTouchOverlay" x:Uid="TouchOverlay" Header="启用触屏辅助" OffContent="否" OnContent="是" />
                 <ToggleSwitch x:Name="tsKeepAspect" x:Uid="AspectRatio" Header="保持纵横比" OffContent="否" OnContent="是" />
-                <TextBox Grid.Row="2" x:Name="tbTextureWidth" x:Uid="TextureWidth" TextWrapping="Wrap" VerticalAlignment="Top" Header="纹理线宽" PlaceholderText="320" InputScope="Number"/>
-                <TextBox Grid.Row="3" x:Name="tbTextureHeight" x:Uid="TextureHeight" TextWrapping="Wrap" VerticalAlignment="Top" Header="纹理线长" PlaceholderText="200" InputScope="Number"/>
+                <TextBox x:Name="tbWindowWidth" x:Uid="WindowWidth" TextWrapping="Wrap" VerticalAlignment="Top" Header="窗口宽度" PlaceholderText="640" InputScope="Number"/>
+                <TextBox x:Name="tbWindowHeight" x:Uid="WindowHeight" TextWrapping="Wrap" VerticalAlignment="Top" Header="窗口高度" PlaceholderText="400" InputScope="Number"/>
+                <TextBox x:Name="tbTextureWidth" x:Uid="TextureWidth" TextWrapping="Wrap" VerticalAlignment="Top" Header="纹理线宽" PlaceholderText="320" InputScope="Number"/>
+                <TextBox x:Name="tbTextureHeight" x:Uid="TextureHeight" TextWrapping="Wrap" VerticalAlignment="Top" Header="纹理线长" PlaceholderText="200" InputScope="Number"/>
                 <ToggleSwitch x:Name="tsEnableAVI" x:Uid="EnableAVI" Header="启用 AVI 过场动画" OffContent="否" OnContent="是" />
                 <CheckBox x:Name="cbEnableGLSL" x:Uid="EnableGLSL" Content="启用GLSL滤镜" Checked="cbEnableGLSL_CheckChanged" Unchecked="cbEnableGLSL_CheckChanged" HorizontalAlignment="Left" VerticalAlignment="Center" />
                 <Grid x:Name="gridGLSL">

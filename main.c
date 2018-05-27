@@ -55,14 +55,6 @@ PAL_Init(
    int           e;
 
    //
-   // Initialize defaults, video and audio
-   //
-   if (SDL_Init(PAL_SDL_INIT_FLAGS) == -1)
-   {
-      TerminateOnError("Could not initialize SDL: %s.\n", SDL_GetError());
-   }
-
-   //
    // Initialize subsystems.
    //
    e = PAL_InitGlobals();
@@ -146,8 +138,6 @@ PAL_Shutdown(
    PAL_FreeText();
    PAL_ShutdownInput();
    VIDEO_Shutdown();
-
-   SDL_Quit();
 
    g_exit_code = exit_code;
    longjmp(g_exit_jmp_buf, 1);
@@ -462,11 +452,20 @@ main(
    if (setjmp(g_exit_jmp_buf) != 0)
    {
 	   // A longjmp is made, should exit here
+	   SDL_Quit();
 	   UTIL_Platform_Quit();
 	   return g_exit_code;
    }
 
 #if !defined(UNIT_TEST) || defined(UNIT_TEST_GAME_INIT)
+   //
+   // Initialize SDL
+   //
+   if (SDL_Init(PAL_SDL_INIT_FLAGS) == -1)
+   {
+	   TerminateOnError("Could not initialize SDL: %s.\n", SDL_GetError());
+   }
+
    PAL_LoadConfig(TRUE);
 
    //

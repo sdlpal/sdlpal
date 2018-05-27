@@ -319,4 +319,10 @@ You can use the main menu option inside the game to return to this page.</value>
   <data name="Warning.Content" xml:space="preserve">
     <value>Warning</value>
   </data>
+  <data name="WindowHeight.Header" xml:space="preserve">
+    <value>Window height</value>
+  </data>
+  <data name="WindowWidth.Header" xml:space="preserve">
+    <value>Window width</value>
+  </data>
 </root>

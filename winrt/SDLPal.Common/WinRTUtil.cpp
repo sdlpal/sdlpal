@@ -47,7 +47,17 @@ BOOL UTIL_GetScreenSize(DWORD *pdwScreenWidth, DWORD *pdwScreenHeight)
 	DWORD retval = FALSE;
 
 #if NTDDI_VERSION >= NTDDI_WIN10
-	if (Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily != L"Windows.Mobile") return FALSE;
+	if (Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily != L"Windows.Mobile")
+	{
+		try
+		{
+			Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->SetPreferredMinSize(Windows::Foundation::Size(320, 200));
+		}
+		catch (Platform::Exception^)
+		{
+		}
+		return (pdwScreenWidth && pdwScreenHeight && *pdwScreenWidth && *pdwScreenHeight);
+	}
 #endif
 
 	if (!pdwScreenWidth || !pdwScreenHeight) return FALSE;

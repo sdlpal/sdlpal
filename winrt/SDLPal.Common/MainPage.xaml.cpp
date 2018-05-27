@@ -121,6 +121,8 @@ void SDLPal::MainPage::LoadControlContents(bool loadDefault)
 	cbEnableGLSL->IsChecked = gConfig.fEnableGLSL == TRUE;
 
 	tbShaderFile->Text = ConvertString(gConfig.pszShader);
+	tbWindowWidth->Text = ConvertString(std::to_string(gConfig.dwScreenWidth));
+	tbWindowHeight->Text = ConvertString(std::to_string(gConfig.dwScreenHeight));
 	tbTextureWidth->Text = ConvertString(std::to_string(gConfig.dwTextureWidth));
 	tbTextureHeight->Text = ConvertString(std::to_string(gConfig.dwTextureHeight));
 
@@ -167,6 +169,8 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.iSoundVolume = (int)slSoundVolume->Value;
 	gConfig.iResampleQuality = (int)slQuality->Value;
 	gConfig.iLogLevel = (LOGLEVEL)cbLogLevel->SelectedIndex;
+	gConfig.dwScreenWidth = _wtoi(tbWindowWidth->Text->Data());
+	gConfig.dwScreenHeight = _wtoi(tbWindowHeight->Text->Data());
 	gConfig.dwTextureWidth = _wtoi(tbTextureWidth->Text->Data());
 	gConfig.dwTextureHeight = _wtoi(tbTextureHeight->Text->Data());
 

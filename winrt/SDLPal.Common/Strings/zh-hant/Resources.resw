@@ -319,4 +319,10 @@
   <data name="Warning.Content" xml:space="preserve">
     <value>普通警告</value>
   </data>
+  <data name="WindowHeight.Header" xml:space="preserve">
+    <value>視窗高度</value>
+  </data>
+  <data name="WindowWidth.Header" xml:space="preserve">
+    <value>視窗寬度</value>
+  </data>
 </root>
