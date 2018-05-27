@@ -467,6 +467,7 @@
     <ClInclude Include="..\main.h" />
     <ClInclude Include="..\map.h" />
     <ClInclude Include="..\midi.h" />
+    <ClInclude Include="..\mini_glloader.h" />
     <ClInclude Include="..\palcfg.h" />
     <ClInclude Include="..\palcommon.h" />
     <ClInclude Include="..\palette.h" />
@@ -508,6 +509,7 @@
     <ClInclude Include="..\libmad\stream.h" />
     <ClInclude Include="..\libmad\synth.h" />
     <ClInclude Include="..\libmad\timer.h" />
+    <ClInclude Include="..\video_glsl.h" />
     <ClInclude Include="pal_config.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\generated.h" />

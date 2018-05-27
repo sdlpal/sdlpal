@@ -73,6 +73,9 @@
     <Filter Include="adplug\nuked">
       <UniqueIdentifier>{fde4098f-ad55-43c6-a706-d34fea999c87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="glsl">
+      <UniqueIdentifier>{b4ef0625-ac16-4ede-a43a-4e388aff7738}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\battle.c">
@@ -332,6 +335,12 @@
     </ClCompile>
     <ClCompile Include="..\adplug\nuked_opl.c">
       <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mini_glloader.c">
+      <Filter>glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\video_glsl.c">
+      <Filter>glsl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -715,6 +724,12 @@
     </ClInclude>
     <ClInclude Include="..\adplug\nuked\opl3.c.h">
       <Filter>adplug\nuked</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mini_glloader.h">
+      <Filter>glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\video_glsl.h">
+      <Filter>glsl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
