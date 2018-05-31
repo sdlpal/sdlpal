@@ -291,8 +291,6 @@ PAL_LoadConfig(
 	MUSICTYPE eCDType = MUSIC_OGG;
 	OPLCORE_TYPE eOPLCore = OPLCORE_DBFLT;
 	OPLCHIP_TYPE eOPLChip = OPLCHIP_OPL2;
-	INT dwAspectX = -1;
-	INT dwAspectY = -1;
 	static const SCREENLAYOUT screen_layout = {
 		// Equipment Screen
 		.EquipImageBox     = PAL_XY(8, 8),

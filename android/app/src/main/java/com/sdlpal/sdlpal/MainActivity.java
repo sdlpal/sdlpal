@@ -128,11 +128,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean traverseDirectory(String path) {
+        File dir = new File(path);
+        boolean iteration = true;
+        if (dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files.length == 0) {
+                return true;
+            } else {
+                for (File file: files) {
+                    iteration = iteration & (file.isDirectory() ? traverseDirectory(file.getAbsolutePath()) : file.exists());
+                }
+            }
+        }
+        return iteration;
+    }
+
     public void StartGame() {
         String dataPath = getApplicationContext().getFilesDir().getPath();
         String cachePath = getApplicationContext().getCacheDir().getPath();
         String sdcardState = Environment.getExternalStorageState();
         String sdlpalPath = Environment.getExternalStorageDirectory().getPath() + "/sdlpal/";
+
+        // hack; on LOS14.1, everytime after rebooted, native file operation will not work until java code accessed same file once, even permission granted.
+        traverseDirectory(sdlpalPath);
+
         String extPath = getApplicationContext().getExternalFilesDir(null).getPath();
 		File extFolder = new File(sdlpalPath);
 		if( !extFolder.exists() )
