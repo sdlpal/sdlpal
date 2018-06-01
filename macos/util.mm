@@ -52,17 +52,18 @@ INT UTIL_Platform_Startup(
 	char* argv[]
 )
 {
-#if !defined(DEBUG) //for ease of debugging(specify resource dir in xcode scheme)
-    char *p = strstr(argv[0], "/Pal.app/");
-    
-    if (p != NULL)
+    if( getppid() == 1 ) //detect whether is debugging; for ease of specify resource dir in debugger
     {
-        char buf[4096];
-        strcpy(buf, argv[0]);
-        buf[p - argv[0]] = '\0';
-        chdir(buf);
+        char *p = strstr(argv[0], "/Pal.app/");
+        
+        if (p != NULL)
+        {
+            char buf[4096];
+            strcpy(buf, argv[0]);
+            buf[p - argv[0]] = '\0';
+            chdir(buf);
+        }
     }
-#endif
     return 0;
 }
 
