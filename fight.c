@@ -1476,6 +1476,7 @@ PAL_BattleStartFrame(
                   if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
                   {
                      g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttack;
+                     g_Battle.rgPlayer[i].action.wActionID = 0; //avoid be deduced to autoattack
                      g_Battle.rgPlayer[i].state = kFighterAct;
                   }
 
@@ -1776,6 +1777,8 @@ PAL_BattleCommitAction(
 
    if (!fRepeat)
    {
+      //clear action cache first; avoid cache pollution
+      memset(&g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action,0,sizeof(g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action));
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType =
          g_Battle.UI.wActionType;
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget =
@@ -3296,6 +3299,7 @@ PAL_BattlePlayerValidateAction(
          //
          fToEnemy = TRUE;
          g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+         g_Battle.rgPlayer[wPlayerIndex].action.wActionID = 0; //avoid be deduced to autoattack
       }
       else
       {
