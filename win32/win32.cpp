@@ -172,6 +172,8 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	gConfig.fEnableHDR = IsDlgButtonChecked(hwndDlg, IDC_HDR) == BST_CHECKED;
 	gConfig.dwTextureWidth = GetDlgItemInt(hwndDlg, IDC_TEXTUREWIDTH, nullptr, FALSE);
 	gConfig.dwTextureHeight = GetDlgItemInt(hwndDlg, IDC_TEXTUREHEIGHT, nullptr, FALSE);
+	gConfig.dwScreenWidth = GetDlgItemInt(hwndDlg, IDC_WINDOWWIDTH, nullptr, FALSE);
+	gConfig.dwScreenHeight = GetDlgItemInt(hwndDlg, IDC_WINDOWHEIGHT, nullptr, FALSE);
 	gConfig.eCDType = (MUSICTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD) + MUSIC_MP3);
 	gConfig.eMusicType = (MUSICTYPE)ComboBox_GetCurSel(hwndDlg, IDC_BGM);
 	gConfig.eOPLCore = (OPLCORE_TYPE)(ComboBox_GetCurSel(hwndDlg, IDC_OPL_CORE));
@@ -234,6 +236,10 @@ void ResetControls(HWND hwndDlg)
 	SetDlgItemText(hwndDlg, IDC_SAMPLERATE, _itot(gConfig.iSampleRate, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_OPLSR, _itot(gConfig.iOPLSampleRate, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_AUDIOBUFFER, _itot(gConfig.wAudioBufferSize, buffer, 10));
+	SetDlgItemText(hwndDlg, IDC_WINDOWWIDTH, _itot(gConfig.dwScreenWidth, buffer, 10));
+	SetDlgItemText(hwndDlg, IDC_WINDOWHEIGHT, _itot(gConfig.dwScreenHeight, buffer, 10));
+	SetDlgItemText(hwndDlg, IDC_TEXTUREWIDTH, _itot(gConfig.dwTextureWidth, buffer, 10));
+	SetDlgItemText(hwndDlg, IDC_TEXTUREHEIGHT, _itot(gConfig.dwTextureHeight, buffer, 10));
 
 	if (gConfig.pszGamePath) SetDlgItemTextA(hwndDlg, IDC_GAMEPATH, gConfig.pszGamePath);
 	if (gConfig.pszMsgFile) SetDlgItemTextA(hwndDlg, IDC_MSGFILE, gConfig.pszMsgFile);
@@ -249,6 +255,7 @@ void ResetControls(HWND hwndDlg)
 INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 {
 	InitCommonControls();
+	SetClassLongPtr(hwndDlg, GCL_HICON, (LONG_PTR)LoadIcon((HINSTANCE)GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_SDLPAL)));
 
 	auto log_levels = LoadResourceString(IDC_LOGLEVEL);
 	for (size_t pos = 0; pos != std::string::npos; )
@@ -374,6 +381,7 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 		EnableDlgItem(hwndDlg, IDC_HDR, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
 		EnableDlgItem(hwndDlg, IDC_TEXTUREWIDTH, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
 		EnableDlgItem(hwndDlg, IDC_TEXTUREHEIGHT, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
+		EnableDlgItem(hwndDlg, IDC_BRSHADER, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
 		return TRUE;
 
 	default: return FALSE;

@@ -41,6 +41,8 @@
 #define IDC_TEXTUREHEIGHT               1032
 #define IDC_BRSHADER                    1033
 #define IDC_SHADERFILE                  1034
+#define IDC_WINDOWWIDTH                 1035
+#define IDC_WINDOWHEIGHT                1036
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
