@@ -46,6 +46,7 @@ typedef struct tagAUDIODEVICE
 #endif
    AUDIOPLAYER              *pSoundPlayer;
    void                     *pSoundBuffer;	/* The output buffer for sound */
+   void                     *pConvertBuffer;/* The temporary buffer for downscale conversion */
 #if SDL_VERSION_ATLEAST(2,0,0)
    SDL_AudioDeviceID         id;
 #endif
@@ -54,6 +55,7 @@ typedef struct tagAUDIODEVICE
    BOOL                      fMusicEnabled; /* Is BGM enabled? */
    BOOL                      fSoundEnabled; /* Is sound effect enabled? */
    BOOL                      fOpened;       /* Is the audio device opened? */
+   BOOL                      fDownscale;
 } AUDIODEVICE;
 
 static AUDIODEVICE gAudioDevice;
@@ -103,11 +105,72 @@ AUDIO_AdjustVolume(
 	}
 }
 
+static void SDLCALL
+AUDIO_FillBuffer_Internal(
+	void*          udata,
+	uint8_t*       stream,
+	int            len
+)
+{
+	memset(stream, 0, len);
+
+	//
+	// Play music
+	//
+	if (gAudioDevice.fMusicEnabled && gAudioDevice.iMusicVolume > 0)
+	{
+		if (gAudioDevice.pMusPlayer)
+		{
+			gAudioDevice.pMusPlayer->FillBuffer(gAudioDevice.pMusPlayer, stream, len);
+		}
+
+		if (gAudioDevice.pCDPlayer)
+		{
+			gAudioDevice.pCDPlayer->FillBuffer(gAudioDevice.pCDPlayer, stream, len);
+		}
+
+		//
+		// Adjust volume for music
+		//
+		AUDIO_AdjustVolume((short *)stream, gAudioDevice.iMusicVolume, len >> 1);
+	}
+
+	//
+	// Play sound
+	//
+	if (gAudioDevice.fSoundEnabled && gAudioDevice.pSoundPlayer && gAudioDevice.iSoundVolume > 0)
+	{
+		memset(gAudioDevice.pSoundBuffer, 0, len);
+
+		gAudioDevice.pSoundPlayer->FillBuffer(gAudioDevice.pSoundPlayer, gAudioDevice.pSoundBuffer, len);
+
+		//
+		// Adjust volume for sound
+		//
+		AUDIO_AdjustVolume((short *)gAudioDevice.pSoundBuffer, gAudioDevice.iSoundVolume, len >> 1);
+
+		//
+		// Mix sound & music
+		//
+		AUDIO_MixNative((short *)stream, gAudioDevice.pSoundBuffer, len >> 1);
+	}
+
+	//
+	// Play sound for AVI
+	//
+	AVI_FillAudioBuffer(AVI_GetPlayState(), (LPBYTE)stream, len);
+
+	//
+	// Convert audio from 16-bit signed native byte-order to actual byte-order & format
+	//
+	SDL_ConvertAudio(&gAudioDevice.cvt);
+}
+
 static VOID SDLCALL
 AUDIO_FillBuffer(
-   LPVOID          udata,
-   LPBYTE          stream,
-   INT             len
+	void*          udata,
+	uint8_t*       stream,
+	int            len
 )
 /*++
   Purpose:
@@ -128,61 +191,23 @@ AUDIO_FillBuffer(
 
 --*/
 {
-   memset(stream, 0, len);
+	if (gAudioDevice.fDownscale)
+	{
+		gAudioDevice.cvt.buf = gAudioDevice.pConvertBuffer;
+		gAudioDevice.cvt.len = len * 2;
+	}
+	else
+	{
+		gAudioDevice.cvt.buf = stream;
+		gAudioDevice.cvt.len = (len / gAudioDevice.cvt.len_mult);
+	}
 
-   gAudioDevice.cvt.buf = stream;
-   gAudioDevice.cvt.len = len;
+	AUDIO_FillBuffer_Internal(udata, gAudioDevice.cvt.buf, gAudioDevice.cvt.len);
 
-   //
-   // Play music
-   //
-   if (gAudioDevice.fMusicEnabled && gAudioDevice.iMusicVolume > 0)
-   {
-      if (gAudioDevice.pMusPlayer)
-      {
-         gAudioDevice.pMusPlayer->FillBuffer(gAudioDevice.pMusPlayer, stream, len);
-      }
-
-      if (gAudioDevice.pCDPlayer)
-      {
-         gAudioDevice.pCDPlayer->FillBuffer(gAudioDevice.pCDPlayer, stream, len);
-      }
-
-      //
-      // Adjust volume for music
-      //
-      AUDIO_AdjustVolume((short *)stream, gAudioDevice.iMusicVolume, len >> 1);
-   }
-
-   //
-   // Play sound
-   //
-   if (gAudioDevice.fSoundEnabled && gAudioDevice.pSoundPlayer && gAudioDevice.iSoundVolume > 0)
-   {
-	   memset(gAudioDevice.pSoundBuffer, 0, len);
-
-	   gAudioDevice.pSoundPlayer->FillBuffer(gAudioDevice.pSoundPlayer, gAudioDevice.pSoundBuffer, len);
-
-	   //
-	   // Adjust volume for sound
-	   //
-	   AUDIO_AdjustVolume((short *)gAudioDevice.pSoundBuffer, gAudioDevice.iSoundVolume, len >> 1);
-
-	   //
-	   // Mix sound & music
-	   //
-	   AUDIO_MixNative((short *)stream, gAudioDevice.pSoundBuffer, len >> 1);
-   }
-
-   //
-   // Play sound for AVI
-   //
-   AVI_FillAudioBuffer(AVI_GetPlayState(), (LPBYTE)stream, len);
-
-   //
-   // Convert audio from native byte-order to actual byte-order
-   //
-   SDL_ConvertAudio(&gAudioDevice.cvt);
+	if (gAudioDevice.fDownscale)
+	{
+		memcpy(stream, gAudioDevice.pConvertBuffer, len);
+	}
 }
 
 INT
@@ -252,6 +277,15 @@ AUDIO_OpenDevice(
    }
 
    SDL_BuildAudioCVT(&gAudioDevice.cvt, AUDIO_S16SYS, spec.channels, spec.freq, spec.format, spec.channels, spec.freq);
+
+   if (gAudioDevice.fDownscale = (gAudioDevice.cvt.len_ratio < 1.0))
+   {
+	   gAudioDevice.pConvertBuffer = malloc(gConfig.wAudioBufferSize * gConfig.iAudioChannels * sizeof(short));
+   }
+   else
+   {
+	   gAudioDevice.pConvertBuffer = NULL;
+   }
 
    gAudioDevice.fOpened = TRUE;
 
@@ -381,6 +415,12 @@ AUDIO_CloseDevice(
    {
       free(gAudioDevice.pSoundBuffer);
 	  gAudioDevice.pSoundBuffer = NULL;
+   }
+
+   if (gAudioDevice.pConvertBuffer != NULL)
+   {
+	   free(gAudioDevice.pConvertBuffer);
+	   gAudioDevice.pConvertBuffer = NULL;
    }
 
    if (gConfig.eMusicType == MUSIC_MIDI)
