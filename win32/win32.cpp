@@ -37,6 +37,10 @@
 #include "../palcfg.h"
 #include "../resampler.h"
 
+#ifndef GCLP_HICON
+# define GCLP_HICON (-14)
+#endif
+
 PAL_C_LINKAGE char* stoupper(char* s)
 {
 	char* p = strdup(s);
@@ -255,7 +259,7 @@ void ResetControls(HWND hwndDlg)
 INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 {
 	InitCommonControls();
-	SetClassLongPtr(hwndDlg, GCL_HICON, (LONG_PTR)LoadIcon((HINSTANCE)GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_SDLPAL)));
+	SetClassLongPtr(hwndDlg, GCLP_HICON, (LONG_PTR)LoadIcon((HINSTANCE)GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_SDLPAL)));
 
 	auto log_levels = LoadResourceString(IDC_LOGLEVEL);
 	for (size_t pos = 0; pos != std::string::npos; )
