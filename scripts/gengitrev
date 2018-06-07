@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PAL_GIT_REVISION=$(git describe --tags 2> /dev/null)
+PAL_GIT_REVISION=$(git describe --tags --dirty=-dirty 2> /dev/null)
 
 if [ -z "$PAL_GIT_REVISION" ]; then
     PAL_GIT_REVISION=$(date -d @$(stat -c %Y ../.gitignore) +"%F %T")
@@ -11,7 +11,7 @@ FILE="$(dirname $0)/../generated.h"
 
 grep -F "$LINE" "$FILE" >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-  echo Generating Git revision header... 1>&2
+  echo Generating Git revision header: $PAL_GIT_REVISION 1>&2
   echo "$LINE" > "$FILE"
 fi
 

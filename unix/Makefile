@@ -92,7 +92,7 @@ $(TEST_TARGET): $(OBJFILES) $(TEST_OBJFILES) gtest-all.o
 	@$(CXX) $^ -o $@ $(LDFLAGS) -lpthread
 
 clean:
-	-rm -f $(TARGET) $(TEST_TARGET) $(OBJFILES) $(TEST_OBJFILES) $(DEPFILES)
+	-@rm -f $(TARGET) $(TEST_TARGET) $(OBJFILES) $(TEST_OBJFILES) $(DEPFILES)
 
 %.d: ;
 .PRECIOUS: %.d
