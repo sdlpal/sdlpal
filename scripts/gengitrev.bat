@@ -1,7 +1,7 @@
 @echo off
 setlocal enableextensions
 setlocal enabledelayedexpansion
-for /f %%t in ('git describe --tags --dirty=-dirty') do set PAL_GIT_REVISION=%%t
+for /f %%t in ('git describe --tags --dirty') do set PAL_GIT_REVISION=%%t
 if "!PAL_GIT_REVISION!" == "" (
 	for %%t in (%~dp0..\.gitignore) do set PAL_GIT_REVISION=%%~tt
 )

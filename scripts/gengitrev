@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PAL_GIT_REVISION=$(git describe --tags --dirty=-dirty 2> /dev/null)
+PAL_GIT_REVISION=$(git describe --tags --dirty 2> /dev/null)
 
 if [ -z "$PAL_GIT_REVISION" ]; then
     PAL_GIT_REVISION=$(date -d @$(stat -c %Y ../.gitignore) +"%F %T")
