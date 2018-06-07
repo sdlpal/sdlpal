@@ -1467,6 +1467,7 @@ PAL_BattleStartFrame(
                   //
                   g_Battle.ActionQueue[j].wDexterity = 0;
                   g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttack;
+                  g_Battle.rgPlayer[i].action.wActionID = 0;
                   g_Battle.rgPlayer[i].state = kFighterAct;
                }
                else
@@ -1476,6 +1477,7 @@ PAL_BattleStartFrame(
                   if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] > 0)
                   {
                      g_Battle.rgPlayer[i].action.ActionType = kBattleActionAttack;
+                     g_Battle.rgPlayer[i].action.wActionID = 0; //avoid be deduced to autoattack
                      g_Battle.rgPlayer[i].state = kFighterAct;
                   }
 
@@ -1776,6 +1778,8 @@ PAL_BattleCommitAction(
 
    if (!fRepeat)
    {
+      //clear action cache first; avoid cache pollution
+      memset(&g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action,0,sizeof(g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action));
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType =
          g_Battle.UI.wActionType;
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget =
@@ -1804,6 +1808,7 @@ PAL_BattleCommitAction(
       if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionPass)
       {
          g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType = kBattleActionAttack;
+         g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.wActionID = 0;
          g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = -1;
       }
    }
@@ -3184,6 +3189,7 @@ PAL_BattlePlayerValidateAction(
          if (!fValid)
          {
             g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+            g_Battle.rgPlayer[wPlayerIndex].action.wActionID = 0;
          }
          else if (gpGlobals->g.rgObject[wObjectID].magic.wFlags & kMagicFlagApplyToAll)
          {
@@ -3236,6 +3242,7 @@ PAL_BattlePlayerValidateAction(
 #endif
          {
             g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+            g_Battle.rgPlayer[wPlayerIndex].action.wActionID = 0;
             break;
          }
       }
@@ -3262,6 +3269,7 @@ PAL_BattlePlayerValidateAction(
       if (PAL_GetItemAmount(wObjectID) == 0)
       {
          g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+         g_Battle.rgPlayer[wPlayerIndex].action.wActionID = 0;
       }
       else if (gpGlobals->g.rgObject[wObjectID].item.wFlags & kItemFlagApplyToAll)
       {
@@ -3296,6 +3304,7 @@ PAL_BattlePlayerValidateAction(
          //
          fToEnemy = TRUE;
          g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+         g_Battle.rgPlayer[wPlayerIndex].action.wActionID = 0; //avoid be deduced to autoattack
       }
       else
       {
@@ -3315,6 +3324,7 @@ PAL_BattlePlayerValidateAction(
             //
             fToEnemy = TRUE;
             g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+            g_Battle.rgPlayer[wPlayerIndex].action.wActionID = 0;
          }
       }
       break;
