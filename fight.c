@@ -69,7 +69,7 @@ PAL_BattleSelectAutoTarget(
 {
    int          i;
 
-   i = (int)g_Battle.UI.wPrevEnemyTarget;
+   i = g_Battle.UI.iPrevEnemyTarget;
 
    if (i >= 0 && i <= g_Battle.wMaxEnemyIndex &&
       g_Battle.rgEnemy[i].wObjectID != 0 &&
@@ -1701,7 +1701,7 @@ PAL_BattleStartFrame(
             else if (g_Battle.fPrevPlayerAutoAtk)
             {
                g_Battle.UI.wCurPlayerIndex = i;
-               g_Battle.UI.wSelectedIndex = g_Battle.rgPlayer[i].action.sTarget;
+               g_Battle.UI.iSelectedIndex = g_Battle.rgPlayer[i].action.sTarget;
                g_Battle.UI.wActionType = kBattleActionAttack;
                PAL_BattleCommitAction(FALSE);
             }
@@ -1783,7 +1783,7 @@ PAL_BattleCommitAction(
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType =
          g_Battle.UI.wActionType;
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget =
-         (SHORT)g_Battle.UI.wSelectedIndex;
+         (SHORT)g_Battle.UI.iSelectedIndex;
 
       if (g_Battle.UI.wActionType == kBattleActionAttack)
       {

@@ -654,7 +654,7 @@ PAL_BattleUIUseItem(
          else
          {
 #ifdef PAL_CLASSIC
-            g_Battle.UI.wSelectedIndex = 0;
+            g_Battle.UI.iSelectedIndex = 0;
 #else
             g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
 #endif
@@ -702,7 +702,7 @@ PAL_BattleUIThrowItem(
          }
          else
          {
-            g_Battle.UI.wSelectedIndex = g_Battle.UI.wPrevEnemyTarget;
+            g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
             g_Battle.UI.state = kBattleUISelectTargetEnemy;
          }
       }
@@ -838,7 +838,7 @@ PAL_BattleUIUpdate(
          if (w == 0)
          {
             g_Battle.UI.wActionType = kBattleActionAttack;
-            g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+            g_Battle.UI.iSelectedIndex = PAL_BattleSelectAutoTarget();
          }
          else
          {
@@ -847,11 +847,11 @@ PAL_BattleUIUpdate(
 
             if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
             {
-               g_Battle.UI.wSelectedIndex = -1;
+               g_Battle.UI.iSelectedIndex = -1;
             }
             else
             {
-               g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+               g_Battle.UI.iSelectedIndex = PAL_BattleSelectAutoTarget();
             }
          }
 
@@ -926,11 +926,11 @@ PAL_BattleUIUpdate(
 
          if (PAL_PlayerCanAttackAll(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole))
          {
-            g_Battle.UI.wSelectedIndex = -1;
+            g_Battle.UI.iSelectedIndex = -1;
          }
          else
          {
-            g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+            g_Battle.UI.iSelectedIndex = PAL_BattleSelectAutoTarget();
          }
 
          PAL_BattleCommitAction(FALSE);
@@ -962,11 +962,11 @@ PAL_BattleUIUpdate(
 
          if (PAL_PlayerCanAttackAll(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole))
          {
-            g_Battle.UI.wSelectedIndex = -1;
+            g_Battle.UI.iSelectedIndex = -1;
          }
          else
          {
-            g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+            g_Battle.UI.iSelectedIndex = PAL_BattleSelectAutoTarget();
          }
 
          PAL_BattleCommitAction(FALSE);
@@ -1091,7 +1091,7 @@ PAL_BattleUIUpdate(
                   }
                   else
                   {
-                     g_Battle.UI.wSelectedIndex = g_Battle.UI.wPrevEnemyTarget;
+                     g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
                      g_Battle.UI.state = kBattleUISelectTargetEnemy;
                   }
                   break;
@@ -1122,7 +1122,7 @@ PAL_BattleUIUpdate(
                      }
                      else
                      {
-                        g_Battle.UI.wSelectedIndex = g_Battle.UI.wPrevEnemyTarget;
+                        g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
                         g_Battle.UI.state = kBattleUISelectTargetEnemy;
                      }
                   }
@@ -1135,7 +1135,7 @@ PAL_BattleUIUpdate(
                      else
                      {
 #ifdef PAL_CLASSIC
-                        g_Battle.UI.wSelectedIndex = 0;
+                        g_Battle.UI.iSelectedIndex = 0;
 #else
                         g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
 #endif
@@ -1168,11 +1168,11 @@ PAL_BattleUIUpdate(
 
                   if (PAL_PlayerCanAttackAll(gpGlobals->rgParty[g_Battle.UI.wCurPlayerIndex].wPlayerRole))
                   {
-                     g_Battle.UI.wSelectedIndex = -1;
+                     g_Battle.UI.iSelectedIndex = -1;
                   }
                   else
                   {
-                     g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+                     g_Battle.UI.iSelectedIndex = PAL_BattleSelectAutoTarget();
                   }
                }
                else
@@ -1182,11 +1182,11 @@ PAL_BattleUIUpdate(
 
                   if (gpGlobals->g.rgObject[w].magic.wFlags & kMagicFlagApplyToAll)
                   {
-                     g_Battle.UI.wSelectedIndex = -1;
+                     g_Battle.UI.iSelectedIndex = -1;
                   }
                   else
                   {
-                     g_Battle.UI.wSelectedIndex = PAL_BattleSelectAutoTarget();
+                     g_Battle.UI.iSelectedIndex = PAL_BattleSelectAutoTarget();
                   }
                }
 
@@ -1312,7 +1312,7 @@ PAL_BattleUIUpdate(
                      }
                      else
                      {
-                        g_Battle.UI.wSelectedIndex = g_Battle.UI.wPrevEnemyTarget;
+                        g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
                         g_Battle.UI.state = kBattleUISelectTargetEnemy;
                      }
                   }
@@ -1325,7 +1325,7 @@ PAL_BattleUIUpdate(
                      else
                      {
 #ifdef PAL_CLASSIC
-                        g_Battle.UI.wSelectedIndex = 0;
+                        g_Battle.UI.iSelectedIndex = 0;
 #else
                         g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
 #endif
@@ -1450,24 +1450,26 @@ PAL_BattleUIUpdate(
       //
       if (y == 1)
       {
-         g_Battle.UI.wPrevEnemyTarget = (WORD)x;
+         g_Battle.UI.iPrevEnemyTarget = x;
+         if( g_Battle.UI.iSelectedIndex == -1 )
+            g_Battle.UI.iSelectedIndex = x;
          PAL_BattleCommitAction(FALSE);
          break;
       }
 #endif
-      if (g_Battle.UI.wSelectedIndex > x)
+      if (g_Battle.UI.iSelectedIndex > x)
       {
-         g_Battle.UI.wSelectedIndex = x;
+         g_Battle.UI.iSelectedIndex = x;
       }
 
       for (i = 0; i <= x; i++)
       {
-         if (g_Battle.rgEnemy[g_Battle.UI.wSelectedIndex].wObjectID != 0)
+         if (g_Battle.rgEnemy[g_Battle.UI.iSelectedIndex].wObjectID != 0)
          {
             break;
          }
-         g_Battle.UI.wSelectedIndex++;
-         g_Battle.UI.wSelectedIndex %= x + 1;
+         g_Battle.UI.iSelectedIndex++;
+         g_Battle.UI.iSelectedIndex %= x + 1;
       }
 
       //
@@ -1475,7 +1477,7 @@ PAL_BattleUIUpdate(
       //
       if (s_iFrame & 1)
       {
-         i = g_Battle.UI.wSelectedIndex;
+         i = g_Battle.UI.iSelectedIndex;
 
          x = PAL_X(g_Battle.rgEnemy[i].pos);
          y = PAL_Y(g_Battle.rgEnemy[i].pos);
@@ -1493,30 +1495,30 @@ PAL_BattleUIUpdate(
       }
       else if (g_InputState.dwKeyPress & kKeySearch)
       {
-         g_Battle.UI.wPrevEnemyTarget = g_Battle.UI.wSelectedIndex;
+         g_Battle.UI.iPrevEnemyTarget = g_Battle.UI.iSelectedIndex;
          PAL_BattleCommitAction(FALSE);
       }
       else if (g_InputState.dwKeyPress & (kKeyLeft | kKeyDown))
       {
-         if (g_Battle.UI.wSelectedIndex != 0)
+         if (g_Battle.UI.iSelectedIndex != 0)
          {
-            g_Battle.UI.wSelectedIndex--;
-            while (g_Battle.UI.wSelectedIndex != 0 &&
-               g_Battle.rgEnemy[g_Battle.UI.wSelectedIndex].wObjectID == 0)
+            g_Battle.UI.iSelectedIndex--;
+            while (g_Battle.UI.iSelectedIndex != 0 &&
+               g_Battle.rgEnemy[g_Battle.UI.iSelectedIndex].wObjectID == 0)
             {
-               g_Battle.UI.wSelectedIndex--;
+               g_Battle.UI.iSelectedIndex--;
             }
          }
       }
       else if (g_InputState.dwKeyPress & (kKeyRight | kKeyUp))
       {
-         if (g_Battle.UI.wSelectedIndex < x)
+         if (g_Battle.UI.iSelectedIndex < x)
          {
-            g_Battle.UI.wSelectedIndex++;
-            while (g_Battle.UI.wSelectedIndex < x &&
-               g_Battle.rgEnemy[g_Battle.UI.wSelectedIndex].wObjectID == 0)
+            g_Battle.UI.iSelectedIndex++;
+            while (g_Battle.UI.iSelectedIndex < x &&
+               g_Battle.rgEnemy[g_Battle.UI.iSelectedIndex].wObjectID == 0)
             {
-               g_Battle.UI.wSelectedIndex++;
+               g_Battle.UI.iSelectedIndex++;
             }
          }
       }
@@ -1529,7 +1531,7 @@ PAL_BattleUIUpdate(
       //
       if (gpGlobals->wMaxPartyMemberIndex == 0)
       {
-         g_Battle.UI.wSelectedIndex = 0;
+         g_Battle.UI.iSelectedIndex = 0;
          PAL_BattleCommitAction(FALSE);
       }
 #endif
@@ -1543,8 +1545,8 @@ PAL_BattleUIUpdate(
       //
       // Draw arrows on the selected player
       //
-      x = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][g_Battle.UI.wSelectedIndex][0] - 8;
-      y = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][g_Battle.UI.wSelectedIndex][1] - 67;
+      x = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][g_Battle.UI.iSelectedIndex][0] - 8;
+      y = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][g_Battle.UI.iSelectedIndex][1] - 67;
 
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, j), gpScreen, PAL_XY(x, y));
 
@@ -1558,24 +1560,24 @@ PAL_BattleUIUpdate(
       }
       else if (g_InputState.dwKeyPress & (kKeyLeft | kKeyDown))
       {
-         if (g_Battle.UI.wSelectedIndex != 0)
+         if (g_Battle.UI.iSelectedIndex != 0)
          {
-            g_Battle.UI.wSelectedIndex--;
+            g_Battle.UI.iSelectedIndex--;
          }
          else
          {
-            g_Battle.UI.wSelectedIndex = gpGlobals->wMaxPartyMemberIndex;
+            g_Battle.UI.iSelectedIndex = gpGlobals->wMaxPartyMemberIndex;
          }
       }
       else if (g_InputState.dwKeyPress & (kKeyRight | kKeyUp))
       {
-         if (g_Battle.UI.wSelectedIndex < gpGlobals->wMaxPartyMemberIndex)
+         if (g_Battle.UI.iSelectedIndex < gpGlobals->wMaxPartyMemberIndex)
          {
-            g_Battle.UI.wSelectedIndex++;
+            g_Battle.UI.iSelectedIndex++;
          }
          else
          {
-            g_Battle.UI.wSelectedIndex = 0;
+            g_Battle.UI.iSelectedIndex = 0;
          }
       }
 
@@ -1586,7 +1588,7 @@ PAL_BattleUIUpdate(
       //
       // Don't bother selecting
       //
-      g_Battle.UI.wSelectedIndex = (WORD)-1;
+      g_Battle.UI.iSelectedIndex = (WORD)-1;
       PAL_BattleCommitAction(FALSE);
 #else
       if (g_Battle.UI.wActionType == kBattleActionCoopMagic)
@@ -1637,7 +1639,7 @@ PAL_BattleUIUpdate(
       //
       // Don't bother selecting
       //
-      g_Battle.UI.wSelectedIndex = (WORD)-1;
+      g_Battle.UI.iSelectedIndex = (WORD)-1;
       PAL_BattleCommitAction(FALSE);
 #else
       j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER;

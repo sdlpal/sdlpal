@@ -1350,8 +1350,8 @@ PAL_StartBattle(
    g_Battle.UI.dwMsgShowTime = 0;
    g_Battle.UI.state = kBattleUIWait;
    g_Battle.UI.fAutoAttack = FALSE;
-   g_Battle.UI.wSelectedIndex = 0;
-   g_Battle.UI.wPrevEnemyTarget = 0;
+   g_Battle.UI.iSelectedIndex = 0;
+   g_Battle.UI.iPrevEnemyTarget = -1;
 
    memset(g_Battle.UI.rgShowNum, 0, sizeof(g_Battle.UI.rgShowNum));
 
