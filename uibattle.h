@@ -101,8 +101,8 @@ typedef struct tagBATTLEUI
 
    WORD             wCurPlayerIndex;      // index of the current player
    WORD             wSelectedAction;      // current selected action
-   WORD             wSelectedIndex;       // current selected index of player or enemy
-   WORD             wPrevEnemyTarget;     // previous enemy target
+   INT              iSelectedIndex;       // current selected index of player or enemy
+   INT              iPrevEnemyTarget;     // previous enemy target
 
    WORD             wActionType;          // type of action to be performed
    WORD             wObjectID;            // object ID of the item or magic to use
