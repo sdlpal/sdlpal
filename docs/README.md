@@ -137,7 +137,7 @@ cd 3ds
 make
 make cia
 ```
-You need to have *DevkitPro ARM* and *SDL 1.2* for 3DS portlib installed. The compiled executable should be generated with the filename *`sdlpal`* at the current directory.
+You need to have *DevkitPro ARM* and *SDL 1.2* for 3DS portlib installed. Creating a CIA package is not required to play the game, but in order to to that, a seperate *makerom* tool is required. The compiled executable should be generated with the filename *`sdlpal`* at the current directory.
  
 Nintendo Wii
 ------------
