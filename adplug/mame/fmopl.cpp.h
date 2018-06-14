@@ -720,7 +720,7 @@ public:
 
 	void CALC_RH()
 	{
-		unsigned int const noise = BIT(noise_rng, 0);
+		unsigned int const noise = MAME_BIT(noise_rng, 0);
 
 		OPL_SLOT *SLOT;
 		signed int out;
@@ -790,9 +790,9 @@ public:
 			*/
 
 			/* base frequency derived from operator 1 in channel 7 */
-			unsigned char const bit7 = BIT(SLOT7_1.Cnt >> FREQ_SH, 7);
-			unsigned char const bit3 = BIT(SLOT7_1.Cnt >> FREQ_SH, 3);
-			unsigned char const bit2 = BIT(SLOT7_1.Cnt >> FREQ_SH, 2);
+			unsigned char const bit7 = MAME_BIT(SLOT7_1.Cnt >> FREQ_SH, 7);
+			unsigned char const bit3 = MAME_BIT(SLOT7_1.Cnt >> FREQ_SH, 3);
+			unsigned char const bit2 = MAME_BIT(SLOT7_1.Cnt >> FREQ_SH, 2);
 
 			unsigned char const res1 = (bit2 ^ bit7) | bit3;
 
@@ -801,8 +801,8 @@ public:
 			uint32_t phase = res1 ? (0x200|(0xd0>>2)) : 0xd0;
 
 			/* enable gate based on frequency of operator 2 in channel 8 */
-			unsigned char const bit5e= BIT(SLOT8_2.Cnt >> FREQ_SH, 5);
-			unsigned char const bit3e= BIT(SLOT8_2.Cnt >> FREQ_SH, 3);
+			unsigned char const bit5e= MAME_BIT(SLOT8_2.Cnt >> FREQ_SH, 5);
+			unsigned char const bit3e= MAME_BIT(SLOT8_2.Cnt >> FREQ_SH, 3);
 
 			unsigned char const res2 = bit3e ^ bit5e;
 
@@ -836,7 +836,7 @@ public:
 		if( env < ENV_QUIET )
 		{
 			/* base frequency derived from operator 1 in channel 7 */
-			unsigned char const bit8 = BIT(SLOT7_1.Cnt >> FREQ_SH, 8);
+			unsigned char const bit8 = MAME_BIT(SLOT7_1.Cnt >> FREQ_SH, 8);
 
 			/* when bit8 = 0 phase = 0x100; */
 			/* when bit8 = 1 phase = 0x200; */
@@ -863,9 +863,9 @@ public:
 		if( env < ENV_QUIET )
 		{
 			/* base frequency derived from operator 1 in channel 7 */
-			unsigned char const bit7 = BIT(SLOT7_1.Cnt >> FREQ_SH, 7);
-			unsigned char const bit3 = BIT(SLOT7_1.Cnt >> FREQ_SH, 3);
-			unsigned char const bit2 = BIT(SLOT7_1.Cnt >> FREQ_SH, 2);
+			unsigned char const bit7 = MAME_BIT(SLOT7_1.Cnt >> FREQ_SH, 7);
+			unsigned char const bit3 = MAME_BIT(SLOT7_1.Cnt >> FREQ_SH, 3);
+			unsigned char const bit2 = MAME_BIT(SLOT7_1.Cnt >> FREQ_SH, 2);
 
 			unsigned char const res1 = (bit2 ^ bit7) | bit3;
 
@@ -874,8 +874,8 @@ public:
 			uint32_t phase = res1 ? 0x300 : 0x100;
 
 			/* enable gate based on frequency of operator 2 in channel 8 */
-			unsigned char const bit5e= BIT(SLOT8_2.Cnt >> FREQ_SH, 5);
-			unsigned char const bit3e= BIT(SLOT8_2.Cnt >> FREQ_SH, 3);
+			unsigned char const bit5e= MAME_BIT(SLOT8_2.Cnt >> FREQ_SH, 5);
+			unsigned char const bit3e= MAME_BIT(SLOT8_2.Cnt >> FREQ_SH, 3);
 
 			unsigned char const res2 = bit3e ^ bit5e;
 			/* when res2 = 0 pass the phase from calculation above (res1); */

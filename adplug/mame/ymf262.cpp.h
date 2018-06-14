@@ -252,9 +252,9 @@ struct OPL3
 	uint32_t  pan[18*4];              /* channels output masks (0xffffffff = enable); 4 masks per one channel */
 	uint32_t  pan_ctrl_value[18];     /* output control values 1 per one channel (1 value contains 4 masks) */
 
-	signed int chanout[18];
-	signed int phase_modulation;        /* phase modulation input (SLOT 2) */
-	signed int phase_modulation2;   /* phase modulation input (SLOT 3 in 4 operator channels) */
+	int32_t   chanout[18];
+	int32_t   phase_modulation;        /* phase modulation input (SLOT 2) */
+	int32_t   phase_modulation2;   /* phase modulation input (SLOT 3 in 4 operator channels) */
 
 	uint32_t  eg_cnt;                 /* global envelope generator counter    */
 	uint32_t  eg_timer;               /* global envelope generator counter works at frequency = chipclock/288 (288=8*36) */

@@ -37,6 +37,6 @@ struct attotime {};
 #define M_PI           3.14159265358979323846
 #endif
 
-#define BIT( _INPUT_, _BIT_ ) ( ( _INPUT_) >> (_BIT_)) & 1
+#define MAME_BIT( _INPUT_, _BIT_ ) ( ( _INPUT_) >> (_BIT_)) & 1
 
 #endif
