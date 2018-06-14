@@ -429,8 +429,8 @@ public:
 	//attotime TimerBase;         /* Timer base time (==sampling time)*/
 	device_t *device;
 
-	signed int phase_modulation;    /* phase modulation input (SLOT 2) */
-	signed int output[1];
+	int32_t phase_modulation;    /* phase modulation input (SLOT 2) */
+	int32_t output[1];
 #if BUILD_Y8950
 	int32_t output_deltat[4];     /* for Y8950 DELTA-T, chip is mono, that 4 here is just for safety */
 #endif
