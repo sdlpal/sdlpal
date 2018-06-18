@@ -457,6 +457,29 @@ main(
 	   return g_exit_code;
    }
 
+
+#ifdef FIX_MACOS_PATH_ISSUE
+	//Fix a path bug on macOS
+	char *work_path = strdup(argv[0]);
+
+	int len = strlen(work_path);
+
+
+	while(--len) {
+		if(work_path[len] == '/') {
+			work_path[len] = '\0';
+			break;
+		}
+	}
+
+
+	chdir(work_path);
+
+	free(work_path);
+#endif
+
+
+
 #if !defined(UNIT_TEST) || defined(UNIT_TEST_GAME_INIT)
    //
    // Initialize SDL
