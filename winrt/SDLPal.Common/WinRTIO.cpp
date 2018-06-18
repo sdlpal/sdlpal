@@ -215,6 +215,10 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 		if (file)
 		{
 			*pFile = new WRT_FILE(AWait(file->OpenAsync(w ? Windows::Storage::FileAccessMode::ReadWrite : Windows::Storage::FileAccessMode::Read), eventHandle), r, w, b);
+			if (*_Mode == 'a')
+			{
+				(*pFile)->stream->Seek(LARGE_INTEGER{ 0,0 }, STREAM_SEEK_END, nullptr);
+			}
 		}
 	}
 	catch (Platform::AccessDeniedException^)
