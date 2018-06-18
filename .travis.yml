@@ -87,9 +87,9 @@ matrix:
                 mkdir -p $DEVKITPRO
                 (
                     cd $DEVKITPRO &&
-                    wget https://sourceforge.net/projects/devkitpro/files/devkitPPC/devkitPPC_r27-x86_64-linux.tar.bz2 &&
-                    wget https://sourceforge.net/projects/devkitpro/files/libogc/libogc-1.8.12.tar.bz2 &&
-                    wget https://sourceforge.net/projects/devkitpro/files/libfat/libfat-ogc-1.0.13.tar.bz2 &&
+                    wget https://media.githubusercontent.com/media/sdlpal/tools/master/devkitPPC_r27-x86_64-linux.tar.bz2 &&
+                    wget https://media.githubusercontent.com/media/sdlpal/tools/master/libogc-1.8.12.tar.bz2 &&
+                    wget https://media.githubusercontent.com/media/sdlpal/tools/master/libfat-ogc-1.0.13.tar.bz2 &&
                     wget https://github.com/dborth/sdl-wii/releases/download/2013-10-28/SDL.Wii.10-28-2013.zip
                 )&&(
                     cd $DEVKITPRO
