@@ -26,6 +26,10 @@
 #ifndef PAL_CONFIG_H
 # define PAL_CONFIG_H
 
+# ifndef FIX_MACOS_PATH_ISSUE
+#  define FIX_MACOS_PATH_ISSUE
+# endif
+
 # ifndef PAL_HAS_JOYSTICKS
 #  define PAL_HAS_JOYSTICKS    1
 # endif
