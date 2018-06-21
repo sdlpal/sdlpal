@@ -550,13 +550,14 @@ void VIDEO_GLSL_Init() {
 #     endif
 #  endif
     //
-    // iOS need this line to enable color correction
-    // WebGL will not crash with sRGB capable, but will not work with it too.
-    // after several tests, Android completely unable to initial video with sRGB framebuffer capability requested, and MAY CRASH on extension detection.
+    // iOS need this line to enable built-in color correction
+    // WebGL/WinRT/RaspberryPI will not crash with sRGB capable, but will not work with it too.
+    // after several tests, Android which version below Nougat completely unable to initial video with sRGB framebuffer capability requested, and MAY CRASH on extension detection;
+    // but Oreo behavior changed.
     //
     SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1);
     
-#if SDL_VIDEO_DRIVER_RPI || SDL_VIDEO_DRIVER_EMSCRIPTEN || SDL_VIDEO_DRIVER_WINRT
+#if SDL_VIDEO_DRIVER_RPI || SDL_VIDEO_DRIVER_EMSCRIPTEN || SDL_VIDEO_DRIVER_WINRT || SDL_VIDEO_DRIVER_ANDROID
     manualSRGB = 1;
 #endif
     
