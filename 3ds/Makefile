@@ -1,5 +1,3 @@
-export DEVKITPRO=/opt/devkitpro
-export DEVKITARM=/opt/devkitpro/devkitARM
 #---------------------------------------------------------------------------------
 .SUFFIXES:
 #---------------------------------------------------------------------------------
@@ -48,7 +46,7 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -D__3DS__ -D__N3DS__ -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -I.
+CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -D__3DS__ -D__N3DS__ -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -I.. -I../..
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++14
 

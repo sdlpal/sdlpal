@@ -1029,7 +1029,7 @@ number   number    BLK/FNUM2 FNUM    Drum  Hat   Drum  Tom  Cymbal
 static inline void chan_calc_rhythm( OPL3 *chip, OPL3_CH *CH, unsigned int noise )
 {
 	OPL3_SLOT *SLOT;
-	signed int *chanout = chip->chanout;
+	int32_t *chanout = chip->chanout;
 	signed int out;
 	unsigned int env;
 
@@ -2627,7 +2627,7 @@ void ymf262_update_one(void *_chip, OPL3SAMPLE /***buffers*/*buffer, int length)
 {
 	int i;
 	OPL3        *chip  = (OPL3 *)_chip;
-	signed int *chanout = chip->chanout;
+	int32_t     *chanout = chip->chanout;
 	uint8_t       rhythm = chip->rhythm&0x20;
 
 	//OPL3SAMPLE  *ch_a = buffers[0];
