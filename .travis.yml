@@ -115,6 +115,10 @@ matrix:
       - os: linux
         env: TARGET=3ds
         sudo: enabled
+        addons:
+          apt:
+            packages:
+            - unzip
         before_install:
           - export PUSHD="$(pwd)"
           - mkdir -p $CACHE/
@@ -131,6 +135,12 @@ matrix:
           - cp Makefile.n3ds Makefile
           - make
           - make install
+          - wget https://github.com/profi200/Project_CTR/releases/download/0.15/makerom_015_ctrtool.zip
+          - unzip makerom_015_ctrtool.zip
+          - sudo mkdir -p /opt/ctrtool/bin
+          - sudo cp Linux_x86_64/* /opt/ctrtool/bin/
+          - chmod +x /opt/ctrtool/bin/*
+          - export PATH=/opt/ctrtool/bin:$PATH
           - cd "${PUSHD}"
         script:
           - cd 3ds
