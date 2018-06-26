@@ -539,16 +539,25 @@ void VIDEO_GLSL_RenderCopy()
 }
 
 void VIDEO_GLSL_Init() {
-#  if GLES
+    int orig_major, orig_minor, orig_profile, orig_srgb;
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &orig_major);
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &orig_minor);
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &orig_profile);
+    SDL_GL_GetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, &orig_srgb);
+#if GLES
     SDL_SetHint( SDL_HINT_RENDER_DRIVER, "opengles2");
-#  else
+#   if SDL_VIDEO_OPENGL_EGL
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#   endif
+#else
     SDL_SetHint( SDL_HINT_RENDER_DRIVER, "opengl");
-#     if FORCE_OPENGL_CORE_PROFILE
+#   if FORCE_OPENGL_CORE_PROFILE
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-#     endif
-#  endif
+#   endif
+#endif
     //
     // iOS need this line to enable built-in color correction
     // WebGL/WinRT/RaspberryPI will not crash with sRGB capable, but will not work with it too.
@@ -564,7 +573,10 @@ void VIDEO_GLSL_Init() {
     Uint32 flags = PAL_VIDEO_INIT_FLAGS | (gConfig.fFullScreen ? SDL_WINDOW_BORDERLESS : 0) | SDL_WINDOW_OPENGL;
     gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
     if (gpWindow == NULL) {
-        SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 0);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, orig_major);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, orig_minor);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,  orig_profile);
+        SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, orig_srgb);
         manualSRGB = 1;
         gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
     }
