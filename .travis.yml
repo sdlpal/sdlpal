@@ -125,7 +125,7 @@ matrix:
           - sudo dkp-pacman -S 3ds-dev --noconfirm
           - export DEVKITPRO=/opt/devkitpro
           - export DEVKITARM=/opt/devkitpro/devkitARM
-          - sudo chown -R $(whoami):$(whoami) /opt/devkitpro/portlibs
+          - sudo chown $(whoami):$(whoami) /opt/devkitpro
           - git clone https://github.com/zephray/SDL-1.2-N3DS.git
           - cd SDL-1.2-N3DS/SDL-1.2.15
           - cp Makefile.n3ds Makefile
