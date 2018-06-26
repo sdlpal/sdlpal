@@ -113,6 +113,29 @@ matrix:
           - cd ..
           
       - os: linux
+        env: TARGET=3ds
+        sudo: enabled
+        before_install:
+          - export PUSHD="$(pwd)"
+          - mkdir -p $CACHE/
+          - cd $CACHE/
+          - wget https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb
+          - sudo dpkg -i devkitpro-pacman.deb
+          - sudo pacman -Syu
+          - sudo pacman -S 3ds-dev
+          - git clone https://github.com/zephray/SDL-1.2-N3DS.git
+          - cd SDL-1.2-N3DS/SDL-1.2.15
+          - cp Makefile.n3ds Makefile
+          - make
+          - sudo make install
+          - cd "${PUSHD}"
+        script:
+          - cd 3ds
+          - make
+          - make cia
+          - cp sdlpal.cia ../deploy/sdlpal-3ds.cia
+          
+      - os: linux
         language: android
         env: TARGET=Android SDK_HASH=3859397 NDK_VERSION=r16 TERM=dumb
         cache:
