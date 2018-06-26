@@ -122,10 +122,9 @@ matrix:
           - wget https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb
           - sudo dpkg -i devkitpro-pacman.deb
           - sudo dkp-pacman -Syu
-          - sudo dkp-pacman -S 3ds-dev --noconfirm
+          - dkp-pacman -S 3ds-dev --noconfirm
           - export DEVKITPRO=/opt/devkitpro
           - export DEVKITARM=/opt/devkitpro/devkitARM
-          - export DEVKITPPC=/opt/devkitpro/devkitPPC
           - git clone https://github.com/zephray/SDL-1.2-N3DS.git
           - cd SDL-1.2-N3DS/SDL-1.2.15
           - cp Makefile.n3ds Makefile
