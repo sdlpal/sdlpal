@@ -157,6 +157,10 @@ errno_t WRT_fopen_s(WRT_FILE ** pFile, const char * _Filename, const char * _Mod
 		if (g_specialFiles.find(_Filename) != g_specialFiles.end())
 		{
 			*pFile = new WRT_FILE(AWait(g_specialFiles[_Filename]->OpenAsync(w ? Windows::Storage::FileAccessMode::ReadWrite : Windows::Storage::FileAccessMode::Read), eventHandle), r, w, b);
+			if (*_Mode == 'a')
+			{
+				(*pFile)->stream->Seek(LARGE_INTEGER{ 0,0 }, STREAM_SEEK_END, nullptr);
+			}
 			return 0;
 		}
 
