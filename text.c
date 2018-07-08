@@ -32,6 +32,7 @@
 #define   FONT_COLOR_RED            0x1A
 #define   FONT_COLOR_CYAN           0x8D
 #define   FONT_COLOR_CYAN_ALT       0x8C
+#define   FONT_COLOR_RED_ALT        0x17
 
 BOOL      g_fUpdatedInBattle      = FALSE;
 
@@ -1303,6 +1304,161 @@ PAL_DialogWaitForKey(
    PAL_DialogWaitForKeyWithMaximumSeconds(0);
 }
 
+static int
+TEXT_DisplayText(
+   LPCWSTR        lpszText,
+   int            x,
+   int            y,
+   BOOL           isDialog
+)
+{
+   //
+   // normal texts
+   //
+   WCHAR text[2];
+   BYTE color, isNumber=0;
+   
+   while (lpszText != NULL && *lpszText != '\0')
+   {
+      switch (*lpszText)
+      {
+         case '-':
+            //
+            // Set the font color to Cyan
+            //
+            if (g_TextLib.bCurrentFontColor == FONT_COLOR_CYAN)
+            {
+               g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
+            }
+            else
+            {
+               g_TextLib.bCurrentFontColor = FONT_COLOR_CYAN;
+            }
+            lpszText++;
+            break;
+         case '\'':
+            //
+            // Set the font color to Red
+            //
+            if (g_TextLib.bCurrentFontColor == FONT_COLOR_RED)
+            {
+               g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
+            }
+            else
+            {
+               g_TextLib.bCurrentFontColor = FONT_COLOR_RED;
+            }
+            lpszText++;
+            break;
+         case '@':
+            //
+            // Set the font color to Red
+            //
+            if (g_TextLib.bCurrentFontColor == FONT_COLOR_RED_ALT)
+            {
+               g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
+            }
+            else
+            {
+               g_TextLib.bCurrentFontColor = FONT_COLOR_RED_ALT;
+            }
+            lpszText++;
+            break;
+         case '\"':
+            //
+            // Set the font color to Yellow
+            //
+            if (g_TextLib.bCurrentFontColor == FONT_COLOR_YELLOW)
+            {
+               g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
+            }
+            else
+            {
+               g_TextLib.bCurrentFontColor = FONT_COLOR_YELLOW;
+            }
+            lpszText++;
+            break;
+            
+         case '$':
+            //
+            // Set the delay time of text-displaying
+            //
+            g_TextLib.iDelayTime = wcstol(lpszText + 1, NULL, 10) * 10 / 7;
+            lpszText += 3;
+            break;
+            
+         case '~':
+            //
+            // Delay for a period and quit
+            //
+            if (g_TextLib.fUserSkip)
+            {
+               VIDEO_UpdateScreen(NULL);
+            }
+            UTIL_Delay(wcstol(lpszText + 1, NULL, 10) * 80 / 7);
+            g_TextLib.nCurrentDialogLine = 0;
+            g_TextLib.fUserSkip = FALSE;
+            return x; // don't go further
+            
+         case ')':
+            //
+            // Set the waiting icon
+            //
+            g_TextLib.bIcon = 1;
+            lpszText++;
+            break;
+            
+         case '(':
+            //
+            // Set the waiting icon
+            //
+            g_TextLib.bIcon = 2;
+            lpszText++;
+            break;
+            
+         case '\\':
+            lpszText++;
+            
+         default:
+            text[0] = *lpszText++;
+            text[1] = 0;
+            
+            color = g_TextLib.bCurrentFontColor;
+            if(isDialog) {
+               if(g_TextLib.bCurrentFontColor == FONT_COLOR_DEFAULT)
+                  color = 0;
+               if( text[0]>= '0' && text[0] <= '9' ) {
+                  isNumber = 1;
+               }else{
+                  isNumber = 0;
+               }
+            }
+
+            // Update the screen on each draw operation is time-consuming, so disable it if user want to skip
+            if( isNumber )
+               PAL_DrawNumber(text[0]-'0', 1, PAL_XY(x, y+4), kNumColorYellow, kNumAlignLeft);
+            else
+               PAL_DrawText(text, PAL_XY(x, y), color, !isDialog, !g_TextLib.fUserSkip, FALSE);
+            x += PAL_CharWidth(text[0]);
+            
+            if (!isDialog && !g_TextLib.fUserSkip)
+            {
+               PAL_ClearKeyState();
+               UTIL_Delay(g_TextLib.iDelayTime * 8);
+               
+               if (g_InputState.dwKeyPress & (kKeySearch | kKeyMenu))
+               {
+                  //
+                  // User pressed a key to skip the dialog
+                  //
+                  g_TextLib.fUserSkip = TRUE;
+               }
+            }
+      }
+   }
+   return x;
+}
+
 VOID
 PAL_ShowDialogText(
    LPCWSTR      lpszText
@@ -1385,8 +1541,7 @@ PAL_ShowDialogText(
          //
          // Show the text on the screen
          //
-         pos = PAL_XY(PAL_X(pos) + 8 + ((len & 1) << 2), PAL_Y(pos) + 10);
-         PAL_DrawText(lpszText, pos, 0, FALSE, FALSE, FALSE);
+         TEXT_DisplayText(lpszText, PAL_X(pos) + 8 + ((len & 1) << 2), PAL_Y(pos) + 10, TRUE);
          VIDEO_UpdateScreen(&rect);
 
          PAL_DialogWaitForKeyWithMaximumSeconds(1.4);
@@ -1417,11 +1572,6 @@ PAL_ShowDialogText(
       }
       else
       {
-         //
-         // normal texts
-         //
-         WCHAR text[2];
-
          if (!g_TextLib.fPlayingRNG && g_TextLib.nCurrentDialogLine == 0)
          {
             //
@@ -1429,120 +1579,8 @@ PAL_ShowDialogText(
             //
             VIDEO_BackupScreen(gpScreen);
          }
-
-         while (lpszText != NULL && *lpszText != '\0')
-         {
-            switch (*lpszText)
-            {
-            case '-':
-               //
-               // Set the font color to Cyan
-               //
-               if (g_TextLib.bCurrentFontColor == FONT_COLOR_CYAN)
-               {
-                  g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
-               }
-               else
-               {
-                  g_TextLib.bCurrentFontColor = FONT_COLOR_CYAN;
-               }
-               lpszText++;
-               break;
-#if 0
-			/* Not used */
-			case '\'':
-               //
-               // Set the font color to Red
-               //
-               if (g_TextLib.bCurrentFontColor == FONT_COLOR_RED)
-               {
-                  g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
-               }
-               else
-               {
-                  g_TextLib.bCurrentFontColor = FONT_COLOR_RED;
-               }
-               lpszText++;
-               break;
-#endif
-            case '\"':
-               //
-               // Set the font color to Yellow
-               //
-               if (g_TextLib.bCurrentFontColor == FONT_COLOR_YELLOW)
-               {
-                  g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
-               }
-               else
-               {
-                  g_TextLib.bCurrentFontColor = FONT_COLOR_YELLOW;
-               }
-               lpszText++;
-               break;
-
-            case '$':
-               //
-               // Set the delay time of text-displaying
-               //
-               g_TextLib.iDelayTime = wcstol(lpszText + 1, NULL, 10) * 10 / 7;
-               lpszText += 3;
-               break;
-
-            case '~':
-               //
-               // Delay for a period and quit
-               //
-               if (g_TextLib.fUserSkip)
-               {
-                  VIDEO_UpdateScreen(NULL);
-               }
-               UTIL_Delay(wcstol(lpszText + 1, NULL, 10) * 80 / 7);
-			   g_TextLib.nCurrentDialogLine = 0;
-               g_TextLib.fUserSkip = FALSE;
-               return; // don't go further
-
-            case ')':
-               //
-               // Set the waiting icon
-               //
-               g_TextLib.bIcon = 1;
-               lpszText++;
-               break;
-
-            case '(':
-               //
-               // Set the waiting icon
-               //
-               g_TextLib.bIcon = 2;
-               lpszText++;
-               break;
-
-            case '\\':
-               lpszText++;
-
-            default:
-               text[0] = *lpszText++;
-			   text[1] = 0;
-
-			   // Update the screen on each draw operation is time-consuming, so disable it if user want to skip
-               PAL_DrawText(text, PAL_XY(x, y), g_TextLib.bCurrentFontColor, TRUE, !g_TextLib.fUserSkip, FALSE);
-			   x += PAL_CharWidth(text[0]);
-
-               if (!g_TextLib.fUserSkip)
-               {
-                  PAL_ClearKeyState();
-                  UTIL_Delay(g_TextLib.iDelayTime * 8);
-
-                  if (g_InputState.dwKeyPress & (kKeySearch | kKeyMenu))
-                  {
-                     //
-                     // User pressed a key to skip the dialog
-                     //
-                     g_TextLib.fUserSkip = TRUE;
-                  }
-               }
-            }
-         }
+         
+         x = TEXT_DisplayText(lpszText, x, y, FALSE);
 
 		 // and update the full screen at once after all texts are drawn
 		 if (g_TextLib.fUserSkip)

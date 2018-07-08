@@ -702,7 +702,8 @@ PAL_BattleUIThrowItem(
          }
          else
          {
-            g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
+            if(g_Battle.UI.iPrevEnemyTarget != -1)
+               g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
             g_Battle.UI.state = kBattleUISelectTargetEnemy;
          }
       }
@@ -1091,7 +1092,8 @@ PAL_BattleUIUpdate(
                   }
                   else
                   {
-                     g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
+                     if(g_Battle.UI.iPrevEnemyTarget != -1)
+                        g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
                      g_Battle.UI.state = kBattleUISelectTargetEnemy;
                   }
                   break;
@@ -1122,7 +1124,8 @@ PAL_BattleUIUpdate(
                      }
                      else
                      {
-                        g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
+                        if(g_Battle.UI.iPrevEnemyTarget != -1)
+                           g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
                         g_Battle.UI.state = kBattleUISelectTargetEnemy;
                      }
                   }
@@ -1312,7 +1315,8 @@ PAL_BattleUIUpdate(
                      }
                      else
                      {
-                        g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
+                        if(g_Battle.UI.iPrevEnemyTarget != -1)
+                           g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
                         g_Battle.UI.state = kBattleUISelectTargetEnemy;
                      }
                   }
