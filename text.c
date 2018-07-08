@@ -1396,7 +1396,7 @@ TEXT_DisplayText(
                VIDEO_UpdateScreen(NULL);
             }
             UTIL_Delay(wcstol(lpszText + 1, NULL, 10) * 80 / 7);
-            g_TextLib.nCurrentDialogLine = 0;
+            g_TextLib.nCurrentDialogLine = -1;
             g_TextLib.fUserSkip = FALSE;
             return x; // don't go further
             
