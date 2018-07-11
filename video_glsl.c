@@ -31,7 +31,8 @@ static uint32_t gVAOIds[3]; // 0 for game screen; 1 for touch overlay; 2 for fin
 static uint32_t gVBOIds[3];
 static uint32_t gEBOId;
 static uint32_t gPassID = -1;
-static int gMVPSlots[3], gTextureSizeSlots[3], gHDRSlot[3], gSRGBSlot[3];
+static int gMVPSlots[3], gHDRSlot[3], gSRGBSlot[3];
+static int gFrameDirectionSlots[3], gFrameCountSlots[3], gOutputSizeSlots[3], gTextureSizeSlots[3], gInputSizeSlots[3];
 static int manualSRGB = 0;
 static int VAOSupported = 1;
 static int glversion_major, glversion_minor;
@@ -343,6 +344,22 @@ void setupShaderParams(int pass){
     if(gTextureSizeSlots[pass] < 0)
         UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform TextureSize not exist\n");
     
+    gOutputSizeSlots[pass] = glGetUniformLocation(gProgramIds[pass], "OutputSize");
+    if(gOutputSizeSlots[pass] < 0)
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform OutputSize not exist\n");
+    
+    gInputSizeSlots[pass] = glGetUniformLocation(gProgramIds[pass], "InputSize");
+    if(gInputSizeSlots[pass] < 0)
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform InputSize not exist\n");
+    
+    gFrameDirectionSlots[pass] = glGetUniformLocation(gProgramIds[pass], "FrameDirection");
+    if(gFrameDirectionSlots[pass] < 0)
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform FrameDirection not exist\n");
+    
+    gFrameCountSlots[pass] = glGetUniformLocation(gProgramIds[pass], "FrameCount");
+    if(gFrameCountSlots[pass] < 0)
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform FrameCount not exist\n");
+    
     gHDRSlot[pass] = glGetUniformLocation(gProgramIds[pass], "HDR");
     if(gHDRSlot[pass] < 0)
         UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform HDR not exist\n");
@@ -375,10 +392,18 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
     // Setup MVP projection matrix uniform
     glUniformMatrix4fv(gMVPSlots[pass], 1, GL_FALSE, gOrthoMatrixes[pass].m);
     
-    GLfloat textureSize[2];
-    textureSize[0] = 320.0;
-    textureSize[1] = 200.0;
-    glUniform2fv(gTextureSizeSlots[pass], 1, textureSize);
+    GLfloat size[2];
+    size[0] = 320.0;
+    size[1] = 200.0;
+    glUniform2fv(gTextureSizeSlots[pass], 1, size);
+    glUniform2fv(gInputSizeSlots[pass],   1, size);
+    size[0] = gConfig.dwTextureWidth;
+    size[1] = gConfig.dwTextureHeight;
+    glUniform2fv(gOutputSizeSlots[pass],  1, size);
+
+    GLint placeholder;
+    glUniform1iv(gFrameCountSlots[pass],        1, &placeholder);
+    glUniform1iv(gFrameDirectionSlots[pass],    1, &placeholder);
     
     GLint HDR = gConfig.fEnableHDR;
     glUniform1iv(gHDRSlot[pass], 1, &HDR);
