@@ -342,6 +342,9 @@
     <ClCompile Include="..\video_glsl.c">
       <Filter>glsl</Filter>
     </ClCompile>
+    <ClCompile Include="..\glslp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ascii.h">
@@ -730,6 +733,9 @@
     </ClInclude>
     <ClInclude Include="..\video_glsl.h">
       <Filter>glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glslp.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,6 +19,8 @@ extern void VIDEO_GLSL_RenderCopy();
 extern void VIDEO_GLSL_Init();
 extern void VIDEO_GLSL_Setup();
 
+extern void VIDEO_GLSL_Destroy();
+
 PAL_C_LINKAGE_END
 
 #endif /* video_glsl_h */

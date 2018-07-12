@@ -296,6 +296,7 @@
     <ClCompile Include="..\font.c" />
     <ClCompile Include="..\game.c" />
     <ClCompile Include="..\global.c" />
+    <ClCompile Include="..\glslp.c" />
     <ClCompile Include="..\input.c" />
     <ClCompile Include="..\itemmenu.c" />
     <ClCompile Include="..\liboggvorbis\src\analysis.c" />
@@ -407,6 +408,7 @@
     <ClInclude Include="..\battle.h" />
     <ClInclude Include="..\codepage.h" />
     <ClInclude Include="..\common.h" />
+    <ClInclude Include="..\glslp.h" />
     <ClInclude Include="..\liboggvorbis\include\ogg\config_types.h" />
     <ClInclude Include="..\ending.h" />
     <ClInclude Include="..\fight.h" />
