@@ -21,6 +21,11 @@
 #endif
 #include <SDL_video.h>
 #include <SDL_opengl.h>
+#ifdef __WIN32__ 
+//glActiveTexture is a OpenGL 1.3 built-in function, so SDL_opengl.h defined it directly and SDL client cannot simply redefine it.
+//but since windows only have OpenGL 1.1, it cannot be directly use too; have to use a freak way bypassing it.
+#define glActiveTexture fake_glActiveTexture
+#endif
 #endif
 
 #if __IOS__ || __ANDROID__ || __EMSCRIPTEN__ || __WINRT__ || SDL_VIDEO_DRIVER_RPI
@@ -57,6 +62,8 @@ PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
 PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
 PFNGLUNIFORM2FVPROC glUniform2fv;
 PFNGLUNIFORM1IVPROC glUniform1iv;
+PFNGLUNIFORM1IPROC glUniform1i;
+PFNGLACTIVETEXTUREPROC glActiveTexture;
 PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 PFNGLBINDFRAGDATALOCATIONPROC glBindFragDataLocation;
 PFNGLGETSTRINGIPROC glGetStringi;

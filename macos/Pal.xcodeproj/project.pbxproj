@@ -112,6 +112,8 @@
 		C639992220455776005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639991F20455776005B20CE /* video_glsl.c */; };
 		C6399929204557B4005B20CE /* mini_glloader.c in Sources */ = {isa = PBXBuildFile; fileRef = C6399926204557B4005B20CE /* mini_glloader.c */; };
 		C63DF68B1EC50B7300C778B8 /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = C63DF68A1EC50B7300C778B8 /* util.mm */; };
+		C650609620F653B300397B73 /* glslp.c in Sources */ = {isa = PBXBuildFile; fileRef = C650609420F653B300397B73 /* glslp.c */; };
+		C650609720F653B300397B73 /* glslp.c in Sources */ = {isa = PBXBuildFile; fileRef = C650609420F653B300397B73 /* glslp.c */; };
 		C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11C1CFAF1780037E9A2 /* overlay.c */; };
 		C65BC11F1CFAF7790037E9A2 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11E1CFAF7790037E9A2 /* audio.c */; };
 		C6972640202E155C00293A73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C697263C202E155C00293A73 /* OpenGL.framework */; };
@@ -397,6 +399,8 @@
 		C6399926204557B4005B20CE /* mini_glloader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mini_glloader.c; sourceTree = "<group>"; };
 		C6399927204557B4005B20CE /* mini_glloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mini_glloader.h; sourceTree = "<group>"; };
 		C63DF68A1EC50B7300C778B8 /* util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = util.mm; sourceTree = "<group>"; };
+		C650609420F653B300397B73 /* glslp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = glslp.c; sourceTree = "<group>"; };
+		C650609520F653B300397B73 /* glslp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = glslp.h; sourceTree = "<group>"; };
 		C65BC11C1CFAF1780037E9A2 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay.c; sourceTree = "<group>"; };
 		C65BC11E1CFAF7790037E9A2 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		C697263C202E155C00293A73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -511,6 +515,7 @@
 				7104FD660D772F6300A97E53 /* video.c */,
 				C639991F20455776005B20CE /* video_glsl.c */,
 				C6399926204557B4005B20CE /* mini_glloader.c */,
+				C650609420F653B300397B73 /* glslp.c */,
 				7104FD680D772F6300A97E53 /* yj1.c */,
 				7104FD520D772F6300A97E53 /* rixplay.cpp */,
 				C602B0011CEF3E6C003A7B09 /* palcfg.c */,
@@ -791,6 +796,7 @@
 		C61464761EA643E600A76CC9 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				C650609520F653B300397B73 /* glslp.h */,
 				C626FFC31E5BD49100E39DD9 /* pal_config.h */,
 				7104FD390D772F6300A97E53 /* ascii.h */,
 				713765631ED86C930084F495 /* aviplay.h */,
@@ -1066,6 +1072,7 @@
 				71E27E050D8C7E2F0048BA16 /* fight.c in Sources */,
 				71F0F6D70DAA63B400F88C16 /* ending.c in Sources */,
 				5757D2751B7A3D5800464A74 /* envelope.c in Sources */,
+				C650609620F653B300397B73 /* glslp.c in Sources */,
 				C639992120455776005B20CE /* video_glsl.c in Sources */,
 				71F0F6D90DAA63B500F88C16 /* itemmenu.c in Sources */,
 				71F0F6DB0DAA63B500F88C16 /* magicmenu.c in Sources */,
@@ -1103,6 +1110,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C650609720F653B300397B73 /* glslp.c in Sources */,
 				C626003D1E62058F00E39DD9 /* gtest-all.cc in Sources */,
 				C639992220455776005B20CE /* video_glsl.c in Sources */,
 				C6399929204557B4005B20CE /* mini_glloader.c in Sources */,
@@ -1159,13 +1167,11 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = Pal;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
-				OTHER_LDFLAGS = (
-					"-Wl,-weak_framework,Metal",
-				);
 			};
 			name = Debug;
 		};
@@ -1189,12 +1195,10 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
 				PRODUCT_NAME = Pal;
 				WRAPPER_EXTENSION = app;
-				OTHER_LDFLAGS = (
-					"-Wl,-weak_framework,Metal",
-				);
 			};
 			name = Release;
 		};
@@ -1228,10 +1232,8 @@
 					/Library/Frameworks/SDL2.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
 				);
-				OTHER_LDFLAGS = (
-					"-Wl,-weak_framework,Metal",
-				);
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PREBINDING = NO;
 				SDKROOT = macosx;
 			};
@@ -1266,9 +1268,7 @@
 					/Library/Frameworks/SDL2.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
 				);
-				OTHER_LDFLAGS = (
-					"-Wl,-weak_framework,Metal",
-				);
+				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PREBINDING = NO;
 				SDKROOT = macosx;
 			};
@@ -1319,13 +1319,11 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PRODUCT_BUNDLE_IDENTIFIER = user.PalTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pal.app/Contents/MacOS/Pal";
 				USER_HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL2.framework/Headers $(HEADER_SEARCH_PATHS)";
-				OTHER_LDFLAGS = (
-					"-Wl,-weak_framework,Metal",
-				);
 			};
 			name = Debug;
 		};
@@ -1369,13 +1367,11 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PRODUCT_BUNDLE_IDENTIFIER = user.PalTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pal.app/Contents/MacOS/Pal";
 				USER_HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL2.framework/Headers $(HEADER_SEARCH_PATHS)";
-				OTHER_LDFLAGS = (
-					"-Wl,-weak_framework,Metal",
-				);
 			};
 			name = Release;
 		};

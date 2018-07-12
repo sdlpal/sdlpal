@@ -67,7 +67,8 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 
 	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, MAKE_STRING("OGG") },
 	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GamePath",           8, MAKE_STRING(NULL) },
-	{ PALCFG_SAVEPATH,          PALCFG_STRING,   "SavePath",           8, MAKE_STRING(NULL) },
+    { PALCFG_SAVEPATH,          PALCFG_STRING,   "SavePath",           8, MAKE_STRING(NULL) },
+    { PALCFG_SHADERPATH,        PALCFG_STRING,   "ShaderPath",        10, MAKE_STRING(NULL) },
 	{ PALCFG_MESSAGEFILE,       PALCFG_STRING,   "MessageFileName",   15, MAKE_STRING(NULL) },
 	{ PALCFG_FONTFILE,          PALCFG_STRING,   "FontFileName",      12, MAKE_STRING(NULL) },
 	{ PALCFG_MUSIC,             PALCFG_STRING,   "Music",              5, MAKE_STRING("RIX") },
@@ -274,6 +275,7 @@ PAL_FreeConfig(
 	free(gConfig.pszFontFile);
 	free(gConfig.pszGamePath);
     free(gConfig.pszSavePath);
+    free(gConfig.pszShaderPath);
     free(gConfig.pszScaleQuality);
 	free(gConfig.pszLogFile);
 
@@ -408,6 +410,9 @@ PAL_LoadConfig(
 				case PALCFG_SAVEPATH:
 					gConfig.pszSavePath = ParseStringValue(value.sValue, gConfig.pszSavePath);
 					break;
+                case PALCFG_SHADERPATH:
+                    gConfig.pszShaderPath = ParseStringValue(value.sValue, gConfig.pszShaderPath);
+                    break;
 				case PALCFG_LOGFILE:
 					gConfig.pszLogFile = ParseStringValue(value.sValue, gConfig.pszLogFile);
 					break;
@@ -520,6 +525,7 @@ PAL_LoadConfig(
 	//
 	if (!gConfig.pszSavePath) gConfig.pszSavePath = gConfig.pszGamePath ? strdup(gConfig.pszGamePath) : strdup(PAL_SAVE_PREFIX);
 	if (!gConfig.pszGamePath) gConfig.pszGamePath = strdup(PAL_PREFIX);
+    if (!gConfig.pszShaderPath) gConfig.pszShaderPath = strdup(gConfig.pszGamePath);
 	gConfig.eMusicType = eMusicType;
 	gConfig.eCDType = eCDType;
 	gConfig.eOPLCore = eOPLCore;
@@ -619,6 +625,7 @@ PAL_SaveConfig(
 
 		if (gConfig.pszGamePath && *gConfig.pszGamePath && strcmp(gConfig.pszGamePath, PAL_PREFIX) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_GAMEPATH), gConfig.pszGamePath); fputs(buf, fp); }
 		if (gConfig.pszSavePath && *gConfig.pszSavePath && strcmp(gConfig.pszSavePath, PAL_SAVE_PREFIX) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
+        if (gConfig.pszShaderPath && *gConfig.pszShaderPath && strcmp(gConfig.pszShaderPath, gConfig.pszGamePath) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SHADERPATH), gConfig.pszShaderPath); fputs(buf, fp); }
 		if (gConfig.pszMsgFile && *gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 		if (gConfig.pszFontFile && *gConfig.pszFontFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_FONTFILE), gConfig.pszFontFile); fputs(buf, fp); }
 		if (gConfig.pszLogFile && *gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }
@@ -672,6 +679,7 @@ PAL_GetConfigItem(
 		case PALCFG_CD:                value.sValue = music_types[gConfig.eCDType]; break;
 		case PALCFG_GAMEPATH:          value.sValue = gConfig.pszGamePath; break;
 		case PALCFG_SAVEPATH:          value.sValue = gConfig.pszSavePath; break;
+        case PALCFG_SHADERPATH:        value.sValue = gConfig.pszShaderPath; break;
 		case PALCFG_MESSAGEFILE:       value.sValue = gConfig.pszMsgFile; break;
 		case PALCFG_FONTFILE:          value.sValue = gConfig.pszFontFile; break;
 		case PALCFG_LOGFILE:           value.sValue = gConfig.pszLogFile; break;
@@ -731,6 +739,10 @@ PAL_SetConfigItem(
 		if (gConfig.pszSavePath) free(gConfig.pszSavePath);
 		gConfig.pszSavePath = value.sValue && value.sValue[0] ? strdup(value.sValue) : (gConfig.pszGamePath ? strdup(gConfig.pszGamePath) : strdup(PAL_SAVE_PREFIX));
 		break;
+    case PALCFG_SHADERPATH:
+        if (gConfig.pszShaderPath) free(gConfig.pszShaderPath);
+        gConfig.pszShaderPath = value.sValue && value.sValue[0] ? strdup(value.sValue) : strdup(PAL_PREFIX);
+        break;
 	case PALCFG_MESSAGEFILE:
 		if (gConfig.pszMsgFile) free(gConfig.pszMsgFile);
 		gConfig.pszMsgFile = value.sValue && value.sValue[0] ? strdup(value.sValue) : NULL;

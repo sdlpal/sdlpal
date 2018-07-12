@@ -12,6 +12,11 @@
 #include "video_glsl.h"
 #include "video.h"
 
+#include "glslp.h"
+
+#define SDL_STBIMAGE_IMPLEMENTATION
+#include "SDL_stbimage.h"
+
 #define FORCE_OPENGL_CORE_PROFILE 1
 //#define SUPPORT_PARAMETER_UNIFORM 1
 
@@ -26,16 +31,19 @@ extern SDL_Rect           gTextureRect;
 static int gRendererWidth;
 static int gRendererHeight;
 
-static uint32_t gProgramIds[]={-1,-1,-1};
-static uint32_t gVAOIds[3]; // 0 for game screen; 1 for touch overlay; 2 for final blit
-static uint32_t gVBOIds[3];
+static uint32_t gProgramIds[MAX_INDEX]={-1};
+static uint32_t gVAOIds[MAX_INDEX];
+static uint32_t gVBOIds[MAX_INDEX];
 static uint32_t gEBOId;
 static uint32_t gPassID = -1;
-static int gMVPSlots[3], gHDRSlot[3], gSRGBSlot[3];
-static int gFrameDirectionSlots[3], gFrameCountSlots[3], gOutputSizeSlots[3], gTextureSizeSlots[3], gInputSizeSlots[3];
+static int gMVPSlots[MAX_INDEX], gHDRSlots[MAX_INDEX], gSRGBSlots[MAX_INDEX];
+static int gFrameDirectionSlots[MAX_INDEX], gFrameCountSlots[MAX_INDEX], gOutputSizeSlots[MAX_INDEX], gTextureSizeSlots[MAX_INDEX], gInputSizeSlots[MAX_INDEX];
 static int manualSRGB = 0;
 static int VAOSupported = 1;
 static int glversion_major, glversion_minor;
+
+static bool flagGLSLP=false;
+static SDL_Texture *origTexture;
 
 struct AttrTexCoord
 {
@@ -71,7 +79,7 @@ union _GLKMatrix4
 #pragma pack(pop)
 typedef union _GLKMatrix4 GLKMatrix4;
 
-static GLKMatrix4 gOrthoMatrixes[3];
+static GLKMatrix4 gOrthoMatrixes[MAX_INDEX];
 
 GLKMatrix4 GLKMatrix4MakeOrtho(float left, float right,
                                float bottom, float top,
@@ -213,7 +221,7 @@ FragColor.rgb -= average*0.8;               \r\n\
 }";
 
 char *readShaderFile(const char *fileName, GLuint type) {
-    FILE *fp = UTIL_OpenRequiredFile(fileName);
+    FILE *fp = UTIL_OpenRequiredFile(PAL_va(0, "%s/%s", gConfig.pszShaderPath, fileName));
     fseek(fp,0,SEEK_END);
     long filesize = ftell(fp);
     char *buf = (char*)malloc(filesize+1);
@@ -237,28 +245,29 @@ char *skip_version(char *src) {
 GLuint compileShader(char* sourceOrFilename, GLuint shaderType, int is_source) {
     //DONT CHANGE
 #define SHADER_TYPE(shaderType) (shaderType == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT")
-    char shaderBuffer[65536];
-    const char *pBuf = shaderBuffer;
-    memset(shaderBuffer,0,sizeof(shaderBuffer));
+    char *pShaderBuffer;
     char *source = sourceOrFilename;
     if(!is_source)
         source = readShaderFile(sourceOrFilename, shaderType);
+    size_t sourceLen = strlen(source)*2;
+    pShaderBuffer = malloc(sourceLen);
+    memset(pShaderBuffer,0, sourceLen);
 #if !GLES
-    sprintf(shaderBuffer,"%s\r\n",glversion_major>3 ? "#version 330" : "#version 110");
+    sprintf(pShaderBuffer,"%s\r\n",glversion_major>=3 ? "#version 330" : "#version 110");
 #else
-    sprintf(shaderBuffer,"%s\r\n","#version 100");
+    sprintf(pShaderBuffer,"%s\r\n","#version 100");
 #endif
 #if SUPPORT_PARAMETER_UNIFORM
-    sprintf(shaderBuffer,"%s#define PARAMETER_UNIFORM\r\n",shaderBuffer);
+    sprintf(pShaderBuffer,"%s#define PARAMETER_UNIFORM\r\n",shaderBuffer);
 #endif
-    sprintf(shaderBuffer,"%s#define %s\r\n%s\r\n",shaderBuffer,SHADER_TYPE(shaderType),is_source ? source : skip_version(source));
+    sprintf(pShaderBuffer,"%s#define %s\r\n%s\r\n",pShaderBuffer,SHADER_TYPE(shaderType),is_source ? source : skip_version(source));
     if(!is_source)
         free((void*)source);
     
     // Create ID for shader
     GLuint result = glCreateShader(shaderType);
     // Define shader text
-    glShaderSource(result, 1, &pBuf, NULL);
+    glShaderSource(result, 1, &pShaderBuffer, NULL);
     // Compile shader
     glCompileShader(result);
     
@@ -272,13 +281,14 @@ GLuint compileShader(char* sourceOrFilename, GLuint shaderType, int is_source) {
         {
             GLchar *log = (GLchar*)malloc(logLength);
             glGetShaderInfoLog(result, logLength, &logLength, log);
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "shader %s compilation error:%s\n", is_source ? "stock" : sourceOrFilename,log);
+            UTIL_LogOutput(LOGLEVEL_FATAL, "shader %s compilation error:%s\n", is_source ? "stock" : sourceOrFilename,log);
             free(log);
         }
         glDeleteShader(result);
         result = 0;
     }else
         UTIL_LogOutput(LOGLEVEL_DEBUG, "%s shader %s compilation succeed!\n", SHADER_TYPE(shaderType), is_source ? "stock" : sourceOrFilename );
+    free(pShaderBuffer);
     return result;
 }
 
@@ -319,7 +329,38 @@ GLuint compileProgram(const char* vtx, const char* frag,int is_source) {
     return programId;
 }
 
-void setupShaderParams(int pass){
+enum tagSlotType{
+    SLOT_NONE,
+    SLOT_ORIG,
+    SLOT_PREV,
+    SLOT_PREVPASS,
+    SLOT_PASS,
+    SLOT_LIMIT
+};
+void setupMultiPassParams(int pass) {
+    gGLSLP.shader_params[pass-2].orig_slots.texture_slot         = glGetUniformLocation(gProgramIds[pass], "OrigTexture");
+    gGLSLP.shader_params[pass-2].orig_slots.texture_size_slot    = glGetUniformLocation(gProgramIds[pass], "OrigTextureSize");
+    gGLSLP.shader_params[pass-2].orig_slots.input_size_slot      = glGetUniformLocation(gProgramIds[pass], "OrigInputSize");
+    gGLSLP.shader_params[pass-2].orig_slots.tex_coord_slot       = glGetAttribLocation (gProgramIds[pass], "OrigTexCoord");
+//    static char *prefixOrig[][20] = {
+//        {},
+//        {"Orig"},
+//        {"Prev",        "Prev1",        "Prev2",        "Prev3",        "Prev4",        "Prev5",        "Prev6"},
+//        {"PassPrev1",   "PassPrev2",    "PassPrev3",    "PassPrev4",    "PassPrev5",    "PassPrev6",    "PassPrev7"},
+//        {"Pass1", "Pass2", "Pass3", "Pass4", "Pass5", "Pass6", "Pass7", "Pass8", "Pass9", "Pass10", "Pass11", "Pass12", "Pass13", "Pass14", "Pass15", "Pass16", "Pass17", "Pass18", "Pass19", "Pass20"}
+//    };
+//    static int indexes[] = {0,1,7,7,20};
+//    static char *postfix[] = {"Texture", "TextureSize", "InputSize", "TexCoord"};
+//    for( int i = SLOT_NONE+1; i < SLOT_LIMIT; i++ ) {
+//        int j=indexes[i];
+//        for( int k = 0; k < 4; k++ ) {
+//            char *slot_name = PAL_va(0, "%s%s",prefixOrig[i][j],postfix[k]);
+//            int slot = glGetUniformLocation(gProgramIds[pass], slot_name);
+//        }
+//    }
+}
+
+void setupShaderParams(int pass, bool mainShader, bool presentShader){
     int slot = glGetAttribLocation(gProgramIds[pass], "VertexCoord");
     if(slot >= 0) {
         glEnableVertexAttribArray(slot);
@@ -340,6 +381,7 @@ void setupShaderParams(int pass){
     if(gMVPSlots[pass] < 0)
         UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform MVPMatrix not exist\n");
     
+    if( mainShader ) {
     gTextureSizeSlots[pass] = glGetUniformLocation(gProgramIds[pass], "TextureSize");
     if(gTextureSizeSlots[pass] < 0)
         UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform TextureSize not exist\n");
@@ -359,16 +401,44 @@ void setupShaderParams(int pass){
     gFrameCountSlots[pass] = glGetUniformLocation(gProgramIds[pass], "FrameCount");
     if(gFrameCountSlots[pass] < 0)
         UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform FrameCount not exist\n");
+    }
     
-    gHDRSlot[pass] = glGetUniformLocation(gProgramIds[pass], "HDR");
-    if(gHDRSlot[pass] < 0)
+    if( presentShader ) {
+    gHDRSlots[pass] = glGetUniformLocation(gProgramIds[pass], "HDR");
+    if(gHDRSlots[pass] < 0)
         UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform HDR not exist\n");
     
-    gSRGBSlot[pass] = glGetUniformLocation(gProgramIds[pass], "sRGB");
-    if(gSRGBSlot[pass] < 0)
+    gSRGBSlots[pass] = glGetUniformLocation(gProgramIds[pass], "sRGB");
+    if(gSRGBSlots[pass] < 0)
         UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform sRGB not exist\n");
+    }
 }
 
+GLint get_gl_wrap_mode(enum wrap_mode mode) {
+    switch (mode) {
+        case WRAP_REPEAT:
+            return GL_REPEAT;
+        case WRAP_CLAMP_TO_EDGE:
+            return GL_CLAMP_TO_EDGE;
+        case WRAP_CLAMP_TO_BORDER:
+            return GL_CLAMP_TO_BORDER;
+        default:
+            return GL_INVALID_ENUM;
+    }
+}
+
+SDL_Texture *load_texture(char *name, char *path, bool filter_linear, enum wrap_mode mode) {
+    SDL_Surface *surf = STBIMG_Load(PAL_va(0, "%s/%s",gConfig.pszShaderPath,path));
+    if( filter_linear )
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(gpRenderer, surf);
+    if( filter_linear )
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+    SDL_GL_BindTexture(texture, NULL, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, get_gl_wrap_mode(mode));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, get_gl_wrap_mode(mode));
+    return texture;
+}
 int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SDL_Rect * srcrect, const SDL_Rect * dstrect, int pass)
 {
     GLint oldProgramId;
@@ -377,8 +447,45 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
     
     GLfloat texw;
     GLfloat texh;
-    SDL_GL_BindTexture(texture, &texw, &texh);
     
+    glActiveTexture(GL_TEXTURE0);
+    SDL_GL_BindTexture(texture, &texw, &texh);
+    if( flagGLSLP ) {
+        if(gGLSLP.shader_params[gGLSLP.shaders-1].scale_type_x == SCALE_ABSOLUTE)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        if(gGLSLP.shader_params[gGLSLP.shaders-1].scale_type_y == SCALE_ABSOLUTE)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    }
+    
+    //calc texture unit:1(main texture)+glslp_textures+glsl_uniform_textures(orig,pass(1-6),prev(1-6))
+    
+    if( flagGLSLP && pass >= 2 ) {
+        int texture_unit_used = 1;
+        //global
+        if( gGLSLP.textures > 0 ) {
+            for( int i = 0; i < gGLSLP.textures; i++ ) {
+                glActiveTexture(GL_TEXTURE0+texture_unit_used++);
+                SDL_GL_BindTexture(gGLSLP.texture_params[i].sdl_texture,NULL,NULL);
+            }
+        }
+        //orig
+        glActiveTexture(GL_TEXTURE0+texture_unit_used++);
+        SDL_GL_BindTexture(origTexture,NULL,NULL);
+//        //pass%
+//        for( int i = 0; i < pass-1; i++ ) {
+//            glActiveTexture(GL_TEXTURE1+texture_unit_used++);
+//            SDL_GL_BindTexture(gGLSLP.shader_params[i].sdl_texture,NULL,NULL);
+//        }
+//        //prev
+//        glActiveTexture(GL_TEXTURE1+texture_unit_used++);
+//        SDL_GL_BindTexture(gGLSLP.shader_params[pass-1].sdl_texture,NULL,NULL);
+//        //prev%
+//        for( int i = pass-1; i > 0; i++ ) {
+//            glActiveTexture(GL_TEXTURE1+texture_unit_used++);
+//            SDL_GL_BindTexture(gGLSLP.shader_params[i].sdl_texture,NULL,NULL);
+//        }
+    }
+
 #ifndef GL_ES_VERSION_3_0
     if(!manualSRGB)
         glEnable(GL_FRAMEBUFFER_SRGB);
@@ -389,6 +496,22 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
         glUseProgram(gProgramIds[pass]);
     }
     
+    if( flagGLSLP ) {
+        int texture_unit_used = 1;
+        //global
+        if( gGLSLP.textures > 0 ) {
+            for( int i = 0; i < gGLSLP.textures; i++ ) {
+                glUniform1i(gGLSLP.texture_params[i].slots[pass], texture_unit_used++);
+            }
+        }
+        //orig
+        glUniform1i(gGLSLP.shader_params[pass-2].orig_slots.texture_slot, texture_unit_used++);
+        GLfloat size[2];
+        size[0]=640;
+        size[1]=480;
+        glUniform2fv(gGLSLP.shader_params[pass-2].orig_slots.texture_size_slot,  1, size);
+    }
+
     // Setup MVP projection matrix uniform
     glUniformMatrix4fv(gMVPSlots[pass], 1, GL_FALSE, gOrthoMatrixes[pass].m);
     
@@ -401,14 +524,25 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
     size[1] = gConfig.dwTextureHeight;
     glUniform2fv(gOutputSizeSlots[pass],  1, size);
 
-    GLint placeholder;
-    glUniform1iv(gFrameCountSlots[pass],        1, &placeholder);
-    glUniform1iv(gFrameDirectionSlots[pass],    1, &placeholder);
+    glUniform1i(gFrameDirectionSlots[pass], 1.0); //SDLPal don't support rewinding so direction is always 1
+    
+    if( pass >= 2 ) {
+        int shaderID = pass-2;
+        int frame_count = 0;
+        if( flagGLSLP  && gGLSLP.shaders >= shaderID ) {
+            gGLSLP.shader_params[shaderID].frame_count = (gGLSLP.shader_params[shaderID].frame_count+1)%(gGLSLP.shader_params[shaderID].frame_count_mod > 0 ? gGLSLP.shader_params[shaderID].frame_count_mod : 1);
+            frame_count = gGLSLP.shader_params[shaderID].frame_count;
+        }else{
+            static int frameCount = 0;
+            frame_count = frameCount++;
+        }
+        glUniform1i(gFrameCountSlots[pass], frame_count);
+    }
     
     GLint HDR = gConfig.fEnableHDR;
-    glUniform1iv(gHDRSlot[pass], 1, &HDR);
+    glUniform1iv(gHDRSlots[pass], 1, &HDR);
     
-    glUniform1iv(gSRGBSlot[pass], 1, &manualSRGB);
+    glUniform1iv(gSRGBSlots[pass], 1, &manualSRGB);
     
     SDL_Rect _srcrect,_dstrect;
     
@@ -500,9 +634,9 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
     double ratio = (double)width / (double)height;
     ratio *= 1.6f * (double)gConfig.dwTextureHeight / (double)gConfig.dwTextureWidth;
     
-    gOrthoMatrixes[0] = GLKMatrix4MakeOrtho(0, width, height, 0, -1, 1);
-    gOrthoMatrixes[1] = GLKMatrix4MakeOrtho(0, width, height, 0, -1, 1);
-    gOrthoMatrixes[2] = GLKMatrix4MakeOrtho(0, width, 0, height, -1, 1);
+    for( int i=0; i<MAX_INDEX; i++)
+        gOrthoMatrixes[i] = GLKMatrix4MakeOrtho(0, width, height, 0, -1, 1);
+    gOrthoMatrixes[1] = GLKMatrix4MakeOrtho(0, width, 0, height, -1, 1);
 
     //
     // Check whether to keep the aspect ratio
@@ -533,6 +667,14 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
         VIDEO_SetupTouchArea(width, height, width, height);
     }
     
+    if( flagGLSLP ) {
+        for( int i = 0; i < gGLSLP.shaders - 1; i++ ) {
+            if( gGLSLP.shader_params[i].sdl_texture )
+                SDL_DestroyTexture( gGLSLP.shader_params[i].sdl_texture );
+            gGLSLP.shader_params[i].sdl_texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gConfig.dwTextureWidth, gConfig.dwTextureHeight);
+        }
+    }
+    
     //
     // Create texture for screen.
     //
@@ -541,23 +683,41 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
 
 void VIDEO_GLSL_RenderCopy()
 {
+//    origTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenReal);
+//    SDL_Texture *prevTexture = origTexture;
+//    gPassID = 1;
+//
+//    for( int i = 0; i < gGLSLP.shaders - 1; i++ ) {
+//        SDL_SetRenderTarget(gpRenderer, gGLSLP.shader_params[i].sdl_texture);
+//        SDL_RenderClear(gpRenderer);
+//        gPassID++;
+//        SDL_RenderCopy(gpRenderer, prevTexture, NULL, i == 0 ? &gTextureRect : NULL);
+//        prevTexture = gGLSLP.shader_params[i].sdl_texture;
+//    }
+//
+//    SDL_SetRenderTarget(gpRenderer, gpTexture);
+//    SDL_RenderClear(gpRenderer);
+//    gPassID++;
+//    SDL_RenderCopy(gpRenderer, prevTexture, NULL, NULL);
+//    SDL_DestroyTexture(origTexture);
     SDL_SetRenderTarget(gpRenderer, gpTexture);
     SDL_RenderClear(gpRenderer);
     SDL_Texture *screenTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenReal);
-    gPassID = 0;
+    origTexture = screenTexture;
+    gPassID = 2;
     SDL_RenderCopy(gpRenderer, screenTexture, NULL, &gTextureRect);
     SDL_DestroyTexture(screenTexture);
     
     SDL_SetRenderTarget(gpRenderer, NULL);
     SDL_RenderClear(gpRenderer);
-    gPassID = 2;
+    gPassID = 1;
     SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
     
     if (gpTouchOverlay)
     {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        gPassID = 1;
+        gPassID = 0;
         SDL_RenderCopy(gpRenderer, gpTouchOverlay, NULL, &gOverlayRect);
     }
     SDL_GL_SwapWindow(gpWindow);
@@ -666,43 +826,84 @@ void VIDEO_GLSL_Setup() {
     
     if(VAOSupported) {
         // Initialize vertex array object
-        glGenVertexArrays(3, gVAOIds);
-        glBindVertexArray(gVAOIds[0]);
+        glGenVertexArrays(MAX_INDEX, gVAOIds);
     }
     
-    UTIL_LogSetPrelude("[PASS 1] ");
-    gProgramIds[0] = compileProgram(gConfig.pszShader,gConfig.pszShader, 0);
-    
     //Create VBO
-    glGenBuffers( 3, gVBOIds );
-    glBindBuffer( GL_ARRAY_BUFFER, gVBOIds[0] );
-    glBufferData( GL_ARRAY_BUFFER, 4 * sizeof(struct VertexDataFormat), vData, GL_DYNAMIC_DRAW );
+    glGenBuffers( MAX_INDEX, gVBOIds );
     
     //Create IBO
     glGenBuffers( 1, &gEBOId );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gEBOId );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), iData, GL_DYNAMIC_DRAW );
     
-    setupShaderParams(0);
+    memset(&gMVPSlots,              -1, sizeof(gMVPSlots));
+    memset(&gHDRSlots,              -1, sizeof(gHDRSlots));
+    memset(&gSRGBSlots,             -1, sizeof(gSRGBSlots));
+    memset(&gFrameDirectionSlots,   -1, sizeof(gFrameDirectionSlots));
+    memset(&gFrameCountSlots,       -1, sizeof(gFrameCountSlots));
+    memset(&gOutputSizeSlots,       -1, sizeof(gOutputSizeSlots));
+    memset(&gTextureSizeSlots,      -1, sizeof(gTextureSizeSlots));
+    memset(&gInputSizeSlots,        -1, sizeof(gInputSizeSlots));
     
-    if(VAOSupported) glBindVertexArray(gVAOIds[1]);
-    glBindBuffer( GL_ARRAY_BUFFER, gVBOIds[1] );
+    int id = 0;
+    
+    if(VAOSupported) glBindVertexArray(gVAOIds[id]);
+    glBindBuffer( GL_ARRAY_BUFFER, gVBOIds[id] );
+    glBufferData( GL_ARRAY_BUFFER, 4 * sizeof(struct VertexDataFormat), vData, GL_DYNAMIC_DRAW );
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gEBOId );
+    UTIL_LogSetPrelude("[PASS 1] ");
+    gProgramIds[id] = compileProgram(plain_glsl_vert, plain_glsl_frag_overlay, 1);
+    setupShaderParams(id++,false,false);
+    
+    if(VAOSupported) glBindVertexArray(gVAOIds[id]);
+    glBindBuffer( GL_ARRAY_BUFFER, gVBOIds[id] );
     glBufferData( GL_ARRAY_BUFFER, 4 * sizeof(struct VertexDataFormat), vData, GL_DYNAMIC_DRAW );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gEBOId );
     UTIL_LogSetPrelude("[PASS 2] ");
-    gProgramIds[1] = compileProgram(plain_glsl_vert, plain_glsl_frag_overlay, 1);
-    setupShaderParams(1);
+    gProgramIds[id] = compileProgram(plain_glsl_vert, plain_glsl_frag, 1);
+    setupShaderParams(id++,false,true);
     
-    if(VAOSupported) glBindVertexArray(gVAOIds[2]);
-    glBindBuffer( GL_ARRAY_BUFFER, gVBOIds[2] );
+    if(VAOSupported) glBindVertexArray(gVAOIds[id]);
+    glBindBuffer( GL_ARRAY_BUFFER, gVBOIds[id] );
     glBufferData( GL_ARRAY_BUFFER, 4 * sizeof(struct VertexDataFormat), vData, GL_DYNAMIC_DRAW );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gEBOId );
     UTIL_LogSetPrelude("[PASS 3] ");
-    gProgramIds[2] = compileProgram(plain_glsl_vert, plain_glsl_frag, 1);
-    setupShaderParams(2);
-    
+    if( strcmp( strrchr(gConfig.pszShader, '.'), ".glslp") == 0 ) {
+        flagGLSLP = parse_glslp(gConfig.pszShader);
+        if( flagGLSLP ) {
+            assert(gGLSLP.shaders > 0);
+            for( int i = 0; i < gGLSLP.shaders; i++ ) {
+                UTIL_LogSetPrelude(PAL_va(0,"[PASS 3.%d] ",i+1));
+                gProgramIds[id+i] = compileProgram(gGLSLP.shader_params[i].shader, gGLSLP.shader_params[i].shader, 0);
+            }
+            for( int i = 0; i < gGLSLP.textures; i++ ) {
+                texture_param *param = &gGLSLP.texture_params[i];
+                char *texture_name = param->texture_name;
+                gGLSLP.texture_params[i].sdl_texture = load_texture(texture_name, param->texture_path, param->linear, param->wrap_mode);
+                for( int j = 0; j < gGLSLP.shaders; j++ )
+                    gGLSLP.texture_params[i].slots[id+j] = glGetUniformLocation(gProgramIds[id+j], texture_name);
+            }
+            for( int i = 0; i < gGLSLP.shaders; i++ ) {
+                UTIL_LogSetPrelude(PAL_va(0,"[PASS 3.%d] ",i+1));
+                setupShaderParams(id+i,true,false);
+                setupMultiPassParams(id+i);
+            }
+        }
+    }else{
+        gProgramIds[id] = compileProgram(gConfig.pszShader, gConfig.pszShader, 0);
+        setupShaderParams(id++,true,false);
+    }
+
     UTIL_LogSetPrelude(NULL);
     
     if(VAOSupported) glBindVertexArray(0);
 }
+
+void VIDEO_GLSL_Destroy() {
+    if( flagGLSLP ) {
+        destroy_glslp();
+    }
+}
+
 #endif
