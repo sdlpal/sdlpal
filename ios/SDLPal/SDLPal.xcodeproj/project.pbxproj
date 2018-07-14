@@ -107,6 +107,7 @@
 		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
 		C63505801EA6578700186049 /* native_midi.m in Sources */ = {isa = PBXBuildFile; fileRef = C635057D1EA6578700186049 /* native_midi.m */; };
 		C639993920459A8A005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639993820459A8A005B20CE /* video_glsl.c */; };
+		C65060B720FAA77B00397B73 /* glslp.c in Sources */ = {isa = PBXBuildFile; fileRef = C65060B220FAA77B00397B73 /* glslp.c */; };
 		C66C6CA41ECCB73100CE10C1 /* SDLPal_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */; };
 		C66F6FD81FB16CB200F3F0DA /* iOS Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C66F6FD51FB16CB200F3F0DA /* iOS Launch Screen.storyboard */; };
 		C6743A841ECCAFA700AEF782 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */; };
@@ -367,6 +368,7 @@
 		C635057D1EA6578700186049 /* native_midi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = native_midi.m; path = ../iOS/SDLPal/SDLPal/native_midi.m; sourceTree = "<group>"; };
 		C639993820459A8A005B20CE /* video_glsl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = video_glsl.c; path = ../../../video_glsl.c; sourceTree = "<group>"; };
 		C639993A20459A9A005B20CE /* video_glsl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = video_glsl.h; path = ../../../video_glsl.h; sourceTree = "<group>"; };
+		C65060B220FAA77B00397B73 /* glslp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glslp.c; path = ../../../glslp.c; sourceTree = "<group>"; };
 		C66C6CA21ECCB73100CE10C1 /* SDLPal_AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLPal_AppDelegate.h; sourceTree = "<group>"; };
 		C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLPal_AppDelegate.m; sourceTree = "<group>"; };
 		C66F6FD51FB16CB200F3F0DA /* iOS Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "iOS Launch Screen.storyboard"; sourceTree = "<group>"; };
@@ -639,6 +641,7 @@
 				71655251195BB6DB006E1227 /* util.c */,
 				71655253195BB6DB006E1227 /* video.c */,
 				C639993820459A8A005B20CE /* video_glsl.c */,
+				C65060B220FAA77B00397B73 /* glslp.c */,
 				71655255195BB6DB006E1227 /* yj1.c */,
 				7165523F195BB6DB006E1227 /* rixplay.cpp */,
 				C622BE641E474B5E000C8970 /* audio.c */,
@@ -997,6 +1000,7 @@
 				57FB01631B7A50E0005FCF4C /* resampler.c in Sources */,
 				57FB01581B7A50B0005FCF4C /* vorbisfile.c in Sources */,
 				71655256195BB6DB006E1227 /* binfile.cpp in Sources */,
+				C65060B720FAA77B00397B73 /* glslp.c in Sources */,
 				71655257195BB6DB006E1227 /* binio.cpp in Sources */,
 				71655258195BB6DB006E1227 /* dosbox_opls.cpp in Sources */,
 				71655259195BB6DB006E1227 /* emuopls.cpp in Sources */,

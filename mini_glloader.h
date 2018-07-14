@@ -21,9 +21,8 @@
 #endif
 #include <SDL_video.h>
 #include <SDL_opengl.h>
-#ifdef __WIN32__ 
+#ifndef __APPLE__
 //glActiveTexture is a OpenGL 1.3 built-in function, so SDL_opengl.h defined it directly and SDL client cannot simply redefine it.
-//but since windows only have OpenGL 1.1, it cannot be directly use too; have to use a freak way bypassing it.
 #define glActiveTexture fake_glActiveTexture
 #endif
 #endif
