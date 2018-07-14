@@ -10,10 +10,10 @@
 
 #include "main.h"
 
-#define MAX_FBO 8
 #define MAX_INDEX 26
 
 #define MAX_TEXTURES 8
+#define PREV_TEXTURES (MAX_TEXTURES-1)
 
 enum wrap_mode {
     WRAP_REPEAT,
@@ -31,8 +31,17 @@ typedef struct tagTEXTUREUNITSLOTS {
     int texture_slot;
     int texture_size_slot;
     int input_size_slot;
+    int output_size_slot;
     int tex_coord_slot;
+    int frame_direction_slot;
+    int frame_count_slot;
 }texture_unit_slots;
+
+typedef struct tagFBOPARAM {
+    bool valid;
+    double width, height;
+    double pow_width, pow_height;
+}fbo_params;
 
 typedef struct tagSHADERPARAM {
     //by defination
@@ -49,12 +58,15 @@ typedef struct tagSHADERPARAM {
     
     //by implementation
     SDL_Texture *sdl_texture;
+    int texture_unit;
     int frame_count;
     texture_unit_slots slots;
     texture_unit_slots orig_slots;
+    texture_unit_slots alias_slots;
     texture_unit_slots pass_slots[MAX_INDEX];
     texture_unit_slots prev_slots[MAX_INDEX];
     texture_unit_slots passprev_slots[MAX_INDEX];
+    fbo_params FBO;
 }shader_param;
 
 typedef struct tagTEXTUREPARAMS {

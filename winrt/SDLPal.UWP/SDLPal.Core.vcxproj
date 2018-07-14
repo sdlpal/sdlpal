@@ -213,6 +213,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\mini_glloader.h" />
     <ClInclude Include="..\..\video_glsl.h" />
+    <ClInclude Include="..\..\glslp.h" />
     <ClInclude Include="..\..\adplug\binfile.h" />
     <ClInclude Include="..\..\adplug\binio.h" />
     <ClInclude Include="..\..\adplug\convertopl.h" />
@@ -343,6 +344,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\mini_glloader.c" />
     <ClCompile Include="..\..\video_glsl.c" />
+    <ClCompile Include="..\..\glslp.c" />
     <ClCompile Include="..\..\adplug\binfile.cpp" />
     <ClCompile Include="..\..\adplug\binio.cpp" />
     <ClCompile Include="..\..\adplug\dosbox_opls.cpp" />
