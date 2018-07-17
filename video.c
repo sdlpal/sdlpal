@@ -314,6 +314,12 @@ VIDEO_Shutdown(
 
 --*/
 {
+#if PAL_HAS_GLSL
+	if( gConfig.fEnableGLSL) {
+		VIDEO_GLSL_Destroy();
+	}
+#endif
+
    if (gpScreen != NULL)
    {
       SDL_FreeSurface(gpScreen);
@@ -364,12 +370,6 @@ VIDEO_Shutdown(
       SDL_FreeSurface(gpScreenReal);
    }
    gpScreenReal = NULL;
-	
-#if PAL_HAS_GLSL
-	if( gConfig.fEnableGLSL) {
-		VIDEO_GLSL_Destroy();
-	}
-#endif
 }
 
 #if SDL_VERSION_ATLEAST(2,0,0)

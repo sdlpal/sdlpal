@@ -28,14 +28,19 @@ enum scale_type {
 };
 
 typedef struct tagTEXTUREUNITSLOTS {
-    int texture_slot;
-    int texture_size_slot;
-    int input_size_slot;
-    int output_size_slot;
-    int tex_coord_slot;
-    int frame_direction_slot;
-    int frame_count_slot;
-}texture_unit_slots;
+    int texture_uniform_location;
+
+    int texture_size_uniform_location;
+    int input_size_uniform_location;
+
+    int tex_coord_attrib_location;
+    
+    int output_size_uniform_location;
+    int frame_direction_uniform_location;
+    int frame_count_uniform_location;
+    
+    int texture_unit;
+}pass_uniform_locations;
 
 typedef struct tagFBOPARAM {
     bool valid;
@@ -58,14 +63,12 @@ typedef struct tagSHADERPARAM {
     
     //by implementation
     SDL_Texture *sdl_texture;
-    int texture_unit;
-    int frame_count;
-    texture_unit_slots slots;
-    texture_unit_slots orig_slots;
-    texture_unit_slots alias_slots;
-    texture_unit_slots pass_slots[MAX_INDEX];
-    texture_unit_slots prev_slots[MAX_INDEX];
-    texture_unit_slots passprev_slots[MAX_INDEX];
+    pass_uniform_locations self_slots;
+    pass_uniform_locations orig_slots;
+    pass_uniform_locations alias_slots;
+    pass_uniform_locations pass_slots[MAX_INDEX];
+    pass_uniform_locations prev_slots[MAX_INDEX];
+    pass_uniform_locations passprev_slots[MAX_INDEX];
     fbo_params FBO;
 }shader_param;
 
@@ -79,7 +82,8 @@ typedef struct tagTEXTUREPARAMS {
     
     //by implementation
     SDL_Texture *sdl_texture;
-    int slots[MAX_INDEX];
+    int texture_unit;
+    int slots_pass[MAX_INDEX]; //corresponding every pass
 }texture_param;
 
 typedef struct tagUNIFORMPARAMS {
