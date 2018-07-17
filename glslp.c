@@ -181,11 +181,12 @@ line_tokenize(
 }
 
 void clear_shader_slots(shader_param *param) {
-    memset(&param->slots, -1, sizeof(texture_unit_slots) );
-    memset(&param->orig_slots, -1, sizeof(texture_unit_slots) );
-    memset(&param->pass_slots, -1, sizeof(texture_unit_slots)*MAX_INDEX );
-    memset(&param->prev_slots, -1, sizeof(texture_unit_slots)*MAX_INDEX );
-    memset(&param->passprev_slots, -1, sizeof(texture_unit_slots)*MAX_INDEX );
+    memset(&param->self_slots, -1, sizeof(pass_uniform_locations) );
+    memset(&param->orig_slots, -1, sizeof(pass_uniform_locations) );
+    memset(&param->prev_slots, -1, sizeof(pass_uniform_locations)*MAX_INDEX );
+    memset(&param->pass_slots, -1, sizeof(pass_uniform_locations)*MAX_INDEX );
+    memset(&param->passprev_slots, -1, sizeof(pass_uniform_locations)*MAX_INDEX );
+    memset(&param->alias_slots, -1, sizeof(pass_uniform_locations) );
 }
 
 int parse_textures(char *line, char *values) {
@@ -313,7 +314,7 @@ bool parse_glslp(const char *filename) {
                         memset(gGLSLP.texture_params, 0, gGLSLP.textures*sizeof(texture_param));
                         for( int i = 0; i < gGLSLP.textures; i++ ) {
                             texture_param *param = &gGLSLP.texture_params[i];
-                            memset(param->slots,-1,sizeof(param->slots));
+                            memset(param->slots_pass,-1,sizeof(param->slots_pass));
                             param->texture_name = strdup((char*)&texture_names+i*FILENAME_MAX);
                             param->linear = true;
                             param->mipmap = false;
