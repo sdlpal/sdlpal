@@ -230,12 +230,17 @@ char *basename(const char *filename) {
     return (char*)filename;
 }
 
+char *get_glslp_path(const char *filename) {
+    char *path = (char*)filename;
+    if( !UTIL_IsAbsolutePath(filename) )
+        path = PAL_va(0, "%s/%s", gConfig.pszShaderPath, filename);
+    return path;
+}
+
 bool parse_glslp(const char *filename) {
     destroy_glslp();
     
-    FILE *fp = UTIL_OpenFileAtPathForMode(gConfig.pszShaderPath, filename, "r");
-    if( !fp )
-        TerminateOnError("GLSLP %s/%s cannot be open!", gConfig.pszShaderPath, filename);
+    FILE *fp = UTIL_OpenRequiredFile(get_glslp_path(filename));
     char *basedir = strdup(basename(filename));
 
     if (fp)

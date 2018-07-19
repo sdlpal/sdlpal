@@ -40,6 +40,7 @@ static int gMVPSlots[MAX_INDEX], gHDRSlots[MAX_INDEX], gSRGBSlots[MAX_INDEX];
 static int manualSRGB = 0;
 static int VAOSupported = 1;
 static int glversion_major, glversion_minor;
+static int glslversion_major, glslversion_minor;
 
 static SDL_Texture *origTexture;
 
@@ -253,8 +254,8 @@ scale_x0 = %d   \r\n\
 scale_y0 = %d   \r\n\
 ";
 
-char *readShaderFile(const char *fileName, GLuint type) {
-    FILE *fp = UTIL_OpenRequiredFile(PAL_va(0, "%s/%s", gConfig.pszShaderPath, fileName));
+char *readShaderFile(const char *filename, GLuint type) {
+    FILE *fp = UTIL_OpenRequiredFile(get_glslp_path(filename));
     fseek(fp,0,SEEK_END);
     long filesize = ftell(fp);
     char *buf = (char*)malloc(filesize+1);
@@ -286,7 +287,7 @@ GLuint compileShader(const char* sourceOrFilename, GLuint shaderType, int is_sou
     pShaderBuffer = malloc(sourceLen);
     memset(pShaderBuffer,0, sourceLen);
 #if !GLES
-    sprintf(pShaderBuffer,"%s\r\n",glversion_major>=3 ? "#version 330" : "#version 110");
+    sprintf(pShaderBuffer,"#version %d%d\r\n",glslversion_major, glslversion_minor);
 #else
     sprintf(pShaderBuffer,"%s\r\n","#version 100");
 #endif
@@ -440,8 +441,10 @@ GLint get_gl_wrap_mode(enum wrap_mode mode) {
     }
 }
 
-SDL_Texture *load_texture(char *name, char *path, bool filter_linear, enum wrap_mode mode) {
-    SDL_Surface *surf = STBIMG_Load(PAL_va(0, "%s/%s",gConfig.pszShaderPath,path));
+SDL_Texture *load_texture(char *name, char *filename, bool filter_linear, enum wrap_mode mode) {
+    SDL_Surface *surf = STBIMG_Load(get_glslp_path(filename));
+    if( !surf )
+        TerminateOnError("Texture %s cannot be open!", get_glslp_path(filename));
     if( filter_linear )
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
     SDL_Texture *texture = SDL_CreateTextureFromSurface(gpRenderer, surf);
@@ -477,8 +480,8 @@ void SetMultiPassUniforms(pass_uniform_locations *pSlot, int shaderID, int textu
     size[1] = gGLSLP.shader_params[shaderID].FBO.height;
     glUniform2fv(pSlot->output_size_uniform_location,  1, size);
     
-    glEnableVertexAttribArray(pSlot->tex_coord_attrib_location);
-    glVertexAttribPointer(pSlot->tex_coord_attrib_location, 4, GL_FLOAT, GL_FALSE, sizeof(struct VertexDataFormat), (GLvoid*)offsetof(struct VertexDataFormat, texCoord));
+//    glEnableVertexAttribArray(pSlot->tex_coord_attrib_location);
+//    glVertexAttribPointer(pSlot->tex_coord_attrib_location, 4, GL_FLOAT, GL_FALSE, sizeof(struct VertexDataFormat), (GLvoid*)offsetof(struct VertexDataFormat, texCoord));
 }
 
 int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SDL_Rect * srcrect, const SDL_Rect * dstrect, int pass)
@@ -897,8 +900,10 @@ void VIDEO_GLSL_Setup() {
 #     endif
     }
     char *glversion = (char*)glGetString(GL_VERSION);
+    char *glslversion = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+    UTIL_LogOutput(LOGLEVEL_DEBUG, "GL_VENDOR:%s\n",glGetString(GL_VENDOR));
     UTIL_LogOutput(LOGLEVEL_DEBUG, "GL_VERSION:%s\n",glversion);
-    UTIL_LogOutput(LOGLEVEL_DEBUG, "GL_SHADING_LANGUAGE_VERSION:%s\n",glGetString(GL_SHADING_LANGUAGE_VERSION));
+    UTIL_LogOutput(LOGLEVEL_DEBUG, "GL_SHADING_LANGUAGE_VERSION:%s\n",glslversion);
     UTIL_LogOutput(LOGLEVEL_DEBUG, "GL_RENDERER:%s\n",glGetString(GL_RENDERER));
     GLint maxTextureSize, maxDrawBuffers, maxColorAttachments;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
@@ -916,6 +921,7 @@ void VIDEO_GLSL_Setup() {
         }
     }else
         UTIL_LogOutput(LOGLEVEL_DEBUG, "GL_EXTENSIONS:%s\n",glGetString(GL_EXTENSIONS));
+    SDL_sscanf(glslversion, "%d.%d", &glslversion_major, &glslversion_minor);
     
     // iOS native GLES supports VAO extension
 #if GLES && !defined(__APPLE__)
@@ -969,12 +975,17 @@ void VIDEO_GLSL_Setup() {
     gProgramIds[id] = compileProgram(plain_glsl_vert, plain_glsl_frag, 1);
     setupShaderParams(id++,false,true);
     
-    if( strcmp( strrchr(gConfig.pszShader, '.'), ".glslp") != 0 ) {
+    UTIL_LogSetPrelude(NULL);
+    
+    if( strcmp( strrchr(gConfig.pszShader, '.'), ".glsl") == 0 ) {
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 3] loading %s\n", gConfig.pszShader);
         char *tempFile = "sdlpal.glslp";
         FILE *fp = UTIL_OpenFileAtPathForMode(gConfig.pszShaderPath, tempFile, "wt"); //follow retroarch spec, this folder needs to be writable
         fputs( PAL_va( 0, glslp_template, gConfig.pszShader, gConfig.dwTextureWidth, gConfig.dwTextureHeight ), fp );
         fclose(fp);
         gConfig.pszShader = strdup(tempFile);
+    }else{
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 3] going to parse %s\n", gConfig.pszShader);
     }
     parse_glslp(gConfig.pszShader);
     assert(gGLSLP.shaders > 0);

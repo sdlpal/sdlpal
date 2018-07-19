@@ -366,7 +366,7 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 			filter.c_str(), nullptr, 0, 0,
 			szFilePath, sizeof(szFilePath) / sizeof(TCHAR),
 			nullptr, 0, nullptr, title.c_str(),
-			OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | (idControl != IDC_BRLOG ? OFN_FILEMUSTEXIST : (DWORD)0)
+			OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | (idControl != IDC_BRLOG ? OFN_FILEMUSTEXIST : (DWORD)0) | OFN_NOCHANGEDIR
 		};
 		if (idControl == IDC_BRLOG ? GetSaveFileName(&ofn) : GetOpenFileName(&ofn))
 		{

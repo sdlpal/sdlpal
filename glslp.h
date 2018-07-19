@@ -102,6 +102,8 @@ typedef struct tagGLSLP {
 
 extern GLSLP gGLSLP;
 
+char *get_glslp_path(const char *filename);
+
 bool parse_glslp(const char *);
 
 void destroy_glslp();
