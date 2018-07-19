@@ -213,7 +213,7 @@ BEGIN
     IDC_BRLOG               "Select file to record logs"
     IDC_LOGFILE             "Log file (*.log, *.txt)|*.log;*.txt|All files (*.*)|*.*||"
     IDC_BRSHADER            "Select shader code file"
-    IDC_SHADERFILE          "GLSL shader code file(*.glsl)|*.glsl|All files (*.*)|*.*||"
+    IDC_SHADERFILE          "GLSLP meta-shaders file(*.glslp)|*.glslp|GLSL shader code file(*.glsl)|*.glsl|All files (*.*)|*.*||"
 END
 
 #endif    // 非特定语言 resources
@@ -389,8 +389,8 @@ STRINGTABLE
 BEGIN
     IDC_BRLOG               "选择用于日志记录的文件"
     IDC_LOGFILE             "日志文件(*.log, *.txt)|*.log;*.txt|所有文件 (*.*)|*.*||"
-    IDC_BRSHADER            "选择着色器代码"
-    IDC_SHADERFILE          "着色器代码文件(*.glsl)|*.glsl|所有文件 (*.*)|*.*||"
+    IDC_BRSHADER            "选择滤镜"
+    IDC_SHADERFILE          "特效定义文件(*.glslp)|*.glslp|着色器代码文件(*.glsl)|*.glsl|所有文件 (*.*)|*.*||"
 END
 
 #endif    // 中文(简体，中国) resources
@@ -540,8 +540,8 @@ STRINGTABLE
 BEGIN
     IDC_BRLOG               "匡拒ノら粁癘魁郎"
     IDC_LOGFILE             "ら粁郎(*.log, *.txt)|*.log;*.txt|┮Τ郎 (*.*)|*.*||"
-    IDC_BRSHADER            "匡拒帝︹竟絏"
-    IDC_SHADERFILE          "帝︹竟絏郎(*.glsl)|*.glsl|┮Τ郎 (*.*)|*.*||"
+    IDC_BRSHADER            "匡拒耾描"
+    IDC_SHADERFILE          "疭﹚竡郎(*.glslp)|*.glslp|帝︹竟絏郎(*.glsl)|*.glsl|┮Τ郎 (*.*)|*.*||"
 END
 
 #endif    // 中文(繁体，中国台湾) resources

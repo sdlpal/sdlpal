@@ -241,7 +241,7 @@ bool parse_glslp(const char *filename) {
     destroy_glslp();
     
     FILE *fp = UTIL_OpenRequiredFile(get_glslp_path(filename));
-    char *basedir = strdup(basename(filename));
+    char *basedir = basename(strdup(filename));
 
     if (fp)
     {
