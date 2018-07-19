@@ -39,7 +39,7 @@ UTIL_IsAbsolutePath(
                     LPCSTR  lpszFileName
                     )
 {
-    return FALSE;
+    return lpszFileName && lpszFileName[0] == '/';
 }
 
 static void LogCallBack(LOGLEVEL, const char* str, const char*)
