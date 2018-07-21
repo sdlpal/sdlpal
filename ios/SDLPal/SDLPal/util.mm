@@ -27,6 +27,8 @@
 #include "palcfg.h"
 #include "util.h"
 
+static char *runningPath = NULL;
+
 LPCSTR
 UTIL_BasePath(
    VOID
@@ -97,6 +99,9 @@ UTIL_Platform_Init(
         NSLog(@"%s",str);
     }, PAL_DEFAULT_LOGLEVEL);
     gConfig.fLaunchSetting = NO;
+    runningPath = strdup(PAL_va(0,"%s/running", gConfig.pszGamePath));
+    FILE *fp = fopen(runningPath, "w");
+    if (fp) fclose(fp);
     return 0;
 }
 
@@ -105,4 +110,6 @@ UTIL_Platform_Quit(
                    VOID
                    )
 {
+    unlink(runningPath);
+    free(runningPath);
 }

@@ -31,6 +31,7 @@
     
     NSArray *allFiles;
     NSMutableArray *AvailFiles;
+    NSMutableArray *AvailEffects;
     BOOL checkAllFilesIncluded;
     NSString *resourceStatus;
     
@@ -72,7 +73,7 @@
 
 - (BOOL)includedInList:(NSArray*)array name:(NSString *)filename {
     for( NSString *item in array ) {
-        if( [filename caseInsensitiveCompare:item] == NSOrderedSame )
+        if ([filename rangeOfString:item options:NSCaseInsensitiveSearch].location != NSNotFound)
             return YES;
     }
     return NO;
@@ -121,15 +122,28 @@
 
 - (void)recheckSharingFolder {
     AvailFiles = [NSMutableArray new];
-    NSArray *builtinList = @[ @"wor16.fon", @"wor16.asc", @"m.msg"];
-    NSArray *builtinExtensionList = @[@"exe",@"drv",@"dll",@"rpg",@"mkf",@"avi",@"dat",@"cfg",@"ini"];
-    allFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[NSString stringWithUTF8String:UTIL_BasePath()] error:nil];
+    AvailEffects = [NSMutableArray new];
+    NSArray *excludeList = @[ @"wor16.fon", @"wor16.asc", @"m.msg", @"license", @"Makefile", @"configure"];
+    NSArray *excludeExtensionList = @[@"exe",@"drv",@"dll",@"rpg",@"mkf",@"avi",@"dat",@"cfg",@"ini",@"glsl",@"glslp",@"png",@"jpg",@"md",@"txt",@"h"];
+    NSArray *effectExtensionList = @[@"glsl",@"glslp"];
+    NSString *basePath = [NSString stringWithUTF8String:UTIL_BasePath()];
+    allFiles = [[NSFileManager defaultManager] subpathsOfDirectoryAtPath:basePath error:nil];
     for( NSString *filename in allFiles ) {
-        if( ![self includedInList:builtinExtensionList name:filename.pathExtension] &&
-           ![self includedInList:builtinList name:filename] ) {
+        BOOL isDirectory = NO;
+        NSString* fullPath = [basePath stringByAppendingPathComponent:filename];
+        [[NSFileManager defaultManager] fileExistsAtPath:fullPath
+                                             isDirectory: &isDirectory];
+        if( isDirectory )
+            continue;
+        if(![filename hasPrefix:@"._"] &&
+           ![self includedInList:excludeExtensionList name:filename.pathExtension] &&
+           ![self includedInList:excludeList name:filename] ) {
             [AvailFiles addObject:filename];
         }
+        if( [self includedInList:effectExtensionList name:filename.pathExtension] )
+            [AvailEffects addObject:filename];
     }
+    AvailEffects = [[AvailEffects sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] mutableCopy];
     checkAllFilesIncluded = YES;
     for( NSString *checkFile in @[@"abc.mkf", @"ball.mkf", @"data.mkf", @"f.mkf", @"fbp.mkf", @"fire.mkf", @"gop.mkf", @"m.msg", @"map.mkf", @"mgo.mkf", @"rgm.mkf", @"rng.mkf", @"sss.mkf", @"word.dat"] ) {
         if( ![self includedInList:allFiles name:checkFile] ) {
@@ -212,7 +226,7 @@ typedef void(^SelectedBlock)(NSString *selected);
         toggleGLSL.on = !toggleGLSL.isOn;
         [self.tableView reloadData];
     }else if( indexPath.section == 3 && indexPath.row == 2 ) { //Shader
-        [self showPickerWithTitle:nil toLabel:lblShader inArray:AvailFiles origin:cell allowEmpty:YES];
+        [self showPickerWithTitle:nil toLabel:lblShader inArray:AvailEffects origin:cell allowEmpty:YES];
     }else if( indexPath.section == 4 && indexPath.row == 0 ) { //BGM
         [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats origin:cell allowEmpty:NO doneBlock:^(NSString *selected) {
             [self.tableView reloadData];
