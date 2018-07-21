@@ -266,6 +266,7 @@ bool parse_glslp(const char *filename) {
                             clear_shader_slots(param);
                             param->scale_type_x = param->scale_type_y = SCALE_SOURCE;
                             param->scale_x = param->scale_y = 1.0f;
+                            param->wrap_mode = WRAP_CLAMP_TO_EDGE;
                         }
                         break;
                     }
@@ -350,16 +351,16 @@ bool parse_glslp(const char *filename) {
 }
 
 void destroy_glslp() {
-    free(gGLSLP.shader_params);
     for( int i = 0; i < gGLSLP.shaders; i++ ) {
         shader_param *param = &gGLSLP.shader_params[i];
         if(param->shader)
             free(param->shader);
         if(param->alias)
             free(param->alias);
-        if(param->sdl_texture )
-            SDL_DestroyTexture( gGLSLP.shader_params[i].sdl_texture );
+        if(param->pass_sdl_texture )
+            SDL_DestroyTexture( gGLSLP.shader_params[i].pass_sdl_texture );
     }
+	free(gGLSLP.shader_params);
     for( int i=0; i<gGLSLP.textures; i++ ) {
         texture_param *param = &gGLSLP.texture_params[i];
         if(param->texture_name)

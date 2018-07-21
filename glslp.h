@@ -62,7 +62,7 @@ typedef struct tagSHADERPARAM {
     int frame_count_mod;
     
     //by implementation
-    SDL_Texture *sdl_texture;
+    SDL_Texture *pass_sdl_texture;
     pass_uniform_locations self_slots;
     pass_uniform_locations orig_slots;
     pass_uniform_locations alias_slots;

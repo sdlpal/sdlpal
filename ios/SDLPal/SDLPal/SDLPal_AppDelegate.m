@@ -118,7 +118,11 @@ int sdlpal_main(int argc, char **argv)
 }
 - (void)restart {
     PAL_LoadConfig(YES);
-    if( gConfig.fLaunchSetting ) {
+    NSString *documentPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] path];
+    if( getppid() != 1)
+        NSLog(@"document path:%@",documentPath);
+    BOOL crashed = [[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/running",documentPath]];
+    if( gConfig.fLaunchSetting || crashed ) {
         self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
         UIViewController *vc = [sb instantiateInitialViewController];
