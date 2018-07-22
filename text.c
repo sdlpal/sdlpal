@@ -1395,7 +1395,8 @@ TEXT_DisplayText(
             {
                VIDEO_UpdateScreen(NULL);
             }
-            UTIL_Delay(wcstol(lpszText + 1, NULL, 10) * 80 / 7);
+            if( !isDialog )
+               UTIL_Delay(wcstol(lpszText + 1, NULL, 10) * 80 / 7);
             g_TextLib.nCurrentDialogLine = -1;
             g_TextLib.fUserSkip = FALSE;
             return x; // don't go further
@@ -1438,7 +1439,7 @@ TEXT_DisplayText(
             if( isNumber )
                PAL_DrawNumber(text[0]-'0', 1, PAL_XY(x, y+4), kNumColorYellow, kNumAlignLeft);
             else
-               PAL_DrawText(text, PAL_XY(x, y), color, !isDialog, !g_TextLib.fUserSkip, FALSE);
+               PAL_DrawText(text, PAL_XY(x, y), color, !isDialog, !isDialog && !g_TextLib.fUserSkip, FALSE);
             x += PAL_CharWidth(text[0]);
             
             if (!isDialog && !g_TextLib.fUserSkip)
@@ -1537,6 +1538,7 @@ PAL_ShowDialogText(
          rect.y = PAL_Y(pos);
          rect.w = 320 - rect.x * 2 + 32;
          rect.h = 64;
+         VIDEO_UpdateScreen(&rect);
 
          //
          // Show the text on the screen
