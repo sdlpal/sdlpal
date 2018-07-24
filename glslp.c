@@ -219,7 +219,7 @@ enum wrap_mode get_wrap_mode(const char *value) {
         return WRAP_CLAMP_TO_BORDER;
 }
 
-char *basename(const char *filename) {
+static char *GLSLP_basename(const char *filename) {
     char *pos = NULL;
     int broked = 0;
     for( int i=0;i<strlen(PAL_PATH_SEPARATORS);i++)
@@ -241,7 +241,7 @@ bool parse_glslp(const char *filename) {
     destroy_glslp();
     
     FILE *fp = UTIL_OpenRequiredFile(get_glslp_path(filename));
-    char *basedir = basename(strdup(filename));
+    char *basedir = GLSLP_basename(strdup(filename));
 
     if (fp)
     {
@@ -271,7 +271,7 @@ bool parse_glslp(const char *filename) {
                         break;
                     }
                     case TOKEN_SHADER_PATH:
-                        s_param->shader = strdup(PAL_va(0,"%s/%s",basedir,value));
+                        s_param->shader = strdup(UTIL_IsAbsolutePath(value) ? value : PAL_va(0,"%s/%s",basedir,value));
                         break;
                     case TOKEN_SHADER_ALIAS:
                         s_param->alias = strdup(value);
@@ -328,7 +328,7 @@ bool parse_glslp(const char *filename) {
                         break;
                     }
                     case TOKEN_TEXTURE_PATH:
-                        t_param->texture_path = strdup(PAL_va(0,"%s/%s",basedir,value));
+                        t_param->texture_path = strdup(UTIL_IsAbsolutePath(value) ? value : PAL_va(0,"%s/%s",basedir,value));
                         break;
                     case TOKEN_TEXTURE_WRAP_MODE:
                         t_param->wrap_mode = get_wrap_mode(value);

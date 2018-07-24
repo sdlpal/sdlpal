@@ -121,7 +121,7 @@ bool CrixPlayer::load(const std::string &filename, const CFileProvider &cfp)
 {
   fp = fopen(filename.c_str(),"rb"); if(!fp) return false;
 
-  if(strcasecmp(filename.substr(filename.length()-4,4).c_str(),".mkf")==0)
+  if(SDL_strcasecmp(filename.substr(filename.length()-4,4).c_str(),".mkf")==0)
   {
 	  flag_mkf=1;
 	  fseek(fp,0,SEEK_SET);
