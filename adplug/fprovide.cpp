@@ -33,7 +33,7 @@ bool CFileProvider::extension(const std::string &filename,
    const char *fname = filename.c_str(), *ext = extension.c_str();
 
    if (strlen(fname) < strlen(ext) ||
-         strcasecmp(fname + strlen(fname) - strlen(ext), ext))
+         SDL_strcasecmp(fname + strlen(fname) - strlen(ext), ext))
       return false;
    else
       return true;

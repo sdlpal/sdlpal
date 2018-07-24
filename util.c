@@ -620,7 +620,7 @@ UTIL_GetFullPathName(
 			int n = scandir(_base, &list, 0, alphasort);
 			while (n-- > 0)
 			{
-				if (!result && strcasecmp(list[n]->d_name, start) == 0)
+				if (!result && SDL_strcasecmp(list[n]->d_name, start) == 0)
 				{
 					result = UTIL_CombinePath(INTERNAL_BUFFER_SIZE_ARGS, 2, _base, list[n]->d_name);
 					if (end)
