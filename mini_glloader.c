@@ -11,7 +11,7 @@
 #include "mini_glloader.h"
 
 #if !defined(__APPLE__)
-int initGLExtensions() {
+int initGLExtensions(int major) {
     glCreateShader = (PFNGLCREATESHADERPROC)SDL_GL_GetProcAddress("glCreateShader");
     glShaderSource = (PFNGLSHADERSOURCEPROC)SDL_GL_GetProcAddress("glShaderSource");
     glCompileShader = (PFNGLCOMPILESHADERPROC)SDL_GL_GetProcAddress("glCompileShader");
@@ -40,10 +40,8 @@ int initGLExtensions() {
     glUniform1i = (PFNGLUNIFORM1IPROC)SDL_GL_GetProcAddress("glUniform1i");
     glActiveTexture = (PFNGLACTIVETEXTUREPROC)SDL_GL_GetProcAddress("glActiveTexture");
     glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)SDL_GL_GetProcAddress("glGetUniformLocation");
-#if !GLES
-    glBindFragDataLocation = (PFNGLBINDFRAGDATALOCATIONPROC)SDL_GL_GetProcAddress("glBindFragDataLocation") ;
-    glGetStringi = (PFNGLGETSTRINGIPROC)SDL_GL_GetProcAddress("glGetStringi") ;
-#endif
+    if( major >= 3 )
+        glGetStringi = (PFNGLGETSTRINGIPROC)SDL_GL_GetProcAddress("glGetStringi") ;
     
     return glCreateShader && glShaderSource && glCompileShader && glGetShaderiv &&
     glGetShaderInfoLog && glDeleteShader && glAttachShader && glCreateProgram &&

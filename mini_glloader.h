@@ -64,10 +64,9 @@ PFNGLUNIFORM1IVPROC glUniform1iv;
 PFNGLUNIFORM1IPROC glUniform1i;
 PFNGLACTIVETEXTUREPROC glActiveTexture;
 PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-PFNGLBINDFRAGDATALOCATIONPROC glBindFragDataLocation;
 PFNGLGETSTRINGIPROC glGetStringi;
 
-extern int initGLExtensions();
+extern int initGLExtensions(int major);
 #endif
 
 #endif /* mini_glloader_h */
