@@ -235,6 +235,7 @@ shader0 = %s    \r\n\
 scale_type0 = absolute   \r\n\
 scale_x0 = %d   \r\n\
 scale_y0 = %d   \r\n\
+filter_linear0 = %s    \r\n\
 ";
 
 char *readShaderFile(const char *filename, GLuint type) {
@@ -811,6 +812,8 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
 void VIDEO_GLSL_RenderCopy()
 {
     gpTexture = framePrevTextures[0]; //...
+    if( gpTexture == NULL )
+        return;
     
     if( gGLSLP.shader_params[0].filter_linear)
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
@@ -989,7 +992,7 @@ void VIDEO_GLSL_Setup() {
         UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] loading %s\n", gConfig.pszShader);
         char *tempFile = "sdlpal.glslp";
         FILE *fp = UTIL_OpenFileAtPathForMode(gConfig.pszShaderPath, tempFile, "wt"); //follow retroarch spec, this folder needs to be writable
-        fputs( PAL_va( 0, glslp_template, gConfig.pszShader, gConfig.dwTextureWidth, gConfig.dwTextureHeight ), fp );
+        fputs( PAL_va( 0, glslp_template, gConfig.pszShader, gConfig.dwTextureWidth, gConfig.dwTextureHeight, SDL_strcasecmp( gConfig.pszScaleQuality, "1" ) == 0 ? "true" : "false" ), fp );
         fclose(fp);
         origGLSL = gConfig.pszShader;
         gConfig.pszShader = strdup(tempFile);

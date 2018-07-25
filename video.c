@@ -204,7 +204,10 @@ VIDEO_Startup(
    // Create texture for screen.
    //
    SDL_GetRendererOutputSize(gpRenderer, &render_w, &render_h);
+   if(!gConfig.fEnableGLSL)
+      SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, gConfig.pszScaleQuality);
    gpTexture = gRenderBackend.CreateTexture(render_w, render_h);
+   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 
    //
    // Create palette object
@@ -232,7 +235,7 @@ VIDEO_Startup(
       if (overlay != NULL)
       {
          SDL_SetColorKey(overlay, SDL_RLEACCEL, SDL_MapRGB(overlay->format, 255, 0, 255));
-         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, gConfig.pszScaleQuality);
          gpTouchOverlay = SDL_CreateTextureFromSurface(gpRenderer, overlay);
          SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
          SDL_SetTextureAlphaMod(gpTouchOverlay, 120);
