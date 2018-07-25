@@ -264,6 +264,7 @@ GLuint compileShader(const char* sourceOrFilename, GLuint shaderType, int is_sou
 #define SHADER_TYPE(shaderType) (shaderType == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT")
     char *pShaderBuffer;
     char *source = (char*)sourceOrFilename;
+    char *ptr = NULL;
     if(!is_source)
         source = readShaderFile(sourceOrFilename, shaderType);
     size_t sourceLen = strlen(source)*2;
@@ -276,7 +277,14 @@ GLuint compileShader(const char* sourceOrFilename, GLuint shaderType, int is_sou
 #endif
 #if SUPPORT_PARAMETER_UNIFORM
     sprintf(pShaderBuffer,"%s#define PARAMETER_UNIFORM\r\n",shaderBuffer);
+    // parse/get parameter uniforms location here
 #endif
+    // remove #pragma parameter from glsl, avoid glsl compiler（ I mean you, atom ) complains
+    while((ptr = strstr(source, "#pragma parameter"))!= NULL) {
+        char *ptrEnd = strchr(ptr, '\r');
+        if( ptrEnd == NULL ) ptrEnd = strchr(ptr, '\n');
+        while(ptr!=ptrEnd) *ptr++=' ';
+    }
     sprintf(pShaderBuffer,"%s#define %s\r\n%s\r\n",pShaderBuffer,SHADER_TYPE(shaderType),is_source ? source : skip_version(source));
     if(!is_source)
         free((void*)source);
@@ -989,6 +997,10 @@ void VIDEO_GLSL_Setup() {
         UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] going to parse %s\n", gConfig.pszShader);
     }
     parse_glslp(gConfig.pszShader);
+    if( origGLSL ) {
+        free(gConfig.pszShader);
+        gConfig.pszShader = origGLSL;
+    }
     assert(gGLSLP.shaders > 0);
     for( int i = 0; i < gGLSLP.shaders; i++ ) {
         if(VAOSupported) glBindVertexArray(gVAOIds[id+i]);
@@ -1010,11 +1022,6 @@ void VIDEO_GLSL_Setup() {
     if(VAOSupported) glBindVertexArray(0);
 
     UTIL_LogSetPrelude(NULL);
-    
-    if( origGLSL ) {
-        free(gConfig.pszShader);
-        gConfig.pszShader = origGLSL;
-    }
 }
 
 void VIDEO_GLSL_Destroy() {
