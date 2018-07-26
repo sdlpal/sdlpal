@@ -855,6 +855,25 @@ void VIDEO_GLSL_RenderCopy()
     gpTexture = NULL; //prevent its deleted when resize...-_-|||
 }
 
+const char *get_gl_profile(int flags) {
+    switch (flags) {
+        case SDL_GL_CONTEXT_PROFILE_ES:
+            return "ES";
+        case SDL_GL_CONTEXT_PROFILE_COMPATIBILITY:
+            return "Compatible";
+        case SDL_GL_CONTEXT_PROFILE_CORE:
+            return "Core";
+        default:
+            return "Default";
+    }
+}
+
+int get_SDL_GLAttribute(SDL_GLattr attr) {
+    int orig_value;
+    SDL_GL_GetAttribute(attr, &orig_value);
+    return orig_value;
+}
+
 void VIDEO_GLSL_Init() {
     int orig_major, orig_minor, orig_profile, orig_srgb;
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &orig_major);
@@ -873,6 +892,10 @@ void VIDEO_GLSL_Init() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #   endif
 #endif
+    
+#if SDL_VIDEO_DRIVER_RPI || SDL_VIDEO_DRIVER_EMSCRIPTEN || SDL_VIDEO_DRIVER_WINRT || SDL_VIDEO_DRIVER_ANDROID
+    manualSRGB = 1;
+#else
     //
     // iOS need this line to enable built-in color correction
     // WebGL/WinRT/RaspberryPI will not crash with sRGB capable, but will not work with it too.
@@ -880,16 +903,15 @@ void VIDEO_GLSL_Init() {
     // but Oreo behavior changed.
     //
     SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1);
-    
-#if SDL_VIDEO_DRIVER_RPI || SDL_VIDEO_DRIVER_EMSCRIPTEN || SDL_VIDEO_DRIVER_WINRT || SDL_VIDEO_DRIVER_ANDROID
-    manualSRGB = 1;
 #endif
     
     Uint32 flags = PAL_VIDEO_INIT_FLAGS | (gConfig.fFullScreen ? SDL_WINDOW_BORDERLESS : 0) | SDL_WINDOW_OPENGL;
+    
+    UTIL_LogOutput(LOGLEVEL_DEBUG, "requesting to create window with flags: %s %s profile latest available, %s based sRGB gamma correction \n", SDL_GetHint( SDL_HINT_RENDER_DRIVER ),  get_gl_profile(get_SDL_GLAttribute(SDL_GL_CONTEXT_PROFILE_MASK)), manualSRGB ? "shader" : "framebuffer_sRGB" );
     gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
     if (gpWindow == NULL) {
-        UTIL_LogOutput(LOGLEVEL_DEBUG, "create window failed!%s\n", SDL_GetError());
-        UTIL_LogOutput(LOGLEVEL_DEBUG, "reverting to: gl %s %d.%d, %s srgb \n", orig_profile ? "core" : "compatible", orig_major, orig_minor, orig_srgb ? "EXT" : "manual" );
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "failed to create window with ordered flags! %s\n", SDL_GetError());
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "reverting to: OpenGL %s profile %d.%d, %s based sRGB gamma correction \n", get_gl_profile(orig_profile), orig_major, orig_minor, "shader" );
         
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, orig_major);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, orig_minor);
@@ -978,7 +1000,7 @@ void VIDEO_GLSL_Setup() {
     
     if(VAOSupported) glBindVertexArray(gVAOIds[id]);
     glBindBuffer( GL_ARRAY_BUFFER, gVBOIds[id] );
-    glBufferData( GL_ARRAY_BUFFER, 4 * sizeof(struct VertexDataFormat), vData, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, 4 * sizeof(struct VertexDataFormat), vData, GL_DYNAMIC_DRAW );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gEBOId );
     UTIL_LogSetPrelude("[PASS 1] ");
     gProgramIds[id] = compileProgram(plain_glsl_vert, plain_glsl_frag, 1);
@@ -1022,6 +1044,17 @@ void VIDEO_GLSL_Setup() {
             gGLSLP.texture_params[i].slots_pass[id+j] = glGetUniformLocation(gProgramIds[id+j], texture_name);
     }
 
+    // in case of GL2/GLES2, the LACK of above snippit makes keepaspectratio a mess.
+    // Unsure what happened.
+    if( glversion_major <= 2 ) {
+        id=0;
+        UTIL_LogSetPrelude("[PASS 1] ");
+        glBindBuffer( GL_ARRAY_BUFFER, gVBOIds[id] );
+        glBufferData( GL_ARRAY_BUFFER, 4 * sizeof(struct VertexDataFormat), vData, GL_DYNAMIC_DRAW );
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gEBOId );
+        setupShaderParams(id);
+    }
+    
     if(VAOSupported) glBindVertexArray(0);
 
     UTIL_LogSetPrelude(NULL);
