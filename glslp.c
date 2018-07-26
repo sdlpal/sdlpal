@@ -230,17 +230,33 @@ static char *GLSLP_basename(const char *filename) {
     return (char*)filename;
 }
 
+char *GLSLP_reflow(const char *path) {
+	char *ptrBeforeDot;
+	while ((ptrBeforeDot = strstr(path, "..")) != NULL) {
+		char *dup = strdup(path);
+		dup[ptrBeforeDot - path - 1] = '\0';
+		dup = GLSLP_basename(dup);
+		sprintf(path, "%s/%s", dup, ptrBeforeDot + 3);
+		free(dup);
+	}
+	return path;
+}
+
 char *get_glslp_path(const char *filename) {
     char *path = (char*)filename;
     if( !UTIL_IsAbsolutePath(filename) )
         path = PAL_va(0, "%s/%s", gConfig.pszShaderPath, filename);
+#if __WINRT__
+    //seems M$ decided fobidden parent referencing. avoid sandbox escaping?
+	GLSLP_reflow(path);
+#endif
     return path;
 }
 
 bool parse_glslp(const char *filename) {
     destroy_glslp();
     
-    FILE *fp = UTIL_OpenRequiredFile(get_glslp_path(filename));
+    FILE *fp = UTIL_OpenRequiredFile(filename);
     char *basedir = GLSLP_basename(strdup(filename));
 
     if (fp)

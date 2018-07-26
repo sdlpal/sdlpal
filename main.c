@@ -58,6 +58,9 @@ PAL_Init(
 --*/
 {
    int           e;
+#if PAL_HAS_GIT_REVISION
+   UTIL_LogOutput(LOGLEVEL_DEBUG, "SDLPal build revision: %s\n", PAL_GIT_REVISION);
+#endif
 
    //
    // Initialize subsystems.
@@ -114,9 +117,6 @@ PAL_Init(
 #endif
        ,(gConfig.fEnableGLSL && gConfig.pszShader ? gConfig.pszShader : "")
    ));
-#if PAL_HAS_GIT_REVISION
-   UTIL_LogOutput(LOGLEVEL_DEBUG, "SDLPal build revision: %s\n", PAL_GIT_REVISION);
-#endif
 }
 
 VOID
