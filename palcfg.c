@@ -625,7 +625,7 @@ PAL_SaveConfig(
 
 		if (gConfig.pszGamePath && *gConfig.pszGamePath && strcmp(gConfig.pszGamePath, PAL_PREFIX) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_GAMEPATH), gConfig.pszGamePath); fputs(buf, fp); }
 		if (gConfig.pszSavePath && *gConfig.pszSavePath && strcmp(gConfig.pszSavePath, PAL_SAVE_PREFIX) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SAVEPATH), gConfig.pszSavePath); fputs(buf, fp); }
-        if (gConfig.pszShaderPath && *gConfig.pszShaderPath && strcmp(gConfig.pszShaderPath, gConfig.pszGamePath) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SHADERPATH), gConfig.pszShaderPath); fputs(buf, fp); }
+        if (gConfig.pszShaderPath && *gConfig.pszShaderPath && gConfig.pszGamePath && strcmp(gConfig.pszShaderPath, gConfig.pszGamePath) != 0) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SHADERPATH), gConfig.pszShaderPath); fputs(buf, fp); }
 		if (gConfig.pszMsgFile && *gConfig.pszMsgFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MESSAGEFILE), gConfig.pszMsgFile); fputs(buf, fp); }
 		if (gConfig.pszFontFile && *gConfig.pszFontFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_FONTFILE), gConfig.pszFontFile); fputs(buf, fp); }
 		if (gConfig.pszLogFile && *gConfig.pszLogFile) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_LOGFILE), gConfig.pszLogFile); fputs(buf, fp); }

@@ -335,14 +335,18 @@ GLuint compileProgram(const char* vtx, const char* frag,int is_source) {
         glValidateProgram(programId);
         
         // Check the status of the compile/link
-        GLint logLen;
-        glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &logLen);
-        if(logLen > 0) {
-            char* log = (char*) malloc(logLen * sizeof(char));
-            // Show any errors as appropriate
-            glGetProgramInfoLog(programId, logLen, &logLen, log);
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "shader linkage error:%s\n",log);
-            free(log);
+        GLint programLinked = GL_FALSE;
+        glGetProgramiv(programId, GL_LINK_STATUS, &programLinked );
+        if( programLinked != GL_TRUE ) {
+            GLint logLen;
+            glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &logLen);
+            if(logLen > 0) {
+                char* log = (char*) malloc(logLen * sizeof(char));
+                // Show any errors as appropriate
+                glGetProgramInfoLog(programId, logLen, &logLen, log);
+                UTIL_LogOutput(LOGLEVEL_FATAL, "shader linkage error:%s\n",log);
+                free(log);
+            }
         }else
             UTIL_LogOutput(LOGLEVEL_DEBUG, "shaders linkage succeed!\n");
     }
@@ -356,6 +360,9 @@ GLuint compileProgram(const char* vtx, const char* frag,int is_source) {
 }
 
 void setupShaderParams(int pass){
+//    glBindAttribLocation(gProgramIds[pass], 0, "TexCoord");
+//    glBindAttribLocation(gProgramIds[pass], 1, "VertexCoord");
+    
     int shader = pass-1;
     int slot = glGetAttribLocation(gProgramIds[pass], "VertexCoord");
     if(slot >= 0) {
@@ -1013,8 +1020,8 @@ void VIDEO_GLSL_Setup() {
     if( SDL_strcasecmp( strrchr(gConfig.pszShader, '.'), ".glsl") == 0 ) {
         UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] loading %s\n", gConfig.pszShader);
         char *tempFile = "sdlpal.glslp";
-        FILE *fp = UTIL_OpenFileAtPathForMode(gConfig.pszShaderPath, tempFile, "wt"); //follow retroarch spec, this folder needs to be writable
-        fputs( PAL_va( 0, glslp_template, gConfig.pszShader, gConfig.dwTextureWidth, gConfig.dwTextureHeight, SDL_strcasecmp( gConfig.pszScaleQuality, "1" ) == 0 ? "true" : "false" ), fp );
+        FILE *fp = UTIL_OpenFileForMode(tempFile, "w"); //follow retroarch spec, this folder needs to be writable
+        fputs( PAL_va( 0, glslp_template, gConfig.pszShader, gConfig.dwTextureWidth, gConfig.dwTextureHeight, (gConfig.pszScaleQuality && SDL_strcasecmp( gConfig.pszScaleQuality, "1" )) == 0 ? "true" : "false" ), fp );
         fclose(fp);
         origGLSL = gConfig.pszShader;
         gConfig.pszShader = strdup(tempFile);

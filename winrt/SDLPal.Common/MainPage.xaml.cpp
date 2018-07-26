@@ -27,7 +27,7 @@ using namespace Windows::UI::Xaml::Navigation;
 static Platform::String^ msg_file_exts[] = { ".msg" };
 static Platform::String^ font_file_exts[] = { ".bdf" };
 static Platform::String^ log_file_exts[] = { ".log" };
-static Platform::String^ shader_file_exts[] = { ".glsl" };
+static Platform::String^ shader_file_exts[] = {  ".glslp", ".glsl" };
 
 MainPage^ MainPage::Current = nullptr;
 
