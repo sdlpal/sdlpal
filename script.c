@@ -1572,7 +1572,7 @@ PAL_InterpretInstruction(
       // Set background music
       //
       gpGlobals->wNumMusic = pScript->rgwOperand[0];
-      AUDIO_PlayMusic(pScript->rgwOperand[0], (pScript->rgwOperand[0] != 0x3D), pScript->rgwOperand[1]);
+      AUDIO_PlayMusic(pScript->rgwOperand[0], pScript->rgwOperand[1] != 1, (pScript->rgwOperand[1] == 3 && pScript->rgwOperand[0] != 9) ? 3.0f : 0.0f);
       break;
 
    case 0x0044:
@@ -2144,7 +2144,7 @@ PAL_InterpretInstruction(
       // Stop current playing music
       //
       AUDIO_PlayMusic(0, FALSE,
-         (pScript->rgwOperand[0] == 0) ? 2.0f : (FLOAT)(pScript->rgwOperand[0]) * 2);
+         (pScript->rgwOperand[0] == 0) ? 2.0f : (FLOAT)(pScript->rgwOperand[0]) * 3);
       gpGlobals->wNumMusic = 0;
       break;
 

@@ -1368,6 +1368,7 @@ TEXT_DisplayText(
             //
             // Set the font color to Yellow
             //
+            if(!isDialog)
             if (g_TextLib.bCurrentFontColor == FONT_COLOR_YELLOW)
             {
                g_TextLib.bCurrentFontColor = FONT_COLOR_DEFAULT;
