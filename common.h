@@ -175,11 +175,6 @@ typedef const WCHAR        *LPCWSTR;
  */
 #include "pal_config.h"
 
-#if defined(PAL_HAS_GIT_REVISION)
-# undef PAL_GIT_REVISION
-# include "generated.h"
-#endif
-
 #ifndef PAL_DEFAULT_FULLSCREEN_HEIGHT
 # define PAL_DEFAULT_FULLSCREEN_HEIGHT PAL_DEFAULT_WINDOW_HEIGHT
 #endif

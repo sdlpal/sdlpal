@@ -23,6 +23,11 @@
 #include "main.h"
 #include <setjmp.h>
 
+#if defined(PAL_HAS_GIT_REVISION)
+# undef PAL_GIT_REVISION
+# include "generated.h"
+#endif
+
 static jmp_buf g_exit_jmp_buf;
 static int g_exit_code = 0;
 
