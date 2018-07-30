@@ -72,4 +72,6 @@ PAL_C_LINKAGE char* stoupper(char* s);
 
 #define PAL_HAS_GLSL 1
 
+#define PAL_HAS_PLATFORM_STARTUP 1
+
 #include <stdbool.h>
