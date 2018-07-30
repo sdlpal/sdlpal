@@ -195,6 +195,8 @@ AUDIO_OpenDevice(
 
 --*/
 {
+   SDL_AudioSpec spec;
+
    if (gAudioDevice.fOpened)
    {
       //
@@ -226,9 +228,29 @@ AUDIO_OpenDevice(
    gAudioDevice.spec.channels = gConfig.iAudioChannels;
    gAudioDevice.spec.samples = gConfig.wAudioBufferSize;
    gAudioDevice.spec.callback = AUDIO_FillBuffer;
-
-   if (SDL_OpenAudio(&gAudioDevice.spec, NULL) < 0)
+    
+#if SDL_VERSION_ATLEAST(2,0,0)
+   for( int i = 0; i<SDL_GetNumAudioDrivers();i++)
    {
+      UTIL_LogOutput(LOGLEVEL_VERBOSE, "Available audio driver %d:%s\n", i, SDL_GetAudioDriver(i));
+   }
+   const char* driver_name = SDL_GetCurrentAudioDriver();
+   if (driver_name) {
+      UTIL_LogOutput(LOGLEVEL_VERBOSE, "Audio subsystem initialized; current driver is %s.\n", driver_name);
+   } else {
+      UTIL_LogOutput(LOGLEVEL_VERBOSE, "Audio subsystem not initialized.\n");
+   }
+   for( int i = 0; i<SDL_GetNumAudioDevices(0);i++)
+   {
+      UTIL_LogOutput(LOGLEVEL_VERBOSE, "Available audio device %d:%s\n", i, SDL_GetAudioDeviceName(i,0));
+   }
+   UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio device: %s\n",(gConfig.iAudioDevice >= 0 ? SDL_GetAudioDeviceName(gConfig.iAudioDevice, 0) : "default"));
+   UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio spec:freq %d, format %d, channels %d, samples %d\n", gAudioDevice.spec.freq, gAudioDevice.spec.format,  gAudioDevice.spec.channels, gAudioDevice.spec.samples);
+#endif
+
+   if (SDL_OpenAudio(&gAudioDevice.spec, &spec) < 0)
+   {
+      UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio ERROR: %s, got spec:freq %d, format %d, channels %d, samples %d\n", SDL_GetError(), spec.freq, spec.format, spec.channels,  spec.samples);
       //
       // Failed
       //
@@ -236,6 +258,7 @@ AUDIO_OpenDevice(
    }
    else
    {
+      UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio succeed\n");
       gAudioDevice.pSoundBuffer = malloc(gConfig.wAudioBufferSize * gConfig.iAudioChannels * sizeof(short));
    }
 
