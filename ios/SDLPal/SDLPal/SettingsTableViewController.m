@@ -12,6 +12,11 @@
 
 #include "palcfg.h"
 
+#if defined(PAL_HAS_GIT_REVISION)
+# undef PAL_GIT_REVISION
+# include "generated.h"
+#endif
+
 #define UIKitLocalizedString(key) [[NSBundle bundleWithIdentifier:@"com.apple.UIKit"] localizedStringForKey:key value:@"" table:nil]
 
 @implementation SettingsTableViewController {
