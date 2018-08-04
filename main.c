@@ -100,7 +100,7 @@ PAL_Init(
    PAL_AVIInit();
 
    VIDEO_SetWindowTitle(UTIL_va(UTIL_GlobalBuffer(0), PAL_GLOBAL_BUFFER_SIZE,
-	   "Pal %s%s%s",
+	   "Pal %s%s%s%s",
 	   gConfig.fIsWIN95 ? "Win95" : "DOS",
 #if defined(_DEBUG) || defined(DEBUG)
 	   " (Debug) ",
@@ -112,6 +112,7 @@ PAL_Init(
 #else
 	   ""
 #endif
+       ,(gConfig.pszShader ? gConfig.pszShader : "")
    ));
 #if PAL_HAS_GIT_REVISION
    UTIL_LogOutput(LOGLEVEL_DEBUG, "SDLPal build revision: %s\n", PAL_GIT_REVISION);

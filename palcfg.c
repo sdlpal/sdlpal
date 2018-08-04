@@ -77,7 +77,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_STRING(NULL) },
 	{ PALCFG_MIDICLIENT,        PALCFG_STRING,   "MIDIClient",        10, MAKE_STRING(NULL) },
 	{ PALCFG_SCALEQUALITY,      PALCFG_STRING,   "ScaleQuality",      12, MAKE_STRING("0") },
-	{ PALCFG_SHADER,            PALCFG_STRING,   "Shader",             6, MAKE_STRING("PLACE YOUR SHADER IN CFG") },
+	{ PALCFG_SHADER,            PALCFG_STRING,   "Shader",             6, MAKE_STRING(NULL) },
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
@@ -570,7 +570,7 @@ PAL_LoadConfig(
     }
     
     if(gConfig.fEnableGLSL && !gConfig.pszShader)
-        gConfig.pszShader = strdup((char*)values[PALCFG_SHADER].sValue);
+        TerminateOnError("Filter backend GLSL enabled but no valid effect file specified");
 }
 
 

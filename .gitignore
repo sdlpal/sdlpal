@@ -274,3 +274,8 @@ import-summary.txt
 
 # CocoaPods
 Pods
+
+# Emscripten
+emscripten/*.h
+emscripten/*.c
+emscripten/*.cpp
