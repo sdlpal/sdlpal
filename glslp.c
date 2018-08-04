@@ -283,6 +283,7 @@ bool parse_glslp(const char *filename) {
                             param->scale_type_x = param->scale_type_y = SCALE_SOURCE;
                             param->scale_x = param->scale_y = 1.0f;
                             param->wrap_mode = WRAP_CLAMP_TO_EDGE;
+                            param->filter_linear = true;
                         }
                         break;
                     }

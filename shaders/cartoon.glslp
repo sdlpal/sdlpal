@@ -1,0 +1,7 @@
+shaders = 2
+
+shader0 = cartoon/AA.glsl
+filter_linear0 = true
+
+shader1 = cartoon/cartoon.glsl
+filter_linear1 = true
