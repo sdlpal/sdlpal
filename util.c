@@ -891,7 +891,6 @@ UTIL_LogOutput(
 	struct tm *tmval = localtime(&tv);
 	int        id, n;
 
-	if (level < gConfig.iLogLevel || !_log_callbacks[0]) return;
 	if (level > LOGLEVEL_MAX) level = LOGLEVEL_MAX;
 
 	snprintf(_log_buffer, PAL_LOG_BUFFER_EXTRA_SIZE,
@@ -908,17 +907,19 @@ UTIL_LogOutput(
 	n = (n == -1) ? PAL_LOG_BUFFER_EXTRA_SIZE + PAL_LOG_BUFFER_SIZE - 1 : n + PAL_LOG_BUFFER_EXTRA_SIZE;
 	_log_buffer[n--] = '\0';
 	if (_log_buffer[n] != '\n') _log_buffer[n] = '\n';
+    
+    if( level == LOGLEVEL_FATAL )
+        TerminateOnError(_log_buffer);
 
-	for(id = 0; id < PAL_LOG_MAX_OUTPUTS && _log_callbacks[id]; id++)
+    if (level < gConfig.iLogLevel || !_log_callbacks[0]) return;
+
+    for(id = 0; id < PAL_LOG_MAX_OUTPUTS && _log_callbacks[id]; id++)
 	{
 		if (level >= _log_callback_levels[id])
 		{
 			_log_callbacks[id](level, _log_buffer, _log_buffer + PAL_LOG_BUFFER_EXTRA_SIZE - 1);
 		}
 	}
-    
-    if( level == LOGLEVEL_FATAL )
-        TerminateOnError(_log_buffer);
 }
 
 void
