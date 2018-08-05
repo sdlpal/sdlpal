@@ -1,13 +1,28 @@
 #!/bin/bash
+PWD="$(pwd)"
+BASEDIR="$(dirname $0)"
+date=date
+stat=stat
+
+if [ "x$(uname)" = xDarwin ]; then
+	date=gdate
+	stat=gstat
+fi
 
 PAL_GIT_REVISION=$(git describe --tags --dirty 2> /dev/null)
 
+# Some environment like TravisCI won't fully clone so they may not get tag based describe correctly.
+# Lets try another way that based on VCS logged info, which should be more accuracy.
 if [ -z "$PAL_GIT_REVISION" ]; then
-    PAL_GIT_REVISION=$(date -d @$(stat -c %Y ../.gitignore) +"%F %T")
+    PAL_GIT_REVISION="v"$($date -d @$(git show -s --format=%ct) +"%F")"-g"$(git rev-parse --verify --short HEAD)
+fi
+
+if [ -z "$PAL_GIT_REVISION" ]; then
+    PAL_GIT_REVISION=$($date -d @$($stat -c %Y ${BASEDIR}/../.gitignore) +"%F %T")
 fi
 
 LINE="#define PAL_GIT_REVISION \"$PAL_GIT_REVISION\""
-FILE="$(dirname $0)/../generated.h"
+FILE="${BASEDIR}/../generated.h"
 
 grep -F "$LINE" "$FILE" >/dev/null 2>&1
 if [ $? -ne 0 ]; then

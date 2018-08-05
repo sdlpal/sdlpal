@@ -1,0 +1,43 @@
+{
+    "package": {
+        "name": "autobuild",
+        "repo": "prereleases",
+        "subject": "sdlpal",
+        "desc": "I was pushed completely automatically",
+        "website_url": "https://sdlpal.github.io",
+        "issue_tracker_url": "https://github.com/sdlpal/sdlpal/issues",
+        "github_repo": "sdlpal/sdlpal",
+        "vcs_url": "https://github.com/sdlpal/sdlpal.git",
+        "github_use_tag_release_notes": true,
+        "github_release_notes_file": "RELEASE.txt",
+        "licenses": ["GPL-3.0"],
+        "labels": ["game", "c", "rpg"],
+        "public_download_numbers": true,
+        "public_stats": true,
+        "attributes": [
+         {"name": "AppVeyor", "values" : ["https://ci.appveyor.com/project/palxex/sdlpal-itfml"], "type": "string"},
+         {"name": "Gitter", "values" : ["https://gitter.im/sdlpal/sdlpal"], "type": "string"}
+        ]
+    },
+
+    "version": {
+        "name": "@VERSION@",
+        "desc": "@DESC@",
+        "released": "@RELEASE_DATE@",
+        "vcs_tag": "@VCS_TAG@",
+        "attributes": [
+         {"name": "Author",		"values" : ["@AUTHOR@"],   		"type": "string"},
+         {"name": "AuthorDate",	"values" : ["@AUTHOR_DATE@"],   "type": "string"},
+         {"name": "Commiter",	"values" : ["@CIMMITER@"], 		"type": "string"},
+         {"name": "Branch",		"values" : ["@BRANCH@"],   		"type": "string"},
+         {"name": "CommitID", 	"values" : ["@COMMITID@"], 		"type": "string"}
+        ]
+    },
+
+    "files":
+        [
+        {"includePattern": "deploy/(.*)", 
+         "uploadPattern": "@VERSION@/$1"}
+        ],
+    "publish": true
+}
