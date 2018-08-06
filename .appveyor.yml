@@ -2,6 +2,9 @@ version: 2.0.{build}
 image:
   - Visual Studio 2017
 environment:
+  #since appveyor official binding for bintray lacks of ability to specify upload path, we'd to use the manual curl way
+  BINTRAY_APIKEY:
+    secure: s4sB+aNp/xHO4oiFNkZ84OOewXOCUMmDIychhJYcXzJ+Exdj1+WJRXQisXgOYHpY
   matrix:
     - solution_name: win32/sdlpal.sln
       APPX_OPTIONS:
@@ -9,7 +12,6 @@ environment:
       APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
 build_script:
   - |-
-    if "%APPVEYOR_REPO_TAG%" == "false" ( set APPX_OPTIONS= )
     msbuild /nologo /m %solution_name% /p:Configuration=Release %APPX_OPTIONS%
 before_build:
   - |-
@@ -19,9 +21,18 @@ before_build:
     cd ..
 after_build:
   - |-
-    if exist win32\Win32\Release\sdlpal.exe ( cd win32\Win32\Release & 7z a ..\..\..\sdlpal-win32.zip sdlpal.exe & cd ..\..\..\ )
+    if exist win32\Win32\Release\sdlpal.exe ( cd win32\Win32\Release & 7z a ..\..\..\sdlpal-win32-msvc.zip sdlpal.exe & cd ..\..\..\ )
     for /d %%d in ("winrt\SDLPal.UWP\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-uwp.zip * & cd ..\..\..\..\ )
-
+    for /f %%t in ('python -c "import time;import os;print(time.strftime(""%%Y-%%m-%%d"", time.localtime(int(os.popen(""git show -s --format=%%ct"").readlines()[0]))))"') do set COMMIT_DATE=%%t
+    for /f %%t in ('git rev-parse --short HEAD') do set COMMIT_ID=%%t
+    set VERSION=v%COMMIT_DATE%-g%COMMIT_ID%
+    set BINTRAY_USER=palxex
+    set BINTRAY_REPO=sdlpal/prereleases
+    set BINTRAY_PATH=%BINTRAY_REPO%/autobuild
+    for %%f in (sdlpal-win32-msvc.zip, sdlpal-uwp.zip) DO if exist %%f ( curl -fsS -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" -X PUT "https://api.bintray.com/content/%BINTRAY_PATH%/%VERSION%/%VERSION%/%%f?override=1&publish=1" --data-binary @%%f )
+    powershell -command "Start-Sleep -s 10"
+    for %%f in (sdlpal-linux, sdlpal-win32-mingw.zip, sdlpal-wii.tar.bz2, sdlpal-3ds.cia, sdlpal-release.apk, sdlpal-impactor.ipa, sdlpal-macos.dmg, sdlpal-sdl1-macos.dmg, sdlpal-win32-msvc.zip, sdlpal-uwp.zip) DO ( curl -sS -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" -X PUT "https://api.bintray.com/file_metadata/%BINTRAY_REPO%/%VERSION%/%%f" -H "Content-Type: application/json " -d "{\"list_in_downloads\": true}" )
+  
 deploy:
 - provider: GitHub
   on:
@@ -30,7 +41,7 @@ deploy:
     secure: RYDRqm5LncsJG32FRSlCkLzkJC4ykCtlgO3+xW4q80wQOA3U9pHAe2beyMEduJIe
 
 artifacts:
-  - path: sdlpal-win32.zip
+  - path: sdlpal-win32-msvc.zip
     name: Win32
   - path: sdlpal-uwp.zip
     name: UWP
