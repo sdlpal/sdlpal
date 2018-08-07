@@ -569,8 +569,10 @@ PAL_LoadConfig(
         gConfig.dwTextureHeight = PAL_DEFAULT_TEXTURE_HEIGHT;
     }
     
-    if(gConfig.fEnableGLSL && !gConfig.pszShader)
-        TerminateOnError("Filter backend GLSL enabled but no valid effect file specified");
+    if(gConfig.fEnableGLSL && !gConfig.pszShader) {
+        UTIL_LogOutput(LOGLEVEL_ERROR, "Filter backend GLSL enabled but no valid effect file specified");
+        gConfig.fEnableGLSL = FALSE;
+    }
 }
 
 
