@@ -1112,10 +1112,7 @@ PAL_CompressInventory(
 
    for (i = 0; i < MAX_INVENTORY; i++)
    {
-      if (gpGlobals->rgInventory[i].wItem == 0)
-      {
-         break;
-      }
+      //removed detect zero then break code, due to incompatible with save file hacked by palmod
 
       if (gpGlobals->rgInventory[i].nAmount > 0)
       {

@@ -1436,9 +1436,41 @@ PAL_InterpretInstruction(
 
          PAL_AddItemToInventory(gpGlobals->g.lprgStore[0].rgwItems[i], 1);
 
-         PAL_StartDialog(kDialogCenterWindow, 0, 0, FALSE);
-         PAL_swprintf(s, sizeof(s) / sizeof(WCHAR), L"%ls%ls", PAL_GetWord(42), PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
+         g_TextLib.iDialogShadow = 5;
+         PAL_StartDialogWithOffset(kDialogCenterWindow, 0, 0, FALSE, 0, -10);
+         PAL_swprintf(s, sizeof(s) / sizeof(WCHAR), L"%ls@%ls@", PAL_GetWord(42), PAL_GetWord(gpGlobals->g.lprgStore[0].rgwItems[i]));
+
+         LPCBITMAPRLE pBG = PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX);
+         INT iBGWidth = PAL_RLEGetWidth(pBG), iBGHeight = PAL_RLEGetHeight(pBG);
+         INT iBG_X = (320 - iBGWidth) / 2, iBG_Y = (200 - iBGHeight) / 2;
+         PAL_POS pos = PAL_XY(iBG_X, iBG_Y);
+         SDL_Rect rect = {iBG_X, iBG_Y, iBGWidth, iBGHeight};
+         PAL_RLEBlitToSurface(pBG, gpScreen, pos);
+         
+         WORD wObject = gpGlobals->g.lprgStore[0].rgwItems[i];
+         static WORD wPrevImageIndex = 0xFFFF;
+         static BYTE bufImage[2048];
+         if (gpGlobals->g.rgObject[wObject].item.wBitmap != wPrevImageIndex)
+         {
+            if (PAL_MKFReadChunk(bufImage, 2048,
+                                 gpGlobals->g.rgObject[wObject].item.wBitmap, gpGlobals->f.fpBALL) > 0)
+            {
+               wPrevImageIndex = gpGlobals->g.rgObject[wObject].item.wBitmap;
+            }
+            else
+            {
+               wPrevImageIndex = 0xFFFF;
+            }
+         }
+         if (wPrevImageIndex != 0xFFFF)
+         {
+            PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(PAL_X(pos)+8, PAL_Y(pos)+7));
+         }
+         
+         VIDEO_UpdateScreen(&rect);
+         
          PAL_ShowDialogText(s);
+         g_TextLib.iDialogShadow = 0;
       }
       else
       {

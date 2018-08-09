@@ -1076,6 +1076,19 @@ PAL_StartDialog(
    INT          iNumCharFace,
    BOOL         fPlayingRNG
 )
+{
+   PAL_StartDialogWithOffset(bDialogLocation, bFontColor, iNumCharFace, fPlayingRNG, 0, 0);
+}
+
+VOID
+PAL_StartDialogWithOffset(
+   BYTE         bDialogLocation,
+   BYTE         bFontColor,
+   INT          iNumCharFace,
+   BOOL         fPlayingRNG,
+   INT          xOff,
+   INT          yOff
+)
 /*++
   Purpose:
 
@@ -1138,8 +1151,8 @@ PAL_StartDialog(
          {
             rect.w = PAL_RLEGetWidth((LPCBITMAPRLE)buf);
             rect.h = PAL_RLEGetHeight((LPCBITMAPRLE)buf);
-            rect.x = 48 - rect.w / 2;
-            rect.y = 55 - rect.h / 2;
+            rect.x = 48 - rect.w / 2 + xOff;
+            rect.y = 55 - rect.h / 2 + yOff;
 
             if (rect.x < 0)
             {
@@ -1181,8 +1194,8 @@ PAL_StartDialog(
          //
          if (PAL_MKFReadChunk(buf, 16384, iNumCharFace, gpGlobals->f.fpRGM) > 0)
          {
-            rect.x = 270 - PAL_RLEGetWidth((LPCBITMAPRLE)buf) / 2;
-            rect.y = 144 - PAL_RLEGetHeight((LPCBITMAPRLE)buf) / 2;
+            rect.x = 270 - PAL_RLEGetWidth((LPCBITMAPRLE)buf) / 2 + xOff;
+            rect.y = 144 - PAL_RLEGetHeight((LPCBITMAPRLE)buf) / 2 + yOff;
 
             PAL_RLEBlitToSurface((LPCBITMAPRLE)buf, gpScreen, PAL_XY(rect.x, rect.y));
 
@@ -1197,6 +1210,9 @@ PAL_StartDialog(
       g_TextLib.posDialogText = PAL_XY(160, 40);
       break;
    }
+   
+   g_TextLib.posDialogTitle = PAL_XY( PAL_X(g_TextLib.posDialogTitle) + xOff, PAL_Y(g_TextLib.posDialogTitle) + yOff);
+   g_TextLib.posDialogText = PAL_XY( PAL_X(g_TextLib.posDialogText) + xOff, PAL_Y(g_TextLib.posDialogText) + yOff);
 
    g_TextLib.bDialogPosition = bDialogLocation;
 }
@@ -1533,7 +1549,7 @@ PAL_ShowDialogText(
          //
          pos = PAL_XY(PAL_X(g_TextLib.posDialogText) - len * 4, PAL_Y(g_TextLib.posDialogText));
          // Follow behavior of original version
-         lpBox = PAL_CreateSingleLineBoxWithShadow(pos, (len + 1) / 2, FALSE, 0);
+         lpBox = PAL_CreateSingleLineBoxWithShadow(pos, (len + 1) / 2, FALSE, g_TextLib.iDialogShadow);
 
          rect.x = PAL_X(pos);
          rect.y = PAL_Y(pos);

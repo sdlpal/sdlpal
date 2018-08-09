@@ -64,6 +64,7 @@ typedef struct tagTEXTLIB
     BYTE            bDialogPosition;
     BYTE            bIcon;
     int             iDelayTime;
+    INT             iDialogShadow;
     BOOL            fUserSkip;
     BOOL            fPlayingRNG;
 
@@ -121,6 +122,16 @@ PAL_StartDialog(
    BYTE         bFontColor,
    INT          iNumCharFace,
    BOOL         fPlayingRNG
+);
+
+VOID
+PAL_StartDialogWithOffset(
+   BYTE         bDialogLocation,
+   BYTE         bFontColor,
+   INT          iNumCharFace,
+   BOOL         fPlayingRNG,
+   INT          xOff,
+   INT          yOff
 );
 
 VOID
