@@ -2695,7 +2695,7 @@ PAL_InterpretInstruction(
 
    case 0x009C:
       //
-      // Enemy duplicate itself
+      // Enemy division itself
       //
       w = 0;
 
@@ -2707,10 +2707,11 @@ PAL_InterpretInstruction(
          }
       }
 
-      if (w != 1)
+      if (w != 1 || g_Battle.rgEnemy[wCurEventObjectID].e.wHealth <= 1)
       {
          //
-         // Duplication is only possible when only 1 enemy left
+         // Division is only possible when only 1 enemy left
+         // health too low also cannot division
          //
          if (pScript->rgwOperand[1] != 0)
          {
@@ -2725,16 +2726,19 @@ PAL_InterpretInstruction(
          w = 1;
       }
 
-      for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+      //division does not limited by original team layout
+      for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
       {
          if (w > 0 && g_Battle.rgEnemy[i].wObjectID == 0)
          {
             w--;
 
+            //notice: MAX MAY VARYING IN DIVISION!
             memset(&(g_Battle.rgEnemy[i]), 0, sizeof(BATTLEENEMY));
 
             g_Battle.rgEnemy[i].wObjectID = g_Battle.rgEnemy[wEventObjectID].wObjectID;
             g_Battle.rgEnemy[i].e = g_Battle.rgEnemy[wEventObjectID].e;
+            g_Battle.rgEnemy[i].e.wHealth = (g_Battle.rgEnemy[wEventObjectID].e.wHealth+w)/(w+1);
             g_Battle.rgEnemy[i].wScriptOnTurnStart = g_Battle.rgEnemy[wEventObjectID].wScriptOnTurnStart;
             g_Battle.rgEnemy[i].wScriptOnBattleEnd = g_Battle.rgEnemy[wEventObjectID].wScriptOnBattleEnd;
             g_Battle.rgEnemy[i].wScriptOnReady = g_Battle.rgEnemy[wEventObjectID].wScriptOnReady;

@@ -28,6 +28,11 @@
 PAL_C_LINKAGE_BEGIN
 
 INT
+PAL_BattleSelectAutoTargetFrom(
+   INT
+);
+
+INT
 PAL_BattleSelectAutoTarget(
    VOID
 );

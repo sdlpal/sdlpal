@@ -52,6 +52,14 @@ INT
 PAL_BattleSelectAutoTarget(
    VOID
 )
+{
+   return PAL_BattleSelectAutoTargetFrom(0);
+}
+
+INT
+PAL_BattleSelectAutoTargetFrom(
+   INT begin
+)
 /*++
   Purpose:
 
@@ -59,7 +67,7 @@ PAL_BattleSelectAutoTarget(
 
   Parameters:
 
-    None.
+    [IN]  begin - the beginning target ID.
 
   Return value:
 
@@ -68,6 +76,7 @@ PAL_BattleSelectAutoTarget(
 --*/
 {
    int          i;
+   int          count;
 
    i = g_Battle.UI.iPrevEnemyTarget;
 
@@ -78,13 +87,14 @@ PAL_BattleSelectAutoTarget(
       return i;
    }
 
-   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+   for (count = 0, i = begin; count < MAX_ENEMIES_IN_TEAM; count++)
    {
       if (g_Battle.rgEnemy[i].wObjectID != 0 &&
          g_Battle.rgEnemy[i].e.wHealth > 0)
       {
          return i;
       }
+      i = ( i + 1 ) % MAX_ENEMIES_IN_TEAM;
    }
 
    return -1;
@@ -1802,8 +1812,10 @@ PAL_BattleCommitAction(
    }
    else
    {
+      SHORT target = g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget;
       g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action =
          g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].prevAction;
+      g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.sTarget = target;
 
       if (g_Battle.rgPlayer[g_Battle.UI.wCurPlayerIndex].action.ActionType == kBattleActionPass)
       {
@@ -3197,7 +3209,7 @@ PAL_BattlePlayerValidateAction(
          }
          else if (sTarget == -1)
          {
-            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTargetFrom(g_Battle.rgPlayer[wPlayerIndex].action.sTarget);
          }
 
          fToEnemy = TRUE;
@@ -3255,7 +3267,7 @@ PAL_BattlePlayerValidateAction(
          }
          else if (sTarget == -1)
          {
-            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTargetFrom(g_Battle.rgPlayer[wPlayerIndex].action.sTarget);
          }
       }
       break;
@@ -3277,7 +3289,7 @@ PAL_BattlePlayerValidateAction(
       }
       else if (g_Battle.rgPlayer[wPlayerIndex].action.sTarget == -1)
       {
-         g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
+         g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTargetFrom(g_Battle.rgPlayer[wPlayerIndex].action.sTarget);
       }
       break;
 
@@ -3339,7 +3351,7 @@ PAL_BattlePlayerValidateAction(
       {
          if (!PAL_PlayerCanAttackAll(wPlayerRole))
          {
-            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
+            g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTargetFrom(g_Battle.rgPlayer[wPlayerIndex].action.sTarget);
          }
       }
       else if (PAL_PlayerCanAttackAll(wPlayerRole))
@@ -3352,7 +3364,7 @@ PAL_BattlePlayerValidateAction(
    {
       if (g_Battle.rgEnemy[g_Battle.rgPlayer[wPlayerIndex].action.sTarget].wObjectID == 0)
       {
-         g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTarget();
+         g_Battle.rgPlayer[wPlayerIndex].action.sTarget = PAL_BattleSelectAutoTargetFrom(g_Battle.rgPlayer[wPlayerIndex].action.sTarget);
          assert(g_Battle.rgPlayer[wPlayerIndex].action.sTarget >= 0);
       }
    }
@@ -4979,7 +4991,7 @@ PAL_BattleSimulateMagic(
    }
    else if (sTarget == -1)
    {
-      sTarget = PAL_BattleSelectAutoTarget();
+      sTarget = PAL_BattleSelectAutoTargetFrom(sTarget);
    }
 
    //

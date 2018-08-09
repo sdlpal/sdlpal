@@ -1504,26 +1504,24 @@ PAL_BattleUIUpdate(
       }
       else if (g_InputState.dwKeyPress & (kKeyLeft | kKeyDown))
       {
-         if (g_Battle.UI.iSelectedIndex != 0)
+         g_Battle.UI.iSelectedIndex--;
+         if( g_Battle.UI.iSelectedIndex < 0 ) g_Battle.UI.iSelectedIndex = MAX_ENEMIES_IN_TEAM-1;
+         while (g_Battle.UI.iSelectedIndex != 0 &&
+            g_Battle.rgEnemy[g_Battle.UI.iSelectedIndex].wObjectID == 0)
          {
             g_Battle.UI.iSelectedIndex--;
-            while (g_Battle.UI.iSelectedIndex != 0 &&
-               g_Battle.rgEnemy[g_Battle.UI.iSelectedIndex].wObjectID == 0)
-            {
-               g_Battle.UI.iSelectedIndex--;
-            }
+            if( g_Battle.UI.iSelectedIndex < 0 ) g_Battle.UI.iSelectedIndex = MAX_ENEMIES_IN_TEAM-1;
          }
       }
       else if (g_InputState.dwKeyPress & (kKeyRight | kKeyUp))
       {
-         if (g_Battle.UI.iSelectedIndex < x)
+         g_Battle.UI.iSelectedIndex++;
+         if( g_Battle.UI.iSelectedIndex >= MAX_ENEMIES_IN_TEAM ) g_Battle.UI.iSelectedIndex = 0;
+         while (g_Battle.UI.iSelectedIndex < MAX_ENEMIES_IN_TEAM &&
+            g_Battle.rgEnemy[g_Battle.UI.iSelectedIndex].wObjectID == 0)
          {
             g_Battle.UI.iSelectedIndex++;
-            while (g_Battle.UI.iSelectedIndex < x &&
-               g_Battle.rgEnemy[g_Battle.UI.iSelectedIndex].wObjectID == 0)
-            {
-               g_Battle.UI.iSelectedIndex++;
-            }
+            if( g_Battle.UI.iSelectedIndex >= MAX_ENEMIES_IN_TEAM ) g_Battle.UI.iSelectedIndex = 0;
          }
       }
       break;
