@@ -1312,7 +1312,6 @@ PAL_StartBattle(
 #endif
       g_Battle.rgPlayer[i].wHidingTime = 0;
       g_Battle.rgPlayer[i].state = kFighterWait;
-      g_Battle.rgPlayer[i].action.sTarget = -1;
       g_Battle.rgPlayer[i].fDefending = FALSE;
       g_Battle.rgPlayer[i].wCurrentFrame = 0;
       g_Battle.rgPlayer[i].iColorShift = FALSE;

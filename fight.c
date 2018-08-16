@@ -3445,6 +3445,7 @@ PAL_BattlePlayerPerformAction(
    g_Battle.wMovingPlayerIndex = wPlayerIndex;
    g_Battle.iBlow = 0;
 
+   SHORT origTarget = g_Battle.rgPlayer[wPlayerIndex].action.sTarget;
    PAL_BattlePlayerValidateAction(wPlayerIndex);
    PAL_BattleBackupStat();
 
@@ -4184,6 +4185,11 @@ PAL_BattlePlayerPerformAction(
    g_Battle.rgPlayer[wPlayerIndex].flTimeMeter = 0;
 
    PAL_BattlePostActionCheck(FALSE);
+   
+   //
+   // Revert target slot of this player 
+   //
+   g_Battle.rgPlayer[wPlayerIndex].action.sTarget = origTarget;
 
 #ifndef PAL_CLASSIC
    //
