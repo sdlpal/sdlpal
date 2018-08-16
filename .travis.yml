@@ -133,9 +133,7 @@ matrix:
           - rm -rf SDL-1.2-N3DS
           - git clone https://github.com/zephray/SDL-1.2-N3DS.git
           - cd SDL-1.2-N3DS/SDL-1.2.15
-          - cp Makefile.n3ds Makefile
-          - make
-          - make install
+          - make -f Makefile.n3ds install
           - wget https://github.com/profi200/Project_CTR/releases/download/0.15/makerom_015_ctrtool.zip
           - unzip makerom_015_ctrtool.zip
           - sudo mkdir -p /opt/ctrtool/bin

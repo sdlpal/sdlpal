@@ -16,7 +16,7 @@ Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
 Copyright (c) 2011-2018, SDLPAL development team.
 All rights reserved.
 ```
-SDLPAL is distributed under the terms of GNU General Public License, version 3 (or any later version) as published by the Free Software Foundation. See [gpl.txt](gpl.txt) for details.
+SDLPAL is distributed under the terms of GNU General Public License, version 3 (or any later version) as published by the Free Software Foundation. See [LICENSE](LICENSE) for details.
 
 Many of the ideas of this program are based on documents from [PAL Research Project](https://github.com/palxex/palresearch), and portions of the code are based on the work done by Baldur and [louyihua](https://github.com/louyihua).
 
@@ -48,6 +48,8 @@ Currently, SDLPAL supports the following platforms:
 * Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*), *Linux* and *macOS*
 * Mobile platforms: *Android*, *iOS* and *Windows*
 * Home consoles: *3DS*, *WII*, *PSP* and others (some of them are not actively maintained now)
+
+Before start building, you may find some inspiration from reading [Our travis scripts](.travis.yml).
 
 To build SDLPAL, there are three major steps you need to do:
 1. Clone the source code from Github into your local folder using `git` or through corresponding GUI:
