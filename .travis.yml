@@ -246,7 +246,7 @@ before_deploy:
   - |
     $sed -i "
     s/@VERSION@/v$DATE-g$COMMIT/g
-    s/@DESC@/${TRAVIS_COMMIT_MESSAGE}/g
+    s/@DESC@/$(echo $TRAVIS_COMMIT_MESSAGE|tr '\n' ' ')}/g
     s/@RELEASE_DATE@/$(git show -s --format=%cI)/g
     s/@VCS_TAG@/$(git describe --tags)/g
     s/@AUTHOR@/$(git show -s --format=%an)/g
