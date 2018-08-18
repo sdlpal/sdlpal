@@ -18,7 +18,9 @@
 #include "SDL_stbimage.h"
 
 #define FORCE_OPENGL_CORE_PROFILE 1
-//#define SUPPORT_PARAMETER_UNIFORM 1
+#define SUPPORT_PARAMETER_UNIFORM 1
+
+#define MID_GLSLP "sdlpal.glslp"
 
 extern SDL_Window        *gpWindow;
 extern SDL_Surface       *gpScreenReal;
@@ -230,6 +232,7 @@ FragColor = blend(FragColor, COMPAT_TEXTURE(TouchOverlay , v_texCoord.xy));     
 }";
 
 static char *glslp_template = "\r\n\
+orig_filter = %s \r\n\
 shaders = 1     \r\n\
 shader0 = %s    \r\n\
 scale_type0 = absolute   \r\n\
@@ -277,13 +280,13 @@ GLuint compileShader(const char* sourceOrFilename, GLuint shaderType, int is_sou
     sprintf(pShaderBuffer,"%s\r\n","#version 100");
 #endif
 #if SUPPORT_PARAMETER_UNIFORM
-    sprintf(pShaderBuffer,"%s#define PARAMETER_UNIFORM\r\n",shaderBuffer);
-    // parse/get parameter uniforms location here
+    sprintf(pShaderBuffer,"%s#define PARAMETER_UNIFORM\r\n",pShaderBuffer);
 #endif
     // remove #pragma parameter from glsl, avoid glsl compiler（ I mean you, atom ) complains
     while((ptr = strstr(source, "#pragma parameter"))!= NULL) {
         char *ptrEnd = strchr(ptr, '\r');
         if( ptrEnd == NULL ) ptrEnd = strchr(ptr, '\n');
+        glslp_add_parameter(ptr, ptrEnd-ptr, &gGLSLP);
         while(ptr!=ptrEnd) *ptr++=' ';
     }
     sprintf(pShaderBuffer,"%s#define %s\r\n%s\r\n",pShaderBuffer,SHADER_TYPE(shaderType),is_source ? source : skip_version(source));
@@ -633,6 +636,13 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
             SetGroupUniforms(&gGLSLP.shader_params[shaderID].alias_slots,    shaderID, gGLSLP.shader_params[shaderID].alias_slots.texture_unit, false );
         }
     }
+#if SUPPORT_PARAMETER_UNIFORM
+    for( int i=0; i < gGLSLP.uniform_parameters; i++ ) {
+        uniform_param *param = &gGLSLP.uniform_params[i];
+        if( shaderID >= 0 )
+            glUniform1f(param->uniform_ids[shaderID], param->value);
+    }
+#endif
     
     SDL_Rect _srcrect,_dstrect;
     
@@ -929,6 +939,16 @@ void VIDEO_GLSL_Init() {
     }
 }
 
+static void dump_preset() {
+    FILE *fp = UTIL_OpenFileForMode(MID_GLSLP, "w");
+    if(fp) {
+        char *content = serialize_glslp(&gGLSLP);
+        fputs( content, fp );
+        free(content);
+        fclose(fp);
+    }
+}
+
 void VIDEO_GLSL_Setup() {
     SDL_GetRendererOutputSize(gpRenderer, &gRendererWidth, &gRendererHeight);
     SDL_RendererInfo rendererInfo;
@@ -1015,25 +1035,32 @@ void VIDEO_GLSL_Setup() {
     
     UTIL_LogSetPrelude(NULL);
 
-    char *origGLSL = NULL;
-
-    if( SDL_strcasecmp( strrchr(gConfig.pszShader, '.'), ".glsl") == 0 ) {
-        UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] loading %s\n", gConfig.pszShader);
-        char *tempFile = "sdlpal.glslp";
-        FILE *fp = UTIL_OpenFileForMode(tempFile, "w"); //follow retroarch spec, this folder needs to be writable
-        fputs( PAL_va( 0, glslp_template, gConfig.pszShader, gConfig.dwTextureWidth, gConfig.dwTextureHeight, "false" ), fp );
-        fclose(fp);
-        origGLSL = gConfig.pszShader;
-        gConfig.pszShader = strdup(tempFile);
+    GLSLP tempGLSLP;
+    memset(&tempGLSLP,0,sizeof(GLSLP));
+    if( access(PAL_va(0,"%s/%s",gConfig.pszGamePath,MID_GLSLP), 0) == 0 && parse_glslp(MID_GLSLP,&tempGLSLP) && tempGLSLP.orig_filter && strcmp( tempGLSLP.orig_filter, gConfig.pszShader ) == 0 ) {
+        //same file, not needed to parse again
+        memcpy(&gGLSLP,&tempGLSLP,sizeof(GLSLP));
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] load parametered filter preset\n");
     }else{
-        UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] going to parse %s\n", gConfig.pszShader);
+        char *origGLSL = NULL;
+        if( SDL_strcasecmp( strrchr(gConfig.pszShader, '.'), ".glsl") == 0 ) {
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] loading %s\n", gConfig.pszShader);
+            FILE *fp = UTIL_OpenFileForMode(MID_GLSLP, "w");
+            fputs( PAL_va( 0, glslp_template, gConfig.pszShader, gConfig.pszShader, gConfig.dwTextureWidth, gConfig.dwTextureHeight, "false" ), fp );
+            fclose(fp);
+            origGLSL = gConfig.pszShader;
+            gConfig.pszShader = strdup(MID_GLSLP);
+        }else{
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] going to parse %s\n", gConfig.pszShader);
+        }
+        parse_glslp(gConfig.pszShader,&gGLSLP);
+        if( origGLSL ) {
+            free(gConfig.pszShader);
+            gConfig.pszShader = origGLSL;
+        }
+        assert(gGLSLP.shaders > 0);
     }
-    parse_glslp(gConfig.pszShader);
-    if( origGLSL ) {
-        free(gConfig.pszShader);
-        gConfig.pszShader = origGLSL;
-    }
-    assert(gGLSLP.shaders > 0);
+    
     for( int i = 0; i < gGLSLP.shaders; i++ ) {
         if(VAOSupported) glBindVertexArray(gVAOIds[id+i]);
         glBindBuffer( GL_ARRAY_BUFFER, gVBOIds[id+i] );
@@ -1043,6 +1070,8 @@ void VIDEO_GLSL_Setup() {
         gProgramIds[id+i] = compileProgram(gGLSLP.shader_params[i].shader, gGLSLP.shader_params[i].shader, 0);
         setupShaderParams(id+i);
     }
+    // for debugging usage
+    dump_preset();
     for( int i = 0; i < gGLSLP.textures; i++ ) {
         texture_param *param = &gGLSLP.texture_params[i];
         char *texture_name = param->texture_name;
@@ -1050,8 +1079,14 @@ void VIDEO_GLSL_Setup() {
         for( int j = 0; j < gGLSLP.shaders; j++ )
             gGLSLP.texture_params[i].slots_pass[id+j] = glGetUniformLocation(gProgramIds[id+j], texture_name);
     }
+    for( int i = 0; i < gGLSLP.uniform_parameters; i++ ) {
+        uniform_param *param = &gGLSLP.uniform_params[i];
+        for( int j = 0; j < gGLSLP.shaders; j++ )
+            param->uniform_ids[j] = glGetUniformLocation(gProgramIds[id+j], param->parameter_name);
+    }
+    Filter_StepParamSlot(0);
 
-    // in case of GL2/GLES2, the LACK of above snippit makes keepaspectratio a mess.
+    // in case of GL2/GLES2, the LACK of the belowing snippit makes keepaspectratio a mess.
     // Unsure what happened.
     if( glversion_major <= 2 ) {
         id=0;
@@ -1068,7 +1103,10 @@ void VIDEO_GLSL_Setup() {
 }
 
 void VIDEO_GLSL_Destroy() {
-    destroy_glslp();
+    // for modified parameters
+    dump_preset();
+    
+    destroy_glslp(&gGLSLP);
     for( int i = 0; i < MAX_TEXTURES; i++ )
         if( framePrevTextures[i] )
             SDL_DestroyTexture(framePrevTextures[i]);
@@ -1076,4 +1114,20 @@ void VIDEO_GLSL_Destroy() {
     gpTexture = NULL;
 }
 
+static int slot = 0;
+#define CLAMP(x,a,b) (min(max(x,a),b))
+void Filter_StepParamSlot(int step) {
+    if( !gConfig.fEnableGLSL || gGLSLP.uniform_parameters <= 0 )
+        return;
+    slot = (gGLSLP.uniform_parameters + slot + step) % gGLSLP.uniform_parameters;
+    uniform_param *param = &gGLSLP.uniform_params[slot];
+    UTIL_LogOutput(LOGLEVEL_INFO, "[PARAM] slot:%s cur:%.2f range:[%.2f,%.2f]\n", param->parameter_name, param->value, param->minimum, param->maximum);
+}
+void Filter_StepCurrentParam(int step) {
+    if( !gConfig.fEnableGLSL || gGLSLP.uniform_parameters <= 0 )
+        return;
+    uniform_param *param = &gGLSLP.uniform_params[slot];
+    param->value = CLAMP( param->value + step * param->step, param->minimum, param->maximum);
+    UTIL_LogOutput(LOGLEVEL_INFO, "[PARAM] slot:%s cur:%.2f range:[%.2f,%.2f]\n", param->parameter_name, param->value, param->minimum, param->maximum);
+}
 #endif
