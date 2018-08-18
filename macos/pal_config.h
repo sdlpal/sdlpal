@@ -65,7 +65,9 @@
 #define PAL_HAS_PLATFORM_SPECIFIC_UTILS 1
 #define PAL_HAS_PLATFORM_STARTUP        1
 
-#define PAL_HAS_GLSL 1
+#if SDL_VERSION_ATLEAST(2,0,0)
+# define PAL_HAS_GLSL 1
+#endif
 
 #include <sys/time.h>
 

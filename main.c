@@ -142,11 +142,17 @@ PAL_Shutdown(
    PAL_AVIShutdown();
    PAL_FreeFont();
    PAL_FreeResources();
-   PAL_FreeGlobals();
    PAL_FreeUI();
    PAL_FreeText();
    PAL_ShutdownInput();
    VIDEO_Shutdown();
+   
+   //
+   // global needs be free in last
+   // since subsystems may needs config content during destroy
+   // which also cleared here
+   //
+   PAL_FreeGlobals();
 
    g_exit_code = exit_code;
    longjmp(g_exit_jmp_buf, 1);

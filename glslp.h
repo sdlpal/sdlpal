@@ -15,6 +15,8 @@
 #define MAX_TEXTURES 8
 #define PREV_TEXTURES (MAX_TEXTURES-1)
 
+#define MAX_PARAMETERS 200
+
 enum wrap_mode {
     WRAP_REPEAT,
     WRAP_CLAMP_TO_EDGE,
@@ -87,11 +89,21 @@ typedef struct tagTEXTUREPARAMS {
 }texture_param;
 
 typedef struct tagUNIFORMPARAMS {
-    char *uniform_key;
-    char *uniform_value;
+    //by defination
+    char *parameter_name;
+    char *desc;
+    double value;
+    double value_default;
+    double minimum;
+    double maximum;
+    double step;
+    
+    //by implementation
+    int uniform_ids[MAX_PARAMETERS];
 }uniform_param;
 
 typedef struct tagGLSLP {
+    char *orig_filter;
     int shaders;
     shader_param *shader_params;
     int textures;
@@ -104,8 +116,11 @@ extern GLSLP gGLSLP;
 
 char *get_glslp_path(const char *filename);
 
-bool parse_glslp(const char *);
+bool parse_glslp(const char *, GLSLP *);
+char *serialize_glslp(const GLSLP *);
 
-void destroy_glslp();
+void glslp_add_parameter(char *line, size_t len, GLSLP *);
+
+void destroy_glslp(GLSLP *);
 
 #endif /* glslp_h */

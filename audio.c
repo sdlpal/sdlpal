@@ -234,16 +234,12 @@ AUDIO_OpenDevice(
    {
       UTIL_LogOutput(LOGLEVEL_VERBOSE, "Available audio driver %d:%s\n", i, SDL_GetAudioDriver(i));
    }
-#ifndef __APPLE__    //SDL_GetCurrentAudioDriver causes random crash when exiting on apple platform once called
    const char* driver_name = SDL_GetCurrentAudioDriver();
    if (driver_name) {
       UTIL_LogOutput(LOGLEVEL_VERBOSE, "Audio subsystem initialized; current driver is %s.\n", driver_name);
    } else {
       UTIL_LogOutput(LOGLEVEL_VERBOSE, "Audio subsystem not initialized.\n");
    }
-#else
-   UTIL_LogOutput(LOGLEVEL_VERBOSE, "Audio subsystem initialized; current driver is coreaudio.\n");
-#endif
    for( int i = 0; i<SDL_GetNumAudioDevices(0);i++)
    {
       UTIL_LogOutput(LOGLEVEL_VERBOSE, "Available audio device %d:%s\n", i, SDL_GetAudioDeviceName(i,0));
