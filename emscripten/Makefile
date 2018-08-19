@@ -9,16 +9,18 @@ INTER=.emscripten
 
 HOST =
 
+GENERATED = -DPAL_HAS_GIT_REVISION $(shell ../scripts/gengitrev)
+
 DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
 CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../*.c)
-CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) $(wildcard ./*.cpp)
+CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) emscripten_adapter.cpp
 OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OBJFILES:.o=.d)
 
-CFLAGS = -g -Wall -O2 -fno-strict-aliasing -I. -I../ -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(DEPFLAGS) $(EMPORTS)
+CFLAGS = -g4 -Wall -O2 -fno-strict-aliasing -I. -I../ -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(DEPFLAGS) $(EMPORTS) $(GENERATED)
 CPPFLAGS = $(CFLAGS) -std=c++11
-override LDFLAGS += -O2 $(EMPORTS) --preload-file data -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -s DEMANGLE_SUPPORT=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s 'EMTERPRETIFY_FILE="sdlpal.bc"' -s WASM=1 -s NO_EXIT_RUNTIME=1  -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["Pointer_stringify"]' -s ASSERTIONS=1 -s USE_WEBGL2=1
+override LDFLAGS += -g4 -O2 $(EMPORTS) --preload-file data -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -s DEMANGLE_SUPPORT=1 -s ASYNCIFY=1 -s NO_EXIT_RUNTIME=1  -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["Pointer_stringify"]' -s USE_WEBGL2=1 -s ASSERTIONS=1 --source-map-base http://localhost:8080/
 
 POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 
@@ -38,7 +40,7 @@ $(TARGET):$(OBJFILES)
 	sh process.sh
 
 exec:$(TARGET)
-	emrun $(TARGET)
+	emrun --no_browser --port 8080 $(TARGET)
 
 clean:
 	rm -f $(TARGET) $(EMFILES) $(OBJFILES) $(DEPFILES)

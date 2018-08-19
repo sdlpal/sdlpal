@@ -275,9 +275,18 @@ GLuint compileShader(const char* sourceOrFilename, GLuint shaderType, int is_sou
     pShaderBuffer = malloc(sourceLen);
     memset(pShaderBuffer,0, sourceLen);
 #if !GLES
-    sprintf(pShaderBuffer,"#version %d%d\r\n",glslversion_major, glslversion_minor);
+    sprintf(pShaderBuffer,"#version %d%02d\r\n",glslversion_major, glslversion_minor);
 #else
-    sprintf(pShaderBuffer,"%s\r\n","#version 100");
+    sprintf(pShaderBuffer,"#version %d%02d %s\r\n", glslversion_major, glslversion_minor, glslversion_major >= 3 ? "es" : "");
+    if( SDL_GL_ExtensionSupported("GL_OES_standard_derivatives") )
+        sprintf(pShaderBuffer,"%s#extension GL_OES_standard_derivatives : enable\r\n",pShaderBuffer);
+    if( SDL_GL_ExtensionSupported("GL_EXT_shader_texture_lod") )
+        sprintf(pShaderBuffer,"%s#extension GL_EXT_shader_texture_lod : enable\r\n",pShaderBuffer);
+    
+    // should be deduced via GL_ES/GL_FRAGMENT_PRECISION_HIGH combination since both is predefined
+    // but unknown why manual define is a must for WebGL2
+    if( glslversion_major >= 3 )
+        sprintf(pShaderBuffer,"%sprecision highp float;\r\n",pShaderBuffer);
 #endif
 #if SUPPORT_PARAMETER_UNIFORM
     sprintf(pShaderBuffer,"%s#define PARAMETER_UNIFORM\r\n",pShaderBuffer);
@@ -992,11 +1001,16 @@ void VIDEO_GLSL_Setup() {
     SDL_sscanf(glslversion, "%d.%d", &glslversion_major, &glslversion_minor);
     
     // iOS native GLES supports VAO extension
-#if GLES && !defined(__APPLE__)
+#if GLES
+#if !defined(__APPLE__)
     if(!strncmp(glversion, "OpenGL ES", 9)) {
         SDL_sscanf(glversion, "OpenGL ES %d.%d", &glversion_major, &glversion_minor);
         if( glversion_major <= 2)
             VAOSupported = 0;
+    }
+#endif
+    if(!strncmp(glslversion, "OpenGL ES GLSL ES", 17)) {
+        SDL_sscanf(glslversion, "OpenGL ES GLSL ES %d.%d", &glslversion_major, &glslversion_minor);
     }
 #endif
     
