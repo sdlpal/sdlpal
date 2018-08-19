@@ -744,6 +744,8 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
     
     for( int i=0; i<MAX_INDEX; i++)
         gOrthoMatrixes[i] = GLKMatrix4MakeOrtho(0, width, 0, height, -1, 1);
+    //hack!
+    if( strstr(gConfig.pszShader,"metacrt.glslp") == NULL)
     gOrthoMatrixes[0] = GLKMatrix4MakeOrtho(0, width, height, 0, -1, 1);
 
     //
