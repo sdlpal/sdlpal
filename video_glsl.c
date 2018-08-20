@@ -779,7 +779,7 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
 
     for( int i = 0; i < gGLSLP.shaders; i++ ) {
         shader_param *param = &gGLSLP.shader_params[i];
-        shader_param *param_next_pass = &gGLSLP.shader_params[i+i];
+        shader_param *param_next_pass = &gGLSLP.shader_params[i+1];
         if( i== gGLSLP.shaders - 1 )
             param_next_pass = NULL;
         
