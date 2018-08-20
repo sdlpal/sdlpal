@@ -16,23 +16,30 @@ build_script:
 before_build:
   - |-
     git submodule update --init --recursive
-    cd winrt 
-    nuget restore SDLPal.UWP.sln 
+    cd winrt
+    if "%solution_name%"=="winrt/SDLPal.UWP.sln" nuget restore SDLPal.UWP.sln 
     cd ..
 after_build:
   - |-
     if exist win32\Win32\Release\sdlpal.exe ( cd win32\Win32\Release & 7z a ..\..\..\sdlpal-win32-msvc.zip sdlpal.exe & cd ..\..\..\ )
     for /d %%d in ("winrt\SDLPal.UWP\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-uwp.zip * & cd ..\..\..\..\ )
-    for /f %%t in ('python -c "import time;import os;print(time.strftime(""%%Y-%%m-%%d"", time.localtime(int(os.popen(""git show -s --format=%%ct"").readlines()[0]))))"') do set COMMIT_DATE=%%t
-    for /f %%t in ('git rev-parse --short HEAD') do set COMMIT_ID=%%t
-    set VERSION=v%COMMIT_DATE%-g%COMMIT_ID%
-    set BINTRAY_USER=palxex
-    set BINTRAY_REPO=sdlpal/prereleases
-    set BINTRAY_PATH=%BINTRAY_REPO%/autobuild
-    for %%f in (sdlpal-win32-msvc.zip, sdlpal-uwp.zip) DO if exist %%f ( curl -fsS -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" -X PUT "https://api.bintray.com/content/%BINTRAY_PATH%/%VERSION%/%VERSION%/%%f?override=1&publish=1" --data-binary @%%f )
-    powershell -command "Start-Sleep -s 10"
-    for %%f in (sdlpal-linux, sdlpal-win32-mingw.zip, sdlpal-wii.tar.bz2, sdlpal-3ds.cia, sdlpal-release.apk, sdlpal-impactor.ipa, sdlpal-macos.dmg, sdlpal-sdl1-macos.dmg, sdlpal-win32-msvc.zip, sdlpal-uwp.zip) DO ( curl -sS -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" -X PUT "https://api.bintray.com/file_metadata/%BINTRAY_REPO%/%VERSION%/%%f" -H "Content-Type: application/json " -d "{\"list_in_downloads\": true}" )
-  
+  - ps: >-
+      if([string]::IsNullOrEmpty($env:APPVEYOR_PULL_REQUEST_NUMBER)) {
+              python -m pip install --upgrade pip pytz
+              $COMMIT_DATE=((python -c "import time;import os;from datetime import datetime;import pytz;print(datetime.utcfromtimestamp(int(os.popen('git show -s --format=%ct').readlines()[0])).replace(tzinfo=pytz.utc).strftime('%Y-%m-%d'));")|out-string).trim()
+              $COMMIT_ID=((git rev-parse --short HEAD)|out-string).trim()
+              $VERSION="v$COMMIT_DATE-g$COMMIT_ID"
+              $BINTRAY_USER="palxex"
+              $BINTRAY_REPO="sdlpal/prereleases"
+              $BINTRAY_PATH="$BINTRAY_REPO/autobuild"
+              # remove notorious PS curl alias to use the built-in one
+              remove-item alias:curl
+              @("sdlpal-win32-msvc.zip","sdlpal-uwp.zip") | ForEach-Object -Process { curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X PUT "https://api.bintray.com/content/$BINTRAY_PATH/$VERSION/$VERSION/${_}?override=1&publish=1" --data-binary "${_}" }
+              # Wait publishing PUT processing; the latter PUT, list_in_downloads, only has effect after publish done.
+              start-sleep -s 10
+              @("sdlpal-linux", "sdlpal-win32-mingw.zip", "sdlpal-wii.tar.bz2", "sdlpal-3ds.cia", "sdlpal-release.apk", "sdlpal-impactor.ipa", "sdlpal-macos.dmg", "sdlpal-sdl1-macos.dmg", "sdlpal-win32-msvc.zip", "sdlpal-uwp.zip") | ForEach-Object -Process {  curl -gsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X PUT "https://api.bintray.com/file_metadata/$BINTRAY_REPO/$VERSION/${_}" -H "Content-Type: application/json" -d '{\"list_in_downloads\": true}' }
+              }
+
 deploy:
 - provider: GitHub
   on:
