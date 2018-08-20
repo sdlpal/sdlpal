@@ -87,7 +87,7 @@ PAL_BattleSelectAutoTargetFrom(
       return i;
    }
 
-   for (count = 0, i = begin; count < MAX_ENEMIES_IN_TEAM; count++)
+   for (count = 0, i = (begin >=0 ? begin : 0); count < MAX_ENEMIES_IN_TEAM; count++)
    {
       if (g_Battle.rgEnemy[i].wObjectID != 0 &&
          g_Battle.rgEnemy[i].e.wHealth > 0)
