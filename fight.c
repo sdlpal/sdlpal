@@ -25,7 +25,7 @@
 
 //#define INVINCIBLE 1
 
-static BOOL
+BOOL
 PAL_IsPlayerDying(
    WORD        wPlayerRole
 )

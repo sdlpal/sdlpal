@@ -32,6 +32,11 @@ PAL_BattleSelectAutoTargetFrom(
    INT
 );
 
+BOOL
+PAL_IsPlayerDying(
+   WORD
+);
+
 INT
 PAL_BattleSelectAutoTarget(
    VOID
