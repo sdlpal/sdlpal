@@ -245,8 +245,8 @@ before_deploy:
   - COMMIT=$(git rev-parse --short HEAD)
   - |
     $sed -i "
-    s/@VERSION@/v$DATE-g$COMMIT/g
-    s/@DESC@/$(echo $TRAVIS_COMMIT_MESSAGE|tr '\n' ' ')}/g
+    s/@VERSION@/v$DATE-g$COMMIT-$TRAVIS_BRANCH/g
+    s/@DESC@/$(echo -n $TRAVIS_COMMIT_MESSAGE|tr '\n' ';'|sed -e 's@[\\"]@\\&@g;s@[/&\$]@\\&@g')/g
     s/@RELEASE_DATE@/$(git show -s --format=%cI)/g
     s/@VCS_TAG@/$(git describe --tags)/g
     s/@AUTHOR@/$(git show -s --format=%an)/g

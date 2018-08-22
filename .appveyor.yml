@@ -28,13 +28,14 @@ after_build:
               python -m pip install --upgrade pip pytz
               $COMMIT_DATE=((python -c "import time;import os;from datetime import datetime;import pytz;print(datetime.utcfromtimestamp(int(os.popen('git show -s --format=%ct').readlines()[0])).replace(tzinfo=pytz.utc).strftime('%Y-%m-%d'));")|out-string).trim()
               $COMMIT_ID=((git rev-parse --short HEAD)|out-string).trim()
-              $VERSION="v$COMMIT_DATE-g$COMMIT_ID"
+              $VERSION="v$COMMIT_DATE-g$COMMIT_ID-$env:APPVEYOR_REPO_BRANCH"
               $BINTRAY_USER="palxex"
               $BINTRAY_REPO="sdlpal/prereleases"
               $BINTRAY_PATH="$BINTRAY_REPO/autobuild"
               # remove notorious PS curl alias to use the built-in one
               remove-item alias:curl
               @("sdlpal-win32-msvc.zip","sdlpal-uwp.zip") | ForEach-Object -Process { curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X PUT "https://api.bintray.com/content/$BINTRAY_PATH/$VERSION/$VERSION/${_}?override=1&publish=1" --data-binary "${_}" }
+              curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X POST "https://api.bintray.com/packages/$BINTRAY_PATH/versions/$VERSION/attributes" -H "Content-Type: application/json" -d "[ {\""name\"": \""Author\"", \""values\"" : [\""$(git show -s --format=%an)\""], \""type\"": \""string\""}, {\""name\"": \""AuthorDate\"", \""values\"" : [\""$(git show -s --format=%ai)\""], \""type\"": \""string\""}, {\""name\"": \""Commiter\"",   \""values\"" : [\""$(git show -s --format=%cn)\""], \""type\"": \""string\""}, {\""name\"": \""Branch\"", \""values\"" : [\""${env:APPVEYOR_REPO_BRANCH}\""], \""type\"": \""string\""}, {\""name\"": \""CommitID\"", \""values\"" : [\""$(git show -s --format=%h)\""], \""type\"": \""string\""}]"
               # Wait publishing PUT processing; the latter PUT, list_in_downloads, only has effect after publish done.
               start-sleep -s 10
               @("sdlpal-linux", "sdlpal-win32-mingw.zip", "sdlpal-wii.tar.bz2", "sdlpal-3ds.cia", "sdlpal-release.apk", "sdlpal-impactor.ipa", "sdlpal-macos.dmg", "sdlpal-sdl1-macos.dmg", "sdlpal-win32-msvc.zip", "sdlpal-uwp.zip") | ForEach-Object -Process {  curl -gsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X PUT "https://api.bintray.com/file_metadata/$BINTRAY_REPO/$VERSION/${_}" -H "Content-Type: application/json" -d '{\"list_in_downloads\": true}' }
