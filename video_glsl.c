@@ -1120,7 +1120,8 @@ void VIDEO_GLSL_Setup() {
 
 void VIDEO_GLSL_Destroy() {
     // for modified parameters
-    dump_preset();
+    if( gGLSLP.shaders > 0 )
+        dump_preset();
     
     destroy_glslp(&gGLSLP);
     for( int i = 0; i < MAX_TEXTURES; i++ )
