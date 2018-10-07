@@ -2780,6 +2780,7 @@ PAL_InterpretInstruction(
             g_Battle.rgEnemy[i].iColorShift = 0;
          }
       }
+      g_Battle.rgEnemy[wCurEventObjectID].e.wHealth = (g_Battle.rgEnemy[wEventObjectID].e.wHealth+w)/(w+1);
 
       PAL_LoadBattleSprites();
 
