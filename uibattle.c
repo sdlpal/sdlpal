@@ -66,7 +66,7 @@ PAL_PlayerInfoBox(
    const BYTE      rgStatusPos[kStatusAll][2] =
    {
       {35, 19},  // confused
-      {0, 0},    // slow
+      {44, 12},  // slow
       {54, 1},   // sleep
       {55, 20},  // silence
       {0, 0},    // puppet
@@ -79,7 +79,7 @@ PAL_PlayerInfoBox(
    const WORD      rgwStatusWord[kStatusAll] =
    {
       0x1D,  // confused
-      0x00,  // slow
+      0x1B,  // slow
       0x1C,  // sleep
       0x1A,  // silence
       0x00,  // puppet
@@ -92,7 +92,7 @@ PAL_PlayerInfoBox(
    const BYTE      rgbStatusColor[kStatusAll] =
    {
       0x5F,  // confused
-      0x00,  // slow
+      0xBF,  // slow
       0x0E,  // sleep
       0x3C,  // silence
       0x00,  // puppet
