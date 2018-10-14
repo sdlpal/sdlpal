@@ -1445,7 +1445,7 @@ PAL_BattleStartFrame(
 
                j++;
 
-               if (g_Battle.rgEnemy[i].e.wDualMove * 50 + RandomLong(0, 100) > 100)
+               if (g_Battle.rgEnemy[i].e.wDualMove)
                {
                   g_Battle.ActionQueue[j].fIsEnemy = TRUE;
                   g_Battle.ActionQueue[j].wIndex = i;
