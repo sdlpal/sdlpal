@@ -1157,6 +1157,8 @@ PAL_IncreaseHPMP(
 --*/
 {
    BOOL           fSuccess = FALSE;
+   WORD           wOrigHP = gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole];
+   WORD           wOrigMP = gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole];
 
    //
    // Only care about alive players
@@ -1195,7 +1197,12 @@ PAL_IncreaseHPMP(
             gpGlobals->g.PlayerRoles.rgwMaxMP[wPlayerRole];
       }
 
-      fSuccess = TRUE;
+      //
+      // Avoid over treatment
+      //
+      if (wOrigHP != gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] ||
+          wOrigMP != gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole])
+         fSuccess = TRUE;
    }
 
    return fSuccess;

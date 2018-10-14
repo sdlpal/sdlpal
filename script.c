@@ -841,13 +841,15 @@ PAL_InterpretInstruction(
       //
       if (pScript->rgwOperand[0])
       {
+         g_fScriptSuccess = FALSE;
          //
          // Apply to everyone
          //
          for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
          {
             w = gpGlobals->rgParty[i].wPlayerRole;
-            PAL_IncreaseHPMP(w, (SHORT)(pScript->rgwOperand[1]), 0);
+            if (PAL_IncreaseHPMP(w, (SHORT)(pScript->rgwOperand[1]), 0))
+               g_fScriptSuccess = TRUE;
          }
       }
       else

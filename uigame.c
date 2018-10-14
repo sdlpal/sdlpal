@@ -744,7 +744,8 @@ PAL_InGameMagicMenu(
             gpGlobals->g.rgObject[wMagic].magic.wScriptOnSuccess =
                PAL_RunTriggerScript(gpGlobals->g.rgObject[wMagic].magic.wScriptOnSuccess, 0);
 
-            gpGlobals->g.PlayerRoles.rgwMP[gpGlobals->rgParty[w].wPlayerRole] -=
+            if(g_fScriptSuccess)
+               gpGlobals->g.PlayerRoles.rgwMP[gpGlobals->rgParty[w].wPlayerRole] -=
                gpGlobals->g.lprgMagic[gpGlobals->g.rgObject[wMagic].magic.wMagicNumber].wCostMP;
          }
 
