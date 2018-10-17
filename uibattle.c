@@ -656,7 +656,7 @@ PAL_BattleUIUseItem(
 #ifdef PAL_CLASSIC
             g_Battle.UI.iSelectedIndex = 0;
 #else
-            g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
+            g_Battle.UI.iSelectedIndex = g_Battle.UI.wCurPlayerIndex;
 #endif
             g_Battle.UI.state = kBattleUISelectTargetPlayer;
          }
@@ -1140,7 +1140,7 @@ PAL_BattleUIUpdate(
 #ifdef PAL_CLASSIC
                         g_Battle.UI.iSelectedIndex = 0;
 #else
-                        g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
+                        g_Battle.UI.iSelectedIndex = g_Battle.UI.wCurPlayerIndex;
 #endif
                         g_Battle.UI.state = kBattleUISelectTargetPlayer;
                      }
@@ -1331,7 +1331,7 @@ PAL_BattleUIUpdate(
 #ifdef PAL_CLASSIC
                         g_Battle.UI.iSelectedIndex = 0;
 #else
-                        g_Battle.UI.wSelectedIndex = g_Battle.UI.wCurPlayerIndex;
+                        g_Battle.UI.iSelectedIndex = g_Battle.UI.wCurPlayerIndex;
 #endif
                         g_Battle.UI.state = kBattleUISelectTargetPlayer;
                      }
@@ -1630,7 +1630,7 @@ PAL_BattleUIUpdate(
       }
       else if (g_InputState.dwKeyPress & kKeySearch)
       {
-         g_Battle.UI.wSelectedIndex = (WORD)-1;
+         g_Battle.UI.iSelectedIndex = -1;
          PAL_BattleCommitAction(FALSE);
       }
 #endif
@@ -1677,7 +1677,7 @@ PAL_BattleUIUpdate(
       }
       else if (g_InputState.dwKeyPress & kKeySearch)
       {
-         g_Battle.UI.wSelectedIndex = (WORD)-1;
+         g_Battle.UI.iSelectedIndex = -1;
          PAL_BattleCommitAction(FALSE);
       }
 #endif
