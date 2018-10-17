@@ -915,6 +915,8 @@ PAL_BattleUpdateFighters(
    {
       wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
 
+      if(!g_Battle.rgPlayer[i].fDefending)
+         g_Battle.rgPlayer[i].pos = g_Battle.rgPlayer[i].posOriginal;
       g_Battle.rgPlayer[i].iColorShift = 0;
 
       if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0)
