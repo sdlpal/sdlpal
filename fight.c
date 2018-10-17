@@ -915,7 +915,8 @@ PAL_BattleUpdateFighters(
    {
       wPlayerRole = gpGlobals->rgParty[i].wPlayerRole;
 
-      g_Battle.rgPlayer[i].pos = g_Battle.rgPlayer[i].posOriginal;
+      if(!g_Battle.rgPlayer[i].fDefending)
+         g_Battle.rgPlayer[i].pos = g_Battle.rgPlayer[i].posOriginal;
       g_Battle.rgPlayer[i].iColorShift = 0;
 
       if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0)
@@ -1446,7 +1447,7 @@ PAL_BattleStartFrame(
 
                j++;
 
-               if (g_Battle.rgEnemy[i].e.wDualMove * 50 + RandomLong(0, 100) > 100)
+               if (g_Battle.rgEnemy[i].e.wDualMove)
                {
                   g_Battle.ActionQueue[j].fIsEnemy = TRUE;
                   g_Battle.ActionQueue[j].wIndex = i;
@@ -1567,6 +1568,10 @@ PAL_BattleStartFrame(
          for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
          {
             g_Battle.rgPlayer[i].fDefending = FALSE;
+            //
+            // Restore player pos from MANUAL defending
+            //
+            g_Battle.rgPlayer[i].pos = g_Battle.rgPlayer[i].posOriginal;
          }
 
          //
@@ -4805,7 +4810,6 @@ PAL_BattleEnemyPerformAction(
       g_Battle.rgPlayer[sTarget].wCurrentFrame = wFrameBak;
       PAL_BattleDelay(1, 0, TRUE);
 
-      g_Battle.rgPlayer[sTarget].pos = g_Battle.rgPlayer[sTarget].posOriginal;
       PAL_BattleDelay(4, 0, TRUE);
 
       PAL_BattleUpdateFighters();

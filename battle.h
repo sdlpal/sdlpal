@@ -81,9 +81,11 @@ typedef struct tagBATTLEENEMY
    WORD               wCurrentFrame;          // current frame number
    FIGHTERSTATE       state;                  // state of this enemy
 
+#ifndef PAL_CLASSIC
    BOOL               fTurnStart;
    BOOL               fFirstMoveDone;
    BOOL               fDualMove;
+#endif
 
    WORD               wScriptOnTurnStart;
    WORD               wScriptOnBattleEnd;
