@@ -44,8 +44,9 @@
 PAL_C_LINKAGE char* stoupper(char* s)
 {
 	char* p = strdup(s);
+	char* p1 = p;
 	while (*p = toupper(*p)) p++;
-	return s;
+	return p1;
 }
 
 #define ComboBox_AddString(hwndDlg, idCtrl, lpsz) \

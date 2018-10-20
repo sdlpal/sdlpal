@@ -441,6 +441,15 @@
     <ClInclude Include="..\..\adplug\opltypes.h">
       <Filter>adplug</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\mini_glloader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\video_glsl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\glslp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\adplug\binfile.cpp">
@@ -691,6 +700,9 @@
     </ClCompile>
     <ClCompile Include="..\..\adplug\mame_opls.cpp">
       <Filter>adplug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\adplug\nuked_opl.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

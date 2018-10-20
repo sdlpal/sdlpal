@@ -137,6 +137,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <PreBuildEvent>
       <Command>$(SolutionDir)../scripts/gengitrev.bat</Command>
@@ -150,6 +151,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <PreBuildEvent>
       <Command>$(SolutionDir)../scripts/gengitrev.bat</Command>
@@ -163,6 +165,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <PreBuildEvent>
       <Command>$(SolutionDir)../scripts/gengitrev.bat</Command>
@@ -176,6 +179,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <PreBuildEvent>
       <Command>$(SolutionDir)../scripts/gengitrev.bat</Command>
@@ -189,6 +193,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <PreBuildEvent>
       <Command>$(SolutionDir)../scripts/gengitrev.bat</Command>
@@ -202,6 +207,7 @@
       <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <PreBuildEvent>
       <Command>$(SolutionDir)../scripts/gengitrev.bat</Command>
