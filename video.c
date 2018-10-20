@@ -1221,7 +1221,7 @@ VIDEO_SetWindowTitle(
 --*/
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_SetWindowTitle(gpWindow, pszTitle);
+	SDL_SetWindowTitle(gpWindow, PAL_CONVERT_UTF8(pszTitle));
 #else
 	SDL_WM_SetCaption(pszTitle, NULL);
 #endif

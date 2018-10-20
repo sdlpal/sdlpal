@@ -74,4 +74,8 @@ PAL_C_LINKAGE char* stoupper(char* s);
 
 #define PAL_HAS_PLATFORM_STARTUP 1
 
+#ifdef __MINGW__
+#define PAL_CONVERT_UTF8 SDL_iconv_utf8_locale
+#endif
+
 #include <stdbool.h>
