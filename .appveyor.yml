@@ -34,7 +34,18 @@ after_build:
               $BINTRAY_PATH="$BINTRAY_REPO/autobuild"
               # remove notorious PS curl alias to use the built-in one
               remove-item alias:curl
-              @("sdlpal-win32-msvc.zip","sdlpal-uwp.zip") | ForEach-Object -Process { curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X PUT "https://api.bintray.com/content/$BINTRAY_PATH/$VERSION/$VERSION/${_}?override=1&publish=1" --data-binary "${_}" }
+              # create version
+              $DESC=$env:APPVEYOR_REPO_COMMIT_MESSAGE
+              $RELEASE_DATE=(git show -s --format=%cI)
+              $VCS_TAG=(git describe --tags)
+              $AUTHOR=(git show -s --format=%an)
+              $AUTHOR_DATE=(git show -s --format=%ai)
+              $CIMMITER=(git show -s --format=%cn)
+              $BRANCH=$env:APPVEYOR_REPO_BRANCH
+              $COMMITID=(git show -s --format=%h)
+              curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X POST -d "{\""name\"":\""$VERSION\"", \""desc\"": \""$DESC\"", \""released\"": \""$RELEASE_DATE\"", \""vcs_t ag\"": \""$VCS_TAG\"", \""attributes\"": [ {\""name\"": \""Author\"",\""values\"" : [\""$AUTHOR\""],   \""type\"": \""string\""}, {\""name\"": \""AuthorDate\"",\""values\"" : [\""$AUTHOR_DATE\""],   \""type\"": \""string\""}, {\""name\"": \""Commiter\"",\""values\"" : [\""$CIMMITER\""], \""type\"": \""string\""}, {\""name\"": \""Branch\"",\""values\"" : [\""$BRANCH\""],   \""type\"": \""string\""}, {\""name\"": \""CommitID\"", \""values\"" : [\""$COMMITID\""], \""type\"": \""string\""} ]}" "https://api.bintray.com/packages/$BINTRAY_PATH/versions"  -H "Content-Type: application/json"
+              # upload artifacts
+              @("sdlpal-win32-msvc.zip","sdlpal-uwp.zip") | ForEach-Object -Process { curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X PUT "https://api.bintray.com/content/$BINTRAY_PATH/$VERSION/$VERSION/${_}?override=1&publish=1" -T "${_}" }
               curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X POST "https://api.bintray.com/packages/$BINTRAY_PATH/versions/$VERSION/attributes" -H "Content-Type: application/json" -d "[ {\""name\"": \""Author\"", \""values\"" : [\""$(git show -s --format=%an)\""], \""type\"": \""string\""}, {\""name\"": \""AuthorDate\"", \""values\"" : [\""$(git show -s --format=%ai)\""], \""type\"": \""string\""}, {\""name\"": \""Commiter\"",   \""values\"" : [\""$(git show -s --format=%cn)\""], \""type\"": \""string\""}, {\""name\"": \""Branch\"", \""values\"" : [\""${env:APPVEYOR_REPO_BRANCH}\""], \""type\"": \""string\""}, {\""name\"": \""CommitID\"", \""values\"" : [\""$(git show -s --format=%h)\""], \""type\"": \""string\""}]"
               # Wait publishing PUT processing; the latter PUT, list_in_downloads, only has effect after publish done.
               start-sleep -s 10

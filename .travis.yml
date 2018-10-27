@@ -243,10 +243,11 @@ before_deploy:
     fi
   - DATE=$($date -d $(git show -s --format=%cI) "+%F")
   - COMMIT=$(git rev-parse --short HEAD)
+  - set -f
   - |
     $sed -i "
     s/@VERSION@/v$DATE-g$COMMIT-$TRAVIS_BRANCH/g
-    s/@DESC@//g
+    s/@DESC@/$(echo -n $TRAVIS_COMMIT_MESSAGE|tr '\r' '\\r'|tr '\n' '\\n'|sed -e 's@[\\"]@\\&@g;s@[/&\$]@\\&@g')/g
     s/@RELEASE_DATE@/$(git show -s --format=%cI)/g
     s/@VCS_TAG@/$(git describe --tags)/g
     s/@AUTHOR@/$(git show -s --format=%an)/g
@@ -255,6 +256,7 @@ before_deploy:
     s/@BRANCH@/$TRAVIS_BRANCH/g
     s/@COMMITID@/$(git show -s --format=%h)/g
     " bintray.json
+  - set +f
   - cat bintray.json
 
 deploy:
