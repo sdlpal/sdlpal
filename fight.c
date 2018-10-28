@@ -341,20 +341,16 @@ PAL_GetPlayerActualDexterity(
       wDexterity *= 2;
       wDexterity /= 3;
    }
-#endif
 
    if (PAL_IsPlayerDying(wPlayerRole))
    {
       //
       // player who is low of HP should be slower
       //
-#ifdef PAL_CLASSIC
-      wDexterity /= 2;
-#else
       wDexterity *= 4;
       wDexterity /= 5;
-#endif
    }
+#endif
 
 #ifdef PAL_CLASSIC
    if (wDexterity > 999)
