@@ -309,21 +309,23 @@ static char *GLSLP_basename(const char *filename) {
 }
 
 static char *GLSLP_reflow(char *path) {
-	char *ptrBeforeDot;
-	while ((ptrBeforeDot = strstr(path, "..")) != NULL) {
+	char *ptr;
+	while ((ptr = strstr(path, "..")) != NULL) {
 		char *dup = strdup(path);
-		dup[ptrBeforeDot - path - 1] = '\0';
+		dup[ptr - path - 1] = '\0';
 		dup = GLSLP_basename(dup);
-		sprintf(path, "%s/%s", dup, ptrBeforeDot + 3);
+		sprintf(path, "%s/%s", dup, ptr + 3);
 		free(dup);
 	}
+	while ((ptr = strstr(path, "/")) != NULL)
+		*ptr = PAL_NATIVE_PATH_SEPARATOR[0];
 	return path;
 }
 
 char *get_glslp_path(const char *filename) {
     char *path = (char*)filename;
     if( !UTIL_IsAbsolutePath(filename) )
-        path = PAL_va(0, "%s/%s", gConfig.pszShaderPath, filename);
+        path = PAL_va(0, "%s%s%s", gConfig.pszShaderPath, PAL_NATIVE_PATH_SEPARATOR, filename);
 #if __WINRT__
     //seems M$ decided fobidden parent referencing. avoid sandbox escaping?
 	GLSLP_reflow(path);
@@ -425,7 +427,7 @@ bool parse_glslp(const char *filename, GLSLP *pGLSLP) {
                         break;
                     }
                     case TOKEN_TEXTURE_PATH:
-                        t_param->texture_path = strdup((UTIL_IsAbsolutePath(value) || strcmp(basedir, "./") == 0) ? value : PAL_va(0,"%s/%s",basedir,value));
+                        t_param->texture_path = strdup((UTIL_IsAbsolutePath(value) || strcmp(basedir, "./") == 0) ? value : PAL_va(0,"%s%s%s",basedir,PAL_NATIVE_PATH_SEPARATOR,value));
                         break;
                     case TOKEN_TEXTURE_WRAP_MODE:
                         t_param->wrap_mode = string_to_wrap_mode(value);

@@ -231,6 +231,10 @@ typedef const WCHAR        *LPCWSTR;
 # define PAL_CONVERT_UTF8(s) s
 #endif
 
+#ifndef PAL_NATIVE_PATH_SEPARATOR
+# define PAL_NATIVE_PATH_SEPARATOR "/"
+#endif
+
 #define PAL_fread(buf, elem, num, fp) if (fread((buf), (elem), (num), (fp)) < (num)) return -1
 
 typedef enum tagLOGLEVEL

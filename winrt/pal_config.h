@@ -53,6 +53,7 @@
 
 #define PAL_FILESYSTEM_IGNORE_CASE 1
 
+#define PAL_NATIVE_PATH_SEPARATOR "\\"
 #define PAL_PATH_SEPARATORS "\\/"
 
 #define PAL_IS_PATH_SEPARATOR(x) ((x) == '\\' || (x) == '/')
@@ -61,7 +62,8 @@
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 
-#define strcasestr(a,b) strstr(_strupr((a)),_strupr((b)))
+PAL_C_LINKAGE char* strcasestr(const char *, const char *);
+#define PAL_NEED_STRCASESTR 1
 
 #if WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
 #define PAL_HAS_GLSL 1

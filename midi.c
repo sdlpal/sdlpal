@@ -67,7 +67,7 @@ MIDI_Play(
 
 	if (gConfig.fIsWIN95)
 	{
-		g_pMidi = native_midi_loadsong(UTIL_GetFullPathName(PAL_BUFFER_SIZE_ARGS(0), gConfig.pszGamePath, PAL_va(1, "Musics/%.3d.mid", iNumRIX)));
+		g_pMidi = native_midi_loadsong(UTIL_GetFullPathName(PAL_BUFFER_SIZE_ARGS(0), gConfig.pszGamePath, PAL_va(1, "Musics%s%.3d.mid", PAL_NATIVE_PATH_SEPARATOR, iNumRIX)));
 	}
 
 	if (!g_pMidi)

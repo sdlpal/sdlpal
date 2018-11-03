@@ -67,8 +67,8 @@
 #define strdup _strdup //https://msdn.microsoft.com/en-us/library/ms235454(v=vs.140).aspx 
 #endif
 
-PAL_C_LINKAGE char* stoupper(char* s);
-#define strcasestr(a,b) strstr(stoupper((a)),stoupper((b)))
+PAL_C_LINKAGE char* strcasestr(const char *, const char *);
+#define PAL_NEED_STRCASESTR 1
 
 #define PAL_HAS_GLSL 1
 
