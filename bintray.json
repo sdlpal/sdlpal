@@ -1,7 +1,7 @@
 {
     "package": {
-        "name": "autobuild",
-        "repo": "prereleases",
+        "name": "@BRANCH@",
+        "repo": "nightly",
         "subject": "sdlpal",
         "desc": "I was pushed completely automatically",
         "website_url": "https://sdlpal.github.io",

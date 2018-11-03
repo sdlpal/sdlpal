@@ -28,12 +28,14 @@ after_build:
               python -m pip install --upgrade pip pytz
               $COMMIT_DATE=((python -c "import time;import os;from datetime import datetime;import pytz;print(datetime.utcfromtimestamp(int(os.popen('git show -s --format=%ct').readlines()[0])).replace(tzinfo=pytz.utc).strftime('%Y-%m-%d'));")|out-string).trim()
               $COMMIT_ID=((git rev-parse --short HEAD)|out-string).trim()
-              $VERSION="v$COMMIT_DATE-g$COMMIT_ID-$env:APPVEYOR_REPO_BRANCH"
+              $VERSION="v$COMMIT_DATE-g$COMMIT_ID"
               $BINTRAY_USER="palxex"
-              $BINTRAY_REPO="sdlpal/prereleases"
-              $BINTRAY_PATH="$BINTRAY_REPO/autobuild"
+              $BINTRAY_REPO="sdlpal/nightly"
+              $BINTRAY_PATH="$BINTRAY_REPO/$env:APPVEYOR_REPO_BRANCH"
               # remove notorious PS curl alias to use the built-in one
               remove-item alias:curl
+              # create package
+              curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X POST -d "{\""name\"":\""$env:APPVEYOR_REPO_BRANCH\"", \""desc\"": \""I was pushed completely automatically\"", \""labels\"": [\""game\"", \""c\"", \""rpg\""], \""licenses\"": [\""GPL-3.0\""], \""vcs_url\"": \""https://github.com/sdlpal/sdlpal.git\"", \""website_url\"": \""https://sdlpal.github.io\"", \""issue_tracker_url\"": \""https://github.com/sdlpal/sdlpal/issues\"", \""github_repo\"": \""sdlpal/sdlpal\"", \""public_download_numbers\"": true, \""public_stats\"": true}"  "https://api.bintray.com/packages/$BINTRAY_REPO"  -H "Content-Type: application/json"
               # create version
               $DESC=$env:APPVEYOR_REPO_COMMIT_MESSAGE
               $RELEASE_DATE=(git show -s --format=%cI)
