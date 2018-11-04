@@ -29,14 +29,15 @@ This program made extensive use of the following libraries:
 * [FLTK](http://www.fltk.org)
 * OPL player from [Adplug](http://adplug.sourceforge.net/)
 * OPL emulation cores from [DOSBOX project](http://www.dosbox.com), [MAME project](http://mamedev.org/) and [Chocolate Doom project](https://github.com/chocolate-doom/chocolate-doom)
-* Audio resampler from [foo_input_adplug](https://github.com/kode54/foo_input_adplug)
+* Audio resampler from [foo_input_adplug](https://www.foobar2000.org/components/view/foo_input_adplug)
 * AVI player from [ffmpeg](https://ffmpeg.org/)
+* Image decoder from [stb](https://github.com/nothings/stb)
 
 This program does **NOT** include any code or data files of the original game, which are proprietary and copyrighted by [SoftStar](http://www.softstar.com.tw/) Inc.
 
 ## FAQ
 
-See [wiki](../../../wiki)
+See [wiki](../../wiki)
 
 ## Chat Room
 
