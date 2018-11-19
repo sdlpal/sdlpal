@@ -40,6 +40,8 @@
 
 #include "palcfg.h"
 
+#import "Config.h"
+
 static int forward_argc;
 static char **forward_argv;
 static int exit_status;
@@ -70,6 +72,12 @@ int sdlpal_main(int argc, char **argv)
 
     return exit_status;
 }
+
+@interface SDLPalAppDelegate ()
+/** in settings or in game? */
+@property (nonatomic) BOOL isInGame;
+
+@end
 
 @implementation SDLPalAppDelegate
 
@@ -106,9 +114,12 @@ int sdlpal_main(int argc, char **argv)
 #undef SDL_IPHONE_LAUNCHSCREEN
 
 - (void)launchGame {
+    self.isInGame = YES;
+    
     SDL_SetMainReady();
     [self performSelector:@selector(postFinishLaunch) withObject:nil afterDelay:0.0];
     [self.window setBackgroundColor:[UIColor blackColor]];
+    
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -118,11 +129,10 @@ int sdlpal_main(int argc, char **argv)
 }
 - (void)restart {
     PAL_LoadConfig(YES);
-    NSString *documentPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] path];
-    if( getppid() != 1)
-        NSLog(@"document path:%@",documentPath);
-    BOOL crashed = [[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/running",documentPath]];
-    if( gConfig.fLaunchSetting || crashed ) {
+    
+    if( gConfig.fLaunchSetting || [self crashed] ) {
+        self.isInGame = NO;
+
         self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
         UIViewController *vc = [sb instantiateInitialViewController];
@@ -131,6 +141,14 @@ int sdlpal_main(int argc, char **argv)
     }else{
         [self launchGame];
     }
+}
+
+- (BOOL)crashed {
+    NSString *documentPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] path];
+    if( getppid() != 1)
+        NSLog(@"document path:%@",documentPath);
+    BOOL crashed = [[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/running",documentPath]];
+    return crashed;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -144,6 +162,19 @@ int sdlpal_main(int argc, char **argv)
 }
 
 #if !TARGET_OS_TV
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    // if not in game. support all orientation
+    if (!self.isInGame) {
+        return UIInterfaceOrientationMaskAll;
+    }
+    
+    if (Config.defaultConfig.isLandscape) {
+        return UIInterfaceOrientationMaskLandscape;
+    }
+    
+    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+}
+
 - (void)application:(UIApplication *)application didChangeStatusBarOrientation:(UIInterfaceOrientation)oldStatusBarOrientation
 {
     BOOL isLandscape = UIInterfaceOrientationIsLandscape(application.statusBarOrientation);

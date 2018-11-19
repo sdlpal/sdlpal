@@ -78,7 +78,10 @@
 "yup-CB-6Rc.text" = "日誌記錄級別";
 
 /* Class = "UILabel"; text = "SmoothScaling"; ObjectID = "VQA-I8-2Wf"; */
-"VQA-I8-2Wf.text" = "平滑縮放";
+"VQA-I8-2Wf.text" = "平滑縮放"
+
+/* Class = "UILabel"; text = "Landscape"; ObjectID = "9SY-7p-jhf"; */
+"9SY-7p-jhf.text" = "熒幕橫置";
 
 "XwQ-GI-OlM.headerTitle" = "濾鏡";
 "ryw-EG-AOY.text" = "啟用GLSL";

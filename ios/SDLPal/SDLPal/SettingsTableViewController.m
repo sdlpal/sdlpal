@@ -19,6 +19,8 @@
 
 #define UIKitLocalizedString(key) [[NSBundle bundleWithIdentifier:@"com.apple.UIKit"] localizedStringForKey:key value:@"" table:nil]
 
+#import "Config.h"
+
 @implementation SettingsTableViewController {
     NSArray *AudioSampleRates;
     NSArray *AudioBufferSizes;
@@ -50,6 +52,7 @@
     
     IBOutlet UISwitch *toggleGLSL;
     IBOutlet UISwitch *toggleHDR;
+    IBOutlet UISwitch *toggleIsLandscape;
     IBOutlet UILabel *lblShader;
     IBOutlet UITextField *textTextureWidth;
     IBOutlet UITextField *textTextureHeight;
@@ -190,7 +193,7 @@ typedef void(^SelectedBlock)(NSString *selected);
             rows = 2;
             break;
         case 2:
-            rows = 4;
+            rows = 5;
             break;
         case 3:
             rows = [toggleGLSL isOn] ? 3 : 1;
@@ -220,6 +223,9 @@ typedef void(^SelectedBlock)(NSString *selected);
         toggleTouchScreenOverlay.on = !toggleTouchScreenOverlay.isOn;
     }else if( indexPath.section == 2 && indexPath.row == 1 ) { //keep aspect
         toggleKeepAspect.on = !toggleKeepAspect.isOn;
+    }else if( indexPath.section == 2 && indexPath.row == 4 ){ //is landScape
+        toggleIsLandscape.on = !toggleIsLandscape.isOn;
+        [self landscapeSwitchValueChanged:toggleIsLandscape];
     }else if( indexPath.section == 3 && indexPath.row == 0 ) { //Enable GLSL
         toggleGLSL.on = !toggleGLSL.isOn;
         [self.tableView reloadData];
@@ -291,6 +297,11 @@ typedef void(^SelectedBlock)(NSString *selected);
                          [[SDLPalAppDelegate sharedAppDelegate] launchGame];
                      }];
 }
+- (IBAction)landscapeSwitchValueChanged:(UISwitch *)sender {
+    Config.defaultConfig.isLandscape = sender.isOn;
+    // TODO: manipulate Device orientation
+    // function Invocation (later)
+}
 
 - (void)readConfigs {
     gConfig.fFullScreen = YES; //iOS specific; need this to make sure statusbar hidden in game completely
@@ -303,6 +314,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     toggleSurroundOPL.on    = gConfig.fUseSurroundOPL;
     toggleGLSL.on           = gConfig.fEnableGLSL;
     toggleHDR.on            = gConfig.fEnableHDR;
+    toggleIsLandscape.on = Config.defaultConfig.isLandscape;
     
     toggleTouchScreenOverlay.on = gConfig.fUseTouchOverlay;
     toggleKeepAspect.on         = gConfig.fKeepAspectRatio;
@@ -360,6 +372,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     gConfig.iResampleQuality = sliderResampleQuality.value;
     
     gConfig.iLogLevel = (LOGLEVEL)[LogLevels indexOfObject:lblLogLevel.text];
+    
+    Config.defaultConfig.isLandscape = toggleIsLandscape.isOn;
 }
 
 @end

@@ -80,6 +80,9 @@
 /* Class = "UILabel"; text = "SmoothScaling"; ObjectID = "VQA-I8-2Wf"; */
 "VQA-I8-2Wf.text" = "平滑缩放";
 
+/* Class = "UILabel"; text = "Landscape"; ObjectID = "9SY-7p-jhf"; */
+"9SY-7p-jhf.text" = "橫屏";
+
 "XwQ-GI-OlM.headerTitle" = "滤镜";
 "ryw-EG-AOY.text" = "启用GLSL";
 "Pnp-pv-bI9.text" = "启用HDR";

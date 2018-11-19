@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0147072721A25F1F00A6BC69 /* Config.m in Sources */ = {isa = PBXBuildFile; fileRef = 0147072621A25F1F00A6BC69 /* Config.m */; };
 		57FB00ED1B7A4FEA005FCF4C /* mame_opls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57FB00E81B7A4FEA005FCF4C /* mame_opls.cpp */; };
 		57FB01421B7A50B0005FCF4C /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB00FB1B7A50B0005FCF4C /* analysis.c */; };
 		57FB01431B7A50B0005FCF4C /* bitrate.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB00FD1B7A50B0005FCF4C /* bitrate.c */; };
@@ -141,6 +142,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0147072521A25F1F00A6BC69 /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		0147072621A25F1F00A6BC69 /* Config.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Config.m; sourceTree = "<group>"; };
 		2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SDLPal.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		57FB00E81B7A4FEA005FCF4C /* mame_opls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mame_opls.cpp; sourceTree = "<group>"; };
 		57FB00E91B7A4FEA005FCF4C /* mame_opls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mame_opls.h; sourceTree = "<group>"; };
@@ -667,6 +670,8 @@
 				C604417A1ED9AF3C006C7A7C /* Settings.storyboard */,
 				C6743A851ECCAFC600AEF782 /* SettingsTableViewController.h */,
 				C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */,
+				0147072521A25F1F00A6BC69 /* Config.h */,
+				0147072621A25F1F00A6BC69 /* Config.m */,
 				C6153B9F1EEE2ECD00DFFCAA /* Localizable.strings */,
 			);
 			name = "Supporting Files";
@@ -1017,6 +1022,7 @@
 				71655265195BB6DB006E1227 /* fight.c in Sources */,
 				71655266195BB6DB006E1227 /* font.c in Sources */,
 				71655267195BB6DB006E1227 /* game.c in Sources */,
+				0147072721A25F1F00A6BC69 /* Config.m in Sources */,
 				C622BE661E474B5E000C8970 /* audio.c in Sources */,
 				71655269195BB6DB006E1227 /* global.c in Sources */,
 				C635057F1EA6578700186049 /* native_midi_common.c in Sources */,
