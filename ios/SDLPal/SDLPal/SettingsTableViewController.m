@@ -220,8 +220,6 @@ typedef void(^SelectedBlock)(NSString *selected);
         toggleTouchScreenOverlay.on = !toggleTouchScreenOverlay.isOn;
     }else if( indexPath.section == 2 && indexPath.row == 1 ) { //keep aspect
         toggleKeepAspect.on = !toggleKeepAspect.isOn;
-    }else if( indexPath.section == 2 && indexPath.row == 2 ) { //smooth scaling
-        toggleSmoothScaling.on = !toggleSmoothScaling.isOn;
     }else if( indexPath.section == 3 && indexPath.row == 0 ) { //Enable GLSL
         toggleGLSL.on = !toggleGLSL.isOn;
         [self.tableView reloadData];
