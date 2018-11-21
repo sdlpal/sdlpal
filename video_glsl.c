@@ -1102,7 +1102,8 @@ void VIDEO_GLSL_Setup() {
     }
     Filter_StepParamSlot(0);
 
-    // in case of GL2/GLES2, the LACK of the belowing snippit makes keepaspectratio a mess.
+#if !GLES
+    // in case of GL2, the LACK of the belowing snippit makes keepaspectratio a mess.
     // Unsure what happened.
     if( glversion_major <= 2 ) {
         id=0;
@@ -1112,6 +1113,7 @@ void VIDEO_GLSL_Setup() {
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gEBOId );
         setupShaderParams(id);
     }
+#endif
     
     if(VAOSupported) glBindVertexArray(0);
 
