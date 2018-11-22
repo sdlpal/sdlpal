@@ -1102,8 +1102,8 @@ void VIDEO_GLSL_Setup() {
     }
     Filter_StepParamSlot(0);
 
-#if !GLES
-    // in case of GL2, the LACK of the belowing snippit makes keepaspectratio a mess.
+#if !__IOS__
+    // in case of GL2/GLES2(except iOS), the LACK of the belowing snippit makes keepaspectratio a mess.
     // Unsure what happened.
     if( glversion_major <= 2 ) {
         id=0;
