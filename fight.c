@@ -3412,6 +3412,31 @@ PAL_BattleCheckHidingEffect(
    }
 }
 
+INT
+FIGHT_DetectMagicTargetChange(
+   WORD wMagicNum,
+   INT sTarget
+)
+{
+   if(sTarget == -1 && (
+                        gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeNormal
+                        || gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeApplyToPlayer
+                        || gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeTrance
+                        ))
+      sTarget = 0;
+   
+   if( sTarget != -1 && (
+                         gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeAttackAll
+                         || gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeAttackWhole
+                         || gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeAttackField
+                         || gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeApplyToParty
+                         || gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon
+                         ))
+      sTarget = -1;
+
+   return sTarget;
+}
+
 VOID
 PAL_BattlePlayerPerformAction(
    WORD         wPlayerIndex
@@ -3676,6 +3701,8 @@ PAL_BattlePlayerPerformAction(
    case kBattleActionCoopMagic:
       wObject = PAL_GetPlayerCooperativeMagic(gpGlobals->rgParty[wPlayerIndex].wPlayerRole);
       wMagicNum = gpGlobals->g.rgObject[wObject].magic.wMagicNumber;
+
+      sTarget = FIGHT_DetectMagicTargetChange(wMagicNum, sTarget);
 
       if (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon)
       {
@@ -3957,6 +3984,8 @@ PAL_BattlePlayerPerformAction(
    case kBattleActionMagic:
       wObject = g_Battle.rgPlayer[wPlayerIndex].action.wActionID;
       wMagicNum = gpGlobals->g.rgObject[wObject].magic.wMagicNumber;
+
+      sTarget = FIGHT_DetectMagicTargetChange(wMagicNum, sTarget);
 
       PAL_BattleShowPlayerPreMagicAnim(wPlayerIndex,
          (gpGlobals->g.lprgMagic[wMagicNum].wType == kMagicTypeSummon));
