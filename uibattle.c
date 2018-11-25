@@ -1457,6 +1457,10 @@ PAL_BattleUIUpdate(
          g_Battle.UI.iPrevEnemyTarget = x;
          if( g_Battle.UI.iSelectedIndex == -1 )
             g_Battle.UI.iSelectedIndex = x;
+         else
+             for (g_Battle.UI.iSelectedIndex = 0; g_Battle.UI.iSelectedIndex < MAX_ENEMIES_IN_TEAM; g_Battle.UI.iSelectedIndex++)
+                 if (g_Battle.rgEnemy[g_Battle.UI.iSelectedIndex].wObjectID != 0)
+                     break;
          PAL_BattleCommitAction(FALSE);
          break;
       }
