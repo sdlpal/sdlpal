@@ -580,6 +580,11 @@ PAL_InitGameData(
    INT           iSaveSlot
 );
 
+INT
+PAL_CountItem(
+   WORD          wObjectID
+);
+
 BOOL
 PAL_AddItemToInventory(
    WORD          wObjectID,

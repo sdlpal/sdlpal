@@ -929,6 +929,69 @@ PAL_InitGameData(
    PAL_UpdateEquipments();
 }
 
+INT
+PAL_CountItem(
+   WORD          wObjectID
+)
+/*++
+ Purpose:
+ 
+ Count the specified kind of item in the inventory AND in players' equipments.
+ 
+ Parameters:
+ 
+ [IN]  wObjectID - object number of the item.
+ 
+ Return value:
+ 
+ Counted value.
+ 
+ --*/
+{
+    int          index;
+    int          count;
+    int          i,j,w;
+
+    if (wObjectID == 0)
+    {
+        return FALSE;
+    }
+    
+    index = 0;
+    count = 0;
+    
+    //
+    // Search for the specified item in the inventory
+    //
+    while (index < MAX_INVENTORY)
+    {
+        if (gpGlobals->rgInventory[index].wItem == wObjectID)
+        {
+            count = gpGlobals->rgInventory[index].nAmount;
+            break;
+        }
+        else if (gpGlobals->rgInventory[index].wItem == 0)
+        {
+            break;
+        }
+        index++;
+    }
+    
+    for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+    {
+        w = gpGlobals->rgParty[i].wPlayerRole;
+        
+        for (j = 0; j < MAX_PLAYER_EQUIPMENTS; j++)
+        {
+            if (gpGlobals->g.PlayerRoles.rgwEquipment[j][w] == wObjectID)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
 BOOL
 PAL_AddItemToInventory(
    WORD          wObjectID,

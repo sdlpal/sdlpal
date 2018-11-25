@@ -949,18 +949,18 @@ PAL_InterpretInstruction(
       //
       // Remove item from inventory
       //
-      if (!PAL_AddItemToInventory(pScript->rgwOperand[0],
-         -((pScript->rgwOperand[1] == 0) ? 1 : pScript->rgwOperand[1])))
+      x = pScript->rgwOperand[1];
+      if (x == 0)
+      {
+         x = 1;
+      }
+      if (x <= PAL_CountItem(pScript->rgwOperand[0]) || pScript->rgwOperand[2] == 0)
+      {
+      if (!PAL_AddItemToInventory(pScript->rgwOperand[0], -x))
       {
          //
          // Try removing equipped item
          //
-         x = pScript->rgwOperand[1];
-         if (x == 0)
-         {
-            x = 1;
-         }
-
          for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
          {
             w = gpGlobals->rgParty[i].wPlayerRole;
@@ -980,12 +980,10 @@ PAL_InterpretInstruction(
                }
             }
          }
-
-         if (x > 0 && pScript->rgwOperand[2] != 0)
-         {
-            wScriptEntry = pScript->rgwOperand[2] - 1;
-         }
       }
+      }
+      else
+          wScriptEntry = pScript->rgwOperand[2] - 1;
       break;
 
    case 0x0021:
