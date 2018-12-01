@@ -97,8 +97,8 @@ PAL_CalcCoverTiles(
    int             x, y, i, l, iTileHeight;
    LPCBITMAPRLE    lpTile;
 
-   const int       sx = PAL_X(gpGlobals->viewport) + PAL_X(lpSpriteToDraw->pos);
-   const int       sy = PAL_Y(gpGlobals->viewport) + PAL_Y(lpSpriteToDraw->pos);
+   const int       sx = PAL_X(gpGlobals->viewport) + PAL_X(lpSpriteToDraw->pos) - lpSpriteToDraw->iLayer/2;
+   const int       sy = PAL_Y(gpGlobals->viewport) + PAL_Y(lpSpriteToDraw->pos) - lpSpriteToDraw->iLayer;
    const int       sh = ((sx % 32) ? 1 : 0);
 
    const int       width = PAL_RLEGetWidth(lpSpriteToDraw->lpSpriteFrame);
