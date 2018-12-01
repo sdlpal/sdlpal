@@ -307,6 +307,17 @@ PAL_KeyboardEventFilter(
             PAL_Shutdown(0);
          }
       }
+      else if (lpEvent->key.keysym.mod & KMOD_CTRL)
+      {
+         if (lpEvent->key.keysym.sym == SDLK_1)
+         {
+            flagCHEAT = !flagCHEAT;
+         }
+         else if (lpEvent->key.keysym.sym == SDLK_2)
+         {
+            flagDEBUG = !flagDEBUG;
+         }
+      }
       else if (lpEvent->key.keysym.sym == SDLK_p)
       {
          VIDEO_SaveScreenshot();

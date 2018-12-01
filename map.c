@@ -413,6 +413,11 @@ PAL_MapBlitToSurface(
                lpBitmap = PAL_MapGetTileBitmap(0, 0, 0, ucLayer, lpMap);
             }
             PAL_RLEBlitToSurface(lpBitmap, lpSurface, PAL_XY(xPos, yPos));
+             
+            if (flagDEBUG && PAL_MapTileIsBlocked(x, y, h, lpMap))
+            {
+               DEBUG_AddTileToDraw(xPos, yPos, 0, 0x1F);
+            }
          }
       }
    }

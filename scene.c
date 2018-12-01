@@ -37,6 +37,22 @@ typedef struct tagSPRITE_TO_DRAW
 static SPRITE_TO_DRAW    g_rgSpriteToDraw[MAX_SPRITE_TO_DRAW];
 static int               g_nSpriteToDraw;
 
+typedef struct tagDEBUGTILE_TO_DRAW
+{
+   LPCBITMAPRLE     lpSpriteFrame; // pointer to the frame bitmap
+   PAL_POS          pos;           // position on the scene
+   int              iLayer;        // logical layer
+   int              iColor;
+} DEBUGTILE_TO_DRAW;
+
+bool enable_debugTile;
+
+DEBUGTILE_TO_DRAW g_rgDebugTileToDraw[MAX_SPRITE_TO_DRAW];
+int               g_nDebugTileToDraw;
+
+int flagCHEAT;
+int flagDEBUG;
+
 static VOID
 PAL_AddSpriteToDraw(
    LPCBITMAPRLE     lpSpriteFrame,
@@ -72,6 +88,53 @@ PAL_AddSpriteToDraw(
    g_rgSpriteToDraw[g_nSpriteToDraw].iLayer = iLayer;
 
    g_nSpriteToDraw++;
+}
+
+VOID
+DEBUG_AddTileToDraw(
+   int              x,
+   int              y,
+   int              iLayer,
+   int              iColor
+)
+/*++
+ Purpose:
+ 
+ Add a debug tile to our list of drawing.
+ 
+ Parameters:
+
+ [IN]  x - the X coordinate on the screen.
+ 
+ [IN]  y - the Y coordinate on the screen.
+ 
+ [IN]  iLayer - the layer of the sprite.
+ 
+ [IN]  iColor - the color of the border.
+
+ Return value:
+ 
+ None.
+ 
+ --*/
+{
+   assert(g_nDebugTileToDraw < MAX_SPRITE_TO_DRAW);
+   bool bFound = false;
+   
+   DEBUGTILE_TO_DRAW tempTile;
+   tempTile.pos = PAL_XY(x, y);
+   tempTile.iLayer = iLayer;
+   tempTile.iColor = iColor;
+   
+   for( int i = 0; i < g_nDebugTileToDraw; i++)
+      if( memcmp(&g_rgDebugTileToDraw[i], &tempTile, sizeof(DEBUGTILE_TO_DRAW)) == 0 ){
+         bFound = true;
+         return;
+      }
+   
+   g_rgDebugTileToDraw[g_nDebugTileToDraw] = tempTile;
+
+   g_nDebugTileToDraw++;
 }
 
 static VOID
@@ -159,6 +222,12 @@ PAL_CalcCoverTiles(
                lpTile = PAL_MapGetTileBitmap(dx, dy, dh, l, PAL_GetCurrentMap());
                iTileHeight = (signed char)PAL_MapGetTileHeight(dx, dy, dh, l, PAL_GetCurrentMap());
 
+               if( flagDEBUG && enable_debugTile )
+                  DEBUG_AddTileToDraw(dx * 32 + dh * 16 - 16 - PAL_X(gpGlobals->viewport),
+                                           dy * 16 + dh * 8 + 7 + l + iTileHeight * 8 - PAL_Y(gpGlobals->viewport),
+                                           iTileHeight * 8 + l,
+                                           0xCF);
+
                //
                // Check if this tile may cover the sprites
                //
@@ -176,6 +245,37 @@ PAL_CalcCoverTiles(
          }
       }
    }
+}
+
+VOID
+SCENE_DrawDebugTile(
+    LPCBITMAPRLE lpRLE,
+    PAL_POS pos,
+    INT color
+)
+{
+    INT x = PAL_X(pos);
+    INT y = PAL_Y(pos);
+    for( int dx = 0; dx < 32; dx++)
+        for( int dy = 0; dy < 16; dy++)
+            if( y+dy > 0 && y+dy < 200 && dx+x > 0 && dx+x < 320)
+            {
+#define CL(v,r) ((v<r) ? v : (2*r-v))
+                int a=CL(dx,16);
+                int b=CL(dy,8);
+                if((a+2*b)/2==8)
+                    ((LPBYTE)gpScreen->pixels)[(y+dy) * gpScreen->pitch + x+dx] = color;
+            }
+}
+VOID SCENE_FlushDebugTiles() {
+   int x,y;
+   for(int i = 0; i < g_nDebugTileToDraw; i ++ ) {
+      DEBUGTILE_TO_DRAW *p = &g_rgDebugTileToDraw[i];
+      x = PAL_X(p->pos);
+      y = PAL_Y(p->pos) - p->iLayer;
+      SCENE_DrawDebugTile(p->lpSpriteFrame, PAL_XY(x,y), p->iColor);
+   }
+   g_nDebugTileToDraw = 0;
 }
 
 static VOID
@@ -319,7 +419,9 @@ PAL_SceneDrawSprites(
       //
       // Calculate covering map tiles
       //
+      enable_debugTile = true;
       PAL_CalcCoverTiles(&g_rgSpriteToDraw[g_nSpriteToDraw - 1]);
+      enable_debugTile = false;
    }
 
    //
@@ -359,7 +461,11 @@ PAL_SceneDrawSprites(
       y = PAL_Y(p->pos) - PAL_RLEGetHeight(p->lpSpriteFrame) - p->iLayer;
 
       PAL_RLEBlitToSurface(p->lpSpriteFrame, gpScreen, PAL_XY(x, y));
+      if(flagDEBUG)
+         SCENE_DrawDebugTile(p->lpSpriteFrame, PAL_XY(x, y), 0x5F);
    }
+   if(flagDEBUG)
+      SCENE_FlushDebugTiles();
 }
 
 VOID
@@ -528,6 +634,8 @@ PAL_CheckObstacle(
 
 --*/
 {
+   if(flagCHEAT)
+      return false;
    int x, y, h, xr, yr;
    int blockX = PAL_X(gpGlobals->partyoffset)/32, blockY = PAL_Y(gpGlobals->partyoffset)/16;
 

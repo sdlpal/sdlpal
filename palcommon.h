@@ -25,6 +25,17 @@
 
 #include "common.h"
 
+extern int flagCHEAT;
+extern int flagDEBUG;
+
+VOID
+DEBUG_AddTileToDraw(
+   int              x,
+   int              y,
+   int              iLayer,
+   int              iColor
+);
+
 typedef LPBYTE      LPSPRITE, LPBITMAPRLE;
 typedef LPCBYTE     LPCSPRITE, LPCBITMAPRLE;
 
