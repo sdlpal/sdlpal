@@ -37,6 +37,11 @@ PAL_IsPlayerDying(
    WORD
 );
 
+BOOL
+PAL_IsPlayerHealthy(
+   WORD     wPlayerRole
+);
+
 INT
 PAL_BattleSelectAutoTarget(
    VOID
