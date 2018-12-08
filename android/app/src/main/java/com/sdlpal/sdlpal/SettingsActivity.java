@@ -177,7 +177,8 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String gamePath = ((EditText)findViewById(R.id.edFolder)).getText().toString();
                 String msgFile = ((EditText)findViewById(R.id.edMsgFile)).getText().toString();
-                if (!checkResourceFiles(gamePath, msgFile)) {
+                File fileMsg =new File(msgFile);
+                if (!checkResourceFiles(gamePath, fileMsg.getName())) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(mInstance);
                     builder.setMessage(getString(R.string.msg_data_not_found_header) + "\n" +
                             gamePath + "\n\n" +
