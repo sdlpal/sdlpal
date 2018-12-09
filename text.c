@@ -1320,7 +1320,7 @@ PAL_DialogWaitForKey(
    PAL_DialogWaitForKeyWithMaximumSeconds(0);
 }
 
-static int
+int
 TEXT_DisplayText(
    LPCWSTR        lpszText,
    int            x,

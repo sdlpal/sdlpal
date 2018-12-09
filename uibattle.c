@@ -1469,6 +1469,10 @@ PAL_BattleUIUpdate(
       {
          g_Battle.UI.iSelectedIndex = x;
       }
+      else if (g_Battle.UI.iSelectedIndex < 0)
+      {
+         g_Battle.UI.iSelectedIndex = 0;
+      }
 
       for (i = 0; i <= x; i++)
       {
