@@ -50,10 +50,11 @@ PAL_BattleMakeScene(
 
 --*/
 {
-   int          i;
+   int          i,j;
    PAL_POS      pos;
    LPBYTE       pSrc, pDst;
    BYTE         b;
+   INT          enemyDrawSeq[MAX_ENEMIES_IN_TEAM];
 
    //
    // Draw the background
@@ -83,11 +84,24 @@ PAL_BattleMakeScene(
 
    PAL_ApplyWave(g_Battle.lpSceneBuf);
 
+   memset(&enemyDrawSeq,-1,sizeof(enemyDrawSeq));
+   // sort by y
+   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++ )
+      enemyDrawSeq[i] = i;
+   for(i=0;i<MAX_ENEMIES_IN_TEAM-g_Battle.wMaxEnemyIndex;i++)
+       for(j=i+1;j<MAX_ENEMIES_IN_TEAM-g_Battle.wMaxEnemyIndex;j++)
+           if( PAL_Y(g_Battle.rgEnemy[i].pos) < PAL_Y(g_Battle.rgEnemy[j].pos) ) {
+               INT tmp = enemyDrawSeq[i];
+               enemyDrawSeq[i]=enemyDrawSeq[j];
+               enemyDrawSeq[j]=tmp;
+           }
+
    //
    // Draw the enemies
    //
-   for (i = g_Battle.wMaxEnemyIndex; i >= 0; i--)
+   for (j = g_Battle.wMaxEnemyIndex; j >= 0; j--)
    {
+      i = enemyDrawSeq[j];
       pos = g_Battle.rgEnemy[i].pos;
 
       if (g_Battle.rgEnemy[i].rgwStatus[kStatusConfused] > 0 &&
