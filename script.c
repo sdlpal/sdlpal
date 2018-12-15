@@ -2757,6 +2757,8 @@ PAL_InterpretInstruction(
       {
          w = 1;
       }
+      x = w + 1;
+      y = w;
 
       //division does not limited by original team layout
       for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
@@ -2770,7 +2772,7 @@ PAL_InterpretInstruction(
 
             g_Battle.rgEnemy[i].wObjectID = g_Battle.rgEnemy[wEventObjectID].wObjectID;
             g_Battle.rgEnemy[i].e = g_Battle.rgEnemy[wEventObjectID].e;
-            g_Battle.rgEnemy[i].e.wHealth = (g_Battle.rgEnemy[wEventObjectID].e.wHealth+w)/(w+1);
+            g_Battle.rgEnemy[i].e.wHealth = (g_Battle.rgEnemy[wEventObjectID].e.wHealth+y)/x;
             g_Battle.rgEnemy[i].wScriptOnTurnStart = g_Battle.rgEnemy[wEventObjectID].wScriptOnTurnStart;
             g_Battle.rgEnemy[i].wScriptOnBattleEnd = g_Battle.rgEnemy[wEventObjectID].wScriptOnBattleEnd;
             g_Battle.rgEnemy[i].wScriptOnReady = g_Battle.rgEnemy[wEventObjectID].wScriptOnReady;
@@ -2778,9 +2780,15 @@ PAL_InterpretInstruction(
             g_Battle.rgEnemy[i].state = kFighterWait;
             g_Battle.rgEnemy[i].flTimeMeter = 50;
             g_Battle.rgEnemy[i].iColorShift = 0;
+
          }
       }
-      g_Battle.rgEnemy[wCurEventObjectID].e.wHealth = (g_Battle.rgEnemy[wEventObjectID].e.wHealth+w)/(w+1);
+      g_Battle.rgEnemy[wCurEventObjectID].e.wHealth = (g_Battle.rgEnemy[wEventObjectID].e.wHealth+y)/x;
+
+      for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
+         if (g_Battle.rgEnemy[i].wObjectID == 0 || g_Battle.rgEnemy[i].e.wHealth == 0)
+            break;
+      g_Battle.wMaxEnemyIndex = i - 1;
 
       PAL_LoadBattleSprites();
 
