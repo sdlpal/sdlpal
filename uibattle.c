@@ -1156,7 +1156,7 @@ PAL_BattleUIUpdate(
                   // Misc menu
                   //
                   g_Battle.UI.MenuState = kBattleMenuMisc;
-                  g_iCurMiscMenuItem = 0;
+//                  g_iCurMiscMenuItem = 0; //disabled due to not same as both original version
                   break;
                }
             }
@@ -1367,7 +1367,7 @@ PAL_BattleUIUpdate(
                case 1: // item
 #endif
                   g_Battle.UI.MenuState = kBattleMenuMiscItemSubMenu;
-                  g_iCurSubMenuItem = 0;
+//                  g_iCurSubMenuItem = 0; //disabled due to not same as both original version
                   break;
 
 #ifdef PAL_CLASSIC
