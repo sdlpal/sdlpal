@@ -3373,10 +3373,10 @@ PAL_BattlePlayerValidateAction(
          if (i > gpGlobals->wMaxPartyMemberIndex)
          {
             //
-            // Attack enemies if no one else is alive
+            // DISABLE Attack enemies if no one else is alive; since original version behaviour is not same
             //
-            fToEnemy = TRUE;
-            g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionAttack;
+//            fToEnemy = TRUE;
+            g_Battle.rgPlayer[wPlayerIndex].action.ActionType = kBattleActionPass;
             g_Battle.rgPlayer[wPlayerIndex].action.wActionID = 0;
          }
       }
