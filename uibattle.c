@@ -709,6 +709,7 @@ PAL_BattleUIThrowItem(
             if(g_Battle.UI.iPrevEnemyTarget != -1)
                g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
             g_Battle.UI.state = kBattleUISelectTargetEnemy;
+            g_Battle.UI.iSelectedIndex = 0;
          }
       }
       else
@@ -1099,6 +1100,7 @@ PAL_BattleUIUpdate(
                      if(g_Battle.UI.iPrevEnemyTarget != -1)
                         g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
                      g_Battle.UI.state = kBattleUISelectTargetEnemy;
+                     g_Battle.UI.iSelectedIndex = 0;
                   }
                   break;
 
@@ -1131,6 +1133,7 @@ PAL_BattleUIUpdate(
                         if(g_Battle.UI.iPrevEnemyTarget != -1)
                            g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
                         g_Battle.UI.state = kBattleUISelectTargetEnemy;
+                        g_Battle.UI.iSelectedIndex = 0;
                      }
                   }
                   else
@@ -1322,6 +1325,7 @@ PAL_BattleUIUpdate(
                         if(g_Battle.UI.iPrevEnemyTarget != -1)
                            g_Battle.UI.iSelectedIndex = g_Battle.UI.iPrevEnemyTarget;
                         g_Battle.UI.state = kBattleUISelectTargetEnemy;
+                        g_Battle.UI.iSelectedIndex = 0;
                      }
                   }
                   else
@@ -1458,7 +1462,7 @@ PAL_BattleUIUpdate(
       //
       if (y == 1)
       {
-         g_Battle.UI.iPrevEnemyTarget = x;
+//         g_Battle.UI.iPrevEnemyTarget = x;  //disabled due to not same as both original version
          if( g_Battle.UI.iSelectedIndex == -1 )
             g_Battle.UI.iSelectedIndex = x;
          else
@@ -1511,7 +1515,7 @@ PAL_BattleUIUpdate(
       }
       else if (g_InputState.dwKeyPress & kKeySearch)
       {
-         g_Battle.UI.iPrevEnemyTarget = g_Battle.UI.iSelectedIndex;
+//         g_Battle.UI.iPrevEnemyTarget = g_Battle.UI.iSelectedIndex; //disabled due to not same as both original version
          PAL_BattleCommitAction(FALSE);
       }
       else if (g_InputState.dwKeyPress & (kKeyLeft | kKeyDown))
