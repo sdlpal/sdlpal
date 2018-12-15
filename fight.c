@@ -4379,6 +4379,37 @@ PAL_BattlePlayerPerformAction(
 }
 
 static INT
+PAL_BattleEnemySelectEnemyTargetIndex(
+   VOID
+)
+/*++
+ Purpose:
+
+ Select a attackable enemy randomly.
+
+ Parameters:
+
+ None.
+
+ Return value:
+
+ None.
+
+ --*/
+{
+   int i;
+
+   i = RandomLong(0, g_Battle.wMaxEnemyIndex);
+
+   while (g_Battle.rgEnemy[i].wObjectID == 0 || g_Battle.rgEnemy[i].e.wHealth == 0)
+   {
+      i = RandomLong(0, g_Battle.wMaxEnemyIndex);
+   }
+
+   return i;
+}
+
+static INT
 PAL_BattleEnemySelectTargetIndex(
    VOID
 )
@@ -4452,7 +4483,68 @@ PAL_BattleEnemyPerformAction(
    }
    else if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusConfused] > 0)
    {
-      // TODO
+      INT  iTarget = PAL_BattleEnemySelectEnemyTargetIndex();
+      if( iTarget == wEnemyIndex )
+         goto end;
+      INT  iX = PAL_X(g_Battle.rgEnemy[iTarget].pos);
+      INT  iY = PAL_Y(g_Battle.rgEnemy[iTarget].pos);
+      for (i = 0; i < 3; i++)
+      {
+         x = PAL_X(g_Battle.rgEnemy[wEnemyIndex].pos);
+         y = PAL_Y(g_Battle.rgEnemy[wEnemyIndex].pos);
+
+         x += iX;
+         y += iY;
+
+         x /= 2;
+         y /= 2;
+
+         g_Battle.rgEnemy[wEnemyIndex].pos = PAL_XY(x, y);
+
+         PAL_BattleDelay(1, 0, TRUE);
+      }
+
+      DWORD dwTime = SDL_GetTicks() + BATTLE_FRAME_TIME;
+      x = (PAL_X(g_Battle.rgEnemy[wEnemyIndex].pos)+PAL_X(g_Battle.rgEnemy[iTarget].pos))/2;
+      y = PAL_Y(g_Battle.rgEnemy[iTarget].pos)-PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[iTarget].lpSprite,0))/3+10;
+      for( i=9; i<12; i++ )
+      {
+         LPCBITMAPRLE b = PAL_SpriteGetFrame(g_Battle.lpEffectSprite, i);
+
+         PAL_DelayUntil(dwTime);
+         dwTime = SDL_GetTicks() + BATTLE_FRAME_TIME;
+
+         PAL_BattleMakeScene();
+         VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
+
+         PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+
+         PAL_BattleUIUpdate();
+
+         VIDEO_UpdateScreen(NULL);
+      }
+
+      int str = (SHORT)g_Battle.rgEnemy[wEnemyIndex].e.wAttackStrength;
+      str += (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 6;
+      int def = (SHORT)g_Battle.rgEnemy[iTarget].e.wDefense;
+      def += (g_Battle.rgEnemy[iTarget].e.wLevel + 6) * 4;
+      sDamage = PAL_CalcBaseDamage(str, def)*2/g_Battle.rgEnemy[iTarget].e.wPhysicalResistance;
+
+      if (sDamage <= 0)
+      {
+         sDamage = 1;
+      }
+
+      g_Battle.rgEnemy[iTarget].e.wHealth -= sDamage;
+
+      PAL_BattleDisplayStatChange();
+      PAL_BattleShowPostMagicAnim();
+      PAL_BattleDelay(5, 0, TRUE);
+
+      g_Battle.rgEnemy[wEnemyIndex].pos = g_Battle.rgEnemy[wEnemyIndex].posOriginal;
+      PAL_BattleDelay(2, 0, TRUE);
+
+      PAL_BattlePostActionCheck(FALSE);
    }
    else if (wMagic != 0 &&
       RandomLong(0, 9) < g_Battle.rgEnemy[wEnemyIndex].e.wMagicRate &&
