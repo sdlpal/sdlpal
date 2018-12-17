@@ -1454,7 +1454,7 @@ PAL_AddPoisonForPlayer(
    {
       gpGlobals->rgPoisonStatus[i][index].wPoisonID = wPoisonID;
       gpGlobals->rgPoisonStatus[i][index].wPoisonScript =
-         gpGlobals->g.rgObject[wPoisonID].poison.wPlayerScript;
+		  PAL_RunTriggerScript(gpGlobals->g.rgObject[wPoisonID].poison.wPlayerScript, wPlayerRole);
    }
 }
 
