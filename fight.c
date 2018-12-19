@@ -70,7 +70,9 @@ PAL_IsPlayerHealthy(
    return (!PAL_IsPlayerDying(wPlayerRole) &&
            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSleep] == 0 &&
            gpGlobals->rgPlayerStatus[wPlayerRole][kStatusConfused] == 0 &&
-           gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] == 0);
+           gpGlobals->rgPlayerStatus[wPlayerRole][kStatusSilence] == 0) &&
+           gpGlobals->rgPlayerStatus[wPlayerRole][kStatusParalyzed] == 0) &&
+           gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet] == 0);
 }
 
 INT
