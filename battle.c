@@ -1376,6 +1376,7 @@ PAL_StartBattle(
    g_Battle.fForce = FALSE;
    g_Battle.fFlee = FALSE;
    g_Battle.fPrevAutoAtk = FALSE;
+   g_Battle.fThisTurnCoop = FALSE;
 #endif
 
    //
