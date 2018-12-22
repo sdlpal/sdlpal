@@ -22,6 +22,8 @@
 
 #include "main.h"
 
+static BOOL __buymenu_firsttime_render;
+
 static WORD GetSavedTimes(int iSaveSlot)
 {
 	FILE *fp = UTIL_OpenFileAtPath(gConfig.pszSavePath, PAL_va(0, "%d.rpg", iSaveSlot));
@@ -1518,6 +1520,8 @@ PAL_BuyMenu_OnItemChange(
    int                 i, n;
    PAL_LARGE BYTE      bufImage[2048];
 
+   if( __buymenu_firsttime_render )
+      PAL_RLEBlitToSurfaceWithShadow(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX), gpScreen, PAL_XY(35+6, 8+6), TRUE);
    //
    // Draw the picture of current selected item
    //
@@ -1527,6 +1531,8 @@ PAL_BuyMenu_OnItemChange(
    if (PAL_MKFReadChunk(bufImage, 2048,
       gpGlobals->g.rgObject[wCurrentItem].item.wBitmap, gpGlobals->f.fpBALL) > 0)
    {
+      if( __buymenu_firsttime_render )
+         PAL_RLEBlitToSurfaceWithShadow(bufImage, gpScreen, PAL_XY(42+6, 16+6), TRUE);
       PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(42, 16));
    }
 
@@ -1548,21 +1554,29 @@ PAL_BuyMenu_OnItemChange(
       }
    }
 
+   if( __buymenu_firsttime_render )
+      PAL_CreateSingleLineBoxWithShadow(PAL_XY(20, 105), 5, FALSE, 6);
+   else
    //
    // Draw the amount of this item in the inventory
    //
-   PAL_CreateSingleLineBox(PAL_XY(20, 105), 5, FALSE);
+   PAL_CreateSingleLineBoxWithShadow(PAL_XY(20, 105), 5, FALSE, 0);
    PAL_DrawText(PAL_GetWord(BUYMENU_LABEL_CURRENT), PAL_XY(30, 115), 0, FALSE, FALSE, FALSE);
    PAL_DrawNumber(n, 6, PAL_XY(69, 119), kNumColorYellow, kNumAlignRight);
 
+   if( __buymenu_firsttime_render )
+      PAL_CreateSingleLineBoxWithShadow(PAL_XY(20, 145), 5, FALSE, 6);
+   else
    //
    // Draw the cash amount
    //
-   PAL_CreateSingleLineBox(PAL_XY(20, 145), 5, FALSE);
+   PAL_CreateSingleLineBoxWithShadow(PAL_XY(20, 145), 5, FALSE, 0);
    PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(30, 155), 0, FALSE, FALSE, FALSE);
    PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(69, 159), kNumColorYellow, kNumAlignRight);
 
    VIDEO_UpdateScreen(&rect);
+   
+   __buymenu_firsttime_render = FALSE;
 }
 
 VOID
@@ -1626,6 +1640,7 @@ PAL_BuyMenu(
    VIDEO_UpdateScreen(&rect);
 
    w = 0;
+   __buymenu_firsttime_render = TRUE;
 
    while (TRUE)
    {
