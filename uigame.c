@@ -894,8 +894,8 @@ PAL_InventoryMenu(
    MENUITEM        rgMenuItem[2] =
    {
       // value  label                     enabled   pos
-      { 1,      INVMENU_LABEL_USE,        TRUE,     PAL_XY(43, 73) },
-      { 2,      INVMENU_LABEL_EQUIP,      TRUE,     PAL_XY(43, 73 + 18) },
+      { 1,      INVMENU_LABEL_EQUIP,      TRUE,     PAL_XY(43, 73) },
+      { 2,      INVMENU_LABEL_USE,        TRUE,     PAL_XY(43, 73 + 18) },
    };
 
    PAL_CreateBox(PAL_XY(30, 60), 1, PAL_MenuTextMaxWidth(rgMenuItem, sizeof(rgMenuItem)/sizeof(MENUITEM)) - 1, 0, FALSE);
@@ -906,11 +906,11 @@ PAL_InventoryMenu(
    switch (w)
    {
    case 1:
-      PAL_GameUseItem();
+      PAL_GameEquipItem();
       break;
 
    case 2:
-      PAL_GameEquipItem();
+      PAL_GameUseItem();
       break;
    }
 }
