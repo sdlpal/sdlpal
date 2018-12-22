@@ -231,7 +231,9 @@ VIDEO_Startup(
       extern const void * PAL_LoadOverlayBMP(void);
       extern int PAL_OverlayBMPLength();
 
-      SDL_Surface *overlay = SDL_LoadBMP_RW(SDL_RWFromConstMem(PAL_LoadOverlayBMP(), PAL_OverlayBMPLength()), 1);
+      const void *bmp = PAL_LoadOverlayBMP();
+      SDL_Surface *overlay = SDL_LoadBMP_RW(SDL_RWFromConstMem(bmp, PAL_OverlayBMPLength()), 1);
+      free((void*)bmp);
       if (overlay != NULL)
       {
          SDL_SetColorKey(overlay, SDL_RLEACCEL, SDL_MapRGB(overlay->format, 255, 0, 255));
