@@ -30,8 +30,10 @@
     NSArray *LogLevels;
     
     NSArray *allFiles;
-    NSMutableArray *AvailFiles;
-    NSMutableArray *AvailEffects;
+    NSMutableArray *availFiles;
+    NSMutableArray *availLangPacks;
+    NSMutableArray *availFonts;
+    NSMutableArray *availEffects;
     BOOL checkAllFilesIncluded;
     NSString *resourceStatus;
     
@@ -121,10 +123,11 @@
 }
 
 - (void)recheckSharingFolder {
-    AvailFiles = [NSMutableArray new];
-    AvailEffects = [NSMutableArray new];
-    NSArray *excludeList = @[ @"wor16.fon", @"wor16.asc", @"m.msg", @"license", @"Makefile", @"configure"];
-    NSArray *excludeExtensionList = @[@"exe",@"drv",@"dll",@"rpg",@"mkf",@"avi",@"dat",@"cfg",@"ini",@"glsl",@"glslp",@"png",@"jpg",@"md",@"txt",@"h"];
+    availLangPacks = [NSMutableArray new];
+    availFonts = [NSMutableArray new];
+    availEffects = [NSMutableArray new];
+    NSArray *langpackExtensionList = @[@"txt",@"msg",@"lng"];
+    NSArray *fontExtensionList = @[@"bdf",@"ttf",@"otf",@"ttc"];
     NSArray *effectExtensionList = @[@"glsl",@"glslp"];
     NSString *basePath = [NSString stringWithUTF8String:UTIL_BasePath()];
     allFiles = [[NSFileManager defaultManager] subpathsOfDirectoryAtPath:basePath error:nil];
@@ -133,17 +136,16 @@
         NSString* fullPath = [basePath stringByAppendingPathComponent:filename];
         [[NSFileManager defaultManager] fileExistsAtPath:fullPath
                                              isDirectory: &isDirectory];
-        if( isDirectory )
+        if( [[filename lastPathComponent] hasPrefix:@"._"] || isDirectory )
             continue;
-        if(![filename hasPrefix:@"._"] &&
-           ![self includedInList:excludeExtensionList name:filename.pathExtension] &&
-           ![self includedInList:excludeList name:filename] ) {
-            [AvailFiles addObject:filename];
-        }
+        if( [self includedInList:langpackExtensionList name:filename.pathExtension] )
+            [availLangPacks addObject:filename];
+        if( [self includedInList:fontExtensionList name:filename.pathExtension] )
+            [availFonts addObject:filename];
         if( [self includedInList:effectExtensionList name:filename.pathExtension] )
-            [AvailEffects addObject:filename];
+            [availEffects addObject:filename];
     }
-    AvailEffects = [[AvailEffects sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] mutableCopy];
+    availEffects = [[availEffects sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] mutableCopy];
     checkAllFilesIncluded = YES;
     for( NSString *checkFile in @[@"abc.mkf", @"ball.mkf", @"data.mkf", @"f.mkf", @"fbp.mkf", @"fire.mkf", @"gop.mkf", @"m.msg", @"map.mkf", @"mgo.mkf", @"rgm.mkf", @"rng.mkf", @"sss.mkf", @"word.dat"] ) {
         if( ![self includedInList:allFiles name:checkFile] ) {
@@ -213,9 +215,9 @@ typedef void(^SelectedBlock)(NSString *selected);
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     if( indexPath.section == 1 && indexPath.row == 0 ) { //language file
-        [self showPickerWithTitle:nil toLabel:lblLanguageFile inArray:AvailFiles origin:cell allowEmpty:YES];
+        [self showPickerWithTitle:nil toLabel:lblLanguageFile inArray:availLangPacks origin:cell allowEmpty:YES];
     }else if( indexPath.section == 1 && indexPath.row == 1 ) { //font file
-        [self showPickerWithTitle:nil toLabel:lblFontFile inArray:AvailFiles origin:cell allowEmpty:YES];
+        [self showPickerWithTitle:nil toLabel:lblFontFile inArray:availFonts origin:cell allowEmpty:YES];
     }else if( indexPath.section == 2 && indexPath.row == 0 ) { //touch overlay
         toggleTouchScreenOverlay.on = !toggleTouchScreenOverlay.isOn;
     }else if( indexPath.section == 2 && indexPath.row == 1 ) { //keep aspect
@@ -224,7 +226,7 @@ typedef void(^SelectedBlock)(NSString *selected);
         toggleGLSL.on = !toggleGLSL.isOn;
         [self.tableView reloadData];
     }else if( indexPath.section == 3 && indexPath.row == 2 ) { //Shader
-        [self showPickerWithTitle:nil toLabel:lblShader inArray:AvailEffects origin:cell allowEmpty:YES];
+        [self showPickerWithTitle:nil toLabel:lblShader inArray:availEffects origin:cell allowEmpty:YES];
     }else if( indexPath.section == 4 && indexPath.row == 0 ) { //BGM
         [self showPickerWithTitle:nil toLabel:lblMusicType inArray:MusicFormats origin:cell allowEmpty:NO doneBlock:^(NSString *selected) {
             [self.tableView reloadData];
