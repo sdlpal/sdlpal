@@ -2162,8 +2162,7 @@ PAL_SetPlayerStatus(
       //
       // for "bad" statuses, don't set the status when we already have it
       //
-      if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] != 0 &&
-         gpGlobals->rgPlayerStatus[wPlayerRole][wStatusID] == 0)
+      if (gpGlobals->rgPlayerStatus[wPlayerRole][wStatusID] == 0)
       {
          gpGlobals->rgPlayerStatus[wPlayerRole][wStatusID] = wNumRound;
       }

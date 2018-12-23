@@ -1135,7 +1135,7 @@ PAL_BattleStartFrame(
          }
          else if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusPuppet] != 0)
          {
-            fEnded = FALSE;
+            fOnlyPuppet = FALSE;
          }
       }
 
