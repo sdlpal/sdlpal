@@ -48,7 +48,12 @@ typedef struct tagTEXTLIB
 {
     LPWSTR         *lpWordBuf;
     LPWSTR         *lpMsgBuf;
-    int           **lpIndexBuf;
+    int           ***lpIndexBuf; 
+	
+	int            *indexMaxCounter;
+	// The variable indexMaxCounter stores the value of (item->indexEnd - item->index), 
+	// which means the span between eid and sid. 
+		
     BOOL            fUseISOFont;
 	int             iFontFlavor;
 
@@ -98,6 +103,7 @@ PAL_GetMsg(
 int
 PAL_GetMsgNum(
    int        iIndex,
+   int        iSpan,
    int        iOrder
 );
 

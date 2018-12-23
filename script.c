@@ -3325,8 +3325,31 @@ PAL_RunTriggerScript(
          //
          if (gConfig.pszMsgFile)
          {
+            //
+            // Find eid of this MESSAGE. 
+            //
+            int tmp_wScriptEntry = wScriptEntry, msgSpan = 0; 
+            //
+            // If the NEXT script is 0xFFFF, but the index is not continuous or not incremental, 
+            // this MESSAGE shoud end at THIS script. 
+            //
+            if( gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].rgwOperand[0] != gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] + 1)
+            {
+                 tmp_wScriptEntry++;
+            }else{
+                while (gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF
+                       || gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
+                {
+                    //
+                    // Skip all following continuous 0xFFFF & 0x008E instructions
+                    //
+                    tmp_wScriptEntry++;
+                }
+            }
+            msgSpan = gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-1].rgwOperand[0] - gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0];
+            // Get eid from the script previous to tmp_wScriptEntry. 
             int idx = 0, iMsg;
-            while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)
+            while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], msgSpan, idx++)) >= 0)
 			{
                if (iMsg == 0)
                {
@@ -3503,8 +3526,33 @@ begin:
 
 		   if (gConfig.pszMsgFile)
 		   {
+			   //
+			   // Find eid of this MESSAGE. 
+			   //
+			   int tmp_wScriptEntry = wScriptEntry, msgSpan = 0;
+			   //
+			   // If the NEXT script is 0xFFFF, but the index is not continuous or not incremental, 
+			   // this MESSAGE shoud end at THIS script. 
+			   //
+			   if( gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].rgwOperand[0] != gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] + 1)
+			   {
+					tmp_wScriptEntry++;
+			   }else{
+					while (gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF
+						   || gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
+					{
+						//
+						// Skip all following continuous 0xFFFF & 0x008E instructions
+						//
+						tmp_wScriptEntry++;
+					}
+			   }
+			   msgSpan = gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-1].rgwOperand[0] - gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0];
+			   // Get eid from the script previous to tmp_wScriptEntry. 
+
+			   
 			   int idx = 0, iMsg;
-			   while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], idx++)) >= 0)
+			   while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], msgSpan, idx++)) >= 0)
 			   {
 				   if (iMsg > 0)
 				   {
