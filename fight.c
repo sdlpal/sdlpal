@@ -5027,7 +5027,8 @@ PAL_BattleEnemyPerformAction(
       PAL_BattleUpdateFighters();
 
       if (iCoverIndex == -1 && !fAutoDefend &&
-         g_Battle.rgEnemy[wEnemyIndex].e.wAttackEquivItemRate >= RandomLong(1, 10))
+         g_Battle.rgEnemy[wEnemyIndex].e.wAttackEquivItemRate >= RandomLong(1, 10) &&
+		 PAL_GetPlayerPoisonResistance(wPlayerRole) < RandomLong(1, 100) )
       {
          i = g_Battle.rgEnemy[wEnemyIndex].e.wAttackEquivItem;
          gpGlobals->g.rgObject[i].item.wScriptOnUse =
