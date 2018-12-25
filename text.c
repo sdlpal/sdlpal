@@ -574,9 +574,12 @@ PAL_ReadMessageFile(
 				//
 				if ((item->indexEnd - item->index + 1) > g_TextLib.indexMaxCounter[item->index])
 				{
+					int oldCount = g_TextLib.indexMaxCounter[item->index];
 					g_TextLib.lpIndexBuf[item->index] = (int **)realloc(g_TextLib.lpIndexBuf[item->index], sizeof(int *) * (item->indexEnd - item->index + 1));
 					// Update the corrisponding data in indexMaxCounter. 
 					g_TextLib.indexMaxCounter[item->index] = item->indexEnd - item->index + 1;
+					// Clear the new allocated blocks; avoid it was then freed as pointer without actual being allocated.
+					memset(&g_TextLib.lpIndexBuf[item->index][oldCount], 0, sizeof(int**)*(g_TextLib.indexMaxCounter[item->index] - oldCount));
 				}
 			}else{
 				// It is a new MESSAGE. Give it a block of memory to store msgSpan data. 
@@ -588,7 +591,7 @@ PAL_ReadMessageFile(
 			//
 			// If a duplicate MESSAGE appears, free the memory used by the previous one to avoid memory leak. 
 			//
-			if (g_TextLib.lpIndexBuf[item->index][item->indexEnd - item->index] == NULL)
+			if (g_TextLib.lpIndexBuf[item->index][item->indexEnd - item->index] != NULL)
 			{
 				free(g_TextLib.lpIndexBuf[item->index][item->indexEnd - item->index]);
 			}
@@ -934,24 +937,26 @@ PAL_FreeText(
       {
          for(i = 0; i < g_TextLib.nIndices; i++)
          {
-            for(j = 0; j < g_TextLib.indexMaxCounter[i]; j++)
-            {
-               if (g_TextLib.lpIndexBuf[i][j] != NULL)
-               {
-                   free(g_TextLib.lpIndexBuf[i][j]);
-               }
-            }
             if (g_TextLib.lpIndexBuf[i] != NULL)
             {
-                free(g_TextLib.lpIndexBuf[i]);
+               for(j = 0; j < g_TextLib.indexMaxCounter[i]; j++)
+               {
+                  if (g_TextLib.lpIndexBuf[i][j] != NULL)
+                  {
+                     free(g_TextLib.lpIndexBuf[i][j]);
+                     g_TextLib.lpIndexBuf[i][j] = NULL;
+                  }
+               }
+               free(g_TextLib.lpIndexBuf[i]);
+               g_TextLib.lpIndexBuf[i] = NULL;
             }
          }
       }else{
          free(g_TextLib.lpIndexBuf[0]);
-	  }
+      }
       free(g_TextLib.lpIndexBuf);
       free(g_TextLib.indexMaxCounter);
-	  
+
       g_TextLib.lpIndexBuf = NULL;
    }
 }
