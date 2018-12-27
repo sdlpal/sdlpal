@@ -191,8 +191,10 @@ PAL_BattleMakeScene(
             //
             // Player is confused
             //
+            int xd = PAL_X(g_Battle.rgPlayer[i].pos), yd = PAL_Y(g_Battle.rgPlayer[i].pos);
             if(!PAL_IsPlayerDying(gpGlobals->rgParty[i].wPlayerRole))
-            pos = PAL_XY(PAL_X(g_Battle.rgPlayer[i].pos), PAL_Y(g_Battle.rgPlayer[i].pos) + RandomLong(-1, 1));
+               yd += RandomLong(-1, 1);
+            pos = PAL_XY(xd, yd);
             pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)) / 2,
                PAL_Y(pos) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)));
 
