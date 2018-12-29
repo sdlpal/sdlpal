@@ -61,6 +61,7 @@
 #define strtok_r strtok_s
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
+#define wcsdup _wcsdup
 
 PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 #define PAL_NEED_STRCASESTR 1
