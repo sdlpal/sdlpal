@@ -1535,6 +1535,25 @@ TEXT_DisplayText(
    return x;
 }
 
+WCHAR *WTEXT_replace(WCHAR *str, size_t buflen, WCHAR *orig, WCHAR *rep)
+{
+   static WCHAR buffer[4096];
+   WCHAR *p;
+
+   if(!(p = wcsstr(str, orig)))  // Is 'orig' even in 'str'?
+      return str;
+
+   wcsncpy(buffer, str, p-str); // Copy characters from 'str' start to 'orig' st$
+   buffer[p-str] = L'\0';
+
+   PAL_swprintf(buffer+(p-str), 4096, L"%ls%ls", rep, p+wcslen(orig));
+
+   memset(str, 0, buflen);
+   wcscpy(str, buffer);
+
+   return str;
+}
+
 VOID
 PAL_ShowDialogText(
    LPCWSTR      lpszText
@@ -1642,10 +1661,24 @@ PAL_ShowDialogText(
 		   lpszText[len - 1] == ':')
 		 )
       {
+         WCHAR *buf=wcsdup(lpszText), *p;
+#define PROCESS_UNESCAPE(x) \
+while( (p = wcsstr(buf, L"\\" x )) != NULL ) \
+WTEXT_replace( buf, len, L"\\" x, L ##x);
+         PROCESS_UNESCAPE("-");
+         PROCESS_UNESCAPE("'");
+         PROCESS_UNESCAPE("@");
+         PROCESS_UNESCAPE("\"");
+         PROCESS_UNESCAPE("$");
+         PROCESS_UNESCAPE("~");
+         PROCESS_UNESCAPE("(");
+         PROCESS_UNESCAPE(")");
+         lpszText = buf;
          //
          // name of character
          //
          PAL_DrawText(lpszText, g_TextLib.posDialogTitle, FONT_COLOR_CYAN_ALT, TRUE, TRUE, FALSE);
+         free(buf);
       }
       else
       {
