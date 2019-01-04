@@ -425,7 +425,9 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 typedef LANGID(__stdcall *GETLANGUAGEID)(void);
 
 extern "C" int UTIL_Platform_Startup(int argc, char *argv[]) {
+#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_setenv("SDL_AUDIODRIVER", "directsound", 1);
+#endif
 	return 0;
 }
 
@@ -483,3 +485,15 @@ BOOL UTIL_IsAbsolutePath(LPCSTR  lpszFileName)
 	else
 		return FALSE;
 }
+
+//workaround for using static SDL build
+#if _MSC_VER>=1900
+#include "stdio.h" 
+_ACRTIMP_ALT FILE* __cdecl __acrt_iob_func(unsigned);
+#ifdef __cplusplus 
+extern "C"
+#endif 
+FILE* __cdecl __iob_func(unsigned i) {
+	return __acrt_iob_func(i);
+}
+#endif /* _MSC_VER>=1900 */

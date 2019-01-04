@@ -1,0 +1,549 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Test|Win32">
+      <Configuration>Test</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Test|x64">
+      <Configuration>Test</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{837BDF47-9375-4C30-866B-07E262E94A01}</ProjectGuid>
+    <RootNamespace>sdlpal</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Test|x64'">true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
+    <IncludePath>..\3rd\SDL\include;..\3rd\googletest\googletest\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
+    <IncludePath>..\3rd\SDL\include;..\3rd\googletest\googletest\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>..\3rd\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;SDL1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4244;4305;4819</DisableSpecificWarnings>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;imm32.lib;version.lib;comctl32.lib;winmm.lib;sdl.lib;sdlmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>SDL1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;SDL1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4244;4305;4819</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;imm32.lib;version.lib;comctl32.lib;winmm.lib;sdl.lib;sdlmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>SDL1\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;SDL1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <DisableSpecificWarnings>4244;4305;4819</DisableSpecificWarnings>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;imm32.lib;version.lib;comctl32.lib;winmm.lib;sdl.lib;sdlmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>SDL1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;SDL1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;UNIT_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <DisableSpecificWarnings>4244;4305;4819</DisableSpecificWarnings>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;imm32.lib;version.lib;comctl32.lib;winmm.lib;sdl.lib;sdlmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>SDL1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;SDL1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <DisableSpecificWarnings>4244;4305;4819</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;imm32.lib;version.lib;comctl32.lib;winmm.lib;sdl.lib;sdlmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>SDL1\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;SDL1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;UNIT_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <DisableSpecificWarnings>4244;4305;4819</DisableSpecificWarnings>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;imm32.lib;version.lib;comctl32.lib;winmm.lib;sdl.lib;sdlmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>SDL1\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Bscmake />
+    <PreBuildEvent>
+      <Command>$(SolutionDir)..\scripts\gengitrev.bat</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\3rd\googletest\googletest\src\gtest-all.cc">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">..\3rd\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Test|x64'">..\3rd\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\adplug\dosbox_opls.cpp" />
+    <ClCompile Include="..\adplug\mame_opls.cpp" />
+    <ClCompile Include="..\adplug\nuked_opl.c" />
+    <ClCompile Include="..\audio.c" />
+    <ClCompile Include="..\aviplay.c" />
+    <ClCompile Include="..\battle.c" />
+    <ClCompile Include="..\ending.c" />
+    <ClCompile Include="..\fight.c" />
+    <ClCompile Include="..\font.c" />
+    <ClCompile Include="..\game.c" />
+    <ClCompile Include="..\global.c" />
+    <ClCompile Include="..\glslp.c" />
+    <ClCompile Include="..\input.c" />
+    <ClCompile Include="..\itemmenu.c" />
+    <ClCompile Include="..\liboggvorbis\src\analysis.c" />
+    <ClCompile Include="..\liboggvorbis\src\bitrate.c" />
+    <ClCompile Include="..\liboggvorbis\src\bitwise.c" />
+    <ClCompile Include="..\liboggvorbis\src\block.c" />
+    <ClCompile Include="..\liboggvorbis\src\codebook.c" />
+    <ClCompile Include="..\liboggvorbis\src\envelope.c" />
+    <ClCompile Include="..\liboggvorbis\src\floor0.c" />
+    <ClCompile Include="..\liboggvorbis\src\floor1.c" />
+    <ClCompile Include="..\liboggvorbis\src\framing.c" />
+    <ClCompile Include="..\liboggvorbis\src\info.c" />
+    <ClCompile Include="..\liboggvorbis\src\lookup.c" />
+    <ClCompile Include="..\liboggvorbis\src\lpc.c" />
+    <ClCompile Include="..\liboggvorbis\src\lsp.c" />
+    <ClCompile Include="..\liboggvorbis\src\mapping0.c" />
+    <ClCompile Include="..\liboggvorbis\src\mdct.c" />
+    <ClCompile Include="..\liboggvorbis\src\psy.c" />
+    <ClCompile Include="..\liboggvorbis\src\registry.c" />
+    <ClCompile Include="..\liboggvorbis\src\res0.c" />
+    <ClCompile Include="..\liboggvorbis\src\sharedbook.c" />
+    <ClCompile Include="..\liboggvorbis\src\smallft.c" />
+    <ClCompile Include="..\liboggvorbis\src\synthesis.c" />
+    <ClCompile Include="..\liboggvorbis\src\vorbisenc.c" />
+    <ClCompile Include="..\liboggvorbis\src\vorbisfile.c" />
+    <ClCompile Include="..\liboggvorbis\src\window.c" />
+    <ClCompile Include="..\magicmenu.c" />
+    <ClCompile Include="..\main.c" />
+    <ClCompile Include="..\map.c" />
+    <ClCompile Include="..\midi.c" />
+    <ClCompile Include="..\mp3play.c" />
+    <ClCompile Include="..\oggplay.c" />
+    <ClCompile Include="..\overlay.c" />
+    <ClCompile Include="..\palcfg.c" />
+    <ClCompile Include="..\palcommon.c" />
+    <ClCompile Include="..\palette.c" />
+    <ClCompile Include="..\play.c" />
+    <ClCompile Include="..\res.c" />
+    <ClCompile Include="..\resampler.c" />
+    <ClCompile Include="..\rixplay.cpp" />
+    <ClCompile Include="..\rngplay.c" />
+    <ClCompile Include="..\scene.c" />
+    <ClCompile Include="..\script.c" />
+    <ClCompile Include="..\sound.c" />
+    <ClCompile Include="..\tests\test_main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\tests\test_swprintf.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\text.c" />
+    <ClCompile Include="..\ui.c" />
+    <ClCompile Include="..\uibattle.c" />
+    <ClCompile Include="..\uigame.c" />
+    <ClCompile Include="..\util.c" />
+    <ClCompile Include="..\video.c" />
+    <ClCompile Include="..\video_glsl.c" />
+    <ClCompile Include="..\mini_glloader.c" />
+    <ClCompile Include="..\yj1.c" />
+    <ClCompile Include="..\adplug\binfile.cpp" />
+    <ClCompile Include="..\adplug\binio.cpp" />
+    <ClCompile Include="..\adplug\fprovide.cpp" />
+    <ClCompile Include="..\adplug\player.cpp" />
+    <ClCompile Include="..\adplug\rix.cpp" />
+    <ClCompile Include="..\adplug\emuopls.cpp" />
+    <ClCompile Include="..\adplug\surroundopl.cpp" />
+    <ClCompile Include="..\native_midi\native_midi_common.c" />
+    <ClCompile Include="..\libmad\bit.c" />
+    <ClCompile Include="..\libmad\decoder.c" />
+    <ClCompile Include="..\libmad\fixed.c" />
+    <ClCompile Include="..\libmad\frame.c" />
+    <ClCompile Include="..\libmad\huffman.c" />
+    <ClCompile Include="..\libmad\layer12.c" />
+    <ClCompile Include="..\libmad\layer3.c" />
+    <ClCompile Include="..\libmad\music_mad.c" />
+    <ClCompile Include="..\libmad\stream.c" />
+    <ClCompile Include="..\libmad\synth.c" />
+    <ClCompile Include="..\libmad\timer.c" />
+    <ClCompile Include="native_midi.cpp" />
+    <ClCompile Include="win32.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\adplug\dosbox\dbopl.cpp.h" />
+    <ClInclude Include="..\adplug\dosbox\dbopl.h" />
+    <ClInclude Include="..\adplug\dosbox\dosbox.h" />
+    <ClInclude Include="..\adplug\dosbox\opl.cpp.h" />
+    <ClInclude Include="..\adplug\dosbox_opls.h" />
+    <ClInclude Include="..\adplug\dosbox\opl.h" />
+    <ClInclude Include="..\adplug\mame\fmopl.cpp.h" />
+    <ClInclude Include="..\adplug\mame\ymf262.cpp.h" />
+    <ClInclude Include="..\adplug\mame_opls.h" />
+    <ClInclude Include="..\adplug\emuopls.h" />
+    <ClInclude Include="..\adplug\convertopl.h" />
+    <ClInclude Include="..\adplug\mame\fmopl.h" />
+    <ClInclude Include="..\adplug\mame\mame.h" />
+    <ClInclude Include="..\adplug\mame\ymf262.h" />
+    <ClInclude Include="..\adplug\nuked\opl3.c.h" />
+    <ClInclude Include="..\adplug\nuked\opl3.h" />
+    <ClInclude Include="..\adplug\nuked_opl.h" />
+    <ClInclude Include="..\adplug\opltypes.h" />
+    <ClInclude Include="..\ascii.h" />
+    <ClInclude Include="..\aviplay.h" />
+    <ClInclude Include="..\battle.h" />
+    <ClInclude Include="..\codepage.h" />
+    <ClInclude Include="..\common.h" />
+    <ClInclude Include="..\glslp.h" />
+    <ClInclude Include="..\liboggvorbis\include\ogg\config_types.h" />
+    <ClInclude Include="..\ending.h" />
+    <ClInclude Include="..\fight.h" />
+    <ClInclude Include="..\font.h" />
+    <ClInclude Include="..\fontglyph.h" />
+    <ClInclude Include="..\game.h" />
+    <ClInclude Include="..\global.h" />
+    <ClInclude Include="..\input.h" />
+    <ClInclude Include="..\itemmenu.h" />
+    <ClInclude Include="..\liboggvorbis\include\ogg\ogg.h" />
+    <ClInclude Include="..\liboggvorbis\include\ogg\os_types.h" />
+    <ClInclude Include="..\liboggvorbis\include\vorbis\codec.h" />
+    <ClInclude Include="..\liboggvorbis\include\vorbis\vorbisenc.h" />
+    <ClInclude Include="..\liboggvorbis\include\vorbis\vorbisfile.h" />
+    <ClInclude Include="..\liboggvorbis\src\backends.h" />
+    <ClInclude Include="..\liboggvorbis\src\bitrate.h" />
+    <ClInclude Include="..\liboggvorbis\src\books\coupled\res_books_51.h" />
+    <ClInclude Include="..\liboggvorbis\src\books\coupled\res_books_stereo.h" />
+    <ClInclude Include="..\liboggvorbis\src\books\floor\floor_books.h" />
+    <ClInclude Include="..\liboggvorbis\src\books\uncoupled\res_books_uncoupled.h" />
+    <ClInclude Include="..\liboggvorbis\src\codebook.h" />
+    <ClInclude Include="..\liboggvorbis\src\codec_internal.h" />
+    <ClInclude Include="..\liboggvorbis\src\envelope.h" />
+    <ClInclude Include="..\liboggvorbis\src\highlevel.h" />
+    <ClInclude Include="..\liboggvorbis\src\lookup.h" />
+    <ClInclude Include="..\liboggvorbis\src\lookup_data.h" />
+    <ClInclude Include="..\liboggvorbis\src\lpc.h" />
+    <ClInclude Include="..\liboggvorbis\src\lsp.h" />
+    <ClInclude Include="..\liboggvorbis\src\masking.h" />
+    <ClInclude Include="..\liboggvorbis\src\mdct.h" />
+    <ClInclude Include="..\liboggvorbis\src\misc.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\floor_all.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\psych_11.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\psych_16.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\psych_44.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\psych_8.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_16.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_44.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_44p51.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_44u.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\residue_8.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_11.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_16.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_22.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_32.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_44.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_44p51.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_44u.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_8.h" />
+    <ClInclude Include="..\liboggvorbis\src\modes\setup_X.h" />
+    <ClInclude Include="..\liboggvorbis\src\os.h" />
+    <ClInclude Include="..\liboggvorbis\src\psy.h" />
+    <ClInclude Include="..\liboggvorbis\src\registry.h" />
+    <ClInclude Include="..\liboggvorbis\src\scales.h" />
+    <ClInclude Include="..\liboggvorbis\src\smallft.h" />
+    <ClInclude Include="..\liboggvorbis\src\window.h" />
+    <ClInclude Include="..\magicmenu.h" />
+    <ClInclude Include="..\main.h" />
+    <ClInclude Include="..\map.h" />
+    <ClInclude Include="..\midi.h" />
+    <ClInclude Include="..\mini_glloader.h" />
+    <ClInclude Include="..\palcfg.h" />
+    <ClInclude Include="..\palcommon.h" />
+    <ClInclude Include="..\palette.h" />
+    <ClInclude Include="..\play.h" />
+    <ClInclude Include="..\res.h" />
+    <ClInclude Include="..\resampler.h" />
+    <ClInclude Include="..\players.h" />
+    <ClInclude Include="..\riff.h" />
+    <ClInclude Include="..\rngplay.h" />
+    <ClInclude Include="..\scene.h" />
+    <ClInclude Include="..\script.h" />
+    <ClInclude Include="..\audio.h" />
+    <ClInclude Include="..\text.h" />
+    <ClInclude Include="..\ui.h" />
+    <ClInclude Include="..\uibattle.h" />
+    <ClInclude Include="..\uigame.h" />
+    <ClInclude Include="..\util.h" />
+    <ClInclude Include="..\video.h" />
+    <ClInclude Include="..\adplug\binfile.h" />
+    <ClInclude Include="..\adplug\binio.h" />
+    <ClInclude Include="..\adplug\fprovide.h" />
+    <ClInclude Include="..\adplug\opl.h" />
+    <ClInclude Include="..\adplug\player.h" />
+    <ClInclude Include="..\adplug\rix.h" />
+    <ClInclude Include="..\adplug\surroundopl.h" />
+    <ClInclude Include="..\native_midi\native_midi.h" />
+    <ClInclude Include="..\native_midi\native_midi_common.h" />
+    <ClInclude Include="..\libmad\bit.h" />
+    <ClInclude Include="..\libmad\decoder.h" />
+    <ClInclude Include="..\libmad\fixed.h" />
+    <ClInclude Include="..\libmad\frame.h" />
+    <ClInclude Include="..\libmad\huffman.h" />
+    <ClInclude Include="..\libmad\layer12.h" />
+    <ClInclude Include="..\libmad\layer3.h" />
+    <ClInclude Include="..\libmad\libmad_config.h" />
+    <ClInclude Include="..\libmad\libmad_global.h" />
+    <ClInclude Include="..\libmad\mad.h" />
+    <ClInclude Include="..\libmad\music_mad.h" />
+    <ClInclude Include="..\libmad\stream.h" />
+    <ClInclude Include="..\libmad\synth.h" />
+    <ClInclude Include="..\libmad\timer.h" />
+    <ClInclude Include="..\video_glsl.h" />
+    <ClInclude Include="pal_config.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\generated.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\docs\sdlpal.cfg.example" />
+    <None Include="..\sdlpal.ico" />
+    <None Include="..\libmad\D.dat" />
+    <None Include="..\libmad\imdct_s.dat" />
+    <None Include="..\libmad\qc_table.dat" />
+    <None Include="..\libmad\rq_table.dat" />
+    <None Include="..\libmad\sf_table.dat" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="sdlpal.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\AUTHORS.txt" />
+    <Text Include="..\README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="Application.manifest" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

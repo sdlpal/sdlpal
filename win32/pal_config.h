@@ -70,7 +70,9 @@
 PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 #define PAL_NEED_STRCASESTR 1
 
-#define PAL_HAS_GLSL 1
+#if SDL_VERSION_ATLEAST(2,0,0)
+# define PAL_HAS_GLSL 1
+#endif
 
 #define PAL_HAS_PLATFORM_STARTUP 1
 
