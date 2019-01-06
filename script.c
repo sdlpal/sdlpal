@@ -2784,10 +2784,11 @@ PAL_InterpretInstruction(
       }
       g_Battle.rgEnemy[wCurEventObjectID].e.wHealth = (g_Battle.rgEnemy[wEventObjectID].e.wHealth+y)/x;
 
+      w = 0;
       for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
-         if (g_Battle.rgEnemy[i].wObjectID == 0 || g_Battle.rgEnemy[i].e.wHealth == 0)
-            break;
-      g_Battle.wMaxEnemyIndex = i - 1;
+         if (g_Battle.rgEnemy[i].wObjectID != 0 )
+            w=i;
+      g_Battle.wMaxEnemyIndex = w;
 
       PAL_LoadBattleSprites();
 
