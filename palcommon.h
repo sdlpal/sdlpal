@@ -268,4 +268,12 @@ PAL_C_LINKAGE_END
       SDL_Delay(1); \
    }
 
+#define PAL_DelayUntilPC(t) \
+   PAL_ProcessEvent(); \
+   while (SDL_GetPerformanceCounter() < (t)) \
+   { \
+      PAL_ProcessEvent(); \
+      SDL_Delay(1); \
+   }
+
 #endif // _PALUTILS_H
