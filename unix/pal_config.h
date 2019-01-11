@@ -59,6 +59,8 @@
 
 #include <sys/time.h>
 
-#define PAL_HAS_GLSL 1
+#if SDL_VERSION_ATLEAST(2,0,0)
+# define PAL_HAS_GLSL 1
+#endif
 
 #endif

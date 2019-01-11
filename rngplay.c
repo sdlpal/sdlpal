@@ -397,12 +397,12 @@ PAL_RNGPlay(
 
 --*/
 {
-   uint64_t        iDelay = SDL_GetPerformanceFrequency() / (iSpeed == 0 ? 16 : iSpeed);
+   double         iDelay = SDL_GetPerformanceFrequency() / (iSpeed == 0 ? 16 : iSpeed);
    uint8_t        *rng = (uint8_t *)malloc(65000);
    uint8_t        *buf = (uint8_t *)malloc(65000);
    FILE           *fp = UTIL_OpenRequiredFile("rng.mkf");
 
-   for (uint64_t iTime = SDL_GetPerformanceCounter(); rng && buf && iStartFrame <= iEndFrame; iStartFrame++)
+   for (double iTime = SDL_GetPerformanceCounter(); rng && buf && iStartFrame <= iEndFrame; iStartFrame++)
    {
 	  iTime += iDelay;
       //
