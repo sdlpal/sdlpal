@@ -88,8 +88,8 @@ PAL_BattleMakeScene(
    // sort by y
    for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++ )
       enemyDrawSeq[i] = i;
-   for(i=0;i<MAX_ENEMIES_IN_TEAM-g_Battle.wMaxEnemyIndex;i++)
-       for(j=i+1;j<MAX_ENEMIES_IN_TEAM-g_Battle.wMaxEnemyIndex;j++)
+   for(i=0;i<g_Battle.wMaxEnemyIndex;i++)
+       for(j=i+1;j<g_Battle.wMaxEnemyIndex;j++)
            if( PAL_Y(g_Battle.rgEnemy[i].pos) < PAL_Y(g_Battle.rgEnemy[j].pos) ) {
                INT tmp = enemyDrawSeq[i];
                enemyDrawSeq[i]=enemyDrawSeq[j];
