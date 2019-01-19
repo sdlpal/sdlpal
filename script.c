@@ -1506,7 +1506,7 @@ PAL_InterpretInstruction(
       //
       PAL_RNGPlay(gpGlobals->iCurPlayingRNG,
          pScript->rgwOperand[0],
-         pScript->rgwOperand[1] > 0 ? pScript->rgwOperand[1] : 999,
+         pScript->rgwOperand[1] > 0 ? pScript->rgwOperand[1] : -1,
          pScript->rgwOperand[2] > 0 ? pScript->rgwOperand[2] : 16);
       break;
 
