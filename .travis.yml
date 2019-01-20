@@ -150,7 +150,17 @@ matrix:
           
       - os: linux
         language: android
-        env: TARGET=Android SDK_HASH=3859397 NDK_VERSION=r16 TERM=dumb
+        env: TARGET=Android ANDROID_BUILD_TOOLS=26.0.2 NDK_VERSION=r16 TERM=dumb
+        android:
+          components:
+          - tools
+          - platform-tools
+          - tools
+          - build-tools-$ANDROID_BUILD_TOOLS
+          licenses:
+          - android-sdk-preview-license-.+
+          - android-sdk-license-.+
+          - google-gdk-license-.+
         cache:
           branch: md5deep
           directories:
@@ -160,16 +170,7 @@ matrix:
           - export PUSHD="$(pwd)"
           - mkdir -p $CACHE/
           - cd $CACHE/
-          # After measuring, caching android SDK/NDK is more slow than direct download
-          - wget https://dl.google.com/android/repository/sdk-tools-linux-$SDK_HASH.zip -O sdk-tools.zip
-          - unzip -o sdk-tools.zip > /dev/null
-          - export PATH=$(pwd)/tools/bin:$PATH
-          # Due to latest Android Plugin for Gradle decides to ignores buildToolsVersion setting, 
-          # we cannot simply continue using travis-ci built-in android sdk tools(previous pairs), 
-          # since it uses fixed version and needs accept license, which varying times and times.
-          # Instead, we directly use latest sdkmanager and accept all available licenses.
-          - yes | sdkmanager --licenses > /dev/null
-          - cp -rv licenses $ANDROID_HOME
+          # After measuring, caching android NDK is more slow than direct download
           - wget http://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip -O ndk.zip
           - unzip ndk.zip > /dev/null
           - export ANDROID_NDK_HOME=`pwd`/android-ndk-$NDK_VERSION
