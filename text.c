@@ -1028,7 +1028,7 @@ PAL_GetMsgNum(
 
 --*/
 {
-   return (iIndex >= g_TextLib.nMsgs || iSpan >= g_TextLib.indexMaxCounter[iIndex] || !g_TextLib.lpIndexBuf[iIndex]) ? -1 : g_TextLib.lpIndexBuf[iIndex][iSpan][iOrder];
+   return (iIndex >= g_TextLib.nMsgs || iSpan >= g_TextLib.indexMaxCounter[iIndex] || !g_TextLib.lpIndexBuf[iIndex] || !g_TextLib.lpIndexBuf[iIndex][iSpan]) ? -1 : g_TextLib.lpIndexBuf[iIndex][iSpan][iOrder];
 }
 
 VOID
