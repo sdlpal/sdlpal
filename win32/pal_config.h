@@ -70,7 +70,13 @@
 PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 #define PAL_NEED_STRCASESTR 1
 
+/* opengl32.lib does not exist in Windows SDK for ARM64 
+   disable GL SL for now. */
+#ifdef _M_ARM64
+#define PAL_HAS_GLSL 0
+#else
 #define PAL_HAS_GLSL 1
+#endif
 
 #define PAL_HAS_PLATFORM_STARTUP 1
 
