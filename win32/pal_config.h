@@ -44,7 +44,13 @@
 # define PAL_HAS_SDLCD         1
 #endif
 
+#ifdef _M_ARM
+/* DirectInput doesn't seem to be exist in Windows ARM32
+   SDL won't initialize when SDL_INIT_JOYSTICK is set */
+#define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE)
+#else
 #define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK)
+#endif
 
 #define PAL_PLATFORM         NULL
 #define PAL_CREDIT           NULL
@@ -70,9 +76,9 @@
 PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 #define PAL_NEED_STRCASESTR 1
 
-/* opengl32.lib does not exist in Windows SDK for ARM64 
+/* opengl32.lib does not exist in Windows SDK for ARM/ARM64 
    disable GL SL for now. */
-#ifdef _M_ARM64
+#if defined (_M_ARM64) || defined(_M_ARM)
 #define PAL_HAS_GLSL 0
 #else
 #define PAL_HAS_GLSL 1
