@@ -149,7 +149,7 @@ sudo xcodebuild -license
 
 Then you have to build the latest SDL2 framework (customized in the source code tree) installed at *`/Library/Frameworks`*. You have to build it by yourself.
 
-##### // Compiling  the customized SDL2 library.
+#### // Compiling  the customized SDL2 library.
 
 If using regular (officially released) SDL2 library, then the built SDLPal cannot function well in anything related to the GLSL. If you don't want to enable GLSL in SDLPal, you can skip this step.
 
@@ -170,7 +170,7 @@ sudo rm -rf /Library/Frameworks/SDL2.framework
 sudo mv -f SDL2.framework /Library/Frameworks/
 ```
 
-##### // Compiling the SDLPal application bundle for non-Metal macOS Releases.
+#### // Compiling the SDLPal application bundle for non-Metal macOS Releases.
 
 This build requires macOS 10.07 SDK installed in Xcode 5 (or Xcode 6) running on macOS 10.8-10.10 (compiling environment). Older SDKs won't built. Newer SDKs may drop support of macOS 10.05-10.06 Leopards. If building using macOS 10.14 SDK, then it only runs on at least macOS 10.14 Mojave.
 
@@ -189,7 +189,7 @@ export cc="/usr/bin/gcc" && xcodebuild -project Pal_PreMetal.xcodeproj -configur
 ```
 Then you can see the generated app bundle in the `macos` directory.
 
-##### // Compiling the SDLPal application bundle for macOS 10.11 and later.
+#### // Compiling the SDLPal application bundle for macOS 10.11 and later.
 
 This requires at least macOS 10.11 SDK (or won't built due to the lack of Metal framework). If building using macOS 10.14 SDK, then it only runs on at least macOS 10.14 Mojave.
 
@@ -203,7 +203,7 @@ export cc="/usr/bin/gcc" && xcodebuild -project Pal.xcodeproj -scheme SDLPal -co
 ```
 Then you can see the generated app bundle in the `macos` directory.
 
-##### // Compiling the SDLPal application bundle for macOS 10.04-10.05 PPC.
+#### // Compiling the SDLPal application bundle for macOS 10.04-10.05 PPC.
 
 We don't support PowerPC platforms anymore due to the raised difficulty of finding a testing machine, and our limited human resources shall focus on latest builds serving the most-recent three major releases of macOS. Still, the `Pal_SDL12.xcodeproj` is there for anyone who is eager to run SDLPal on a Power-PC macOS platform (or Intel mac) running macOS 10.04-10.05 systems, and we don't guarantee whether it works or not in the future. Also, SDL1 framework introduces reduced video performances.
 
