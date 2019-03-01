@@ -279,3 +279,6 @@ Pods
 emscripten/*.h
 emscripten/*.c
 emscripten/*.cpp
+
+# macOS Trashes
+*.DS_Store
