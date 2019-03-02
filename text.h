@@ -118,6 +118,17 @@ PAL_DrawText(
 );
 
 VOID
+PAL_DrawTextUnescape(
+   LPCWSTR    lpszText,
+   PAL_POS    pos,
+   BYTE       bColor,
+   BOOL       fShadow,
+   BOOL       fUpdate,
+   BOOL       fUse8x8Font,
+   BOOL       fUnescape
+);
+
+VOID
 PAL_DialogSetDelayTime(
    INT          iDelayTime
 );

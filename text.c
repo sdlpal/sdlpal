@@ -1031,6 +1031,25 @@ PAL_GetMsgNum(
    return (iIndex >= g_TextLib.nMsgs || iSpan >= g_TextLib.indexMaxCounter[iIndex] || !g_TextLib.lpIndexBuf[iIndex] || !g_TextLib.lpIndexBuf[iIndex][iSpan]) ? -1 : g_TextLib.lpIndexBuf[iIndex][iSpan][iOrder];
 }
 
+static WCHAR *WTEXT_replace(WCHAR *str, size_t buflen, WCHAR *orig, WCHAR *rep)
+{
+	static WCHAR buffer[4096];
+	WCHAR *p;
+
+	if (!(p = wcsstr(str, orig)))  // Is 'orig' even in 'str'?
+		return str;
+
+	wcsncpy(buffer, str, p - str); // Copy characters from 'str' start to 'orig' st$
+	buffer[p - str] = L'\0';
+
+	PAL_swprintf(buffer + (p - str), 4096, L"%ls%ls", rep, p + wcslen(orig));
+
+	memset(str, 0, buflen);
+	wcscpy(str, buffer);
+
+	return str;
+}
+
 VOID
 PAL_DrawText(
    LPCWSTR    lpszText,
@@ -1039,6 +1058,20 @@ PAL_DrawText(
    BOOL       fShadow,
    BOOL       fUpdate,
    BOOL       fUse8x8Font
+)
+{
+    PAL_DrawTextUnescape(lpszText, pos, bColor, fShadow, fUpdate, fUse8x8Font, TRUE);
+}
+
+VOID
+PAL_DrawTextUnescape(
+   LPCWSTR    lpszText,
+   PAL_POS    pos,
+   BYTE       bColor,
+   BOOL       fShadow,
+   BOOL       fUpdate,
+   BOOL       fUse8x8Font,
+   BOOL       fUnescape
 )
 /*++
   Purpose:
@@ -1057,8 +1090,10 @@ PAL_DrawText(
 
     [IN]  fUpdate - TRUE if update the screen area.
 
-	[IN]  fUse8x8Font - TRUE if use 8x8 font.
+    [IN]  fUse8x8Font - TRUE if use 8x8 font.
 
+    [IN]  fUnescape - TRUE if unescaping needed.
+ 
   Return value:
 
     None.
@@ -1066,6 +1101,8 @@ PAL_DrawText(
 --*/
 {
    SDL_Rect   rect, urect;
+   WCHAR *buf = wcsdup(lpszText), *p;
+   size_t buflen = wcslen(lpszText);
 
    urect.x = rect.x = PAL_X(pos);
    urect.y = rect.y = PAL_Y(pos);
@@ -1074,6 +1111,21 @@ PAL_DrawText(
 
    // Handle text overflow
    if (rect.x >= 320) return;
+
+#define PROCESS_UNESCAPE(x) \
+while( (p = wcsstr(buf, L"\\" x )) != NULL ) \
+WTEXT_replace( buf, buflen, L"\\" x, L ##x);
+   if(fUnescape) {
+      PROCESS_UNESCAPE("-");
+      PROCESS_UNESCAPE("'");
+      PROCESS_UNESCAPE("\"");
+      PROCESS_UNESCAPE("$");
+      PROCESS_UNESCAPE("~");
+      PROCESS_UNESCAPE("(");
+      PROCESS_UNESCAPE(")");
+      PROCESS_UNESCAPE("@");
+      lpszText = buf;
+   }
 
    while (*lpszText)
    {
@@ -1090,6 +1142,9 @@ PAL_DrawText(
 	  PAL_DrawCharOnSurface(*lpszText++, gpScreen, PAL_XY(rect.x, rect.y), bColor, fUse8x8Font);
 	  rect.x += char_width; urect.w += char_width;
    }
+
+   if(fUnescape)
+      free(buf);
 
    //
    // Update the screen area
@@ -1514,7 +1569,7 @@ TEXT_DisplayText(
             if( isNumber )
                PAL_DrawNumber(text[0]-'0', 1, PAL_XY(x, y+4), kNumColorYellow, kNumAlignLeft);
             else
-               PAL_DrawText(text, PAL_XY(x, y), color, !isDialog, !isDialog && !g_TextLib.fUserSkip, FALSE);
+               PAL_DrawTextUnescape(text, PAL_XY(x, y), color, !isDialog, !isDialog && !g_TextLib.fUserSkip, FALSE, FALSE);
             x += PAL_CharWidth(text[0]);
             
             if (!isDialog && !g_TextLib.fUserSkip)
@@ -1533,25 +1588,6 @@ TEXT_DisplayText(
       }
    }
    return x;
-}
-
-WCHAR *WTEXT_replace(WCHAR *str, size_t buflen, WCHAR *orig, WCHAR *rep)
-{
-   static WCHAR buffer[4096];
-   WCHAR *p;
-
-   if(!(p = wcsstr(str, orig)))  // Is 'orig' even in 'str'?
-      return str;
-
-   wcsncpy(buffer, str, p-str); // Copy characters from 'str' start to 'orig' st$
-   buffer[p-str] = L'\0';
-
-   PAL_swprintf(buffer+(p-str), 4096, L"%ls%ls", rep, p+wcslen(orig));
-
-   memset(str, 0, buflen);
-   wcscpy(str, buffer);
-
-   return str;
 }
 
 VOID
@@ -1661,24 +1697,10 @@ PAL_ShowDialogText(
 		   lpszText[len - 1] == ':')
 		 )
       {
-         WCHAR *buf=wcsdup(lpszText), *p;
-#define PROCESS_UNESCAPE(x) \
-while( (p = wcsstr(buf, L"\\" x )) != NULL ) \
-WTEXT_replace( buf, len, L"\\" x, L ##x);
-         PROCESS_UNESCAPE("-");
-         PROCESS_UNESCAPE("'");
-         PROCESS_UNESCAPE("@");
-         PROCESS_UNESCAPE("\"");
-         PROCESS_UNESCAPE("$");
-         PROCESS_UNESCAPE("~");
-         PROCESS_UNESCAPE("(");
-         PROCESS_UNESCAPE(")");
-         lpszText = buf;
          //
          // name of character
          //
          PAL_DrawText(lpszText, g_TextLib.posDialogTitle, FONT_COLOR_CYAN_ALT, TRUE, TRUE, FALSE);
-         free(buf);
       }
       else
       {
