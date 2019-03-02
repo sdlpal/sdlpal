@@ -756,7 +756,7 @@ PAL_MenuTextMaxWidth(
 	for (i = 0; i < nMenuItem; i++)
 	{
 		LPCWSTR itemText = PAL_GetWord(rgMenuItem[i].wNumWord);
-		int w = (PAL_TextWidth(itemText) + 8) >> 4;
+		int w = (PAL_TextWidth(PAL_UnescapeText(itemText)) + 8) >> 4;
 		if (r < w)
 		{
 			r = w;

@@ -36,6 +36,8 @@
 
 BOOL      g_fUpdatedInBattle      = FALSE;
 
+static wchar_t internal_wbuffer[PAL_GLOBAL_BUFFER_SIZE];
+
 #define   MESSAGE_MAX_BUFFER_SIZE   512
 
 #define INCLUDE_CODEPAGE_H
@@ -689,7 +691,7 @@ PAL_InitText(
 		   {
 			   if (g_TextLib.lpWordBuf[i])
 			   {
-				   LPWSTR ptr = g_TextLib.lpWordBuf[i];
+				   LPWSTR ptr = PAL_UnescapeText( g_TextLib.lpWordBuf[i] );
 				   DWORD n = 0;
 				   while (*ptr) n += PAL_CharWidth(*ptr++) >> 3;
 				   if (dwWordLength < n) dwWordLength = n;
@@ -1031,23 +1033,40 @@ PAL_GetMsgNum(
    return (iIndex >= g_TextLib.nMsgs || iSpan >= g_TextLib.indexMaxCounter[iIndex] || !g_TextLib.lpIndexBuf[iIndex] || !g_TextLib.lpIndexBuf[iIndex][iSpan]) ? -1 : g_TextLib.lpIndexBuf[iIndex][iSpan][iOrder];
 }
 
-static WCHAR *WTEXT_replace(WCHAR *str, size_t buflen, WCHAR *orig, WCHAR *rep)
+static inline WCHAR *WTEXT_replace(WCHAR *str, size_t buflen, WCHAR *orig, WCHAR *rep)
 {
-	static WCHAR buffer[4096];
-	WCHAR *p;
+   static WCHAR buffer[4096];
+   WCHAR *p;
+   if (!(p = wcsstr(str, orig)))
+      return str;
+   wcsncpy(buffer, str, p - str);
+   buffer[p - str] = L'\0';
+   PAL_swprintf(buffer + (p - str), 4096, L"%ls%ls", rep, p + wcslen(orig));
+   memset(str, 0, buflen);
+   wcscpy(str, buffer);
+   return str;
+}
 
-	if (!(p = wcsstr(str, orig)))  // Is 'orig' even in 'str'?
-		return str;
-
-	wcsncpy(buffer, str, p - str); // Copy characters from 'str' start to 'orig' st$
-	buffer[p - str] = L'\0';
-
-	PAL_swprintf(buffer + (p - str), 4096, L"%ls%ls", rep, p + wcslen(orig));
-
-	memset(str, 0, buflen);
-	wcscpy(str, buffer);
-
-	return str;
+LPWSTR
+PAL_UnescapeText(
+   LPCWSTR    lpszText
+)
+{
+   WCHAR *buf = internal_wbuffer, *p;
+   wcscpy(buf, lpszText);
+#define PROCESS_UNESCAPE(x) \
+while( (p = wcsstr(buf, L"\\" x )) != NULL ) \
+WTEXT_replace( buf, PAL_GLOBAL_BUFFER_SIZE, L"\\" x, L ##x);
+   PROCESS_UNESCAPE("-");
+   PROCESS_UNESCAPE("'");
+   PROCESS_UNESCAPE("\"");
+   PROCESS_UNESCAPE("$");
+   PROCESS_UNESCAPE("~");
+   PROCESS_UNESCAPE("(");
+   PROCESS_UNESCAPE(")");
+   PROCESS_UNESCAPE("@");
+   PROCESS_UNESCAPE("\\");
+   return buf;
 }
 
 VOID
@@ -1101,8 +1120,6 @@ PAL_DrawTextUnescape(
 --*/
 {
    SDL_Rect   rect, urect;
-   WCHAR *buf = wcsdup(lpszText), *p;
-   size_t buflen = wcslen(lpszText);
 
    urect.x = rect.x = PAL_X(pos);
    urect.y = rect.y = PAL_Y(pos);
@@ -1112,20 +1129,8 @@ PAL_DrawTextUnescape(
    // Handle text overflow
    if (rect.x >= 320) return;
 
-#define PROCESS_UNESCAPE(x) \
-while( (p = wcsstr(buf, L"\\" x )) != NULL ) \
-WTEXT_replace( buf, buflen, L"\\" x, L ##x);
-   if(fUnescape) {
-      PROCESS_UNESCAPE("-");
-      PROCESS_UNESCAPE("'");
-      PROCESS_UNESCAPE("\"");
-      PROCESS_UNESCAPE("$");
-      PROCESS_UNESCAPE("~");
-      PROCESS_UNESCAPE("(");
-      PROCESS_UNESCAPE(")");
-      PROCESS_UNESCAPE("@");
-      lpszText = buf;
-   }
+   if(fUnescape)
+      lpszText = PAL_UnescapeText(lpszText);
 
    while (*lpszText)
    {
@@ -1142,9 +1147,6 @@ WTEXT_replace( buf, buflen, L"\\" x, L ##x);
 	  PAL_DrawCharOnSurface(*lpszText++, gpScreen, PAL_XY(rect.x, rect.y), bColor, fUse8x8Font);
 	  rect.x += char_width; urect.w += char_width;
    }
-
-   if(fUnescape)
-      free(buf);
 
    //
    // Update the screen area

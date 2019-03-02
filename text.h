@@ -107,6 +107,11 @@ PAL_GetMsgNum(
    int        iOrder
 );
 
+LPWSTR
+PAL_UnescapeText(
+   LPCWSTR    lpszText
+);
+
 VOID
 PAL_DrawText(
    LPCWSTR    lpszText,
