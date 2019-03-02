@@ -248,7 +248,7 @@ PAL_ItemSelectMenuUpdate(
 
          if (d != NULL)
          {
-            k = 150;
+            k = 150 - gConfig.ScreenLayout.ExtraItemDescLines * 16;
             wcscpy(szDesc, d);
             d = szDesc;
 
