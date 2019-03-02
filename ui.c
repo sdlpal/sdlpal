@@ -856,6 +856,7 @@ PAL_LoadObjectDesc(
    char                      *p;
    LPOBJECTDESC               lpDesc = NULL, pNew = NULL;
    unsigned int               i;
+   CODEPAGE cp = PAL_DetectCodePage(lpszFileName);
 
    fp = UTIL_OpenFileForMode(lpszFileName, "r");
 
@@ -881,14 +882,14 @@ PAL_LoadObjectDesc(
          if(p[strlen(p)-1]=='\r') p[strlen(p)-1]='\0';
          if(p[strlen(p)-1]=='\n') p[strlen(p)-1]='\0';
       }
-	  wlen = PAL_MultiByteToWideChar(p, -1, NULL, 0);
+      wlen = PAL_MultiByteToWideCharCP(cp, p, -1, NULL, 0);
 
       pNew = UTIL_calloc(1, sizeof(OBJECTDESC));
 
       sscanf(buf, "%x", &i);
       pNew->wObjectID = i;
-	  pNew->lpDesc = (LPWSTR)UTIL_malloc(wlen * sizeof(WCHAR));
-	  PAL_MultiByteToWideChar(p, -1, pNew->lpDesc, wlen);
+      pNew->lpDesc = (LPWSTR)UTIL_malloc(wlen * sizeof(WCHAR));
+      PAL_MultiByteToWideCharCP(cp, p, -1, pNew->lpDesc, wlen);
 
       pNew->next = lpDesc;
       lpDesc = pNew;
