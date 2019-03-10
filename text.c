@@ -1033,40 +1033,36 @@ PAL_GetMsgNum(
    return (iIndex >= g_TextLib.nMsgs || iSpan >= g_TextLib.indexMaxCounter[iIndex] || !g_TextLib.lpIndexBuf[iIndex] || !g_TextLib.lpIndexBuf[iIndex][iSpan]) ? -1 : g_TextLib.lpIndexBuf[iIndex][iSpan][iOrder];
 }
 
-static inline WCHAR *WTEXT_replace(WCHAR *str, size_t buflen, WCHAR *orig, WCHAR *rep)
-{
-   static WCHAR buffer[4096];
-   WCHAR *p;
-   if (!(p = wcsstr(str, orig)))
-      return str;
-   wcsncpy(buffer, str, p - str);
-   buffer[p - str] = L'\0';
-   PAL_swprintf(buffer + (p - str), 4096, L"%ls%ls", rep, p + wcslen(orig));
-   memset(str, 0, buflen);
-   wcscpy(str, buffer);
-   return str;
-}
-
 LPWSTR
 PAL_UnescapeText(
    LPCWSTR    lpszText
 )
 {
-   WCHAR *buf = internal_wbuffer, *p;
-   wcscpy(buf, lpszText);
-#define PROCESS_UNESCAPE(x) \
-while( (p = wcsstr(buf, L"\\" x )) != NULL ) \
-WTEXT_replace( buf, PAL_GLOBAL_BUFFER_SIZE, L"\\" x, L ##x);
-   PROCESS_UNESCAPE("-");
-   PROCESS_UNESCAPE("'");
-   PROCESS_UNESCAPE("\"");
-   PROCESS_UNESCAPE("$");
-   PROCESS_UNESCAPE("~");
-   PROCESS_UNESCAPE("(");
-   PROCESS_UNESCAPE(")");
-   PROCESS_UNESCAPE("@");
-   PROCESS_UNESCAPE("\\");
-   return buf;
+   WCHAR *buf = internal_wbuffer;
+   memset(internal_wbuffer, 0, sizeof(internal_wbuffer));
+
+   while (*lpszText != L'\0')
+   {
+      switch (*lpszText)
+      {
+         case '-':
+         case '\'':
+         case '@':
+         case '\"':
+         case '$':
+         case '~':
+         case ')':
+         case '(':
+            lpszText++;
+            break;
+         case '\\':
+            lpszText++;
+         default:
+            wcsncpy(buf++, lpszText++, 1);
+            break;
+      }
+   }
+   return internal_wbuffer;
 }
 
 VOID
