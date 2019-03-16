@@ -1039,6 +1039,10 @@ PAL_UnescapeText(
 )
 {
    WCHAR *buf = internal_wbuffer;
+   
+   if(wcsstr(lpszText, L"\\") == NULL)
+      return (LPWSTR)lpszText;
+   
    memset(internal_wbuffer, 0, sizeof(internal_wbuffer));
 
    while (*lpszText != L'\0')
