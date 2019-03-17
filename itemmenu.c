@@ -50,7 +50,7 @@ PAL_ItemSelectMenuUpdate(
    BYTE               bColor;
    static BYTE        bufImage[2048];
    static WORD        wPrevImageIndex = 0xFFFF;
-   const int          iItemsPerLine = 34 / gConfig.dwWordLength;
+   const int          iItemsPerLine = 32 / gConfig.dwWordLength;
    const int          iItemTextWidth = 8 * gConfig.dwWordLength + 20;
    const int          iLinesPerPage = 7 - gConfig.ScreenLayout.ExtraItemDescLines;
    const int          iCursorXOffset = gConfig.dwWordLength * 5 / 2;

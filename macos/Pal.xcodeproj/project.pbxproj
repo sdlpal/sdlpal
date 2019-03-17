@@ -90,6 +90,7 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C602B0021CEF3E6C003A7B09 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C602B0011CEF3E6C003A7B09 /* palcfg.c */; };
+		C604BF6F2233886D00E0A4CF /* test_unescape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C604BF6E2233886D00E0A4CF /* test_unescape.cpp */; };
 		C61464681EA6425700A76CC9 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C61464641EA6425700A76CC9 /* native_midi_common.c */; };
 		C61464691EA6425700A76CC9 /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = C61464661EA6425700A76CC9 /* native_midi_macosx.c */; };
 		C614646C1EA642F200A76CC9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C614646B1EA642F200A76CC9 /* AudioToolbox.framework */; };
@@ -109,11 +110,8 @@
 		C63505D31EB4631100186049 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D21EB4631100186049 /* ForceFeedback.framework */; };
 		C63505D41EB4633000186049 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D01EB4630200186049 /* Carbon.framework */; };
 		C639992120455776005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639991F20455776005B20CE /* video_glsl.c */; };
-		C639992220455776005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639991F20455776005B20CE /* video_glsl.c */; };
-		C6399929204557B4005B20CE /* mini_glloader.c in Sources */ = {isa = PBXBuildFile; fileRef = C6399926204557B4005B20CE /* mini_glloader.c */; };
 		C63DF68B1EC50B7300C778B8 /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = C63DF68A1EC50B7300C778B8 /* util.mm */; };
 		C650609620F653B300397B73 /* glslp.c in Sources */ = {isa = PBXBuildFile; fileRef = C650609420F653B300397B73 /* glslp.c */; };
-		C650609720F653B300397B73 /* glslp.c in Sources */ = {isa = PBXBuildFile; fileRef = C650609420F653B300397B73 /* glslp.c */; };
 		C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11C1CFAF1780037E9A2 /* overlay.c */; };
 		C65BC11F1CFAF7790037E9A2 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11E1CFAF7790037E9A2 /* audio.c */; };
 		C6972640202E155C00293A73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C697263C202E155C00293A73 /* OpenGL.framework */; };
@@ -121,6 +119,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C604BF6C2233857A00E0A4CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = Pal;
+		};
 		C63505B21EB45F9A00186049 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
@@ -364,6 +369,7 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Pal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C602B0011CEF3E6C003A7B09 /* palcfg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = palcfg.c; sourceTree = "<group>"; };
+		C604BF6E2233886D00E0A4CF /* test_unescape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = test_unescape.cpp; path = ../../tests/test_unescape.cpp; sourceTree = "<group>"; };
 		C61464631EA6425700A76CC9 /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		C61464641EA6425700A76CC9 /* native_midi_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_common.c; sourceTree = "<group>"; };
 		C61464651EA6425700A76CC9 /* native_midi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi_common.h; sourceTree = "<group>"; };
@@ -847,6 +853,7 @@
 				C626003C1E62058F00E39DD9 /* gtest-all.cc */,
 				C62600441E620F0500E39DD9 /* GoogleTests.mm */,
 				C626FFE61E6204BE00E39DD9 /* Info.plist */,
+				C604BF6E2233886D00E0A4CF /* test_unescape.cpp */,
 			);
 			path = PalTests;
 			sourceTree = "<group>";
@@ -897,6 +904,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C604BF6D2233857A00E0A4CF /* PBXTargetDependency */,
 			);
 			name = PalTests;
 			productName = PalTests;
@@ -1110,10 +1118,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C650609720F653B300397B73 /* glslp.c in Sources */,
 				C626003D1E62058F00E39DD9 /* gtest-all.cc in Sources */,
-				C639992220455776005B20CE /* video_glsl.c in Sources */,
-				C6399929204557B4005B20CE /* mini_glloader.c in Sources */,
+				C604BF6F2233886D00E0A4CF /* test_unescape.cpp in Sources */,
 				C62600451E620F0500E39DD9 /* GoogleTests.mm in Sources */,
 				C62600491E62139C00E39DD9 /* test_swprintf.cpp in Sources */,
 			);
@@ -1122,6 +1128,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C604BF6D2233857A00E0A4CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* Pal */;
+			targetProxy = C604BF6C2233857A00E0A4CF /* PBXContainerItemProxy */;
+		};
 		C63505C51EB4625000186049 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Static Library";
@@ -1287,17 +1298,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(FRAMEWORK_SEARCH_PATHS)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1308,11 +1321,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
+					../3rd/SDL/include,
 					../liboggvorbis/include,
 					../liboggvorbis/src,
 					../3rd/googletest/googletest/,
 					../3rd/googletest/googletest/include,
-					/Library/Frameworks/SDL2.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
 				);
 				INFOPLIST_FILE = PalTests/Info.plist;
@@ -1322,8 +1335,10 @@
 				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PRODUCT_BUNDLE_IDENTIFIER = user.PalTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pal.app/Contents/MacOS/Pal";
-				USER_HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL2.framework/Headers $(HEADER_SEARCH_PATHS)";
+				USER_HEADER_SEARCH_PATHS = "";
+				USE_HEADERMAP = YES;
 			};
 			name = Debug;
 		};
@@ -1340,10 +1355,12 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
@@ -1351,16 +1368,16 @@
 					"$(FRAMEWORK_SEARCH_PATHS)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_PREPROCESSOR_DEFINITIONS = "UNIT_TEST=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
+					../3rd/SDL/include,
 					../liboggvorbis/include,
 					../liboggvorbis/src,
 					../3rd/googletest/googletest/,
 					../3rd/googletest/googletest/include,
-					/Library/Frameworks/SDL2.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
 				);
 				INFOPLIST_FILE = PalTests/Info.plist;
@@ -1370,8 +1387,10 @@
 				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PRODUCT_BUNDLE_IDENTIFIER = user.PalTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pal.app/Contents/MacOS/Pal";
-				USER_HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL2.framework/Headers $(HEADER_SEARCH_PATHS)";
+				USER_HEADER_SEARCH_PATHS = "";
+				USE_HEADERMAP = YES;
 			};
 			name = Release;
 		};
