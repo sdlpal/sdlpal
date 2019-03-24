@@ -1030,6 +1030,9 @@ PAL_GetMsgNum(
 
 --*/
 {
+   assert(iIndex>=0);
+   assert(iSpan>=0);
+   assert(iOrder>=0);
    return (iIndex >= g_TextLib.nMsgs || iSpan >= g_TextLib.indexMaxCounter[iIndex] || !g_TextLib.lpIndexBuf[iIndex] || !g_TextLib.lpIndexBuf[iIndex][iSpan]) ? -1 : g_TextLib.lpIndexBuf[iIndex][iSpan][iOrder];
 }
 
