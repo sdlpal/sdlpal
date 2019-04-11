@@ -6,6 +6,14 @@ import argparse
 import os
 import traceback
 import struct
+import zlib
+
+def crc32(st):
+    rawcrc32 = zlib.crc32(st)
+    if rawcrc32 > 0:
+        return "%x" % (rawcrc32)
+    else:
+        return "%x" % (~rawcrc32 ^ 0xFFFFFFFF)
 
 def main():
 
@@ -23,7 +31,8 @@ def main():
     script_bytes = []
     index_bytes = []
     msg_bytes = []
-    word_bytes = []
+    data_bytes = []
+    sss_bytes = []
 
     is_msg_group = 0    #是否正在处理文字组的标示。
     msg_count = 0
@@ -41,6 +50,8 @@ def main():
                     f.seek(offset_begin, os.SEEK_SET)
                     index_bytes = f.read(script_begin - offset_begin)
                     script_bytes = f.read(file_end - script_begin)
+                with open(options.gamepath + file_, 'rb') as f:
+                    sss_bytes = f.read()
             except:
                 traceback.print_exc()
                 return
@@ -64,6 +75,22 @@ def main():
 
     output = "# All lines, except those inside [BEIGN MESSAGE] and [END MESSAGE], can be commented by adding the sharp '#' mark at the first of the line.\n\n"
 
+    output += "# This section contains the information of this message file.\n"
+    output += "# All the items of this section are optional.\n"
+    output += "[BEGIN INFO]\n"
+    output += "NAME= \n"
+    output += "LANGUAGE= \n"
+    output += "VERSION= \n"
+    output += "CREDIT= \n"
+    output += "LINK= \n"
+    output += "COMMENT= \n"
+    output += "SDLPAL_VERSION= \n"
+    output += "SSS_MKF_CRC32=%s\n" % crc32(sss_bytes)
+    output += "INDEX_CRC32=%s\n" % crc32(index_bytes)
+    output += "M_MSG_CRC32=%s\n" % crc32(msg_bytes)
+    output += "WORD_DAT_CRC32=%s\n" % crc32(data_bytes)
+    output += "[END INFO]\n\n"
+	
     output += "# This section contains the information that will be displayed when a user finishes the game.\n"
     output += "# Only the keys listed here are valid. Other keys will be ignored.\n"
     output += "[BEGIN CREDITS]\n"
