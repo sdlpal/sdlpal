@@ -198,7 +198,7 @@ matrix:
           - cd ../..
 
       - os: osx
-        osx_image: xcode9.2
+        osx_image: xcode10.2
         env: TARGET=macOS
         language: objective-c
         script:
