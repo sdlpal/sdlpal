@@ -207,7 +207,8 @@ VIDEO_Startup(
    if(!gConfig.fEnableGLSL)
       SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, gConfig.pszScaleQuality);
    gpTexture = gRenderBackend.CreateTexture(render_w, render_h);
-   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+   if(gConfig.fEnableGLSL)
+      SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 
    //
    // Create palette object
