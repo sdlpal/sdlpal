@@ -2822,6 +2822,13 @@ PAL_InterpretInstruction(
       //
       // Enemy summons another monster
       //
+      for (i = 0; i < g_Battle.rgEnemy[wEventObjectID].e.wMagicFrames; i++)
+      {
+         g_Battle.rgEnemy[wEventObjectID].wCurrentFrame =
+         g_Battle.rgEnemy[wEventObjectID].e.wIdleFrames + i;
+         PAL_BattleDelay(g_Battle.rgEnemy[wEventObjectID].e.wActWaitFrames, 0, FALSE);
+      }
+
       x = 0;
       w = pScript->rgwOperand[0];
       y = (((SHORT)(pScript->rgwOperand[1]) <= 0) ? 1 : (SHORT)pScript->rgwOperand[1]);
@@ -2875,13 +2882,14 @@ PAL_InterpretInstruction(
             }
          }
 
-         PAL_BattleDelay(2, 0, TRUE);
-
          VIDEO_BackupScreen(g_Battle.lpSceneBuf);
          PAL_LoadBattleSprites();
          PAL_BattleMakeScene();
          AUDIO_PlaySound(212);
          PAL_BattleFadeScene();
+
+         // avoid releasing gesture disappears before summon done
+         PAL_BattleDelay(2, 0, TRUE);
 
          for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
          {
