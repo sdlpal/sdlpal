@@ -1671,7 +1671,8 @@ PAL_InterpretInstruction(
       //
       // Set the state of event object
       //
-      pCurrent->sState = pScript->rgwOperand[1];
+      if (pScript->rgwOperand[0] != 0)
+         pCurrent->sState = pScript->rgwOperand[1];
       break;
 
    case 0x004A:
