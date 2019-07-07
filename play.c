@@ -44,6 +44,7 @@ PAL_GameUpdate(
    WORD            wEventObjectID, wDir;
    int             i;
    LPEVENTOBJECT   p;
+   WORD            wResult;
 
    //
    // Check for trigger events
@@ -61,8 +62,9 @@ PAL_GameUpdate(
          gpGlobals->fEnteringScene = FALSE;
 
          i = gpGlobals->wNumScene - 1;
-         gpGlobals->g.rgScene[i].wScriptOnEnter =
-            PAL_RunTriggerScript(gpGlobals->g.rgScene[i].wScriptOnEnter, 0xFFFF);
+         wResult = PAL_RunTriggerScript(gpGlobals->g.rgScene[i].wScriptOnEnter, 0xFFFF);
+         if (!gpGlobals->fGameStart)
+            gpGlobals->g.rgScene[i].wScriptOnEnter = wResult;
 
          if (gpGlobals->fEnteringScene || gpGlobals->fGameStart)
          {
