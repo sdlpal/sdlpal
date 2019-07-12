@@ -1,9 +1,27 @@
+/* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
-//  video_glsl.h
-//  Pal
+// Copyright (c) 2011-2019, SDLPAL development team.
+// All rights reserved.
 //
-//  Created by palxex on 27/2/18.
+// This file is part of SDLPAL.
 //
+// SDLPAL is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// video_glsl.h: hacky SDL2 renderer that compatible of retroarch-style
+// multipass shader preset header by palxex, 2018
+//
+
 
 #ifndef video_glsl_h
 #define video_glsl_h

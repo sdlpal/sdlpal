@@ -1,7 +1,7 @@
 /* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
 // Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
-// Copyright (c) 2011-2018, SDLPAL development team.
+// Copyright (c) 2011-2019, SDLPAL development team.
 // All rights reserved.
 //
 // This file is part of SDLPAL.
@@ -545,7 +545,7 @@ PAL_AdditionalCredits(
       L" ",
 	  L"    (c) 2009-2011, Wei Mingzhi",
 	  L"        <whistler_wmz@users.sf.net>.",
-      L"    (c) 2011-2018, SDLPAL Team",
+      L"    (c) 2011-2019, SDLPAL Team",
 	  L"%ls",  // Porting information line 1
 	  L"%ls",  // Porting information line 2
 	  L"%ls",  // GNU line 1
@@ -1671,7 +1671,8 @@ PAL_InterpretInstruction(
       //
       // Set the state of event object
       //
-      pCurrent->sState = pScript->rgwOperand[1];
+      if (pScript->rgwOperand[0] != 0)
+         pCurrent->sState = pScript->rgwOperand[1];
       break;
 
    case 0x004A:
@@ -2822,6 +2823,13 @@ PAL_InterpretInstruction(
       //
       // Enemy summons another monster
       //
+      for (i = 0; i < g_Battle.rgEnemy[wEventObjectID].e.wMagicFrames; i++)
+      {
+         g_Battle.rgEnemy[wEventObjectID].wCurrentFrame =
+         g_Battle.rgEnemy[wEventObjectID].e.wIdleFrames + i;
+         PAL_BattleDelay(g_Battle.rgEnemy[wEventObjectID].e.wActWaitFrames, 0, FALSE);
+      }
+
       x = 0;
       w = pScript->rgwOperand[0];
       y = (((SHORT)(pScript->rgwOperand[1]) <= 0) ? 1 : (SHORT)pScript->rgwOperand[1]);
@@ -2875,13 +2883,14 @@ PAL_InterpretInstruction(
             }
          }
 
-         PAL_BattleDelay(2, 0, TRUE);
-
          VIDEO_BackupScreen(g_Battle.lpSceneBuf);
          PAL_LoadBattleSprites();
          PAL_BattleMakeScene();
          AUDIO_PlaySound(212);
          PAL_BattleFadeScene();
+
+         // avoid releasing gesture disappears before summon done
+         PAL_BattleDelay(2, 0, TRUE);
 
          for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
          {
@@ -3019,6 +3028,56 @@ PAL_InterpretInstruction(
    }
 
    return wScriptEntry + 1;
+}
+
+PAL_FORCE_INLINE
+INT
+MESSAGE_GetSpan(
+    INT wScriptEntry
+)
+/*++
+ Purpose:
+
+ Get the final span of a message block which started from message index of wScriptEntry
+ 
+ Parameters:
+ 
+ [IN]  wScriptEntry - The script entry which starts the message block, must be a 0xffff command.
+ 
+ Return value:
+ 
+ The final span of the message block.
+ 
+ --*/
+{
+    int tmp_wScriptEntry = wScriptEntry;
+    int offset=0;
+
+    // ensure the command leads a new message block
+    assert(wScriptEntry > 0 &&
+           gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation != 0xFFFF &&
+           gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation != 0x008E );
+    // ensure the command is 0xFFFF
+    assert(gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF);
+
+    //
+    // If the NEXT command is 0xFFFF, but the message index is not continuous or not incremental,
+    // this MESSAGE block shoud end at THIS command.
+    //
+    if( gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].rgwOperand[0] != gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] + 1)
+        tmp_wScriptEntry++;
+    else
+        while (gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF
+               || gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
+        {
+            if(gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
+                offset++;
+            if(gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF)
+                offset=0;
+            tmp_wScriptEntry++;
+        }
+
+    return gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-offset-1].rgwOperand[0] - gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0];
 }
 
 WORD
@@ -3326,29 +3385,7 @@ PAL_RunTriggerScript(
          //
          if (gConfig.pszMsgFile)
          {
-            //
-            // Find eid of this MESSAGE. 
-            //
-            int tmp_wScriptEntry = wScriptEntry, msgSpan = 0; 
-            //
-            // If the NEXT script is 0xFFFF, but the index is not continuous or not incremental, 
-            // this MESSAGE shoud end at THIS script. 
-            //
-            if( gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].rgwOperand[0] != gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] + 1)
-            {
-                 tmp_wScriptEntry++;
-            }else{
-                while (gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF
-                       || gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
-                {
-                    //
-                    // Skip all following continuous 0xFFFF & 0x008E instructions
-                    //
-                    tmp_wScriptEntry++;
-                }
-            }
-            msgSpan = gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-1].rgwOperand[0] - gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0];
-            // Get eid from the script previous to tmp_wScriptEntry. 
+            int msgSpan = MESSAGE_GetSpan(wScriptEntry);
             int idx = 0, iMsg;
             while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], msgSpan, idx++)) >= 0)
 			{
@@ -3527,31 +3564,7 @@ begin:
 
 		   if (gConfig.pszMsgFile)
 		   {
-			   //
-			   // Find eid of this MESSAGE. 
-			   //
-			   int tmp_wScriptEntry = wScriptEntry, msgSpan = 0;
-			   //
-			   // If the NEXT script is 0xFFFF, but the index is not continuous or not incremental, 
-			   // this MESSAGE shoud end at THIS script. 
-			   //
-			   if( gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].rgwOperand[0] != gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] + 1)
-			   {
-					tmp_wScriptEntry++;
-			   }else{
-					while (gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF
-						   || gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
-					{
-						//
-						// Skip all following continuous 0xFFFF & 0x008E instructions
-						//
-						tmp_wScriptEntry++;
-					}
-			   }
-			   msgSpan = gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-1].rgwOperand[0] - gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0];
-			   // Get eid from the script previous to tmp_wScriptEntry. 
-
-			   
+               int msgSpan = MESSAGE_GetSpan(wScriptEntry);
 			   int idx = 0, iMsg;
 			   while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], msgSpan, idx++)) >= 0)
 			   {

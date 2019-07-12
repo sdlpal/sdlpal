@@ -1,7 +1,7 @@
 /* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
 // Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
-// Copyright (c) 2011-2018, SDLPAL development team.
+// Copyright (c) 2011-2019, SDLPAL development team.
 // All rights reserved.
 //
 // This file is part of SDLPAL.
@@ -50,7 +50,7 @@ PAL_ItemSelectMenuUpdate(
    BYTE               bColor;
    static BYTE        bufImage[2048];
    static WORD        wPrevImageIndex = 0xFFFF;
-   const int          iItemsPerLine = 34 / gConfig.dwWordLength;
+   const int          iItemsPerLine = 32 / gConfig.dwWordLength;
    const int          iItemTextWidth = 8 * gConfig.dwWordLength + 20;
    const int          iLinesPerPage = 7 - gConfig.ScreenLayout.ExtraItemDescLines;
    const int          iCursorXOffset = gConfig.dwWordLength * 5 / 2;
@@ -248,7 +248,7 @@ PAL_ItemSelectMenuUpdate(
 
          if (d != NULL)
          {
-            k = 150;
+            k = 150 - gConfig.ScreenLayout.ExtraItemDescLines * 16;
             wcscpy(szDesc, d);
             d = szDesc;
 

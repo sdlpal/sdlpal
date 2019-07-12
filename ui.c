@@ -1,7 +1,7 @@
 /* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
 // Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
-// Copyright (c) 2011-2018, SDLPAL development team.
+// Copyright (c) 2011-2019, SDLPAL development team.
 // All rights reserved.
 //
 // This file is part of SDLPAL.
@@ -756,7 +756,7 @@ PAL_MenuTextMaxWidth(
 	for (i = 0; i < nMenuItem; i++)
 	{
 		LPCWSTR itemText = PAL_GetWord(rgMenuItem[i].wNumWord);
-		int w = (PAL_TextWidth(itemText) + 8) >> 4;
+		int w = (PAL_TextWidth(PAL_UnescapeText(itemText)) + 8) >> 4;
 		if (r < w)
 		{
 			r = w;
@@ -856,6 +856,7 @@ PAL_LoadObjectDesc(
    char                      *p;
    LPOBJECTDESC               lpDesc = NULL, pNew = NULL;
    unsigned int               i;
+   CODEPAGE cp = PAL_DetectCodePage(lpszFileName);
 
    fp = UTIL_OpenFileForMode(lpszFileName, "r");
 
@@ -881,14 +882,14 @@ PAL_LoadObjectDesc(
          if(p[strlen(p)-1]=='\r') p[strlen(p)-1]='\0';
          if(p[strlen(p)-1]=='\n') p[strlen(p)-1]='\0';
       }
-	  wlen = PAL_MultiByteToWideChar(p, -1, NULL, 0);
+      wlen = PAL_MultiByteToWideCharCP(cp, p, -1, NULL, 0);
 
       pNew = UTIL_calloc(1, sizeof(OBJECTDESC));
 
       sscanf(buf, "%x", &i);
       pNew->wObjectID = i;
-	  pNew->lpDesc = (LPWSTR)UTIL_malloc(wlen * sizeof(WCHAR));
-	  PAL_MultiByteToWideChar(p, -1, pNew->lpDesc, wlen);
+      pNew->lpDesc = (LPWSTR)UTIL_malloc(wlen * sizeof(WCHAR));
+      PAL_MultiByteToWideCharCP(cp, p, -1, pNew->lpDesc, wlen);
 
       pNew->next = lpDesc;
       lpDesc = pNew;

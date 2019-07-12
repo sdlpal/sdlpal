@@ -1,17 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
 
     defaultConfig {
         applicationId "com.sdlpal.sdlpal"
         minSdkVersion 10
-        targetSdkVersion 25
+        targetSdkVersion 26
         multiDexEnabled true
         externalNativeBuild {
             ndkBuild {
                 arguments "NDK_APPLICATION_MK:=src/main/cpp/Application.mk"
-                abiFilters "armeabi-v7a", "x86"
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
             }
         }
     }

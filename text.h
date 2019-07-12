@@ -1,7 +1,7 @@
 /* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
 // Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
-// Copyright (c) 2011-2018, SDLPAL development team.
+// Copyright (c) 2011-2019, SDLPAL development team.
 // All rights reserved.
 //
 // This file is part of SDLPAL.
@@ -107,6 +107,11 @@ PAL_GetMsgNum(
    int        iOrder
 );
 
+LPWSTR
+PAL_UnescapeText(
+   LPCWSTR    lpszText
+);
+
 VOID
 PAL_DrawText(
    LPCWSTR    lpszText,
@@ -115,6 +120,17 @@ PAL_DrawText(
    BOOL       fShadow,
    BOOL       fUpdate,
    BOOL       fUse8x8Font
+);
+
+VOID
+PAL_DrawTextUnescape(
+   LPCWSTR    lpszText,
+   PAL_POS    pos,
+   BYTE       bColor,
+   BOOL       fShadow,
+   BOOL       fUpdate,
+   BOOL       fUse8x8Font,
+   BOOL       fUnescape
 );
 
 VOID

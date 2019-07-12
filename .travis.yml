@@ -147,7 +147,7 @@ matrix:
           - make cia
           - cp sdlpal.cia ../deploy/sdlpal-3ds.cia
           - cd ..
-          
+
       - os: linux
         language: android
         env: TARGET=Android ANDROID_BUILD_TOOLS=26.0.2 NDK_VERSION=r16 TERM=dumb
@@ -157,6 +157,7 @@ matrix:
           - platform-tools
           - tools
           - build-tools-$ANDROID_BUILD_TOOLS
+          - android-26
           licenses:
           - android-sdk-preview-license-.+
           - android-sdk-license-.+
@@ -177,9 +178,10 @@ matrix:
           - cd "${PUSHD}"
         script:
           - cd android
+          - sed -i.bak s/"android:versionCode.*"/"android:versionCode=\"`date +%Y%m%d`\""/g ./app/src/main/AndroidManifest.xml
           - ./gradlew assembleRelease
           - cd ..
-          - jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk bca4145d-30d4-4f88-9549-dc57a851a38a
+          - jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 1
 
       - os: osx
         osx_image: xcode9.2
@@ -196,7 +198,7 @@ matrix:
           - cd ../..
 
       - os: osx
-        osx_image: xcode9.2
+        osx_image: xcode10.2
         env: TARGET=macOS
         language: objective-c
         script:

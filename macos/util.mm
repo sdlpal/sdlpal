@@ -1,7 +1,7 @@
 /* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
 // Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
-// Copyright (c) 2011-2018, SDLPAL development team.
+// Copyright (c) 2011-2019, SDLPAL development team.
 // All rights reserved.
 //
 // This file is part of SDLPAL.
@@ -47,6 +47,11 @@ static void LogCallBack(LOGLEVEL, const char* str, const char*)
     NSLog(@"%s",str);
 }
 
+BOOL isUnitTesting() {
+    NSDictionary *env = [NSProcessInfo processInfo].environment;
+    return env[@"XCTestConfigurationFilePath"] != nil;
+}
+
 INT UTIL_Platform_Startup(
 	int argc,
 	char* argv[]
@@ -64,7 +69,7 @@ INT UTIL_Platform_Startup(
             chdir(buf);
         }
     }
-    return 0;
+    return isUnitTesting() ? -1 : 0;
 }
 
 INT
