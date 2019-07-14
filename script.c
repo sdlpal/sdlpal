@@ -2573,19 +2573,25 @@ PAL_InterpretInstruction(
 
    case 0x0091:
       //
-      // Jump if the enemy is not alone
+      // Jump if the enemy is not first of same kind
       //
-      if (gpGlobals->fInBattle)
       {
-         for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+         int self_pos=0;
+         int count=0;
+         if (gpGlobals->fInBattle)
          {
-            if (i != wEventObjectID &&
-               g_Battle.rgEnemy[i].wObjectID == g_Battle.rgEnemy[wEventObjectID].wObjectID)
+            for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
             {
-               wScriptEntry = pScript->rgwOperand[0] - 1;
-               break;
+               if (g_Battle.rgEnemy[i].wObjectID == g_Battle.rgEnemy[wEventObjectID].wObjectID)
+               {
+                  count++;
+                  if(i==wEventObjectID)
+                     self_pos=count;
+               }
             }
          }
+         if(self_pos>1)
+            wScriptEntry = pScript->rgwOperand[0] - 1;
       }
       break;
 
