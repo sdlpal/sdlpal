@@ -3061,7 +3061,9 @@ MESSAGE_GetSpan(
 
     // ensure the command leads a new message block
     assert(wScriptEntry > 0 &&
-           gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation != 0xFFFF &&
+           (gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation != 0xFFFF ||
+            gpGlobals->g.lprgScriptEntry[wScriptEntry-1].rgwOperand[0] != gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] + 1)
+           &&
            gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation != 0x008E );
     // ensure the command is 0xFFFF
     assert(gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF);
