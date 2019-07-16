@@ -3039,7 +3039,7 @@ PAL_InterpretInstruction(
 PAL_FORCE_INLINE
 INT
 MESSAGE_GetSpan(
-    INT wScriptEntry
+    WORD *pwScriptEntry
 )
 /*++
  Purpose:
@@ -3048,7 +3048,7 @@ MESSAGE_GetSpan(
  
  Parameters:
  
- [IN]  wScriptEntry - The script entry which starts the message block, must be a 0xffff command.
+ [IN]  pwScriptEntry - The pointer of script entry which starts the message block, must be a 0xffff command.
  
  Return value:
  
@@ -3056,40 +3056,37 @@ MESSAGE_GetSpan(
  
  --*/
 {
-    int tmp_wScriptEntry = wScriptEntry;
-    int offset=0;
+    int currentScriptEntry = *pwScriptEntry;
+    int result=0;
     int beginning = 1;
+    int firstMsgIndex, lastMsgIndex;
 
-    // ensure the command leads a new message block
-    assert(wScriptEntry > 0 &&
-           (gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation != 0xFFFF ||
-            gpGlobals->g.lprgScriptEntry[wScriptEntry-1].rgwOperand[0] != gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] + 1)
-           &&
-           gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation != 0x008E );
     // ensure the command is 0xFFFF
-    assert(gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF);
+    assert(gpGlobals->g.lprgScriptEntry[currentScriptEntry].wOperation == 0xFFFF);
+
+    firstMsgIndex = lastMsgIndex = gpGlobals->g.lprgScriptEntry[currentScriptEntry].rgwOperand[0];
 
     //
     // If the NEXT command is 0xFFFF, but the message index is not continuous or not incremental,
     // this MESSAGE block shoud end at THIS command.
     //
-    if( gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].rgwOperand[0] != gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] + 1)
-        tmp_wScriptEntry++;
+    if( gpGlobals->g.lprgScriptEntry[currentScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[currentScriptEntry+1].rgwOperand[0] != lastMsgIndex + 1)
+        currentScriptEntry++;
     else
-        while ((gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF &&
-                ((!beginning && gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-1].wOperation == 0xFFFF) ?
-                 gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] == gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-1].rgwOperand[0] + 1 : 1))
-               || gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
+        while ((gpGlobals->g.lprgScriptEntry[currentScriptEntry].wOperation == 0xFFFF &&
+                (!beginning ? gpGlobals->g.lprgScriptEntry[currentScriptEntry].rgwOperand[0] == lastMsgIndex + 1 : 1))
+               || gpGlobals->g.lprgScriptEntry[currentScriptEntry].wOperation == 0x008E)
         {
-            if(gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
-                offset++;
-            if(gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF)
-                offset=0;
-            tmp_wScriptEntry++;
+            if(gpGlobals->g.lprgScriptEntry[currentScriptEntry].wOperation == 0xFFFF)
+                lastMsgIndex = gpGlobals->g.lprgScriptEntry[currentScriptEntry].rgwOperand[0];
+            currentScriptEntry++;
             beginning = 0;
         }
 
-    return gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-offset-1].rgwOperand[0] - gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0];
+    result = lastMsgIndex - firstMsgIndex;
+    assert(result >= 0);
+    *pwScriptEntry = currentScriptEntry;
+    return result;
 }
 
 WORD
@@ -3397,9 +3394,8 @@ PAL_RunTriggerScript(
          //
          if (gConfig.pszMsgFile)
          {
-            int msgSpan = MESSAGE_GetSpan(wScriptEntry);
+            int msgSpan = MESSAGE_GetSpan(&wScriptEntry);
             int idx = 0, iMsg;
-            int beginning=1;
             while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], msgSpan, idx++)) >= 0)
 			   {
                if (iMsg == 0)
@@ -3413,20 +3409,6 @@ PAL_RunTriggerScript(
                }
 			   else
                   PAL_ShowDialogText(PAL_GetMsg(iMsg));
-            }
-            if( gpGlobals->g.lprgScriptEntry[wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[wScriptEntry+1].rgwOperand[0] != pScript->rgwOperand[0] + 1)
-			   wScriptEntry++;
-            else
-            while ((gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF &&
-                    ((!beginning && gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation == 0xFFFF) ?
-                     gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0] == gpGlobals->g.lprgScriptEntry[wScriptEntry-1].rgwOperand[0] + 1 : 1))
-                || gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0x008E)
-            {
-               //
-               // Skip all following continuous 0xFFFF & 0x008E instructions
-               //
-               wScriptEntry++;
-               beginning=0;
             }
          }
 		 else
@@ -3580,9 +3562,8 @@ begin:
 
 		   if (gConfig.pszMsgFile)
 		   {
-               int msgSpan = MESSAGE_GetSpan(wScriptEntry);
+            int msgSpan = MESSAGE_GetSpan(&wScriptEntry);
 			   int idx = 0, iMsg;
-            int beginning=1;
 			   while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], msgSpan, idx++)) >= 0)
 			   {
 				   if (iMsg > 0)
@@ -3590,16 +3571,6 @@ begin:
 					   PAL_DrawText(PAL_GetMsg(iMsg), PAL_XY(XBase, iDescLine * 16 + YBase), DESCTEXT_COLOR, TRUE, FALSE, FALSE);
 					   iDescLine++;
 				   }
-			   }
-            while (gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF &&
-                   ((!beginning && gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation == 0xFFFF) ?
-                    gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0] == gpGlobals->g.lprgScriptEntry[wScriptEntry-1].rgwOperand[0] + 1 : 1))
-			   {
-				   //
-				   // Skip all following continuous 0xFFFF instructions
-				   //
-				   wScriptEntry++;
-               beginning=0;
 			   }
 		   }
 		   else
