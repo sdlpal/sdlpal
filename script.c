@@ -3058,6 +3058,7 @@ MESSAGE_GetSpan(
 {
     int tmp_wScriptEntry = wScriptEntry;
     int offset=0;
+    int beginning = 1;
 
     // ensure the command leads a new message block
     assert(wScriptEntry > 0 &&
@@ -3075,7 +3076,9 @@ MESSAGE_GetSpan(
     if( gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry+1].rgwOperand[0] != gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] + 1)
         tmp_wScriptEntry++;
     else
-        while (gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF
+        while ((gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF &&
+                ((!beginning && gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-1].wOperation == 0xFFFF) ?
+                 gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].rgwOperand[0] == gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-1].rgwOperand[0] + 1 : 1))
                || gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
         {
             if(gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0x008E)
@@ -3083,6 +3086,7 @@ MESSAGE_GetSpan(
             if(gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry].wOperation == 0xFFFF)
                 offset=0;
             tmp_wScriptEntry++;
+            beginning = 0;
         }
 
     return gpGlobals->g.lprgScriptEntry[tmp_wScriptEntry-offset-1].rgwOperand[0] - gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0];
@@ -3395,8 +3399,9 @@ PAL_RunTriggerScript(
          {
             int msgSpan = MESSAGE_GetSpan(wScriptEntry);
             int idx = 0, iMsg;
+            int beginning=1;
             while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], msgSpan, idx++)) >= 0)
-			{
+			   {
                if (iMsg == 0)
                {
                   //
@@ -3412,13 +3417,16 @@ PAL_RunTriggerScript(
             if( gpGlobals->g.lprgScriptEntry[wScriptEntry+1].wOperation == 0xFFFF && gpGlobals->g.lprgScriptEntry[wScriptEntry+1].rgwOperand[0] != pScript->rgwOperand[0] + 1)
 			   wScriptEntry++;
             else
-            while (gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF
+            while ((gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF &&
+                    ((!beginning && gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation == 0xFFFF) ?
+                     gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0] == gpGlobals->g.lprgScriptEntry[wScriptEntry-1].rgwOperand[0] + 1 : 1))
                 || gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0x008E)
             {
                //
                // Skip all following continuous 0xFFFF & 0x008E instructions
                //
                wScriptEntry++;
+               beginning=0;
             }
          }
 		 else
@@ -3574,6 +3582,7 @@ begin:
 		   {
                int msgSpan = MESSAGE_GetSpan(wScriptEntry);
 			   int idx = 0, iMsg;
+            int beginning=1;
 			   while ((iMsg = PAL_GetMsgNum(pScript->rgwOperand[0], msgSpan, idx++)) >= 0)
 			   {
 				   if (iMsg > 0)
@@ -3582,12 +3591,15 @@ begin:
 					   iDescLine++;
 				   }
 			   }
-			   while (gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF)
+            while (gpGlobals->g.lprgScriptEntry[wScriptEntry].wOperation == 0xFFFF &&
+                   ((!beginning && gpGlobals->g.lprgScriptEntry[wScriptEntry-1].wOperation == 0xFFFF) ?
+                    gpGlobals->g.lprgScriptEntry[wScriptEntry].rgwOperand[0] == gpGlobals->g.lprgScriptEntry[wScriptEntry-1].rgwOperand[0] + 1 : 1))
 			   {
 				   //
 				   // Skip all following continuous 0xFFFF instructions
 				   //
 				   wScriptEntry++;
+               beginning=0;
 			   }
 		   }
 		   else
