@@ -150,7 +150,7 @@ matrix:
 
       - os: linux
         language: android
-        env: TARGET=Android ANDROID_BUILD_TOOLS=26.0.2 NDK_VERSION=r16 TERM=dumb
+        env: TARGET=Android ANDROID_BUILD_TOOLS=28.0.3 NDK_VERSION=r16 TERM=dumb
         android:
           components:
           - tools
