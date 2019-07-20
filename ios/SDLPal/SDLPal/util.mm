@@ -78,6 +78,9 @@ UTIL_GetScreenSize(
                    DWORD *pdwScreenHeight
                    )
 {
+    CGRect bounds = [[UIScreen mainScreen] nativeBounds];
+    if (*pdwScreenWidth) *pdwScreenWidth = bounds.size.width;
+    if (*pdwScreenHeight) *pdwScreenHeight = bounds.size.height;
     return (pdwScreenWidth && pdwScreenHeight && *pdwScreenWidth && *pdwScreenHeight);
 }
 
