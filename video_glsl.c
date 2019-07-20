@@ -750,10 +750,10 @@ PAL_FORCE_INLINE int CORE_RenderCopy(SDL_Renderer * renderer, SDL_Texture * text
                     const SDL_Rect * srcrect, const SDL_Rect * dstrect)
 {
 #if SDL_VERSION_ATLEAST(2,0,10)
-    // hack for 2.0.10, for flushing defered glViewPort call( have NO relation with the new introduced drawcall batching system ), or the whole window will be black.
-    // path: RenderDrawPoint->SetDrawState->glViewPort; may need update in future update
-    // HAVE performance impact.
-    SDL_RenderDrawPoint(renderer, 0, 0);
+    // hack for 2.0.10, manually call glViewport for replaced SDL_RenderCopy.
+    int w,h;
+    SDL_GetRendererOutputSize(renderer, &w, &h);
+    glViewport(0, 0, w, h);
 #endif
     return VIDEO_RenderTexture(renderer, texture, srcrect, dstrect, gPassID);
 }
