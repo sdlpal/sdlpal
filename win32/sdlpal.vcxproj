@@ -29,7 +29,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{837BDF47-9375-4C30-866B-07E262E94A01}</ProjectGuid>
     <RootNamespace>sdlpal</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -412,6 +412,7 @@
     <ClInclude Include="..\battle.h" />
     <ClInclude Include="..\codepage.h" />
     <ClInclude Include="..\common.h" />
+    <ClInclude Include="..\defines.h" />
     <ClInclude Include="..\glslp.h" />
     <ClInclude Include="..\liboggvorbis\include\ogg\config_types.h" />
     <ClInclude Include="..\ending.h" />
@@ -530,7 +531,14 @@
     <None Include="..\libmad\sf_table.dat" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="sdlpal.rc" />
+    <ResourceCompile Include="sdlpal.rc" >
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Test|x64'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\AUTHORS.txt" />
