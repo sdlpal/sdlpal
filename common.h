@@ -175,6 +175,14 @@ typedef const WCHAR        *LPCWSTR;
  */
 #include "pal_config.h"
 
+#if !SDL_VERSION_ATLEAST(2,0,0)
+# if PAL_HAS_GLSL
+#  undef PAL_HAS_GLSL
+# endif
+#define SDL_strcasecmp strcasecmp
+#define SDL_setenv(a,b,c) 
+#endif
+
 #ifndef PAL_DEFAULT_FULLSCREEN_HEIGHT
 # define PAL_DEFAULT_FULLSCREEN_HEIGHT PAL_DEFAULT_WINDOW_HEIGHT
 #endif
