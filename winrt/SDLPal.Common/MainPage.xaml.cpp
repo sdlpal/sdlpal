@@ -24,7 +24,7 @@ using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 
-static Platform::String^ msg_file_exts[] = { ".msg" };
+static Platform::String^ msg_file_exts[] = { "." PAL_LOCALIZATION_EXT };
 static Platform::String^ font_file_exts[] = { ".bdf" };
 static Platform::String^ log_file_exts[] = { ".log" };
 static Platform::String^ shader_file_exts[] = {  ".glslp", ".glsl" };
@@ -319,7 +319,7 @@ void SDLPal::MainPage::Page_Loaded(Platform::Object^ sender, Windows::UI::Xaml::
 #if NTDDI_VERSION >= NTDDI_WIN10
 	if (!Windows::Foundation::Metadata::ApiInformation::IsTypePresent("Windows.UI.ViewManagement.StatusBar")) return;
 #endif
-#if NTDDI_VERSION >= NTDDI_WIN10 || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 	auto statusBar = Windows::UI::ViewManagement::StatusBar::GetForCurrentView();
 	concurrency::create_task(statusBar->ShowAsync()).then([statusBar]() { statusBar->BackgroundOpacity = 1.0; });
 #endif

@@ -215,7 +215,7 @@ You can use the main menu option inside the game to return to this page.</value>
     <value>Setting finished</value>
   </data>
   <data name="MessageFile.PlaceholderText" xml:space="preserve">
-    <value>No customized message file</value>
+    <value>No customized localization file</value>
   </data>
   <data name="MusicVolume.Header" xml:space="preserve">
     <value>Music volume</value>
@@ -311,7 +311,7 @@ You can use the main menu option inside the game to return to this page.</value>
     <value>Log to file</value>
   </data>
   <data name="UseMessageFile.Content" xml:space="preserve">
-    <value>Customized message file</value>
+    <value>Customized localization file</value>
   </data>
   <data name="Verbose.Content" xml:space="preserve">
     <value>Verbose</value>

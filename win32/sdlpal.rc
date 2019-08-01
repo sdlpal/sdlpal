@@ -1,6 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
+#include "defines.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +14,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 非特定语言 resources
+// LANG_NEUTRAL resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
@@ -40,7 +41,7 @@ BEGIN
     CONTROL         "&Keep aspect ratio",IDC_ASPECTRATIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,90,129,72,10
     LTEXT           "BGM source:",IDC_STATIC,14,228,41,8
     CONTROL         "&Full screen start",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,129,67,10
-    EDITTEXT        IDC_MSGFILE,70,56,270,14,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_MSGFILE,84,56,256,14,ES_AUTOHSCROLL | ES_READONLY
     GROUPBOX        "Audio",IDC_STATIC,7,190,391,85
     COMBOBOX        IDC_CD,57,206,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_BGM,57,226,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -56,7 +57,7 @@ BEGIN
     LTEXT           "Buffer size:",IDC_STATIC,311,229,38,8
     EDITTEXT        IDC_AUDIOBUFFER,351,226,40,14,ES_AUTOHSCROLL | ES_NUMBER
     PUSHBUTTON      "&Browse",IDC_BRGAME,348,7,50,14
-    CONTROL         "Message file:",IDC_USEMSGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,59,56,8
+    CONTROL         "Localization file:",IDC_USEMSGFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,59,66,8
     CONTROL         "Enable &touch overlay",IDC_TOUCHOVERLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,170,147,80,10
     LTEXT           "Quality:",IDC_STATIC,14,248,26,8
     LTEXT           "Low                              High",IDC_STATIC,31,262,88,8
@@ -67,8 +68,8 @@ BEGIN
     LTEXT           "Sound volume:",IDC_STATIC,256,249,48,8
     LTEXT           "Low                                      High",IDC_STATIC,291,262,104,8
     CONTROL         "",IDC_SOUNDVOLUME,"msctls_trackbar32",WS_TABSTOP,303,248,80,15
-    EDITTEXT        IDC_FONTFILE,70,38,270,14,ES_AUTOHSCROLL | ES_READONLY
-    CONTROL         "Font file:",IDC_USEFONTFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,41,56,8
+    EDITTEXT        IDC_FONTFILE,84,38,256,14,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Font file:",IDC_USEFONTFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,41,66,8
     GROUPBOX        "Logging",IDC_STATIC,7,80,391,30
     LTEXT           "Log level:",IDC_STATIC,14,95,32,8
     COMBOBOX        IDC_LOGLEVEL,46,92,61,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -202,7 +203,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDC_MSGFILE             "Message file (*.msg)|*.msg|All files (*.*)|*.*||"
+    IDC_MSGFILE             "SDLPal localization file (*." PAL_LOCALIZATION_EXT ")|*." PAL_LOCALIZATION_EXT "|All files (*.*)|*.*||"
     IDC_LOGLEVEL            "Verbose;Debug;Informational;Warning;Error;Fatal"
     IDC_BRFONT              "Select customized font file"
     IDC_FONTFILE            "Font file (*.bdf)|*.bdf|All files (*.*)|*.*||"
@@ -216,12 +217,12 @@ BEGIN
     IDC_SHADERFILE          "GLSLP meta-shaders file(*.glslp)|*.glslp|GLSL shader code file(*.glsl)|*.glsl|All files (*.*)|*.*||"
 END
 
-#endif    // 非特定语言 resources
+#endif    // LANG_NEUTRAL resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// 中文(简体，中国) resources
+// GBK resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -379,7 +380,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDC_MSGFILE             "语言文件(*.msg)|*.msg|所有文件 (*.*)|*.*||"
+    IDC_MSGFILE             "本地化语言文件(*." PAL_LOCALIZATION_EXT ")|*." PAL_LOCALIZATION_EXT "|所有文件 (*.*)|*.*||"
     IDC_LOGLEVEL            "详细信息;调试信息;运行信息;普通警告;严重错误;致命错误"
     IDC_BRFONT              "选择自定义字体文件"
     IDC_FONTFILE            "字体文件(*.bdf)|*.bdf|所有文件 (*.*)|*.*||"
@@ -393,12 +394,12 @@ BEGIN
     IDC_SHADERFILE          "特效定义文件(*.glslp)|*.glslp|着色器代码文件(*.glsl)|*.glsl|所有文件 (*.*)|*.*||"
 END
 
-#endif    // 中文(简体，中国) resources
+#endif    // GBK resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// 中文(繁体，中国台湾) resources
+// BIG5 resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL
@@ -530,7 +531,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDC_MSGFILE             "粂ē郎(*.msg)|*.msg|┮Τ郎 (*.*)|*.*||"
+    IDC_MSGFILE             "セて粂ē郎(*." PAL_LOCALIZATION_EXT ")|*." PAL_LOCALIZATION_EXT "|┮Τ郎 (*.*)|*.*||"
     IDC_LOGLEVEL            "冈灿獺;秸刚獺;笲︽獺;炊硄牡;腨岿粇;璓㏑岿粇"
     IDC_BRFONT              "匡拒璹砰郎"
     IDC_FONTFILE            "砰郎(*.bdf)|*.bdf|┮Τ郎 (*.*)|*.*||"
@@ -544,7 +545,7 @@ BEGIN
     IDC_SHADERFILE          "疭﹚竡郎(*.glslp)|*.glslp|帝︹竟絏郎(*.glsl)|*.glsl|┮Τ郎 (*.*)|*.*||"
 END
 
-#endif    // 中文(繁体，中国台湾) resources
+#endif    // BIG5 resources
 /////////////////////////////////////////////////////////////////////////////
 
 

@@ -737,6 +737,9 @@
     <ClInclude Include="..\glslp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sdlpal.ico">
