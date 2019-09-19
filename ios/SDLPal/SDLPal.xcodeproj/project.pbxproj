@@ -372,6 +372,7 @@
 		C66C6CA21ECCB73100CE10C1 /* SDLPal_AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLPal_AppDelegate.h; sourceTree = "<group>"; };
 		C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLPal_AppDelegate.m; sourceTree = "<group>"; };
 		C66F6FD51FB16CB200F3F0DA /* iOS Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "iOS Launch Screen.storyboard"; sourceTree = "<group>"; };
+		C67162F422EB2E0D0093995B /* defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = defines.h; path = ../../../defines.h; sourceTree = "<group>"; };
 		C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
 		C6743A851ECCAFC600AEF782 /* SettingsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		C694CF861EB619660006F937 /* gs_instruments.dls */ = {isa = PBXFileReference; lastKnownFileType = file; name = gs_instruments.dls; path = /System/Library/Components/CoreAudio.component/Contents/Resources/gs_instruments.dls; sourceTree = "<group>"; };
@@ -745,6 +746,7 @@
 		C63505771EA6575200186049 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				C67162F422EB2E0D0093995B /* defines.h */,
 				71DCB6951ED9CBB000F120DB /* aviplay.h */,
 				C635056A1EA6570300186049 /* midi.h */,
 				57FB015A1B7A50E0005FCF4C /* codepage.h */,

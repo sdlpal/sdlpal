@@ -126,7 +126,7 @@
     availLangPacks = [NSMutableArray new];
     availFonts = [NSMutableArray new];
     availEffects = [NSMutableArray new];
-    NSArray *langpackExtensionList = @[@"txt",@"msg",@"lng"];
+    NSArray *langpackExtensionList = @[@PAL_LOCALIZATION_EXT];
     NSArray *fontExtensionList = @[@"bdf",@"ttf",@"otf",@"ttc"];
     NSArray *effectExtensionList = @[@"glsl",@"glslp"];
     NSString *basePath = [NSString stringWithUTF8String:UTIL_BasePath()];

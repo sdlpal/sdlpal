@@ -27,6 +27,8 @@
 # define PAL_CLASSIC        1
 #endif
 
+#include "defines.h"
+
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -174,6 +176,14 @@ typedef const WCHAR        *LPCWSTR;
    The example of this file can be found in directories of existing portings.
  */
 #include "pal_config.h"
+
+#if !SDL_VERSION_ATLEAST(2,0,0)
+# if PAL_HAS_GLSL
+#  undef PAL_HAS_GLSL
+# endif
+#define SDL_strcasecmp strcasecmp
+#define SDL_setenv(a,b,c) 
+#endif
 
 #ifndef PAL_DEFAULT_FULLSCREEN_HEIGHT
 # define PAL_DEFAULT_FULLSCREEN_HEIGHT PAL_DEFAULT_WINDOW_HEIGHT

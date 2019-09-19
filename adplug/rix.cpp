@@ -19,7 +19,7 @@
  * rix.cpp - Softstar RIX OPL Format Player by palxex <palxex.ys168.com>
  *                                             BSPAL <BSPAL.ys168.com>
  */
-#include "common.h"
+#include "../common.h"
 
 #include <cstring>
 #include <cstdio>

@@ -117,7 +117,7 @@ struct {
    const char* levels;
 } gLabels[3] = {
    { "SDLPAL Launcher",     "Language & Font",    "Display",         "Audio",         "Logging",
-     "Game folder:",        "Message file:",      "Font file:",      "Log file:",     "Log level:",
+     "Game folder:",        "Localization file:",      "Font file:",      "Log file:",     "Log level:",
      "&Touch overlay",      "&Keep aspect ratio", "&Full screen",    "Enable A&VI",   "Enable &GLSL",
      "Enable &HDR",         "Texture size:",      "x ",              "Window size:",  "x ",
      "Shader file:",        "&CD src:",           "&BGM src:",       "&OPL core:",    "O&PL chip:",

@@ -531,7 +531,7 @@ void glslp_add_parameter(char *line, size_t len, GLSLP *pGLSLP) {
     if( found == -1 ) {
         nfound = 1;
         found = pGLSLP->uniform_parameters++;
-        pGLSLP->uniform_params = SDL_realloc(pGLSLP->uniform_params, pGLSLP->uniform_parameters * sizeof(uniform_param));
+        pGLSLP->uniform_params = realloc(pGLSLP->uniform_params, pGLSLP->uniform_parameters * sizeof(uniform_param));
     }
     uniform_param *param = &pGLSLP->uniform_params[found];
     param->value_default = tempParam.value_default;

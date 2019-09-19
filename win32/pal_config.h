@@ -90,4 +90,5 @@ PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 #define PAL_CONVERT_UTF8 SDL_iconv_utf8_locale
 #endif
 
+#include <malloc.h>
 #include <stdbool.h>

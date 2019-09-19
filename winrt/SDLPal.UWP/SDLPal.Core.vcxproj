@@ -217,6 +217,7 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\defines.h" />
     <ClInclude Include="..\..\mini_glloader.h" />
     <ClInclude Include="..\..\video_glsl.h" />
     <ClInclude Include="..\..\glslp.h" />

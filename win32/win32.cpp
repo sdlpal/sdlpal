@@ -425,7 +425,6 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 typedef LANGID(__stdcall *GETLANGUAGEID)(void);
 
 extern "C" int UTIL_Platform_Startup(int argc, char *argv[]) {
-	SDL_setenv("SDL_AUDIODRIVER", "directsound", 1);
 	return 0;
 }
 
