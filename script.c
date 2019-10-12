@@ -2982,6 +2982,7 @@ PAL_InterpretInstruction(
       //
       // Play CD music. Use the RIX music for fallback.
       //
+      gpGlobals->wNumMusic = pScript->rgwOperand[1];
       if (!AUDIO_PlayCDTrack(pScript->rgwOperand[0]))
       {
          AUDIO_PlayMusic(pScript->rgwOperand[1], TRUE, 0);
