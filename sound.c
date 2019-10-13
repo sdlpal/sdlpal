@@ -31,8 +31,6 @@
 #include "riff.h"
 #include <math.h>
 
-#define PAL_CDTRACK_BASE    10000
-
 typedef struct tagWAVESPEC
 {
 	int                 size;

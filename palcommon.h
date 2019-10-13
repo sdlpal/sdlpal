@@ -83,6 +83,8 @@ typedef DWORD           PAL_POS;
 
 #define     MINIMAL_WORD_COUNT           (MAX_OBJECTS + 13)
 
+#define PAL_CDTRACK_BASE    10000
+
 typedef enum tagPALDIRECTION
 {
    kDirSouth = 0,

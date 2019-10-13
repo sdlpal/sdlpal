@@ -31,8 +31,6 @@
 #include "aviplay.h"
 #include <math.h>
 
-#define PAL_CDTRACK_BASE    10000
-
 /* WASAPI need fewer samples for less gapping */
 #ifndef PAL_AUDIO_FORCE_BUFFER_SIZE_WASAPI
 # define PAL_AUDIO_FORCE_BUFFER_SIZE_WASAPI   512
