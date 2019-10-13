@@ -431,12 +431,12 @@ OGG_Play(
 		player->fp = NULL;
 	}
 
+    player->iMusic = iNum;
+
 	if (iNum == -1)
 	{
 		return TRUE;
 	}
-
-	player->iMusic = iNum;
 
 	player->fp = UTIL_OpenFile(PAL_va(0, "ogg%s%.2d.ogg", PAL_NATIVE_PATH_SEPARATOR, iNum));
 	if (player->fp == NULL)
