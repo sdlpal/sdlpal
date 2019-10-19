@@ -30,6 +30,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <shlobj.h>
+#include <errno.h>
 #include <string>
 #include "resource.h"
 #include "../global.h"

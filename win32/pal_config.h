@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifndef PAL_HAS_JOYSTICKS
-# define PAL_HAS_JOYSTICKS    1
-#endif
-
 #define PAL_PREFIX            "./"
 #define PAL_SAVE_PREFIX       "./"
 
@@ -44,7 +40,14 @@
 # define PAL_HAS_SDLCD         1
 #endif
 
-#define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK)
+#ifdef _M_ARM
+# define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE)
+#else
+# ifndef PAL_HAS_JOYSTICKS
+#  define PAL_HAS_JOYSTICKS    1
+# endif
+# define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK)
+#endif
 
 #define PAL_PLATFORM         NULL
 #define PAL_CREDIT           NULL
@@ -70,7 +73,11 @@
 PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 #define PAL_NEED_STRCASESTR 1
 
+#if defined (_M_ARM64) || defined(_M_ARM)
+#define PAL_HAS_GLSL 0
+#else
 #define PAL_HAS_GLSL 1
+#endif
 
 #define PAL_HAS_PLATFORM_STARTUP 1
 

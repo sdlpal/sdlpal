@@ -70,6 +70,62 @@ matrix:
           - cd ..
 
       - os: linux
+        env: TARGET=MinGW32 SDL2_VERSION=2.0.8-armv7
+        addons:
+          apt:
+            packages:
+            - zip
+            - upx-ucl
+            - make
+            - lzma
+            - openssl
+            - mono-devel
+        before_install:
+          - cd win32
+          - |
+            if ! [ -f $CACHE/llvm-mingw-armv7/armv7-w64-mingw32/bin/libc++.dll ]
+            then
+                # download llvm-mingw for armv7 build
+                export PUSHD="$(pwd)"
+                mkdir $CACHE
+                cd $CACHE
+                wget -O llvm-mingw-armv7.tar.gz 'https://github.com/sdlpal/tools/blob/master/llvm-mingw-armv7.tar.gz?raw=true'
+                tar xzvf llvm-mingw-armv7.tar.gz
+                rm llvm-mingw-armv7.tar.gz
+                cd "${PUSHD}"
+            fi
+          - |
+            if ! [ -d $CACHE/SDL2-$SDL2_VERSION ]
+            then
+                export PUSHD="$(pwd)"
+                cd ../3rd/SDL
+                export PATH=${CACHE}/llvm-mingw-armv7/bin:$PATH
+                CC=armv7-w64-mingw32-gcc CXX=armv7-w64-mingw32-g++ \
+                    bash ./configure --host=armv7-w64-mingw32 --prefix=$CACHE/SDL2-$SDL2_VERSION \
+                    --enable-static --disable-shared --disable-joystick --disable-haptic \
+                    --disable-video-opengl --enable-render-d3d
+                make install V=1 SHELL=/bin/bash
+                cd "${PUSHD}"
+            fi
+          - ln -sf $CACHE/SDL2-$SDL2_VERSION
+          - ln -sf $CACHE/llvm-mingw-armv7 llvm-mingw
+          - export PATH=$(pwd)/SDL2-$SDL2_VERSION/bin:$(pwd)/llvm-mingw/bin:$PATH
+          - cat SDL2-$SDL2_VERSION/bin/sdl2-config
+          - cd ..
+        script:
+          - cd win32
+          - make HOST=armv7-w64-mingw32- OPENGL_LIBS=
+          - armv7-w64-mingw32-strip -s sdlpal.exe
+          - "openssl pkcs12 -passin pass: -in ../winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -nocerts -nodes -out key.pem"
+          - "openssl rsa -passout pass:temporary -in key.pem -outform PVK -pvk-strong -out authenticode.pvk"
+          - "openssl pkcs12 -passin pass: -in ../winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -nokeys -nodes -out cert.pem"
+          - "openssl crl2pkcs7 -nocrl -certfile cert.pem -outform DER -out authenticode.spc"
+          - "echo temporary | signcode -spc authenticode.spc -v authenticode.pvk -a sha1 -$ commercial -n SDLPal -i http://sdlpal.github.io -t http://timestamp.verisign.com/scripts/timstamp.dll -tr 10 sdlpal.exe"
+          - zip sdlpal-windows-armv7.zip sdlpal.exe
+          - mv sdlpal-windows-armv7.zip ../deploy/
+          - cd ..
+
+      - os: linux
         env: TARGET=wii
         before_install:
           - export DEVKITPRO=$CACHE/devkitPro

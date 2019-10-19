@@ -37,7 +37,7 @@
 #include <atomic>
 #include <vector>
 
-#if (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS)
+#if (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS) && !defined(_LIBCPP_MUTEX)
 #include "mingw.condition_variable.h"
 #include "mingw.mutex.h"
 #include "mingw.thread.h"
