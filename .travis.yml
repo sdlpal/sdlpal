@@ -48,17 +48,16 @@ matrix:
             if ! [ -d $CACHE/SDL2-$SDL2_VERSION ]
             then
                 export PUSHD="$(pwd)"
-                mkdir -p "${CACHE}"
-                cd $CACHE
-                wget http://libsdl.org/release/SDL2-devel-$SDL2_VERSION-mingw.tar.gz
-                tar xvf SDL2-devel-$SDL2_VERSION-mingw.tar.gz
-                sed -i "s@/usr/local@$PUSHD/SDL2-$SDL2_VERSION@g" SDL2-$SDL2_VERSION/i686-w64-mingw32/bin/sdl2-config
-                rm *.gz
+                cd ../3rd/SDL
+                CC=i686-w64-mingw32-gcc CXX=i686-w64-mingw32-g++ \
+                    bash ./configure --host=i686-w64-mingw32 --prefix=$CACHE/SDL2-$SDL2_VERSION \
+                    --enable-static --disable-shared
+                make install V=1 SHELL=/bin/bash
                 cd "${PUSHD}"
             fi
           - ln -sf $CACHE/SDL2-$SDL2_VERSION
-          - export PATH=$(pwd)/SDL2-$SDL2_VERSION/i686-w64-mingw32/bin:$PATH
-          - cat SDL2-$SDL2_VERSION/i686-w64-mingw32/bin/sdl2-config
+          - export PATH=$(pwd)/SDL2-$SDL2_VERSION/bin:$PATH
+          - cat SDL2-$SDL2_VERSION/bin/sdl2-config
           - cd ..
         script:
           - cd win32
