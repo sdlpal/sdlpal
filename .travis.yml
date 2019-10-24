@@ -239,7 +239,7 @@ matrix:
           - jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 1
 
       - os: osx
-        osx_image: xcode9.2
+        osx_image: xcode11
         env: TARGET=iOS
         cache: cocoapods
         podfile: ios/SDLPal/Podfile
@@ -253,7 +253,7 @@ matrix:
           - cd ../..
 
       - os: osx
-        osx_image: xcode10.2
+        osx_image: xcode11
         env: TARGET=macOS
         language: objective-c
         script:
