@@ -88,7 +88,7 @@ matrix:
                 export PUSHD="$(pwd)"
                 mkdir $CACHE
                 cd $CACHE
-                wget -O llvm-mingw-armv7.tar.gz 'https://github.com/sdlpal/tools/blob/master/llvm-mingw-armv7.tar.gz?raw=true'
+                wget -O llvm-mingw-armv7.tar.gz 'https://github.com/sdlpal/tools/releases/download/sensedown/llvm-mingw-armv7.tar.gz'
                 tar xzvf llvm-mingw-armv7.tar.gz
                 rm llvm-mingw-armv7.tar.gz
                 cd "${PUSHD}"
