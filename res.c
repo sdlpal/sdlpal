@@ -30,7 +30,7 @@ typedef struct tagRESOURCES
    LPSPRITE        *lppEventObjectSprites;                      // event object sprites
    int              nEventObject;                               // number of event objects
 
-   LPSPRITE         rglpPlayerSprite[MAX_PLAYERS_IN_PARTY + 1]; // player sprites
+   LPSPRITE         rglpPlayerSprite[MAX_PLAYABLE_PLAYER_ROLES]; // player sprites
 } RESOURCES, *LPRESOURCES;
 
 static LPRESOURCES gpResources = NULL;
@@ -91,7 +91,7 @@ PAL_FreePlayerSprites(
 {
    int i;
 
-   for (i = 0; i < MAX_PLAYERS_IN_PARTY + 1; i++)
+   for (i = 0; i < MAX_PLAYABLE_PLAYER_ROLES; i++)
    {
       free(gpResources->rglpPlayerSprite[i]);
       gpResources->rglpPlayerSprite[i] = NULL;
@@ -324,18 +324,18 @@ PAL_LoadResources(
             gpGlobals->f.fpMGO);
       }
 
-      if (gpGlobals->nFollower > 0)
+      for (i = 1; i <= gpGlobals->nFollower; i++)
       {
          //
          // Load the follower sprite
          //
-         wSpriteNum = gpGlobals->rgParty[i].wPlayerRole;
+         wSpriteNum = gpGlobals->rgParty[(short)gpGlobals->wMaxPartyMemberIndex+i].wPlayerRole;
 
          l = PAL_MKFGetDecompressedSize(wSpriteNum, gpGlobals->f.fpMGO);
 
-         gpResources->rglpPlayerSprite[i] = (LPSPRITE)UTIL_malloc(l);
+         gpResources->rglpPlayerSprite[(short)gpGlobals->wMaxPartyMemberIndex+i] = (LPSPRITE)UTIL_malloc(l);
 
-         PAL_MKFDecompressChunk(gpResources->rglpPlayerSprite[i], l, wSpriteNum,
+         PAL_MKFDecompressChunk(gpResources->rglpPlayerSprite[(short)gpGlobals->wMaxPartyMemberIndex+i], l, wSpriteNum,
             gpGlobals->f.fpMGO);
       }
    }
@@ -392,7 +392,7 @@ PAL_GetPlayerSprite(
 
 --*/
 {
-   if (gpResources == NULL || bPlayerIndex > MAX_PLAYERS_IN_PARTY)
+   if (gpResources == NULL || bPlayerIndex > MAX_PLAYABLE_PLAYER_ROLES-1)
    {
       return NULL;
    }

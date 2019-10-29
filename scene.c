@@ -705,17 +705,17 @@ PAL_UpdatePartyGestures(
          }
       }
 
-      if (gpGlobals->nFollower > 0)
+      for (i = 1; i <= gpGlobals->nFollower; i++)
       {
          //
          // Update the position and gesture for the follower
          //
-         gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex + 1].x =
-            gpGlobals->rgTrail[3].x - PAL_X(gpGlobals->viewport);
-         gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex + 1].y =
-            gpGlobals->rgTrail[3].y - PAL_Y(gpGlobals->viewport);
-         gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex + 1].wFrame =
-            gpGlobals->rgTrail[3].wDirection * 3 + iStepFrameFollower;
+         gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex + i].x =
+            gpGlobals->rgTrail[2+i].x - PAL_X(gpGlobals->viewport);
+         gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex + i].y =
+            gpGlobals->rgTrail[2+i].y - PAL_Y(gpGlobals->viewport);
+         gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex + i].wFrame =
+            gpGlobals->rgTrail[2+i].wDirection * 3 + iStepFrameFollower;
       }
    }
    else
@@ -740,10 +740,10 @@ PAL_UpdatePartyGestures(
          gpGlobals->rgParty[i].wFrame = gpGlobals->rgTrail[2].wDirection * f;
       }
 
-      if (gpGlobals->nFollower > 0)
+      for (i = 1; i <= gpGlobals->nFollower; i++)
       {
-         gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex + 1].wFrame =
-            gpGlobals->rgTrail[3].wDirection * 3;
+         gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex + i].wFrame =
+            gpGlobals->rgTrail[2+i].wDirection * 3;
       }
 
       s_iThisStepFrame &= 2;
