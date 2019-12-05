@@ -1089,11 +1089,11 @@ public:
 
 		/* allocate memory block */
 		char *ptr = reinterpret_cast<char *>(::operator new(state_size));
-		std::fill_n(ptr, state_size, 0);
 
 		FM_OPL *const OPL = new(ptr) FM_OPL;
+        memset(OPL, 0, state_size);
 
-		ptr += sizeof(FM_OPL);
+		ptr += state_size;
 
 #if BUILD_Y8950
 		if (type & OPL_TYPE_ADPCM)
