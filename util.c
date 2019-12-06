@@ -972,6 +972,7 @@ PAL_C_LINKAGE char* strcasestr(const char *a, const char *b) {
 	char *a1 = stoupper(a);
 	char *b1 = stoupper(b);
 	char *ptr = strstr(a1, b1);
+	if (ptr != NULL) ptr = (char*)a + (ptr - a1);
 	free(a1);
 	free(b1);
 	return ptr;
