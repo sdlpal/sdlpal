@@ -492,6 +492,7 @@ SDL_Texture *load_texture(char *name, char *filename, bool filter_linear, enum w
     SDL_GL_BindTexture(texture, NULL, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, get_gl_wrap_mode(mode, type));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, get_gl_wrap_mode(mode, type));
+    SDL_FreeSurface(surf);
     return texture;
 }
 
