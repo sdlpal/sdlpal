@@ -31,6 +31,8 @@
 static jmp_buf g_exit_jmp_buf;
 static int g_exit_code = 0;
 
+char gExecutablePath[PAL_MAX_PATH];
+
 #define BITMAPNUM_SPLASH_UP         (gConfig.fIsWIN95 ? 0x03 : 0x26)
 #define BITMAPNUM_SPLASH_DOWN       (gConfig.fIsWIN95 ? 0x04 : 0x27)
 #define SPRITENUM_SPLASH_TITLE      0x47
@@ -466,6 +468,9 @@ main(
 
 --*/
 {
+   memset(gExecutablePath,0,PAL_MAX_PATH);
+   strncpy(gExecutablePath, argv[0], PAL_MAX_PATH);
+
 #if PAL_HAS_PLATFORM_STARTUP
    UTIL_Platform_Startup(argc,argv);
 #endif

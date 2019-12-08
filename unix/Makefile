@@ -48,7 +48,7 @@ endif
 
 CC = $(HOST)gcc
 CXX = $(HOST)g++
-CCFLAGS = `$(SDL_CONFIG) --cflags` -D_GNU_SOURCE -g -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include \
+override CCFLAGS += `$(SDL_CONFIG) --cflags` -D_GNU_SOURCE -g -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include \
 	-I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS) $(GENERATED)
 CXXFLAGS = $(CCFLAGS) -std=c++11 $(FLTK_CXXFLAGS)
 CFLAGS = $(CCFLAGS) -std=gnu99 $(FLTK_CFLAGS)

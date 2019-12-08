@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=sdlpal
+Icon=sdlpal
+Terminal=false
+Name=SDLPal
+GenericName=Game
+Comment=SDL-based reimplementation of the classic Chinese-language RPG "Xiān jiàn Qí Xiá Zhuàn" (also known as PAL).
+Categories=Game;

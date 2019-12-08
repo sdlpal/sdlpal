@@ -16,7 +16,7 @@ matrix:
     fast_finish: true
     include:
       - os: linux
-        env: TARGET=Linux
+        env: TARGET=AppImage
         addons:
           apt:
             packages:
@@ -25,10 +25,9 @@ matrix:
             - upx-ucl
         script:
           - cd unix
-          - make
-          - upx --best --lzma sdlpal
-          - mv sdlpal ../deploy/sdlpal-linux
-          - make clean
+          - make CCFLAGS="-DAPPIMAGE=1"
+          - ./appimage.sh
+          - rm ../main.unix.*
           - make check
           - cd ..
 
@@ -315,7 +314,6 @@ before_deploy:
     s/@COMMITID@/$(git show -s --format=%h)/g
     " bintray.json
   - set +f
-  - cat bintray.json
 
 deploy:
   - provider: releases

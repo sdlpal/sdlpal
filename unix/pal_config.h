@@ -37,6 +37,11 @@
 # define PAL_PREFIX            "./"
 # define PAL_SAVE_PREFIX       "./"
 
+# if APPIMAGE
+#  undef PAL_PREFIX
+#  define PAL_PREFIX            PAL_va(PAL_MAX_GLOBAL_BUFFERS-1,"%s%s", SDL_getenv("HOME"),"/.config")
+# endif
+
 # define PAL_DEFAULT_WINDOW_WIDTH   640
 # define PAL_DEFAULT_WINDOW_HEIGHT  400
 # define PAL_DEFAULT_FULLSCREEN_HEIGHT 480

@@ -147,6 +147,12 @@ VIDEO_Startup(
 
 --*/
 {
+	extern SDL_Surface* STBIMG_Load(const char* file);
+	extern char *dirname(char *path);
+#if APPIMAGE
+	SDL_Surface *surf = STBIMG_Load( PAL_va(0, "%s%s", dirname(dirname(dirname(gExecutablePath))), "/usr/share/icons/hicolor/256x256/apps/sdlpal.png" ) );
+#endif
+
 #if SDL_VERSION_ATLEAST(2,0,0)
    int render_w, render_h;
 
@@ -177,6 +183,12 @@ VIDEO_Startup(
    {
       return -1;
    }
+
+# if APPIMAGE
+	if(surf){
+		SDL_SetWindowIcon(gpWindow, surf);
+	}
+# endif
 
    gpRenderer = SDL_CreateRenderer(gpWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -262,6 +274,12 @@ VIDEO_Startup(
 # endif
 #else
 
+# if APPIMAGE
+	if(surf){
+		SDL_WM_SetIcon(surf, NULL);
+	}
+# endif
+
    //
    // Create the screen surface.
    //
@@ -311,6 +329,11 @@ VIDEO_Startup(
       SDL_ShowCursor(FALSE);
    }
 
+#endif
+
+#if APPIMAGE
+	if(surf)
+		SDL_FreeSurface(surf);
 #endif
 
    return 0;

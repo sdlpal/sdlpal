@@ -58,4 +58,6 @@ PAL_Shutdown(
    int exit_code
 );
 
+extern char gExecutablePath[PAL_MAX_PATH];
+
 #endif
