@@ -68,7 +68,7 @@ matrix:
           - cd ..
 
       - os: linux
-        env: TARGET=MinGW32-armv7 SDL2_VERSION=2.0.8
+        env: TARGET=MinGW32-armv7 SDL2_VERSION=2.0.10-armv7
         addons:
           apt:
             packages:
@@ -96,10 +96,7 @@ matrix:
             if ! [ -d $CACHE/SDL2-$SDL2_VERSION ]
             then
                 export PUSHD="$(pwd)"
-                cd ../3rd/
-                wget https://www.libsdl.org/release/SDL2-$SDL2_VERSION.zip
-                unzip SDL2-$SDL2_VERSION.zip
-                cd SDL2-$SDL2_VERSION
+                cd ../3rd/SDL
                 export PATH=${CACHE}/llvm-mingw-armv7/bin:$PATH
                 CC=armv7-w64-mingw32-gcc CXX=armv7-w64-mingw32-g++ \
                     bash ./configure --host=armv7-w64-mingw32 --prefix=$CACHE/SDL2-$SDL2_VERSION \
