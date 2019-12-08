@@ -5,7 +5,6 @@ env:
     - CACHE=$HOME/.sdlpal-caches
 
 cache:
-  branch: md5deep
   directories:
     - $CACHE
 
