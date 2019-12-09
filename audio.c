@@ -241,7 +241,6 @@ AUDIO_OpenDevice(
         UTIL_LogOutput(LOGLEVEL_VERBOSE, "Available audio device %d:%s\n", i, SDL_GetAudioDeviceName(i,0));
     }
     UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio device: %s\n",(gConfig.iAudioDevice >= 0 ? SDL_GetAudioDeviceName(gConfig.iAudioDevice, 0) : "default"));
-    UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio spec:freq %d, format %d, channels %d, samples %d\n", gAudioDevice.spec.freq, gAudioDevice.spec.format,  gAudioDevice.spec.channels, gAudioDevice.spec.samples);
 #endif
 
    //
@@ -253,6 +252,8 @@ AUDIO_OpenDevice(
    gAudioDevice.spec.samples = gConfig.wAudioBufferSize;
    gAudioDevice.spec.callback = AUDIO_FillBuffer;
 
+   UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio spec:freq %d, format %d, channels %d, samples %d\n", gAudioDevice.spec.freq, gAudioDevice.spec.format,  gAudioDevice.spec.channels, gAudioDevice.spec.samples);
+
    if (SDL_OpenAudio(&gAudioDevice.spec, &spec) < 0)
    {
       UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio ERROR: %s, got spec:freq %d, format %d, channels %d, samples %d\n", SDL_GetError(), spec.freq, spec.format, spec.channels,  spec.samples);
@@ -263,7 +264,7 @@ AUDIO_OpenDevice(
    }
    else
    {
-      UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio succeed\n");
+      UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio succeed, got spec:freq %d, format %d, channels %d, samples %d\n", spec.freq, spec.format, spec.channels,  spec.samples);
       gAudioDevice.pSoundBuffer = malloc(gConfig.wAudioBufferSize * gConfig.iAudioChannels * sizeof(short));
    }
 
