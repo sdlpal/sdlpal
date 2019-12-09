@@ -1,2 +1,5 @@
+platform :ios, '8.0'
+
 target 'SDLPal'
+target 'SDLPal-Catalyst'
 pod 'ActionSheetPicker-3.0', '~> 2.2.0'

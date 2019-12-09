@@ -54,6 +54,10 @@
 
 #define PAL_HAS_PLATFORM_SPECIFIC_UTILS 1
 
+#if TARGET_OS_MACCATALYST
+#define PAL_FILESYSTEM_IGNORE_CASE 1
+#endif
+
 PAL_C_LINKAGE_BEGIN
 
 LPCSTR
@@ -69,7 +73,5 @@ UTIL_SavePath(
 PAL_C_LINKAGE_END
 
 #include <sys/time.h>
-
-#define PAL_HAS_GLSL 1
 
 #endif

@@ -91,7 +91,7 @@
     tlabel.adjustsFontSizeToFitWidth=YES;
     self.navigationItem.titleView=tlabel;
     
-    AudioSampleRates = @[ @"11025", @"22050", @"44100", @"49716" ];
+    AudioSampleRates = @[ @"11025", @"22050", @"44100", @"48000", @"49716" ];
     AudioBufferSizes = @[ @"512", @"1024", @"2048", @"4096", @"8192" ];
     OPLSampleRates = @[ @"12429", @"24858", @"49716", @"11025", @"22050", @"44100" ];
     CDFormats = @[ @"None", @"MP3", @"OGG", @"OPUS" ];
@@ -153,7 +153,11 @@
             break;
         }
     }
+#if !TARGET_OS_MACCATALYST
     if(!resourceStatus) resourceStatus = lblResourceStatus.text;
+#else
+    resourceStatus = @"Catalyst沙箱";
+#endif
     lblResourceStatus.text  = [NSString stringWithFormat:@"%@%@", resourceStatus, checkAllFilesIncluded ? @"✅" : @"❌" ];
 }
 
@@ -214,7 +218,9 @@ typedef void(^SelectedBlock)(NSString *selected);
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-    if( indexPath.section == 1 && indexPath.row == 0 ) { //language file
+    if( indexPath.section == 0 && indexPath.row == 0 ) { //resource folder
+        [self recheckSharingFolder];
+    }else if( indexPath.section == 1 && indexPath.row == 0 ) { //language file
         [self showPickerWithTitle:nil toLabel:lblLanguageFile inArray:availLangPacks origin:cell allowEmpty:YES];
     }else if( indexPath.section == 1 && indexPath.row == 1 ) { //font file
         [self showPickerWithTitle:nil toLabel:lblFontFile inArray:availFonts origin:cell allowEmpty:YES];
@@ -223,8 +229,10 @@ typedef void(^SelectedBlock)(NSString *selected);
     }else if( indexPath.section == 2 && indexPath.row == 1 ) { //keep aspect
         toggleKeepAspect.on = !toggleKeepAspect.isOn;
     }else if( indexPath.section == 3 && indexPath.row == 0 ) { //Enable GLSL
+#if !TARGET_OS_MACCATALYST
         toggleGLSL.on = !toggleGLSL.isOn;
         [self.tableView reloadData];
+#endif
     }else if( indexPath.section == 3 && indexPath.row == 2 ) { //Shader
         [self showPickerWithTitle:nil toLabel:lblShader inArray:availEffects origin:cell allowEmpty:YES];
     }else if( indexPath.section == 4 && indexPath.row == 0 ) { //BGM
@@ -238,6 +246,9 @@ typedef void(^SelectedBlock)(NSString *selected);
             if( [selected isEqualToString:@"NUKED"] )
                 lblOPLChip.text = @"OPL3";
         }];
+    }else if( indexPath.section == 4 && indexPath.row == 5 ) { //OPL Type
+        if( ![lblOPLCore.text isEqualToString:@"NUKED"] )
+            [self showPickerWithTitle:nil toLabel:lblOPLChip inArray:OPLChips origin:cell];
     }else if( indexPath.section == 4 && indexPath.row == 6 ) { //OPL Rate
         [self showPickerWithTitle:nil toLabel:lblOPLRate inArray:OPLSampleRates origin:cell];
     }else if( indexPath.section == 4 && indexPath.row == 7 ) { //SampleRate
@@ -295,7 +306,11 @@ typedef void(^SelectedBlock)(NSString *selected);
 }
 
 - (void)readConfigs {
+#if TARGET_OS_MACCATALYST
+    gConfig.fFullScreen = NO; // catalyst not support fullscreen
+#else
     gConfig.fFullScreen = YES; //iOS specific; need this to make sure statusbar hidden in game completely
+#endif
     
     lblLanguageFile.text    = [NSString stringWithUTF8String:gConfig.pszMsgFile  ? gConfig.pszMsgFile  : ""];
     lblFontFile.text        = [NSString stringWithUTF8String:gConfig.pszFontFile ? gConfig.pszFontFile : ""];
@@ -303,7 +318,12 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     toggleStereo.on         = gConfig.iAudioChannels == 2;
     toggleSurroundOPL.on    = gConfig.fUseSurroundOPL;
+#if !TARGET_OS_MACCATALYST
     toggleGLSL.on           = gConfig.fEnableGLSL;
+#else
+    toggleGLSL.on           = NO;
+    toggleGLSL.enabled      = NO;
+#endif
     toggleHDR.on            = gConfig.fEnableHDR;
     
     toggleTouchScreenOverlay.on = gConfig.fUseTouchOverlay;
@@ -317,7 +337,12 @@ typedef void(^SelectedBlock)(NSString *selected);
     lblOPLChip.text         = OPLChips[gConfig.eOPLChip];
     lblOPLRate.text         = [NSString stringWithFormat:@"%d",gConfig.iOPLSampleRate];
     lblCDAudioSource.text   = CDFormats[gConfig.eCDType];
+#if !TARGET_OS_MACCATALYST
     lblResampleRate.text    = [NSString stringWithFormat:@"%d",gConfig.iSampleRate];
+#else
+    //due to a catalyst bug(?), only 48000 is acceptable, other freq will change audio speed
+    lblResampleRate.text    = @"48000";
+#endif
     lblAudioBufferSize.text = [NSString stringWithFormat:@"%d",gConfig.wAudioBufferSize];
     lblShader.text          = [NSString stringWithFormat:@"%s",gConfig.pszShader];
     
