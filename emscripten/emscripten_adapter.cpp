@@ -4,6 +4,7 @@
 #include "util.h"
 
 #include <emscripten.h>
+#include <fcntl.h>
 
 BOOL
 UTIL_GetScreenSize(
@@ -34,6 +35,16 @@ UTIL_Platform_Init(
 	}, LOGLEVEL_MIN);
 
 	gConfig.fLaunchSetting = FALSE;
+
+	EM_ASM({
+		try {
+			FS.mkdir('/palsave');
+		} catch (e) {
+		}
+		FS.mount(IDBFS, {}, '/palsave');
+		FS.syncfs(true, function (err) {});
+	});
+
 	return 0;
 }
 
@@ -42,4 +53,17 @@ UTIL_Platform_Quit(
    VOID
 )
 {
+}
+
+extern "C" int
+EMSCRIPTEN_fclose(
+    FILE *stream
+)
+{
+	int mode = fcntl(fileno(stream), F_GETFL);
+	int ret = fclose(stream);
+	if ((mode & O_ACCMODE) != O_RDONLY) {
+		EM_ASM({FS.syncfs(false, function (err) {});});
+	}
+	return ret;
 }

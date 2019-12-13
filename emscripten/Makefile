@@ -20,13 +20,13 @@ DEPFILES = $(OBJFILES:.o=.d)
 
 CFLAGS = -g4 -Wall -O2 -fno-strict-aliasing -I. -I../ -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(DEPFLAGS) $(EMPORTS) $(GENERATED)
 CPPFLAGS = $(CFLAGS) -std=c++11
-override LDFLAGS += -g4 -O2 $(EMPORTS) --preload-file data -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -s DEMANGLE_SUPPORT=1 -s ASYNCIFY=1 -s NO_EXIT_RUNTIME=1  -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["Pointer_stringify"]' -s USE_WEBGL2=1 -s ASSERTIONS=1 --source-map-base http://localhost:8080/
+override LDFLAGS += -g4 -O2 $(EMPORTS) --preload-file data -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -lidbfs.js -s DEMANGLE_SUPPORT=1 -s ASYNCIFY=1 -s NO_EXIT_RUNTIME=1  -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["Pointer_stringify"]' -s USE_WEBGL2=1 -s ASSERTIONS=1 --source-map-base http://localhost:8080/
 
 POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 
 %$(INTER).o: %.c %$(INTER).d
 	@echo [CC] $<
-	@emcc -c $(CFLAGS) -o $@ $<
+	@emcc -c $(CFLAGS) -Dfclose=EMSCRIPTEN_fclose -o $@ $<
 	$(POSTCOMPILE)
 
 %$(INTER).o: %.cpp %$(INTER).d

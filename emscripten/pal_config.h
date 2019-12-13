@@ -30,7 +30,7 @@
 # define SDL_Delay emscripten_sleep
 
 # define PAL_PREFIX            "data/"
-# define PAL_SAVE_PREFIX       "data/"
+# define PAL_SAVE_PREFIX       "/palsave/"
 # define PAL_HAS_TOUCH         0
 # define PAL_DEFAULT_WINDOW_WIDTH   320
 # define PAL_DEFAULT_WINDOW_HEIGHT  200
@@ -54,6 +54,6 @@
 
 #define strcasestr(a,b) strstr(toupper((a)),toupper((b)))
 
-#define PAL_HAS_GLSL 1
+#define PAL_HAS_GLSL 0
 
 #endif
