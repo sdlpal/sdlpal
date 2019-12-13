@@ -54,6 +54,6 @@
 
 #define strcasestr(a,b) strstr(toupper((a)),toupper((b)))
 
-#define PAL_HAS_GLSL 0
+#define PAL_HAS_GLSL 1
 
 #endif

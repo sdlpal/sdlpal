@@ -1038,6 +1038,10 @@ void VIDEO_GLSL_Setup() {
     if(!strncmp(glslversion, "OpenGL ES GLSL ES", 17)) {
         SDL_sscanf(glslversion, "OpenGL ES GLSL ES %d.%d", &glslversion_major, &glslversion_minor);
     }
+#ifdef __EMSCRIPTEN__
+    // EDGE even on GLES3 does not support VAO. Since hard to detect, disabled totally
+    VAOSupported = 0;
+#endif
 #endif
     
     struct VertexDataFormat vData[ 4 ];

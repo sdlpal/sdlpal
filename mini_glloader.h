@@ -37,10 +37,6 @@
 #endif
 #include <SDL_video.h>
 #include <SDL_opengl.h>
-#ifndef __APPLE__
-//glActiveTexture is a OpenGL 1.3 built-in function, so SDL_opengl.h defined it directly and SDL client cannot simply redefine it.
-#define glActiveTexture fake_glActiveTexture
-#endif
 #endif
 
 #if __IOS__ || __ANDROID__ || __EMSCRIPTEN__ || __WINRT__ || SDL_VIDEO_DRIVER_RPI
@@ -50,38 +46,68 @@
 
 #if !defined(__APPLE__)
 
-// I'm avoiding the use of GLEW or some extensions handler, but that
-// doesn't mean you should...
-PFNGLCREATESHADERPROC glCreateShader;
-PFNGLSHADERSOURCEPROC glShaderSource;
-PFNGLCOMPILESHADERPROC glCompileShader;
-PFNGLGETSHADERIVPROC glGetShaderiv;
-PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
-PFNGLDELETESHADERPROC glDeleteShader;
-PFNGLATTACHSHADERPROC glAttachShader;
-PFNGLCREATEPROGRAMPROC glCreateProgram;
-PFNGLLINKPROGRAMPROC glLinkProgram;
-PFNGLVALIDATEPROGRAMPROC glValidateProgram;
-PFNGLGETPROGRAMIVPROC glGetProgramiv;
-PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
-PFNGLUSEPROGRAMPROC glUseProgram;
-PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
-PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
-PFNGLGENBUFFERSPROC glGenBuffers;
-PFNGLBINDBUFFERPROC glBindBuffer;
-PFNGLBUFFERDATAPROC glBufferData;
-PFNGLBUFFERSUBDATAPROC glBufferSubData;
-PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation;
-PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
-PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
-PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
-PFNGLUNIFORM2FVPROC glUniform2fv;
-PFNGLUNIFORM1IVPROC glUniform1iv;
-PFNGLUNIFORM1IPROC glUniform1i;
-PFNGLUNIFORM1FPROC glUniform1f;
-PFNGLACTIVETEXTUREPROC glActiveTexture;
-PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-PFNGLGETSTRINGIPROC glGetStringi;
+//avoid manually imported glfuncs conflicts with platform-builtin ones, like emscripten
+#define glCreateShader _glCreateShader
+#define glShaderSource _glShaderSource
+#define glCompileShader _glCompileShader
+#define glGetShaderiv _glGetShaderiv
+#define glGetShaderInfoLog _glGetShaderInfoLog
+#define glDeleteShader _glDeleteShader
+#define glAttachShader _glAttachShader
+#define glCreateProgram _glCreateProgram
+#define glLinkProgram _glLinkProgram
+#define glValidateProgram _glValidateProgram
+#define glGetProgramiv _glGetProgramiv
+#define glGetProgramInfoLog _glGetProgramInfoLog
+#define glUseProgram _glUseProgram
+#define glGenVertexArrays _glGenVertexArrays
+#define glBindVertexArray _glBindVertexArray
+#define glGenBuffers _glGenBuffers
+#define glBindBuffer _glBindBuffer
+#define glBufferData _glBufferData
+#define glBufferSubData _glBufferSubData
+#define glGetAttribLocation _glGetAttribLocation
+#define glEnableVertexAttribArray _glEnableVertexAttribArray
+#define glVertexAttribPointer _glVertexAttribPointer
+#define glUniformMatrix4fv _glUniformMatrix4fv
+#define glUniform2fv _glUniform2fv
+#define glUniform1iv _glUniform1iv
+#define glUniform1i _glUniform1i
+#define glUniform1f _glUniform1f
+#define glActiveTexture _glActiveTexture
+#define glGetUniformLocation _glGetUniformLocation
+#define glGetStringi _glGetStringi
+
+extern PFNGLCREATESHADERPROC glCreateShader;
+extern PFNGLSHADERSOURCEPROC glShaderSource;
+extern PFNGLCOMPILESHADERPROC glCompileShader;
+extern PFNGLGETSHADERIVPROC glGetShaderiv;
+extern PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+extern PFNGLDELETESHADERPROC glDeleteShader;
+extern PFNGLATTACHSHADERPROC glAttachShader;
+extern PFNGLCREATEPROGRAMPROC glCreateProgram;
+extern PFNGLLINKPROGRAMPROC glLinkProgram;
+extern PFNGLVALIDATEPROGRAMPROC glValidateProgram;
+extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
+extern PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+extern PFNGLUSEPROGRAMPROC glUseProgram;
+extern PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
+extern PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
+extern PFNGLGENBUFFERSPROC glGenBuffers;
+extern PFNGLBINDBUFFERPROC glBindBuffer;
+extern PFNGLBUFFERDATAPROC glBufferData;
+extern PFNGLBUFFERSUBDATAPROC glBufferSubData;
+extern PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation;
+extern PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
+extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+extern PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
+extern PFNGLUNIFORM2FVPROC glUniform2fv;
+extern PFNGLUNIFORM1IVPROC glUniform1iv;
+extern PFNGLUNIFORM1IPROC glUniform1i;
+extern PFNGLUNIFORM1FPROC glUniform1f;
+extern PFNGLACTIVETEXTUREPROC glActiveTexture;
+extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+extern PFNGLGETSTRINGIPROC glGetStringi;
 
 extern int initGLExtensions(int major);
 #endif

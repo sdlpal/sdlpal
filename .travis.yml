@@ -287,6 +287,18 @@ matrix:
           - hdiutil create -srcfolder build/Release/Pal.app -volname "SDLPal-SDL1" ../deploy/sdlpal-sdl1-macos.dmg
           - cd ..
 
+      - os: linux
+        language: node_js
+        env: TARGET=Emscripten TAG=1.39.4-upstream
+        services:
+          - docker
+        before_install:
+          - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:$TAG bash
+        script:
+          - mkdir -p emscripten/data
+          - touch emscripten/data/placeholder
+          - docker exec -it emscripten emmake make -C emscripten
+
 before_deploy:
   - sed=sed; date=date
   - |
