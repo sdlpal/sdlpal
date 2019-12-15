@@ -37,10 +37,9 @@ POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 $(TARGET):$(OBJFILES)
 	@echo [LD] $@
 	@em++ -o $(TARGET) $(OBJFILES) $(LDFLAGS)
-	#sh process.sh
 
 exec:$(TARGET)
-	emrun --no_browser --port 8080 $(TARGET)
+	emrun --no_browser --hostname 0.0.0.0 --port 8080 $(TARGET)
 
 clean:
 	rm -f $(TARGET) $(EMFILES) $(OBJFILES) $(DEPFILES)
@@ -48,7 +47,6 @@ clean:
 repackage:
 	rm -f $(TARGET) $(EMFILES)
 	em++ -o $(TARGET) $(OBJFILES) $(LDFLAGS)
-	#sh process.sh
 
 %.d: ;
 .PRECIOUS: %.d

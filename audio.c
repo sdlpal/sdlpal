@@ -207,9 +207,6 @@ AUDIO_OpenDevice(
       //
       return -1;
    }
-#if defined( __EMSCRIPTEN__ ) // Now either music/sound enabled will makes whole app crash in emscripten. Disabled until a solution is found.
-   return -1;
-#endif
 
    gAudioDevice.fOpened = FALSE;
    gAudioDevice.fMusicEnabled = TRUE;
