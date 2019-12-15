@@ -6,13 +6,13 @@ HOST = powerpc-eabi-
 
 DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
-SOURCES = . .. ../adplug ../liboggvorbis/src ../libmad
+SOURCES = . .. ../adplug ../liboggvorbis/src ../libopusfile/src ../libopusfile/celt ../libopusfile/silk ../libopusfile/silk/float ../libmad
 CFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.c)) 
 CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp))
 OFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OFILES:.o=.d) 
 
-CCFLAGS = $(DFALG) -g -Wall -O2 -DGEKKO -D__POWERPC__ -D__ppc__ -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -I. -I../ -I../liboggvorbis/include -I../liboggvorbis/src $(DEPFLAGS) -I$(DEVKITPRO)/libogc/include -I$(DEVKITPRO)/libogc/include/ogc -I$(DEVKITPRO)/libogc/include/SDL 
+CCFLAGS = $(DFALG) -g -Wall -O2 -DGEKKO -D__POWERPC__ -D__ppc__ $(EXTRA_CCFLAGS) $(DEPFLAGS) -I$(DEVKITPRO)/libogc/include -I$(DEVKITPRO)/libogc/include/ogc -I$(DEVKITPRO)/libogc/include/SDL 
 CXXFLAGS = $(CCFLAGS) -std=c++11
 CFLAGS = $(CCFLAGS) -std=gnu99
 LDFLAGS = -L$(DEVKITPRO)/libogc/lib/wii -lSDL -lfat -lwiiuse -lbte -logc -lm -lwiikeyboard -lg -mrvl
@@ -65,3 +65,6 @@ clean:
 
 -include $(DEPFILES)
 
+../liboggvorbis/%$(INTER).o: EXTRA_CCFLAGS := -I../liboggvorbis/include -I../liboggvorbis/src
+../libopusfile/%$(INTER).o: EXTRA_CCFLAGS := -I../liboggvorbis/include -I../libopusfile/include -I../libopusfile/src -I../libopusfile/celt -I../libopusfile/silk -I../libopusfile/silk/float -DHAVE_CONFIG_H
+%$(INTER).o: EXTRA_CCFLAGS := -I. -I.. -I../liboggvorbis/include -I../libopusfile/include -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -DPAL_HAS_OPUS=1

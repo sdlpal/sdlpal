@@ -286,6 +286,9 @@ AUDIO_OpenDevice(
    case MUSIC_OGG:
 	   gAudioDevice.pMusPlayer = OGG_Init();
 	   break;
+   case MUSIC_OPUS:
+	   gAudioDevice.pMusPlayer = OPUS_Init();
+	   break;
    case MUSIC_MIDI:
 	   gAudioDevice.pMusPlayer = NULL;
 	   break;
@@ -329,6 +332,9 @@ AUDIO_OpenDevice(
 	   break;
    case MUSIC_OGG:
 	   gAudioDevice.pCDPlayer = OGG_Init();
+	   break;
+   case MUSIC_OPUS:
+	   gAudioDevice.pCDPlayer = OPUS_Init();
 	   break;
    default:
 	   break;

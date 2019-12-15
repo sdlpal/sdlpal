@@ -54,6 +54,13 @@ OGG_Init(
 	VOID
 );
 
+/* OPUS */
+
+LPAUDIOPLAYER
+OPUS_Init(
+	VOID
+);
+
 /* MP3 */
 
 LPAUDIOPLAYER

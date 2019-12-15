@@ -30,6 +30,7 @@ This program made extensive use of the following libraries:
 * [SDL_mixer](http://www.libsdl.org/projects/SDL_mixer/)
 * [libmad](http://www.underbit.com/products/mad/)
 * [libogg & libvorbis](http://www.vorbis.com/)
+* [libopus & opusfile](https://www.opus-codec.org/)
 * [FLTK](http://www.fltk.org)
 * OPL player from [Adplug](http://adplug.sourceforge.net/)
 * OPL emulation cores from [DOSBOX project](http://www.dosbox.com), [MAME project](http://mamedev.org/) and [Chocolate Doom project](https://github.com/chocolate-doom/chocolate-doom)

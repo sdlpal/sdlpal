@@ -34,6 +34,7 @@
 		57FB01591B7A50B0005FCF4C /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB01401B7A50B0005FCF4C /* window.c */; };
 		57FB01611B7A50E0005FCF4C /* mp3play.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB015C1B7A50E0005FCF4C /* mp3play.c */; };
 		57FB01621B7A50E0005FCF4C /* oggplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB015D1B7A50E0005FCF4C /* oggplay.c */; };
+		57FB01622B7A50E0005FCF4C /* opusplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB015D2B7A50E0005FCF4C /* opusplay.c */; };
 		57FB01631B7A50E0005FCF4C /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 57FB015F1B7A50E0005FCF4C /* resampler.c */; };
 		71655061195BB372006E1227 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71655060195BB372006E1227 /* UIKit.framework */; };
 		71655063195BB372006E1227 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71655062195BB372006E1227 /* Foundation.framework */; };
@@ -220,6 +221,7 @@
 		57FB015B1B7A50E0005FCF4C /* fontglyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fontglyph.h; path = ../../../fontglyph.h; sourceTree = "<group>"; };
 		57FB015C1B7A50E0005FCF4C /* mp3play.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3play.c; path = ../../../mp3play.c; sourceTree = "<group>"; };
 		57FB015D1B7A50E0005FCF4C /* oggplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = oggplay.c; path = ../../../oggplay.c; sourceTree = "<group>"; };
+		57FB015D2B7A50E0005FCF4C /* opusplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = opusplay.c; path = ../../../opusplay.c; sourceTree = "<group>"; };
 		57FB015E1B7A50E0005FCF4C /* players.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = players.h; path = ../../../players.h; sourceTree = "<group>"; };
 		57FB015F1B7A50E0005FCF4C /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resampler.c; path = ../../../resampler.c; sourceTree = "<group>"; };
 		57FB01601B7A50E0005FCF4C /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = resampler.h; path = ../../../resampler.h; sourceTree = "<group>"; };
@@ -615,6 +617,7 @@
 				C635056B1EA6570300186049 /* midi.c */,
 				57FB015C1B7A50E0005FCF4C /* mp3play.c */,
 				57FB015D1B7A50E0005FCF4C /* oggplay.c */,
+				57FB015D2B7A50E0005FCF4C /* opusplay.c */,
 				57FB015F1B7A50E0005FCF4C /* resampler.c */,
 				716551FF195BB6DA006E1227 /* battle.c */,
 				71655202195BB6DA006E1227 /* ending.c */,
@@ -987,6 +990,7 @@
 				57FB014C1B7A50B0005FCF4C /* lookup.c in Sources */,
 				57FB014A1B7A50B0005FCF4C /* framing.c in Sources */,
 				57FB01621B7A50E0005FCF4C /* oggplay.c in Sources */,
+				57FB01622B7A50E0005FCF4C /* opusplay.c in Sources */,
 				57FB01501B7A50B0005FCF4C /* mdct.c in Sources */,
 				57FB01541B7A50B0005FCF4C /* sharedbook.c in Sources */,
 				C622BE6C1E474C01000C8970 /* palcfg.c in Sources */,

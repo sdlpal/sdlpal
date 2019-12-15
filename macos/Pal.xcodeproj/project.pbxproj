@@ -34,6 +34,7 @@
 		5757D2871B7A3D5800464A74 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D26E1B7A3D5800464A74 /* window.c */; };
 		5757D2951B7A3DCE00464A74 /* mp3play.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D2901B7A3DCE00464A74 /* mp3play.c */; };
 		5757D2961B7A3DCE00464A74 /* oggplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D2911B7A3DCE00464A74 /* oggplay.c */; };
+		5757D2962B7A3DCE00464A74 /* opusplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D2912B7A3DCE00464A74 /* opusplay.c */; };
 		5757D2971B7A3DCE00464A74 /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 5757D2931B7A3DCE00464A74 /* resampler.c */; };
 		7104FD6A0D772F6300A97E53 /* battle.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD3A0D772F6300A97E53 /* battle.c */; };
 		7104FD6D0D772F6300A97E53 /* font.c in Sources */ = {isa = PBXBuildFile; fileRef = 7104FD3D0D772F6300A97E53 /* font.c */; };
@@ -257,6 +258,7 @@
 		5757D28B1B7A3D8100464A74 /* opltypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = opltypes.h; path = adplug/opltypes.h; sourceTree = "<group>"; };
 		5757D2901B7A3DCE00464A74 /* mp3play.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3play.c; sourceTree = "<group>"; };
 		5757D2911B7A3DCE00464A74 /* oggplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oggplay.c; sourceTree = "<group>"; };
+		5757D2912B7A3DCE00464A74 /* opusplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opusplay.c; sourceTree = "<group>"; };
 		5757D2921B7A3DCE00464A74 /* players.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = players.h; sourceTree = "<group>"; };
 		5757D2931B7A3DCE00464A74 /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
 		5757D2941B7A3DCE00464A74 /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
@@ -504,6 +506,7 @@
 				7104FD480D772F6300A97E53 /* map.c */,
 				5757D2901B7A3DCE00464A74 /* mp3play.c */,
 				5757D2911B7A3DCE00464A74 /* oggplay.c */,
+				5757D2912B7A3DCE00464A74 /* opusplay.c */,
 				7104FD4A0D772F6300A97E53 /* palcommon.c */,
 				7104FD4C0D772F6300A97E53 /* palette.c */,
 				7104FD4E0D772F6300A97E53 /* play.c */,
@@ -1106,6 +1109,7 @@
 				71E23EAB13F6D1AD001287B6 /* synth.c in Sources */,
 				713765641ED86C930084F495 /* aviplay.c in Sources */,
 				5757D2961B7A3DCE00464A74 /* oggplay.c in Sources */,
+				5757D2962B7A3DCE00464A74 /* opusplay.c in Sources */,
 				71E23EAD13F6D1AD001287B6 /* timer.c in Sources */,
 				5757D2741B7A3D5800464A74 /* codebook.c in Sources */,
 				71147E4014085E31003FB2DB /* surroundopl.cpp in Sources */,

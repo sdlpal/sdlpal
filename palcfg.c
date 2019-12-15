@@ -422,6 +422,8 @@ PAL_LoadConfig(
 						eCDType = MUSIC_MP3;
 					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", slen) == 0)
 						eCDType = MUSIC_OGG;
+					else if (PAL_HAS_OPUS && SDL_strncasecmp(value.sValue, "OPUS", slen) == 0)
+						eCDType = MUSIC_OPUS;
 					else if (PAL_HAS_SDLCD && SDL_strncasecmp(value.sValue, "RAW", slen) == 0)
 						eCDType = MUSIC_SDLCD;
 					break;
@@ -434,6 +436,8 @@ PAL_LoadConfig(
 						eMusicType = MUSIC_MP3;
 					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", slen) == 0)
 						eMusicType = MUSIC_OGG;
+					else if (PAL_HAS_OPUS && SDL_strncasecmp(value.sValue, "OPUS", slen) == 0)
+						eMusicType = MUSIC_OPUS;
 					else if (SDL_strncasecmp(value.sValue, "RIX", slen) == 0)
 						eMusicType = MUSIC_RIX;
 					break;

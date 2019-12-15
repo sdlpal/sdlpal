@@ -414,6 +414,7 @@
     <ClCompile Include="..\..\mp3play.c" />
     <ClCompile Include="..\..\native_midi\native_midi_common.c" />
     <ClCompile Include="..\..\oggplay.c" />
+    <ClCompile Include="..\..\opusplay.c" />
     <ClCompile Include="..\..\overlay.c" />
     <ClCompile Include="..\..\palcfg.c" />
     <ClCompile Include="..\..\palcommon.c" />

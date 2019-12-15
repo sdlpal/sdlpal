@@ -671,6 +671,9 @@
     <ClCompile Include="..\..\oggplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\opusplay.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\resampler.c">
       <Filter>Source Files</Filter>
     </ClCompile>
