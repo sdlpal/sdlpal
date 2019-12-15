@@ -46,6 +46,7 @@
 		7111D6091F2D6348009312F0 /* midi.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D5C31F2D6348009312F0 /* midi.h */; };
 		7111D60A1F2D6348009312F0 /* mp3play.c in Sources */ = {isa = PBXBuildFile; fileRef = 7111D5C41F2D6348009312F0 /* mp3play.c */; };
 		7111D60B1F2D6348009312F0 /* oggplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 7111D5C51F2D6348009312F0 /* oggplay.c */; };
+		7111D60B2F2D6348009312F0 /* opusplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 7111D5C52F2D6348009312F0 /* opusplay.c */; };
 		7111D60C1F2D6348009312F0 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = 7111D5C61F2D6348009312F0 /* overlay.c */; };
 		7111D60D1F2D6348009312F0 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 7111D5C71F2D6348009312F0 /* palcfg.c */; };
 		7111D60E1F2D6348009312F0 /* palcfg.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 7111D5C81F2D6348009312F0 /* palcfg.h */; };
@@ -253,6 +254,7 @@
 		7111D5C31F2D6348009312F0 /* midi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = midi.h; path = ../midi.h; sourceTree = SOURCE_ROOT; };
 		7111D5C41F2D6348009312F0 /* mp3play.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mp3play.c; path = ../mp3play.c; sourceTree = SOURCE_ROOT; };
 		7111D5C51F2D6348009312F0 /* oggplay.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = oggplay.c; path = ../oggplay.c; sourceTree = SOURCE_ROOT; };
+		7111D5C52F2D6348009312F0 /* opusplay.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = opusplay.c; path = ../opusplay.c; sourceTree = SOURCE_ROOT; };
 		7111D5C61F2D6348009312F0 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = overlay.c; path = ../overlay.c; sourceTree = SOURCE_ROOT; };
 		7111D5C71F2D6348009312F0 /* palcfg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = palcfg.c; path = ../palcfg.c; sourceTree = SOURCE_ROOT; };
 		7111D5C81F2D6348009312F0 /* palcfg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = palcfg.h; path = ../palcfg.h; sourceTree = SOURCE_ROOT; };
@@ -449,6 +451,7 @@
 				7111D5C31F2D6348009312F0 /* midi.h */,
 				7111D5C41F2D6348009312F0 /* mp3play.c */,
 				7111D5C51F2D6348009312F0 /* oggplay.c */,
+				7111D5C52F2D6348009312F0 /* opusplay.c */,
 				7111D5C61F2D6348009312F0 /* overlay.c */,
 				7111D5C71F2D6348009312F0 /* palcfg.c */,
 				7111D5C81F2D6348009312F0 /* palcfg.h */,
@@ -674,6 +677,7 @@
 				7111D6081F2D6348009312F0 /* midi.c in Sources */,
 				7111D60A1F2D6348009312F0 /* mp3play.c in Sources */,
 				7111D60B1F2D6348009312F0 /* oggplay.c in Sources */,
+				7111D60B2F2D6348009312F0 /* opusplay.c in Sources */,
 				7111D60C1F2D6348009312F0 /* overlay.c in Sources */,
 				7111D60D1F2D6348009312F0 /* palcfg.c in Sources */,
 				7111D60F1F2D6348009312F0 /* palcommon.c in Sources */,

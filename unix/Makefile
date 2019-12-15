@@ -25,8 +25,9 @@ else
 	MIDI_LDFLAGS =
 endif
 
-CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../liboggvorbis/src/*.c) $(wildcard ../*.c) $(MIDI_CFILES)
-CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) unix.cpp $(MIDI_CPPFILES)
+SOURCES = .. ../adplug ../liboggvorbis/src ../libopusfile/src ../libopusfile/celt ../libopusfile/silk ../libopusfile/silk/float ../libmad
+CFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.c)) $(MIDI_CFILES)
+CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp)) unix.cpp $(MIDI_CPPFILES)
 OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OBJFILES:.o=.d)
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
@@ -48,8 +49,7 @@ endif
 
 CC = $(HOST)gcc
 CXX = $(HOST)g++
-override CCFLAGS += `$(SDL_CONFIG) --cflags` -D_GNU_SOURCE -g -Wall -O2 -fno-strict-aliasing -I. -I../ -I../liboggvorbis/include \
-	-I../liboggvorbis/src -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(TEST_CCFLAGS) $(GENERATED)
+override CCFLAGS += `$(SDL_CONFIG) --cflags` -D_GNU_SOURCE -g -Wall -O2 -fno-strict-aliasing $(EXTRA_CCFLAGS) $(TEST_CCFLAGS) $(GENERATED)
 CXXFLAGS = $(CCFLAGS) -std=c++11 $(FLTK_CXXFLAGS)
 CFLAGS = $(CCFLAGS) -std=gnu99 $(FLTK_CFLAGS)
 LDFLAGS = `$(SDL_CONFIG) --libs` $(FLTK_LDFLAGS) $(MIDI_LDFLAGS) -lstdc++ -lm
@@ -99,7 +99,10 @@ clean:
 
 -include $(DEPFILES)
 
-check: TEST_CCFLAGS = -DUNIT_TEST=1 -isystem $(GTEST_DIR)/include
+../liboggvorbis/%$(INTER).o: EXTRA_CCFLAGS := -I../liboggvorbis/include -I../liboggvorbis/src
+../libopusfile/%$(INTER).o: EXTRA_CCFLAGS := -I../liboggvorbis/include -I../libopusfile/include -I../libopusfile/src -I../libopusfile/celt -I../libopusfile/silk -I../libopusfile/silk/float -DHAVE_CONFIG_H
+%$(INTER).o: EXTRA_CCFLAGS := -I. -I.. -I../liboggvorbis/include -I../libopusfile/include -DPAL_HAS_PLATFORM_SPECIFIC_UTILS -DPAL_HAS_OPUS=1
+check: TEST_CCFLAGS = -I. -I.. -DUNIT_TEST=1 -isystem $(GTEST_DIR)/include
 check: $(TEST_TARGET)
 	@echo [EXEC] $(TEST_TARGET)
 	@chmod +x $(TEST_TARGET)

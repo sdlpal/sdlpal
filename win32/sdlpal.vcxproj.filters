@@ -294,6 +294,9 @@
     <ClCompile Include="..\oggplay.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\opusplay.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\mp3play.c">
       <Filter>Source Files</Filter>
     </ClCompile>
