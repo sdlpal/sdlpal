@@ -36,15 +36,6 @@ UTIL_Platform_Init(
 
 	gConfig.fLaunchSetting = FALSE;
 
-	EM_ASM({
-		try {
-			FS.mkdir('/palsave');
-		} catch (e) {
-		}
-		FS.mount(IDBFS, {}, '/palsave');
-		FS.syncfs(true, function (err) {});
-	});
-
 	return 0;
 }
 

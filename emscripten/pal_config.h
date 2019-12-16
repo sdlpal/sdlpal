@@ -29,8 +29,8 @@
 # include <emscripten.h>
 # define SDL_Delay emscripten_sleep
 
-# define PAL_PREFIX            "data/"
-# define PAL_SAVE_PREFIX       "/palsave/"
+# define PAL_PREFIX            "/data/"
+# define PAL_SAVE_PREFIX       "/data/"
 # define PAL_HAS_TOUCH         0
 # define PAL_DEFAULT_WINDOW_WIDTH   640
 # define PAL_DEFAULT_WINDOW_HEIGHT  400

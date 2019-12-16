@@ -468,8 +468,10 @@ main(
 
 --*/
 {
+#ifndef __EMSCRIPTEN__
    memset(gExecutablePath,0,PAL_MAX_PATH);
    strncpy(gExecutablePath, argv[0], PAL_MAX_PATH);
+#endif
 
 #if PAL_HAS_PLATFORM_STARTUP
    UTIL_Platform_Startup(argc,argv);
