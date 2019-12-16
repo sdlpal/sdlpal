@@ -4,9 +4,13 @@ SDLPAL
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/sdlpal/sdlpal?branch=master&svg=true)](https://ci.appveyor.com/project/palxex/sdlpal-itfml)
 [ ![Download](https://api.bintray.com/packages/sdlpal/nightly/master/images/download.svg) ](https://bintray.com/sdlpal/nightly/master/_latestVersion)
 
-***SDLPAL*** is an SDL-based open-source cross-platform reimplementation of the classic Chinese RPG game *Xiān jiàn Qí Xiá Zhuàn (Chinese: 仙剑奇侠传/仙劍奇俠傳)* (also known as *Chinese Paladin* or *Legend of Sword and Fairy*, or *PAL* for short).
+***SDLPAL*** is an SDL-based open-source cross-platform reimplementation of the classic Chinese RPG game *Xiān jiàn Qí Xiá Zhuàn (Simplified Chinese: 仙剑奇侠传, Traditional Chinese: 仙劍奇俠傳)* (also known as *Chinese Paladin* or *Legend of Sword and Fairy*, or *PAL* for short).
 
 [![Google Play](https://sdlpal.github.io/images/googleplay.png)](https://play.google.com/store/apps/details?id=com.sdlpal.sdlpal)
+
+[Try the online demo for now!](https://sdlpal.github.io/demo/sdlpal.html)
+=======
+The development team has built a web-based demo version of SDLPAL on github pages via Emscripten, which you can try anytime by clicking the above link. It should work well on most morden browsers (e.g., Google Chrome, Microsoft Edge, Safari, ...), but there may still be problems on some browsers. Before you can enjoy your game journey, please prepare a zipped file containing the game resource data.
 
 LICENSE
 =======
