@@ -147,6 +147,7 @@ function launch() {
     }
     document.getElementById('btnLaunch').style = "display:none";
     document.getElementById('btnLoadZip').style = "display:none";
+    document.getElementById('btnDeleteData').style = "display:none";
     runGame();
 }
 
