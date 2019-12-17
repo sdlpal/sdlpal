@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #endif
 
-#include "main.h"
+#include "silk_main.h"
 
 /*********************************************/
 /* Decode quantization indices of excitation */

@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #endif
 
-#include "main.h"
+#include "silk_main.h"
 
 /* Delayed-decision quantizer for NLSF residuals */
 opus_int32 silk_NLSF_del_dec_quant(                             /* O    Returns RD value in Q25                     */

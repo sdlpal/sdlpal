@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #endif
 
-#include "main.h"
+#include "silk_main.h"
 #include "stack_alloc.h"
 
 #define OVERRIDE_silk_noise_shape_quantizer_del_dec

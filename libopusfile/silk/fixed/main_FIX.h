@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "SigProc_FIX.h"
 #include "structs_FIX.h"
 #include "control.h"
-#include "main.h"
+#include "silk_main.h"
 #include "PLC.h"
 #include "debug.h"
 #include "entenc.h"

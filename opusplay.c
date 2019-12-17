@@ -215,6 +215,7 @@ OPUS_Play(
 )
 {
     LPOPUSPLAYER player = (LPOPUSPLAYER)object;
+    static char internal_buffer[PAL_GLOBAL_BUFFER_SIZE];
 
     int ret;
 
@@ -245,7 +246,7 @@ OPUS_Play(
         return TRUE;
     }
 
-    player->fp = op_open_file(PAL_va(0, "opus%s%.2d.opus", PAL_NATIVE_PATH_SEPARATOR, iNum), &ret);
+    player->fp = op_open_file(UTIL_GetFullPathName(internal_buffer, PAL_GLOBAL_BUFFER_SIZE, gConfig.pszGamePath, PAL_va(0, "opus%s%.2d.opus", PAL_NATIVE_PATH_SEPARATOR, iNum)), &ret);
     if (player->fp == NULL)
     {
         return FALSE;

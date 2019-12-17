@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #endif
 #include "API.h"
-#include "main.h"
+#include "silk_main.h"
 #include "stack_alloc.h"
 #include "os_support.h"
 

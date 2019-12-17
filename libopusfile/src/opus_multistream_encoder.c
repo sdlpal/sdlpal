@@ -37,7 +37,7 @@
 #include "float_cast.h"
 #include "os_support.h"
 #include "mathops.h"
-#include "mdct.h"
+#include "opus_mdct.h"
 #include "modes.h"
 #include "bands.h"
 #include "quant_bands.h"

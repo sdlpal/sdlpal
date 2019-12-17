@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #endif
 
-#include "main.h"
+#include "silk_main.h"
 
 /* Decode side-information parameters from payload */
 void silk_decode_indices(

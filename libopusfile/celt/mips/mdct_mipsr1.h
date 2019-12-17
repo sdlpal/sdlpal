@@ -47,7 +47,7 @@
 #endif
 #endif
 
-#include "mdct.h"
+#include "opus_mdct.h"
 #include "kiss_fft.h"
 #include "_kiss_fft_guts.h"
 #include <math.h>

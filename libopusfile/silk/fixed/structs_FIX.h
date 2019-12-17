@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define SILK_STRUCTS_FIX_H
 
 #include "typedef.h"
-#include "main.h"
+#include "silk_main.h"
 #include "structs.h"
 
 #ifdef __cplusplus

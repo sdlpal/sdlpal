@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "SigProc_FLP.h"
 #include "SigProc_FIX.h"
 #include "structs_FLP.h"
-#include "main.h"
+#include "silk_main.h"
 #include "define.h"
 #include "debug.h"
 #include "entenc.h"

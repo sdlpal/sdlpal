@@ -33,7 +33,7 @@
 #include "opus_types.h"
 #include "celt.h"
 #include "arch.h"
-#include "mdct.h"
+#include "opus_mdct.h"
 #include "entenc.h"
 #include "entdec.h"
 

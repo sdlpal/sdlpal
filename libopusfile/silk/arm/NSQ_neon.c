@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #include <arm_neon.h>
-#include "main.h"
+#include "silk_main.h"
 #include "stack_alloc.h"
 #include "NSQ.h"
 #include "celt/cpu_support.h"
