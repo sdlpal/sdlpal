@@ -5,9 +5,9 @@ var spinnerElement = document.getElementById('spinner');
 var Module = {
     preRun: [],
     postRun: [],
-    print: (function(text) {
+    print: function(text) {
         console.log(text);
-    })(),
+    },
     printErr: function(text) {
         console.error(text);
     },
@@ -102,6 +102,30 @@ function loadZip() {
 	    spinnerElement.style.display = 'none';
 	});
     });
+}
+
+function clearData() {
+    if (window.prompt("This will DELETE your game data and saved games stored in browser cache. Type 'YES' to continue.") === "YES") {
+        var doDelete = function(path) {
+            Object.keys(FS.lookupPath(path).node.contents).forEach(element => {
+                var stat = FS.stat(path + '/' + element);
+                if (stat.mode & 0040000) {
+                    doDelete(path + '/' + element);
+                    FS.rmdir(path + '/' + element);
+                } else {
+                    FS.unlink(path + '/' + element);
+                }
+            });
+        };
+        Module.setStatus('Deleting...');
+        spinnerElement.style.display = 'inline-block';
+        doDelete('/data');
+        Module.setStatus('Syncing FS...');
+        FS.syncfs(false, function (err) {
+            spinnerElement.style.display = 'none';
+            Module.setStatus('Done.');
+        });
+    }
 }
 
 async function runGame() {
