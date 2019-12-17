@@ -68,6 +68,9 @@
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #define strdup _strdup //https://msdn.microsoft.com/en-us/library/ms235454(v=vs.140).aspx 
+
+// TODO: make libopusfile work for MSVC project
+#define PAL_HAS_OPUS 0
 #endif
 
 PAL_C_LINKAGE char* strcasestr(const char *, const char *);

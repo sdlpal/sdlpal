@@ -63,6 +63,9 @@
 #define strncasecmp _strnicmp
 #define wcsdup _wcsdup
 
+// TODO: make libopusfile work for MSVC project
+#define PAL_HAS_OPUS 0
+
 PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 #define PAL_NEED_STRCASESTR 1
 
