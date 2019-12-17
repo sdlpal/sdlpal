@@ -128,6 +128,27 @@ function clearData() {
     }
 }
 
+function downloadSaves() {
+    var zip = new JSZip();
+    var hasData = false;
+    Object.keys(FS.lookupPath('/data').node.contents).forEach(element => {
+        if (element.endsWith('.rpg')) {
+            var array = FS.readFile('/data/' + element);
+            zip.file(element, array);
+            hasData = true;
+        }
+    });
+    if (!hasData) {
+        window.alert('Cannot find saved games to download');
+        return;
+    }
+    zip.generateAsync({type:"base64"}).then(function (base64) {
+        window.location = "data:application/zip;base64," + base64;
+    }, function (err) {
+        Module.printErr(err);
+    });
+}
+
 async function runGame() {
     mainFunc = Module.cwrap('EMSCRIPTEN_main', 'number', ['number', 'number'], {async:true});
     mainFunc(0, 0);

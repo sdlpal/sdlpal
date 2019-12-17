@@ -100,7 +100,7 @@
         box-shadow: 0px 0px 10px #ccc;
       }
 
-      button,#btnLaunch,#btnDeleteData {
+      button,#btnLaunch,#btnDeleteData,#btnDownloadSave {
         margin: 0px;
         font-size: 12pt;
         padding: 4px;
@@ -124,6 +124,7 @@
       <span>
         <input type="file" id="btnLoadZip" accept="application/zip" value="Load Zip" onchange="loadZip();">
         <input type="button" id="btnDeleteData" value="Delete Data" onclick="clearData();">
+        <input type="button" id="btnDownloadSave" value="Download Saved Games" onclick="downloadSaves();">
         <input type="button" id="btnLaunch" value="Launch" onclick="launch();">
       </span>
     </span>
