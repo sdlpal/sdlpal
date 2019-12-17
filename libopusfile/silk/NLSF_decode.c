@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #endif
 
-#include "main.h"
+#include "silk_main.h"
 
 /* Predictive dequantizer for NLSF residuals */
 static OPUS_INLINE void silk_NLSF_residual_dequant(          /* O    Returns RD value in Q30                     */

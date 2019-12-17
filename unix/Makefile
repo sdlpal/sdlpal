@@ -28,7 +28,7 @@ endif
 SOURCES = .. ../adplug ../liboggvorbis/src ../libopusfile/src ../libopusfile/celt ../libopusfile/silk ../libopusfile/silk/float ../libmad
 CFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.c)) $(MIDI_CFILES)
 CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp)) unix.cpp $(MIDI_CPPFILES)
-OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
+TOBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OBJFILES:.o=.d)
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
@@ -58,8 +58,10 @@ TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	LDFLAGS += -framework OpenGL
+	OBJFILES = $(filter-out ../mini_glloader.unix.o, $(TOBJFILES))
 else
 	LDFLAGS += -lGL -pthread
+	OBJFILES = $(TOBJFILES)
 endif
 
 POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@

@@ -33,7 +33,7 @@
 #if !defined(MDCT_ARM_H)
 #define MDCT_ARM_H
 
-#include "mdct.h"
+#include "opus_mdct.h"
 
 #if defined(HAVE_ARM_NE10)
 /** Compute a forward MDCT and scale by 4/N, trashes the input array */

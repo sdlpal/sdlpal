@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #endif
 
-#include "main.h"
+#include "silk_main.h"
 
 /* Find least-squares prediction gain for one signal based on another and quantize it */
 opus_int32 silk_stereo_find_predictor(                          /* O    Returns predictor in Q13                    */

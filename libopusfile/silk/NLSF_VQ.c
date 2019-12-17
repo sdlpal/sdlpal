@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #endif
 
-#include "main.h"
+#include "silk_main.h"
 
 /* Compute quantization errors for an LPC_order element input vector for a VQ codebook */
 void silk_NLSF_VQ(

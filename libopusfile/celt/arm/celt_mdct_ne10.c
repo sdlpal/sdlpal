@@ -38,7 +38,7 @@
 
 #include "kiss_fft.h"
 #include "_kiss_fft_guts.h"
-#include "mdct.h"
+#include "opus_mdct.h"
 #include "stack_alloc.h"
 
 void clt_mdct_forward_neon(const mdct_lookup *l,

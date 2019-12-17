@@ -213,7 +213,7 @@ typedef const WCHAR        *LPCWSTR;
 # define PAL_HAS_OGG          1   /* Try always enable OGG. If compilation/run failed, please change this value to 0. */
 #endif
 #ifndef PAL_HAS_OPUS
-# define PAL_HAS_OPUS         0   /* Disable OPUS by default. */
+# define PAL_HAS_OPUS         1   /* Try always enable OPUS. If compilation/run failed, please change this value to 0. */
 #endif
 
 #ifndef PAL_CONFIG_PREFIX

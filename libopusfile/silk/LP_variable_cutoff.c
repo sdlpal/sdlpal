@@ -35,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
     [0.95 : 0.15 : 0.35] normalized cut off frequencies.
 */
 
-#include "main.h"
+#include "silk_main.h"
 
 /* Helper function, interpolates the filter taps */
 static OPUS_INLINE void silk_LP_interpolate_filter_taps(

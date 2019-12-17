@@ -37,7 +37,7 @@
 #define CELT_C
 
 #include "os_support.h"
-#include "mdct.h"
+#include "opus_mdct.h"
 #include <math.h>
 #include "celt.h"
 #include "pitch.h"

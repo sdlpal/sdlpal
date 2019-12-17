@@ -31,7 +31,7 @@
 
 #include "pitch.h"
 #include "kiss_fft.h"
-#include "mdct.h"
+#include "opus_mdct.h"
 
 #if defined(OPUS_HAVE_RTCD)
 

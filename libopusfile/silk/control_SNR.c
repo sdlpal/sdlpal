@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #endif
 
-#include "main.h"
+#include "silk_main.h"
 #include "tuning_parameters.h"
 
 /* These tables hold SNR values divided by 21 (so they fit in 8 bits)
