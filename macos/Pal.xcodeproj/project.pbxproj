@@ -552,7 +552,7 @@
 		C650609420F653B300397B73 /* glslp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = glslp.c; sourceTree = "<group>"; };
 		C650609520F653B300397B73 /* glslp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = glslp.h; sourceTree = "<group>"; };
 		C65BC11C1CFAF1780037E9A2 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay.c; sourceTree = "<group>"; };
-		C65BC11E1CFAF7790037E9A2 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
+		C65BC11E1CFAF7790037E9A2 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; tabWidth = 3; };
 		C697263C202E155C00293A73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		C6BF8C7020A1498A000AE188 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		C6CFDB8323A858B700DEB8F9 /* celt_lpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = celt_lpc.h; sourceTree = "<group>"; };

@@ -32,6 +32,11 @@ AUDIO_OpenDevice(
    VOID
 );
 
+BOOL
+AUDIO_CD_Available(
+   VOID
+);
+
 VOID
 AUDIO_CloseDevice(
    VOID
