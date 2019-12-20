@@ -179,6 +179,18 @@ AUDIO_FillBuffer(
    AVI_FillAudioBuffer(AVI_GetPlayState(), (LPBYTE)stream, len);
 }
 
+BOOL
+AUDIO_CD_Available(
+   VOID
+)
+{
+#if PAL_HAS_SDLCD
+   return gAudioDevice.pCD != NULL;
+#else
+   return gAudioDevice.pCDPlayer != NULL;
+#endif
+}
+
 INT
 AUDIO_OpenDevice(
    VOID
