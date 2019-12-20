@@ -1,3 +1,34 @@
+var strSyncingFs = 'Syncing FS...';
+var strDone = 'Done.';
+var strDeleting = 'Deleting...';
+var strNoSave = 'Cannot find saved games to download';
+var strNoData = 'Error: Game data not loaded!';
+var strInit = 'Initializing...';
+var strLoading = 'Loading';
+var strDelConfirm = "This will DELETE your game data and saved games stored in browser cache. Type 'YES' to continue.";
+
+var userLang = navigator.language || navigator.userLanguage;
+if (userLang === 'zh-CN') {
+    strSyncingFs = '正在同步文件系统...';
+    strDone = '完成。';
+    strDeleting = '正在删除...';
+    strNoSave = '无法找到可下载的游戏存档！';
+    strNoData = '错误：游戏数据未上传。请先上传ZIP格式的游戏数据文件。';
+    strInit = '正在初始化...';
+    strLoading = '正在加载';
+    strDelConfirm = '此操作将删除您浏览器缓存中保存的数据文件及存档。请输入 "YES" 继续：';
+} else if (userLang === 'zh-TW') {
+    strSyncingFs = '正在同步檔案系統...';
+    strDone = '完成。';
+    strDeleting = '正在刪除...';
+    strNoSave = '無法找到可下載的遊戲記錄！';
+    strNoData = '錯誤：遊戲資料檔未上傳。請先上傳ZIP格式的遊戲資料檔。';
+    strInit = '正在初始化...';
+    strLoading = '正在加載';
+    strDelConfirm = '此操作將刪除您瀏覽器緩存中保存的遊戲資料檔及記錄。請輸入 "YES" 繼續：';
+}
+
+
 var statusElement = document.getElementById('status');
 var progressElement = document.getElementById('progress');
 var spinnerElement = document.getElementById('spinner');
@@ -24,7 +55,7 @@ var Module = {
     setStatus: function(text) {
         if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
         if (text === Module.setStatus.last.text) return;
-	if (text === '' && Module.setStatus.last.text == 'Syncing FS...') return;
+	if (text === '' && Module.setStatus.last.text == strSyncingFs) return;
         var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
         var now = Date.now();
         if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
@@ -60,17 +91,17 @@ function onRuntimeInitialized() {
     } catch (e) {
     }
     FS.mount(IDBFS, {}, '/data');
-    Module.setStatus('Syncing FS...');
+    Module.setStatus(strSyncingFs);
     spinnerElement.style.display = 'inline-block';
     FS.syncfs(true, function (err) {
 	spinnerElement.style.display = 'none';
-        Module.setStatus('Done.');
+        Module.setStatus(strDone);
     });
 }
 
 function loadZip() {
     var fileBtn = document.getElementById('btnLoadZip');
-    Module.setStatus('Loading ' + fileBtn.files[0].name + '...');
+    Module.setStatus(strLoading + ' ' + fileBtn.files[0].name + '...');
     spinnerElement.style.display = 'inline-block';
 
     var fileInput = document.getElementById("btnLoadZip");
@@ -96,16 +127,16 @@ function loadZip() {
 		})});
 	    }
 	});
-	Module.setStatus('Syncing FS...');
+	Module.setStatus(strSyncingFs);
 	FS.syncfs(function (err) {
-	    Module.setStatus('Done.');
+	    Module.setStatus(strDone);
 	    spinnerElement.style.display = 'none';
 	});
     });
 }
 
 function clearData() {
-    if (window.prompt("This will DELETE your game data and saved games stored in browser cache. Type 'YES' to continue.") === "YES") {
+    if (window.prompt(strDelConfirm) === "YES") {
         var doDelete = function(path) {
             Object.keys(FS.lookupPath(path).node.contents).forEach(element => {
                 var stat = FS.stat(path + '/' + element);
@@ -117,13 +148,13 @@ function clearData() {
                 }
             });
         };
-        Module.setStatus('Deleting...');
+        Module.setStatus(strDeleting);
         spinnerElement.style.display = 'inline-block';
         doDelete('/data');
-        Module.setStatus('Syncing FS...');
+        Module.setStatus(strSyncingFs);
         FS.syncfs(false, function (err) {
             spinnerElement.style.display = 'none';
-            Module.setStatus('Done.');
+            Module.setStatus(strDone);
         });
     }
 }
@@ -139,7 +170,7 @@ function downloadSaves() {
         }
     });
     if (!hasData) {
-        window.alert('Cannot find saved games to download');
+        window.alert(strNoSave);
         return;
     }
     zip.generateAsync({type:"base64"}).then(function (base64) {
@@ -163,7 +194,7 @@ function launch() {
     } catch (e) {
     }
     if (!checkFile) {
-	Module.setStatus('Error: Game data not loaded!');
+	Module.setStatus(strNoData);
 	return;
     }
     document.getElementById('btnLaunch').style = "display:none";
@@ -172,7 +203,7 @@ function launch() {
     runGame();
 }
 
-Module.setStatus('Initializing...');
+Module.setStatus(strInit);
 window.onerror = function(event) {
     Module.setStatus('Exception thrown, see JavaScript console');
     spinnerElement.style.display = 'none';
