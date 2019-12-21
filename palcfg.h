@@ -196,7 +196,7 @@ typedef struct tagCONFIGURATION
 	INT              iSoundVolume;
 	LOGLEVEL         iLogLevel;
 	MUSICTYPE        eMusicType;
-	MUSICTYPE        eCDType;
+	CDTYPE           eCDType;
 	OPLCORE_TYPE     eOPLCore;
 	OPLCHIP_TYPE     eOPLChip;
 	WORD             wAudioBufferSize;

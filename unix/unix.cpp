@@ -161,7 +161,7 @@ void InitControls()
    sprintf(buffer, "%u", gConfig.dwScreenWidth); gWidgets.windowwidth->value(buffer);
    sprintf(buffer, "%u", gConfig.dwScreenHeight); gWidgets.windowheight->value(buffer);
    gWidgets.shaderfile->value(gConfig.pszShader);
-   gWidgets.cd->value(gConfig.eCDType - MUSIC_MP3);
+   gWidgets.cd->value(gConfig.eCDType);
    gWidgets.bgm->value(gConfig.eMusicType);
    gWidgets.stereo->value(gConfig.iAudioChannels == 2 ? 1 : 0);
    sprintf(buffer, "%d", gConfig.iSampleRate); gWidgets.samplerate->value(buffer);
@@ -200,7 +200,7 @@ void SaveControls()
    gConfig.dwTextureHeight = atoi(gWidgets.textureheight->value());
    gConfig.dwScreenWidth = atoi(gWidgets.windowwidth->value());
    gConfig.dwScreenHeight = atoi(gWidgets.windowheight->value());
-   gConfig.eCDType = (MUSICTYPE)(gWidgets.cd->value() + MUSIC_MP3);
+   gConfig.eCDType = (CDTYPE)(gWidgets.cd->value());
    gConfig.eMusicType = (MUSICTYPE)(gWidgets.bgm->value());
    gConfig.iAudioChannels = gWidgets.stereo->value() ? 2 : 1;
    gConfig.iSampleRate = atoi(gWidgets.samplerate->value());
@@ -259,8 +259,8 @@ Fl_Window* InitWindow()
    gWidgets.shaderfile = new Fl_Input(100, 235, 530, 22, gLabels[lang].shaderfile);
 
    (new Fl_Box(FL_BORDER_BOX, 5, 280, 630, 130, gLabels[lang].audio))->align(FL_ALIGN_TOP);
-   (gWidgets.cd = new Fl_Choice(84, 289, 60, 22, gLabels[lang].cd))->add("MP3|OGG");
-   (gWidgets.bgm = new Fl_Choice(84, 319, 60, 22, gLabels[lang].bgm))->add("MIDI|RIX|MP3|OGG");
+   (gWidgets.cd = new Fl_Choice(84, 289, 60, 22, gLabels[lang].cd))->add("NONE|MP3|OGG|OPUS");
+   (gWidgets.bgm = new Fl_Choice(84, 319, 60, 22, gLabels[lang].bgm))->add("MIDI|RIX|MP3|OGG|OPUS");
    gWidgets.stereo = new Fl_Check_Button(lang ? 425 : 435, 320, 70, 20, gLabels[lang].stereo);
    gWidgets.samplerate = new Fl_Int_Input(570, 289, 60, 22, gLabels[lang].samplerate);
    (gWidgets.oplcore = new Fl_Choice(224, 289, 75, 22, gLabels[lang].oplcore))->add("MAME|DBFLT|DBINT|NUKED");

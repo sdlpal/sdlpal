@@ -83,14 +83,17 @@
                     <ComboBoxItem Content="8192"/>
                 </ComboBox>
                 <ComboBox x:Name="cbCD" x:Uid="CD" HorizontalAlignment="Stretch" Header="CD 音轨格式" PlaceholderText="选择 CD 音轨格式">
+                    <ComboBoxItem Content="None"/>
                     <ComboBoxItem Content="MP3"/>
                     <ComboBoxItem Content="OGG"/>
+                    <ComboBoxItem Content="OPUS"/>
                 </ComboBox>
                 <ComboBox x:Name="cbBGM" x:Uid="BGM" HorizontalAlignment="Stretch" Header="背景音乐格式" PlaceholderText="选择背景音乐格式" SelectionChanged="cbBGM_SelectionChanged">
                     <ComboBoxItem Content="MIDI"/>
                     <ComboBoxItem Content="RIX"/>
                     <ComboBoxItem Content="MP3"/>
                     <ComboBoxItem Content="OGG"/>
+                    <ComboBoxItem Content="OPUS"/>
                 </ComboBox>
                 <ComboBox x:Name="cbOPLCore" x:Uid="OPLCORE" HorizontalAlignment="Stretch" Header="OPL 模拟核心" PlaceholderText="选择 OPL 模拟核心">
                     <ComboBoxItem Content="MAME"/>

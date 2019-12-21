@@ -172,7 +172,7 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	gConfig.dwTextureHeight = GetDlgItemInt(hwndDlg, IDC_TEXTUREHEIGHT, nullptr, FALSE);
 	gConfig.dwScreenWidth = GetDlgItemInt(hwndDlg, IDC_WINDOWWIDTH, nullptr, FALSE);
 	gConfig.dwScreenHeight = GetDlgItemInt(hwndDlg, IDC_WINDOWHEIGHT, nullptr, FALSE);
-	gConfig.eCDType = (MUSICTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD) + MUSIC_MP3);
+	gConfig.eCDType = (CDTYPE)(ComboBox_GetCurSel(hwndDlg, IDC_CD));
 	gConfig.eMusicType = (MUSICTYPE)ComboBox_GetCurSel(hwndDlg, IDC_BGM);
 	gConfig.eOPLCore = (OPLCORE_TYPE)(ComboBox_GetCurSel(hwndDlg, IDC_OPL_CORE));
 	gConfig.eOPLChip = (OPLCHIP_TYPE)(gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : ComboBox_GetCurSel(hwndDlg, IDC_OPL_CHIP));
@@ -225,7 +225,7 @@ void ResetControls(HWND hwndDlg)
 	EnableDlgItem(hwndDlg, IDC_TEXTUREHEIGHT, gConfig.fEnableGLSL ? TRUE : FALSE);
 	EnableDlgItem(hwndDlg, IDC_BRSHADER, gConfig.fEnableGLSL ? TRUE : FALSE);
 
-	ComboBox_SetCurSel(hwndDlg, IDC_CD, gConfig.eCDType - MUSIC_MP3);
+	ComboBox_SetCurSel(hwndDlg, IDC_CD, gConfig.eCDType);
 	ComboBox_SetCurSel(hwndDlg, IDC_BGM, gConfig.eMusicType);
 	ComboBox_SetCurSel(hwndDlg, IDC_OPL_CORE, gConfig.eOPLCore);
 	ComboBox_SetCurSel(hwndDlg, IDC_OPL_CHIP, gConfig.eOPLChip);
@@ -276,13 +276,16 @@ INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 		}
 	}
 
+	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("None"));
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("MP3"));
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("OGG"));
+	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("OPUS"));
 
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("MIDI"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("RIX"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("MP3"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("OGG"));
+	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("OPUS"));
 
 	ComboBox_AddString(hwndDlg, IDC_OPL_CORE, TEXT("MAME"));
 	ComboBox_AddString(hwndDlg, IDC_OPL_CORE, TEXT("DBFLT"));

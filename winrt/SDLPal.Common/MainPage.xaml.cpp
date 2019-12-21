@@ -114,8 +114,8 @@ void SDLPal::MainPage::LoadControlContents(bool loadDefault)
 	slQuality->Value = gConfig.iResampleQuality;
 	cbLogLevel->SelectedIndex = (int)gConfig.iLogLevel;
 
-	cbCD->SelectedIndex = (gConfig.eCDType == MUSIC_MP3) ? 0 : 1;
-	cbBGM->SelectedIndex = (gConfig.eMusicType <= MUSIC_OGG) ? gConfig.eMusicType : MUSIC_RIX;
+	cbCD->SelectedIndex = gConfig.eCDType;
+	cbBGM->SelectedIndex = gConfig.eMusicType;
 	cbOPLCore->SelectedIndex = (int)gConfig.eOPLCore;
 	cbOPLChip->SelectedIndex = (int)gConfig.eOPLChip;
 	cbEnableGLSL->IsChecked = gConfig.fEnableGLSL == TRUE;
@@ -174,7 +174,7 @@ void SDLPal::MainPage::SaveControlContents()
 	gConfig.dwTextureWidth = _wtoi(tbTextureWidth->Text->Data());
 	gConfig.dwTextureHeight = _wtoi(tbTextureHeight->Text->Data());
 
-	gConfig.eCDType = (MUSICTYPE)(MUSIC_MP3 + cbCD->SelectedIndex);
+	gConfig.eCDType = (CDTYPE)cbCD->SelectedIndex;
 	gConfig.eMusicType = (MUSICTYPE)cbBGM->SelectedIndex;
 	gConfig.eOPLCore = (OPLCORE_TYPE)cbOPLCore->SelectedIndex;
 	gConfig.eOPLChip = gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : (OPLCHIP_TYPE)cbOPLChip->SelectedIndex;

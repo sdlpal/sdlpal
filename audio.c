@@ -184,11 +184,7 @@ AUDIO_CD_Available(
    VOID
 )
 {
-#if PAL_HAS_SDLCD
-   return gAudioDevice.pCD != NULL;
-#else
-   return gAudioDevice.pCDPlayer != NULL;
-#endif
+   return gConfig.eCDType != CD_NONE;
 }
 
 INT
@@ -313,7 +309,7 @@ AUDIO_OpenDevice(
    //
    switch (gConfig.eCDType)
    {
-   case MUSIC_SDLCD:
+   case CD_SDLCD:
    {
 #if PAL_HAS_SDLCD
 	   int i;
@@ -339,16 +335,17 @@ AUDIO_OpenDevice(
 	   gAudioDevice.pCDPlayer = NULL;
 	   break;
    }
-   case MUSIC_MP3:
+   case CD_MP3:
 	   gAudioDevice.pCDPlayer = MP3_Init();
 	   break;
-   case MUSIC_OGG:
+   case CD_OGG:
 	   gAudioDevice.pCDPlayer = OGG_Init();
 	   break;
-   case MUSIC_OPUS:
+   case CD_OPUS:
 	   gAudioDevice.pCDPlayer = OPUS_Init();
 	   break;
    default:
+      gAudioDevice.pCDPlayer = NULL;
 	   break;
    }
 

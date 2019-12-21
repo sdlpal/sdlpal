@@ -65,7 +65,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
     { PALCFG_TEXTUREHEIGHT,     PALCFG_UNSIGNED, "TextureHeight",     13, MAKE_UNSIGNED(PAL_DEFAULT_TEXTURE_HEIGHT,    0,                     UINT32_MAX) },
     { PALCFG_TEXTUREWIDTH,      PALCFG_UNSIGNED, "TextureWidth",      12, MAKE_UNSIGNED(PAL_DEFAULT_TEXTURE_WIDTH,     0,                     UINT32_MAX) },
 
-	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, MAKE_STRING("OGG") },
+	{ PALCFG_CD,                PALCFG_STRING,   "CD",                 2, MAKE_STRING("NONE") },
 	{ PALCFG_GAMEPATH,          PALCFG_STRING,   "GamePath",           8, MAKE_STRING(NULL) },
     { PALCFG_SAVEPATH,          PALCFG_STRING,   "SavePath",           8, MAKE_STRING(NULL) },
     { PALCFG_SHADERPATH,        PALCFG_STRING,   "ShaderPath",        10, MAKE_STRING(NULL) },
@@ -81,7 +81,8 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_SHADER,            PALCFG_STRING,   "Shader",             6, MAKE_STRING(NULL) },
 };
 
-static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
+static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "OPUS", "RAW" };
+static const char *cd_types[] = { "NONE", "MP3", "OGG", "OPUS", "RAW" };
 static const char *opl_cores[] = { "MAME", "DBFLT", "DBINT", "NUKED" };
 static const char *opl_chips[] = { "OPL2", "OPL3" };
 
@@ -290,7 +291,7 @@ PAL_LoadConfig(
 	FILE     *fp;
 	ConfigValue  values[PALCFG_ALL_MAX];
 	MUSICTYPE eMusicType = MUSIC_RIX;
-	MUSICTYPE eCDType = MUSIC_OGG;
+	CDTYPE eCDType = CD_NONE;
 	OPLCORE_TYPE eOPLCore = OPLCORE_DBFLT;
 	OPLCHIP_TYPE eOPLChip = OPLCHIP_OPL2;
 	static const SCREENLAYOUT screen_layout = {
@@ -419,13 +420,13 @@ PAL_LoadConfig(
 				case PALCFG_CD:
 				{
 					if (PAL_HAS_MP3 && SDL_strncasecmp(value.sValue, "MP3", slen) == 0)
-						eCDType = MUSIC_MP3;
+						eCDType = CD_MP3;
 					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", slen) == 0)
-						eCDType = MUSIC_OGG;
+						eCDType = CD_OGG;
 					else if (PAL_HAS_OPUS && SDL_strncasecmp(value.sValue, "OPUS", slen) == 0)
-						eCDType = MUSIC_OPUS;
+						eCDType = CD_OPUS;
 					else if (PAL_HAS_SDLCD && SDL_strncasecmp(value.sValue, "RAW", slen) == 0)
-						eCDType = MUSIC_SDLCD;
+						eCDType = CD_SDLCD;
 					break;
 				}
 				case PALCFG_MUSIC:
@@ -622,7 +623,7 @@ PAL_SaveConfig(
         sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_TEXTUREHEIGHT), gConfig.dwTextureHeight); fputs(buf, fp);
         sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_TEXTUREWIDTH), gConfig.dwTextureWidth); fputs(buf, fp);
 
-		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CD), music_types[gConfig.eCDType]); fputs(buf, fp);
+		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_CD), cd_types[gConfig.eCDType]); fputs(buf, fp);
 		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MUSIC), music_types[gConfig.eMusicType]); fputs(buf, fp);
 		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_OPL_CORE), opl_cores[gConfig.eOPLCore]); fputs(buf, fp);
 		sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_OPL_CHIP), opl_chips[gConfig.eOPLChip]); fputs(buf, fp);
@@ -680,7 +681,7 @@ PAL_GetConfigItem(
 		case PALCFG_WINDOWHEIGHT:      value.uValue = gConfig.dwScreenHeight; break;
 		case PALCFG_WINDOWWIDTH:       value.uValue = gConfig.dwScreenWidth; break;
 
-		case PALCFG_CD:                value.sValue = music_types[gConfig.eCDType]; break;
+		case PALCFG_CD:                value.sValue = cd_types[gConfig.eCDType]; break;
 		case PALCFG_GAMEPATH:          value.sValue = gConfig.pszGamePath; break;
 		case PALCFG_SAVEPATH:          value.sValue = gConfig.pszSavePath; break;
         case PALCFG_SHADERPATH:        value.sValue = gConfig.pszShaderPath; break;
@@ -772,11 +773,11 @@ PAL_SetConfigItem(
 		gConfig.pszShader = value.sValue && value.sValue[0] ? strdup(value.sValue) : NULL;
 		break;
 	case PALCFG_CD:
-		for (int i = 0; i < sizeof(music_types) / sizeof(music_types[0]); i++)
+		for (int i = 0; i < sizeof(cd_types) / sizeof(cd_types[0]); i++)
 		{
-			if (SDL_strcasecmp(value.sValue, music_types[i]) == 0)
+			if (SDL_strcasecmp(value.sValue, cd_types[i]) == 0)
 			{
-				gConfig.eCDType = (MUSICTYPE)i;
+				gConfig.eCDType = (CDTYPE)i;
 				return;
 			}
 		}

@@ -95,8 +95,8 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int AudioSampleRates[] = { 11025, 22050, 44100 };
     private static final int AudioBufferSizes[] = { 512, 1024, 2048, 4096, 8192 };
     private static final int OPLSampleRates[] = { 11025, 12429, 22050, 24858, 44100, 49716 };
-    private static final String CDFormats[] = { "MP3", "OGG" };
-    private static final String MusicFormats[] = { "MIDI", "RIX", "MP3", "OGG" };
+    private static final String CDFormats[] = { "None", "MP3", "OGG", "OPUS" };
+    private static final String MusicFormats[] = { "MIDI", "RIX", "MP3", "OGG", "OPUS" };
     private static final String OPLCores[] = { "MAME", "DBFLT", "DBINT", "NUKED" };
     private static final String OPLChips[] = { "OPL2", "OPL3" };
     private static final String AspectRatios[] = { "16:10", "4:3" };
@@ -358,7 +358,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((AppCompatSpinner)findViewById(R.id.spLogLevel)).setSelection(getConfigInt(LogLevel, true));
         ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, true), AudioSampleRates, 2));    // 44100Hz
         ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, true), AudioBufferSizes, 1));    // 1024
-        ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, true), CDFormats, 1));     // OGG
+        ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, true), CDFormats, 1));     // None
         ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, true), MusicFormats, 1));    // RIX
         ((AppCompatSpinner)findViewById(R.id.spOPLCore)).setSelection(findMatchedStringIndex(getConfigString(OPLCore, true), OPLCores, 1));       // DBFLT
         ((AppCompatSpinner)findViewById(R.id.spOPLChip)).setSelection(findMatchedStringIndex(getConfigString(OPLChip, true), OPLChips, 0));       // OPL2

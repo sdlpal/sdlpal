@@ -98,11 +98,19 @@ typedef enum tagMUSICTYPE
 {
 	MUSIC_MIDI,
 	MUSIC_RIX,
-	MUSIC_MP3,
-	MUSIC_OPUS,
-	MUSIC_OGG,
-	MUSIC_SDLCD
+    MUSIC_MP3,
+    MUSIC_OGG,
+	MUSIC_OPUS
 } MUSICTYPE, *LPMUSICTYPE;
+
+typedef enum tagCDTYPE
+{
+    CD_NONE,
+    CD_MP3,
+	CD_OGG,
+    CD_OPUS,
+	CD_SDLCD
+} CDTYPE, *LPCDTYPE;
 
 typedef enum tagCODEPAGE {
 	CP_MIN = 0,

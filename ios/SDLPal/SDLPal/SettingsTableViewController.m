@@ -94,8 +94,8 @@
     AudioSampleRates = @[ @"11025", @"22050", @"44100", @"49716" ];
     AudioBufferSizes = @[ @"512", @"1024", @"2048", @"4096", @"8192" ];
     OPLSampleRates = @[ @"12429", @"24858", @"49716", @"11025", @"22050", @"44100" ];
-    CDFormats = @[ @"MP3", @"OGG" ];
-    MusicFormats = @[ @"MIDI", @"RIX", @"MP3", @"OGG" ];
+    CDFormats = @[ @"None", @"MP3", @"OGG", @"OPUS" ];
+    MusicFormats = @[ @"MIDI", @"RIX", @"MP3", @"OGG", @"OPUS" ];
     OPLCores = @[ @"MAME", @"DBFLT", @"DBINT", @"NUKED" ];
     OPLChips = @[ @"OPL2", @"OPL3" ];
     LogLevels = @[ @"VERBOSE", @"DEBUG", @"INFO", @"WARNING", @"ERROR", @"FATAL" ];
@@ -316,7 +316,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     lblOPLCore.text         = OPLCores[gConfig.eOPLCore];
     lblOPLChip.text         = OPLChips[gConfig.eOPLChip];
     lblOPLRate.text         = [NSString stringWithFormat:@"%d",gConfig.iOPLSampleRate];
-    lblCDAudioSource.text   = CDFormats[gConfig.eCDType-MUSIC_OGG];
+    lblCDAudioSource.text   = CDFormats[gConfig.eCDType];
     lblResampleRate.text    = [NSString stringWithFormat:@"%d",gConfig.iSampleRate];
     lblAudioBufferSize.text = [NSString stringWithFormat:@"%d",gConfig.wAudioBufferSize];
     lblShader.text          = [NSString stringWithFormat:@"%s",gConfig.pszShader];
@@ -353,7 +353,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     gConfig.eOPLCore    = (OPLCORE_TYPE)[OPLCores  indexOfObject:lblOPLCore.text];
     gConfig.eOPLChip    = gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : (OPLCHIP_TYPE)[OPLChips  indexOfObject:lblOPLChip.text];
     gConfig.iOPLSampleRate = [lblOPLRate.text intValue];
-    gConfig.eCDType     = (MUSICTYPE)[CDFormats indexOfObject:lblCDAudioSource.text]+MUSIC_OGG;
+    gConfig.eCDType     = (CDTYPE)[CDFormats indexOfObject:lblCDAudioSource.text];
     gConfig.iSampleRate = [lblResampleRate.text intValue];
     gConfig.wAudioBufferSize = [lblAudioBufferSize.text intValue];
     
