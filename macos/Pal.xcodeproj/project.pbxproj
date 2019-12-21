@@ -432,7 +432,7 @@
 		7104FD520D772F6300A97E53 /* rixplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rixplay.cpp; sourceTree = "<group>"; };
 		7104FD540D772F6300A97E53 /* rngplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rngplay.c; sourceTree = "<group>"; };
 		7104FD550D772F6300A97E53 /* rngplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rngplay.h; sourceTree = "<group>"; };
-		7104FD560D772F6300A97E53 /* scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scene.c; sourceTree = "<group>"; };
+		7104FD560D772F6300A97E53 /* scene.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.c; path = scene.c; sourceTree = "<group>"; tabWidth = 3; };
 		7104FD570D772F6300A97E53 /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
 		7104FD580D772F6300A97E53 /* script.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.c; path = script.c; sourceTree = "<group>"; tabWidth = 3; };
 		7104FD590D772F6300A97E53 /* script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = script.h; sourceTree = "<group>"; };

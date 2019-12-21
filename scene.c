@@ -529,11 +529,7 @@ PAL_CheckObstacle(
 --*/
 {
    int x, y, h, xr, yr;
-
-   if (PAL_X(pos) < 0 || PAL_X(pos) >= 2048 || PAL_Y(pos) < 0 || PAL_Y(pos) >= 2048)
-   {
-      return TRUE;
-   }
+   int blockX = PAL_X(gpGlobals->partyoffset)/32, blockY = PAL_Y(gpGlobals->partyoffset)/16;
 
    //
    // Check if the map tile at the specified position is blocking
@@ -541,6 +537,14 @@ PAL_CheckObstacle(
    x = PAL_X(pos) / 32;
    y = PAL_Y(pos) / 16;
    h = 0;
+
+   //
+   // Avoid walk out of range, look out of map
+   //
+   if (x < blockX || x >= 2048 || y < blockY || y >= 2048 )
+   {
+      return TRUE;
+   }
 
    xr = PAL_X(pos) % 32;
    yr = PAL_Y(pos) % 16;
