@@ -64,10 +64,8 @@ typedef struct tagOGGPLAYER
 	FILE            *fp;
 	void            *resampler[2];
 	INT              iFlags;
-	INT              iMusic;
 	INT              iStage;
 	INT              nChannels;
-	BOOL             fLoop;
 	BOOL             fReady;
 	BOOL             fUseResampler;
 } OGGPLAYER, *LPOGGPLAYER;

@@ -41,14 +41,12 @@ typedef struct tagRIXPLAYER :
    void                      *resampler[2];
    BYTE                       buf[(PAL_MAX_SAMPLERATE + 69) / 70 * sizeof(short) * 2];
    LPBYTE                     pos;
-   INT                        iCurrentMusic; // current playing music number
    INT                        iNextMusic; // the next music number to switch to
    DWORD                      dwStartFadeTime;
    INT                        iTotalFadeOutSamples;
    INT                        iTotalFadeInSamples;
    INT                        iRemainingFadeSamples;
    enum { NONE, FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
-   BOOL                       fLoop;
    BOOL                       fNextLoop;
    BOOL                       fReady;
 } RIXPLAYER, *LPRIXPLAYER;
@@ -115,7 +113,7 @@ RIX_FillBuffer(
 				INT   passed_samples = ((INT)(now - pRixPlayer->dwStartFadeTime) > 0) ? (INT)((now - pRixPlayer->dwStartFadeTime) * AUDIO_GetDeviceSpec()->freq / 1000) : 0;
 				pRixPlayer->iRemainingFadeSamples -= passed_samples;
 			}
-			if (pRixPlayer->iCurrentMusic == -1 || pRixPlayer->iRemainingFadeSamples <= 0)
+			if (pRixPlayer->iMusic == -1 || pRixPlayer->iRemainingFadeSamples <= 0)
 			{
 				//
 				// There is no current playing music, or fading time has passed.
@@ -123,24 +121,24 @@ RIX_FillBuffer(
 				//
 				if (pRixPlayer->iNextMusic > 0)
 				{
-					pRixPlayer->iCurrentMusic = pRixPlayer->iNextMusic;
+					pRixPlayer->iMusic = pRixPlayer->iNextMusic;
 					pRixPlayer->iNextMusic = -1;
 					pRixPlayer->fLoop = pRixPlayer->fNextLoop;
 					pRixPlayer->FadeType = RIXPLAYER::FADE_IN;
-					if (pRixPlayer->iCurrentMusic > 0)
+					if (pRixPlayer->iMusic > 0)
 						pRixPlayer->dwStartFadeTime += pRixPlayer->iTotalFadeOutSamples * 1000 / gConfig.iSampleRate;
 					else
 						pRixPlayer->dwStartFadeTime = SDL_GetTicks();
 					pRixPlayer->iTotalFadeOutSamples = 0;
 					pRixPlayer->iRemainingFadeSamples = pRixPlayer->iTotalFadeInSamples;
-					pRixPlayer->rix->rewind(pRixPlayer->iCurrentMusic);
+					pRixPlayer->rix->rewind(pRixPlayer->iMusic);
 					if (pRixPlayer->resampler[0]) resampler_clear(pRixPlayer->resampler[0]);
 					if (pRixPlayer->resampler[1]) resampler_clear(pRixPlayer->resampler[1]);
 					continue;
 				}
 				else
 				{
-					pRixPlayer->iCurrentMusic = -1;
+					pRixPlayer->iMusic = -1;
 					pRixPlayer->FadeType = RIXPLAYER::NONE;
 					return;
 				}
@@ -152,7 +150,7 @@ RIX_FillBuffer(
 			}
 			break;
 		default:
-			if (pRixPlayer->iCurrentMusic <= 0)
+			if (pRixPlayer->iMusic <= 0)
 			{
 				//
 				// No current playing music
@@ -182,20 +180,20 @@ RIX_FillBuffer(
 						//
 						// Not loop, simply terminate the music
 						//
-						pRixPlayer->iCurrentMusic = -1;
+						pRixPlayer->iMusic = -1;
 						if (pRixPlayer->FadeType != RIXPLAYER::FADE_OUT && pRixPlayer->iNextMusic == -1)
 						{
 							pRixPlayer->FadeType = RIXPLAYER::NONE;
 						}
 						return;
 					}
-					pRixPlayer->rix->rewindReInit(pRixPlayer->iCurrentMusic, false);
+					pRixPlayer->rix->rewindReInit(pRixPlayer->iMusic, false);
 					if (!pRixPlayer->rix->update())
 					{
 						//
 						// Something must be wrong
 						//
-						pRixPlayer->iCurrentMusic = -1;
+						pRixPlayer->iMusic = -1;
 						pRixPlayer->FadeType = RIXPLAYER::NONE;
 						return;
 					}
@@ -332,7 +330,7 @@ RIX_Play(
 		return FALSE;
 	}
 
-	if (iNumRIX == pRixPlayer->iCurrentMusic && pRixPlayer->iNextMusic == -1)
+	if (iNumRIX == pRixPlayer->iMusic && pRixPlayer->iNextMusic == -1)
 	{
 		/* Will play the same music without any pending play changes,
 		   just change the loop attribute */
@@ -474,7 +472,7 @@ RIX_Init(
 	// Success.
 	//
 	pRixPlayer->FadeType = RIXPLAYER::NONE;
-	pRixPlayer->iCurrentMusic = pRixPlayer->iNextMusic = -1;
+	pRixPlayer->iMusic = pRixPlayer->iNextMusic = -1;
 	pRixPlayer->pos = NULL;
 	pRixPlayer->fLoop = FALSE;
 	pRixPlayer->fNextLoop = FALSE;

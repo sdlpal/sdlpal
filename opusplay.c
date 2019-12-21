@@ -48,8 +48,6 @@ typedef struct tagOPUSPLAYER
 
     void            *resampler[2];
     int              iLink;
-    int              iMusic;
-    int              fLoop;
     int              fReady;
     int              fRewind;
     int              fUseResampler;

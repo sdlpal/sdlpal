@@ -562,6 +562,7 @@ AUDIO_PlayCDTrack(
   Parameters:
 
     [IN]  iNumTrack - number of the CD Audio Track.
+                      special case: -2: do NOTHING
 
   Return value:
 
@@ -574,6 +575,10 @@ AUDIO_PlayCDTrack(
 	{
 		AUDIO_PlayMusic(-1, FALSE, 0);
 	}
+   if (iNumTrack == -2 && gAudioDevice.pCDPlayer->iMusic > PAL_CDTRACK_BASE )
+   {
+       return TRUE;
+   }
 #if PAL_HAS_SDLCD
    if (gAudioDevice.pCD != NULL)
    {

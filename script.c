@@ -2988,8 +2988,9 @@ PAL_InterpretInstruction(
       gpGlobals->wNumMusic = pScript->rgwOperand[1];
       if (AUDIO_CD_Available())
       {
-         if (pScript->rgwOperand[0] != 0xffff)
-            AUDIO_PlayCDTrack(pScript->rgwOperand[0]);
+         int numTrack = (SHORT)pScript->rgwOperand[0];
+         if (!AUDIO_PlayCDTrack(numTrack == -1 ? -2 : numTrack))
+            AUDIO_PlayMusic(pScript->rgwOperand[1], TRUE, 0);
       }
       else
          AUDIO_PlayMusic(pScript->rgwOperand[1], TRUE, 0);

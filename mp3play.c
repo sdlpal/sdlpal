@@ -35,8 +35,6 @@ typedef struct tagMP3PLAYER
 	AUDIOPLAYER_COMMONS;
 
 	mad_data           *pMP3;
-	INT                 iMusic;
-	BOOL                fLoop;
 } MP3PLAYER, *LPMP3PLAYER;
 
 static VOID MP3_Close(
