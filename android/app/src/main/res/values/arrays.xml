@@ -12,14 +12,17 @@
         <item>8192</item>
     </string-array>
     <string-array name="cd_format" translatable="false">
+        <item>None</item>
         <item>MP3</item>
         <item>OGG</item>
+        <item>OPUS</item>
     </string-array>
     <string-array name="music_format" translatable="false">
         <item>MIDI</item>
         <item>RIX</item>
         <item>MP3</item>
         <item>OGG</item>
+        <item>OPUS</item>
     </string-array>
     <string-array name="opl_core" translatable="false">
         <item>MAME</item>

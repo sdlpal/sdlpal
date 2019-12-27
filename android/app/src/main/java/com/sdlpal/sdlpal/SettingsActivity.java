@@ -316,7 +316,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     protected int findMatchedStringIndex(String value, String[] values, int defaultIndex) {
         for(int i = 0; i < values.length; i++) {
-            if (values[i].equals(value))
+            if (values[i].equalsIgnoreCase(value))
                 return i;
         }
         return defaultIndex;
