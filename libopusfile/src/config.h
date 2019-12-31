@@ -6,6 +6,7 @@
 
 #ifdef _MSC_VER
 #define USE_ALLOCA
+#define alloca _alloca
 #else
 #define VAR_ARRAYS
 #define FORTIFY_SOURCE 2
