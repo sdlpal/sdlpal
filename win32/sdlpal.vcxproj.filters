@@ -76,6 +76,9 @@
     <Filter Include="glsl">
       <UniqueIdentifier>{b4ef0625-ac16-4ede-a43a-4e388aff7738}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libopusfile">
+      <UniqueIdentifier>{8db6e25a-a8d4-4e0e-af84-e231f468e5c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\battle.c">
@@ -347,6 +350,432 @@
     </ClCompile>
     <ClCompile Include="..\glslp.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_analysis.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\http.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_info.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\internal.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\mapping_matrix.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\mlp.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\mlp_data.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_decoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_encoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_multistream.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_multistream_decoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_multistream_encoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_projection_decoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_projection_encoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opusfile.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\repacketizer.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\opus_stream.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\src\wincerts.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\bands.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\celt.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\celt_decoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\celt_encoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\celt_lpc.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\cwrs.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\entcode.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\entdec.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\entenc.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\kiss_fft.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\laplace.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\mathops.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\opus_mdct.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\modes.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\pitch.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\quant_bands.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\rate.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\celt\vq.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\A2NLSF.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\ana_filt_bank_1.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\biquad_alt.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\bwexpander.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\bwexpander_32.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\check_control_input.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\CNG.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\code_signs.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\control_audio_bandwidth.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\control_codec.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\control_SNR.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\debug.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\dec_API.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\decode_core.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\decode_frame.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\decode_indices.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\decode_parameters.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\decode_pitch.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\decode_pulses.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\decoder_set_fs.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\enc_API.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\encode_indices.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\encode_pulses.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\gain_quant.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\HP_variable_cutoff.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\init_decoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\init_encoder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\inner_prod_aligned.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\interpolate.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\lin2log.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\log2lin.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\LP_variable_cutoff.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\LPC_analysis_filter.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\LPC_fit.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\LPC_inv_pred_gain.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NLSF_decode.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NLSF_del_dec_quant.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NLSF_encode.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NLSF_stabilize.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NLSF_unpack.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NLSF_VQ.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NLSF_VQ_weights_laroia.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NLSF2A.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NSQ.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\NSQ_del_dec.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\pitch_est_tables.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\PLC.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\process_NLSFs.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\quant_LTP_gains.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\opus_resampler.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\resampler_down2.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\resampler_down2_3.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\resampler_private_AR2.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\resampler_private_down_FIR.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\resampler_private_IIR_FIR.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\resampler_private_up2_HQ.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\resampler_rom.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\shell_coder.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\sigm_Q15.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\sort.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\stereo_decode_pred.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\stereo_encode_pred.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\stereo_find_predictor.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\stereo_LR_to_MS.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\stereo_MS_to_LR.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\stereo_quant_pred.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\sum_sqr_shift.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\table_LSF_cos.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\tables_gain.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\tables_LTP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\tables_NLSF_CB_NB_MB.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\tables_NLSF_CB_WB.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\tables_other.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\tables_pitch_lag.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\tables_pulses_per_block.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\VAD.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\VQ_WMat_EC.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\apply_sine_window_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\autocorrelation_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\burg_modified_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\bwexpander_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\corrMatrix_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\encode_frame_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\energy_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\find_LPC_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\find_LTP_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\find_pitch_lags_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\find_pred_coefs_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\inner_product_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\k2a_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\LPC_analysis_filter_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\LPC_inv_pred_gain_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\LTP_analysis_filter_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\LTP_scale_ctrl_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\noise_shape_analysis_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\pitch_analysis_core_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\process_gains_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\regularize_correlations_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\residual_energy_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\scale_copy_vector_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\scale_vector_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\schur_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\sort_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\warped_autocorrelation_FLP.c">
+      <Filter>libopusfile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libopusfile\silk\float\wrappers_FLP.c">
+      <Filter>libopusfile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -742,6 +1171,213 @@
     </ClInclude>
     <ClInclude Include="..\defines.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\src\analysis.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\src\config.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\src\internal.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\src\mapping_matrix.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\src\mlp.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\src\opus_private.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\src\tansig_table.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\src\winerrno.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\_kiss_fft_guts.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\arch.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\bands.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\celt.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\celt_lpc.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\cpu_support.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\cwrs.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\ecintrin.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\entcode.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\entdec.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\entenc.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\fixed_debug.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\fixed_generic.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\float_cast.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\kiss_fft.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\laplace.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\mathops.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\mfrngcod.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\modes.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\opus_mdct.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\os_support.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\pitch.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\quant_bands.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\rate.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\stack_alloc.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\static_modes_fixed.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\static_modes_fixed_arm_ne10.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\static_modes_float.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\static_modes_float_arm_ne10.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\celt\vq.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\include\opus.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\include\opus_custom.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\include\opus_defines.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\include\opus_multistream.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\include\opus_projection.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\include\opus_types.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\include\opusfile.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\API.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\control.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\debug.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\define.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\errors.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\Inlines.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\MacroCount.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\MacroDebug.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\macros.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\NSQ.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\pitch_est_defines.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\PLC.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\resampler_private.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\resampler_rom.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\resampler_structs.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\SigProc_FIX.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\silk_main.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\structs.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\tables.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\tuning_parameters.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\typedef.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\float\main_FLP.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\float\SigProc_FLP.h">
+      <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libopusfile\silk\float\structs_FLP.h">
+      <Filter>libopusfile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

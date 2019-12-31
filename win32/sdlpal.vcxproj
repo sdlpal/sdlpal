@@ -119,8 +119,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;..\libopusfile\src;..\libopusfile\include;..\libopusfile\celt;..\libopusfile\silk;..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -146,8 +146,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;..\libopusfile\src;..\libopusfile\include;..\libopusfile\celt;..\libopusfile\silk;..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -171,8 +171,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;..\libopusfile\src;..\libopusfile\include;..\libopusfile\celt;..\libopusfile\silk;..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -200,8 +200,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;UNIT_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;..\libopusfile\src;..\libopusfile\include;..\libopusfile\celt;..\libopusfile\silk;..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;UNIT_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -229,8 +229,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;..\libopusfile\src;..\libopusfile\include;..\libopusfile\celt;..\libopusfile\silk;..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -255,8 +255,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;UNIT_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\include;..\src;..\liboggvorbis\include;..\libopusfile\src;..\libopusfile\include;..\libopusfile\celt;..\libopusfile\silk;..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_DEBUG;UNIT_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -327,6 +327,148 @@
     <ClCompile Include="..\liboggvorbis\src\vorbisenc.c" />
     <ClCompile Include="..\liboggvorbis\src\vorbisfile.c" />
     <ClCompile Include="..\liboggvorbis\src\window.c" />
+    <ClCompile Include="..\libopusfile\celt\bands.c" />
+    <ClCompile Include="..\libopusfile\celt\celt.c" />
+    <ClCompile Include="..\libopusfile\celt\celt_decoder.c" />
+    <ClCompile Include="..\libopusfile\celt\celt_encoder.c" />
+    <ClCompile Include="..\libopusfile\celt\celt_lpc.c" />
+    <ClCompile Include="..\libopusfile\celt\cwrs.c" />
+    <ClCompile Include="..\libopusfile\celt\entcode.c" />
+    <ClCompile Include="..\libopusfile\celt\entdec.c" />
+    <ClCompile Include="..\libopusfile\celt\entenc.c" />
+    <ClCompile Include="..\libopusfile\celt\kiss_fft.c" />
+    <ClCompile Include="..\libopusfile\celt\laplace.c" />
+    <ClCompile Include="..\libopusfile\celt\mathops.c" />
+    <ClCompile Include="..\libopusfile\celt\opus_mdct.c" />
+    <ClCompile Include="..\libopusfile\celt\modes.c" />
+    <ClCompile Include="..\libopusfile\celt\pitch.c" />
+    <ClCompile Include="..\libopusfile\celt\quant_bands.c" />
+    <ClCompile Include="..\libopusfile\celt\rate.c" />
+    <ClCompile Include="..\libopusfile\celt\vq.c" />
+    <ClCompile Include="..\libopusfile\silk\A2NLSF.c" />
+    <ClCompile Include="..\libopusfile\silk\ana_filt_bank_1.c" />
+    <ClCompile Include="..\libopusfile\silk\biquad_alt.c" />
+    <ClCompile Include="..\libopusfile\silk\bwexpander.c" />
+    <ClCompile Include="..\libopusfile\silk\bwexpander_32.c" />
+    <ClCompile Include="..\libopusfile\silk\check_control_input.c" />
+    <ClCompile Include="..\libopusfile\silk\CNG.c" />
+    <ClCompile Include="..\libopusfile\silk\code_signs.c" />
+    <ClCompile Include="..\libopusfile\silk\control_audio_bandwidth.c" />
+    <ClCompile Include="..\libopusfile\silk\control_codec.c" />
+    <ClCompile Include="..\libopusfile\silk\control_SNR.c" />
+    <ClCompile Include="..\libopusfile\silk\debug.c" />
+    <ClCompile Include="..\libopusfile\silk\decoder_set_fs.c" />
+    <ClCompile Include="..\libopusfile\silk\decode_core.c" />
+    <ClCompile Include="..\libopusfile\silk\decode_frame.c" />
+    <ClCompile Include="..\libopusfile\silk\decode_indices.c" />
+    <ClCompile Include="..\libopusfile\silk\decode_parameters.c" />
+    <ClCompile Include="..\libopusfile\silk\decode_pitch.c" />
+    <ClCompile Include="..\libopusfile\silk\decode_pulses.c" />
+    <ClCompile Include="..\libopusfile\silk\dec_API.c" />
+    <ClCompile Include="..\libopusfile\silk\encode_indices.c" />
+    <ClCompile Include="..\libopusfile\silk\encode_pulses.c" />
+    <ClCompile Include="..\libopusfile\silk\enc_API.c" />
+    <ClCompile Include="..\libopusfile\silk\float\apply_sine_window_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\autocorrelation_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\burg_modified_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\bwexpander_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\corrMatrix_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\encode_frame_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\energy_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\find_LPC_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\find_LTP_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\find_pitch_lags_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\find_pred_coefs_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\inner_product_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\k2a_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\LPC_analysis_filter_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\LPC_inv_pred_gain_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\LTP_analysis_filter_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\LTP_scale_ctrl_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\noise_shape_analysis_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\pitch_analysis_core_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\process_gains_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\regularize_correlations_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\residual_energy_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\scale_copy_vector_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\scale_vector_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\schur_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\sort_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\warped_autocorrelation_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\float\wrappers_FLP.c" />
+    <ClCompile Include="..\libopusfile\silk\gain_quant.c" />
+    <ClCompile Include="..\libopusfile\silk\HP_variable_cutoff.c" />
+    <ClCompile Include="..\libopusfile\silk\init_decoder.c" />
+    <ClCompile Include="..\libopusfile\silk\init_encoder.c" />
+    <ClCompile Include="..\libopusfile\silk\inner_prod_aligned.c" />
+    <ClCompile Include="..\libopusfile\silk\interpolate.c" />
+    <ClCompile Include="..\libopusfile\silk\lin2log.c" />
+    <ClCompile Include="..\libopusfile\silk\log2lin.c" />
+    <ClCompile Include="..\libopusfile\silk\LPC_analysis_filter.c" />
+    <ClCompile Include="..\libopusfile\silk\LPC_fit.c" />
+    <ClCompile Include="..\libopusfile\silk\LPC_inv_pred_gain.c" />
+    <ClCompile Include="..\libopusfile\silk\LP_variable_cutoff.c" />
+    <ClCompile Include="..\libopusfile\silk\NLSF2A.c" />
+    <ClCompile Include="..\libopusfile\silk\NLSF_decode.c" />
+    <ClCompile Include="..\libopusfile\silk\NLSF_del_dec_quant.c" />
+    <ClCompile Include="..\libopusfile\silk\NLSF_encode.c" />
+    <ClCompile Include="..\libopusfile\silk\NLSF_stabilize.c" />
+    <ClCompile Include="..\libopusfile\silk\NLSF_unpack.c" />
+    <ClCompile Include="..\libopusfile\silk\NLSF_VQ.c" />
+    <ClCompile Include="..\libopusfile\silk\NLSF_VQ_weights_laroia.c" />
+    <ClCompile Include="..\libopusfile\silk\NSQ.c" />
+    <ClCompile Include="..\libopusfile\silk\NSQ_del_dec.c" />
+    <ClCompile Include="..\libopusfile\silk\pitch_est_tables.c" />
+    <ClCompile Include="..\libopusfile\silk\PLC.c" />
+    <ClCompile Include="..\libopusfile\silk\process_NLSFs.c" />
+    <ClCompile Include="..\libopusfile\silk\quant_LTP_gains.c" />
+    <ClCompile Include="..\libopusfile\silk\opus_resampler.c" />
+    <ClCompile Include="..\libopusfile\silk\resampler_down2.c" />
+    <ClCompile Include="..\libopusfile\silk\resampler_down2_3.c" />
+    <ClCompile Include="..\libopusfile\silk\resampler_private_AR2.c" />
+    <ClCompile Include="..\libopusfile\silk\resampler_private_down_FIR.c" />
+    <ClCompile Include="..\libopusfile\silk\resampler_private_IIR_FIR.c" />
+    <ClCompile Include="..\libopusfile\silk\resampler_private_up2_HQ.c" />
+    <ClCompile Include="..\libopusfile\silk\resampler_rom.c" />
+    <ClCompile Include="..\libopusfile\silk\shell_coder.c" />
+    <ClCompile Include="..\libopusfile\silk\sigm_Q15.c" />
+    <ClCompile Include="..\libopusfile\silk\sort.c" />
+    <ClCompile Include="..\libopusfile\silk\stereo_decode_pred.c" />
+    <ClCompile Include="..\libopusfile\silk\stereo_encode_pred.c" />
+    <ClCompile Include="..\libopusfile\silk\stereo_find_predictor.c" />
+    <ClCompile Include="..\libopusfile\silk\stereo_LR_to_MS.c" />
+    <ClCompile Include="..\libopusfile\silk\stereo_MS_to_LR.c" />
+    <ClCompile Include="..\libopusfile\silk\stereo_quant_pred.c" />
+    <ClCompile Include="..\libopusfile\silk\sum_sqr_shift.c" />
+    <ClCompile Include="..\libopusfile\silk\tables_gain.c" />
+    <ClCompile Include="..\libopusfile\silk\tables_LTP.c" />
+    <ClCompile Include="..\libopusfile\silk\tables_NLSF_CB_NB_MB.c" />
+    <ClCompile Include="..\libopusfile\silk\tables_NLSF_CB_WB.c" />
+    <ClCompile Include="..\libopusfile\silk\tables_other.c" />
+    <ClCompile Include="..\libopusfile\silk\tables_pitch_lag.c" />
+    <ClCompile Include="..\libopusfile\silk\tables_pulses_per_block.c" />
+    <ClCompile Include="..\libopusfile\silk\table_LSF_cos.c" />
+    <ClCompile Include="..\libopusfile\silk\VAD.c" />
+    <ClCompile Include="..\libopusfile\silk\VQ_WMat_EC.c" />
+    <ClCompile Include="..\libopusfile\src\opus_analysis.c" />
+    <ClCompile Include="..\libopusfile\src\http.c" />
+    <ClCompile Include="..\libopusfile\src\opus_info.c" />
+    <ClCompile Include="..\libopusfile\src\internal.c" />
+    <ClCompile Include="..\libopusfile\src\mapping_matrix.c" />
+    <ClCompile Include="..\libopusfile\src\mlp.c" />
+    <ClCompile Include="..\libopusfile\src\mlp_data.c" />
+    <ClCompile Include="..\libopusfile\src\opus.c" />
+    <ClCompile Include="..\libopusfile\src\opusfile.c" />
+    <ClCompile Include="..\libopusfile\src\opus_decoder.c" />
+    <ClCompile Include="..\libopusfile\src\opus_encoder.c" />
+    <ClCompile Include="..\libopusfile\src\opus_multistream.c" />
+    <ClCompile Include="..\libopusfile\src\opus_multistream_decoder.c" />
+    <ClCompile Include="..\libopusfile\src\opus_multistream_encoder.c" />
+    <ClCompile Include="..\libopusfile\src\opus_projection_decoder.c" />
+    <ClCompile Include="..\libopusfile\src\opus_projection_encoder.c" />
+    <ClCompile Include="..\libopusfile\src\repacketizer.c" />
+    <ClCompile Include="..\libopusfile\src\opus_stream.c" />
+    <ClCompile Include="..\libopusfile\src\wincerts.c" />
     <ClCompile Include="..\magicmenu.c" />
     <ClCompile Include="..\main.c" />
     <ClCompile Include="..\map.c" />
@@ -471,6 +613,75 @@
     <ClInclude Include="..\liboggvorbis\src\scales.h" />
     <ClInclude Include="..\liboggvorbis\src\smallft.h" />
     <ClInclude Include="..\liboggvorbis\src\window.h" />
+    <ClInclude Include="..\libopusfile\celt\arch.h" />
+    <ClInclude Include="..\libopusfile\celt\bands.h" />
+    <ClInclude Include="..\libopusfile\celt\celt.h" />
+    <ClInclude Include="..\libopusfile\celt\celt_lpc.h" />
+    <ClInclude Include="..\libopusfile\celt\cpu_support.h" />
+    <ClInclude Include="..\libopusfile\celt\cwrs.h" />
+    <ClInclude Include="..\libopusfile\celt\ecintrin.h" />
+    <ClInclude Include="..\libopusfile\celt\entcode.h" />
+    <ClInclude Include="..\libopusfile\celt\entdec.h" />
+    <ClInclude Include="..\libopusfile\celt\entenc.h" />
+    <ClInclude Include="..\libopusfile\celt\fixed_debug.h" />
+    <ClInclude Include="..\libopusfile\celt\fixed_generic.h" />
+    <ClInclude Include="..\libopusfile\celt\float_cast.h" />
+    <ClInclude Include="..\libopusfile\celt\kiss_fft.h" />
+    <ClInclude Include="..\libopusfile\celt\laplace.h" />
+    <ClInclude Include="..\libopusfile\celt\mathops.h" />
+    <ClInclude Include="..\libopusfile\celt\mfrngcod.h" />
+    <ClInclude Include="..\libopusfile\celt\modes.h" />
+    <ClInclude Include="..\libopusfile\celt\opus_mdct.h" />
+    <ClInclude Include="..\libopusfile\celt\os_support.h" />
+    <ClInclude Include="..\libopusfile\celt\pitch.h" />
+    <ClInclude Include="..\libopusfile\celt\quant_bands.h" />
+    <ClInclude Include="..\libopusfile\celt\rate.h" />
+    <ClInclude Include="..\libopusfile\celt\stack_alloc.h" />
+    <ClInclude Include="..\libopusfile\celt\static_modes_fixed.h" />
+    <ClInclude Include="..\libopusfile\celt\static_modes_fixed_arm_ne10.h" />
+    <ClInclude Include="..\libopusfile\celt\static_modes_float.h" />
+    <ClInclude Include="..\libopusfile\celt\static_modes_float_arm_ne10.h" />
+    <ClInclude Include="..\libopusfile\celt\vq.h" />
+    <ClInclude Include="..\libopusfile\celt\_kiss_fft_guts.h" />
+    <ClInclude Include="..\libopusfile\include\opus.h" />
+    <ClInclude Include="..\libopusfile\include\opusfile.h" />
+    <ClInclude Include="..\libopusfile\include\opus_custom.h" />
+    <ClInclude Include="..\libopusfile\include\opus_defines.h" />
+    <ClInclude Include="..\libopusfile\include\opus_multistream.h" />
+    <ClInclude Include="..\libopusfile\include\opus_projection.h" />
+    <ClInclude Include="..\libopusfile\include\opus_types.h" />
+    <ClInclude Include="..\libopusfile\silk\API.h" />
+    <ClInclude Include="..\libopusfile\silk\control.h" />
+    <ClInclude Include="..\libopusfile\silk\debug.h" />
+    <ClInclude Include="..\libopusfile\silk\define.h" />
+    <ClInclude Include="..\libopusfile\silk\errors.h" />
+    <ClInclude Include="..\libopusfile\silk\float\main_FLP.h" />
+    <ClInclude Include="..\libopusfile\silk\float\SigProc_FLP.h" />
+    <ClInclude Include="..\libopusfile\silk\float\structs_FLP.h" />
+    <ClInclude Include="..\libopusfile\silk\Inlines.h" />
+    <ClInclude Include="..\libopusfile\silk\MacroCount.h" />
+    <ClInclude Include="..\libopusfile\silk\MacroDebug.h" />
+    <ClInclude Include="..\libopusfile\silk\macros.h" />
+    <ClInclude Include="..\libopusfile\silk\NSQ.h" />
+    <ClInclude Include="..\libopusfile\silk\pitch_est_defines.h" />
+    <ClInclude Include="..\libopusfile\silk\PLC.h" />
+    <ClInclude Include="..\libopusfile\silk\resampler_private.h" />
+    <ClInclude Include="..\libopusfile\silk\resampler_rom.h" />
+    <ClInclude Include="..\libopusfile\silk\resampler_structs.h" />
+    <ClInclude Include="..\libopusfile\silk\SigProc_FIX.h" />
+    <ClInclude Include="..\libopusfile\silk\silk_main.h" />
+    <ClInclude Include="..\libopusfile\silk\structs.h" />
+    <ClInclude Include="..\libopusfile\silk\tables.h" />
+    <ClInclude Include="..\libopusfile\silk\tuning_parameters.h" />
+    <ClInclude Include="..\libopusfile\silk\typedef.h" />
+    <ClInclude Include="..\libopusfile\src\analysis.h" />
+    <ClInclude Include="..\libopusfile\src\config.h" />
+    <ClInclude Include="..\libopusfile\src\internal.h" />
+    <ClInclude Include="..\libopusfile\src\mapping_matrix.h" />
+    <ClInclude Include="..\libopusfile\src\mlp.h" />
+    <ClInclude Include="..\libopusfile\src\opus_private.h" />
+    <ClInclude Include="..\libopusfile\src\tansig_table.h" />
+    <ClInclude Include="..\libopusfile\src\winerrno.h" />
     <ClInclude Include="..\magicmenu.h" />
     <ClInclude Include="..\main.h" />
     <ClInclude Include="..\map.h" />
@@ -532,7 +743,7 @@
     <None Include="..\libmad\sf_table.dat" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="sdlpal.rc" >
+    <ResourceCompile Include="sdlpal.rc">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">..</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..</AdditionalIncludeDirectories>

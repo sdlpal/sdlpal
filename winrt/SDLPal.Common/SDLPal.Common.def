@@ -1,6 +1,7 @@
 LIBRARY
 EXPORTS
 	fopen=WRT_fopen
+	_wfopen=WRT_wfopen
 	fopen_s=WRT_fopen_s
 	fclose=WRT_fclose
 	fread=WRT_fread
@@ -17,6 +18,10 @@ EXPORTS
 	access=WRT_access
 	_access=WRT_access
 	access_s=WRT_access
+	fgetpos=WRT_fgetpos
+	fsetpos=WRT_fsetpos
+	_fileno=WRT_fileno
+	_filelengthi64=WRT_filelengthi64
 
 	get_special_files_map
 	get_special_folders_map

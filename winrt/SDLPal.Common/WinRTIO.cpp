@@ -247,6 +247,20 @@ WRT_FILE* WRT_fopen(const char * _Filename, const char * _Mode)
 }
 
 extern "C"
+WRT_FILE * WRT_wfopen(const wchar_t* _Filename, const wchar_t* _Mode)
+{
+	WRT_FILE* ret;
+	char filename[MAX_PATH];
+	char mode[8];
+	size_t len;
+	wcstombs_s(&len,filename, MAX_PATH, _Filename, MAX_PATH);
+	wcstombs_s(&len,mode, 8, _Mode, 8);
+	int err = WRT_fopen_s(&ret, filename, mode);
+	_set_errno(err);
+	return err ? nullptr : ret;
+}
+
+extern "C"
 int WRT_fclose(WRT_FILE * _File)
 {
 	if (!_File || _File->sig != _SIGNATURE) return fclose((FILE*)_File);
@@ -301,6 +315,44 @@ extern "C"
 size_t WRT_ftell(WRT_FILE * _File)
 {
 	return (size_t)WRT_ftelli64(_File);
+}
+
+extern "C"
+int WRT_fgetpos(WRT_FILE * _File, fpos_t* pos)
+{
+	*pos = WRT_ftell(_File);
+	return 0;
+}
+
+extern "C"
+int WRT_fsetpos(WRT_FILE * _File, const fpos_t * pos)
+{
+	WRT_fseek(_File,*pos,SEEK_SET);
+	return 0;
+}
+
+static WRT_FILE *_WRT_handles[128];
+static int used_handles = 0;
+
+extern "C"
+int WRT_fileno(WRT_FILE * _File)
+{
+	if (used_handles >= 128)
+		used_handles = 0;
+	_WRT_handles[used_handles++] = _File;
+	return used_handles-1;
+}
+
+extern "C"
+long long WRT_filelengthi64(long long fileno)
+{
+	long long size;
+	WRT_FILE* _File = reinterpret_cast<WRT_FILE*>(_WRT_handles[fileno]);
+	long long pos = WRT_ftelli64(_File);
+	WRT_fseek(_File, 0, SEEK_END);
+	size = WRT_ftelli64(_File);
+	WRT_fseeki64(_File, pos, SEEK_SET);
+	return size;
 }
 
 extern "C"

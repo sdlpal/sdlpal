@@ -468,7 +468,7 @@ main(
 
 --*/
 {
-#ifndef __EMSCRIPTEN__
+#if !defined( __EMSCRIPTEN__ ) && !defined(__WINRT__)
    memset(gExecutablePath,0,PAL_MAX_PATH);
    strncpy(gExecutablePath, argv[0], PAL_MAX_PATH);
 #endif

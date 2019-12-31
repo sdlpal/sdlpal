@@ -244,6 +244,11 @@ OPUS_Play(
         return TRUE;
     }
 
+    if (iNum == 0)
+    {
+        return FALSE;
+    }
+
     player->fp = op_open_file(UTIL_GetFullPathName(internal_buffer, PAL_GLOBAL_BUFFER_SIZE, gConfig.pszGamePath, PAL_va(0, "opus%s%.2d.opus", PAL_NATIVE_PATH_SEPARATOR, iNum)), &ret);
     if (player->fp == NULL)
     {

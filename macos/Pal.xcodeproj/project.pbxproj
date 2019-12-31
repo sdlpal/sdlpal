@@ -119,7 +119,7 @@
 		C6BF8C7420A1498A000AE188 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6BF8C7020A1498A000AE188 /* Metal.framework */; };
 		C6CFDCAB23A858B800DEB8F9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB8823A858B700DEB8F9 /* kiss_fft.c */; };
 		C6CFDCAC23A858B800DEB8F9 /* rate.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB9023A858B700DEB8F9 /* rate.c */; };
-		C6CFDCAD23A858B800DEB8F9 /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB9223A858B700DEB8F9 /* mdct.c */; };
+		C6CFDCAD23A858B800DEB8F9 /* opus_mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB9223A858B700DEB8F9 /* opus_mdct.c */; };
 		C6CFDCAE23A858B800DEB8F9 /* cwrs.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB9523A858B700DEB8F9 /* cwrs.c */; };
 		C6CFDCAF23A858B800DEB8F9 /* modes.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB9623A858B700DEB8F9 /* modes.c */; };
 		C6CFDCB023A858B800DEB8F9 /* celt_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB9B23A858B700DEB8F9 /* celt_decoder.c */; };
@@ -146,7 +146,7 @@
 		C6CFDCCF23A858B800DEB8F9 /* interpolate.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDBE223A858B700DEB8F9 /* interpolate.c */; };
 		C6CFDCD023A858B800DEB8F9 /* NLSF_decode.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDBE323A858B700DEB8F9 /* NLSF_decode.c */; };
 		C6CFDCD123A858B800DEB8F9 /* control_codec.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDBE523A858B700DEB8F9 /* control_codec.c */; };
-		C6CFDCD223A858B800DEB8F9 /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDBE623A858B700DEB8F9 /* resampler.c */; };
+		C6CFDCD223A858B800DEB8F9 /* opus_resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDBE623A858B700DEB8F9 /* opus_resampler.c */; };
 		C6CFDCD323A858B800DEB8F9 /* LPC_analysis_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDBE723A858B700DEB8F9 /* LPC_analysis_filter.c */; };
 		C6CFDCD423A858B800DEB8F9 /* stereo_LR_to_MS.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDBE823A858B700DEB8F9 /* stereo_LR_to_MS.c */; };
 		C6CFDCD523A858B800DEB8F9 /* tables_gain.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDBE923A858B700DEB8F9 /* tables_gain.c */; };
@@ -243,9 +243,9 @@
 		C6CFDD4D23A858B800DEB8F9 /* mlp.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC8D23A858B700DEB8F9 /* mlp.c */; };
 		C6CFDD4E23A858B800DEB8F9 /* opus_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9123A858B700DEB8F9 /* opus_decoder.c */; };
 		C6CFDD4F23A858B800DEB8F9 /* opusfile.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9223A858B700DEB8F9 /* opusfile.c */; };
-		C6CFDD5023A858B800DEB8F9 /* info.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9323A858B700DEB8F9 /* info.c */; };
+		C6CFDD5023A858B800DEB8F9 /* opus_info.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9323A858B700DEB8F9 /* opus_info.c */; };
 		C6CFDD5123A858B800DEB8F9 /* opus_projection_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9423A858B700DEB8F9 /* opus_projection_decoder.c */; };
-		C6CFDD5223A858B800DEB8F9 /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9523A858B700DEB8F9 /* analysis.c */; };
+		C6CFDD5223A858B800DEB8F9 /* opus_analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9523A858B700DEB8F9 /* opus_analysis.c */; };
 		C6CFDD5323A858B800DEB8F9 /* opus_multistream_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9623A858B700DEB8F9 /* opus_multistream_encoder.c */; };
 		C6CFDD5423A858B800DEB8F9 /* internal.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9A23A858B700DEB8F9 /* internal.c */; };
 		C6CFDD5523A858B800DEB8F9 /* opus_multistream_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDC9B23A858B700DEB8F9 /* opus_multistream_decoder.c */; };
@@ -256,7 +256,7 @@
 		C6CFDD5A23A858B800DEB8F9 /* opus_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA023A858B800DEB8F9 /* opus_encoder.c */; };
 		C6CFDD5B23A858B800DEB8F9 /* mlp_data.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA123A858B800DEB8F9 /* mlp_data.c */; };
 		C6CFDD5C23A858B800DEB8F9 /* wincerts.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA223A858B800DEB8F9 /* wincerts.c */; };
-		C6CFDD5D23A858B800DEB8F9 /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA423A858B800DEB8F9 /* stream.c */; };
+		C6CFDD5D23A858B800DEB8F9 /* opus_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA423A858B800DEB8F9 /* opus_stream.c */; };
 		C6CFDD5E23A858B800DEB8F9 /* mapping_matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA523A858B800DEB8F9 /* mapping_matrix.c */; };
 		C6CFDD5F23A858B800DEB8F9 /* opus_multistream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA623A858B800DEB8F9 /* opus_multistream.c */; };
 /* End PBXBuildFile section */
@@ -570,7 +570,7 @@
 		C6CFDB8F23A858B700DEB8F9 /* pitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pitch.h; sourceTree = "<group>"; };
 		C6CFDB9023A858B700DEB8F9 /* rate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rate.c; sourceTree = "<group>"; };
 		C6CFDB9123A858B700DEB8F9 /* bands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bands.h; sourceTree = "<group>"; };
-		C6CFDB9223A858B700DEB8F9 /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mdct.c; sourceTree = "<group>"; };
+		C6CFDB9223A858B700DEB8F9 /* opus_mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_mdct.c; sourceTree = "<group>"; };
 		C6CFDB9323A858B700DEB8F9 /* entcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entcode.h; sourceTree = "<group>"; };
 		C6CFDB9423A858B700DEB8F9 /* entdec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entdec.h; sourceTree = "<group>"; };
 		C6CFDB9523A858B700DEB8F9 /* cwrs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cwrs.c; sourceTree = "<group>"; };
@@ -625,7 +625,7 @@
 		C6CFDBE323A858B700DEB8F9 /* NLSF_decode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NLSF_decode.c; sourceTree = "<group>"; };
 		C6CFDBE423A858B700DEB8F9 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		C6CFDBE523A858B700DEB8F9 /* control_codec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = control_codec.c; sourceTree = "<group>"; };
-		C6CFDBE623A858B700DEB8F9 /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
+		C6CFDBE623A858B700DEB8F9 /* opus_resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_resampler.c; sourceTree = "<group>"; };
 		C6CFDBE723A858B700DEB8F9 /* LPC_analysis_filter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LPC_analysis_filter.c; sourceTree = "<group>"; };
 		C6CFDBE823A858B700DEB8F9 /* stereo_LR_to_MS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stereo_LR_to_MS.c; sourceTree = "<group>"; };
 		C6CFDBE923A858B700DEB8F9 /* tables_gain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tables_gain.c; sourceTree = "<group>"; };
@@ -745,9 +745,9 @@
 		C6CFDC9023A858B700DEB8F9 /* tansig_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tansig_table.h; sourceTree = "<group>"; };
 		C6CFDC9123A858B700DEB8F9 /* opus_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_decoder.c; sourceTree = "<group>"; };
 		C6CFDC9223A858B700DEB8F9 /* opusfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opusfile.c; sourceTree = "<group>"; };
-		C6CFDC9323A858B700DEB8F9 /* info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = info.c; sourceTree = "<group>"; };
+		C6CFDC9323A858B700DEB8F9 /* opus_info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_info.c; sourceTree = "<group>"; };
 		C6CFDC9423A858B700DEB8F9 /* opus_projection_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_projection_decoder.c; sourceTree = "<group>"; };
-		C6CFDC9523A858B700DEB8F9 /* analysis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analysis.c; sourceTree = "<group>"; };
+		C6CFDC9523A858B700DEB8F9 /* opus_analysis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_analysis.c; sourceTree = "<group>"; };
 		C6CFDC9623A858B700DEB8F9 /* opus_multistream_encoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_multistream_encoder.c; sourceTree = "<group>"; };
 		C6CFDC9723A858B700DEB8F9 /* mapping_matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mapping_matrix.h; sourceTree = "<group>"; };
 		C6CFDC9823A858B700DEB8F9 /* winerrno.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = winerrno.h; sourceTree = "<group>"; };
@@ -762,7 +762,7 @@
 		C6CFDCA123A858B800DEB8F9 /* mlp_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mlp_data.c; sourceTree = "<group>"; };
 		C6CFDCA223A858B800DEB8F9 /* wincerts.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wincerts.c; sourceTree = "<group>"; };
 		C6CFDCA323A858B800DEB8F9 /* opus_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opus_private.h; sourceTree = "<group>"; };
-		C6CFDCA423A858B800DEB8F9 /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stream.c; sourceTree = "<group>"; };
+		C6CFDCA423A858B800DEB8F9 /* opus_stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_stream.c; sourceTree = "<group>"; };
 		C6CFDCA523A858B800DEB8F9 /* mapping_matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mapping_matrix.c; sourceTree = "<group>"; };
 		C6CFDCA623A858B800DEB8F9 /* opus_multistream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_multistream.c; sourceTree = "<group>"; };
 		C6CFDCA723A858B800DEB8F9 /* analysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analysis.h; sourceTree = "<group>"; };
@@ -1256,7 +1256,7 @@
 				C6CFDB8F23A858B700DEB8F9 /* pitch.h */,
 				C6CFDB9023A858B700DEB8F9 /* rate.c */,
 				C6CFDB9123A858B700DEB8F9 /* bands.h */,
-				C6CFDB9223A858B700DEB8F9 /* mdct.c */,
+				C6CFDB9223A858B700DEB8F9 /* opus_mdct.c */,
 				C6CFDB9323A858B700DEB8F9 /* entcode.h */,
 				C6CFDB9423A858B700DEB8F9 /* entdec.h */,
 				C6CFDB9523A858B700DEB8F9 /* cwrs.c */,
@@ -1325,7 +1325,7 @@
 				C6CFDBE323A858B700DEB8F9 /* NLSF_decode.c */,
 				C6CFDBE423A858B700DEB8F9 /* debug.h */,
 				C6CFDBE523A858B700DEB8F9 /* control_codec.c */,
-				C6CFDBE623A858B700DEB8F9 /* resampler.c */,
+				C6CFDBE623A858B700DEB8F9 /* opus_resampler.c */,
 				C6CFDBE723A858B700DEB8F9 /* LPC_analysis_filter.c */,
 				C6CFDBE823A858B700DEB8F9 /* stereo_LR_to_MS.c */,
 				C6CFDBE923A858B700DEB8F9 /* tables_gain.c */,
@@ -1460,9 +1460,9 @@
 				C6CFDC9023A858B700DEB8F9 /* tansig_table.h */,
 				C6CFDC9123A858B700DEB8F9 /* opus_decoder.c */,
 				C6CFDC9223A858B700DEB8F9 /* opusfile.c */,
-				C6CFDC9323A858B700DEB8F9 /* info.c */,
+				C6CFDC9323A858B700DEB8F9 /* opus_info.c */,
 				C6CFDC9423A858B700DEB8F9 /* opus_projection_decoder.c */,
-				C6CFDC9523A858B700DEB8F9 /* analysis.c */,
+				C6CFDC9523A858B700DEB8F9 /* opus_analysis.c */,
 				C6CFDC9623A858B700DEB8F9 /* opus_multistream_encoder.c */,
 				C6CFDC9723A858B700DEB8F9 /* mapping_matrix.h */,
 				C6CFDC9823A858B700DEB8F9 /* winerrno.h */,
@@ -1477,7 +1477,7 @@
 				C6CFDCA123A858B800DEB8F9 /* mlp_data.c */,
 				C6CFDCA223A858B800DEB8F9 /* wincerts.c */,
 				C6CFDCA323A858B800DEB8F9 /* opus_private.h */,
-				C6CFDCA423A858B800DEB8F9 /* stream.c */,
+				C6CFDCA423A858B800DEB8F9 /* opus_stream.c */,
 				C6CFDCA523A858B800DEB8F9 /* mapping_matrix.c */,
 				C6CFDCA623A858B800DEB8F9 /* opus_multistream.c */,
 				C6CFDCA723A858B800DEB8F9 /* analysis.h */,
@@ -1646,7 +1646,7 @@
 				C602B0021CEF3E6C003A7B09 /* palcfg.c in Sources */,
 				C6CFDCD723A858B800DEB8F9 /* quant_LTP_gains.c in Sources */,
 				C6CFDCB323A858B800DEB8F9 /* mathops.c in Sources */,
-				C6CFDD5223A858B800DEB8F9 /* analysis.c in Sources */,
+				C6CFDD5223A858B800DEB8F9 /* opus_analysis.c in Sources */,
 				C6CFDCB723A858B800DEB8F9 /* laplace.c in Sources */,
 				C6CFDCF323A858B800DEB8F9 /* debug.c in Sources */,
 				002F3A3F09D088BA00EBEB88 /* main.c in Sources */,
@@ -1661,7 +1661,7 @@
 				C6CFDCE223A858B800DEB8F9 /* pitch_est_tables.c in Sources */,
 				5757D2831B7A3D5800464A74 /* smallft.c in Sources */,
 				C6CFDCEB23A858B800DEB8F9 /* resampler_private_AR2.c in Sources */,
-				5757D2971B7A3DCE00464A74 /* resampler.c in Sources */,
+				5757D2971B7A3DCE00464A74 /* opus_resampler.c in Sources */,
 				5757D2851B7A3D5800464A74 /* vorbisenc.c in Sources */,
 				7104FD6A0D772F6300A97E53 /* battle.c in Sources */,
 				C6CFDD3223A858B800DEB8F9 /* k2a_FLP.c in Sources */,
@@ -1678,18 +1678,18 @@
 				C6CFDCF023A858B800DEB8F9 /* tables_NLSF_CB_NB_MB.c in Sources */,
 				C6CFDCDD23A858B800DEB8F9 /* stereo_find_predictor.c in Sources */,
 				C6CFDD2E23A858B800DEB8F9 /* find_LPC_FLP.c in Sources */,
-				5757D27E1B7A3D5800464A74 /* mdct.c in Sources */,
+				5757D27E1B7A3D5800464A74 /* opus_mdct.c in Sources */,
 				7104FD7A0D772F6300A97E53 /* palcommon.c in Sources */,
 				C6CFDD1223A858B800DEB8F9 /* HP_variable_cutoff.c in Sources */,
 				C6CFDCD623A858B800DEB8F9 /* PLC.c in Sources */,
-				C6CFDCAD23A858B800DEB8F9 /* mdct.c in Sources */,
+				C6CFDCAD23A858B800DEB8F9 /* opus_mdct.c in Sources */,
 				C6CFDD2223A858B800DEB8F9 /* sort_FLP.c in Sources */,
 				C6CFDD2623A858B800DEB8F9 /* burg_modified_FLP.c in Sources */,
 				7104FD7C0D772F6300A97E53 /* palette.c in Sources */,
 				7104FD7E0D772F6300A97E53 /* play.c in Sources */,
 				C6CFDCE923A858B800DEB8F9 /* decode_pulses.c in Sources */,
 				C6CFDCEC23A858B800DEB8F9 /* tables_NLSF_CB_WB.c in Sources */,
-				5757D2701B7A3D5800464A74 /* analysis.c in Sources */,
+				5757D2701B7A3D5800464A74 /* opus_analysis.c in Sources */,
 				C6CFDD5823A858B800DEB8F9 /* opus_projection_encoder.c in Sources */,
 				C6CFDD1723A858B800DEB8F9 /* LPC_analysis_filter_FLP.c in Sources */,
 				C6CFDCC823A858B800DEB8F9 /* gain_quant.c in Sources */,
@@ -1818,7 +1818,7 @@
 				C6CFDD2523A858B800DEB8F9 /* apply_sine_window_FLP.c in Sources */,
 				C6CFDD1C23A858B800DEB8F9 /* LPC_inv_pred_gain_FLP.c in Sources */,
 				C6CFDD5323A858B800DEB8F9 /* opus_multistream_encoder.c in Sources */,
-				C6CFDD5D23A858B800DEB8F9 /* stream.c in Sources */,
+				C6CFDD5D23A858B800DEB8F9 /* opus_stream.c in Sources */,
 				C6CFDCD023A858B800DEB8F9 /* NLSF_decode.c in Sources */,
 				71E23E9813F6D1AD001287B6 /* frame.c in Sources */,
 				C6CFDCE423A858B800DEB8F9 /* stereo_quant_pred.c in Sources */,
@@ -1850,7 +1850,7 @@
 				C6CFDD1023A858B800DEB8F9 /* stereo_decode_pred.c in Sources */,
 				C6CFDD4323A858B800DEB8F9 /* stereo_encode_pred.c in Sources */,
 				C6CFDD1E23A858B800DEB8F9 /* encode_frame_FLP.c in Sources */,
-				71E23EA913F6D1AD001287B6 /* stream.c in Sources */,
+				71E23EA913F6D1AD001287B6 /* opus_stream.c in Sources */,
 				C6CFDCDA23A858B800DEB8F9 /* table_LSF_cos.c in Sources */,
 				71E23EAB13F6D1AD001287B6 /* synth.c in Sources */,
 				713765641ED86C930084F495 /* aviplay.c in Sources */,
@@ -1868,7 +1868,7 @@
 				C6CFDD1F23A858B800DEB8F9 /* find_pitch_lags_FLP.c in Sources */,
 				5757D2731B7A3D5800464A74 /* block.c in Sources */,
 				C6CFDD1123A858B800DEB8F9 /* encode_indices.c in Sources */,
-				5757D2791B7A3D5800464A74 /* info.c in Sources */,
+				5757D2791B7A3D5800464A74 /* opus_info.c in Sources */,
 				C6CFDD4423A858B800DEB8F9 /* NLSF2A.c in Sources */,
 				C6CFDD4C23A858B800DEB8F9 /* sum_sqr_shift.c in Sources */,
 			);
