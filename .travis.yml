@@ -229,9 +229,9 @@ jobs:
           - unzip ndk.zip > /dev/null
           - export ANDROID_NDK_HOME=`pwd`/android-ndk-$NDK_VERSION
           - cd "${PUSHD}"
-          - sudo apt-add-repository ppa:brightbox/ruby-ng
+          - sudo apt-add-repository -y ppa:brightbox/ruby-ng
           - sudo apt-get update
-          - sudo apt-get install ruby2.4 ruby2.4-dev
+          - sudo apt-get install -y ruby2.4 ruby2.4-dev
           - sudo gem install google-api-client -v 0.29.1
           - sudo gem install fastlane
         script:
