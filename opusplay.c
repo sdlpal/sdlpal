@@ -179,6 +179,10 @@ OPUS_FillBuffer(
             OPUS_FillResample(player, (opus_int16 *)(stream + total_bytes), fill_count);
             total_bytes += fill_count * bytes_per_sample;
         } else {
+            if (player->fRewind) {
+                OPUS_Rewind(player);
+                continue;
+            }
             int i;
             opus_int16 *ptr = (opus_int16 *)(stream + total_bytes);
             opus_int16 *inptr = player->sBuffer + player->iBufPos;
