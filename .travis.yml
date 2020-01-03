@@ -236,7 +236,7 @@ jobs:
           - sudo gem install fastlane
         script:
           - cd android
-          - sed -i.bak s/"android:versionCode.*"/"android:versionCode=\"`date +%Y%m%d%H%M%S`\""/g ./app/src/main/AndroidManifest.xml
+          - sed -i.bak s/"android:versionCode.*"/"android:versionCode=\"`date +'%s'`\""/g ./app/src/main/AndroidManifest.xml
           - ./gradlew assembleRelease
           - cd ..
           - /usr/local/android-sdk/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk deploy/sdlpal-release.apk
