@@ -234,9 +234,9 @@ jobs:
           - sed -i.bak s/"android:versionCode.*"/"android:versionCode=\"`date +%Y%m%d`\""/g ./app/src/main/AndroidManifest.xml
           - ./gradlew assembleRelease
           - cd ..
-          - zipalign -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk deploy/sdlpal-release.apk
+          - /usr/local/android-sdk/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk deploy/sdlpal-release.apk
           - echo ${ANDROID_KEY_FILE} | base64 -d > android-key.key
-          - apksigner sign --ks android-key.key --ks-pass pass:${ANDROID_KEY_PASS} deploy/sdlpal-release.apk
+          - /usr/local/android-sdk/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks android-key.key --ks-pass pass:${ANDROID_KEY_PASS} deploy/sdlpal-release.apk
 
       - os: osx
         osx_image: xcode11
