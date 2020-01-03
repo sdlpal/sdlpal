@@ -229,6 +229,7 @@ jobs:
           - unzip ndk.zip > /dev/null
           - export ANDROID_NDK_HOME=`pwd`/android-ndk-$NDK_VERSION
           - cd "${PUSHD}"
+          - sudo gem install fastlane
         script:
           - cd android
           - sed -i.bak s/"android:versionCode.*"/"android:versionCode=\"`date +%Y%m%d`\""/g ./app/src/main/AndroidManifest.xml
@@ -237,6 +238,8 @@ jobs:
           - /usr/local/android-sdk/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk deploy/sdlpal-release.apk
           - echo ${ANDROID_KEY_FILE} | base64 -d > android-key.key
           - /usr/local/android-sdk/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks android-key.key --ks-pass pass:${ANDROID_KEY_PASS} deploy/sdlpal-release.apk
+          - echo ${PLAY_API_JSONFILE} | base64 -d > google-key.json
+          - fastlane supply --apk deploy/sdlpal-release.apk --track alpha --json_key ./google-key.json --package_name com.sdlpal.sdlpal
 
       - os: osx
         osx_image: xcode11
