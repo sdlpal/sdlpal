@@ -210,7 +210,7 @@ jobs:
           - platform-tools
           - tools
           - build-tools-$ANDROID_BUILD_TOOLS
-          - android-26
+          - android-28
           licenses:
           - android-sdk-preview-license-.+
           - android-sdk-license-.+

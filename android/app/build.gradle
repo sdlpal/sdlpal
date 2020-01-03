@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.sdlpal.sdlpal"
         minSdkVersion 10
-        targetSdkVersion 26
+        targetSdkVersion 28
         multiDexEnabled true
         externalNativeBuild {
             ndkBuild {
