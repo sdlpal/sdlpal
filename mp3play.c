@@ -102,14 +102,7 @@ MP3_Play(
 
 	player->fLoop = fLoop;
 
-	if (iNum == player->iMusic)
-	{
-		return TRUE;
-	}
-
 	MP3_Close(player);
-
-	player->iMusic = iNum;
 
 	if (iNum > 0)
 	{
@@ -144,7 +137,6 @@ MP3_Init(
 		player->Shutdown = MP3_Shutdown;
 
 		player->pMP3 = NULL;
-		player->iMusic = -1;
 		player->fLoop = FALSE;
 	}
 	return (LPAUDIOPLAYER)player;

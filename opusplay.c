@@ -209,28 +209,16 @@ OPUS_FillBuffer(
 }
 
 static BOOL
-OPUS_Play(
+OPUS_Stop_internal(
     VOID       *object,
-    INT         iNum,
-    BOOL        fLoop,
     FLOAT       flFadeTime
 )
 {
     LPOPUSPLAYER player = (LPOPUSPLAYER)object;
-    static char internal_buffer[PAL_GLOBAL_BUFFER_SIZE];
-
-    int ret;
 
     if (player == NULL)
     {
         return FALSE;
-    }
-
-    player->fLoop = fLoop;
-
-    if (iNum == player->iMusic)
-    {
-        return TRUE;
     }
 
     player->fReady = FALSE;
@@ -241,19 +229,46 @@ OPUS_Play(
         player->fp = NULL;
     }
 
-    player->iMusic = iNum;
+    return TRUE;
+}
 
-    if (iNum == -1)
-    {
-        return TRUE;
-    }
+static BOOL
+OPUS_Stop(
+    VOID       *object,
+    FLOAT       flFadeTime
+)
+{
+    return OPUS_Stop_internal(object, flFadeTime);
+}
 
-    if (iNum == 0)
+static BOOL
+OPUS_Play(
+    VOID       *object,
+    INT         iNum,
+    BOOL        fLoop,
+    FLOAT       flFadeTime
+)
+{
+    assert(iNum > 0);
+    
+    LPOPUSPLAYER player = (LPOPUSPLAYER)object;
+
+    int ret;
+
+    if (player == NULL)
     {
         return FALSE;
     }
 
-    player->fp = op_open_file(UTIL_GetFullPathName(internal_buffer, PAL_GLOBAL_BUFFER_SIZE, gConfig.pszGamePath, PAL_va(0, "opus%s%.2d.opus", PAL_NATIVE_PATH_SEPARATOR, iNum)), &ret);
+    player->fLoop = fLoop;
+
+    OPUS_Stop_internal(object, flFadeTime);
+
+    //
+    // op_open_file cannot accept NULL ( msvc will crash on strlen(NULL) )
+    // so we'd better not use UTIL_GetFullPathName since it will return NULL when file not exist
+    //
+    player->fp = op_open_file(UTIL_CombinePath(PAL_BUFFER_SIZE_ARGS(1), 2, gConfig.pszGamePath, PAL_va(0, "opus%s%.2d.opus", PAL_NATIVE_PATH_SEPARATOR, iNum)), &ret);
     if (player->fp == NULL)
     {
         return FALSE;
@@ -297,10 +312,10 @@ OPUS_Init(
 
         player->FillBuffer = OPUS_FillBuffer;
         player->Play = OPUS_Play;
+        player->Stop = OPUS_Stop;
         player->Shutdown = OPUS_Shutdown;
 
         player->iLink = -1;
-        player->iMusic = -1;
 
         player->resampler[0] = resampler_create();
         if (player->resampler[0])

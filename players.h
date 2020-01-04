@@ -31,10 +31,10 @@
 typedef struct tagAUDIOPLAYER
 {
 #define AUDIOPLAYER_COMMONS \
-    INT                        iMusic;  \
     BOOL                       fLoop; \
 	VOID (*Shutdown)(VOID*); \
-	BOOL (*Play)(VOID*, INT, BOOL, FLOAT); \
+    BOOL (*Play)(VOID*, INT, BOOL, FLOAT); \
+    BOOL (*Stop)(VOID*, FLOAT); \
 	VOID (*FillBuffer)(VOID*, LPBYTE, INT)
 
 	AUDIOPLAYER_COMMONS;

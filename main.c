@@ -221,7 +221,6 @@ PAL_SplashScreen(
    LPBYTE         buf, buf2;
    int            cranepos[9][3], i, iImgPos = 200, iCraneFrame = 0, iTitleHeight;
    DWORD          dwTime, dwBeginTime;
-   BOOL           fUseCD = TRUE;
 
    if (PAL_PlayAVI("2.avi")) return;
 
@@ -278,7 +277,6 @@ PAL_SplashScreen(
    //
    if (!AUDIO_PlayCDTrack(7))
    {
-      fUseCD = FALSE;
       AUDIO_PlayMusic(NUM_RIX_TITLE, TRUE, 2);
    }
 
@@ -436,10 +434,7 @@ PAL_SplashScreen(
    VIDEO_FreeSurface(lpBitmapUp);
    free(buf);
 
-   if (!fUseCD)
-   {
-      AUDIO_PlayMusic(0, FALSE, 1);
-   }
+   AUDIO_StopMusic(1);
 
    PAL_FadeOut(1);
 }

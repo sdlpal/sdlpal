@@ -322,7 +322,7 @@ PAL_BattleMain(
    //
    // Fade out the music and delay for a while
    //
-   AUDIO_PlayMusic(0, FALSE, 1);
+   AUDIO_StopMusic(1);
    UTIL_Delay(200);
 
    //

@@ -441,7 +441,8 @@ PAL_EndingScreen(
 		gpGlobals->fNeedToFadeIn = TRUE;
 		PAL_EndingAnimation();
 
-		if (!win_music) AUDIO_PlayMusic(0, FALSE, 2);
+		if (!win_music)
+            AUDIO_StopMusic(2);
 		PAL_ColorFade(7, 15, FALSE);
 
 		if (!win_music && !AUDIO_PlayCDTrack(2))
@@ -479,7 +480,7 @@ PAL_EndingScreen(
 		PAL_ShowFBP(68, 6);
 
 		PAL_WaitForKey(0);
-		AUDIO_PlayMusic(0, FALSE, 1);
+        AUDIO_StopMusic(1);
 		UTIL_Delay(500);
 	}
 
@@ -507,7 +508,7 @@ PAL_EndingScreen(
 		PAL_ScrollFBP(60, 0xf, TRUE);
 		PAL_ScrollFBP(59, 0xf, TRUE);
 
-		AUDIO_PlayMusic(0, FALSE, 6);
+        AUDIO_StopMusic(6);
 		PAL_FadeOut(3);
 	}
 }

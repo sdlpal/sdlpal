@@ -55,10 +55,7 @@ MIDI_Play(
 		return;
 	}
 
-	native_midi_stop(g_pMidi);
-	native_midi_freesong(g_pMidi);
-	g_pMidi = NULL;
-	g_iMidiCurrent = -1;
+    MIDI_Stop();
 
 	if (!AUDIO_MusicEnabled() || iNumRIX <= 0)
 	{
@@ -101,5 +98,21 @@ MIDI_Play(
 		native_midi_start(g_pMidi, fLoop);
 		g_iMidiCurrent = iNumRIX;
 	}
+#endif
+}
+
+void
+MIDI_Stop(
+    VOID
+)
+{
+#if PAL_HAS_NATIVEMIDI
+    if (!native_midi_detect())
+        return;
+
+    native_midi_stop(g_pMidi);
+    native_midi_freesong(g_pMidi);
+    g_pMidi = NULL;
+    g_iMidiCurrent = -1;
 #endif
 }

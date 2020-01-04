@@ -416,11 +416,6 @@ OGG_Play(
 
 	player->fLoop = fLoop;
 
-	if (iNum == player->iMusic)
-	{
-		return TRUE;
-	}
-
 	player->fReady = FALSE;
 	OGG_Cleanup(player);
 	if (player->fp)
@@ -428,8 +423,6 @@ OGG_Play(
 		UTIL_CloseFile(player->fp);
 		player->fp = NULL;
 	}
-
-    player->iMusic = iNum;
 
 	if (iNum == -1)
 	{
@@ -483,7 +476,6 @@ OGG_Init(
 		player->Shutdown = OGG_Shutdown;
 
 		player->fp = NULL;
-		player->iMusic = -1;
 		player->iFlags = 0;
 		player->iStage = 0;
 		player->fLoop = FALSE;

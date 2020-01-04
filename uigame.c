@@ -155,7 +155,7 @@ PAL_OpeningMenu(
    //
    // Fade out the screen and the music
    //
-   AUDIO_PlayMusic(0, FALSE, 1);
+   AUDIO_StopMusic(1);
    PAL_FadeOut(1);
 
    if (wItemSelected == 0)
@@ -612,8 +612,8 @@ PAL_SystemMenu(
       iSlot = PAL_SaveSlotMenu(gpGlobals->bCurrentSaveSlot);
       if (iSlot != MENUITEM_VALUE_CANCELLED)
       {
-         AUDIO_PlayMusic(0, FALSE, 1);
          PAL_FadeOut(1);
+         AUDIO_StopMusic(1);
          PAL_InitGameData(iSlot);
       }
       break;
@@ -2036,7 +2036,7 @@ PAL_QuitGame(
 	{
 		if (wReturnValue == 2) gConfig.fLaunchSetting = TRUE;
 		PAL_SaveConfig();		// Keep the fullscreen state
-		AUDIO_PlayMusic(0, FALSE, 2);
+      AUDIO_StopMusic(2);
 		PAL_FadeOut(2);
 		PAL_Shutdown(0);
 	}

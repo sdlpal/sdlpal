@@ -1602,8 +1602,16 @@ PAL_InterpretInstruction(
       //
       // Set background music
       //
-      gpGlobals->wNumMusic = pScript->rgwOperand[0];
-      AUDIO_PlayMusic(pScript->rgwOperand[0], pScript->rgwOperand[1] != 1, (pScript->rgwOperand[1] == 3 && pScript->rgwOperand[0] != 9) ? 3.0f : 0.0f);
+      {
+         WORD wNextMusic = pScript->rgwOperand[0];
+         BOOL bLoop = pScript->rgwOperand[1] != 1;
+         FLOAT fFadeTime = (pScript->rgwOperand[1] == 3) ? 3.0f : 0.0f;
+         if( wNextMusic > 0 && gpGlobals->wNumMusic != wNextMusic)
+            AUDIO_PlayMusic(wNextMusic, bLoop, fFadeTime);
+         else
+            AUDIO_StopMusic(fFadeTime);
+         gpGlobals->wNumMusic = wNextMusic;
+      }
       break;
 
    case 0x0044:
@@ -2175,8 +2183,7 @@ PAL_InterpretInstruction(
       //
       // Stop current playing music
       //
-      AUDIO_PlayMusic(0, FALSE,
-         (pScript->rgwOperand[0] == 0) ? 2.0f : (FLOAT)(pScript->rgwOperand[0]) * 3);
+      AUDIO_StopMusic((pScript->rgwOperand[0] == 0) ? 2.0f : (FLOAT)(pScript->rgwOperand[0]) * 3);
       gpGlobals->wNumMusic = 0;
       break;
 
@@ -2989,7 +2996,7 @@ PAL_InterpretInstruction(
       if (AUDIO_CD_Available())
       {
          int numTrack = (SHORT)pScript->rgwOperand[0];
-         if (!AUDIO_PlayCDTrack(numTrack == -1 ? -2 : numTrack))
+         if (!AUDIO_PlayCDTrack(numTrack))
             AUDIO_PlayMusic(pScript->rgwOperand[1], TRUE, 0);
       }
       else

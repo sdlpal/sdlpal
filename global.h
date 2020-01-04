@@ -527,6 +527,7 @@ typedef struct tagGLOBALVARS
    WORD             wNumPalette;         // current palette number
    BOOL             fNightPalette;       // TRUE if use the darker night palette
    WORD             wNumMusic;           // current music number
+   WORD             wNumCD;              // current CD number
    WORD             wNumBattleMusic;     // current music number in battle
    WORD             wNumBattleField;     // current battle field number
    WORD             wCollectValue;       // value of "collected" items

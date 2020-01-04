@@ -399,7 +399,7 @@ AUDIO_CloseDevice(
 #if PAL_HAS_SDLCD
    if (gAudioDevice.pCD != NULL)
    {
-      AUDIO_PlayCDTrack(-1);
+      AUDIO_StopCDTrack();
       SDL_CDClose(gAudioDevice.pCD);
    }
 #endif
@@ -412,7 +412,7 @@ AUDIO_CloseDevice(
 
    if (gConfig.eMusicType == MUSIC_MIDI)
    {
-      MIDI_Play(0, FALSE);
+      MIDI_Stop();
    }
 
    gAudioDevice.fOpened = FALSE;
@@ -528,13 +528,13 @@ AUDIO_PlayMusic(
    FLOAT     flFadeTime
 )
 {
-	if (iNumRIX > 0)
-	{
-		//
-		// Stop the current CD music.
-		//
-		AUDIO_PlayCDTrack(-1);
-	}
+   assert(iNumRIX > 0);
+
+   //
+   // Stop the current CD music.
+   //
+   if( gpGlobals->wNumCD > 0)
+      AUDIO_StopCDTrack();
 
    if (gConfig.eMusicType == MUSIC_MIDI)
    {
@@ -546,6 +546,30 @@ AUDIO_PlayMusic(
    if (gAudioDevice.pMusPlayer)
    {
       gAudioDevice.pMusPlayer->Play(gAudioDevice.pMusPlayer, iNumRIX, fLoop, flFadeTime);
+   }
+   AUDIO_Unlock();
+}
+
+VOID
+AUDIO_StopMusic(
+   FLOAT     flFadeTime
+)
+{
+   gpGlobals->wNumMusic = 0;
+   if (gConfig.eMusicType == MUSIC_MIDI)
+   {
+      MIDI_Stop();
+      return;
+   }
+
+   AUDIO_Lock();
+   if (gAudioDevice.pMusPlayer)
+   {
+      gAudioDevice.pMusPlayer->Stop(gAudioDevice.pMusPlayer, flFadeTime);
+   }
+   if (gAudioDevice.pCDPlayer)
+   {
+      gAudioDevice.pCDPlayer->Stop(gAudioDevice.pMusPlayer, flFadeTime);
    }
    AUDIO_Unlock();
 }
@@ -562,7 +586,7 @@ AUDIO_PlayCDTrack(
   Parameters:
 
     [IN]  iNumTrack - number of the CD Audio Track.
-                      special case: -2: do NOTHING
+                      special case: -1: do NOTHING
 
   Return value:
 
@@ -571,11 +595,13 @@ AUDIO_PlayCDTrack(
 --*/
 {
 	BOOL ret = FALSE;
-	if (iNumTrack > 0)
-	{
-		AUDIO_PlayMusic(-1, FALSE, 0);
-	}
-   if (iNumTrack == -2 && gAudioDevice.pCDPlayer->iMusic > PAL_CDTRACK_BASE )
+
+   assert(iNumTrack > 0 || iNumTrack == -1);
+
+   if( gpGlobals->wNumMusic > 0 )
+      AUDIO_StopMusic(0);
+
+   if (iNumTrack == -1 && gpGlobals->wNumCD > 0 )
    {
        return TRUE;
    }
@@ -599,18 +625,50 @@ AUDIO_PlayCDTrack(
    AUDIO_Lock();
    if (gAudioDevice.pCDPlayer)
    {
-	   if (iNumTrack != -1)
-	   {
-		   ret = gAudioDevice.pCDPlayer->Play(gAudioDevice.pCDPlayer, PAL_CDTRACK_BASE + iNumTrack, TRUE, 0);
-	   }
-	   else
-	   {
-		   ret = gAudioDevice.pCDPlayer->Play(gAudioDevice.pCDPlayer, -1, FALSE, 0);
-	   }
+      ret = gAudioDevice.pCDPlayer->Play(gAudioDevice.pCDPlayer, PAL_CDTRACK_BASE + iNumTrack, TRUE, 0);
+      if( ret )
+         gpGlobals->wNumCD = iNumTrack;
    }
    AUDIO_Unlock();
 
    return ret;
+}
+
+VOID
+AUDIO_StopCDTrack(
+   VOID
+)
+/*++
+  Purpose:
+
+    Stop a CD Audio Track.
+
+  Parameters:
+
+    None
+
+  Return value:
+
+    None
+
+--*/
+{
+   gpGlobals->wNumCD = 0;
+#if PAL_HAS_SDLCD
+   if (gAudioDevice.pCD != NULL)
+   {
+      if (CD_INDRIVE(SDL_CDStatus(gAudioDevice.pCD)))
+      {
+         SDL_CDStop(gAudioDevice.pCD);
+      }
+   }
+#endif
+   AUDIO_Lock();
+   if (gAudioDevice.pCDPlayer)
+   {
+      gAudioDevice.pCDPlayer->Stop(gAudioDevice.pCDPlayer, 0);
+   }
+   AUDIO_Unlock();
 }
 
 VOID

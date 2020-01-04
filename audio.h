@@ -64,9 +64,19 @@ AUDIO_PlayMusic(
    FLOAT     flFadeTime
 );
 
+VOID
+AUDIO_StopMusic(
+   FLOAT     flFadeTime
+);
+
 BOOL
 AUDIO_PlayCDTrack(
    INT    iNumTrack
+);
+
+VOID
+AUDIO_StopCDTrack(
+   VOID
 );
 
 VOID

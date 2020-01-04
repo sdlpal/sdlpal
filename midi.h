@@ -69,4 +69,9 @@ MIDI_Play(
 	BOOL      fLoop
 );
 
+void
+MIDI_Stop(
+    VOID
+);
+
 #endif
