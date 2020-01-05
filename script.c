@@ -545,7 +545,7 @@ PAL_AdditionalCredits(
       L" ",
 	  L"    (c) 2009-2011, Wei Mingzhi",
 	  L"        <whistler_wmz@users.sf.net>.",
-      L"    (c) 2011-2019, SDLPAL Team",
+      L"    (c) 2011-2020, SDLPAL Team",
 	  L"%ls",  // Porting information line 1
 	  L"%ls",  // Porting information line 2
 	  L"%ls",  // GNU line 1
