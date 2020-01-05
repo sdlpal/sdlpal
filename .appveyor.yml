@@ -1,6 +1,6 @@
 version: 2.0.{build}
 image:
-  - Visual Studio 2017
+  - Visual Studio 2019
 environment:
   #since appveyor official binding for bintray lacks of ability to specify upload path, we'd to use the manual curl way
   BINTRAY_APIKEY:
