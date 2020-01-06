@@ -229,11 +229,6 @@ jobs:
           - unzip ndk.zip > /dev/null
           - export ANDROID_NDK_HOME=`pwd`/android-ndk-$NDK_VERSION
           - cd "${PUSHD}"
-          - sudo apt-add-repository -y ppa:brightbox/ruby-ng
-          - sudo apt-get update
-          - sudo apt-get install -y ruby2.4 ruby2.4-dev
-          - sudo gem install google-api-client -v 0.29.1
-          - sudo gem install fastlane
         script:
           - cd android
           - sed -i.bak s/"android:versionCode.*"/"android:versionCode=\"`date +'%s'`\""/g ./app/src/main/AndroidManifest.xml
@@ -245,8 +240,6 @@ jobs:
               /usr/local/android-sdk/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk deploy/sdlpal-release.apk
               echo ${ANDROID_KEY_FILE} | base64 -d > android-key.key
               /usr/local/android-sdk/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks android-key.key --ks-pass pass:${ANDROID_KEY_PASS} deploy/sdlpal-release.apk
-              echo ${PLAY_API_JSONFILE} | base64 -d > google-key.json
-              fastlane supply --apk deploy/sdlpal-release.apk --track alpha --json_key ./google-key.json --package_name com.sdlpal.sdlpal
             else
               jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 1
             fi
@@ -324,6 +317,16 @@ before_deploy:
         sed=gsed
         date=gdate
     fi
+  - |
+    if ! [[ -z "$ANDROID_BUILD_TOOLS" ]]
+    then
+        sudo apt-add-repository -y ppa:brightbox/ruby-ng
+        sudo apt-get update
+        sudo apt-get install -y ruby2.4 ruby2.4-dev
+        sudo gem install google-api-client -v 0.29.1
+        sudo gem install fastlane
+        echo ${PLAY_API_JSONFILE} | base64 -d > google-key.json;
+    fi
   - DATE=$($date -d $(git show -s --format=%cI) "+%F")
   - COMMIT=$(git rev-parse --short HEAD)
   - set -f
@@ -342,6 +345,10 @@ before_deploy:
   - set +f
 
 deploy:
+  - provider: script
+    script: if ! [[ -z "$ANDROID_BUILD_TOOLS" ]]; then fastlane supply --apk deploy/sdlpal-release.apk --track alpha --json_key ./google-key.json --package_name com.sdlpal.sdlpal; fi
+    on:
+      branch: master
   - provider: releases
     token:
       secure: FFV8UBcz6GkeSoGRbrL9tnTpVqXoFjFK2QtW0Ml8YvvqaHhxOaIWs2nAabOGsW1mJop/QlpuUNw1TfLl7TokcUDgOHrFRdC8hVY7K1uSWMnt7m4ZRPatVybIkzgrnItHlnMrL4uJK2xXb6Jc5+cSrU5jRMcmTZjaOKLTBwF97+6AgqpdmKUCVYZJzQYg0Jn9GfaL1EOGl7ISt/VEgi/tKFzJvJVxJBU3NuKyxXlfEwkTiSOFuGoD5qWDjCE+aGxTR6RQefsADPIDfeU3TJHTJE/ORGy9gl+Y41JgU0Bfgipcqg1RSwNclclmxgi8lo/XNUiZAMTyQrXjByBWcvYovk+H4h9mbvJlrVSjI8Wxb5ICcYkhDVkNxtEXX7AsIk4yHiNTi1MAW0qJJKinaFxLmK2U3LGEK3DudXl/0eVRoQATmRcXLdBQezISt2CWpTktCxlQmtz/GsoHv0PcWdkJYL4qbbRrBRFj9++VjlnCI124YZnbVjC3+jtWN1Zluxynj0GDBY3r7EdLWWKZo5XnygPOZ8+uaTMYfqmTvQWPc5GRRRdVJowQFQhb48hzKyWYqsf8eyS3VuZ9b/DwES3dutOaX7sIL9Vkg3DlQYOEz938MB4VbTGizUUrBbrIP4Kz/+WOZ9pxM9X+qsgMYkw8FvHqn2TvCWxPDCgqq3zUWig=
