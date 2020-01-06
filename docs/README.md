@@ -8,6 +8,8 @@ SDLPAL
 
 [![Google Play](https://sdlpal.github.io/images/googleplay.png)](https://play.google.com/store/apps/details?id=com.sdlpal.sdlpal)
 
+If you would like to get the nightly build from Google Play Store, [please enroll](https://play.google.com/apps/testing/com.sdlpal.sdlpal) (WARNING: might be unstable).
+
 [Try the online demo for now!](https://sdlpal.github.io/demo/sdlpal.html)
 =======
 The development team has built a web-based demo version of SDLPAL on github pages via Emscripten, which you can try anytime by clicking the above link. It should work well on most morden browsers (e.g., Google Chrome, Microsoft Edge, Safari, ...), but there may still be problems on some browsers. Before you can enjoy your game journey, please prepare a zipped file containing the game resource data.
