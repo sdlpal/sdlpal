@@ -347,6 +347,7 @@ before_deploy:
 deploy:
   - provider: script
     script: bash -c '[[ -z "$ANDROID_BUILD_TOOLS" ]] || fastlane supply --apk deploy/sdlpal-release.apk --track alpha --json_key ./google-key.json --package_name com.sdlpal.sdlpal'
+    skip_cleanup: true
     on:
       branch: master
   - provider: releases
