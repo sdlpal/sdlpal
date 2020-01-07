@@ -362,8 +362,7 @@ deploy:
       tags: true
   - provider: bintray
     user: palxex
-    key:
-      secure: NQl1hNntoXlHyj7uAMiHr3OsMwrEgAeYIIopUSY6Ete9ODVFSTzSqm2lb/Nwq+4ZV5UCYVpDdpBlhWZlxZ/TO9cPVJuwi7oPtRKHNKvAAHRNHWsyO965Y8qtMIo1SGPnNIF5fA8KS9W0iKUAlUubMNHpJBnT2GT2ylrmf7YHkb2mv7OTGswcbMdtQosOy2T4WMCOPTGsu8jcVPX1TMlmhIrbEQqQ4SV8Lz7VoNDPDswlcZrx/X3ZkBHz+iAZQM3vyrAfpJNHpR1qdVXpSQ6AJNrvxAyv3iXCQTmy28o4Skn9ciU4A8kNXSyrKK8O3lKv65XuSGG9XoaldII1SvG3woI2t1dwAxcxmn2/Yf2Uznuostz7j5L5FtJqW9+c4KGXxCh+RgMrTbM1n0yvFMwcxuTIYemFb7OOyLnYf2hhVZXN8GBItoqhZoGboBp0s1usT1XqHSKHtf6RXd9IGOZH1LwRyUNYoLTY8cMJVrzQ9LtpdHeapZgr3idtrRCOmEF7d4/q8WUD+yOZuzUECL2QEnEgg6Ho79chWAUngUCdI4v70nCaMNCwLaTVJY5jtnt3VVUCYJ6vsoimxTbhQT2Cf6HTRcHt1JKhI4cGTBcCRIRdXWqSX4VmxBUCQ/XvskJX5Kj9FJC2/jhZDfIXcKfrYjw0tk3+7FzZuAwt8FnznUs=
+    key: $BINTRAY_TOKEN
     file: bintray.json
     skip_cleanup: true
     on:
