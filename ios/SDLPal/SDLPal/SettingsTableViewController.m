@@ -8,7 +8,7 @@
 
 #import "SettingsTableViewController.h"
 #import "SDLPal_AppDelegate.h"
-#import <ActionSheetPicker-3.0/ActionSheetStringPicker.h>
+#import <ActionSheetPicker.h>
 
 #include "palcfg.h"
 

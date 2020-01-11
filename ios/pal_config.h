@@ -66,6 +66,11 @@ UTIL_SavePath(
    VOID
 );
 
+LPCSTR
+UTIL_CachePath(
+   VOID
+);
+
 PAL_C_LINKAGE_END
 
 #include <sys/time.h>

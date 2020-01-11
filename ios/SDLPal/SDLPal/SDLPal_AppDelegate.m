@@ -121,15 +121,27 @@ int sdlpal_main(int argc, char **argv)
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // iOS Files app will not show other app with no file inside documents. Create placeholder if needed.
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    NSString *docPath = [NSString stringWithUTF8String:UTIL_BasePath()];
+    NSString *placeholderPath =[NSString stringWithFormat:@"%@/placeholder", docPath];
+    NSError *err = nil;
+    NSArray *contents = [fileMgr contentsOfDirectoryAtPath:docPath error:&err];
+    if( contents == nil || contents.count == 0 )
+        [fileMgr createFileAtPath:placeholderPath contents:nil attributes:nil];
+    else
+        if( [fileMgr fileExistsAtPath:placeholderPath] )
+            [fileMgr removeItemAtPath:placeholderPath error:&err];
+
     [self restart];
     return YES;
 }
 - (void)restart {
     PAL_LoadConfig(YES);
-    NSString *documentPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] path];
+    const char *cachePath = UTIL_CachePath();
     if( getppid() != 1)
-        NSLog(@"document path:%@",documentPath);
-    BOOL crashed = [[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/running",documentPath]];
+        NSLog(@"cache path:%s",cachePath);
+    BOOL crashed = [[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%s/running", cachePath]];
     if( gConfig.fLaunchSetting || crashed ) {
         self.isInGame = NO;
         

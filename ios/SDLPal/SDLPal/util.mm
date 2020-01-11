@@ -72,6 +72,23 @@ UTIL_SavePath(
    return buf;
 }
 
+LPCSTR
+UTIL_CachePath(
+   VOID
+)
+{
+   static char buf[4096] = "";
+
+   if (buf[0] == '\0')
+   {
+      NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+      NSString *documentsDirectory = [[paths objectAtIndex:0] stringByAppendingString:@"/"];
+      strcpy(buf, [documentsDirectory UTF8String]);
+   }
+
+   return buf;
+}
+
 BOOL
 UTIL_GetScreenSize(
                    DWORD *pdwScreenWidth,
@@ -102,7 +119,7 @@ UTIL_Platform_Init(
         NSLog(@"%s",str);
     }, PAL_DEFAULT_LOGLEVEL);
     gConfig.fLaunchSetting = NO;
-    runningPath = strdup(PAL_va(0,"%s/running", gConfig.pszGamePath));
+    runningPath = strdup(PAL_va(0,"%s/running", UTIL_CachePath()));
     FILE *fp = fopen(runningPath, "w");
     if (fp) fclose(fp);
     return 0;
