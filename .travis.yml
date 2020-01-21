@@ -303,8 +303,6 @@ jobs:
         before_install:
           - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:$TAG bash
         script:
-          - mkdir -p emscripten/data
-          - touch emscripten/data/placeholder
           - docker exec -it emscripten emmake make -C emscripten
 
 before_deploy:
@@ -343,10 +341,17 @@ before_deploy:
     s/@COMMITID@/$(git show -s --format=%h)/g
     " bintray.json
   - set +f
+  - git config --global user.email "sdlpal@sdlpal.com"
+  - git config --global user.name "SDLPAL"
 
 deploy:
   - provider: script
     script: bash -c '[[ -z "$ANDROID_BUILD_TOOLS" ]] || fastlane supply --apk deploy/sdlpal-release.apk --track alpha --json_key ./google-key.json --package_name com.sdlpal.sdlpal'
+    skip_cleanup: true
+    on:
+      branch: master
+  - provider: script
+    script: bash -c '[[ -f "emscripten/sdlpal.js" ]] && git clone --depth=1 https://github.com/sdlpal/demo ~/demo && cp -f emscripten/*.{html,js,wasm,png} ~/demo && cd ~/demo && git commit -mAutoupdate -a && git push "https://${AUTO_UPDATE_USERNAME}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo" || true'
     skip_cleanup: true
     on:
       branch: master
