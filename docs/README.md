@@ -143,6 +143,10 @@ Android
 
 To build the game, open the `android` directory through ***Android Studio***, and click `Make Project`.
 
+* NOTE: `android/app/src/main/java/org/libsdl/app` is a link to `3rd/SDL/android-project/app/src/main/java/org/libsdl/app`. Deal with it properly if your git system does not create link automatically. 
+
+* NOTE: For Windows users, please put the repo in the root of a partition. A too long path may cause compilation to fail. 
+
 Nintendo 3DS
 ------------
 
