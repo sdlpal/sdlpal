@@ -255,7 +255,7 @@ jobs:
           - xcodebuild -workspace SDLPal.xcworkspace -scheme SDLPal ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO -configuration Release CONFIGURATION_BUILD_DIR=/tmp/sdlpal-build
           - mkdir -p Payload
           - mv /tmp/sdlpal-build/SDLPal.app Payload
-          - zip ../../deploy/sdlpal-impactor.ipa -r Payload
+          - zip ../../deploy/sdlpal-unsigned.ipa -r Payload
           - cd ../..
 
       - os: osx
