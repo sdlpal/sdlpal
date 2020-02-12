@@ -216,17 +216,21 @@ jobs:
           - android-sdk-license-.+
           - google-gdk-license-.+
         cache:
-          branch: md5deep
           directories:
+            - $CACHE
             - $HOME/.gradle/caches/
             - $HOME/.gradle/wrapper/dists/
         before_install:
           - export PUSHD="$(pwd)"
-          - mkdir -p $CACHE/
-          - cd $CACHE/
-          # After measuring, caching android NDK is more slow than direct download
-          - wget http://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip -O ndk.zip
-          - unzip ndk.zip > /dev/null
+          - |
+            if ! [ -f $CACHE/ndk.zip ]
+            then
+              mkdir -p $CACHE
+              cd $CACHE
+              wget http://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip -O ndk.zip
+            fi
+          - cd ..
+          - unzip $CACHE/ndk.zip > /dev/null
           - export ANDROID_NDK_HOME=`pwd`/android-ndk-$NDK_VERSION
           - cd "${PUSHD}"
         script:
@@ -306,15 +310,6 @@ jobs:
           - docker exec -it emscripten emmake make -C emscripten
 
 before_deploy:
-  - sed=sed; date=date
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" ]]
-    then
-        brew update
-        brew install gnu-sed
-        sed=gsed
-        date=gdate
-    fi
   - |
     if ! [[ -z "$ANDROID_BUILD_TOOLS" ]]
     then
@@ -325,12 +320,14 @@ before_deploy:
         sudo gem install fastlane
         echo ${PLAY_API_JSONFILE} | base64 -d > google-key.json;
     fi
-  - DATE=$($date -d $(git show -s --format=%cI) "+%F")
+  - CI=$(git show -s --format=%cI)
+  - DATE=${CI%T*}
   - COMMIT=$(git rev-parse --short HEAD)
+  - VERSION=v$DATE-g$COMMIT
   - set -f
   - |
-    $sed -i "
-    s/@VERSION@/v$DATE-g$COMMIT/g
+    sed -i.bak "
+    s/@VERSION@/$VERSION/g
     s/@DESC@/$(echo -n $TRAVIS_COMMIT_MESSAGE|tr '\r' '\\r'|tr '\n' '\\n'|sed -e 's@[\\"]@\\&@g;s@[/&\$]@\\&@g')/g
     s/@RELEASE_DATE@/$(git show -s --format=%cI)/g
     s/@VCS_TAG@/$(git describe --tags)/g
@@ -366,12 +363,19 @@ deploy:
       all_branches: true
       tags: true
   - provider: bintray
-    user: palxex
-    key: $BINTRAY_TOKEN
+    user: $BINTRAY_USER
+    key: $BINTRAY_KEY
     file: bintray.json
     skip_cleanup: true
     on:
       all_branches: true
+
+after_deploy:
+  - curl -sS -u "$BINTRAY_USER:$BINTRAY_KEY" -X PATCH "https://api.bintray.com/packages/sdlpal/nightly/$TRAVIS_BRANCH" -H "Content-Type:application/json" -d '{"github_repo":"sdlpal/sdlpal"}'
+  - curl -sS -u "$BINTRAY_USER:$BINTRAY_KEY" -X POST "https://api.bintray.com/packages/sdlpal/nightly/$TRAVIS_BRANCH/readme" -H "Content-Type:application/json" -d '{"github":{"github_repo":"sdlpal/sdlpal"}}'
+  - FILE=$(ls deploy)
+  - sleep 10
+  - curl -sS -u "$BINTRAY_USER:$BINTRAY_KEY" -X PUT "https://api.bintray.com/file_metadata/sdlpal/nightly/$VERSION/$FILE" -H "Content-Type:application/json" -d '{"list_in_downloads":true}'
 
 notifications:
   webhooks:
