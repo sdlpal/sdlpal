@@ -222,15 +222,20 @@ jobs:
             - $HOME/.gradle/wrapper/dists/
         before_install:
           - export PUSHD="$(pwd)"
+          - mkdir -p $CACHE
+          - cd $CACHE
           - |
-            if ! [ -f $CACHE/ndk.zip ]
+            if [ -f ndk.zip ]
             then
-              mkdir -p $CACHE
-              cd $CACHE
-              wget http://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip -O ndk.zip
+              mv ndk.zip ndk-$NDK_VERSION.zip
+            fi
+          - |
+            if ! [ -f ndk-$NDK_VERSION.zip ]
+            then
+              wget http://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip -O ndk-$NDK_VERSION.zip
             fi
           - cd ..
-          - unzip $CACHE/ndk.zip > /dev/null
+          - unzip $CACHE/ndk-$NDK_VERSION.zip > /dev/null
           - export ANDROID_NDK_HOME=`pwd`/android-ndk-$NDK_VERSION
           - cd "${PUSHD}"
         script:
@@ -247,6 +252,7 @@ jobs:
             else
               jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 1
             fi
+          - if [[ $TRAVIS_COMMIT_MESSAGE =~ .*[skip\ play].* ]]; then PLAY_DEPLOY=0; else PLAY_DEPLOY=1; fi
 
       - os: osx
         osx_image: xcode11
@@ -311,7 +317,7 @@ jobs:
 
 before_deploy:
   - |
-    if ! [[ -z "$ANDROID_BUILD_TOOLS" ]]
+    if [[ x"$PLAY_DEPLOY" == "x1" ]]
     then
         sudo apt-add-repository -y ppa:brightbox/ruby-ng
         sudo apt-get update
@@ -343,7 +349,7 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: bash -c '[[ -z "$ANDROID_BUILD_TOOLS" ]] || fastlane supply --apk deploy/sdlpal-release.apk --track alpha --json_key ./google-key.json --package_name com.sdlpal.sdlpal'
+    script: bash -c '[[ x"$PLAY_DEPLOY" != "x1" ]] || fastlane supply --apk deploy/sdlpal-release.apk --track alpha --json_key ./google-key.json --package_name com.sdlpal.sdlpal'
     skip_cleanup: true
     on:
       branch: master
