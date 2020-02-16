@@ -243,8 +243,9 @@ jobs:
           - sed -i.bak s/"android:versionCode.*"/"android:versionCode=\"`date +'%s'`\""/g ./app/src/main/AndroidManifest.xml
           - ./gradlew assembleRelease
           - cd ..
+          - if [[ $TRAVIS_COMMIT_MESSAGE =~ .*[skip\ play].* ]]; then PLAY_DEPLOY=0; else PLAY_DEPLOY=1; fi
           - |
-            if ! [ -z "$ANDROID_KEY_FILE" ]
+            if [[ x"$PLAY_DEPLOY" == "x1" ]] && ! [ -z "$ANDROID_KEY_FILE" ]
             then
               /usr/local/android-sdk/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk deploy/sdlpal-release.apk
               echo ${ANDROID_KEY_FILE} | base64 -d > android-key.key
@@ -252,7 +253,6 @@ jobs:
             else
               jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 1
             fi
-          - if [[ $TRAVIS_COMMIT_MESSAGE =~ .*[skip\ play].* ]]; then PLAY_DEPLOY=0; else PLAY_DEPLOY=1; fi
 
       - os: osx
         osx_image: xcode11
