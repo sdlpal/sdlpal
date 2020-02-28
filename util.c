@@ -602,6 +602,7 @@ UTIL_GetFullPathName(
 		result = internal_buffer[PAL_MAX_GLOBAL_BUFFERS];
 	}
 
+#ifndef __EMSCRIPTEN__
 #if !defined(PAL_FILESYSTEM_IGNORE_CASE) || !PAL_FILESYSTEM_IGNORE_CASE
 	if (result == NULL)
 	{
@@ -633,6 +634,7 @@ UTIL_GetFullPathName(
 			free(list);
 		}
 	}
+#endif
 #endif
 	if (result != NULL)
 	{

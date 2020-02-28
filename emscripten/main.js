@@ -8,7 +8,7 @@ var strLoading = 'Loading';
 var strDelConfirm = "This will DELETE your game data and saved games stored in browser cache. Type 'YES' to continue.";
 
 var userLang = navigator.language || navigator.userLanguage;
-if (userLang === 'zh-CN') {
+if (userLang === 'zh-CN' || userLang.startsWith('zh-Hans') ) {
     strSyncingFs = '正在同步文件系统...';
     strDone = '完成。';
     strDeleting = '正在删除...';
@@ -17,7 +17,7 @@ if (userLang === 'zh-CN') {
     strInit = '正在初始化...';
     strLoading = '正在加载';
     strDelConfirm = '此操作将删除您浏览器缓存中保存的数据文件及存档。请输入 "YES" 继续：';
-} else if (userLang === 'zh-TW') {
+} else if (userLang === 'zh-TW' || userLang.startsWith('zh-Hant') ) {
     strSyncingFs = '正在同步檔案系統...';
     strDone = '完成。';
     strDeleting = '正在刪除...';

@@ -313,6 +313,7 @@ jobs:
         before_install:
           - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:$TAG bash
         script:
+          - sed -i 's@http://localhost:8080/@https://sdlpal.github.io/demo/@g' emscripten/Makefile
           - docker exec -it emscripten emmake make -C emscripten
 
 before_deploy:
@@ -354,7 +355,7 @@ deploy:
     on:
       branch: master
   - provider: script
-    script: bash -c '[[ -f "emscripten/sdlpal.js" ]] && git clone --depth=1 https://github.com/sdlpal/demo ~/demo && cp -f emscripten/*.{html,js,wasm,png} ~/demo && cd ~/demo && git commit -mAutoupdate -a && git push "https://${AUTO_UPDATE_USERNAME}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo" || true'
+    script: bash -c '[[ -f "emscripten/sdlpal.js" ]] && git clone --depth=1 https://github.com/sdlpal/demo ~/demo && cp -f emscripten/*.{html,js,wasm,wasm.map,png} ~/demo && cd ~/demo && git commit -mAutoupdate -a && git push "https://${AUTO_UPDATE_USERNAME}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo" || true'
     skip_cleanup: true
     on:
       branch: master

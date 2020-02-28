@@ -21,7 +21,7 @@ DEPFILES = $(OBJFILES:.o=.d)
 CFLAGS = -g4 -Wall -O2 -fno-strict-aliasing -I. -I../ -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(DEPFLAGS) $(EMPORTS) $(GENERATED)
 CPPFLAGS = $(CFLAGS) -std=c++11
 override LDFLAGS += -g4 -O2 $(EMPORTS) -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -lidbfs.js -s DEMANGLE_SUPPORT=1 -s ASYNCIFY=1 -s NO_EXIT_RUNTIME=1 \
-	-s EXPORTED_FUNCTIONS="['_EMSCRIPTEN_main']" -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["Pointer_stringify", "cwrap"]' -s USE_WEBGL2=1 -s ASSERTIONS=1 --source-map-base http://localhost:8080/
+	-s EXPORTED_FUNCTIONS="['_EMSCRIPTEN_main']" -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["cwrap"]' -s USE_WEBGL2=1 -s ASSERTIONS=1 --source-map-base http://localhost:8080/
 
 POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 
