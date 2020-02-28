@@ -251,6 +251,7 @@ jobs:
               echo ${ANDROID_KEY_FILE} | base64 -d > android-key.key
               /usr/local/android-sdk/build-tools/${ANDROID_BUILD_TOOLS}/apksigner sign --ks android-key.key --ks-pass pass:${ANDROID_KEY_PASS} deploy/sdlpal-release.apk
             else
+              PLAY_DEPLOY=0
               jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 1
             fi
 
@@ -307,7 +308,7 @@ jobs:
 
       - os: linux
         language: node_js
-        env: TARGET=Emscripten TAG=1.39.4-upstream
+        env: TARGET=Emscripten TAG=1.39.8-upstream
         services:
           - docker
         before_install:
@@ -355,7 +356,7 @@ deploy:
     on:
       branch: master
   - provider: script
-    script: bash -c '[[ -f "emscripten/sdlpal.js" ]] && git clone --depth=1 https://github.com/sdlpal/demo ~/demo && cp -f emscripten/*.{html,js,wasm,wasm.map,png} ~/demo && cd ~/demo && git commit -mAutoupdate -a && git push "https://${AUTO_UPDATE_USERNAME}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo" || true'
+    script: bash -c '[[ -f "emscripten/sdlpal.js" ]] && git clone --depth=1 https://github.com/sdlpal/demo ~/demo && cp -f emscripten/*.{html,js,wasm,wasm.map,png} ~/demo && cd ~/demo && git add -A && git commit -mAutoupdate -a && git push "https://${AUTO_UPDATE_USERNAME}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo" || true'
     skip_cleanup: true
     on:
       branch: master
