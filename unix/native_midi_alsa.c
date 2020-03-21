@@ -55,6 +55,7 @@ struct _NativeMidiSong {
     int                 current_volume;
     volatile int        new_volume;
     int                 looping;
+    int                 channel_volume[16];
 
     SDL_Thread         *thread;
 };
@@ -498,11 +499,11 @@ static int play_midi(void *_song)
             event.dest.client = song->dst_client_id;
             event.dest.port = song->dst_port_id;
             event.data.control.param = MIDI_CTL_MSB_MAIN_VOLUME;
-            event.data.control.value = song->current_volume;
 
             for (chan = 0; chan < 16; chan++)
             {
                 event.data.control.channel = chan;
+                event.data.control.value = (song->current_volume * song->channel_volume[chan]) / 127;
                 snd_seq_event_output(song->sequencer, &event);
             }
 
@@ -550,6 +551,11 @@ static int play_midi(void *_song)
                     event.data.control.channel = events[current_event].channel;
                     event.data.control.param = events[current_event].data1;
                     event.data.control.value = events[current_event].data2;
+                    if (event.data.control.param == MIDI_CTL_MSB_MAIN_VOLUME)
+                    {
+                        song->channel_volume[event.data.control.channel] = event.data.control.value;
+                        event.data.control.value = (event.data.control.value * song->current_volume) / 127;
+                    }
                     break;
                 case SND_SEQ_EVENT_PGMCHANGE:
                 case SND_SEQ_EVENT_CHANPRESS:
@@ -688,6 +694,12 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
     song->current_volume = 128;
     song->new_volume = 128;
     song->timediv = division;
+
+    int chan;
+    for (chan = 0; chan < 16; chan++)
+    {
+        song->channel_volume[chan] = 127;
+    }
 
     if (convert_event_list(song, eventlist) < 0)
     {
