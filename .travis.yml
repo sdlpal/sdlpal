@@ -243,7 +243,7 @@ jobs:
           - sed -i.bak s/"android:versionCode.*"/"android:versionCode=\"`date +'%s'`\""/g ./app/src/main/AndroidManifest.xml
           - ./gradlew assembleRelease
           - cd ..
-          - if [[ $TRAVIS_COMMIT_MESSAGE =~ .*[skip\ play].* ]]; then PLAY_DEPLOY=0; else PLAY_DEPLOY=1; fi
+          - if [[ $TRAVIS_COMMIT_MESSAGE =~ .*[skip\ play].* ]]; then export PLAY_DEPLOY=0; else export PLAY_DEPLOY=1; fi
           - |
             if [[ x"$PLAY_DEPLOY" == "x1" ]] && ! [ -z "$ANDROID_KEY_FILE" ]
             then
