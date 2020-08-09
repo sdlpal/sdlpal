@@ -25,6 +25,8 @@
 
 #include "common.h"
 
+#define TOUCHOVERLAY_ALPHAMOD           120
+
 #define VIDEO_CopySurface(s, sr, t, tr) SDL_BlitSurface((s), (sr), (t), (tr))
 #define VIDEO_CopyEntireSurface(s, t)   SDL_BlitSurface((s), NULL, (t), NULL)
 #define VIDEO_BackupScreen(s)           SDL_BlitSurface((s), NULL, gpScreenBak, NULL)

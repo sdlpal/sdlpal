@@ -253,7 +253,7 @@ VIDEO_Startup(
          SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, gConfig.pszScaleQuality);
          gpTouchOverlay = SDL_CreateTextureFromSurface(gpRenderer, overlay);
          SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-         SDL_SetTextureAlphaMod(gpTouchOverlay, 120);
+         SDL_SetTextureAlphaMod(gpTouchOverlay, TOUCHOVERLAY_ALPHAMOD );
          SDL_FreeSurface(overlay);
       }
    }

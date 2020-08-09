@@ -50,6 +50,9 @@
 #define __WIDETEXT(quote) L##quote
 #define WIDETEXT(quote) __WIDETEXT(quote)
 
+#define STR_INDIR(x)                    #x
+#define STR(x)                          STR_INDIR(x)
+
 #if !defined(fmax) || !defined(fmin)
 # include <math.h>
 #endif

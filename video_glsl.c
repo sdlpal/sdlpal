@@ -223,14 +223,10 @@ return pow((channel + SRGB_ALPHA) / (1.0 + SRGB_ALPHA), 2.4);    \r\n\
 vec3 srgb_to_rgb(vec3 srgb) {       \r\n\
 return vec3(srgb_to_linear(srgb.r),    srgb_to_linear(srgb.g),    srgb_to_linear(srgb.b));\r\n\
 }\r\n\
-vec4 blend(vec4 src, vec4 dst){     \r\n\
-float sat = (dst.r+dst.g+dst.b)/3.0;\r\n\
-vec3 average = vec3(sat,sat,sat);   \r\n\
-dst.rgb -= average*0.8;             \r\n\
-dst.a=0.5;                          \r\n\
-vec4 sfactor = vec4(1,1,1,1);       \r\n\
-vec4 dfactor = vec4(1,1,1,1);       \r\n\
-return src*sfactor+dst*dfactor;     \r\n\
+vec4 blend(vec4 dst, vec4 src){     \r\n\
+src.a*=(" STR(TOUCHOVERLAY_ALPHAMOD) ".0/255.0);\r\n\
+float final_alpha = 1.0;\r\n\
+return vec4( (src.rgb * src.a + dst.rgb * dst.a * (1.0 - src.a)) / final_alpha, final_alpha);\r\n\
 }\r\n\
 void main()                         \r\n\
 {                                   \r\n\
@@ -945,7 +941,7 @@ void VIDEO_GLSL_Init() {
 #   endif
 #endif
     
-#if SDL_VIDEO_DRIVER_RPI || SDL_VIDEO_DRIVER_EMSCRIPTEN || SDL_VIDEO_DRIVER_WINRT || SDL_VIDEO_DRIVER_ANDROID
+#if SDL_VIDEO_DRIVER_RPI || SDL_VIDEO_DRIVER_EMSCRIPTEN || SDL_VIDEO_DRIVER_WINRT || SDL_VIDEO_DRIVER_ANDROID || SDL_VIDEO_DRIVER_COCOA || SDL_VIDEO_DRIVER_UIKIT
     manualSRGB = 1;
 #else
     //
