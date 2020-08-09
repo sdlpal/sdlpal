@@ -259,6 +259,7 @@
 		C6CFDD5D23A858B800DEB8F9 /* opus_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA423A858B800DEB8F9 /* opus_stream.c */; };
 		C6CFDD5E23A858B800DEB8F9 /* mapping_matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA523A858B800DEB8F9 /* mapping_matrix.c */; };
 		C6CFDD5F23A858B800DEB8F9 /* opus_multistream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDCA623A858B800DEB8F9 /* opus_multistream.c */; };
+		C6E73CFB24DFA11500A5CE48 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E73CF724DFA11500A5CE48 /* AudioUnit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -766,6 +767,7 @@
 		C6CFDCA523A858B800DEB8F9 /* mapping_matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mapping_matrix.c; sourceTree = "<group>"; };
 		C6CFDCA623A858B800DEB8F9 /* opus_multistream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_multistream.c; sourceTree = "<group>"; };
 		C6CFDCA723A858B800DEB8F9 /* analysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analysis.h; sourceTree = "<group>"; };
+		C6E73CF724DFA11500A5CE48 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -773,6 +775,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6E73CFB24DFA11500A5CE48 /* AudioUnit.framework in Frameworks */,
 				C6BF8C7420A1498A000AE188 /* Metal.framework in Frameworks */,
 				C6972640202E155C00293A73 /* OpenGL.framework in Frameworks */,
 				C63505D41EB4633000186049 /* Carbon.framework in Frameworks */,
@@ -904,6 +907,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C6E73CF724DFA11500A5CE48 /* AudioUnit.framework */,
 				C6BF8C7020A1498A000AE188 /* Metal.framework */,
 				C697263C202E155C00293A73 /* OpenGL.framework */,
 				C63505D21EB4631100186049 /* ForceFeedback.framework */,
@@ -1661,7 +1665,7 @@
 				C6CFDCE223A858B800DEB8F9 /* pitch_est_tables.c in Sources */,
 				5757D2831B7A3D5800464A74 /* smallft.c in Sources */,
 				C6CFDCEB23A858B800DEB8F9 /* resampler_private_AR2.c in Sources */,
-				5757D2971B7A3DCE00464A74 /* opus_resampler.c in Sources */,
+				5757D2971B7A3DCE00464A74 /* resampler.c in Sources */,
 				5757D2851B7A3D5800464A74 /* vorbisenc.c in Sources */,
 				7104FD6A0D772F6300A97E53 /* battle.c in Sources */,
 				C6CFDD3223A858B800DEB8F9 /* k2a_FLP.c in Sources */,
@@ -1669,7 +1673,7 @@
 				C6CFDCE723A858B800DEB8F9 /* A2NLSF.c in Sources */,
 				5757D2761B7A3D5800464A74 /* floor0.c in Sources */,
 				7104FD730D772F6300A97E53 /* global.c in Sources */,
-				C6CFDCD223A858B800DEB8F9 /* resampler.c in Sources */,
+				C6CFDCD223A858B800DEB8F9 /* opus_resampler.c in Sources */,
 				C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */,
 				7104FD750D772F6300A97E53 /* input.c in Sources */,
 				C6CFDD0E23A858B800DEB8F9 /* control_SNR.c in Sources */,
@@ -1678,7 +1682,7 @@
 				C6CFDCF023A858B800DEB8F9 /* tables_NLSF_CB_NB_MB.c in Sources */,
 				C6CFDCDD23A858B800DEB8F9 /* stereo_find_predictor.c in Sources */,
 				C6CFDD2E23A858B800DEB8F9 /* find_LPC_FLP.c in Sources */,
-				5757D27E1B7A3D5800464A74 /* opus_mdct.c in Sources */,
+				5757D27E1B7A3D5800464A74 /* mdct.c in Sources */,
 				7104FD7A0D772F6300A97E53 /* palcommon.c in Sources */,
 				C6CFDD1223A858B800DEB8F9 /* HP_variable_cutoff.c in Sources */,
 				C6CFDCD623A858B800DEB8F9 /* PLC.c in Sources */,
@@ -1689,7 +1693,7 @@
 				7104FD7E0D772F6300A97E53 /* play.c in Sources */,
 				C6CFDCE923A858B800DEB8F9 /* decode_pulses.c in Sources */,
 				C6CFDCEC23A858B800DEB8F9 /* tables_NLSF_CB_WB.c in Sources */,
-				5757D2701B7A3D5800464A74 /* opus_analysis.c in Sources */,
+				5757D2701B7A3D5800464A74 /* analysis.c in Sources */,
 				C6CFDD5823A858B800DEB8F9 /* opus_projection_encoder.c in Sources */,
 				C6CFDD1723A858B800DEB8F9 /* LPC_analysis_filter_FLP.c in Sources */,
 				C6CFDCC823A858B800DEB8F9 /* gain_quant.c in Sources */,
@@ -1843,14 +1847,14 @@
 				71E23EA413F6D1AD001287B6 /* music_mad.c in Sources */,
 				C6CFDCF423A858B800DEB8F9 /* bwexpander.c in Sources */,
 				5757D2811B7A3D5800464A74 /* res0.c in Sources */,
-				C6CFDD5023A858B800DEB8F9 /* info.c in Sources */,
+				C6CFDD5023A858B800DEB8F9 /* opus_info.c in Sources */,
 				C63DF68B1EC50B7300C778B8 /* util.mm in Sources */,
 				C6CFDCD323A858B800DEB8F9 /* LPC_analysis_filter.c in Sources */,
 				C6CFDCCC23A858B800DEB8F9 /* tables_pulses_per_block.c in Sources */,
 				C6CFDD1023A858B800DEB8F9 /* stereo_decode_pred.c in Sources */,
 				C6CFDD4323A858B800DEB8F9 /* stereo_encode_pred.c in Sources */,
 				C6CFDD1E23A858B800DEB8F9 /* encode_frame_FLP.c in Sources */,
-				71E23EA913F6D1AD001287B6 /* opus_stream.c in Sources */,
+				71E23EA913F6D1AD001287B6 /* stream.c in Sources */,
 				C6CFDCDA23A858B800DEB8F9 /* table_LSF_cos.c in Sources */,
 				71E23EAB13F6D1AD001287B6 /* synth.c in Sources */,
 				713765641ED86C930084F495 /* aviplay.c in Sources */,
@@ -1868,7 +1872,7 @@
 				C6CFDD1F23A858B800DEB8F9 /* find_pitch_lags_FLP.c in Sources */,
 				5757D2731B7A3D5800464A74 /* block.c in Sources */,
 				C6CFDD1123A858B800DEB8F9 /* encode_indices.c in Sources */,
-				5757D2791B7A3D5800464A74 /* opus_info.c in Sources */,
+				5757D2791B7A3D5800464A74 /* info.c in Sources */,
 				C6CFDD4423A858B800DEB8F9 /* NLSF2A.c in Sources */,
 				C6CFDD4C23A858B800DEB8F9 /* sum_sqr_shift.c in Sources */,
 			);
