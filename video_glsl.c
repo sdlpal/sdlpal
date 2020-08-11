@@ -55,8 +55,7 @@ static uint32_t gVAOIds[MAX_INDEX];
 static uint32_t gVBOIds[MAX_INDEX];
 static uint32_t gEBOId;
 static uint32_t gPassID = -1;
-static int gMVPSlots[MAX_INDEX], gHDRSlot=-1, gSRGBSlot=-1, gTouchOverlaySlot=-1;
-static int manualSRGB = 0;
+static int gMVPSlots[MAX_INDEX], gHDRSlot=-1, gTouchOverlaySlot=-1;
 static int VAOSupported = 1;
 static int glversion_major, glversion_minor;
 static int glslversion_major, glslversion_minor;
@@ -193,7 +192,6 @@ precision mediump float;            \r\n\
 COMPAT_VARYING vec2 v_texCoord;     \r\n\
 uniform sampler2D tex0;             \r\n\
 uniform int HDR;                    \r\n\
-uniform int sRGB;                   \r\n\
 uniform sampler2D TouchOverlay;     \r\n\
 vec3 ACESFilm(vec3 x)               \r\n\
 {                                   \r\n\
@@ -238,7 +236,6 @@ FragColor.rgb = FragColor.bgr;      \r\n\
 vec3 color = FragColor.rgb;         \r\n\
 if( HDR > 0 )                       \r\n\
 color = ACESFilm(color);            \r\n\
-if( sRGB > 0 )                      \r\n\
 color = rgb_to_srgb(color);         \r\n\
 FragColor.rgb=color;                \r\n\
 FragColor = blend(FragColor, COMPAT_TEXTURE(TouchOverlay , v_texCoord.xy));     \r\n\
@@ -437,11 +434,7 @@ void setupShaderParams(int pass){
         gHDRSlot = glGetUniformLocation(gProgramIds[pass], "HDR");
         if(gHDRSlot < 0)
             UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform HDR not exist\n");
-        
-        gSRGBSlot = glGetUniformLocation(gProgramIds[pass], "sRGB");
-        if(gSRGBSlot < 0)
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform sRGB not exist\n");
-        
+
         gTouchOverlaySlot = glGetUniformLocation(gProgramIds[pass], "TouchOverlay");
         if(gTouchOverlaySlot < 0)
             UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform TouchOverlay not exist\n");
@@ -614,14 +607,8 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
     glUniformMatrix4fv(gMVPSlots[pass], 1, GL_FALSE, gOrthoMatrixes[pass].m);
     
     if( pass == 0 ) {
-#ifndef GL_ES_VERSION_3_0
-        if(!manualSRGB)
-            glEnable(GL_FRAMEBUFFER_SRGB);
-#endif
-
         GLint HDR = gConfig.fEnableHDR;
         glUniform1i(gHDRSlot, HDR);
-        glUniform1i(gSRGBSlot, manualSRGB);
         glUniform1i(gTouchOverlaySlot, touchoverlay_texture_slot);
     }
 
@@ -923,11 +910,10 @@ int get_SDL_GLAttribute(SDL_GLattr attr) {
 }
 
 void VIDEO_GLSL_Init() {
-    int orig_major, orig_minor, orig_profile, orig_srgb;
+    int orig_major, orig_minor, orig_profile;
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &orig_major);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &orig_minor);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &orig_profile);
-    SDL_GL_GetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, &orig_srgb);
 #if GLES
     SDL_SetHint( SDL_HINT_RENDER_DRIVER, "opengles2");
 #   if SDL_VIDEO_OPENGL_EGL && (SDL_VIDEO_DRIVER_EMSCRIPTEN || SDL_VIDEO_DRIVER_WINRT)
@@ -940,32 +926,18 @@ void VIDEO_GLSL_Init() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #   endif
 #endif
-    
-#if SDL_VIDEO_DRIVER_RPI || SDL_VIDEO_DRIVER_EMSCRIPTEN || SDL_VIDEO_DRIVER_WINRT || SDL_VIDEO_DRIVER_ANDROID || SDL_VIDEO_DRIVER_COCOA || SDL_VIDEO_DRIVER_UIKIT
-    manualSRGB = 1;
-#else
-    //
-    // iOS need this line to enable built-in color correction
-    // WebGL/WinRT/RaspberryPI will not crash with sRGB capable, but will not work with it too.
-    // after several tests, Android which version below Nougat completely unable to initial video with sRGB framebuffer capability requested, and MAY CRASH on extension detection;
-    // but Oreo behavior changed.
-    //
-    SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1);
-#endif
-    
+
     Uint32 flags = PAL_VIDEO_INIT_FLAGS | (gConfig.fFullScreen ? SDL_WINDOW_BORDERLESS : 0) | SDL_WINDOW_OPENGL;
     
-    UTIL_LogOutput(LOGLEVEL_DEBUG, "requesting to create window with flags: %s %s profile latest available, %s based sRGB gamma correction \n", SDL_GetHint( SDL_HINT_RENDER_DRIVER ),  get_gl_profile(get_SDL_GLAttribute(SDL_GL_CONTEXT_PROFILE_MASK)), manualSRGB ? "shader" : "framebuffer_sRGB" );
+    UTIL_LogOutput(LOGLEVEL_DEBUG, "requesting to create window with flags: %s %s profile latest available\n", SDL_GetHint( SDL_HINT_RENDER_DRIVER ),  get_gl_profile(get_SDL_GLAttribute(SDL_GL_CONTEXT_PROFILE_MASK)));
     gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
     if (gpWindow == NULL) {
         UTIL_LogOutput(LOGLEVEL_DEBUG, "failed to create window with ordered flags! %s\n", SDL_GetError());
-        UTIL_LogOutput(LOGLEVEL_DEBUG, "reverting to: OpenGL %s profile %d.%d, %s based sRGB gamma correction \n", get_gl_profile(orig_profile), orig_major, orig_minor, "shader" );
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "reverting to: OpenGL %s profile %d.%d\n", get_gl_profile(orig_profile), orig_major, orig_minor);
         
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, orig_major);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, orig_minor);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,  orig_profile);
-        SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, orig_srgb);
-        manualSRGB = 1;
         gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
     }
 }
