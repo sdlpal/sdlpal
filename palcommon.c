@@ -528,6 +528,7 @@ PAL_RLEBlitMonoColor(
    // Start decoding and blitting the bitmap.
    //
    lpBitmapRLE += 4;
+   bColor &= 0xF0;
    for (i = 0; i < uiLen;)
    {
       T = *lpBitmapRLE++;
