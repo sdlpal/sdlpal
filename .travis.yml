@@ -172,32 +172,32 @@ jobs:
           apt:
             packages:
             - unzip
+        services:
+          - docker
         before_install:
           - export PUSHD="$(pwd)"
           - mkdir -p $CACHE/
           - cd $CACHE/
-          - wget https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb
-          - sudo dpkg -i devkitpro-pacman.deb
-          - sudo dkp-pacman -Syu
-          - sudo dkp-pacman -S 3ds-dev --noconfirm
-          - export DEVKITPRO=/opt/devkitpro
-          - export DEVKITARM=/opt/devkitpro/devkitARM
-          - sudo chown $(whoami):$(whoami) /opt/devkitpro
-          - rm -rf SDL-1.2-N3DS
-          - git clone https://github.com/zephray/SDL-1.2-N3DS.git
-          - cd SDL-1.2-N3DS/SDL-1.2.15
-          - make -f Makefile.n3ds install
-          - wget https://github.com/profi200/Project_CTR/releases/download/0.15/makerom_015_ctrtool.zip
-          - unzip makerom_015_ctrtool.zip
-          - sudo mkdir -p /opt/ctrtool/bin
-          - sudo cp Linux_x86_64/* /opt/ctrtool/bin/
-          - sudo chmod +x /opt/ctrtool/bin/*
-          - export PATH=/opt/ctrtool/bin:$PATH
+          - docker run -dit --name devkit -v $(pwd):/cache -v $TRAVIS_BUILD_DIR:/src devkitpro/devkitarm bash
+          - |
+            if ! [ -d $CACHE/SDL-1.2-N3DS ]
+            then
+              git clone https://github.com/zephray/SDL-1.2-N3DS.git
+              sed -i 's/GSPGPU_FramebufferFormats/GSPGPU_FramebufferFormat/g' SDL-1.2-N3DS/SDL-1.2.15/src/video/n3ds/SDL_n3dsvideo.h
+            fi
+          - docker exec -it devkit make -C cache/SDL-1.2-N3DS/SDL-1.2.15 -f Makefile.n3ds install
+          - |
+            if ! [ -f $CACHE/Linux_x86_64/ctrtool ] || ! [ -f $CACHE/Linux_x86_64/makerom ]
+            then
+              wget https://github.com/profi200/Project_CTR/releases/download/0.15/makerom_015_ctrtool.zip
+              unzip -o makerom_015_ctrtool.zip
+              chmod +x Linux_x86_64/*
+            fi
+          - docker exec -it devkit cp /cache/Linux_x86_64/{ctrtool,makerom} /opt/devkitpro/tools/bin
           - cd "${PUSHD}"
         script:
           - cd 3ds
-          - make
-          - make cia
+          - docker exec -it devkit make -C src/3ds cia
           - cp sdlpal.cia ../deploy/sdlpal-3ds.cia
           - cd ..
 
