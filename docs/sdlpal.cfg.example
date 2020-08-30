@@ -67,7 +67,7 @@
 #SurroundOPLOffset=384.0
 
 # ResampleQuality: Indicates the resample quality, valid values from 0 to 4 (default).
-#                  Larger value indicates higher quality and higher hardware requirement.
+#                  Larger value indicates higher quality.
 #ResampleQuality=4
 
 # AudioBufferSize: Indicates the size of audio buffer in samples. Valid values are in 
