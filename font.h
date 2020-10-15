@@ -29,6 +29,9 @@
 
 PAL_C_LINKAGE_BEGIN
 
+extern char *font_offset_x;
+extern char *font_offset_y;
+
 /*++
   Purpose:
 

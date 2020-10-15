@@ -116,7 +116,7 @@ PAL_DetectCodePage(
 {
 	FILE *fp;
 	char *word_buf = NULL;
-	long word_len = 0;
+	size_t word_len;
 	CODEPAGE cp = CP_BIG5;
 
 	if (NULL != (fp = UTIL_OpenFile(filename)))
@@ -740,7 +740,7 @@ PAL_SaveGame_Common(
 )
 {
 	FILE *fp;
-	int   i;
+	size_t i;
 
 	s->wSavedTimes = wSavedTimes;
 	s->wViewportX = PAL_X(gpGlobals->viewport);

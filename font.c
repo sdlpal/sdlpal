@@ -34,6 +34,11 @@
 
 static int _font_height = 16;
 
+//#define POINT_IMPORT 1
+
+char *font_offset_x;
+char *font_offset_y;
+
 static uint8_t reverseBits(uint8_t x) {
     uint8_t y = 0;
     for (int i = 0 ; i < 8; i++){
@@ -218,6 +223,11 @@ PAL_LoadUserFont(
    BYTE bFontGlyph[32] = {0};
    int iCurHeight = 0;
    int bbw = 0, bbh = 0, bbox, bboy;
+   int got_size;
+   int size_x, size_y;
+   int cstate = 0;
+   int font_w_global = 0;
+   int font_w = 16;
 
    FILE *fp = UTIL_OpenFileForMode(pszBdfFileName, "r");
 
@@ -255,6 +265,11 @@ PAL_LoadUserFont(
                TerminateOnError("Charset of %s is %s, which is not a supported yet.",pszBdfFileName,buf);
             }
          }
+         else if (strncmp(buf, "STARTCHAR", 9) == 0)
+         {
+            cstate = 1;
+            font_w = font_w_global;
+         }
          else if (strncmp(buf, "ENCODING", 8) == 0)
          {
             dwEncoding = atoi(buf + 8);
@@ -262,22 +277,52 @@ PAL_LoadUserFont(
          else if (strncmp(buf, "SIZE", 3) == 0)
          {
             int bytes_consumed = 0, bytes_now;
-            int got_size;
             BOOL got_expected = FALSE;
             char size[10];
             sscanf(buf + bytes_consumed, "%s%n", size, &bytes_now);
             bytes_consumed += bytes_now;
-            while (sscanf(buf + bytes_consumed, "%d%n", &got_size, &bytes_now))
-            {
-               bytes_consumed += bytes_now;
+            sscanf(buf + bytes_consumed, "%d%n", &got_size, &bytes_now); bytes_consumed += bytes_now;
+            sscanf(buf + bytes_consumed, "%d%n", &size_x, &bytes_now); bytes_consumed += bytes_now;
+            sscanf(buf + bytes_consumed, "%d%n", &size_y, &bytes_now); bytes_consumed += bytes_now;
                if (got_size == 16 || got_size == 15)
                {
                   _font_height = got_size;
                   got_expected = TRUE;
                }
-            }
             if (!got_expected)
                TerminateOnError("%s not contains expected font size 15/16!", pszBdfFileName);
+         }
+         /*else if (strncmp(buf, "SWIDTH", 6) == 0)
+         {
+             int bytes_consumed = 0, bytes_now;
+             char swidth[10];
+             int swidth_x, swidth_y;
+             sscanf(buf + bytes_consumed, "%s%n", swidth, &bytes_now); bytes_consumed += bytes_now;
+             sscanf(buf + bytes_consumed, "%d%n", &swidth_x, &bytes_now); bytes_consumed += bytes_now;
+             sscanf(buf + bytes_consumed, "%d%n", &swidth_y, &bytes_now); bytes_consumed += bytes_now;
+             font_w = (int)ceil(swidth_x / 1000.0 * (size_x / 72) * got_size / 2) << 1;
+             if( font_w > 8 && font_w <= 16 )
+                font_w = 16;
+             if( !cstate ) {
+                 swidth_x_global = swidth_x;
+                 swidth_y_global = swidth_y;
+                 font_w_global = font_w;
+             }
+         }*/
+         else if (strncmp(buf, "DWIDTH", 6) == 0)
+         {
+             int bytes_consumed = 0, bytes_now;
+             char dwidth[10];
+             int dwidth_x, dwidth_y;
+             sscanf(buf + bytes_consumed, "%s%n", dwidth, &bytes_now); bytes_consumed += bytes_now;
+             sscanf(buf + bytes_consumed, "%d%n", &dwidth_x, &bytes_now); bytes_consumed += bytes_now;
+             sscanf(buf + bytes_consumed, "%d%n", &dwidth_y, &bytes_now); bytes_consumed += bytes_now;
+             font_w = dwidth_x;
+             if (font_w > 8 && font_w <= 16)
+                 font_w = 16;
+             if (!cstate) {
+                 font_w_global = font_w;
+             }
          }
          else if (strncmp(buf, "BBX", 3) == 0)
          {
@@ -293,10 +338,6 @@ PAL_LoadUserFont(
          {
             state = 1;
             iCurHeight = 0;
-            for(iCurHeight=0;iCurHeight<bboy;iCurHeight++){
-               bFontGlyph[iCurHeight * 2] = 0;
-               bFontGlyph[iCurHeight * 2 + 1] = 0;
-            }
             memset(bFontGlyph, 0, sizeof(bFontGlyph));
          }
       }
@@ -323,20 +364,40 @@ PAL_LoadUserFont(
             if (wc[0] != 0)
             {
                wchar_t w = (wc[0] >= unicode_upper_base) ? (wc[0] - unicode_upper_base + unicode_lower_top) : wc[0];
+#if POINT_IMPORT
+               if (font_w <= 8) {
+                   bFontGlyph[0] = bFontGlyph[14] = 0xff;
+                   for (int m = 1; m <= 14; m++)
+                       bFontGlyph[m] |= 0x81;
+               }
+               else {
+                   bFontGlyph[0] = bFontGlyph[1] = bFontGlyph[28] = bFontGlyph[29] = 0xff;
+                   for (int m = 2; m <= 27; m++)
+                       bFontGlyph[m] |= ((m % 2) ? 1 : 0x80);
+               }
+#endif
                if (w < sizeof(unicode_font) / sizeof(unicode_font[0]))
                {
                   memcpy(unicode_font[w], bFontGlyph, sizeof(bFontGlyph));
+                  font_width[w] = font_w << 1;
+                  font_offset_x[w] = bbox;
+                  font_offset_y[w] = _font_height - bboy - bbh - 4;
+               }
+               else
+               {
+                   UTIL_LogOutput(LOGLEVEL_DEBUG, "this user font has much code than unifont! ignoring %d\n", w);
                }
             }
 
             state = 0;
+            cstate = 0;
          }
          else
          {
-            if (iCurHeight < bbh )
+            if (iCurHeight < _font_height )
             {
                WORD wCode = strtoul(buf, NULL, 16);
-               if(bbw <= 8)
+               if(font_w <= 8)
                {
                   switch(fstate)
                   {
@@ -351,8 +412,13 @@ PAL_LoadUserFont(
                         break;
                   }
                }else{
-                  bFontGlyph[iCurHeight * 2] = (wCode >> 8);
-                  bFontGlyph[iCurHeight * 2 + 1] = (wCode & 0xFF);
+                  if(strnlen(buf,sizeof(buf))<=3){
+                     bFontGlyph[iCurHeight * 2] = wCode;
+                     bFontGlyph[iCurHeight * 2 + 1] = 0;
+                  } else {
+                     bFontGlyph[iCurHeight * 2] = (wCode >> 8);
+                     bFontGlyph[iCurHeight * 2 + 1] = (wCode & 0xFF);
+                  }
                   iCurHeight++;
                }
             }
@@ -383,6 +449,10 @@ PAL_InitFont(
       } \
       _font_height = height; \
    }
+
+    size_t fonts = sizeof(font_width);
+    font_offset_x = calloc(1, fonts);
+    font_offset_y = calloc(1, fonts);
 
    if (!cfg->pszMsgFile)
    {
@@ -444,6 +514,8 @@ PAL_FreeFont(
 	void
 )
 {
+    free(font_offset_x);
+    free(font_offset_y);
 }
 
 void
@@ -457,6 +529,7 @@ PAL_DrawCharOnSurface(
 {
 	int       i, j;
 	int       x = PAL_X(pos), y = PAL_Y(pos);
+    int       x_offset, y_offset;
 
 	//
 	// Check for NULL pointer & invalid char code.
@@ -475,10 +548,13 @@ PAL_DrawCharOnSurface(
 		wChar -= (unicode_upper_base - unicode_lower_top);
 	}
 
+    x_offset = font_offset_x[wChar];
+    y_offset = font_offset_y[wChar];
+
 	//
 	// Draw the character to the surface.
 	//
-	LPBYTE dest = (LPBYTE)lpSurface->pixels + y * lpSurface->pitch + x;
+	LPBYTE dest = (LPBYTE)lpSurface->pixels + (int)max(y + y_offset, 0) * lpSurface->pitch + x;
 	LPBYTE top = (LPBYTE)lpSurface->pixels + lpSurface->h * lpSurface->pitch;
 	if (fUse8x8Font)
 	{
@@ -499,18 +575,18 @@ PAL_DrawCharOnSurface(
 		{
 			for (i = 0; i < _font_height * 2 && dest < top; i += 2, dest += lpSurface->pitch)
 			{
-				for (j = 0; j < 8 && x + j < lpSurface->w; j++)
+				for (j = 0; j < 8 && x + j + x_offset < lpSurface->w && x + j + x_offset >= 0; j++)
 				{
 					if (unicode_font[wChar][i] & (1 << (7 - j)))
 					{
-						dest[j] = bColor;
+						dest[j + x_offset] = bColor;
 					}
 				}
-				for (j = 0; j < 8 && x + j + 8 < lpSurface->w; j++)
+				for (j = 0; j < 8 && x + j + 8 + x_offset < lpSurface->w && x + j + 8 + x_offset >= 0; j++)
 				{
 					if (unicode_font[wChar][i + 1] & (1 << (7 - j)))
 					{
-						dest[j + 8] = bColor;
+						dest[j + 8 + x_offset] = bColor;
 					}
 				}
 			}
@@ -519,11 +595,11 @@ PAL_DrawCharOnSurface(
 		{
 			for (i = 0; i < _font_height && dest < top; i++, dest += lpSurface->pitch)
 			{
-				for (j = 0; j < 8 && x + j < lpSurface->w; j++)
+				for (j = 0; j < 8 && x + j + x_offset < lpSurface->w && x + j + x_offset >= 0; j++)
 				{
 					if (unicode_font[wChar][i] & (1 << (7 - j)))
 					{
-						dest[j] = bColor;
+						dest[j + x_offset] = bColor;
 					}
 				}
 			}

@@ -161,6 +161,7 @@ static int token_conform( const char *name, LineType type, GLSLP *pGLSLP ) {
 
 static char *strip_quotes(char *str) {
     char *begin = (char*)str;
+    if(!begin[0]) return begin;
     while(*begin == '"') begin++;
     size_t len = strlen(begin)-1;
     while( begin[len] == '\r' || begin[len] == '\n' || begin[len] == '"' )

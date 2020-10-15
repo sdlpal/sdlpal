@@ -117,7 +117,7 @@ PAL_ReadOneLine(
 {
 	if (fgets(temp, limit, fp))
 	{
-		int n = strlen(temp);
+		size_t n = strlen(temp);
 		if (n == limit - 1 && temp[n - 1] != '\n' && !feof(fp))
 		{
 			// Line too long, try to read it as a whole
@@ -1145,7 +1145,6 @@ PAL_DrawTextUnescape(
       if (fShadow)
       {
 		  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y + 1), 0, fUse8x8Font);
-		  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y), 0, fUse8x8Font);
       }
 	  PAL_DrawCharOnSurface(*lpszText++, gpScreen, PAL_XY(rect.x, rect.y), bColor, fUse8x8Font);
 	  rect.x += char_width; urect.w += char_width;
@@ -1156,11 +1155,22 @@ PAL_DrawTextUnescape(
    //
    if (fUpdate && urect.w > 0)
    {
-      if (fShadow) urect.w++;
+      if (fShadow) urect.w++,urect.h++;
+#define PROT_OFFSET 10 //consider offset in custom font
+	  urect.x -= PROT_OFFSET;
+	  urect.w += 2 * PROT_OFFSET;
+	  urect.y -= PROT_OFFSET;
+	  urect.h += 2*PROT_OFFSET;
+	  if (urect.x < 0) urect.x = 0;
+	  if (urect.y < 0) urect.y = 0;
       if (urect.x + urect.w > 320)
       {
          urect.w = 320 - urect.x;
       }
+	  if (urect.y + urect.h > 200)
+	  {
+		  urect.h = 200 - urect.y;
+	  }
       VIDEO_UpdateScreen(&urect);
    }
 }
@@ -1694,7 +1704,7 @@ PAL_ShowDialogText(
    }
    else
    {
-      int len = wcslen(lpszText);
+      size_t len = wcslen(lpszText);
       if (g_TextLib.nCurrentDialogLine == 0 &&
           g_TextLib.bDialogPosition != kDialogCenter &&
 		  (lpszText[len - 1] == 0xff1a ||
@@ -1880,7 +1890,7 @@ PAL_SetCodePage(
 CODEPAGE
 PAL_DetectCodePageForString(
 	const char *   text,
-	int            text_len,
+	size_t         text_len,
 	CODEPAGE       default_cp,
 	int *          probability
 )
@@ -1947,9 +1957,9 @@ INT
 PAL_MultiByteToWideCharCP(
    CODEPAGE      cp,
    LPCSTR        mbs,
-   int           mbslength,
+   size_t        mbslength,
    LPWSTR        wcs,
-   int           wcslength
+   size_t        wcslength
 )
 /*++
   Purpose:

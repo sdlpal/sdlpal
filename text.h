@@ -201,9 +201,9 @@ INT
 PAL_MultiByteToWideCharCP(
 	CODEPAGE      cp,
 	LPCSTR        mbs,
-	int           mbslength,
+	size_t        mbslength,
 	LPWSTR        wcs,
-	int           wcslength
+	size_t        wcslength
 	);
 
 WCHAR
@@ -224,7 +224,7 @@ PAL_SetCodePage(
 CODEPAGE
 PAL_DetectCodePageForString(
 	const char *   text,
-	int            text_len,
+	size_t         text_len,
 	CODEPAGE       default_cp,
 	int *          probability
 );
