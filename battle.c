@@ -890,6 +890,14 @@ PAL_BattleWon(
          CHECK_HIDDEN_EXP(rgFleeExp, rgwFleeRate, STATUS_LABEL_FLEERATE);
 
 #undef CHECK_HIDDEN_EXP
+
+         //
+         // Avoid HP/MP out of sync with upgraded maxHP/MP
+         //
+         if(fLevelUp){
+            gpGlobals->g.PlayerRoles.rgwHP[w] = gpGlobals->g.PlayerRoles.rgwMaxHP[w];
+            gpGlobals->g.PlayerRoles.rgwMP[w] = gpGlobals->g.PlayerRoles.rgwMaxMP[w];
+         }
       }
 
       //
