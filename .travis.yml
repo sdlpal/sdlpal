@@ -255,7 +255,7 @@ jobs:
             fi
 
       - os: osx
-        osx_image: xcode11
+        osx_image: xcode12.2
         env: TARGET=iOS
         cache: cocoapods
         podfile: ios/SDLPal/Podfile
@@ -269,7 +269,7 @@ jobs:
           - cd ../..
 
       - os: osx
-        osx_image: xcode11
+        osx_image: xcode12.2
         env: TARGET=macOS
         language: objective-c
         script:
