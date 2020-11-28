@@ -3152,7 +3152,7 @@ PAL_RunTriggerScript(
    //
    PAL_DialogSetDelayTime(3);
 
-   while (wScriptEntry != 0 && !fEnded)
+   while (wScriptEntry != 0 && !fEnded && !gpGlobals->fGameStart)
    {
       pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
 
