@@ -1448,6 +1448,7 @@ PAL_BattleStartFrame(
             for (i = 0; i < MAX_ACTIONQUEUE_ITEMS; i++)
             {
                g_Battle.ActionQueue[i].wIndex = 0xFFFF;
+               g_Battle.ActionQueue[i].fIsSecond = FALSE;
                g_Battle.ActionQueue[i].wDexterity = 0xFFFF;
             }
 
@@ -1465,6 +1466,7 @@ PAL_BattleStartFrame(
 
                g_Battle.ActionQueue[j].fIsEnemy = TRUE;
                g_Battle.ActionQueue[j].wIndex = i;
+               g_Battle.ActionQueue[j].fIsSecond = FALSE;
                g_Battle.ActionQueue[j].wDexterity = PAL_GetEnemyDexterity(i);
                g_Battle.ActionQueue[j].wDexterity *= RandomFloat(0.9f, 1.1f);
 
@@ -1474,8 +1476,14 @@ PAL_BattleStartFrame(
                {
                   g_Battle.ActionQueue[j].fIsEnemy = TRUE;
                   g_Battle.ActionQueue[j].wIndex = i;
+                  g_Battle.ActionQueue[j].fIsSecond = FALSE;
                   g_Battle.ActionQueue[j].wDexterity = PAL_GetEnemyDexterity(i);
                   g_Battle.ActionQueue[j].wDexterity *= RandomFloat(0.9f, 1.1f);
+
+                  if(g_Battle.ActionQueue[j].wDexterity <= g_Battle.ActionQueue[j-1].wDexterity)
+                      g_Battle.ActionQueue[j].fIsSecond = TRUE;
+                  else
+                      g_Battle.ActionQueue[j-1].fIsSecond = TRUE;
 
                   j++;
                }
@@ -4821,6 +4829,9 @@ PAL_BattleEnemyPerformAction(
          def *= 2;
       }
 
+      if(gConfig.fIsWIN95 && g_Battle.ActionQueue[g_Battle.iCurAction].fIsSecond && g_Battle.rgEnemy[wEnemyIndex].e.wMagic == 0)
+          AUDIO_PlaySound(g_Battle.rgEnemy[wEnemyIndex].e.wMagicSound);
+      else
       AUDIO_PlaySound(g_Battle.rgEnemy[wEnemyIndex].e.wAttackSound);
 
       iCoverIndex = -1;

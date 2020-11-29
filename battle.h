@@ -140,6 +140,7 @@ typedef struct tagACTIONQUEUE
    BOOL       fIsEnemy;
    WORD       wDexterity;
    WORD       wIndex;
+   BOOL       fIsSecond;
 } ACTIONQUEUE;
 
 #define MAX_ACTIONQUEUE_ITEMS (MAX_PLAYERS_IN_PARTY + MAX_ENEMIES_IN_TEAM * 2)
