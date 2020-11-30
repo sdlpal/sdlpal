@@ -1722,7 +1722,7 @@ PAL_InterpretInstruction(
       //
       PAL_FadeOut(1);
       PAL_InitGameData(gpGlobals->bCurrentSaveSlot);
-      return 0; // don't go further
+      return -1; // don't go further
 
    case 0x004F:
       //
@@ -3120,8 +3120,11 @@ PAL_RunTriggerScript(
 --*/
 {
    static WORD       wLastEventObject = 0;
+   BOOL              fForceQuit = FALSE;
 
    WORD              wNextScriptEntry;
+   WORD              wBakNextScriptEntry;
+   WORD              wRet;
    BOOL              fEnded;
    LPSCRIPTENTRY     pScript;
    LPEVENTOBJECT     pEvtObj = NULL;
@@ -3130,6 +3133,7 @@ PAL_RunTriggerScript(
    extern BOOL       g_fUpdatedInBattle; // HACKHACK
 
    wNextScriptEntry = wScriptEntry;
+   wBakNextScriptEntry = wNextScriptEntry;
    fEnded = FALSE;
    g_fUpdatedInBattle = FALSE;
 
@@ -3152,7 +3156,7 @@ PAL_RunTriggerScript(
    //
    PAL_DialogSetDelayTime(3);
 
-   while (wScriptEntry != 0 && !fEnded && !gpGlobals->fGameStart)
+   while (wScriptEntry != 0 && !fEnded && !fForceQuit)
    {
       pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
 
@@ -3220,8 +3224,12 @@ PAL_RunTriggerScript(
          //
          // Call script
          //
-         PAL_RunTriggerScript(pScript->rgwOperand[0],
-            ((pScript->rgwOperand[1] == 0) ? wEventObjectID : pScript->rgwOperand[1]));
+         wRet = PAL_RunTriggerScript(pScript->rgwOperand[0],
+              ((pScript->rgwOperand[1] == 0) ? wEventObjectID : pScript->rgwOperand[1]));
+         if (wRet == (WORD)-1) {
+             wNextScriptEntry = wBakNextScriptEntry;
+             goto breakscript;
+         }
          wScriptEntry++;
          break;
 
@@ -3429,10 +3437,13 @@ PAL_RunTriggerScript(
       default:
          PAL_ClearDialog(TRUE);
          wScriptEntry = PAL_InterpretInstruction(wScriptEntry, wEventObjectID);
+         if (wScriptEntry == (WORD)-1)
+             return -1;
          break;
       }
    }
 
+breakscript:
    PAL_EndDialog();
    g_iCurEquipPart = -1;
 
