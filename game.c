@@ -22,39 +22,6 @@
 
 #include "main.h"
 
-static VOID
-PAL_GameStart(
-   VOID
-)
-/*++
-  Purpose:
-
-    Do some initialization work when game starts (new game or load game).
-
-  Parameters:
-
-    None.
-
-  Return value:
-
-    None.
-
---*/
-{
-   PAL_SetLoadFlags(kLoadScene | kLoadPlayerSprite);
-
-   if (!gpGlobals->fEnteringScene)
-   {
-      //
-      // Fade in music if the player has loaded an old game.
-      //
-      AUDIO_PlayMusic(gpGlobals->wNumMusic, TRUE, 1);
-   }
-
-   gpGlobals->fNeedToFadeIn = TRUE;
-   gpGlobals->dwFrameNum = 0;
-}
-
 VOID
 PAL_GameMain(
    VOID
@@ -85,7 +52,7 @@ PAL_GameMain(
    //
    // Initialize game data and set the flags to load the game resources.
    //
-   PAL_InitGameData(gpGlobals->bCurrentSaveSlot);
+   PAL_ReloadInNextTick(gpGlobals->bCurrentSaveSlot);
 
    //
    // Run the main game loop.
@@ -93,15 +60,6 @@ PAL_GameMain(
    dwTime = SDL_GetTicks();
    while (TRUE)
    {
-      //
-      // Do some initialization at game start.
-      //
-      if (gpGlobals->fGameStart)
-      {
-         PAL_GameStart();
-         gpGlobals->fGameStart = FALSE;
-      }
-
       //
       // Load the game resources if needed.
       //

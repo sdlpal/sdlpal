@@ -608,7 +608,7 @@ PAL_SystemMenu(
       {
          AUDIO_PlayMusic(0, FALSE, 1);
          PAL_FadeOut(1);
-         PAL_InitGameData(iSlot);
+         PAL_ReloadInNextTick(iSlot);
       }
       break;
 

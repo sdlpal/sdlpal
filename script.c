@@ -1721,7 +1721,7 @@ PAL_InterpretInstruction(
       // Load the last saved game
       //
       PAL_FadeOut(1);
-      PAL_InitGameData(gpGlobals->bCurrentSaveSlot);
+      PAL_ReloadInNextTick(gpGlobals->bCurrentSaveSlot);
       return 0; // don't go further
 
    case 0x004F:
@@ -3268,7 +3268,7 @@ PAL_RunTriggerScript(
          }
          else
          {
-            wScriptEntry++;
+             wScriptEntry++;
          }
          break;
 

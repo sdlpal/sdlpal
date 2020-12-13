@@ -886,6 +886,32 @@ PAL_SaveGame(
 }
 
 VOID
+PAL_ReloadInNextTick(
+    INT           iSaveSlot
+)
+/*++
+  Purpose:
+
+    Reload the game IN NEXT TICK, avoid reentrant problems.
+
+  Parameters:
+
+    [IN]  iSaveSlot - Slot of saved game.
+
+  Return value:
+
+    None.
+
+--*/
+{
+    gpGlobals->bCurrentSaveSlot = (BYTE)iSaveSlot;
+    PAL_SetLoadFlags(kLoadGlobalData | kLoadScene | kLoadPlayerSprite);
+    gpGlobals->fEnteringScene = TRUE;
+    gpGlobals->fNeedToFadeIn = TRUE;
+    gpGlobals->dwFrameNum = 0;
+}
+
+VOID
 PAL_InitGameData(
    INT         iSaveSlot
 )
@@ -919,8 +945,6 @@ PAL_InitGameData(
       PAL_LoadDefaultGame();
    }
 
-   gpGlobals->fGameStart = TRUE;
-   gpGlobals->fNeedToFadeIn = FALSE;
    gpGlobals->iCurInvMenuItem = 0;
    gpGlobals->fInBattle = FALSE;
 

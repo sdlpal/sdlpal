@@ -503,7 +503,6 @@ typedef struct tagGLOBALVARS
    int              iCurPlayingRNG;      // current playing RNG animation
    BYTE             bCurrentSaveSlot;    // current save slot (1-5)
    BOOL             fInMainGame;         // TRUE if in main game
-   BOOL             fGameStart;          // TRUE if the has just started
    BOOL             fEnteringScene;      // TRUE if entering a new scene
    BOOL             fNeedToFadeIn;       // TRUE if need to fade in when drawing scene
    BOOL             fInBattle;           // TRUE if in battle
@@ -578,6 +577,11 @@ PAL_SaveGame(
 VOID
 PAL_InitGameData(
    INT           iSaveSlot
+);
+
+VOID
+PAL_ReloadInNextTick(
+	INT           iSaveSlot
 );
 
 INT
