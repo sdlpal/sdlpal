@@ -32,7 +32,7 @@ jobs:
           - cd ..
 
       - os: linux
-        env: TARGET=MinGW32 SDL2_VERSION=2.0.10
+        env: TARGET=MinGW32 SDL2_VERSION=2.0.14
         addons:
           apt:
             packages:
@@ -56,7 +56,6 @@ jobs:
             fi
           - ln -sf $CACHE/SDL2-$SDL2_VERSION
           - export PATH=$(pwd)/SDL2-$SDL2_VERSION/bin:$PATH
-          - cat SDL2-$SDL2_VERSION/bin/sdl2-config
           - cd ..
         script:
           - cd win32
@@ -68,7 +67,7 @@ jobs:
           - cd ..
 
       - os: linux
-        env: TARGET=MinGW32-armv7 SDL2_VERSION=2.0.10-armv7
+        env: TARGET=MinGW32-armv7 SDL2_VERSION=2.0.14-armv7
         addons:
           apt:
             packages:
@@ -108,7 +107,6 @@ jobs:
           - ln -sf $CACHE/SDL2-$SDL2_VERSION
           - ln -sf $CACHE/llvm-mingw-armv7 llvm-mingw
           - export PATH=$(pwd)/SDL2-$SDL2_VERSION/bin:$(pwd)/llvm-mingw/bin:$PATH
-          - cat SDL2-$SDL2_VERSION/bin/sdl2-config
           - cd ..
         script:
           - cd win32
@@ -118,7 +116,7 @@ jobs:
           - "openssl rsa -passout pass:temporary -in key.pem -outform PVK -pvk-strong -out authenticode.pvk"
           - "openssl pkcs12 -passin pass: -in ../winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -nokeys -nodes -out cert.pem"
           - "openssl crl2pkcs7 -nocrl -certfile cert.pem -outform DER -out authenticode.spc"
-          - "echo temporary | signcode -spc authenticode.spc -v authenticode.pvk -a sha1 -$ commercial -n SDLPal -i http://sdlpal.github.io -t http://timestamp.verisign.com/scripts/timstamp.dll -tr 10 sdlpal.exe"
+          - "echo temporary | signcode -spc authenticode.spc -v authenticode.pvk -a sha1 -$ commercial -n SDLPal -i http://sdlpal.github.io -t http://tsa.starfieldtech.com -tr 10 sdlpal.exe"
           - zip sdlpal-windows-armv7.zip sdlpal.exe
           - mv sdlpal-windows-armv7.zip ../deploy/
           - cd ..
@@ -178,6 +176,7 @@ jobs:
           - export PUSHD="$(pwd)"
           - mkdir -p $CACHE/
           - cd $CACHE/
+          - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
           - docker run -dit --name devkit -v $(pwd):/cache -v $TRAVIS_BUILD_DIR:/src devkitpro/devkitarm bash
           - |
             if ! [ -d $CACHE/SDL-1.2-N3DS ]
@@ -311,6 +310,7 @@ jobs:
         services:
           - docker
         before_install:
+          - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
           - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:$TAG bash
         script:
           - sed -i 's@http://localhost:8080/@https://sdlpal.github.io/demo/@g' emscripten/Makefile
