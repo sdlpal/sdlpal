@@ -58,7 +58,7 @@ deploy:
   on:
     appveyor_repo_tag: true
   auth_token:
-    secure: RYDRqm5LncsJG32FRSlCkLzkJC4ykCtlgO3+xW4q80wQOA3U9pHAe2beyMEduJIe
+    secure: SDvpRENFzV+oGUJOpB3TtbzNu9pcQ6MAElcNRTXwFjagjsy5X70ylfO/1EAfdrRv
 
 artifacts:
   - path: sdlpal-win32-msvc.zip
