@@ -365,6 +365,7 @@ deploy:
     file: deploy/*
     skip_cleanup: true
     overwrite: true
+    prerelease: true
     on:
       all_branches: true
       tags: true
