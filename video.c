@@ -267,7 +267,7 @@ VIDEO_Startup(
    {
 	   BYTE pixels[4*PIXELS*PIXELS];
 	   memset(pixels, 0, sizeof(pixels));
-	   SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixels, PIXELS, PIXELS, 32, PIXELS, 0, 0, 0, 0);
+	   SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixels, PIXELS, PIXELS, 32, PIXELS, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	   gpTouchOverlay = SDL_CreateTextureFromSurface(gpRenderer, temp);
 	   SDL_FreeSurface(temp);
    }
