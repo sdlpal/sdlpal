@@ -1,5 +1,7 @@
 # Makefile for win32 platforms with mingw under msys or linux
 
+MAKEFLAGS += -j
+
 TARGET = sdlpal.exe
 TEST_TARGET = sdlpal-tests.exe
 
