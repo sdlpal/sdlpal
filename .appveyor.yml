@@ -9,7 +9,7 @@ environment:
     - solution_name: win32/sdlpal.sln
       APPX_OPTIONS:
     - solution_name: winrt/SDLPal.UWP.sln
-      APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM";AppxPackageDir="AppPackages"
+      APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM|ARM64";AppxPackageDir="AppPackages"
 build_script:
   - |-
     msbuild /nologo /m %solution_name% /p:Configuration=Release %APPX_OPTIONS%
