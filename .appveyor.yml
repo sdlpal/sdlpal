@@ -2,9 +2,8 @@ version: 2.0.{build}
 image:
   - Visual Studio 2019
 environment:
-  #since appveyor official binding for bintray lacks of ability to specify upload path, we'd to use the manual curl way
-  BINTRAY_APIKEY:
-    secure: s4sB+aNp/xHO4oiFNkZ84OOewXOCUMmDIychhJYcXzJ+Exdj1+WJRXQisXgOYHpY
+  CLOUDSMITH_API_KEY:
+    secure: gryxZxQ1A85JeBI+HHk8GQqY/RQ4y8Oq8kR3yZ2v9zmtnUEmtPmkARFfoypUO0K8
   matrix:
     - solution_name: win32/sdlpal.sln
       APPX_OPTIONS:
@@ -19,6 +18,7 @@ before_build:
     cd winrt
     if "%solution_name%"=="winrt/SDLPal.UWP.sln" nuget restore SDLPal.UWP.sln 
     cd ..
+    pip install cloudsmith-cli
 after_build:
   - |-
     if exist win32\Win32\Release\sdlpal.exe ( cd win32\Win32\Release & 7z a ..\..\..\sdlpal-win32-msvc.zip sdlpal.exe & cd ..\..\..\ )
@@ -26,32 +26,13 @@ after_build:
   - ps: >-
       if([string]::IsNullOrEmpty($env:APPVEYOR_PULL_REQUEST_NUMBER)) {
               $COMMIT_DATE=((git show -s --format=%cs)|out-string).trim()
+              $REV=((git rev-list --count HEAD)|out-string).trim()
               $COMMIT_ID=((git rev-parse --short HEAD)|out-string).trim()
-              $VERSION="v$COMMIT_DATE-g$COMMIT_ID"
-              $BINTRAY_USER="palxex"
-              $BINTRAY_REPO="sdlpal/nightly"
-              $BINTRAY_PATH="$BINTRAY_REPO/$env:APPVEYOR_REPO_BRANCH"
-              # remove notorious PS curl alias to use the built-in one
-              remove-item alias:curl
-              # create package
-              curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X POST -d "{\""name\"":\""$env:APPVEYOR_REPO_BRANCH\"", \""desc\"": \""I was pushed completely automatically\"", \""labels\"": [\""game\"", \""c\"", \""rpg\""], \""licenses\"": [\""GPL-3.0\""], \""vcs_url\"": \""https://github.com/sdlpal/sdlpal.git\"", \""website_url\"": \""https://sdlpal.github.io\"", \""issue_tracker_url\"": \""https://github.com/sdlpal/sdlpal/issues\"", \""github_repo\"": \""sdlpal/sdlpal\"", \""public_download_numbers\"": true, \""public_stats\"": true}"  "https://api.bintray.com/packages/$BINTRAY_REPO"  -H "Content-Type: application/json"
-              # create version
-              $DESC=$env:APPVEYOR_REPO_COMMIT_MESSAGE
-              $RELEASE_DATE=(git show -s --format=%cI)
-              $VCS_TAG=(git describe --tags)
-              $AUTHOR=(git show -s --format=%an)
-              $AUTHOR_DATE=(git show -s --format=%ai)
-              $CIMMITER=(git show -s --format=%cn)
-              $BRANCH=$env:APPVEYOR_REPO_BRANCH
-              $COMMITID=(git show -s --format=%h)
-              curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X POST -d "{\""name\"":\""$VERSION\"", \""desc\"": \""$DESC\"", \""released\"": \""$RELEASE_DATE\"", \""vcs_t ag\"": \""$VCS_TAG\"", \""attributes\"": [ {\""name\"": \""Author\"",\""values\"" : [\""$AUTHOR\""],   \""type\"": \""string\""}, {\""name\"": \""AuthorDate\"",\""values\"" : [\""$AUTHOR_DATE\""],   \""type\"": \""string\""}, {\""name\"": \""Commiter\"",\""values\"" : [\""$CIMMITER\""], \""type\"": \""string\""}, {\""name\"": \""Branch\"",\""values\"" : [\""$BRANCH\""],   \""type\"": \""string\""}, {\""name\"": \""CommitID\"", \""values\"" : [\""$COMMITID\""], \""type\"": \""string\""} ]}" "https://api.bintray.com/packages/$BINTRAY_PATH/versions"  -H "Content-Type: application/json"
+              $VERSION="v$COMMIT_DATE-r$REV-g$COMMIT_ID"
               # upload artifacts
-              @("sdlpal-win32-msvc.zip","sdlpal-uwp.zip") | ForEach-Object -Process { if (Test-Path ${_}) { curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X PUT "https://api.bintray.com/content/$BINTRAY_PATH/$VERSION/$VERSION/${_}?override=1&publish=1" -T "${_}" } }
-              curl -fsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X POST "https://api.bintray.com/packages/$BINTRAY_PATH/versions/$VERSION/attributes" -H "Content-Type: application/json" -d "[ {\""name\"": \""Author\"", \""values\"" : [\""$(git show -s --format=%an)\""], \""type\"": \""string\""}, {\""name\"": \""AuthorDate\"", \""values\"" : [\""$(git show -s --format=%ai)\""], \""type\"": \""string\""}, {\""name\"": \""Commiter\"",   \""values\"" : [\""$(git show -s --format=%cn)\""], \""type\"": \""string\""}, {\""name\"": \""Branch\"", \""values\"" : [\""${env:APPVEYOR_REPO_BRANCH}\""], \""type\"": \""string\""}, {\""name\"": \""CommitID\"", \""values\"" : [\""$(git show -s --format=%h)\""], \""type\"": \""string\""}]"
-              # Wait publishing PUT processing; the latter PUT, list_in_downloads, only has effect after publish done.
-              start-sleep -s 10
-              @("sdlpal-win32-msvc.zip","sdlpal-uwp.zip") | ForEach-Object -Process { if (Test-Path ${_}) { curl -gsS -u "${BINTRAY_USER}:${env:BINTRAY_APIKEY}" -X PUT "https://api.bintray.com/file_metadata/$BINTRAY_REPO/$VERSION/${_}" -H "Content-Type: application/json" -d '{\"list_in_downloads\": true}' } }
-              }
+              if (Test-Path "sdlpal-win32-msvc.zip") { cloudsmith upload raw sdlpal/sdlpal "sdlpal-win32-msvc.zip" --version $VERSION --name win32-msvc --republish --tags "branch/$env:APPVEYOR_REPO_BRANCH"}
+              if (Test-Path "sdlpal-uwp.zip")        { cloudsmith upload raw sdlpal/sdlpal "sdlpal-uwp.zip"        --version $VERSION --name UWP        --republish --tags "branch/$env:APPVEYOR_REPO_BRANCH"}
+      }
 
 deploy:
 - provider: GitHub

@@ -1,9 +1,13 @@
 language: c
 os: linux
 
+git:
+  depth: false
+
 env:
   global:
     - CACHE=$HOME/.sdlpal-caches
+    - PIP=pip
 
 cache:
   directories:
@@ -16,7 +20,7 @@ jobs:
     fast_finish: true
     include:
       - os: linux
-        env: TARGET=AppImage
+        env: TARGET=AppImage EXT=AppImage
         addons:
           apt:
             packages:
@@ -32,7 +36,7 @@ jobs:
           - cd ..
 
       - os: linux
-        env: TARGET=MinGW32 SDL2_VERSION=2.0.14
+        env: TARGET=MinGW32 SDL2_VERSION=2.0.14 EXT=zip
         addons:
           apt:
             packages:
@@ -67,7 +71,7 @@ jobs:
           - cd ..
 
       - os: linux
-        env: TARGET=MinGW32-armv7 SDL2_VERSION=2.0.14-armv7
+        env: TARGET=MinGW32-armv7 SDL2_VERSION=2.0.14-armv7 EXT=zip
         addons:
           apt:
             packages:
@@ -122,7 +126,7 @@ jobs:
           - cd ..
 
       - os: linux
-        env: TARGET=wii
+        env: TARGET=wii EXT=tar.bz2
         before_install:
           - export DEVKITPRO=$CACHE/devkitPro
           - export DEVKITPPC=${DEVKITPRO}/devkitPPC
@@ -165,7 +169,7 @@ jobs:
           - cd ..
           
       - os: linux
-        env: TARGET=3ds
+        env: TARGET=3ds EXT=cia
         addons:
           apt:
             packages:
@@ -202,7 +206,11 @@ jobs:
 
       - os: linux
         language: android
-        env: TARGET=Android ANDROID_BUILD_TOOLS=28.0.3 NDK_VERSION=r16 TERM=dumb
+        env: TARGET=Android ANDROID_BUILD_TOOLS=28.0.3 NDK_VERSION=r16 TERM=dumb EXT=apk PIP="sudo pip3"
+        addons:
+          apt:
+            packages:
+            - python3-pip
         android:
           components:
           - tools
@@ -254,8 +262,8 @@ jobs:
             fi
 
       - os: osx
-        osx_image: xcode12.2
-        env: TARGET=iOS
+        osx_image: xcode12.3
+        env: TARGET=iOS EXT=ipa
         cache: cocoapods
         podfile: ios/SDLPal/Podfile
         script:
@@ -268,8 +276,8 @@ jobs:
           - cd ../..
 
       - os: osx
-        osx_image: xcode12.2
-        env: TARGET=macOS
+        osx_image: xcode12.3
+        env: TARGET=macOS EXT=dmg
         language: objective-c
         script:
           - cd macos
@@ -280,7 +288,7 @@ jobs:
 
       - os: osx
         osx_image: xcode9.2
-        env: TARGET=macOS SDL=1.2.15
+        env: TARGET=macOS-SDL1 SDL=1.2.15 EXT=dmg PIP=pip3
         before_install:
           - |
             if ! [ -d /Library/Frameworks/SDL.framework ]
@@ -303,10 +311,12 @@ jobs:
           - xcodebuild -project Pal_SDL12.xcodeproj -configuration Release
           - hdiutil create -srcfolder build/Release/Pal.app -volname "SDLPal-SDL1" ../deploy/sdlpal-sdl1-macos.dmg
           - cd ..
+        after_success:
+          - HOMEBREW_NO_AUTO_UPDATE=1 brew install python3
 
       - os: linux
         language: node_js
-        env: TARGET=Emscripten TAG=1.39.8-upstream
+        env: TARGET=Emscripten TAG=1.39.8-upstream EXT=zip
         services:
           - docker
         before_install:
@@ -315,6 +325,9 @@ jobs:
         script:
           - sed -i 's@http://localhost:8080/@https://sdlpal.github.io/demo/@g' emscripten/Makefile
           - docker exec -it emscripten emmake make -C emscripten
+          - cd emscripten
+          - zip ../deploy/sdlpal-emscripten.zip *.{html,js,wasm,wasm.map,png}
+          - cd ..
 
 before_deploy:
   - |
@@ -329,22 +342,10 @@ before_deploy:
     fi
   - CI=$(git show -s --format=%cI)
   - DATE=${CI%T*}
+  - REV=$(git rev-list --count HEAD)
   - COMMIT=$(git rev-parse --short HEAD)
-  - VERSION=v$DATE-g$COMMIT
-  - set -f
-  - |
-    sed -i.bak "
-    s/@VERSION@/$VERSION/g
-    s/@DESC@/$(echo -n $TRAVIS_COMMIT_MESSAGE|tr '\r' '\\r'|tr '\n' '\\n'|sed -e 's@[\\"]@\\&@g;s@[/&\$]@\\&@g')/g
-    s/@RELEASE_DATE@/$(git show -s --format=%cI)/g
-    s/@VCS_TAG@/$(git describe --tags)/g
-    s/@AUTHOR@/$(git show -s --format=%an)/g
-    s/@AUTHOR_DATE@/$(git show -s --format=%ai)/g
-    s/@CIMMITER@/$(git show -s --format=%cn)/g
-    s/@BRANCH@/$TRAVIS_BRANCH/g
-    s/@COMMITID@/$(git show -s --format=%h)/g
-    " bintray.json
-  - set +f
+  - VERSION=v$DATE-r$REV-g$COMMIT
+  - $PIP install cloudsmith-cli
   - git config --global user.email "sdlpal@sdlpal.com"
   - git config --global user.name "SDLPAL"
 
@@ -368,20 +369,11 @@ deploy:
     on:
       all_branches: true
       tags: true
-  - provider: bintray
-    user: $BINTRAY_USER
-    key: $BINTRAY_KEY
-    file: bintray.json
-    skip_cleanup: true
+  - provider: script
+    edge: true
+    script: cloudsmith push raw sdlpal/sdlpal --version $VERSION --name $TARGET --republish deploy/*.$EXT --tags "branch/$TRAVIS_BRANCH"
     on:
       all_branches: true
-
-after_deploy:
-  - curl -sS -u "$BINTRAY_USER:$BINTRAY_KEY" -X PATCH "https://api.bintray.com/packages/sdlpal/nightly/$TRAVIS_BRANCH" -H "Content-Type:application/json" -d '{"github_repo":"sdlpal/sdlpal"}'
-  - curl -sS -u "$BINTRAY_USER:$BINTRAY_KEY" -X POST "https://api.bintray.com/packages/sdlpal/nightly/$TRAVIS_BRANCH/readme" -H "Content-Type:application/json" -d '{"github":{"github_repo":"sdlpal/sdlpal"}}'
-  - FILE=$(ls deploy)
-  - sleep 10
-  - curl -sS -u "$BINTRAY_USER:$BINTRAY_KEY" -X PUT "https://api.bintray.com/file_metadata/sdlpal/nightly/$VERSION/$FILE" -H "Content-Type:application/json" -d '{"list_in_downloads":true}'
 
 notifications:
   webhooks:
