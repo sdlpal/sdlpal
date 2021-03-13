@@ -37,4 +37,5 @@
     <string name="enable_hdr">Enable HDR</string>
     <string name="texture_width">Texture Width</string>
     <string name="texture_height">Texture Height</string>
+    <string name="msg_res_not_available">The requested resource is not available</string>
 </resources>

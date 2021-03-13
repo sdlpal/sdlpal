@@ -37,4 +37,5 @@
     <string name="enable_hdr">启用HDR</string>
     <string name="texture_width">纹理宽度</string>
     <string name="texture_height">纹理高度</string>
+    <string name="msg_res_not_available">请求的资源不存在</string>
 </resources>

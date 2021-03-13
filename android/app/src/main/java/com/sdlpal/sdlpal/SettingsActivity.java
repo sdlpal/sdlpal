@@ -41,6 +41,8 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import com.nononsenseapps.filepicker.*;
+import android.widget.Toast;
+import android.util.Log;
 
 import java.io.File;
 import java.util.List;
@@ -108,6 +110,21 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int BROWSE_FONTFILE_CODE = 30003;
     private static final int BROWSE_SHADER_CODE = 30004;
 
+    private static String savePath;
+
+    private void ShowWarning(String text)
+    {
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+        toast.show();
+    }
+    private boolean FolderExists(String path)
+    {
+        File folder = new File(path);
+        return folder.exists();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,11 +167,25 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 findViewById(R.id.layoutOPL).setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+                if( position > 1 && !FolderExists(savePath+MusicFormats[position]))
+                    ShowWarning(getString(R.string.msg_res_not_available));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 findViewById(R.id.layoutOPL).setVisibility(View.VISIBLE);
+            }
+        });
+
+        ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if( position > 0 && !FolderExists(savePath+CDFormats[position]))
+                    ShowWarning(getString(R.string.msg_res_not_available));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
@@ -338,10 +369,11 @@ public class SettingsActivity extends AppCompatActivity {
         ((SeekBar)findViewById(R.id.sbQuality)).setProgress(getConfigInt(ResampleQuality, true));
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            ((EditText)findViewById(R.id.edFolder)).setText(Environment.getExternalStorageDirectory().getPath() + "/sdlpal/");
+            savePath=Environment.getExternalStorageDirectory().getPath() + "/sdlpal/";
         } else {
-            ((EditText)findViewById(R.id.edFolder)).setText("/sdcard/sdlpal/");
+            savePath="/sdcard/sdlpal/";
         }
+        ((EditText)findViewById(R.id.edFolder)).setText(savePath);
         ((EditText)findViewById(R.id.edMsgFile)).setText("");
         ((EditText)findViewById(R.id.edFontFile)).setText("");
         ((EditText)findViewById(R.id.edLogFile)).setText("");
@@ -380,7 +412,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((SeekBar)findViewById(R.id.sbQuality)).setProgress(getConfigInt(ResampleQuality, false)); // Best quality
 
         String msgFile, fontFile, logFile, shader, textureWidth, textureHeight;
-        ((EditText)findViewById(R.id.edFolder)).setText(getConfigString(GamePath, false));
+        ((EditText)findViewById(R.id.edFolder)).setText(savePath = getConfigString(GamePath, false));
         ((EditText)findViewById(R.id.edMsgFile)).setText(msgFile = getConfigString(MessageFileName, false));
         ((EditText)findViewById(R.id.edFontFile)).setText(fontFile = getConfigString(FontFileName, false));
         ((EditText)findViewById(R.id.edLogFile)).setText(logFile = getConfigString(LogFileName, false));
