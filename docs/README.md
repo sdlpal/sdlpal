@@ -23,7 +23,7 @@ Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
 Copyright (c) 2011-2018, SDLPAL development team.
 All rights reserved.
 ```
-SDLPAL is distributed under the terms of GNU General Public License, version 3 (or any later version) as published by the Free Software Foundation. See [LICENSE](LICENSE) for details.
+SDLPAL is distributed under the terms of GNU General Public License, version 3 as published by the Free Software Foundation. See [LICENSE](LICENSE) for details.
 
 Many of the ideas of this program are based on documents from [PAL Research Project](https://github.com/palxex/palresearch), and portions of the code are based on the work done by Baldur and [louyihua](https://github.com/louyihua).
 
