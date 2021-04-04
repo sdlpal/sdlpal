@@ -463,11 +463,11 @@ main(
 
   Return value:
 
-    Integer value.
+    Integer value.157190
 
 --*/
 {
-#if !defined( __EMSCRIPTEN__ ) && !defined(__WINRT__)
+#if !defined( __EMSCRIPTEN__ ) && !defined(__WINRT__) && !defined(__N3DS__)
    memset(gExecutablePath,0,PAL_MAX_PATH);
    strncpy(gExecutablePath, argv[0], PAL_MAX_PATH);
 #endif
