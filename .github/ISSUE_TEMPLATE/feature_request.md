@@ -1,6 +1,9 @@
 ---
 name: Feature request / 功能建议
 about: Suggest an idea for this project / 给项目提个建议
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
