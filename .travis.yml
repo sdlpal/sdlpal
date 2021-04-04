@@ -165,17 +165,16 @@ jobs:
             if ! [ -d $CACHE/SDL-1.2-N3DS ]
             then
               git clone https://github.com/zephray/SDL-1.2-N3DS.git
-              sed -i 's/GSPGPU_FramebufferFormats/GSPGPU_FramebufferFormat/g' SDL-1.2-N3DS/SDL-1.2.15/src/video/n3ds/SDL_n3dsvideo.h
             fi
           - docker exec -it devkit make -C cache/SDL-1.2-N3DS/SDL-1.2.15 -f Makefile.n3ds install
           - |
             if ! [ -f $CACHE/Linux_x86_64/ctrtool ] || ! [ -f $CACHE/Linux_x86_64/makerom ]
             then
-              wget https://github.com/profi200/Project_CTR/releases/download/0.15/makerom_015_ctrtool.zip
-              unzip -o makerom_015_ctrtool.zip
-              chmod +x Linux_x86_64/*
+              wget https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.17/makerom-v0.17-ubuntu_x86_64.zip
+              unzip -o makerom-v0.17-ubuntu_x86_64.zip
+              chmod +x makerom
             fi
-          - docker exec -it devkit cp /cache/Linux_x86_64/{ctrtool,makerom} /opt/devkitpro/tools/bin
+          - docker exec -it devkit cp /cache/makerom /opt/devkitpro/tools/bin
           - cd "${PUSHD}"
         script:
           - cd 3ds
