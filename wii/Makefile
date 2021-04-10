@@ -12,10 +12,10 @@ CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp))
 OFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OFILES:.o=.d) 
 
-CCFLAGS = $(DFALG) -g -Wall -O2 -DGEKKO -D__POWERPC__ -D__ppc__ $(EXTRA_CCFLAGS) $(DEPFLAGS) -I$(DEVKITPRO)/libogc/include -I$(DEVKITPRO)/libogc/include/ogc -I$(DEVKITPRO)/libogc/include/SDL 
+CCFLAGS = $(DFALG) -g -Wall -O2 -DGEKKO -D__POWERPC__ -D__ppc__ $(EXTRA_CCFLAGS) $(DEPFLAGS) -I$(DEVKITPRO)/libogc/include -I$(DEVKITPRO)/libogc/include/ogc -I$(DEVKITPRO)/portlibs/wii/include/SDL 
 CXXFLAGS = $(CCFLAGS) -std=c++11
 CFLAGS = $(CCFLAGS) -std=gnu99
-LDFLAGS = -L$(DEVKITPRO)/libogc/lib/wii -lSDL -lfat -lwiiuse -lbte -logc -lm -lwiikeyboard -lg -mrvl
+LDFLAGS = -L$(DEVKITPRO)/libogc/lib/wii -L$(DEVKITPRO)/portlibs/wii/lib -lSDL -lfat -lwiiuse -lbte -logc -lm -lwiikeyboard -lg -mrvl
 
 ifeq ($(DEBUG),1)
 	CCFLAGS += -DDEBUG -I$(DEVKITPRO)/wii_dev_debug/net_print/sockettest/source

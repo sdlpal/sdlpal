@@ -128,42 +128,21 @@ jobs:
       - os: linux
         env: TARGET=wii EXT=tar.bz2
         before_install:
-          - export DEVKITPRO=$CACHE/devkitPro
-          - export DEVKITPPC=${DEVKITPRO}/devkitPPC
-          - export PATH=$DEVKITPPC/bin:$PATH
+          - export PUSHD="$(pwd)"
+          - mkdir -p $CACHE/
+          - cd $CACHE/
+          - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          - docker run -dit --name devkit -v $(pwd):/cache -v $TRAVIS_BUILD_DIR:/src devkitpro/devkitppc bash
           - |
-            if ! [ -f $DEVKITPRO/libogc/include/gctypes.h ]
+            if ! [ -d $CACHE/sdl-wii ]
             then
-                rm -rfv $DEVKITPRO 
+              git clone https://github.com/dborth/sdl-wii.git
             fi
-          - |
-            if ! [ -d $DEVKITPRO ]
-            then
-                export PUSHD="$(pwd)"
-                mkdir -p $DEVKITPRO
-                (
-                    cd $DEVKITPRO &&
-                    wget https://github.com/sdlpal/tools/releases/download/sensedown/devkitPPC_r27-x86_64-linux.tar.bz2 &&
-                    wget https://github.com/sdlpal/tools/releases/download/sensedown/libogc-1.8.12.tar.bz2 &&
-                    wget https://github.com/sdlpal/tools/releases/download/sensedown/libfat-ogc-1.0.13.tar.bz2 &&
-                    wget https://github.com/dborth/sdl-wii/releases/download/2013-10-28/SDL.Wii.10-28-2013.zip
-                )&&(
-                    cd $DEVKITPRO
-                    tar xvf devkitPPC_r27-x86_64-linux.tar.bz2
-                    mkdir libogc
-                    tar xvf libogc-1.8.12.tar.bz2 -C libogc
-                    tar xvf libfat-ogc-1.0.13.tar.bz2 -C libogc
-                    unzip SDL.Wii.10-28-2013.zip
-                    rm -v *.zip *.bz2
-                    echo "cache finished!"
-                )||( 
-                    rm -rfv $DEVKITPRO 
-                    echo "download failed! clearing cache"
-                )
-            fi
+          - docker exec -it devkit make -C cache/sdl-wii/SDL install
+          - cd "${PUSHD}"
         script:
           - cd wii
-          - make
+          - docker exec -it devkit /bin/bash -ex /src/wii/.travis/docker.sh
           - tar cvjf ../deploy/sdlpal-wii.tar.bz2 icon.png meta.xml boot.dol
           - make clean
           - cd ..
