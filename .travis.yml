@@ -168,7 +168,7 @@ jobs:
             fi
           - docker exec -it devkit make -C cache/SDL-1.2-N3DS/SDL-1.2.15 -f Makefile.n3ds install
           - |
-            if ! [ -f $CACHE/Linux_x86_64/ctrtool ] || ! [ -f $CACHE/Linux_x86_64/makerom ]
+            if ! [ -f $CACHE/makerom ]
             then
               wget https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.17/makerom-v0.17-ubuntu_x86_64.zip
               unzip -o makerom-v0.17-ubuntu_x86_64.zip
