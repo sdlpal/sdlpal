@@ -463,7 +463,7 @@ main(
 
   Return value:
 
-    Integer value.157190
+    Integer value
 
 --*/
 {
