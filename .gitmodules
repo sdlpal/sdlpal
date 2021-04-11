@@ -9,4 +9,4 @@
 	url = https://github.com/sdlpal/mingw-std-threads.git
 [submodule "scripts"]
 	path = scripts
-	url = git@github.com:sdlpal/scripts.git
+	url = https://github.com/sdlpal/scripts.git
