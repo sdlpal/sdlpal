@@ -1048,7 +1048,7 @@ void VIDEO_GLSL_Setup() {
 
     GLSLP tempGLSLP;
     memset(&tempGLSLP,0,sizeof(GLSLP));
-    if( access(PAL_va(0,"%s%s%s",gConfig.pszGamePath, PAL_NATIVE_PATH_SEPARATOR,MID_GLSLP), 0) == 0 && parse_glslp(MID_GLSLP,&tempGLSLP) && tempGLSLP.orig_filter && strcmp( tempGLSLP.orig_filter, gConfig.pszShader ) == 0 ) {
+    if( UTIL_IsFileExist(MID_GLSLP) && parse_glslp(MID_GLSLP,&tempGLSLP) && tempGLSLP.orig_filter && strcmp( tempGLSLP.orig_filter, gConfig.pszShader ) == 0 ) {
         //same file, not needed to parse again
         memcpy(&gGLSLP,&tempGLSLP,sizeof(GLSLP));
         UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] load parametered filter preset\n");

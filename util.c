@@ -579,6 +579,16 @@ UTIL_CloseFile(
    }
 }
 
+BOOL
+UTIL_IsFileExist(
+    const char *path
+)
+{
+    if( UTIL_IsAbsolutePath(path) )
+        return UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, "", path) != NULL;
+    else
+        return UTIL_GetFullPathName(INTERNAL_BUFFER_SIZE_ARGS, gConfig.pszGamePath, path) != NULL;
+}
 
 const char *
 UTIL_GetFullPathName(
@@ -979,3 +989,19 @@ PAL_C_LINKAGE char* strcasestr(const char *a, const char *b) {
 	return ptr;
 }
 #endif
+
+char basename_buf[256];
+
+char *UTIL_basename(const char *filename) {
+    memset(basename_buf, 0, 256);
+    memcpy(basename_buf, filename, strlen(filename));
+    
+    char *pos = NULL;
+    int broked = 0;
+    for( int i=0;i<strlen(PAL_PATH_SEPARATORS);i++)
+        if( (pos = strrchr(basename_buf,PAL_PATH_SEPARATORS[i])) != NULL )
+            *pos='\0', broked = 1;
+    if( !broked )
+        sprintf((char*)basename_buf, "./");
+    return (char*)basename_buf;
+}

@@ -193,6 +193,11 @@ UTIL_CombinePath(
 );
 #define PAL_CombinePath(i, d, f) UTIL_CombinePath(UTIL_GlobalBuffer(i), PAL_GLOBAL_BUFFER_SIZE, 2, (d), (f))
 
+BOOL
+UTIL_IsFileExist(
+    const char *path
+);
+
 const char *
 UTIL_GetFullPathName(
 	char       *buffer,
@@ -206,6 +211,8 @@ UTIL_CheckResourceFiles(
 	const char *path,
 	const char *msgfile
 );
+
+char *UTIL_basename(const char *path);
 
 /*
  * Platform-specific utilities

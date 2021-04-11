@@ -313,23 +313,12 @@ static char * wrap_mode_to_string(enum wrap_mode type) {
     return value;
 }
 
-static char *GLSLP_basename(const char *filename) {
-    char *pos = NULL;
-    int broked = 0;
-    for( int i=0;i<strlen(PAL_PATH_SEPARATORS);i++)
-        if( (pos = strrchr(filename,PAL_PATH_SEPARATORS[i])) != NULL )
-            *pos='\0', broked = 1;
-    if( !broked )
-        sprintf((char*)filename, "./");
-    return (char*)filename;
-}
-
 static char *GLSLP_reflow(char *path) {
 	char *ptr;
 	while ((ptr = strstr(path, "..")) != NULL) {
 		char *dup = strdup(path);
 		dup[ptr - path - 1] = '\0';
-		dup = GLSLP_basename(dup);
+		dup = UTIL_basename(dup);
 		sprintf(path, "%s/%s", dup, ptr + 3);
 		free(dup);
 	}
@@ -353,7 +342,7 @@ bool parse_glslp(const char *filename, GLSLP *pGLSLP) {
     destroy_glslp(pGLSLP);
     
     FILE *fp = UTIL_OpenRequiredFile(filename);
-    char *basedir = GLSLP_basename(strdup(filename));
+    char *basedir = UTIL_basename(filename);
 
     if (fp)
     {
@@ -475,7 +464,6 @@ bool parse_glslp(const char *filename, GLSLP *pGLSLP) {
             }
         }
     }
-    free(basedir);
     
     return true;
 }
