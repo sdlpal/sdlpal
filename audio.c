@@ -220,6 +220,7 @@ AUDIO_OpenDevice(
    gAudioDevice.fSoundEnabled = TRUE;
    gAudioDevice.iMusicVolume = gConfig.iMusicVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
    gAudioDevice.iSoundVolume = gConfig.iSoundVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+   if(gConfig.eMIDISynth == SYNTH_NATIVE)
    MIDI_SetVolume(gConfig.iMusicVolume);
 
    //
@@ -297,7 +298,10 @@ AUDIO_OpenDevice(
 	   gAudioDevice.pMusPlayer = OPUS_Init();
 	   break;
    case MUSIC_MIDI:
-	   gAudioDevice.pMusPlayer = NULL;
+	   if (gConfig.eMIDISynth == SYNTH_TIMIDITY)
+		   gAudioDevice.pMusPlayer = TIMIDITY_Init();
+	   else if (gConfig.eMIDISynth == SYNTH_TINYSOUNDFONT)
+		   gAudioDevice.pMusPlayer = TSF_Init();
 	   break;
    default:
 	   break;
@@ -409,7 +413,7 @@ AUDIO_CloseDevice(
 	  gAudioDevice.pSoundBuffer = NULL;
    }
 
-   if (gConfig.eMusicType == MUSIC_MIDI)
+   if (gConfig.eMIDISynth == SYNTH_NATIVE && gConfig.eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(0, FALSE);
    }
@@ -462,6 +466,7 @@ AUDIO_IncreaseVolume(
    AUDIO_ChangeVolumeByValue(&gConfig.iSoundVolume, 3);
    gAudioDevice.iMusicVolume = gConfig.iMusicVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
    gAudioDevice.iSoundVolume = gConfig.iSoundVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+   if(gConfig.eMIDISynth == SYNTH_NATIVE)
    MIDI_SetVolume(gConfig.iMusicVolume);
 }
 
@@ -488,6 +493,7 @@ AUDIO_DecreaseVolume(
    AUDIO_ChangeVolumeByValue(&gConfig.iSoundVolume, -3);
    gAudioDevice.iMusicVolume = gConfig.iMusicVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
    gAudioDevice.iSoundVolume = gConfig.iSoundVolume * SDL_MIX_MAXVOLUME / PAL_MAX_VOLUME;
+   if(gConfig.eMIDISynth == SYNTH_NATIVE)
    MIDI_SetVolume(gConfig.iMusicVolume);
 }
 
@@ -535,7 +541,7 @@ AUDIO_PlayMusic(
 		AUDIO_PlayCDTrack(-1);
 	}
 
-   if (gConfig.eMusicType == MUSIC_MIDI)
+   if (gConfig.eMIDISynth == SYNTH_NATIVE && gConfig.eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(iNumRIX, fLoop);
       return;

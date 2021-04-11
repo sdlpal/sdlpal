@@ -34,6 +34,7 @@ This program made extensive use of the following libraries:
 * [libogg & libvorbis](http://www.vorbis.com/)
 * [libopus & opusfile](https://www.opus-codec.org/)
 * [FLTK](http://www.fltk.org)
+* [TinySoundFont](https://github.com/schellingb/TinySoundFont)
 * OPL player from [Adplug](http://adplug.sourceforge.net/)
 * OPL emulation cores from [DOSBOX project](http://www.dosbox.com), [MAME project](http://mamedev.org/) and [Chocolate Doom project](https://github.com/chocolate-doom/chocolate-doom)
 * Audio resampler from [foo_input_adplug](https://www.foobar2000.org/components/view/foo_input_adplug)

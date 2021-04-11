@@ -9,3 +9,8 @@
 
 "NOTE: For copyright reasons data files required to run the game are NOT included." = "說明：為防止侵害大宇公司版權，恕不提供遊戲資料檔。请自行將正版PAL的資料檔復製到手機中。";
 "Shader must be specified on GLSL enabled" = "在啟用GLSL時必須選擇Shader文件";
+
+"OPL Synthesizer" = "OPL核心";
+"MIDI Synthesizer" = "MIDI合成器";
+"OPL Chip" = "OPL晶片";
+"SoundBank" = "音色庫";

@@ -169,7 +169,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;..\..\timidity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -183,7 +183,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;..\..\timidity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -197,7 +197,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;..\..\timidity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -211,7 +211,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;..\..\timidity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -225,7 +225,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;..\..\timidity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -239,7 +239,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;..\..\timidity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -253,7 +253,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;..\..\timidity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -267,7 +267,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;..\..\liboggvorbis\include;..\..\libopusfile\src;..\..\libopusfile\include;..\..\libopusfile\celt;..\..\libopusfile\silk;..\..\libopusfile\silk\float;..\..\timidity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_CONFIG_H;PAL_HAS_GIT_REVISION;PAL_HAS_PLATFORM_SPECIFIC_UTILS;_CRT_SECURE_NO_WARNINGS;__WINRT__=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -351,6 +351,16 @@
     <ClInclude Include="..\..\libopusfile\src\tansig_table.h" />
     <ClInclude Include="..\..\libopusfile\src\winerrno.h" />
     <ClInclude Include="..\..\mini_glloader.h" />
+    <ClInclude Include="..\..\timidity\common.h" />
+    <ClInclude Include="..\..\timidity\instrum.h" />
+    <ClInclude Include="..\..\timidity\mix.h" />
+    <ClInclude Include="..\..\timidity\options.h" />
+    <ClInclude Include="..\..\timidity\output.h" />
+    <ClInclude Include="..\..\timidity\playmidi.h" />
+    <ClInclude Include="..\..\timidity\readmidi.h" />
+    <ClInclude Include="..\..\timidity\resample.h" />
+    <ClInclude Include="..\..\timidity\tables.h" />
+    <ClInclude Include="..\..\timidity\timidity.h" />
     <ClInclude Include="..\..\video_glsl.h" />
     <ClInclude Include="..\..\glslp.h" />
     <ClInclude Include="..\..\adplug\binfile.h" />
@@ -623,7 +633,18 @@
     <ClCompile Include="..\..\libopusfile\src\opus_stream.c" />
     <ClCompile Include="..\..\libopusfile\src\repacketizer.c" />
     <ClCompile Include="..\..\libopusfile\src\wincerts.c" />
+    <ClCompile Include="..\..\midi_timidity.c" />
+    <ClCompile Include="..\..\midi_tsf.c" />
     <ClCompile Include="..\..\mini_glloader.c" />
+    <ClCompile Include="..\..\timidity\common.c" />
+    <ClCompile Include="..\..\timidity\instrum.c" />
+    <ClCompile Include="..\..\timidity\mix.c" />
+    <ClCompile Include="..\..\timidity\output.c" />
+    <ClCompile Include="..\..\timidity\playmidi.c" />
+    <ClCompile Include="..\..\timidity\readmidi.c" />
+    <ClCompile Include="..\..\timidity\resample.c" />
+    <ClCompile Include="..\..\timidity\tables.c" />
+    <ClCompile Include="..\..\timidity\timidity.c" />
     <ClCompile Include="..\..\video_glsl.c" />
     <ClCompile Include="..\..\glslp.c" />
     <ClCompile Include="..\..\adplug\binfile.cpp" />

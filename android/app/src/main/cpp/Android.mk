@@ -11,8 +11,9 @@ LOCAL_MODULE := main
 
 OGG_PATH := $(SDLPAL_PATH)/liboggvorbis
 OPUS_PATH := $(SDLPAL_PATH)/libopusfile
+TIMIDITY_PATH := $(SDLPAL_PATH)/timidity
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH) $(SDLPAL_PATH) $(SDL_PATH)/include $(OGG_PATH)/include $(OGG_PATH)/src $(OPUS_PATH)/include $(OPUS_PATH)/src $(OPUS_PATH)/celt $(OPUS_PATH)/silk $(OPUS_PATH)/silk/float
+LOCAL_C_INCLUDES := $(LOCAL_PATH) $(SDLPAL_PATH) $(SDL_PATH)/include $(OGG_PATH)/include $(OGG_PATH)/src $(OPUS_PATH)/include $(OPUS_PATH)/src $(OPUS_PATH)/celt $(OPUS_PATH)/silk $(OPUS_PATH)/silk/float $(TIMIDITY_PATH)
 
 LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
     $(wildcard $(SDLPAL_PATH)/*.cpp) $(wildcard $(SDLPAL_PATH)/*.c) \
@@ -24,6 +25,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
     $(wildcard $(SDLPAL_PATH)/liboggvorbis/src/*.c) \
     $(wildcard $(SDLPAL_PATH)/libmad/*.c) \
     $(wildcard $(SDLPAL_PATH)/native_midi/*.c) \
+    $(wildcard $(SDLPAL_PATH)/timidity/*.c) \
     $(wildcard $(LOCAL_PATH)/*.cpp) \
     $(wildcard $(LOCAL_PATH)/*.c)
 

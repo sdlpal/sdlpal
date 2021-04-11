@@ -13,12 +13,12 @@ GENERATED = -DPAL_HAS_GIT_REVISION $(shell ../scripts/gengitrev)
 
 DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
-CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../*.c)
+CFILES = $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../timidity/*.c) $(wildcard ../*.c)
 CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) emscripten_adapter.cpp
 OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OBJFILES:.o=.d)
 
-CFLAGS = -g4 -Wall -O2 -fno-strict-aliasing -I. -I../ -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(DEPFLAGS) $(EMPORTS) $(GENERATED)
+CFLAGS = -g4 -Wall -O2 -fno-strict-aliasing -I. -I.. -I../timidity -DPAL_HAS_PLATFORM_SPECIFIC_UTILS $(DEPFLAGS) $(EMPORTS) $(GENERATED)
 CPPFLAGS = $(CFLAGS) -std=c++11
 override LDFLAGS += -g4 -O2 $(EMPORTS) -s TOTAL_MEMORY=134217728 -s TOTAL_STACK=5242880 --emrun -lidbfs.js -s DEMANGLE_SUPPORT=1 -s ASYNCIFY=1 -s NO_EXIT_RUNTIME=1 \
 	-s EXPORTED_FUNCTIONS="['_EMSCRIPTEN_main']" -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["cwrap"]' -s USE_WEBGL2=1 -s ASSERTIONS=1 --source-map-base http://localhost:8080/

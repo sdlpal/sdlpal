@@ -79,6 +79,9 @@
     <Filter Include="libopusfile">
       <UniqueIdentifier>{8db6e25a-a8d4-4e0e-af84-e231f468e5c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="timidity">
+      <UniqueIdentifier>{d7a20b30-e42b-4804-8b48-4ac1cbaf3b10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\battle.c">
@@ -777,6 +780,39 @@
     <ClCompile Include="..\libopusfile\silk\float\wrappers_FLP.c">
       <Filter>libopusfile</Filter>
     </ClCompile>
+    <ClCompile Include="..\timidity\common.c">
+      <Filter>timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\timidity\instrum.c">
+      <Filter>timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\timidity\mix.c">
+      <Filter>timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\timidity\output.c">
+      <Filter>timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\timidity\playmidi.c">
+      <Filter>timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\timidity\readmidi.c">
+      <Filter>timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\timidity\resample.c">
+      <Filter>timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\timidity\tables.c">
+      <Filter>timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\timidity\timidity.c">
+      <Filter>timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\midi_timidity.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\midi_tsf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ascii.h">
@@ -1378,6 +1414,39 @@
     </ClInclude>
     <ClInclude Include="..\libopusfile\silk\float\structs_FLP.h">
       <Filter>libopusfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\common.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\instrum.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\mix.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\options.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\output.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\playmidi.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\readmidi.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\resample.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\tables.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\timidity\timidity.h">
+      <Filter>timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\midi_timidity.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

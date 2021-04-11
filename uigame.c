@@ -616,7 +616,7 @@ PAL_SystemMenu(
       // Music
       //
       AUDIO_EnableMusic(PAL_SwitchMenu(AUDIO_MusicEnabled()));
-      if (gConfig.eMusicType == MUSIC_MIDI)
+      if (gConfig.eMIDISynth == SYNTH_NATIVE && gConfig.eMusicType == MUSIC_MIDI)
       {
          AUDIO_PlayMusic(AUDIO_MusicEnabled() ? gpGlobals->wNumMusic : 0, AUDIO_MusicEnabled(), 0);
       }

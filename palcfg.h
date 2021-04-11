@@ -82,11 +82,13 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_MESSAGEFILE,
 	PALCFG_FONTFILE,
 	PALCFG_MUSIC,
+	PALCFG_MIDISYNTH,
 	PALCFG_OPL_CORE,
 	PALCFG_OPL_CHIP,
 	PALCFG_LOGFILE,
 	PALCFG_RIXEXTRAINIT,
 	PALCFG_MIDICLIENT,
+	PALCFG_SOUNDBANK,
 	PALCFG_SCALEQUALITY,
 	PALCFG_SHADER,
 	/* Strings */
@@ -177,6 +179,7 @@ typedef struct tagCONFIGURATION
 	char            *pszMsgFile;
 	char            *pszFontFile;
 	char            *pszMIDIClient;
+	char            *pszSoundBank;
 	char            *pszLogFile;
 	char            *pszScaleQuality;
 	char            *pszShader;
@@ -198,6 +201,7 @@ typedef struct tagCONFIGURATION
 	CDTYPE           eCDType;
 	OPLCORE_TYPE     eOPLCore;
 	OPLCHIP_TYPE     eOPLChip;
+	MIDISYNTHTYPE    eMIDISynth;
 	WORD             wAudioBufferSize;
 	BOOL             fIsWIN95;
 	BOOL             fUseSurroundOPL;

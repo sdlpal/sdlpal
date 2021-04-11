@@ -257,6 +257,17 @@
 		C6CFDF4923A859F800DEB8F9 /* opus_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDE8323A859F800DEB8F9 /* opus_stream.c */; };
 		C6CFDF4A23A859F800DEB8F9 /* mapping_matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDE8423A859F800DEB8F9 /* mapping_matrix.c */; };
 		C6CFDF4B23A859F800DEB8F9 /* opus_multistream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDE8523A859F800DEB8F9 /* opus_multistream.c */; };
+		C6D61DE52619A6A4000622C2 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DCD2619A6A4000622C2 /* common.c */; };
+		C6D61DE62619A6A4000622C2 /* tables.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DCE2619A6A4000622C2 /* tables.c */; };
+		C6D61DE82619A6A4000622C2 /* readmidi.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DD12619A6A4000622C2 /* readmidi.c */; };
+		C6D61DEB2619A6A4000622C2 /* instrum.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DD52619A6A4000622C2 /* instrum.c */; };
+		C6D61DEE2619A6A4000622C2 /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DDC2619A6A4000622C2 /* resample.c */; };
+		C6D61DF02619A6A4000622C2 /* mix.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DDF2619A6A4000622C2 /* mix.c */; };
+		C6D61DF12619A6A4000622C2 /* playmidi.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DE02619A6A4000622C2 /* playmidi.c */; };
+		C6D61DF22619A6A4000622C2 /* output.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DE22619A6A4000622C2 /* output.c */; };
+		C6D61DF32619A6A4000622C2 /* timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DE32619A6A4000622C2 /* timidity.c */; };
+		C6D61DF72619A6B3000622C2 /* midi_timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DF52619A6B2000622C2 /* midi_timidity.c */; };
+		C6D61DF82619A6B3000622C2 /* midi_tsf.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DF62619A6B3000622C2 /* midi_tsf.c */; };
 		F9BC4A0C6F1B983EB45414F3 /* libPods-SDLPal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */; };
 /* End PBXBuildFile section */
 
@@ -812,6 +823,33 @@
 		C6CFDE8423A859F800DEB8F9 /* mapping_matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mapping_matrix.c; sourceTree = "<group>"; };
 		C6CFDE8523A859F800DEB8F9 /* opus_multistream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opus_multistream.c; sourceTree = "<group>"; };
 		C6CFDE8623A859F800DEB8F9 /* analysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analysis.h; sourceTree = "<group>"; };
+		C6D61DCC2619A6A4000622C2 /* resample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resample.h; sourceTree = "<group>"; };
+		C6D61DCD2619A6A4000622C2 /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
+		C6D61DCE2619A6A4000622C2 /* tables.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tables.c; sourceTree = "<group>"; };
+		C6D61DCF2619A6A4000622C2 /* Android.mk */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Android.mk; sourceTree = "<group>"; };
+		C6D61DD02619A6A4000622C2 /* mix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mix.h; sourceTree = "<group>"; };
+		C6D61DD12619A6A4000622C2 /* readmidi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readmidi.c; sourceTree = "<group>"; };
+		C6D61DD22619A6A4000622C2 /* FAQ */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FAQ; sourceTree = "<group>"; };
+		C6D61DD32619A6A4000622C2 /* CHANGES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGES; sourceTree = "<group>"; };
+		C6D61DD42619A6A4000622C2 /* playmidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playmidi.h; sourceTree = "<group>"; };
+		C6D61DD52619A6A4000622C2 /* instrum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = instrum.c; sourceTree = "<group>"; };
+		C6D61DD62619A6A4000622C2 /* options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = "<group>"; };
+		C6D61DD72619A6A4000622C2 /* timidity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timidity.h; sourceTree = "<group>"; };
+		C6D61DD82619A6A4000622C2 /* output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = output.h; sourceTree = "<group>"; };
+		C6D61DD92619A6A4000622C2 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		C6D61DDA2619A6A4000622C2 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
+		C6D61DDB2619A6A4000622C2 /* tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tables.h; sourceTree = "<group>"; };
+		C6D61DDC2619A6A4000622C2 /* resample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resample.c; sourceTree = "<group>"; };
+		C6D61DDD2619A6A4000622C2 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		C6D61DDE2619A6A4000622C2 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		C6D61DDF2619A6A4000622C2 /* mix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mix.c; sourceTree = "<group>"; };
+		C6D61DE02619A6A4000622C2 /* playmidi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playmidi.c; sourceTree = "<group>"; };
+		C6D61DE12619A6A4000622C2 /* readmidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = readmidi.h; sourceTree = "<group>"; };
+		C6D61DE22619A6A4000622C2 /* output.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = output.c; sourceTree = "<group>"; };
+		C6D61DE32619A6A4000622C2 /* timidity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timidity.c; sourceTree = "<group>"; };
+		C6D61DE42619A6A4000622C2 /* instrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = instrum.h; sourceTree = "<group>"; };
+		C6D61DF52619A6B2000622C2 /* midi_timidity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi_timidity.c; path = ../../../midi_timidity.c; sourceTree = "<group>"; };
+		C6D61DF62619A6B3000622C2 /* midi_tsf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi_tsf.c; path = ../../../midi_tsf.c; sourceTree = "<group>"; };
 		E8A03C34C8311310F5BFC81E /* Pods-SDLPal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDLPal.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SDLPal/Pods-SDLPal.debug.xcconfig"; sourceTree = "<group>"; };
 		F7379C304509DA5D22123C42 /* Pods-SDLPal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDLPal.release.xcconfig"; path = "Pods/Target Support Files/Pods-SDLPal/Pods-SDLPal.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1010,6 +1048,7 @@
 				71655212195BB6DA006E1227 /* libmad */,
 				57FB00F01B7A50B0005FCF4C /* liboggvorbis */,
 				C63505791EA6578700186049 /* native_midi */,
+				C6D61DCB2619A6A4000622C2 /* timidity */,
 				71655066195BB372006E1227 /* SDLPal */,
 				71655067195BB372006E1227 /* Supporting Files */,
 				7165505F195BB372006E1227 /* Frameworks */,
@@ -1052,6 +1091,8 @@
 				C63505771EA6575200186049 /* Headers */,
 				71DCB6941ED9CBB000F120DB /* aviplay.c */,
 				C635056B1EA6570300186049 /* midi.c */,
+				C6D61DF52619A6B2000622C2 /* midi_timidity.c */,
+				C6D61DF62619A6B3000622C2 /* midi_tsf.c */,
 				57FB015C1B7A50E0005FCF4C /* mp3play.c */,
 				57FB015D1B7A50E0005FCF4C /* oggplay.c */,
 				57FB015D2B7A50E0005FCF4C /* opusplay.c */,
@@ -1500,6 +1541,39 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		C6D61DCB2619A6A4000622C2 /* timidity */ = {
+			isa = PBXGroup;
+			children = (
+				C6D61DCC2619A6A4000622C2 /* resample.h */,
+				C6D61DCD2619A6A4000622C2 /* common.c */,
+				C6D61DCE2619A6A4000622C2 /* tables.c */,
+				C6D61DCF2619A6A4000622C2 /* Android.mk */,
+				C6D61DD02619A6A4000622C2 /* mix.h */,
+				C6D61DD12619A6A4000622C2 /* readmidi.c */,
+				C6D61DD22619A6A4000622C2 /* FAQ */,
+				C6D61DD32619A6A4000622C2 /* CHANGES */,
+				C6D61DD42619A6A4000622C2 /* playmidi.h */,
+				C6D61DD52619A6A4000622C2 /* instrum.c */,
+				C6D61DD62619A6A4000622C2 /* options.h */,
+				C6D61DD72619A6A4000622C2 /* timidity.h */,
+				C6D61DD82619A6A4000622C2 /* output.h */,
+				C6D61DD92619A6A4000622C2 /* README */,
+				C6D61DDA2619A6A4000622C2 /* TODO */,
+				C6D61DDB2619A6A4000622C2 /* tables.h */,
+				C6D61DDC2619A6A4000622C2 /* resample.c */,
+				C6D61DDD2619A6A4000622C2 /* COPYING */,
+				C6D61DDE2619A6A4000622C2 /* common.h */,
+				C6D61DDF2619A6A4000622C2 /* mix.c */,
+				C6D61DE02619A6A4000622C2 /* playmidi.c */,
+				C6D61DE12619A6A4000622C2 /* readmidi.h */,
+				C6D61DE22619A6A4000622C2 /* output.c */,
+				C6D61DE32619A6A4000622C2 /* timidity.c */,
+				C6D61DE42619A6A4000622C2 /* instrum.h */,
+			);
+			name = timidity;
+			path = ../../timidity;
+			sourceTree = "<group>";
+		};
 		C6E974971E49C22D00F76B17 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1748,6 +1822,7 @@
 				57FB01591B7A50B0005FCF4C /* window.c in Sources */,
 				57FB01521B7A50B0005FCF4C /* registry.c in Sources */,
 				C6CFDEC823A859F800DEB8F9 /* NLSF_unpack.c in Sources */,
+				C6D61DF82619A6B3000622C2 /* midi_tsf.c in Sources */,
 				C6CFDE9723A859F800DEB8F9 /* kiss_fft.c in Sources */,
 				C6CFDED223A859F800DEB8F9 /* ana_filt_bank_1.c in Sources */,
 				C6CFDF0E23A859F800DEB8F9 /* sort_FLP.c in Sources */,
@@ -1793,9 +1868,12 @@
 				C6CFDF1523A859F800DEB8F9 /* scale_vector_FLP.c in Sources */,
 				C6CFDEBD23A859F800DEB8F9 /* control_codec.c in Sources */,
 				C6CFDEFF23A859F800DEB8F9 /* code_signs.c in Sources */,
+				C6D61DE52619A6A4000622C2 /* common.c in Sources */,
 				57FB01571B7A50B0005FCF4C /* vorbisenc.c in Sources */,
 				C6CFDF2223A859F800DEB8F9 /* resampler_rom.c in Sources */,
+				C6D61DE62619A6A4000622C2 /* tables.c in Sources */,
 				57FB01631B7A50E0005FCF4C /* resampler.c in Sources */,
+				C6D61DF32619A6A4000622C2 /* timidity.c in Sources */,
 				C6CFDF0523A859F800DEB8F9 /* regularize_correlations_FLP.c in Sources */,
 				57FB01581B7A50B0005FCF4C /* vorbisfile.c in Sources */,
 				C6CFDF1B23A859F800DEB8F9 /* autocorrelation_FLP.c in Sources */,
@@ -1850,6 +1928,7 @@
 				71655269195BB6DB006E1227 /* global.c in Sources */,
 				C6CFDF2323A859F800DEB8F9 /* resampler_private_down_FIR.c in Sources */,
 				C635057F1EA6578700186049 /* native_midi_common.c in Sources */,
+				C6D61DF22619A6A4000622C2 /* output.c in Sources */,
 				C6CFDF4923A859F800DEB8F9 /* opus_stream.c in Sources */,
 				7165526A195BB6DB006E1227 /* input.c in Sources */,
 				7165526B195BB6DB006E1227 /* itemmenu.c in Sources */,
@@ -1874,6 +1953,7 @@
 				C6CFDF3823A859F800DEB8F9 /* sum_sqr_shift.c in Sources */,
 				71655274195BB6DB006E1227 /* layer3.c in Sources */,
 				C6CFDF1323A859F800DEB8F9 /* LTP_scale_ctrl_FLP.c in Sources */,
+				C6D61DF12619A6A4000622C2 /* playmidi.c in Sources */,
 				C6CFDF2F23A859F800DEB8F9 /* stereo_encode_pred.c in Sources */,
 				71655275195BB6DB006E1227 /* music_mad.c in Sources */,
 				C6CFDEB123A859F800DEB8F9 /* bands.c in Sources */,
@@ -1904,9 +1984,11 @@
 				C6CFDF3923A859F800DEB8F9 /* mlp.c in Sources */,
 				C6CFDF4523A859F800DEB8F9 /* http.c in Sources */,
 				7165527D195BB6DB006E1227 /* main.c in Sources */,
+				C6D61DEB2619A6A4000622C2 /* instrum.c in Sources */,
 				C6CFDEDF23A859F800DEB8F9 /* debug.c in Sources */,
 				C6CFDF4B23A859F800DEB8F9 /* opus_multistream.c in Sources */,
 				7165527E195BB6DB006E1227 /* map.c in Sources */,
+				C6D61DEE2619A6A4000622C2 /* resample.c in Sources */,
 				C6CFDEC123A859F800DEB8F9 /* tables_gain.c in Sources */,
 				C6CFDF0023A859F800DEB8F9 /* log2lin.c in Sources */,
 				C6CFDECD23A859F800DEB8F9 /* decode_core.c in Sources */,
@@ -1920,6 +2002,7 @@
 				C6CFDF1A23A859F800DEB8F9 /* find_LPC_FLP.c in Sources */,
 				C6CFDF0223A859F800DEB8F9 /* tables_LTP.c in Sources */,
 				C6CFDEFC23A859F800DEB8F9 /* stereo_decode_pred.c in Sources */,
+				C6D61DF02619A6A4000622C2 /* mix.c in Sources */,
 				57FB01491B7A50B0005FCF4C /* floor1.c in Sources */,
 				C6CFDF1C23A859F800DEB8F9 /* wrappers_FLP.c in Sources */,
 				C6CFDF2B23A859F800DEB8F9 /* tables_other.c in Sources */,
@@ -1930,10 +2013,12 @@
 				71655282195BB6DB006E1227 /* res.c in Sources */,
 				71655283195BB6DB006E1227 /* rixplay.cpp in Sources */,
 				C6CFDF4423A859F800DEB8F9 /* opus_projection_encoder.c in Sources */,
+				C6D61DE82619A6A4000622C2 /* readmidi.c in Sources */,
 				C6CFDEA323A859F800DEB8F9 /* laplace.c in Sources */,
 				C6CFDF1223A859F800DEB8F9 /* burg_modified_FLP.c in Sources */,
 				71655284195BB6DB006E1227 /* rngplay.c in Sources */,
 				C6CFDEDC23A859F800DEB8F9 /* tables_NLSF_CB_NB_MB.c in Sources */,
+				C6D61DF72619A6B3000622C2 /* midi_timidity.c in Sources */,
 				C6CFDE9823A859F800DEB8F9 /* rate.c in Sources */,
 				71655285195BB6DB006E1227 /* scene.c in Sources */,
 				71655286195BB6DB006E1227 /* script.c in Sources */,

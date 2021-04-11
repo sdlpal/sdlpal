@@ -23,6 +23,8 @@ jobs:
         env: TARGET=AppImage EXT=AppImage
         addons:
           apt:
+            sources:
+            - sourceline: 'ppa:savoury1/games'
             packages:
             - libsdl2-dev
             - libfltk1.3-dev

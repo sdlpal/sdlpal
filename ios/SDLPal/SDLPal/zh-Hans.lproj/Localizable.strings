@@ -9,3 +9,8 @@
 
 "NOTE: For copyright reasons data files required to run the game are NOT included." = "注意：由于版权问题，数据文件无法提供。请自行从百游官方下载并解压拷贝到手机中。";
 "Shader must be specified on GLSL enabled" = "在启用GLSL时必须选择Shader文件";
+
+"OPL Synthesizer" = "OPL核心";
+"MIDI Synthesizer" = "MIDI合成器";
+"OPL Chip" = "OPL芯片";
+"SoundBank" = "音色库";
