@@ -7,3 +7,6 @@
 [submodule "3rd/mingw-std-threads"]
 	path = 3rd/mingw-std-threads
 	url = https://github.com/sdlpal/mingw-std-threads.git
+[submodule "scripts"]
+	path = scripts
+	url = git@github.com:sdlpal/scripts.git
