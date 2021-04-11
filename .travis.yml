@@ -130,10 +130,12 @@ jobs:
       - os: linux
         env: TARGET=wii EXT=tar.bz2
         before_install:
+          - echo 'DOCKER_OPTS="$DOCKER_OPTS --debug --registry-mirror=https://mirror.gcr.io"'
+          - sudo service docker restart
+          - docker system info
           - export PUSHD="$(pwd)"
           - mkdir -p $CACHE/
           - cd $CACHE/
-          - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
           - docker run -dit --name devkit -v $(pwd):/cache -v $TRAVIS_BUILD_DIR:/src devkitpro/devkitppc bash
           - |
             if ! [ -d $CACHE/sdl-wii ]
@@ -158,10 +160,12 @@ jobs:
         services:
           - docker
         before_install:
+          - echo 'DOCKER_OPTS="$DOCKER_OPTS --debug --registry-mirror=https://mirror.gcr.io"'
+          - sudo service docker restart
+          - docker system info
           - export PUSHD="$(pwd)"
           - mkdir -p $CACHE/
           - cd $CACHE/
-          - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
           - docker run -dit --name devkit -v $(pwd):/cache -v $TRAVIS_BUILD_DIR:/src devkitpro/devkitarm bash
           - |
             if ! [ -d $CACHE/SDL-1.2-N3DS ]
@@ -300,7 +304,9 @@ jobs:
         services:
           - docker
         before_install:
-          - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          - echo 'DOCKER_OPTS="$DOCKER_OPTS --debug --registry-mirror=https://mirror.gcr.io"'
+          - sudo service docker restart
+          - docker system info
           - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:$TAG bash
         script:
           - sed -i 's@http://localhost:8080/@https://sdlpal.github.io/demo/@g' emscripten/Makefile
