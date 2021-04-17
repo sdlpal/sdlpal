@@ -2374,7 +2374,7 @@ PAL_InterpretInstruction(
          x -= PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset);
          y -= PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset);
 
-         if (abs(x) + abs(y * 2) < pScript->rgwOperand[1] * 32 + 16)
+         if (abs(x) + abs(y * 2) < pScript->rgwOperand[1] * 32 + 16 && gpGlobals->g.lprgEventObject[pScript->rgwOperand[0] - 1].sState > 0)
          {
             if (pScript->rgwOperand[1] > 0)
             {
