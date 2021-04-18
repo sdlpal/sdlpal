@@ -240,12 +240,14 @@ VIDEO_Startup(
    //
    if (gConfig.fUseTouchOverlay)
    {
-      extern const void * PAL_LoadOverlayBMP(void);
-      extern int PAL_OverlayBMPLength();
+      extern const unsigned char bmpData[];
+      extern unsigned int bmpLen;
 
-      const void *bmp = PAL_LoadOverlayBMP();
-      SDL_Surface *overlay = SDL_LoadBMP_RW(SDL_RWFromConstMem(bmp, PAL_OverlayBMPLength()), 1);
-      free((void*)bmp);
+      void *bmp = UTIL_malloc(bmpLen);
+      YJ1_Decompress(bmpData, bmp, bmpLen);
+      SDL_Surface *overlay = SDL_LoadBMP_RW(SDL_RWFromConstMem(bmp, bmpLen), 1);
+      free(bmp);
+
       if (overlay != NULL)
       {
          SDL_SetColorKey(overlay, SDL_RLEACCEL, SDL_MapRGB(overlay->format, 255, 0, 255));
