@@ -66,6 +66,7 @@ typedef struct tagSOUNDPLAYER
 	SoundLoader         LoadSound;	/* The function pointer for load WAVE/VOC data */
 	WAVEDATA            soundlist;
 	int                 cursounds;
+	int					lastSFX;
 } SOUNDPLAYER, *LPSOUNDPLAYER;
 
 static const void *
@@ -765,6 +766,11 @@ SOUND_Play(
 		return FALSE;
 	}
 
+	if (player->lastSFX == iSoundNum)
+		return FALSE;
+
+	player->lastSFX = iSoundNum;
+
 	//
 	// Get the length of the sound file.
 	//
@@ -921,6 +927,7 @@ SOUND_FillBuffer(
 					free((void *)cursnd->base);
 					cursnd->base = cursnd->current = cursnd->end = NULL;
 					player->cursounds--;
+					player->lastSFX = 0;
 				}
 				else
 					sounds++;
