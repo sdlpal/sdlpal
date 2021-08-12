@@ -118,6 +118,35 @@
     [self readConfigs];
     [self reloadMusic];
 }
+
+-(void)setLabelColor:(UIColor *)color {
+    [lblResourceStatus setTextColor:color];
+    [lblLanguageFile setTextColor:color];
+    [lblFontFile setTextColor:color];
+    [lblShader setTextColor:color];
+    [textTextureWidth setTextColor:color];
+    [textTextureHeight setTextColor:color];
+    [lblMusicType setTextColor:color];
+    [lblSynthesizer setTextColor:color];
+    [lblOPLCore setTextColor:color];
+    [lblSynthParam setTextColor:color];
+    [lblOPLChip setTextColor:color];
+    [lblOPLRate setTextColor:color];
+    [lblCDAudioSource setTextColor:color];
+    [lblResampleRate setTextColor:color];
+    [lblAudioBufferSize setTextColor:color];
+    [lblLogLevel setTextColor:color];
+    [textLogFile setTextColor:color];
+}
+
+-(void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    if (@available(iOS 13.0, *)) {
+        [self setLabelColor: [UIColor labelColor]];
+    }else{
+        [self setLabelColor:(NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) ? [UIColor blackColor] : [UIColor whiteColor]];
+    }
+}
+
 -(void)dismissKeyboard
 {
     [self.view endEditing:YES];
