@@ -84,7 +84,7 @@ void _ve_envelope_clear(envelope_lookup *e){
   memset(e,0,sizeof(*e));
 }
 
-/* fairly straight threshhold-by-band based until we find something
+/* fairly straight threshold-by-band based until we find something
    that works better and isn't patented. */
 
 static int _ve_amp(envelope_lookup *ve,

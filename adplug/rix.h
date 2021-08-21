@@ -42,7 +42,7 @@ class CrixPlayer: public CPlayer
   bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
-  void rewindReInit(int subsong, bool reinit); /* For seamless continous */
+  void rewindReInit(int subsong, bool reinit); /* For seamless continuous */
   float getrefresh();
   unsigned int getsubsongs();
 

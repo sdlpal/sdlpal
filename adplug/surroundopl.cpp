@@ -282,7 +282,7 @@ void CSurroundopl::write_opl3(int reg, int val)
 		// generates waveforms to the left channel or the right channel on output
 
 		// Since a OPL3 chip has 18 channels, the higher 9 channels can act as
-		// another OPL2 chip on generateing the harmonic effect. However, the
+		// another OPL2 chip on generating the harmonic effect. However, the
 		// the percussion channels have no counterparts on higher channels,
 		// so they should be treated separately.
 		if ((reg & 0xF) <= 5 || !percussion)
