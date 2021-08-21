@@ -543,7 +543,7 @@ public:
 				case EG_SUS:    /* sustain phase */
 
 					/* this is important behaviour:
-					one can change percusive/non-percussive modes on the fly and
+					one can change percussive/non-percussive modes on the fly and
 					the chip will remain in sustain phase - verified on real YM3812 */
 
 					if(op.eg_type)     /* non-percussive mode */

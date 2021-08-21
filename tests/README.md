@@ -43,7 +43,7 @@ As tests are grouped into test cases in Google Test, please put logically relate
 Step 3
 ------
 
-When you finished writting test codes, you can use ***`make check`*** to compile and run tests. If you are using ***Visual Studio*** under Windows, please make sure you've actived the **Test** configuration before you launch the program.
+When you finished writting test codes, you can use ***`make check`*** to compile and run tests. If you are using ***Visual Studio*** under Windows, please make sure you've activated the **Test** configuration before you launch the program.
 
 ### Special notes for ***Visual Studio*** users
 

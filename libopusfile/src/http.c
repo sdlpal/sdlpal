@@ -2480,7 +2480,7 @@ static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
           ret=op_http_parse_content_range(&range_first,&range_last,
            &range_length,cdr);
           if(OP_UNLIKELY(ret<0))return ret;
-          /*"A response with satus code 206 (Partial Content) MUST NOT
+          /*"A response with status code 206 (Partial Content) MUST NOT
              include a Content-Range field with a byte-range-resp-spec of
              '*'."*/
           if(status_code[2]=='6'
@@ -2782,7 +2782,7 @@ static int op_http_conn_handle_response(OpusHTTPStream *_stream,
       ret=op_http_parse_content_range(&range_first,&range_last,
        &range_length,cdr);
       if(OP_UNLIKELY(ret<0))return ret;
-      /*"A response with satus code 206 (Partial Content) MUST NOT
+      /*"A response with status code 206 (Partial Content) MUST NOT
          include a Content-Range field with a byte-range-resp-spec of
          '*'."*/
       if(OP_UNLIKELY(range_first<0)||OP_UNLIKELY(range_last<0))return OP_FALSE;

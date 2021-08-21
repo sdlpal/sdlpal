@@ -196,7 +196,7 @@ static int _vds_shared_init(vorbis_dsp_state *v,vorbis_info *vi,int encp){
   b->transform[0]=_ogg_calloc(VI_TRANSFORMB,sizeof(*b->transform[0]));
   b->transform[1]=_ogg_calloc(VI_TRANSFORMB,sizeof(*b->transform[1]));
 
-  /* MDCT is tranform 0 */
+  /* MDCT is transform 0 */
 
   b->transform[0][0]=_ogg_calloc(1,sizeof(mdct_lookup));
   b->transform[1][0]=_ogg_calloc(1,sizeof(mdct_lookup));
