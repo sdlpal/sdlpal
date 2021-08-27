@@ -182,6 +182,7 @@ static void PAL_LoadEmbeddedFont(void)
 	for (i = 0; i < nChars; i++)
 	{
 		wchar_t w = (wchar_buf[i] >= unicode_upper_base) ? (wchar_buf[i] - unicode_upper_base + unicode_lower_top) : wchar_buf[i];
+		if (w >= sizeof(unicode_font) / sizeof(unicode_font[0])) { continue; }
 		if (fread(unicode_font[w], 30, 1, fp) == 1)
 		{
 			unicode_font[w][30] = 0;
