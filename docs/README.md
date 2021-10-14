@@ -2,9 +2,9 @@ SDLPAL
 ======
 [![Travis CI](https://travis-ci.com/sdlpal/sdlpal.svg?branch=master)](https://travis-ci.com/sdlpal/sdlpal)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/sdlpal/sdlpal?branch=master&svg=true)](https://ci.appveyor.com/project/palxex/sdlpal-itfml)
-[ ![Download](https://api-prd.cloudsmith.io/badges/version/sdlpal/sdlpal/raw/wii/latest/x/?render=true) ](https://cloudsmith.io/~sdlpal/repos/sdlpal/groups)
+[![Download](https://api-prd.cloudsmith.io/badges/version/sdlpal/sdlpal/raw/wii/latest/x/?render=true) ](https://cloudsmith.io/~sdlpal/repos/sdlpal/groups)
 
-***SDLPAL*** is an SDL-based open-source cross-platform reimplementation of the classic Chinese RPG game *Xiān jiàn Qí Xiá Zhuàn (Simplified Chinese: 仙剑奇侠传, Traditional Chinese: 仙劍奇俠傳)* (also known as *Chinese Paladin* or *Legend of Sword and Fairy*, or *PAL* for short).
+***SDLPAL*** is an SDL-based cross-platform reimplementation of the classic Chinese RPG game *Xiān jiàn Qí Xiá Zhuàn (Simplified Chinese: 仙剑奇侠传, Traditional Chinese: 仙劍奇俠傳)* (also known as *Chinese Paladin* or *Legend of Sword and Fairy*, or *PAL* for short).
 
 [![Google Play](https://sdlpal.github.io/images/googleplay.png)](https://play.google.com/store/apps/details?id=com.sdlpal.sdlpal)
 
@@ -12,22 +12,22 @@ If you would like to get the nightly build from Google Play Store, [please enrol
 
 [Try the online demo for now!](https://sdlpal.github.io/demo/sdlpal.html)
 =======
-The development team has built a web-based demo version of SDLPAL on github pages via Emscripten, which you can try anytime by clicking the above link. It should work well on most morden browsers (e.g., Google Chrome, Microsoft Edge, Safari, ...), but there may still be problems on some browsers. Before you can enjoy your game journey, please prepare a zipped file containing the game resource data.
+Check the link above for a Web-based demo of SDLPAL. It should work on most of modern browsers (e.g., Google Chrome, Mozilla Firefox, Safari, ...), but problems might exist on some browsers. Before you can enjoy the game, please prepare a zipped file containing the game resource data.
 
 gitee镜像
 =======
-中国大陆用户如从GitHub下载代码困难，请使用[gitee镜像](https://gitee.com/sdlpal/sdlpal) (每小时自动更新)。
+中国大陆地区用户如从GitHub下载代码存在困难，请使用[gitee镜像](https://gitee.com/sdlpal/sdlpal) (每小时自动更新)。
 
 LICENSE
 =======
 
-SDLPAL is originally created by [Wei Mingzhi](https://github.com/CecilHarvey) from 2009. Now it is owned by the SDLPAL development team. Please see [AUTHORS](AUTHORS) for full author list.
+SDLPAL was originally created by [Wei Mingzhi](https://github.com/CecilHarvey) from 2009. Now it is owned by the SDLPAL development team. Please see [AUTHORS](AUTHORS) for full author list.
 ```
 Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
-Copyright (c) 2011-2018, SDLPAL development team.
+Copyright (c) 2011-2021, SDLPAL development team.
 All rights reserved.
 ```
-SDLPAL is distributed under the terms of GNU General Public License, version 3 as published by the Free Software Foundation. See [LICENSE](LICENSE) for details.
+SDLPAL is distributed under the terms of **GNU General Public License, version 3** as published by the [Free Software Foundation](http://www.fsf.org/). See [LICENSE](LICENSE) for details.
 
 Many of the ideas of this program are based on documents from [PAL Research Project](https://github.com/palxex/palresearch), and portions of the code are based on the work done by Baldur and [louyihua](https://github.com/louyihua).
 
@@ -63,7 +63,7 @@ Building the game
 =================
 
 Currently, SDLPAL supports the following platforms:
-* Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*), *Linux* and *macOS*
+* Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*), *GNU/Linux* and *macOS*
 * Mobile platforms: *Android*, *iOS* and *Windows*
 * Home consoles: *3DS*, *WII*, *PSP* and others (some of them are not actively maintained now)
 
@@ -107,7 +107,7 @@ $ cd win32
 $ make
 ```
 
-* If you need to cross-compile SDLPAL under **Linux** shell environment, please go to the root of the source code tree and type:
+* If you need to cross-compile SDLPAL under **GNU/Linux** shell environment, please go to the root of the source code tree and type:
 ```bash
 $ cd win32
 $ # This builds a 32-bit executable.
@@ -117,8 +117,8 @@ $ make HOST=x86_64-w64-mingw32-
 ```
 
 
-Linux or Unix
--------------
+GNU/Linux or Unix
+-----------------
 
 To build the game, please go to the root of the source code tree and type:
 ```shell
@@ -128,8 +128,8 @@ $ make
 You also need to have SDL 2.0 development files installed in the system. The compiled executable should be generated with the filename *`sdlpal`* at the current directory. By default, SDLPAL uses the FLTK library to provide setting GUI at launch. If you do not want to use the library, please define he macro `PAL_NO_LAUNCH_UI` in the `Makefile`. SDLPAL should also be able to compile and run under other Unix-like systems, however it's not tested.
 
 
-macOS (OS X)
-------------
+macOS
+-----
 
 To compile, open *`Pal.xcodeproj`* with `Xcode`, and click Build. You need to have SDL framework installed at *`/Library/Frameworks`*.
 
@@ -148,9 +148,9 @@ Android
 
 To build the game, open the `android` directory through ***Android Studio***, and click `Make Project`.
 
-* NOTE: `android/app/src/main/java/org/libsdl/app` is a link to `3rd/SDL/android-project/app/src/main/java/org/libsdl/app`. Deal with it properly if your git system does not create link automatically. 
+* NOTE: `android/app/src/main/java/org/libsdl/app` is a link to `3rd/SDL/android-project/app/src/main/java/org/libsdl/app`. Deal with it properly if your git system does not create link automatically.
 
-* NOTE: For Windows users, please put the repo in the root of a partition. A too long path may cause compilation to fail. 
+* NOTE: For Windows users, please put the repo at the root of a disk partition. A long path may cause compilation to fail.
 
 Nintendo 3DS
 ------------
@@ -190,13 +190,13 @@ SDLPAL also provides a revised battle system (***deprecated*** and will be remov
 Running the game
 ================
 
-The data files required for running the game are not included with the source package due to copyright issues, so you need to obtain them from a licensed game copy before you can run the game.
+The data files required for running the game are not included with the source package due to copyright issues. You need to obtain them from a licensed copy of the game before you can run the game.
 
 To run the game, copy all the files in the original game CD to a directory, then copy the built SDLPAL executable to the same directory, and run the executable.
 
-Note that the filenames of data files should be all in lower-case under systems that use case-sensitive filesystems such as Linux or other Unix-like operating systems.
+Note that the filenames of data files should be all in lower-case under systems that use case-sensitive filesystems such as GNU/Linux or other Unix-like operating systems.
 
-If you prefer using MIDI as background music source, please note that the MIDI playing feature is not yet complete under every supported platform. Currently, **offical** support is provided under *Windows Desktop*, *Universal Windows Platform*, *Android*, *iOS* and *macOS*. There is also a preliminary support for *Linux* that relys upon package *timidity*. Other platforms do not support playing MIDI for now.
+If you prefer using MIDI as background music source, please note that the MIDI playing feature is not yet complete under every supported platform. Currently, **offical** support is provided under *Windows Desktop*, *Universal Windows Platform*, *Android*, *iOS* and *macOS*. There is also a preliminary support for *GNU/Linux* that relys upon package *timidity*. Other platforms do not support playing MIDI for now.
 
 
 Configuring the game
@@ -209,7 +209,7 @@ GUI
 The configuration GUI provides options for you to change the most common configuration options. If you launch SDLPAL for the first time, it will bring you to the configuration GUI by default. Once you have saved configurations from the GUI, the GUI will not to show again on subsequent launches. However, you have the opportunity to bring the GUI back on fatal game program errors or through the in-game system menu.
 
 Currently, the configuration GUI is available under the following platforms:
-* Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*) and *Linux*
+* Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*) and *GNU/Linux*
 * Mobile platforms: *Android*, *Windows* and *iOS*
 
 Configuration GUIs for *macOS* is still unavailable for now and we welcome contributions to implement it.
