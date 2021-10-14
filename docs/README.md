@@ -16,7 +16,7 @@ The development team has built a web-based demo version of SDLPAL on github page
 
 gitee镜像
 =======
-中国大陆用户如从GitHub下载代码困难，请使用[gitee镜像](https://gitee.com/sdlpal/sdlpal) (每天自动更新)。
+中国大陆用户如从GitHub下载代码困难，请使用[gitee镜像](https://gitee.com/sdlpal/sdlpal) (每小时自动更新)。
 
 LICENSE
 =======
