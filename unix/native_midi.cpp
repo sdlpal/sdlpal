@@ -36,6 +36,7 @@
 #include "native_midi/native_midi.h"
 #include "util.h"
 #include "palcfg.h"
+#include "../common.h"
 
 #define CLIPLAYER_EXECUTABLE (which("timidity"))
 
@@ -55,7 +56,7 @@ char* cliplayer = nullptr;
 
 static char *which(const char *cmd)
 {
-	static char path[PATH_MAX] = { '\0' };
+	static char path[PAL_MAX_PATH] = { '\0' };
     FILE *fp = popen(PAL_va(0, "which %s", cmd), "r");
     if (fp == NULL) {
         return NULL;

@@ -673,7 +673,6 @@ PAL_InGameMagicMenu(
    int              i, y;
    static WORD      w;
    WORD             wMagic;
-   const SDL_Rect   rect = {35, 62, 285, 90};
 
    //
    // Draw the player info boxes
@@ -883,7 +882,6 @@ PAL_InventoryMenu(
 --*/
 {
    static WORD      w = 0;
-   const SDL_Rect   rect = {30, 60, 290, 60};
 
    MENUITEM        rgMenuItem[2] =
    {
@@ -951,7 +949,6 @@ PAL_InGameMenu(
 {
    LPBOX                lpCashBox, lpMenuBox;
    WORD                 wReturnValue;
-   const SDL_Rect       rect = {0, 0, 320, 185};
    
    // Fix render problem with shadow
    VIDEO_BackupScreen(gpScreen);
@@ -1591,7 +1588,6 @@ PAL_BuyMenu(
    MENUITEM        rgMenuItem[MAX_STORE_ITEM];
    int             i, y;
    WORD            w;
-   SDL_Rect        rect = {125, 8, 190, 190};
 
    //
    // create the menu items

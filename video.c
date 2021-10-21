@@ -942,7 +942,7 @@ VIDEO_SaveScreenshot(
 
 --*/
 {
-	char filename[32];
+	char filename[80];
 #ifdef _WIN32
 	SYSTEMTIME st;
 	GetLocalTime(&st);

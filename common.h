@@ -159,7 +159,11 @@ typedef const CHAR         *LPCSTR;
 typedef WCHAR              *LPWSTR;
 typedef const WCHAR        *LPCWSTR;
 
+#ifdef PATH_MAX
 # define PAL_MAX_PATH  PATH_MAX
+#else
+# define PAL_MAX_PATH  1024
+#endif
 
 #endif
 
