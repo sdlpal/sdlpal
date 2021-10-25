@@ -968,7 +968,7 @@ UTIL_LogSetPrelude(
 {
     memset(_log_prelude, 0, sizeof(_log_prelude));
     if( prelude )
-        strncpy(_log_prelude, prelude, sizeof(_log_prelude));
+        strncpy(_log_prelude, prelude, sizeof(_log_prelude) - 1);
 }
 
 #if PAL_NEED_STRCASESTR
