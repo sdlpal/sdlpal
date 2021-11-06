@@ -310,15 +310,14 @@ GLuint compileShader(const char* sourceOrFilename, GLuint shaderType, int is_sou
     sprintf(pShaderBuffer,"%s#define PARAMETER_UNIFORM\r\n",pShaderBuffer);
     lines++;
 #endif
+    sprintf(pShaderBuffer, "%s#line %d\r\n", pShaderBuffer, lines);
     // remove #pragma parameter from glsl, avoid glsl compiler（ I mean you, atom ) complains
     while((ptr = strstr(source, "#pragma parameter"))!= NULL) {
         char *ptrEnd = strchr(ptr, '\r');
         if( ptrEnd == NULL ) ptrEnd = strchr(ptr, '\n');
         glslp_add_parameter(ptr, ptrEnd-ptr, &gGLSLP);
-        lines--;
         while(ptr!=ptrEnd) *ptr++=' ';
     }
-    sprintf(pShaderBuffer, "%s#line %d\r\n", pShaderBuffer, lines);
     sprintf(pShaderBuffer,"%s#define %s\r\n%s\r\n",pShaderBuffer,SHADER_TYPE(shaderType),is_source ? source : skip_version(source));
     if(!is_source)
         free((void*)source);
