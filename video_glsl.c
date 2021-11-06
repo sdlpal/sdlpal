@@ -506,12 +506,14 @@ void SetGroupUniforms(pass_uniform_locations *pSlot, int shaderID, int texture_u
         size[1] = (shaderID > 0) ? gGLSLP.shader_params[shaderID-1].FBO.height : 200;
     }else
         size[0] = 320, size[1] = 200;
-    glUniform2fv(pSlot->texture_size_uniform_location, 1, size);
     glUniform2fv(pSlot->input_size_uniform_location, 1, size);
     size[0] = is_pass ? gGLSLP.shader_params[shaderID].FBO.width  : gConfig.dwTextureWidth;
     size[1] = is_pass ? gGLSLP.shader_params[shaderID].FBO.height : gConfig.dwTextureHeight;
     glUniform2fv(pSlot->output_size_uniform_location,  1, size);
-    
+    size[0] = gGLSLP.shader_params[shaderID].FBO.pow_width;
+    size[1] = gGLSLP.shader_params[shaderID].FBO.pow_height;
+    glUniform2fv(pSlot->texture_size_uniform_location, 1, size);
+
 //    glEnableVertexAttribArray(pSlot->tex_coord_attrib_location);
 //    glVertexAttribPointer(pSlot->tex_coord_attrib_location, 4, GL_FLOAT, GL_FALSE, sizeof(struct VertexDataFormat), (GLvoid*)offsetof(struct VertexDataFormat, texCoord));
 }
