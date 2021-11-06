@@ -275,38 +275,50 @@ char *skip_version(char *src) {
 GLuint compileShader(const char* sourceOrFilename, GLuint shaderType, int is_source) {
     //DONT CHANGE
 #define SHADER_TYPE(shaderType) (shaderType == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT")
-    char *pShaderBuffer;
-    char *source = (char*)sourceOrFilename;
-    char *ptr = NULL;
-    if(!is_source)
+    char* pShaderBuffer;
+    char* source = (char*)sourceOrFilename;
+    char* ptr = NULL;
+    int lines = -1;
+    if (!is_source)
         source = readShaderFile(sourceOrFilename, shaderType);
-    size_t sourceLen = strlen(source)*2;
+    size_t sourceLen = strlen(source) * 2;
     pShaderBuffer = malloc(sourceLen);
-    memset(pShaderBuffer,0, sourceLen);
+    memset(pShaderBuffer, 0, sourceLen);
 #if !GLES
-    sprintf(pShaderBuffer,"#version %d%02d\r\n",glslversion_major, glslversion_minor);
+    sprintf(pShaderBuffer, "#version %d%02d\r\n", glslversion_major, glslversion_minor);
+    lines++;
 #else
-    sprintf(pShaderBuffer,"#version %d%02d %s\r\n", glslversion_major, glslversion_minor, glslversion_major >= 3 ? "es" : "");
-    if( SDL_GL_ExtensionSupported("GL_OES_standard_derivatives") )
-        sprintf(pShaderBuffer,"%s#extension GL_OES_standard_derivatives : enable\r\n",pShaderBuffer);
-    if( SDL_GL_ExtensionSupported("GL_EXT_shader_texture_lod") )
-        sprintf(pShaderBuffer,"%s#extension GL_EXT_shader_texture_lod : enable\r\n",pShaderBuffer);
-    
+    sprintf(pShaderBuffer, "#version %d%02d %s\r\n", glslversion_major, glslversion_minor, glslversion_major >= 3 ? "es" : "");
+    lines++;
+    if (SDL_GL_ExtensionSupported("GL_OES_standard_derivatives")) {
+        sprintf(pShaderBuffer, "%s#extension GL_OES_standard_derivatives : enable\r\n", pShaderBuffer);
+        lines++;
+    }
+    if (SDL_GL_ExtensionSupported("GL_EXT_shader_texture_lod")) {
+        sprintf(pShaderBuffer, "%s#extension GL_EXT_shader_texture_lod : enable\r\n", pShaderBuffer);
+        lines++;
+    }
+
     // should be deduced via GL_ES/GL_FRAGMENT_PRECISION_HIGH combination since both is predefined
     // but unknown why manual define is a must for WebGL2
-    if( glslversion_major >= 3 )
-        sprintf(pShaderBuffer,"%sprecision highp float;\r\n",pShaderBuffer);
+    if (glslversion_major >= 3) {
+        sprintf(pShaderBuffer, "%sprecision highp float;\r\n", pShaderBuffer);
+        lines++;
+    }
 #endif
 #if SUPPORT_PARAMETER_UNIFORM
     sprintf(pShaderBuffer,"%s#define PARAMETER_UNIFORM\r\n",pShaderBuffer);
+    lines++;
 #endif
     // remove #pragma parameter from glsl, avoid glsl compiler（ I mean you, atom ) complains
     while((ptr = strstr(source, "#pragma parameter"))!= NULL) {
         char *ptrEnd = strchr(ptr, '\r');
         if( ptrEnd == NULL ) ptrEnd = strchr(ptr, '\n');
         glslp_add_parameter(ptr, ptrEnd-ptr, &gGLSLP);
+        lines--;
         while(ptr!=ptrEnd) *ptr++=' ';
     }
+    sprintf(pShaderBuffer, "%s#line %d\r\n", pShaderBuffer, lines);
     sprintf(pShaderBuffer,"%s#define %s\r\n%s\r\n",pShaderBuffer,SHADER_TYPE(shaderType),is_source ? source : skip_version(source));
     if(!is_source)
         free((void*)source);
@@ -507,12 +519,10 @@ void SetGroupUniforms(pass_uniform_locations *pSlot, int shaderID, int texture_u
     }else
         size[0] = 320, size[1] = 200;
     glUniform2fv(pSlot->input_size_uniform_location, 1, size);
-    size[0] = is_pass ? gGLSLP.shader_params[shaderID].FBO.width  : gConfig.dwTextureWidth;
-    size[1] = is_pass ? gGLSLP.shader_params[shaderID].FBO.height : gConfig.dwTextureHeight;
-    glUniform2fv(pSlot->output_size_uniform_location,  1, size);
+    glUniform2fv(pSlot->texture_size_uniform_location, 1, size);
     size[0] = gGLSLP.shader_params[shaderID].FBO.pow_width;
     size[1] = gGLSLP.shader_params[shaderID].FBO.pow_height;
-    glUniform2fv(pSlot->texture_size_uniform_location, 1, size);
+    glUniform2fv(pSlot->output_size_uniform_location,  1, size);
 
 //    glEnableVertexAttribArray(pSlot->tex_coord_attrib_location);
 //    glVertexAttribPointer(pSlot->tex_coord_attrib_location, 4, GL_FLOAT, GL_FALSE, sizeof(struct VertexDataFormat), (GLvoid*)offsetof(struct VertexDataFormat, texCoord));
