@@ -825,14 +825,18 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
                 param->FBO.height = param->scale_y;
                 break;
         }
-        param->FBO.pow_width = next_pow2(param->FBO.width);
-        param->FBO.pow_height = next_pow2(param->FBO.height);
+        param->FBO.pow_width = param->FBO.width;
+        param->FBO.pow_height = param->FBO.height;
         
         if( param_next_pass && param_next_pass->filter_linear )
             SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
         param->pass_sdl_texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, param->FBO.pow_width, param->FBO.pow_height);
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
         SDL_GL_BindTexture(param->pass_sdl_texture, NULL, NULL);
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
         if( param_next_pass ) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, get_gl_wrap_mode(param_next_pass->wrap_mode, param_next_pass->scale_type_x));
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, get_gl_wrap_mode(param_next_pass->wrap_mode, param_next_pass->scale_type_y));
