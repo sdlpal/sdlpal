@@ -15,4 +15,5 @@
   - [ ] Android
   - [ ] macOS
   - [ ] iOS
-  
+
+- [ ] I certify that I have the right and agree to submit my contributions under the terms of GNU General Public License, version 3 (or any later version at the choice of the maintainers of the SDLPAL Project) as published by the Free Software Foundation.
