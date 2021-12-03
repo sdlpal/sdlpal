@@ -1,12 +1,12 @@
 [submodule "3rd/googletest"]
 	path = 3rd/googletest
-	url = https://github.com/google/googletest
+	url = ../googletest
 [submodule "3rd/SDL"]
 	path = 3rd/SDL
-	url = https://github.com/sdlpal/SDL.git
+	url = ../SDL.git
 [submodule "3rd/mingw-std-threads"]
 	path = 3rd/mingw-std-threads
-	url = https://github.com/sdlpal/mingw-std-threads.git
+	url = ../mingw-std-threads.git
 [submodule "scripts"]
 	path = scripts
-	url = https://github.com/sdlpal/scripts.git
+	url = ../scripts.git
