@@ -6,6 +6,8 @@
 //  Copyright © 2017年 SDLPAL team. All rights reserved.
 //
 
+#include "TargetConditionals.h"
+
 #import "SettingsTableViewController.h"
 #import "SDLPal_AppDelegate.h"
 #import <ActionSheetPicker.h>
@@ -37,7 +39,8 @@
     NSMutableArray *availEffects;
     NSMutableArray *availTimidityCFG;
     NSMutableArray *availSoundFonts;
-    BOOL checkAllFilesIncluded;
+    BOOL checkAllGameFilesIncluded;
+    BOOL checkAllAudioFilesIncluded;
     NSString *resourceStatus;
     
     AbstractActionSheetPicker *picker;
@@ -183,6 +186,8 @@
     NSArray *effectExtensionList = @[@"glsl",@"glslp"];
     NSArray *cfgExtensionList = @[@"cfg"];
     NSArray *soundfontExtensionList = @[@"sf2"];
+    NSArray *requiredGameFiles = @[@"abc.mkf", @"ball.mkf", @"data.mkf", @"f.mkf", @"fbp.mkf", @"fire.mkf", @"gop.mkf", @"m.msg", @"map.mkf", @"mgo.mkf", @"pat.mkf", @"rgm.mkf", @"rng.mkf", @"sss.mkf", @"word.dat"];
+    NSArray *optionalAudioFiles = @[@"voc.mkf", @"sounds.mkf", @"midi.mkf", @"mus.mkf"];
     NSString *basePath = [NSString stringWithUTF8String:UTIL_BasePath()];
     allFiles = [[NSFileManager defaultManager] subpathsOfDirectoryAtPath:basePath error:nil];
     for( NSString *filename in allFiles ) {
@@ -204,15 +209,27 @@
             [availSoundFonts addObject:filename];
     }
     availEffects = [[availEffects sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] mutableCopy];
-    checkAllFilesIncluded = YES;
-    for( NSString *checkFile in @[@"abc.mkf", @"ball.mkf", @"data.mkf", @"f.mkf", @"fbp.mkf", @"fire.mkf", @"gop.mkf", @"m.msg", @"map.mkf", @"mgo.mkf", @"rgm.mkf", @"rng.mkf", @"sss.mkf", @"word.dat"] ) {
+    checkAllGameFilesIncluded = YES;
+    for( NSString *checkFile in requiredGameFiles ) {
         if( ![self includedInList:allFiles name:checkFile] ) {
-            checkAllFilesIncluded = NO;
+            checkAllGameFilesIncluded = NO;
+            NSLog(@"Required original game resource files are missing, please copy files under: %@\nRequired game files are: %@", basePath, requiredGameFiles);
+            break;
+        }
+    }
+    checkAllAudioFilesIncluded = YES;
+    for( NSString *checkFile in optionalAudioFiles) {
+        if( ![self includedInList:allFiles name:checkFile] ) {
+            checkAllAudioFilesIncluded = NO;
+            NSLog(@"Optional game audio files are missing, please copy files under: %@\nRequired audio files are: %@", basePath, optionalAudioFiles);
             break;
         }
     }
     if(!resourceStatus) resourceStatus = lblResourceStatus.text;
-    lblResourceStatus.text  = [NSString stringWithFormat:@"%@%@", resourceStatus, checkAllFilesIncluded ? @"✅" : @"❌" ];
+#if TARGET_OS_SIMULATOR
+    resourceStatus = @"Simulator's doc folder";
+#endif
+    lblResourceStatus.text  = [NSString stringWithFormat:@"%@%@", resourceStatus, checkAllGameFilesIncluded ? @"✅" : @"❌" ];
 }
 
 typedef void(^SelectedBlock)(NSString *selected);
@@ -339,12 +356,25 @@ typedef void(^SelectedBlock)(NSString *selected);
 }
 
 - (IBAction)btnConfirmClicked:(id)sender {
-    if(!checkAllFilesIncluded){
-        UIAlertController  *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Cannot find data file in the iTunes File Sharing directory",nil)
+    if(!checkAllGameFilesIncluded){
+        
+        NSString *errorMsg = @"Cannot find data file in the iTunes File Sharing directory";
+#if TARGET_OS_SIMULATOR
+        NSString *basePath = [NSString stringWithUTF8String:UTIL_BasePath()];
+        errorMsg = [NSString stringWithFormat:@"Cannot find data file in the simulator's document folder: %@", basePath];
+#endif
+        UIAlertController  *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(errorMsg,nil)
                                                                         message:NSLocalizedString(@"NOTE: For copyright reasons data files required to run the game are NOT included.",nil)
                                                                  preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *cacelAction = [UIAlertAction actionWithTitle:UIKitLocalizedString(@"OK") style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:cacelAction];
+#if TARGET_OS_SIMULATOR
+        UIAlertAction *copyPathAction = [UIAlertAction actionWithTitle:UIKitLocalizedString(@"Copy Folder Path") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+            UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+            pasteboard.string = basePath;
+        }];
+        [alert addAction:copyPathAction];
+#endif
         [self presentViewController:alert animated:YES completion:nil];
         return;
     }
