@@ -1,0 +1,7 @@
+-I/usr/include/SDL2
+-I./unix
+-I.
+-I./liboggvorbis/include
+-I./libopusfile/include
+-I../timidity
+-DPAL_HAS_PLATFORM_SPECIFIC_UTILS
