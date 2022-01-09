@@ -24,7 +24,7 @@ LICENSE
 SDLPAL was originally created by [Wei Mingzhi](https://github.com/weimzh/) from 2009. Now it is owned by the SDLPAL development team. Please see [AUTHORS](AUTHORS) for full author list.
 ```
 Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
-Copyright (c) 2011-2021, SDLPAL development team.
+Copyright (c) 2011-2022, SDLPAL development team.
 All rights reserved.
 ```
 SDLPAL is distributed under the terms of **GNU General Public License, version 3** as published by the [Free Software Foundation](http://www.fsf.org/). See [LICENSE](LICENSE) for details.
