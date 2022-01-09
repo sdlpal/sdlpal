@@ -3,5 +3,5 @@
 -I.
 -I./liboggvorbis/include
 -I./libopusfile/include
--I../timidity
+-I./timidity
 -DPAL_HAS_PLATFORM_SPECIFIC_UTILS
