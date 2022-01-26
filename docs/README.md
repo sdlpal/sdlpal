@@ -70,7 +70,7 @@ Currently, SDLPAL supports the following platforms:
 Before start building, you may find some inspiration from reading [Our travis scripts](.travis.yml).
 
 To build SDLPAL, there are three major steps you need to do:
-1. Clone the source code from Github into your local folder using `git` or through corresponding GUI:
+1. Clone the source code from GitHub into your local folder using `git` or through corresponding GUI:
 ```shell
 $ cd <parent-path-of-sdlpal>
 $ git clone https://github.com/sdlpal/sdlpal.git
@@ -222,10 +222,10 @@ To set the configuration options manually, create a file named as *`sdlpal.cfg`*
 Reporting issues
 ================
 
-If you find any issues of SDLPAL, please feel free to report them to the development team through Github's issue tracking system using either English or Chinese.
+If you find any issues of SDLPAL, please feel free to report them to the development team through GitHub's issue tracking system using either English or Chinese.
 
 
 Contributing to the game
 ========================
 
-Any original code & documentation contributions are welcomed as long as the contributed code & documentation is licensed under GPL. You can use Github's pull request system to submit your changes to the main repository here. But remember, as a step to keep the quality of code, you should write corresponding unit tests before your changes can be merged. The guidance of writting unit tests can be found [here](/tests).
+Any original code & documentation contributions are welcomed as long as the contributed code & documentation is licensed under GPL. You can use GitHub's pull request system to submit your changes to the main repository here. But remember, as a step to keep the quality of code, you should write corresponding unit tests before your changes can be merged. The guidance of writting unit tests can be found [here](/tests).
