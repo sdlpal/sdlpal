@@ -51,14 +51,6 @@ This program does **NOT** include any code or data files of the original game, w
 
 See [wiki](../../wiki)
 
-## Chat Room
-
-Want to chat with other members of the SDLPal community?
-
-We have a Gitter Room which you can join below.
-
-[![Join the chat at https://gitter.im/sdlpal/sdlpal](https://badges.gitter.im/sdlpal/sdlpal.svg)](https://gitter.im/sdlpal/sdlpal?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 Building the game
 =================
 
