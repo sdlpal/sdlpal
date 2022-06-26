@@ -268,6 +268,7 @@
 		C6D61DF32619A6A4000622C2 /* timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DE32619A6A4000622C2 /* timidity.c */; };
 		C6D61DF72619A6B3000622C2 /* midi_timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DF52619A6B2000622C2 /* midi_timidity.c */; };
 		C6D61DF82619A6B3000622C2 /* midi_tsf.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DF62619A6B3000622C2 /* midi_tsf.c */; };
+		C6E89A16286892C800E772A0 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E89A15286892C800E772A0 /* CoreBluetooth.framework */; };
 		F9BC4A0C6F1B983EB45414F3 /* libPods-SDLPal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */; };
 /* End PBXBuildFile section */
 
@@ -341,27 +342,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = BECDF6BE0761BA81005FE872;
 			remoteInfo = "Standard DMG";
-		};
-		C69D0AA625C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FDB8C23E4C74400529352;
-			remoteInfo = hidapi;
-		};
-		C69D0AA825C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FDB4923E399AC00529352;
-			remoteInfo = "hidapi-iOS";
-		};
-		C69D0AAA25C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FDB6E23E3A2C900529352;
-			remoteInfo = "hidapi-tvOS";
 		};
 		C69D0AAC25C1463C00FF3EFF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -850,6 +830,7 @@
 		C6D61DE42619A6A4000622C2 /* instrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = instrum.h; sourceTree = "<group>"; };
 		C6D61DF52619A6B2000622C2 /* midi_timidity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi_timidity.c; path = ../../../midi_timidity.c; sourceTree = "<group>"; };
 		C6D61DF62619A6B3000622C2 /* midi_tsf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi_tsf.c; path = ../../../midi_tsf.c; sourceTree = "<group>"; };
+		C6E89A15286892C800E772A0 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		E8A03C34C8311310F5BFC81E /* Pods-SDLPal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDLPal.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SDLPal/Pods-SDLPal.debug.xcconfig"; sourceTree = "<group>"; };
 		F7379C304509DA5D22123C42 /* Pods-SDLPal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDLPal.release.xcconfig"; path = "Pods/Target Support Files/Pods-SDLPal/Pods-SDLPal.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -860,6 +841,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C69D0AAF25C1465200FF3EFF /* libSDL2.a in Frameworks */,
+				C6E89A16286892C800E772A0 /* CoreBluetooth.framework in Frameworks */,
 				C69D0A4825C1446A00FF3EFF /* CoreHaptics.framework in Frameworks */,
 				71655292195BBCD6006E1227 /* OpenGLES.framework in Frameworks */,
 				C622BE761E474CFC000C8970 /* AVFoundation.framework in Frameworks */,
@@ -1068,6 +1050,7 @@
 		7165505F195BB372006E1227 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C6E89A15286892C800E772A0 /* CoreBluetooth.framework */,
 				C69D0A4725C1446A00FF3EFF /* CoreHaptics.framework */,
 				C622BE751E474CFC000C8970 /* AVFoundation.framework */,
 				C622BE731E474CE2000C8970 /* GameController.framework */,
@@ -1587,9 +1570,6 @@
 				C69D0AA125C1463000FF3EFF /* libSDL2.dylib */,
 				C69D0AA325C1463000FF3EFF /* libSDL2.dylib */,
 				C69D0AA525C1463000FF3EFF /* SDL2 */,
-				C69D0AA725C1463000FF3EFF /* hidapi.framework */,
-				C69D0AA925C1463000FF3EFF /* hidapi.framework */,
-				C69D0AAB25C1463000FF3EFF /* hidapi.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1728,27 +1708,6 @@
 			fileType = "compiled.mach-o.executable";
 			path = SDL2;
 			remoteRef = C69D0AA425C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0AA725C1463000FF3EFF /* hidapi.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = hidapi.framework;
-			remoteRef = C69D0AA625C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0AA925C1463000FF3EFF /* hidapi.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = hidapi.framework;
-			remoteRef = C69D0AA825C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0AAB25C1463000FF3EFF /* hidapi.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = hidapi.framework;
-			remoteRef = C69D0AAA25C1463000FF3EFF /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
