@@ -1,6 +1,6 @@
 version: 2.0.{build}
 image:
-  - Visual Studio 2019
+  - Visual Studio 2022
 environment:
   CLOUDSMITH_API_KEY:
     secure: gryxZxQ1A85JeBI+HHk8GQqY/RQ4y8Oq8kR3yZ2v9zmtnUEmtPmkARFfoypUO0K8

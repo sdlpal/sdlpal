@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="67d7840d-5e23-4312-8484-b33ffe3d5f36" Publisher="CN=SDLPAL Team" Version="2.0.0.0" />
+  <Identity Name="67d7840d-5e23-4312-8484-b33ffe3d5f36" Publisher="CN=SDLPAL Team" Version="2.0.1.0" />
   <mp:PhoneIdentity PhoneProductId="67d7840d-5e23-4312-8484-b33ffe3d5f36" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>SDL PAL</DisplayName>
