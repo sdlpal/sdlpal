@@ -207,12 +207,12 @@ PAL_MagicSelectionMenuUpdate(
       //
       // Draw the MP of the selected magic.
       //
-      PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
+      PAL_CreateSingleLineBox(PAL_XY(0, 0), PAL_X(gConfig.ScreenLayout.MagicMPDescLines), FALSE);
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
-         gpScreen, PAL_XY(45, 14));
-      PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),
-         kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
+          gpScreen, gConfig.ScreenLayout.MagicMPSlashPos);
+      PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, gConfig.ScreenLayout.MagicMPNeededPos,
+          kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(g_wPlayerMP, 4, gConfig.ScreenLayout.MagicMPCurrentPos, kNumColorCyan, kNumAlignRight);
    }
 
 

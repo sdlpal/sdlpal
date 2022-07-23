@@ -159,6 +159,13 @@ typedef struct tagSCREENLAYOUT
 
 	PAL_POS          ExtraItemDescLines;
 	PAL_POS          ExtraMagicDescLines;
+
+	PAL_POS			 MagicMPDescLines;
+	PAL_POS			 MagicMPSlashPos;
+	PAL_POS			 MagicMPNeededPos;
+	PAL_POS			 MagicMPCurrentPos;
+
+	PAL_POS			 MagicDescMsgPos;
 } SCREENLAYOUT;
 
 typedef struct tagCONFIGURATION

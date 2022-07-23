@@ -372,6 +372,15 @@ PAL_LoadConfig(
 		// Extra Lines
 		.ExtraItemDescLines  = PAL_XY(0, 0),
 		.ExtraMagicDescLines = PAL_XY(0, 0),
+
+		// Magic Menu Desc
+		.MagicMPDescLines	= PAL_XY(5, 0),
+		.MagicMPSlashPos	= PAL_XY(45, 14),
+		.MagicMPNeededPos	= PAL_XY(15, 14),
+		.MagicMPCurrentPos	= PAL_XY(50, 14),
+
+		// Magic Desc Message Pos
+		.MagicDescMsgPos	= PAL_XY(102, 0),
 	};
 
 	for (PALCFG_ITEM i = PALCFG_ALL_MIN; i < PALCFG_ALL_MAX; i++) values[i] = gConfigItems[i].DefaultValue;
