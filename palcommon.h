@@ -84,6 +84,8 @@ typedef DWORD           PAL_POS;
 
 #define PAL_CDTRACK_BASE    10000
 
+#define PAL_RLEBUFSIZE	64000
+
 typedef enum tagPALDIRECTION
 {
    kDirSouth = 0,

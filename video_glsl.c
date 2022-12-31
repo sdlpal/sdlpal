@@ -512,15 +512,24 @@ void SetGroupUniforms(pass_uniform_locations *pSlot, int shaderID, int texture_u
     glUniform1i(pSlot->texture_uniform_location, texture_unit);
 
     GLfloat size[2];
-    if( is_pass ) {
-        size[0] = (shaderID > 0) ? gGLSLP.shader_params[shaderID-1].FBO.width  : 320;
-        size[1] = (shaderID > 0) ? gGLSLP.shader_params[shaderID-1].FBO.height : 200;
-    }else
-        size[0] = 320, size[1] = 200;
+    if( is_pass && shaderID > 0 && shaderID <= gGLSLP.shaders ) {
+        size[0] = gGLSLP.shader_params[shaderID-1].FBO.pow_width;
+        size[1] = gGLSLP.shader_params[shaderID-1].FBO.pow_height;
+    }
+    else {
+        size[0] = 320;
+        size[1] = 200;
+    }
     glUniform2fv(pSlot->input_size_uniform_location, 1, size);
     glUniform2fv(pSlot->texture_size_uniform_location, 1, size);
-    size[0] = gGLSLP.shader_params[shaderID].FBO.pow_width;
-    size[1] = gGLSLP.shader_params[shaderID].FBO.pow_height;
+    if (is_pass && shaderID >= 0 && shaderID < gGLSLP.shaders) {
+        size[0] = gGLSLP.shader_params[shaderID].FBO.pow_width;
+        size[1] = gGLSLP.shader_params[shaderID].FBO.pow_height;
+    }
+    else {
+        size[0] = gGLSLP.shader_params[gGLSLP.shaders - 1].FBO.pow_width;
+        size[1] = gGLSLP.shader_params[gGLSLP.shaders - 1].FBO.pow_height;
+    }
     glUniform2fv(pSlot->output_size_uniform_location,  1, size);
 
 //    glEnableVertexAttribArray(pSlot->tex_coord_attrib_location);
@@ -641,7 +650,7 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
         //self
         SetGroupUniforms(&gGLSLP.shader_params[shaderID].self_slots,         shaderID, 0, false );
         //orig
-        SetGroupUniforms(&gGLSLP.shader_params[shaderID].orig_slots,         shaderID, orig_texture_unit, false );
+        SetGroupUniforms(&gGLSLP.shader_params[shaderID].orig_slots, shaderID, orig_texture_unit, false);
         //prev-prev%
         for( int i = 1; i < (frames_passed_limit ? MAX_TEXTURES : min(frames, MAX_TEXTURES)); i++ )
             SetGroupUniforms(&gGLSLP.shader_params[shaderID].prev_slots[i],         i, frame_prev_texture_units[i], false );

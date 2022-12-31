@@ -1237,7 +1237,7 @@ PAL_StartDialogWithOffset(
 
 --*/
 {
-   PAL_LARGE BYTE buf[16384];
+   PAL_LARGE BYTE buf[PAL_RLEBUFSIZE];
    SDL_Rect       rect;
 
    if (gpGlobals->fInBattle && !g_fUpdatedInBattle)
@@ -1274,7 +1274,7 @@ PAL_StartDialogWithOffset(
          //
          // Display the character face at the upper part of the screen
          //
-         if (PAL_MKFReadChunk(buf, 16384, iNumCharFace, gpGlobals->f.fpRGM) > 0)
+         if (PAL_MKFReadChunk(buf, PAL_RLEBUFSIZE, iNumCharFace, gpGlobals->f.fpRGM) > 0)
          {
             rect.w = PAL_RLEGetWidth((LPCBITMAPRLE)buf);
             rect.h = PAL_RLEGetHeight((LPCBITMAPRLE)buf);
@@ -1319,7 +1319,7 @@ PAL_StartDialogWithOffset(
          //
          // Display the character face at the lower part of the screen
          //
-         if (PAL_MKFReadChunk(buf, 16384, iNumCharFace, gpGlobals->f.fpRGM) > 0)
+         if (PAL_MKFReadChunk(buf, PAL_RLEBUFSIZE, iNumCharFace, gpGlobals->f.fpRGM) > 0)
          {
             rect.x = 270 - PAL_RLEGetWidth((LPCBITMAPRLE)buf) / 2 + xOff;
             rect.y = 144 - PAL_RLEGetHeight((LPCBITMAPRLE)buf) / 2 + yOff;

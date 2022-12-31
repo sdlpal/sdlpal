@@ -1055,7 +1055,7 @@ PAL_PlayerStatus(
 --*/
 {
    PAL_LARGE BYTE   bufBackground[320 * 200];
-   PAL_LARGE BYTE   bufImage[16384];
+   PAL_LARGE BYTE   bufImage[PAL_RLEBUFSIZE];
    PAL_LARGE BYTE   bufImageBox[50 * 49];
    int              labels0[] = {
       STATUS_LABEL_EXP, STATUS_LABEL_LEVEL, STATUS_LABEL_HP,
@@ -1117,7 +1117,7 @@ PAL_PlayerStatus(
       //
       // Draw the image of player role
       //
-      if (PAL_MKFReadChunk(bufImage, 16384, gpGlobals->g.PlayerRoles.rgwAvatar[iPlayerRole], gpGlobals->f.fpRGM) > 0)
+      if (PAL_MKFReadChunk(bufImage, PAL_RLEBUFSIZE, gpGlobals->g.PlayerRoles.rgwAvatar[iPlayerRole], gpGlobals->f.fpRGM) > 0)
       {
          PAL_RLEBlitToSurface(bufImage, gpScreen, gConfig.ScreenLayout.RoleImage);
       }
@@ -1139,7 +1139,7 @@ PAL_PlayerStatus(
          //
          // Draw the image
          //
-         if (PAL_MKFReadChunk(bufImage, 16384,
+         if (PAL_MKFReadChunk(bufImage, PAL_RLEBUFSIZE,
             gpGlobals->g.rgObject[w].item.wBitmap, gpGlobals->f.fpBALL) > 0)
          {
             PAL_RLEBlitToSurface(bufImage, gpScreen,
