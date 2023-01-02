@@ -25,6 +25,9 @@
 
 #if PAL_HAS_GLSL
 
+#define FSHACK_X 1000
+#define FSHACK_Y 1000
+
 #include "video_glsl.h"
 #include "video.h"
 
@@ -60,6 +63,8 @@ static int glversion_major, glversion_minor;
 static int glslversion_major, glslversion_minor;
 
 static SDL_Texture *origTexture;
+
+static BOOL g_WindowSizeEverMemed;
 
 static char *frame_prev_prefixes[MAX_TEXTURES] = {
     "",
@@ -753,15 +758,27 @@ PAL_FORCE_INLINE int CORE_RenderCopy(SDL_Renderer * renderer, SDL_Texture * text
                     const SDL_Rect * srcrect, const SDL_Rect * dstrect)
 {
 #if SDL_VERSION_ATLEAST(2,0,10)
-    // hack for 2.0.10, manually call glViewport for replaced SDL_RenderCopy.
-    int w,h;
+    // hack for SDL 2.0.10+, manually call glViewport for replaced SDL_RenderCopy.
+    int x,y,w,h;
+    x = 0;
+    y = 0;
     SDL_GetRendererOutputSize(renderer, &w, &h);
-    glViewport(0, 0, w, h);
+    if (gPassID == 0 && gConfig.fFullScreen) {
+        w -= FSHACK_X;
+        h -= FSHACK_Y;
+        y += FSHACK_Y;
+    }
+    glViewport(x, y, w, h);
 #endif
     return VIDEO_RenderTexture(renderer, texture, srcrect, dstrect, gPassID);
 }
 SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
 {
+    if (gConfig.fFullScreen) {
+        width -= FSHACK_X;
+        height -= FSHACK_Y;
+    }
+
     gRendererWidth = width;
     gRendererHeight = height;
 
@@ -781,18 +798,19 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
     {
         if (ratio > 1.6f)
         {
-            ratio = (float)height / gConfig.dwTextureHeight;
+            ratio = (double)height / gConfig.dwTextureHeight;
         }
         else
         {
-            ratio = (float)width / gConfig.dwTextureWidth;
+            ratio = (double)width / gConfig.dwTextureWidth;
         }
         
         WORD w = (WORD)(ratio * gConfig.dwTextureWidth) & ~0x3;
         WORD h = (WORD)(ratio * gConfig.dwTextureHeight) & ~0x3;
-        gTextureRect.x = (width - w) / 2;
+        gTextureRect.x = (width - w) / 2 ;
         gTextureRect.y = (height - h) / 2;
-        gTextureRect.w = w; gTextureRect.h = h;
+        gTextureRect.w = w;
+        gTextureRect.h = h;
     }
     else
     {
@@ -897,7 +915,7 @@ void VIDEO_GLSL_RenderCopy()
     SDL_SetRenderTarget(gpRenderer, NULL);
     SDL_RenderClear(gpRenderer);
     gPassID = 0;
-    SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
+    SDL_RenderCopy(gpRenderer, gpTexture, NULL, &(SDL_Rect){ 0, 0, gConfig.dwScreenWidth, gConfig.dwScreenHeight });
     
     SDL_GL_SwapWindow(gpWindow);
     
@@ -946,10 +964,15 @@ void VIDEO_GLSL_Init() {
 #   endif
 #endif
 
-    Uint32 flags = PAL_VIDEO_INIT_FLAGS | SDL_WINDOW_OPENGL;
-    
+    uint32_t flags = PAL_VIDEO_INIT_FLAGS | SDL_WINDOW_OPENGL;
+
     UTIL_LogOutput(LOGLEVEL_DEBUG, "requesting to create window with flags: %s %s profile latest available\n", SDL_GetHint( SDL_HINT_RENDER_DRIVER ),  get_gl_profile(get_SDL_GLAttribute(SDL_GL_CONTEXT_PROFILE_MASK)));
     gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
+    if (gConfig.fFullScreen) {
+        gConfig.fFullScreen = FALSE;
+        VIDEO_GLSL_ToggleFullscreen();
+        g_WindowSizeEverMemed = FALSE;
+    }
     if (gpWindow == NULL) {
         UTIL_LogOutput(LOGLEVEL_DEBUG, "failed to create window with ordered flags! %s\n", SDL_GetError());
         UTIL_LogOutput(LOGLEVEL_DEBUG, "reverting to: OpenGL %s profile %d.%d\n", get_gl_profile(orig_profile), orig_major, orig_minor);
@@ -958,6 +981,59 @@ void VIDEO_GLSL_Init() {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, orig_minor);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,  orig_profile);
         gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
+    }
+}
+
+
+VOID VIDEO_GLSL_ToggleFullscreen()
+{
+    int displayIndex = SDL_GetWindowDisplayIndex(gpWindow);
+    SDL_Rect bounds;
+
+    static SDL_Rect resized, origin;
+
+    SDL_GetDisplayBounds(displayIndex, &bounds);
+
+    if (gConfig.fFullScreen)
+    {
+        if (g_WindowSizeEverMemed) {
+            resized = origin;
+        }
+        else {
+            resized.x = bounds.x + (bounds.w - gConfig.dwScreenWidth) / 2;
+            resized.y = bounds.y + (bounds.h - gConfig.dwScreenHeight) / 2;
+            resized.w = gConfig.dwScreenWidth;
+            resized.h = gConfig.dwScreenHeight;
+        }
+
+        SDL_SetWindowBordered(gpWindow, SDL_TRUE);
+        SDL_SetWindowResizable(gpWindow, SDL_TRUE);
+        SDL_SetWindowPosition(gpWindow, resized.x, resized.y);
+        SDL_SetWindowSize(gpWindow, resized.w, resized.h);
+
+        gConfig.fFullScreen = FALSE;
+    }
+    else
+    {
+        SDL_GetWindowPosition(gpWindow, &origin.x, &origin.y);
+        SDL_GetWindowSize(gpWindow, &origin.w, &origin.h);
+        g_WindowSizeEverMemed = TRUE;
+
+        resized.x = bounds.x;
+        resized.y = bounds.y;
+        //
+        // make sure resized window be absolutely bigger than monitor, avoid
+        // fullscreen optimization breaks HDR
+        //
+        resized.w = bounds.w + FSHACK_X;
+        resized.h = bounds.h + FSHACK_Y;
+
+        SDL_SetWindowBordered(gpWindow, SDL_FALSE);
+        SDL_SetWindowResizable(gpWindow, SDL_FALSE);
+        SDL_SetWindowPosition(gpWindow, resized.x, resized.y);
+        SDL_SetWindowSize(gpWindow, resized.w, resized.h);
+
+        gConfig.fFullScreen = TRUE;
     }
 }
 

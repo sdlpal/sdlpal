@@ -35,6 +35,7 @@ PAL_C_LINKAGE_BEGIN
 
 extern SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height);
 extern void VIDEO_GLSL_RenderCopy();
+extern void VIDEO_GLSL_ToggleFullscreen();
 
 extern void VIDEO_GLSL_Init();
 extern void VIDEO_GLSL_Setup();

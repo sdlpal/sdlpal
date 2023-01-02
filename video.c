@@ -41,6 +41,7 @@ SDL_Rect           gTextureRect;
 static struct RenderBackend {
     void (*Init)();
     void (*Setup)();
+    void (*ToggleFullscreen)();
     SDL_Texture *(*CreateTexture)(int width, int height);
     void (*RenderCopy)();
 } gRenderBackend;
@@ -125,6 +126,7 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 #endif
 
 void NullFunc() {}
+void VIDEO_ORIGIN_ToggleFullscreen();
 
 INT
 VIDEO_Startup(
@@ -157,6 +159,7 @@ VIDEO_Startup(
 
    gRenderBackend.Init = NullFunc;
    gRenderBackend.Setup = NullFunc;
+   gRenderBackend.ToggleFullscreen = VIDEO_ORIGIN_ToggleFullscreen;
    gRenderBackend.CreateTexture = VIDEO_CreateTexture;
    gRenderBackend.RenderCopy = VIDEO_RenderCopy;
 
@@ -164,6 +167,7 @@ VIDEO_Startup(
    if( gConfig.fEnableGLSL) {
 	   gRenderBackend.Init = VIDEO_GLSL_Init;
 	   gRenderBackend.Setup = VIDEO_GLSL_Setup;
+       gRenderBackend.ToggleFullscreen = VIDEO_GLSL_ToggleFullscreen;
 	   gRenderBackend.CreateTexture = VIDEO_GLSL_CreateTexture;
 	   gRenderBackend.RenderCopy = VIDEO_GLSL_RenderCopy;
    }
@@ -770,8 +774,13 @@ VIDEO_ToggleScaleScreen(
    VIDEO_UpdateScreen(NULL);
 }
 
+void VIDEO_ToggleFullscreen()
+{
+    gRenderBackend.ToggleFullscreen();
+}
+
 VOID
-VIDEO_ToggleFullscreen(
+VIDEO_ORIGIN_ToggleFullscreen(
    VOID
 )
 /*++
