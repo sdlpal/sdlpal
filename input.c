@@ -1011,7 +1011,7 @@ PAL_EventFilter(
    {
 #if SDL_VERSION_ATLEAST(2,0,0)
    case SDL_WINDOWEVENT:
-      if (lpEvent->window.event == SDL_WINDOWEVENT_RESIZED)
+      if (lpEvent->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
       {
          //
          // resized the window
