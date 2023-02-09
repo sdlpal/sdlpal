@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * -------------------------------------------------------------------------
  * SDLPAL
- * Copyright (c) 2011-2022, SDLPAL development team.
+ * Copyright (c) 2011-2023, SDLPAL development team.
  * All rights reserved.
  *
  * This file is part of SDLPAL.
