@@ -63,6 +63,9 @@ class CrixPlayer: public CPlayer
   uint32_t *extra_regs;
   uint8_t *extra_vals;
 #endif
+#ifdef USE_RIX_MKF_FILE_BUFFER
+  uint8_t* file_buffer;
+#endif
   FILE *fp;
   int subsongs;
   uint8_t *rix_buf;  /* rix files' f_buffer */
@@ -130,4 +133,6 @@ class CrixPlayer: public CPlayer
   uint16_t rix_proc();                   /**/
   void set_new_int();
   void switch_ad_bd(uint16_t);           /**/
+
+  void read_file_to(uint8_t *&);
 };

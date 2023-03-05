@@ -79,18 +79,27 @@ CPlayer *CrixPlayer::factory(Copl *newopl)
 }
 
 CrixPlayer::CrixPlayer(Copl *newopl)
-  : CPlayer(newopl), flag_mkf(0), fp(NULL), rix_buf(0)
+  : CPlayer(newopl), flag_mkf(0)
 #if USE_RIX_EXTRA_INIT
 	, extra_regs(NULL), extra_vals(NULL), extra_length(0)
 #endif
+#ifdef USE_RIX_MKF_FILE_BUFFER
+    , file_buffer(0)
+#endif
+    , fp(NULL), rix_buf(0)
 {
 }
 
 CrixPlayer::~CrixPlayer()
 {
+#ifdef USE_RIX_MKF_FILE_BUFFER
+    if (file_buffer)
+        delete[] file_buffer;
+#else
   fclose(fp);
   if(rix_buf)
     free(rix_buf);
+#endif
 #if USE_RIX_EXTRA_INIT
   if (extra_regs) delete[] extra_regs;
   if (extra_vals) delete[] extra_vals;
@@ -119,6 +128,17 @@ void CrixPlayer::set_extra_init(uint32_t* regs, uint8_t* datas, int n)
 }
 #endif
 
+void CrixPlayer::read_file_to(uint8_t *&buf) {
+    fseek(fp, 0, SEEK_END);
+    length = (uint32_t)ftell(fp);
+    if (buf)
+        free(buf);
+    buf = (uint8_t*)calloc(1, length);
+    fseek(fp, 0, SEEK_SET);
+    fread(buf, length, 1, fp);
+    return;
+}
+
 bool CrixPlayer::load(const std::string &filename, const CFileProvider &cfp)
 {
   fp = fopen(filename.c_str(),"rb"); if(!fp) return false;
@@ -136,21 +156,23 @@ bool CrixPlayer::load(const std::string &filename, const CFileProvider &cfp)
   if(RIX_SWAP16(signature)!=0x55aa){ fclose(fp);return false; }
     if(!flag_mkf)
     {
-        fseek(fp,0,SEEK_END);
-        length = (uint32_t)ftell(fp);
-        if(rix_buf)
-            free(rix_buf);
-        rix_buf = (uint8_t *)calloc(1, length);
-        fseek(fp,0,SEEK_SET);
-        fread(rix_buf,length,1,fp);
+        read_file_to(rix_buf);
         subsongs = 1;
+#ifdef USE_RIX_MKF_FILE_BUFFER
+        file_buffer = rix_buf;
+        fclose(fp);
+#endif
     }
     else
     {
-        fseek(fp,0,SEEK_SET);
-        fread(&subsongs,4,1,fp);
+        fseek(fp, 0, SEEK_SET);
+        fread(&subsongs, 4, 1, fp);
         subsongs = RIX_SWAP32(subsongs);
-        subsongs/=4;
+        subsongs /= 4;
+#ifdef USE_RIX_MKF_FILE_BUFFER
+        read_file_to(file_buffer);
+        fclose(fp);
+#endif
     }
   rewind(0);
   return true;
@@ -199,6 +221,13 @@ void CrixPlayer::rewindReInit(int subsong, bool reinit)
 	if (flag_mkf)
 	{
         int index,index2;
+#ifdef USE_RIX_MKF_FILE_BUFFER
+        uint32_t* buf_index = (uint32_t*)file_buffer;
+        int offset1 = RIX_SWAP32(buf_index[subsong]), offset2;
+        while ((offset2 = RIX_SWAP32(buf_index[++subsong])) == offset1);
+        length = offset2 - offset1 + 1;
+        rix_buf = file_buffer + offset1;
+#else
         fseek(fp,subsong*4,SEEK_SET);
         fread(&index,4,1,fp);
         fread(&index2,4,1,fp);
@@ -212,6 +241,7 @@ void CrixPlayer::rewindReInit(int subsong, bool reinit)
         rix_buf = (uint8_t *)calloc(1, length);
         memset(rix_buf, 0, sizeof(rix_buf));
         fread(rix_buf,length,1,fp);
+#endif
 	}
 
 	if (reinit)
