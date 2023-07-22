@@ -258,21 +258,6 @@ VIDEO_Startup(
          SDL_FreeSurface(overlay);
       }
    }
-# if PAL_HAS_GLSL
-   // notice: power of 2
-#  define PIXELS 1
-   // We need a total empty texture in case of not using touch overlay.
-   // Or GL runtime will pick the previous texture - the main screen itself
-   // and reuse it - that makes color seems overexposed
-   else if( gConfig.fEnableGLSL )
-   {
-	   BYTE pixels[4*PIXELS*PIXELS];
-	   memset(pixels, 0, sizeof(pixels));
-	   SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixels, PIXELS, PIXELS, 32, PIXELS, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-	   gpTouchOverlay = SDL_CreateTextureFromSurface(gpRenderer, temp);
-	   SDL_FreeSurface(temp);
-   }
-# endif
 #else
 
 # if APPIMAGE

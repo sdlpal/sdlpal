@@ -54,7 +54,10 @@ static uint32_t gVAOIds[MAX_INDEX];
 static uint32_t gVBOIds[MAX_INDEX];
 static uint32_t gEBOId;
 static uint32_t gPassID = -1;
-static int gMVPSlots[MAX_INDEX], gHDRSlot=-1, gTouchOverlaySlot=-1;
+static int gMVPSlots[MAX_INDEX];
+static int gHDRSlot = -1;
+static int gUseTouchOverlaySlot = -1;
+static int gTouchOverlaySlot = -1;
 static int VAOSupported = 1;
 static int glversion_major, glversion_minor;
 static int glslversion_major, glslversion_minor;
@@ -191,6 +194,7 @@ precision mediump float;            \r\n\
 COMPAT_VARYING vec2 v_texCoord;     \r\n\
 uniform sampler2D tex0;             \r\n\
 uniform int HDR;                    \r\n\
+uniform int useTouchOverlay;        \r\n\
 uniform sampler2D TouchOverlay;     \r\n\
 vec3 ACESFilm(vec3 x)               \r\n\
 {                                   \r\n\
@@ -237,6 +241,7 @@ if( HDR > 0 )                       \r\n\
 color = ACESFilm(color);            \r\n\
 color = rgb_to_srgb(color);         \r\n\
 FragColor.rgb=color;                \r\n\
+if( useTouchOverlay > 0 )           \r\n\
 FragColor = blend(FragColor, COMPAT_TEXTURE(TouchOverlay , v_texCoord.xy));     \r\n\
 }";
 
@@ -445,6 +450,10 @@ void setupShaderParams(int pass){
         if(gHDRSlot < 0)
             UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform HDR not exist\n");
 
+        gUseTouchOverlaySlot = glGetUniformLocation(gProgramIds[pass], "useTouchOverlay");
+        if (gUseTouchOverlaySlot < 0)
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform useTouchOverlay not exist\n");
+
         gTouchOverlaySlot = glGetUniformLocation(gProgramIds[pass], "TouchOverlay");
         if(gTouchOverlaySlot < 0)
             UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform TouchOverlay not exist\n");
@@ -577,7 +586,7 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
     
     int texture_unit_used = 1;
     int touchoverlay_texture_slot = -1;
-    if( pass == 0 ) {
+    if( pass == 0 && gpTouchOverlay) {
         glActiveTexture(GL_TEXTURE0+texture_unit_used);
         SDL_GL_BindTexture(gpTouchOverlay, NULL, NULL);
         touchoverlay_texture_slot = texture_unit_used++;
@@ -627,7 +636,9 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
     
     if( pass == 0 ) {
         GLint HDR = gConfig.fEnableHDR;
+        GLint useTouchOverlay = gConfig.fUseTouchOverlay;
         glUniform1i(gHDRSlot, HDR);
+        glUniform1i(gUseTouchOverlaySlot, useTouchOverlay);
         glUniform1i(gTouchOverlaySlot, touchoverlay_texture_slot);
     }
 
