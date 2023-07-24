@@ -440,6 +440,7 @@ PAL_LoadDefaultGame(
    gpGlobals->wMaxPartyMemberIndex = 0;
    gpGlobals->viewport = PAL_XY(0, 0);
    gpGlobals->wLayer = 0;
+   gpGlobals->nFollower = 0;
    gpGlobals->wChaseRange = 1;
 #ifndef PAL_CLASSIC
    gpGlobals->bBattleSpeed = 2;
