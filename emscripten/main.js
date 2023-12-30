@@ -118,7 +118,7 @@ function loadZip() {
 
     zip.loadAsync(file).then(function(z) {
 	z.forEach(function(relativePath, zipEntry) {
-        if (relativePath.includes('._.')) {
+        if (relativePath.includes('._')) {
             Module.print("ignoring file"+relativePath);
             return;
         }

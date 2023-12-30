@@ -27,7 +27,7 @@ POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 
 %$(INTER).o: %.c %$(INTER).d
 	@echo [CC] $<
-	@emcc -c $(CFLAGS) -Dfclose=EMSCRIPTEN_fclose -Dmain=EMSCRIPTEN_main -o $@ $<
+	@emcc -c $(CFLAGS) -Dfopen=EMSCRIPTEN_fopen -Dfclose=EMSCRIPTEN_fclose -Dmain=EMSCRIPTEN_main -o $@ $<
 	$(POSTCOMPILE)
 
 %$(INTER).o: %.cpp %$(INTER).d

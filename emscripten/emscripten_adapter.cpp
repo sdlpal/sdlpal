@@ -6,10 +6,10 @@
 #include <emscripten.h>
 #include <fcntl.h>
 
-extern "C" char *_stringtoupper(char *s) 
+extern "C" char *_stringtolower(char *s) 
 {
 	char *orig = s;
-	do{	*s=toupper(*s); }while(*++s);
+	do{	*s=tolower(*s); }while(*++s);
 	return orig;
 }
 
@@ -57,6 +57,14 @@ UTIL_Platform_Quit(
 {
 }
 
+extern "C" FILE *
+EMSCRIPTEN_fopen(
+    char *fname,
+	char *opts
+)
+{
+	return fopen(_stringtolower(fname),opts);
+}
 extern "C" int
 EMSCRIPTEN_fclose(
     FILE *stream
