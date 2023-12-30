@@ -6,6 +6,13 @@
 #include <emscripten.h>
 #include <fcntl.h>
 
+extern "C" char *_stringtoupper(char *s) 
+{
+	char *orig = s;
+	do{	*s=toupper(*s); }while(*++s);
+	return orig;
+}
+
 BOOL
 UTIL_GetScreenSize(
    DWORD *pdwScreenWidth,
@@ -23,17 +30,21 @@ UTIL_IsAbsolutePath(
 	return FALSE;
 }
 
+extern "C" int UTIL_Platform_Startup(int argc, char *argv[]) {
+	// Defaults log to debug output
+	UTIL_LogAddOutputCallback([](LOGLEVEL, const char* str, const char*)->void {
+		EM_ASM(Module.print(UTF8ToString($0)), str);
+	}, LOGLEVEL_MIN);
+
+	return 0;
+}
+
 INT
 UTIL_Platform_Init(
    int argc,
    char* argv[]
 )
 {
-	// Defaults log to debug output
-	UTIL_LogAddOutputCallback([](LOGLEVEL, const char* str, const char*)->void {
-		EM_ASM(Module.print(UTF8ToString($0)), str);
-	}, LOGLEVEL_MIN);
-
 	gConfig.fLaunchSetting = FALSE;
 
 	return 0;
