@@ -6,6 +6,7 @@ var strNoData = 'Error: Game data not loaded!';
 var strInit = 'Initializing...';
 var strLoading = 'Loading';
 var strDelConfirm = "This will DELETE your game data and saved games stored in browser cache. Type 'YES' to continue.";
+var strTips = "Note: Avoid using uppercase letters in the configuration file when specifying paths and file names.";
 
 var userLang = navigator.language || navigator.userLanguage;
 if (userLang === 'zh-CN' || userLang.startsWith('zh-Hans') ) {
@@ -17,6 +18,7 @@ if (userLang === 'zh-CN' || userLang.startsWith('zh-Hans') ) {
     strInit = '正在初始化...';
     strLoading = '正在加载';
     strDelConfirm = '此操作将删除您浏览器缓存中保存的数据文件及存档。请输入 "YES" 继续：';
+    strTips = "注意！配置文件内的路径和文件名 不能 包含大写字母。";
 } else if (userLang === 'zh-TW' || userLang.startsWith('zh-Hant') ) {
     strSyncingFs = '正在同步檔案系統...';
     strDone = '完成。';
@@ -26,12 +28,18 @@ if (userLang === 'zh-CN' || userLang.startsWith('zh-Hans') ) {
     strInit = '正在初始化...';
     strLoading = '正在加載';
     strDelConfirm = '此操作將刪除您瀏覽器緩存中保存的遊戲資料檔及記錄。請輸入 "YES" 繼續：';
+    strTips = "請注意：在設定檔中指定路徑和檔案名稱時，請勿使用大寫字母。";
 }
 
 
 var statusElement = document.getElementById('status');
 var progressElement = document.getElementById('progress');
 var spinnerElement = document.getElementById('spinner');
+var tipsElement;
+window.addEventListener('load', function () {
+    tipsElement = document.getElementById('tips');
+    tipsElement.textContent = strTips;
+})
 
 var Module = {
     preRun: [],
@@ -110,6 +118,10 @@ function loadZip() {
 
     zip.loadAsync(file).then(function(z) {
 	z.forEach(function(relativePath, zipEntry) {
+        if (relativePath.includes('._.')) {
+            Module.print("ignoring file"+relativePath);
+            return;
+        }
 	    if (zipEntry.dir) {
 		var pathArr = relativePath.split('/');
 		var currPath = '/data';
@@ -200,6 +212,7 @@ function launch() {
     document.getElementById('btnLaunch').style = "display:none";
     document.getElementById('btnLoadZip').style = "display:none";
     document.getElementById('btnDeleteData').style = "display:none";
+    tipsElement.style = "display:none";
     runGame();
 }
 
