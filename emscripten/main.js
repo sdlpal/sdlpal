@@ -117,9 +117,10 @@ function loadZip() {
     var file = fileInput.files[0];
 
     zip.loadAsync(file).then(function(z) {
+        var promises = [];
 	z.forEach(function(relativePath, zipEntry) {
         if (relativePath.includes('._')) {
-            Module.print("ignoring file"+relativePath);
+            Module.print("ignoring file "+relativePath);
             return;
         }
 	    if (zipEntry.dir) {
@@ -134,16 +135,18 @@ function loadZip() {
 		    }
 		}
 	    } else {
-		zip.sync(function(){zipEntry.async('uint8array').then(function(arr) {
+		promises.push(zipEntry.async('uint8array').then(function(arr) {
 		    FS.writeFile('/data/' + relativePath.toLowerCase(), arr, {encoding: 'binary'});
-		})});
-	    }
-	});
+		}));
+        }
+    });
+    Promise.all(promises).then(function() {
 	Module.setStatus(strSyncingFs);
 	FS.syncfs(function (err) {
 	    Module.setStatus(strDone);
 	    spinnerElement.style.display = 'none';
 	});
+    });
     });
 }
 
