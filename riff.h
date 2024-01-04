@@ -129,5 +129,11 @@ typedef struct BitmapInfoHeader
 #define AVI_auds  (((uint32_t)'a') | (((uint32_t)'u') << 8) | (((uint32_t)'d') << 16) | (((uint32_t)'s') << 24))
 #define VIDS_MSVC (((uint32_t)'M') | (((uint32_t)'S') << 8) | (((uint32_t)'V') << 16) | (((uint32_t)'C') << 24))
 #define VIDS_msvc (((uint32_t)'m') | (((uint32_t)'s') << 8) | (((uint32_t)'v') << 16) | (((uint32_t)'c') << 24))
+#define CODEC_MSVC (((uint32_t)'M') | (((uint32_t)'S') << 8) | (((uint32_t)'V') << 16) | (((uint32_t)'C') << 24))
+#define CODEC_msvc (((uint32_t)'m') | (((uint32_t)'s') << 8) | (((uint32_t)'v') << 16) | (((uint32_t)'c') << 24))
+#define CODEC_CRAM (((uint32_t)'C') | (((uint32_t)'R') << 8) | (((uint32_t)'A') << 16) | (((uint32_t)'M') << 24))
+#define CODEC_cram (((uint32_t)'c') | (((uint32_t)'r') << 8) | (((uint32_t)'a') << 16) | (((uint32_t)'m') << 24))
+
+#define CODEC_PCM_U8 1
 
 #endif
