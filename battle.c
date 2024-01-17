@@ -31,17 +31,17 @@ g_rgPlayerPos[3][3][2] = {
 };
 
 VOID
-PAL_BattleMakeScene(
+PAL_BattleMakeBackground(
    VOID
 )
 /*++
   Purpose:
 
-    Generate the battle scene into the scene buffer.
+    Generate background in battle to the scene buffer.
 
   Parameters:
 
-    None.
+    [IN]  wEnemyIndex - the index of the enemy (0 = all enemies).
 
   Return value:
 
@@ -49,11 +49,9 @@ PAL_BattleMakeScene(
 
 --*/
 {
-   int          i,j;
-   PAL_POS      pos;
+   int          i, j;
    LPBYTE       pSrc, pDst;
    BYTE         b;
-   INT          enemyDrawSeq[MAX_ENEMIES_IN_TEAM];
 
    //
    // Draw the background
@@ -82,25 +80,35 @@ PAL_BattleMakeScene(
    }
 
    PAL_ApplyWave(g_Battle.lpSceneBuf);
+}
 
-   memset(&enemyDrawSeq,-1,sizeof(enemyDrawSeq));
-   // sort by y
-   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++ )
-      enemyDrawSeq[i] = i;
-   for(i=0;i<g_Battle.wMaxEnemyIndex;i++)
-       for(j=i+1;j<g_Battle.wMaxEnemyIndex;j++)
-           if( PAL_Y(g_Battle.rgEnemy[i].pos) < PAL_Y(g_Battle.rgEnemy[j].pos) ) {
-               INT tmp = enemyDrawSeq[i];
-               enemyDrawSeq[i]=enemyDrawSeq[j];
-               enemyDrawSeq[j]=tmp;
-           }
+VOID
+PAL_BattleMakeEnemySprites(
+   WORD        wEnemyIndex
+)
+/*++
+  Purpose:
+
+    Generate enemies in battle to the scene buffer.
+
+  Parameters:
+
+    [IN]  wEnemyIndex - the index of the enemy (0 = all enemies).
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int          i;
+   PAL_POS      pos;
 
    //
    // Draw the enemies
    //
-   for (j = g_Battle.wMaxEnemyIndex; j >= 0; j--)
+   for (i = (wEnemyIndex) ? wEnemyIndex - 1 : g_Battle.wMaxEnemyIndex; i >= 0; i--)
    {
-      i = enemyDrawSeq[j];
       pos = g_Battle.rgEnemy[i].pos;
 
       if (g_Battle.rgEnemy[i].rgwStatus[kStatusConfused] > 0 &&
@@ -129,7 +137,38 @@ PAL_BattleMakeScene(
                g_Battle.lpSceneBuf, pos);
          }
       }
+
+      if (wEnemyIndex)
+      {
+         //
+         // When the index is not 0, draw an enemy
+         //
+         break;
+      }
    }
+}
+
+VOID
+PAL_BattleMakePlayerSprites(
+   WORD        wPlayerIndex
+)
+/*++
+  Purpose:
+
+    Generate players in battle to the scene buffer.
+
+  Parameters:
+
+    [IN]  wPlayerIndex - the index of the player (0 = all players).
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int          i, j;
+   PAL_POS      pos;
 
    if (g_Battle.lpSummonSprite != NULL)
    {
@@ -147,7 +186,7 @@ PAL_BattleMakeScene(
       //
       // Draw the players
       //
-      for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
+      for (i = (wPlayerIndex) ? wPlayerIndex - 1 : gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
       {
          pos = g_Battle.rgPlayer[i].pos;
 
@@ -175,12 +214,20 @@ PAL_BattleMakeScene(
             PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
                g_Battle.lpSceneBuf, pos);
          }
+
+         if (wPlayerIndex)
+         {
+            //
+            // When the index is not 0, draw an enemy
+            //
+            break;
+         }
       }
 
       //
       // Confused players should be drawn on top of normal players
       //
-      for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
+      for (i = (wPlayerIndex) ? wPlayerIndex - 1 : gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
       {
          if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0 &&
             gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusSleep] == 0 &&
@@ -191,7 +238,7 @@ PAL_BattleMakeScene(
             // Player is confused
             //
             int xd = PAL_X(g_Battle.rgPlayer[i].pos), yd = PAL_Y(g_Battle.rgPlayer[i].pos);
-            if(!PAL_IsPlayerDying(gpGlobals->rgParty[i].wPlayerRole))
+            if (!PAL_IsPlayerDying(gpGlobals->rgParty[i].wPlayerRole))
                yd += RandomLong(-1, 1);
             pos = PAL_XY(xd, yd);
             pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)) / 2,
@@ -208,6 +255,146 @@ PAL_BattleMakeScene(
                   g_Battle.lpSceneBuf, pos);
             }
          }
+
+         if (wPlayerIndex)
+         {
+            //
+            // When the index is not 0, draw an enemy
+            //
+            break;
+         }
+      }
+   }
+}
+
+VOID
+PAL_BattleMakeScene(
+   VOID
+)
+/*++
+  Purpose:
+
+    Generate the battle scene into the scene buffer.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   PAL_BattleMakeBackground();
+   PAL_BattleMakeEnemySprites(0);
+   PAL_BattleMakePlayerSprites(0);
+}
+
+VOID
+PAL_BattleMakeSpritesByTheLowLayer(
+   SHORT        sLayerNum,
+   BOOL         fClearDrawRecord
+)
+/*++
+  Purpose:
+
+    Stores a sprite lower than the specified layer into the combat screen buffer.
+
+  Parameters:
+
+    [IN]  sLayerNum - Need to compare sprite layers.
+
+    [IN]  fClearDrawRecord - TRUE is the drawing record of all sprites.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   INT j, s;
+
+   if (fClearDrawRecord)
+   {
+      memset(&g_Battle.fIsDrawedEnemy, 0, sizeof(g_Battle.fIsDrawedEnemy));
+      memset(&g_Battle.fIsDrawedPlayer, 0, sizeof(g_Battle.fIsDrawedPlayer));
+   }
+
+   for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
+   {
+      s = g_Battle.wEnemyDrawSeq[j];
+      if (g_Battle.rgEnemy[s].wObjectID == 0) continue;
+
+      if (sLayerNum > g_Battle.sEnemyLayers[s] && !g_Battle.fIsDrawedEnemy[s])
+      {
+         g_Battle.fIsDrawedEnemy[s] = TRUE;
+
+         PAL_BattleMakeEnemySprites(s + 1);
+      }
+   }
+
+   for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+   {
+      s = g_Battle.wPlayerDrawSeq[j];
+
+      if (sLayerNum > g_Battle.sPlayerLayers[s] && !g_Battle.fIsDrawedPlayer[s])
+      {
+         g_Battle.fIsDrawedPlayer[s] = TRUE;
+
+         PAL_BattleMakePlayerSprites(s + 1);
+      }
+   }
+}
+
+VOID
+PAL_BattleMakeSpritesByTheHighLayer(
+   SHORT        sLayerNum,
+   BOOL         fClearDrawRecord
+)
+/*++
+  Purpose:
+
+    Stores a sprite high than the specified layer into the combat screen buffer.
+
+  Parameters:
+
+    [IN]  sLayerNum - Need to compare sprite layers.
+
+    [IN]  fClearDrawRecord - TRUE is the drawing record of all sprites.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   INT j, s;
+
+   if (fClearDrawRecord)
+   {
+      memset(&g_Battle.fIsDrawedEnemy, 0, sizeof(g_Battle.fIsDrawedEnemy));
+      memset(&g_Battle.fIsDrawedPlayer, 0, sizeof(g_Battle.fIsDrawedPlayer));
+   }
+
+   for (j = 0; j <= g_Battle.wMaxEnemyIndex; j++)
+   {
+      s = g_Battle.wEnemyDrawSeq[j];
+      if (g_Battle.rgEnemy[s].wObjectID == 0) continue;
+
+      if (sLayerNum <= g_Battle.sEnemyLayers[s])
+      {
+         PAL_BattleMakeEnemySprites(s + 1);
+      }
+   }
+
+   for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
+   {
+      s = g_Battle.wPlayerDrawSeq[j];
+
+      if (sLayerNum <= g_Battle.sPlayerLayers[s])
+      {
+         PAL_BattleMakePlayerSprites(s + 1);
       }
    }
 }
@@ -486,6 +673,11 @@ PAL_LoadBattleSprites(
    fp = UTIL_OpenRequiredFile("abc.mkf");
 
    //
+   // Clear player layers
+   //
+   memset(&g_Battle.sPlayerLayers, 0, sizeof(g_Battle.sPlayerLayers));
+
+   //
    // Load battle sprites for players
    //
    for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
@@ -512,7 +704,32 @@ PAL_LoadBattleSprites(
 
       g_Battle.rgPlayer[i].posOriginal = PAL_XY(x, y);
       g_Battle.rgPlayer[i].pos = PAL_XY(x, y);
+
+      //
+      // Calculating enemy layers
+      //
+      g_Battle.sPlayerLayers[i] = y;
    }
+
+   //
+   // Sort the players' drawing order by Y coordinate
+   //
+   memset(&g_Battle.wPlayerDrawSeq, -1, sizeof(g_Battle.wPlayerDrawSeq));
+   // sort by y
+   for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      g_Battle.wPlayerDrawSeq[i] = i;
+   for (i = gpGlobals->wMaxPartyMemberIndex; i > 0; i--)
+      for (l = i - 1; l >= 0; l--)
+         if (PAL_Y(g_Battle.rgPlayer[i].pos) < PAL_Y(g_Battle.rgPlayer[l].pos)) {
+            INT tmp = g_Battle.wPlayerDrawSeq[i];
+            g_Battle.wPlayerDrawSeq[i] = g_Battle.wPlayerDrawSeq[l];
+            g_Battle.wPlayerDrawSeq[l] = tmp;
+         }
+
+   //
+   // Clear enemy layers
+   //
+   memset(&g_Battle.sEnemyLayers, 0, sizeof(g_Battle.sEnemyLayers));
 
    //
    // Load battle sprites for enemies
@@ -536,7 +753,7 @@ PAL_LoadBattleSprites(
 
       PAL_MKFDecompressChunk(g_Battle.rgEnemy[i].lpSprite, l,
          gpGlobals->g.rgObject[g_Battle.rgEnemy[i].wObjectID].enemy.wEnemyID, fp);
-
+      
       //
       // Set the default position for this enemy
       //
@@ -547,7 +764,27 @@ PAL_LoadBattleSprites(
 
       g_Battle.rgEnemy[i].posOriginal = PAL_XY(x, y);
       g_Battle.rgEnemy[i].pos = PAL_XY(x, y);
+
+      //
+      // Calculating enemy layers
+      //
+      g_Battle.sEnemyLayers[i] = y;
    }
+
+   //
+   // Sort the enemies drawing order by Y coordinate
+   //
+   memset(&g_Battle.wEnemyDrawSeq, -1, sizeof(g_Battle.wEnemyDrawSeq));
+   // sort by y
+   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+      g_Battle.wEnemyDrawSeq[i] = i;
+   for (i = g_Battle.wMaxEnemyIndex; i > 0; i--)
+      for (l = i - 1; l >= 0; l--)
+         if (PAL_Y(g_Battle.rgEnemy[i].pos) < PAL_Y(g_Battle.rgEnemy[l].pos)) {
+            INT tmp = g_Battle.wEnemyDrawSeq[i];
+            g_Battle.wEnemyDrawSeq[i] = g_Battle.wEnemyDrawSeq[l];
+            g_Battle.wEnemyDrawSeq[l] = tmp;
+         }
 
    fclose(fp);
 }

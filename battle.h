@@ -151,6 +151,12 @@ typedef struct tagBATTLE
    BATTLEPLAYER     rgPlayer[MAX_PLAYERS_IN_PARTY];
    BATTLEENEMY      rgEnemy[MAX_ENEMIES_IN_TEAM];
 
+   WORD             sPlayerLayers[MAX_PLAYABLE_PLAYER_ROLES];
+   WORD             wPlayerDrawSeq[MAX_PLAYABLE_PLAYER_ROLES];
+   BOOL             fIsDrawedPlayer[MAX_PLAYABLE_PLAYER_ROLES];
+   WORD             sEnemyLayers[MAX_ENEMIES_IN_TEAM];
+   WORD             wEnemyDrawSeq[MAX_ENEMIES_IN_TEAM];
+   BOOL             fIsDrawedEnemy[MAX_ENEMIES_IN_TEAM];
    WORD             wMaxEnemyIndex;
 
    SDL_Surface     *lpSceneBuf;
@@ -208,8 +214,35 @@ PAL_LoadBattleSprites(
 );
 
 VOID
+PAL_BattleMakeBackground(
+   VOID
+);
+
+VOID
+PAL_BattleMakeEnemySprites(
+   WORD        wEnemyIndex
+);
+
+VOID
+PAL_BattleMakePlayerSprites(
+   WORD        wPlayerIndex
+);
+
+VOID
 PAL_BattleMakeScene(
    VOID
+);
+
+VOID
+PAL_BattleMakeSpritesByTheLowLayer(
+   SHORT        sLayerNum,
+   BOOL         fClearDrawRecord
+);
+
+VOID
+PAL_BattleMakeSpritesByTheHighLayer(
+   SHORT        sLayerNum,
+   BOOL         fClearDrawRecord
 );
 
 VOID
