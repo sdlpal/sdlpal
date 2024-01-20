@@ -347,13 +347,20 @@ typedef enum tagMAGIC_TYPE
    kMagicTypeSummon           = 9,  // summon
 } MAGIC_TYPE;
 
+typedef union tagMAGIC_SPECIAL
+{
+   WORD               wSummonEffect;         // summon effect sprite (in F.MKF)
+   SHORT              sLayerOffset;          // limited to non-summon magic.
+                                             // actual layer: PAL_Y(pos) + wYOffset + wMagicLayerOffset
+} MAGIC_SPECIAL, * LPMAGIC_SPECIAL;
+
 typedef struct tagMAGIC
 {
    WORD               wEffect;               // effect sprite
    WORD               wType;                 // type of this magic
    WORD               wXOffset;
    WORD               wYOffset;
-   WORD               wSummonEffect;         // summon effect sprite (in F.MKF)
+   MAGIC_SPECIAL      rgSpecific;            // have multiple meanings
    SHORT              wSpeed;                // speed of the effect
    WORD               wKeepEffect;           // FIXME: ???
    WORD               wFireDelay;            // start frame of the magic fire stage

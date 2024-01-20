@@ -31,13 +31,13 @@ g_rgPlayerPos[3][3][2] = {
 };
 
 VOID
-PAL_BattleMakeScene(
+PAL_BattleDrawBackground(
    VOID
 )
 /*++
   Purpose:
 
-    Generate the battle scene into the scene buffer.
+    Generate the combat background to the specified screen buffer.
 
   Parameters:
 
@@ -49,11 +49,9 @@ PAL_BattleMakeScene(
 
 --*/
 {
-   int          i,j;
-   PAL_POS      pos;
+   int          i;
    LPBYTE       pSrc, pDst;
    BYTE         b;
-   INT          enemyDrawSeq[MAX_ENEMIES_IN_TEAM];
 
    //
    // Draw the background
@@ -82,134 +80,529 @@ PAL_BattleMakeScene(
    }
 
    PAL_ApplyWave(g_Battle.lpSceneBuf);
+}
 
-   memset(&enemyDrawSeq,-1,sizeof(enemyDrawSeq));
-   // sort by y
-   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++ )
-      enemyDrawSeq[i] = i;
-   for(i=0;i<g_Battle.wMaxEnemyIndex;i++)
-       for(j=i+1;j<g_Battle.wMaxEnemyIndex;j++)
-           if( PAL_Y(g_Battle.rgEnemy[i].pos) < PAL_Y(g_Battle.rgEnemy[j].pos) ) {
-               INT tmp = enemyDrawSeq[i];
-               enemyDrawSeq[i]=enemyDrawSeq[j];
-               enemyDrawSeq[j]=tmp;
-           }
+VOID
+PAL_BattleDrawEnemySprites(
+   WORD              wEnemyIndex,
+   SDL_Surface      *lpDstSurface
+)
+/*++
+  Purpose:
+
+    Generate enemies in battle into the specified buffer.
+
+  Parameters:
+
+    [IN]  wEnemyIndex - The index of the enemy.
+
+    [OUT] lpDstSurface - pointer to the destination SDL surface.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   PAL_POS       pos;
 
    //
    // Draw the enemies
    //
-   for (j = g_Battle.wMaxEnemyIndex; j >= 0; j--)
+   pos = g_Battle.rgEnemy[wEnemyIndex].pos;
+
+   if (g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusConfused] > 0 &&
+      g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusSleep] == 0 &&
+      g_Battle.rgEnemy[wEnemyIndex].rgwStatus[kStatusParalyzed] == 0)
    {
-      i = enemyDrawSeq[j];
-      pos = g_Battle.rgEnemy[i].pos;
+      //
+      // Enemy is confused
+      //
+      pos = PAL_XY(PAL_X(pos) + RandomLong(-1, 1), PAL_Y(pos));
+   }
+      
+   pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[wEnemyIndex].lpSprite, g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame)) / 2,
+      PAL_Y(pos) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[wEnemyIndex].lpSprite, g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame)));
 
-      if (g_Battle.rgEnemy[i].rgwStatus[kStatusConfused] > 0 &&
-         g_Battle.rgEnemy[i].rgwStatus[kStatusSleep] == 0 &&
-         g_Battle.rgEnemy[i].rgwStatus[kStatusParalyzed] == 0)
+   if (g_Battle.rgEnemy[wEnemyIndex].wObjectID != 0)
+   {
+      if (g_Battle.rgEnemy[wEnemyIndex].iColorShift)
       {
-         //
-         // Enemy is confused
-         //
-         pos = PAL_XY(PAL_X(pos) + RandomLong(-1, 1), PAL_Y(pos));
+         PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgEnemy[wEnemyIndex].lpSprite, g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame),
+            lpDstSurface, pos, g_Battle.rgEnemy[wEnemyIndex].iColorShift);
       }
-
-      pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame)) / 2,
-         PAL_Y(pos) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame)));
-
-      if (g_Battle.rgEnemy[i].wObjectID != 0)
+      else
       {
-         if (g_Battle.rgEnemy[i].iColorShift)
-         {
-            PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
-               g_Battle.lpSceneBuf, pos, g_Battle.rgEnemy[i].iColorShift);
-         }
-         else
-         {
-            PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgEnemy[i].lpSprite, g_Battle.rgEnemy[i].wCurrentFrame),
-               g_Battle.lpSceneBuf, pos);
-         }
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgEnemy[wEnemyIndex].lpSprite, g_Battle.rgEnemy[wEnemyIndex].wCurrentFrame),
+            lpDstSurface, pos);
       }
    }
+}
 
-   if (g_Battle.lpSummonSprite != NULL)
+VOID
+PAL_BattleDrawPlayerSprites(
+   WORD              wPlayerIndex,
+   SDL_Surface      *lpDstSurface
+)
+/*++
+  Purpose:
+
+    Generate players in battle into the specified buffer.
+
+  Parameters:
+
+    [IN]  wPlayerIndex - The index of the player (-1 = summon god).
+
+    [OUT] lpDstSurface - pointer to the destination SDL surface.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   PAL_POS      pos;
+
+   if (wPlayerIndex == 0xFFFF)
    {
       //
       // Draw the summoned god
       //
-      pos = PAL_XY(PAL_X(g_Battle.posSummon) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.lpSummonSprite, g_Battle.iSummonFrame)) / 2,
-         PAL_Y(g_Battle.posSummon) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.lpSummonSprite, g_Battle.iSummonFrame)));
+      if (g_Battle.lpSummonSprite != NULL)
+      {
+         pos = PAL_XY(PAL_X(g_Battle.posSummon) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.lpSummonSprite, g_Battle.iSummonFrame)) / 2,
+            PAL_Y(g_Battle.posSummon) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.lpSummonSprite, g_Battle.iSummonFrame)));
 
-      PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.lpSummonSprite, g_Battle.iSummonFrame),
-         g_Battle.lpSceneBuf, pos);
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.lpSummonSprite, g_Battle.iSummonFrame),
+            lpDstSurface, pos);
+      }
    }
    else
    {
       //
       // Draw the players
       //
-      for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
+      pos = g_Battle.rgPlayer[wPlayerIndex].pos;
+
+      if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[wPlayerIndex].wPlayerRole][kStatusConfused] != 0 &&
+         gpGlobals->rgPlayerStatus[gpGlobals->rgParty[wPlayerIndex].wPlayerRole][kStatusSleep] == 0 &&
+         gpGlobals->rgPlayerStatus[gpGlobals->rgParty[wPlayerIndex].wPlayerRole][kStatusParalyzed] == 0 &&
+         gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[wPlayerIndex].wPlayerRole] > 0 &&
+         !PAL_IsPlayerDying(gpGlobals->rgParty[wPlayerIndex].wPlayerRole))
       {
-         pos = g_Battle.rgPlayer[i].pos;
-
-         if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0 &&
-            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusSleep] == 0 &&
-            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusParalyzed] == 0 &&
-            gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] > 0)
-         {
-            //
-            // Player is confused
-            //
-            continue;
-         }
-
-         pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)) / 2,
-            PAL_Y(pos) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)));
-
-         if (g_Battle.rgPlayer[i].iColorShift != 0)
-         {
-            PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
-               g_Battle.lpSceneBuf, pos, g_Battle.rgPlayer[i].iColorShift);
-         }
-         else if (g_Battle.iHidingTime == 0)
-         {
-            PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
-               g_Battle.lpSceneBuf, pos);
-         }
+         //
+         // Player is confused and not dead
+         //
+         pos = PAL_XY(PAL_X(pos), PAL_Y(pos) + RandomLong(-1, 1));
       }
 
-      //
-      // Confused players should be drawn on top of normal players
-      //
-      for (i = gpGlobals->wMaxPartyMemberIndex; i >= 0; i--)
+      pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame)) / 2,
+         PAL_Y(pos) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame)));
+
+      if (g_Battle.rgPlayer[wPlayerIndex].iColorShift != 0)
       {
-         if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusConfused] != 0 &&
-            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusSleep] == 0 &&
-            gpGlobals->rgPlayerStatus[gpGlobals->rgParty[i].wPlayerRole][kStatusParalyzed] == 0 &&
-            gpGlobals->g.PlayerRoles.rgwHP[gpGlobals->rgParty[i].wPlayerRole] > 0)
+         PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame),
+            lpDstSurface, pos, g_Battle.rgPlayer[wPlayerIndex].iColorShift);
+      }
+      else if (g_Battle.iHidingTime == 0)
+      {
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[wPlayerIndex].lpSprite, g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame),
+            lpDstSurface, pos);
+      }
+   }
+}
+
+VOID
+PAL_BattleDrawMagicSprites(
+   INT               iMagicNum,
+   SDL_Surface      *lpDstSurface,
+   PAL_POS           pos
+)
+/*++
+  Purpose:
+
+    Generate magic in battle into the specified buffer.
+
+  Parameters:
+
+    [IN]  wObjectID - The index of the magic.
+
+    [OUT] lpDstSurface - pointer to the destination SDL surface.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   SHORT x, y;
+   LPCBITMAPRLE lpBitmap = g_Battle.lpMagicBitmap;
+
+   x = PAL_X(pos);
+   y = PAL_Y(pos);
+
+   PAL_RLEBlitToSurface(lpBitmap, lpDstSurface, PAL_XY(x - PAL_RLEGetWidth(lpBitmap) / 2, y - PAL_RLEGetHeight(lpBitmap)));
+}
+
+VOID
+PAL_BattleClearSpriteObject(
+   VOID
+)
+/*++
+  Purpose:
+
+    Empty the Sprite object drawing sequence.
+
+  Parameters:
+
+    [IN]  wSpriteObjectIndex - Specifies the index of the sprite object to be removed.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   memset(&g_Battle.SpriteDrawSeq, 0, sizeof(g_Battle.SpriteDrawSeq));
+
+   g_Battle.wMaxSpriteDrawSeqIndex = 0;
+}
+
+VOID
+PAL_BattleSpriteAddUnlock(
+   VOID
+)
+{
+   g_Battle.fSpriteAddLock = FALSE;
+
+   PAL_BattleClearSpriteObject();
+}
+
+VOID
+PAL_BattleAddSpriteObject(
+   WORD               wType,
+   WORD               wObjectIndex,
+   PAL_POS            pos,
+   SHORT              sLayerOffset,
+   BOOL               fHaveColorShift
+)
+/*++
+  Purpose:
+
+    Add sprite objects to the drawing sequence.
+
+  Parameters:
+
+    [IN]  bType - What type is the sprite object?
+
+    [IN]  bObjectIndex - The index of this sprite object in its type.
+
+    [IN]  pos - The pos of sprite object.
+
+    [IN]  sLayerOffset - The layer offset of sprite object.
+
+    [IN]  fHaveColorShift - TRUE is the highest layer in battle.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   WORD *wMaxIndex = &g_Battle.wMaxSpriteDrawSeqIndex;
+   BATTLESPRITESEQ *SpriteObject;
+
+   if (*wMaxIndex + 1 < MAX_BATTLESPRITESEQ_ITEMS)
+   {
+      SpriteObject = &g_Battle.SpriteDrawSeq[*wMaxIndex];
+
+      SpriteObject->wType = wType;
+      SpriteObject->wObjectIndex = wObjectIndex;
+      SpriteObject->pos = pos;
+      SpriteObject->sLayerOffset = sLayerOffset;
+      SpriteObject->fHaveColorShift = fHaveColorShift;
+
+      (*wMaxIndex)++;
+   }
+}
+
+VOID
+PAL_BattleRemoveSpriteObject(
+   WORD               wSpriteObjectIndex
+)
+/*++
+  Purpose:
+
+    Removes the specified sprite object from the drawn sequence by index.
+
+  Parameters:
+
+    [IN]  wSpriteObjectIndex - Specifies the index of the sprite object to be removed.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   BATTLESPRITESEQ *SpriteObject;
+
+   if (wSpriteObjectIndex < MAX_BATTLESPRITESEQ_ITEMS)
+   {
+      SpriteObject = &g_Battle.SpriteDrawSeq[wSpriteObjectIndex];
+
+      memset(SpriteObject, 0, sizeof(*SpriteObject));
+
+      g_Battle.wMaxSpriteDrawSeqIndex--;
+   }
+}
+
+VOID
+PAL_BattleAddFighterSpriteObject(
+   VOID
+)
+/*++
+  Purpose:
+
+    Place enemies and players in the drawing sequence.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   INT i;
+
+   //
+   // Place enemies in the drawing sequence.
+   //
+   for (i = 0; i <= g_Battle.wMaxEnemyIndex; i++)
+   {
+      PAL_BattleAddSpriteObject(kBattleSpriteTypeEnemy, i, g_Battle.rgEnemy[i].pos, 0, g_Battle.rgEnemy[i].iColorShift);
+   }
+
+   if (g_Battle.lpSummonSprite != NULL)
+   {
+      //
+      // Place summon god in the drawing sequence.
+      //
+      PAL_BattleAddSpriteObject(kBattleSpriteTypePlayer, -1, g_Battle.posSummon, 0, g_Battle.fSummonColorShift);
+   }
+   else
+   {
+      //
+      // Place players in the drawing sequence.
+      //
+      for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+      {
+         PAL_BattleAddSpriteObject(kBattleSpriteTypePlayer, i, g_Battle.rgPlayer[i].pos, 0, g_Battle.rgPlayer[i].iColorShift);
+      }
+   }
+}
+
+VOID
+PAL_BattleSortSpriteObjecByPos(
+   VOID
+)
+/*++
+  Purpose:
+
+    Sort all sprite according to pos.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   INT i, j;
+   BATTLESPRITESEQ *this, *next, tmp;
+   SHORT thisPosX, thisPosY, nextPosX, nextPosY;
+
+   //
+   // Sort the players drawing order by Y coordinate
+   //
+   for (i = 0; i < g_Battle.wMaxSpriteDrawSeqIndex; i++)
+   {
+      for (j = i + 1; j <= g_Battle.wMaxSpriteDrawSeqIndex - 1; j++)
+      {
+         this = &g_Battle.SpriteDrawSeq[i];
+         next = &g_Battle.SpriteDrawSeq[j];
+
+         thisPosY = PAL_Y(this->pos) + this->sLayerOffset;
+         nextPosY = PAL_Y(next->pos) + next->sLayerOffset;
+
+         if (thisPosY > nextPosY)
          {
             //
-            // Player is confused
+            // Pos Y compare successfully, directly swap variable values
             //
-            int xd = PAL_X(g_Battle.rgPlayer[i].pos), yd = PAL_Y(g_Battle.rgPlayer[i].pos);
-            if(!PAL_IsPlayerDying(gpGlobals->rgParty[i].wPlayerRole))
-               yd += RandomLong(-1, 1);
-            pos = PAL_XY(xd, yd);
-            pos = PAL_XY(PAL_X(pos) - PAL_RLEGetWidth(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)) / 2,
-               PAL_Y(pos) - PAL_RLEGetHeight(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame)));
+            tmp = *this;
+            *this = *next;
+            *next = tmp;
+         }
+         else if(thisPosY == nextPosY)
+         {
+            //
+            // The pos Y of the two are equal. Compare their X coordinates
+            //
+            thisPosX = PAL_X(this->pos);
+            nextPosX = PAL_X(next->pos);
 
-            if (g_Battle.rgPlayer[i].iColorShift != 0)
+            if (thisPosX < nextPosX)
             {
-               PAL_RLEBlitWithColorShift(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
-                  g_Battle.lpSceneBuf, pos, g_Battle.rgPlayer[i].iColorShift);
-            }
-            else if (g_Battle.iHidingTime == 0)
-            {
-               PAL_RLEBlitToSurface(PAL_SpriteGetFrame(g_Battle.rgPlayer[i].lpSprite, g_Battle.rgPlayer[i].wCurrentFrame),
-                  g_Battle.lpSceneBuf, pos);
+               tmp = *this;
+               *this = *next;
+               *next = tmp;
             }
          }
       }
    }
+}
+
+VOID
+PAL_BattleDrawAllSprites(
+   VOID
+)
+/*++
+  Purpose:
+
+    Draw all sprites to the battle screen buffer.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   //
+   // Draw all sprites to the battle screen buffer.
+   //
+   PAL_BattleDrawAllSpritesWithColorShift(FALSE);
+
+   //
+   // Only draw sprites with color shift into the battle screen buffer.
+   // Because in the original game,
+   // sprites with color shift are directly overlaid on the original sprites.
+   //
+   PAL_BattleDrawAllSpritesWithColorShift(TRUE);
+}
+
+VOID
+PAL_BattleDrawAllSpritesWithColorShift(
+   BOOL               fColorShift
+)
+/*++
+  Purpose:
+
+    Draws all sprites with color shift to the battle screen buffer..
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   INT i;
+   BATTLESPRITESEQ *SpriteObject;
+
+   //
+   // Sort the sprite that need to be drawn
+   //
+   PAL_BattleSortSpriteObjecByPos();
+
+   for (i = 0; i <= g_Battle.wMaxSpriteDrawSeqIndex; i++)
+   {
+      SpriteObject = &g_Battle.SpriteDrawSeq[i];
+
+      if (fColorShift)
+      {
+         //
+         // Draw only sprites with color shift
+         //
+         if (!SpriteObject->fHaveColorShift) continue;
+      }
+
+      switch (SpriteObject->wType)
+      {
+      case kBattleSpriteTypeNone:
+         break;
+
+      case kBattleSpriteTypeEnemy:
+         PAL_BattleDrawEnemySprites(SpriteObject->wObjectIndex, g_Battle.lpSceneBuf);
+         break;
+
+      case kBattleSpriteTypePlayer:
+         PAL_BattleDrawPlayerSprites(SpriteObject->wObjectIndex, g_Battle.lpSceneBuf);
+         break;
+
+      case kBattleSpriteTypeMagic:
+         PAL_BattleDrawMagicSprites(SpriteObject->wObjectIndex, g_Battle.lpSceneBuf, SpriteObject->pos);
+         break;
+
+      }
+   }
+}
+
+VOID
+PAL_BattleMakeScene(
+   VOID
+)
+/*++
+  Purpose:
+
+    Generate the battle scene into the scene buffer.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   PAL_BattleDrawBackground();
+
+   if (g_Battle.fSpriteAddLock)
+   {
+      //
+      // Initialize the drawing sequence
+      //
+      PAL_BattleClearSpriteObject();
+   }
+   else
+   {
+      g_Battle.fSpriteAddLock = TRUE;
+   }
+
+   //
+   // Place enemies and players in the drawing sequence
+   //
+   PAL_BattleAddFighterSpriteObject();
+
+   //
+   // Draw all sprite
+   //
+   PAL_BattleDrawAllSprites();
 }
 
 VOID
@@ -1383,6 +1776,7 @@ PAL_StartBattle(
 
    gpGlobals->fInBattle = TRUE;
    g_Battle.BattleResult = kBattleResultPreBattle;
+   g_Battle.fSpriteAddLock = TRUE;
 
    PAL_BattleUpdateFighters();
 
