@@ -2425,6 +2425,7 @@ PAL_BattleShowPlayerDefMagicAnim(
    LPSPRITE   lpSpriteEffect;
    int        l, iMagicNum, iEffectNum, n, i, j, x, y;
    DWORD      dwTime = SDL_GetTicks();
+   SHORT      sLayerOffset;
 
    iMagicNum = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
    iEffectNum = gpGlobals->g.lprgMagic[iMagicNum].wEffect;
@@ -2446,7 +2447,7 @@ PAL_BattleShowPlayerDefMagicAnim(
 
    for (i = 0; i < n; i++)
    {
-      LPCBITMAPRLE b = PAL_SpriteGetFrame(lpSpriteEffect, i);
+      g_Battle.lpMagicBitmap = PAL_SpriteGetFrame(lpSpriteEffect, i);
 
       if (i == (gConfig.fIsWIN95 ? 0 : gpGlobals->g.lprgMagic[iMagicNum].wFireDelay))
       {
@@ -2464,8 +2465,15 @@ PAL_BattleShowPlayerDefMagicAnim(
       dwTime = SDL_GetTicks() +
          (gpGlobals->g.lprgMagic[iMagicNum].wSpeed + 5) * 10;
 
-      PAL_BattleMakeScene();
-      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
+      //
+      // Magic layers offset
+      //
+      sLayerOffset = (SHORT)gpGlobals->g.lprgMagic[iMagicNum].rgSpecific.sLayerOffset;
+      
+      //
+      // Unlocks the sprite sequence to add some image objects.
+      //
+      PAL_BattleSpriteAddUnlock();
 
       if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToParty)
       {
@@ -2479,8 +2487,10 @@ PAL_BattleShowPlayerDefMagicAnim(
             x += (SHORT) gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
             y += (SHORT) gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
-            PAL_RLEBlitToSurface(b, gpScreen,
-               PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+            //
+            // Add magic sprite to the sprite drawing sequence.
+            //
+            PAL_BattleAddSpriteObject(kBattleSpriteTypeMagic, iMagicNum, PAL_XY(x, y), sLayerOffset, FALSE);
          }
       }
       else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeApplyToPlayer)
@@ -2493,32 +2503,18 @@ PAL_BattleShowPlayerDefMagicAnim(
          x += (SHORT) gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
          y += (SHORT) gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
-         PAL_RLEBlitToSurface(b, gpScreen,
-            PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
-
          //
-         // Repaint the previous player
+         // Add magic sprite to the sprite drawing sequence.
          //
-         if (sTarget > 0 && g_Battle.iHidingTime == 0)
-         {
-            if (gpGlobals->rgPlayerStatus[gpGlobals->rgParty[sTarget - 1].wPlayerRole][kStatusConfused] == 0)
-            {
-               LPCBITMAPRLE p = PAL_SpriteGetFrame(g_Battle.rgPlayer[sTarget - 1].lpSprite, g_Battle.rgPlayer[sTarget - 1].wCurrentFrame);
-
-               x = PAL_X(g_Battle.rgPlayer[sTarget - 1].pos);
-               y = PAL_Y(g_Battle.rgPlayer[sTarget - 1].pos);
-
-               x -= PAL_RLEGetWidth(p) / 2;
-               y -= PAL_RLEGetHeight(p);
-
-               PAL_RLEBlitToSurface(p, gpScreen, PAL_XY(x, y));
-            }
-         }
+         PAL_BattleAddSpriteObject(kBattleSpriteTypeMagic, iMagicNum, PAL_XY(x, y), sLayerOffset, FALSE);
       }
       else
       {
          assert(FALSE);
       }
+
+      PAL_BattleMakeScene();
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
       PAL_BattleUIUpdate();
 
@@ -2591,6 +2587,7 @@ PAL_BattleShowPlayerOffMagicAnim(
    LPSPRITE   lpSpriteEffect;
    int        l, iMagicNum, iEffectNum, n, i, k, x, y, wave, blow;
    DWORD      dwTime = SDL_GetTicks();
+   SHORT      sLayerOffset;
 
    iMagicNum = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
    iEffectNum = gpGlobals->g.lprgMagic[iMagicNum].wEffect;
@@ -2629,7 +2626,7 @@ PAL_BattleShowPlayerOffMagicAnim(
 
    for (i = 0; i < l; i++)
    {
-      LPCBITMAPRLE b;
+      LPCBITMAPRLE *b = &g_Battle.lpMagicBitmap;
 	  if (!gConfig.fIsWIN95 && i == gpGlobals->g.lprgMagic[iMagicNum].wFireDelay && wPlayerIndex != (WORD)-1)
       {
          g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 6;
@@ -2662,7 +2659,7 @@ PAL_BattleShowPlayerOffMagicAnim(
             k += gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
          }
 
-         b = PAL_SpriteGetFrame(lpSpriteEffect, k);
+         *b = PAL_SpriteGetFrame(lpSpriteEffect, k);
 
 		 if (!gConfig.fIsWIN95 && (i - gpGlobals->g.lprgMagic[iMagicNum].wFireDelay) % n == 0)
          {
@@ -2672,9 +2669,8 @@ PAL_BattleShowPlayerOffMagicAnim(
       else
       {
          VIDEO_ShakeScreen(i, 3);
-         b = PAL_SpriteGetFrame(lpSpriteEffect, (l - gpGlobals->g.lprgMagic[iMagicNum].wShake - 1) % n);
+         *b = PAL_SpriteGetFrame(lpSpriteEffect, (l - gpGlobals->g.lprgMagic[iMagicNum].wShake - 1) % n);
       }
-
       //
       // Wait for the time of one frame. Accept input here.
       //
@@ -2686,8 +2682,15 @@ PAL_BattleShowPlayerOffMagicAnim(
       dwTime = SDL_GetTicks() +
          (gpGlobals->g.lprgMagic[iMagicNum].wSpeed + 5) * 10;
 
-      PAL_BattleMakeScene();
-      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
+      //
+      // Magic layers offset
+      //
+      sLayerOffset = (SHORT)gpGlobals->g.lprgMagic[iMagicNum].rgSpecific.sLayerOffset;
+      
+      //
+      // Unlocks the sprite sequence to add some image objects.
+      //
+      PAL_BattleSpriteAddUnlock();
 
       if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeNormal)
       {
@@ -2699,22 +2702,25 @@ PAL_BattleShowPlayerOffMagicAnim(
          x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
          y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
-         PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+         //
+         // Add magic sprite to the sprite drawing sequence.
+         //
+         PAL_BattleAddSpriteObject(kBattleSpriteTypeMagic, iMagicNum, PAL_XY(x, y), sLayerOffset, FALSE);
 
          if (i == l - 1 && gpGlobals->wScreenWave < 9 &&
             gpGlobals->g.lprgMagic[iMagicNum].wKeepEffect == 0xFFFF)
          {
-            PAL_RLEBlitToSurface(b, g_Battle.lpBackground,
-               PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+            PAL_RLEBlitToSurface(*b, g_Battle.lpBackground,
+               PAL_XY(x - PAL_RLEGetWidth(*b) / 2, y - PAL_RLEGetHeight(*b)));
          }
       }
       else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeAttackAll)
       {
-         const int effectpos[3][2] = {{70, 140}, {100, 110}, {160, 100}};
+         const int effectpos[MAX_BATTLE_MAGICSPRITE_ITEMS][2] = {{70, 140}, {100, 110}, {160, 100}};
 
          assert(sTarget == -1);
 
-         for (k = 0; k < 3; k++)
+         for (k = 0; k < MAX_BATTLE_MAGICSPRITE_ITEMS; k++)
          {
             x = effectpos[k][0];
             y = effectpos[k][1];
@@ -2722,13 +2728,16 @@ PAL_BattleShowPlayerOffMagicAnim(
             x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
             y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
-            PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+            //
+            // Add magic sprite to the sprite drawing sequence.
+            //
+            PAL_BattleAddSpriteObject(kBattleSpriteTypeMagic, iMagicNum, PAL_XY(x, y), sLayerOffset, FALSE);
 
             if (i == l - 1 && gpGlobals->wScreenWave < 9 &&
                gpGlobals->g.lprgMagic[iMagicNum].wKeepEffect == 0xFFFF)
             {
-               PAL_RLEBlitToSurface(b, g_Battle.lpBackground,
-                  PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+               PAL_RLEBlitToSurface(*b, g_Battle.lpBackground,
+                  PAL_XY(x - PAL_RLEGetWidth(*b) / 2, y - PAL_RLEGetHeight(*b)));
             }
          }
       }
@@ -2751,19 +2760,25 @@ PAL_BattleShowPlayerOffMagicAnim(
          x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
          y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
-         PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+         //
+         // Add magic sprite to the sprite drawing sequence.
+         //
+         PAL_BattleAddSpriteObject(kBattleSpriteTypeMagic, iMagicNum, PAL_XY(x, y), sLayerOffset, FALSE);
 
          if (i == l - 1 && gpGlobals->wScreenWave < 9 &&
             gpGlobals->g.lprgMagic[iMagicNum].wKeepEffect == 0xFFFF)
          {
-            PAL_RLEBlitToSurface(b, g_Battle.lpBackground,
-               PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+            PAL_RLEBlitToSurface(*b, g_Battle.lpBackground,
+               PAL_XY(x - PAL_RLEGetWidth(*b) / 2, y - PAL_RLEGetHeight(*b)));
          }
       }
       else
       {
          assert(FALSE);
       }
+
+      PAL_BattleMakeScene();
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
       PAL_BattleUIUpdate();
 
@@ -2807,6 +2822,7 @@ PAL_BattleShowEnemyMagicAnim(
    LPSPRITE   lpSpriteEffect;
    int        l, iMagicNum, iEffectNum, n, i, k, x, y, wave, blow;
    DWORD      dwTime = SDL_GetTicks();
+   SHORT      sLayerOffset;
 
    iMagicNum = gpGlobals->g.rgObject[wObjectID].magic.wMagicNumber;
    iEffectNum = gpGlobals->g.lprgMagic[iMagicNum].wEffect;
@@ -2833,7 +2849,7 @@ PAL_BattleShowEnemyMagicAnim(
 
    for (i = 0; i < l; i++)
    {
-      LPCBITMAPRLE b;
+      LPCBITMAPRLE *b = &g_Battle.lpMagicBitmap;
 
       blow = ((g_Battle.iBlow > 0) ? RandomLong(0, g_Battle.iBlow) : RandomLong(g_Battle.iBlow, 0));
 
@@ -2858,7 +2874,7 @@ PAL_BattleShowEnemyMagicAnim(
             k += gpGlobals->g.lprgMagic[iMagicNum].wFireDelay;
          }
 
-         b = PAL_SpriteGetFrame(lpSpriteEffect, k);
+         *b = PAL_SpriteGetFrame(lpSpriteEffect, k);
 
          if (i == (gConfig.fIsWIN95 ? 0 : gpGlobals->g.lprgMagic[iMagicNum].wFireDelay))
          {
@@ -2877,7 +2893,7 @@ PAL_BattleShowEnemyMagicAnim(
       else
       {
          VIDEO_ShakeScreen(i, 3);
-         b = PAL_SpriteGetFrame(lpSpriteEffect, (l - gpGlobals->g.lprgMagic[iMagicNum].wShake - 1) % n);
+         *b = PAL_SpriteGetFrame(lpSpriteEffect, (l - gpGlobals->g.lprgMagic[iMagicNum].wShake - 1) % n);
       }
 
       //
@@ -2891,8 +2907,15 @@ PAL_BattleShowEnemyMagicAnim(
       dwTime = SDL_GetTicks() +
          (gpGlobals->g.lprgMagic[iMagicNum].wSpeed + 5) * 10;
 
-      PAL_BattleMakeScene();
-      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
+      //
+      // Magic layers offset
+      //
+      sLayerOffset = (SHORT)gpGlobals->g.lprgMagic[iMagicNum].rgSpecific.sLayerOffset;
+      
+      //
+      // Unlocks the sprite sequence to add some image objects.
+      //
+      PAL_BattleSpriteAddUnlock();
 
       if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeNormal)
       {
@@ -2904,22 +2927,25 @@ PAL_BattleShowEnemyMagicAnim(
          x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
          y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
-         PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+         //
+         // Add magic sprite to the sprite drawing sequence.
+         //
+         PAL_BattleAddSpriteObject(kBattleSpriteTypeMagic, iMagicNum, PAL_XY(x, y), sLayerOffset, FALSE);
 
          if (i == l - 1 && gpGlobals->wScreenWave < 9 &&
             gpGlobals->g.lprgMagic[iMagicNum].wKeepEffect == 0xFFFF)
          {
-            PAL_RLEBlitToSurface(b, g_Battle.lpBackground,
-               PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+            PAL_RLEBlitToSurface(*b, g_Battle.lpBackground,
+               PAL_XY(x - PAL_RLEGetWidth(*b) / 2, y - PAL_RLEGetHeight(*b)));
          }
       }
       else if (gpGlobals->g.lprgMagic[iMagicNum].wType == kMagicTypeAttackAll)
       {
-         const int effectpos[3][2] = {{180, 180}, {234, 170}, {270, 146}};
+         const int effectpos[MAX_BATTLE_MAGICSPRITE_ITEMS][2] = {{180, 180}, {234, 170}, {270, 146}};
 
          assert(sTarget == -1);
 
-         for (k = 0; k < 3; k++)
+         for (k = 0; k < MAX_BATTLE_MAGICSPRITE_ITEMS; k++)
          {
             x = effectpos[k][0];
             y = effectpos[k][1];
@@ -2927,13 +2953,16 @@ PAL_BattleShowEnemyMagicAnim(
             x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
             y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
-            PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+            //
+            // Add magic sprite to the sprite drawing sequence.
+            //
+            PAL_BattleAddSpriteObject(kBattleSpriteTypeMagic, iMagicNum, PAL_XY(x, y), sLayerOffset, FALSE);
 
             if (i == l - 1 && gpGlobals->wScreenWave < 9 &&
                gpGlobals->g.lprgMagic[iMagicNum].wKeepEffect == 0xFFFF)
             {
-               PAL_RLEBlitToSurface(b, g_Battle.lpBackground,
-                  PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+               PAL_RLEBlitToSurface(*b, g_Battle.lpBackground,
+                  PAL_XY(x - PAL_RLEGetWidth(*b) / 2, y - PAL_RLEGetHeight(*b)));
             }
          }
       }
@@ -2956,19 +2985,25 @@ PAL_BattleShowEnemyMagicAnim(
          x += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wXOffset;
          y += (SHORT)gpGlobals->g.lprgMagic[iMagicNum].wYOffset;
 
-         PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+         //
+         // Add magic sprite to the sprite drawing sequence.
+         //
+         PAL_BattleAddSpriteObject(kBattleSpriteTypeMagic, iMagicNum, PAL_XY(x, y), sLayerOffset, FALSE);
 
          if (i == l - 1 && gpGlobals->wScreenWave < 9 &&
             gpGlobals->g.lprgMagic[iMagicNum].wKeepEffect == 0xFFFF)
          {
-            PAL_RLEBlitToSurface(b, g_Battle.lpBackground,
-               PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+            PAL_RLEBlitToSurface(*b, g_Battle.lpBackground,
+               PAL_XY(x - PAL_RLEGetWidth(*b) / 2, y - PAL_RLEGetHeight(*b)));
          }
       }
       else
       {
          assert(FALSE);
       }
+
+      PAL_BattleMakeScene();
+      VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
       PAL_BattleUIUpdate();
 
@@ -3050,7 +3085,7 @@ PAL_BattleShowPlayerSummonMagicAnim(
    //
    // Load the sprite of the summoned god
    //
-   j = gpGlobals->g.lprgMagic[wMagicNum].wSummonEffect + 10;
+   j = gpGlobals->g.lprgMagic[wMagicNum].rgSpecific.wSummonEffect + 10;
    i = PAL_MKFGetDecompressedSize(j, gpGlobals->f.fpF);
 
    g_Battle.lpSummonSprite = UTIL_malloc(i);
@@ -3061,12 +3096,15 @@ PAL_BattleShowPlayerSummonMagicAnim(
    g_Battle.posSummon = PAL_XY(240 + (SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wXOffset),
       165 + (SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wYOffset));
    g_Battle.sBackgroundColorShift = (SHORT)(gpGlobals->g.lprgMagic[wMagicNum].wEffectTimes);
+   g_Battle.fSummonColorShift = TRUE;
 
    //
    // Fade in the summoned god
    //
    PAL_BattleMakeScene();
    PAL_BattleFadeScene();
+
+   g_Battle.fSummonColorShift = FALSE;
 
    //
    // Show the animation of the summoned god
