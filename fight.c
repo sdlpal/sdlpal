@@ -754,6 +754,9 @@ PAL_BattlePostActionCheck(
 
          AUDIO_PlaySound(g_Battle.rgEnemy[i].e.wDeathSound);
          g_Battle.rgEnemy[i].wObjectID = 0;
+         if (g_Battle.rgEnemy[i].lpSprite)
+             free(g_Battle.rgEnemy[i].lpSprite);
+         g_Battle.rgEnemy[i].lpSprite = NULL;
          fFade = TRUE;
 
          continue;
