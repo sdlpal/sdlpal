@@ -2,7 +2,7 @@ SDLPAL
 ======
 [![Travis CI](https://travis-ci.com/sdlpal/sdlpal.svg?branch=master)](https://travis-ci.com/sdlpal/sdlpal)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/sdlpal/sdlpal?branch=master&svg=true)](https://ci.appveyor.com/project/palxex/sdlpal-itfml)
-[![Download](https://api-prd.cloudsmith.io/badges/version/sdlpal/sdlpal/raw/wii/latest/x/?render=true) ](https://cloudsmith.io/~sdlpal/repos/sdlpal/groups)
+[![Download](https://api-prd.cloudsmith.io/badges/version/sdlpal/sdlpal/raw/win32-msvc/latest/x/?render=true) ](https://cloudsmith.io/~sdlpal/repos/sdlpal/groups)
 
 ***SDLPAL*** is an SDL-based cross-platform reimplementation of the classic Chinese RPG game known as *PAL*.
 
