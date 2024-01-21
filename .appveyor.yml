@@ -7,22 +7,16 @@ environment:
   matrix:
     - solution_name: win32/sdlpal.sln
       APPX_OPTIONS:
-    - solution_name: winrt/SDLPal.UWP.sln
-      APPX_OPTIONS:  /p:AppxBundle=Always;AppxBundlePlatforms="x86|x64|ARM|ARM64";AppxPackageDir="AppPackages"
 build_script:
   - |-
     msbuild /nologo /m %solution_name% /p:Configuration=Release %APPX_OPTIONS%
 before_build:
   - |-
     git submodule update --init --recursive
-    cd winrt
-    if "%solution_name%"=="winrt/SDLPal.UWP.sln" nuget restore SDLPal.UWP.sln 
-    cd ..
     pip install cloudsmith-cli
 after_build:
   - |-
     if exist win32\Win32\Release\sdlpal.exe ( cd win32\Win32\Release & 7z a ..\..\..\sdlpal-win32-msvc.zip sdlpal.exe & cd ..\..\..\ )
-    for /d %%d in ("winrt\SDLPal.UWP\AppPackages\*") do ( cd %%d & del /q *.appxsym & 7z a ..\..\..\..\sdlpal-uwp.zip * & cd ..\..\..\..\ )
   - ps: >-
       if([string]::IsNullOrEmpty($env:APPVEYOR_PULL_REQUEST_NUMBER)) {
               $COMMIT_DATE=((git show -s --format=%cs)|out-string).trim()
@@ -31,7 +25,6 @@ after_build:
               $VERSION="v$COMMIT_DATE-r$REV-g$COMMIT_ID"
               # upload artifacts
               if (Test-Path "sdlpal-win32-msvc.zip") { cloudsmith upload raw sdlpal/sdlpal "sdlpal-win32-msvc.zip" --version $VERSION --name win32-msvc --republish --tags "branch/$env:APPVEYOR_REPO_BRANCH"}
-              if (Test-Path "sdlpal-uwp.zip")        { cloudsmith upload raw sdlpal/sdlpal "sdlpal-uwp.zip"        --version $VERSION --name UWP        --republish --tags "branch/$env:APPVEYOR_REPO_BRANCH"}
       }
 
 deploy:
@@ -44,13 +37,3 @@ deploy:
 artifacts:
   - path: sdlpal-win32-msvc.zip
     name: Win32
-  - path: sdlpal-uwp.zip
-    name: UWP
-
-notifications:
-- provider: Webhook
-  url: https://webhooks.gitter.im/e/2accb0e6e37119e604b3
-  method: POST
-  on_build_success: true
-  on_build_failure: true
-  on_build_status_changed: true
