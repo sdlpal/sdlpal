@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Dependencies
-      run: apt-get install build-essential libsdl2-dev
+      run: sudo apt-get install build-essential libsdl2-dev
     - uses: actions/checkout@v3
     - name: make
       run: cd unix && make
