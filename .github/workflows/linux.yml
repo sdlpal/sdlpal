@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install build-essential libsdl2-dev
+      run: sudo apt-get install libsdl2-dev libfltk1.3-dev upx-ucl
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
     - name: make
       run: cd unix && make
+    - name: upx
+      run: cd unix && upx --best --lzma sdlpal
