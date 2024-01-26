@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install libsdl2-dev libfltk1.3-dev upx-ucl python3-pip && sudo pip3 install cloudsmith-cli
+      run: sudo apt-get install libsdl2-dev libfltk1.3-dev upx-ucl python3-pip fuse && sudo pip3 install cloudsmith-cli
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
