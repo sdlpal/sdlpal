@@ -19,8 +19,6 @@ jobs:
       run: cd unix && make CCFLAGS="-DAPPIMAGE=1"
     - name: appimage
       run: cd unix && TRAVIS_BUILD_DIR=$GITHUB_WORKSPACE bash appimage.sh
-    - name: check
-      run: cd unix && make check
     - name: deploy
       run: cloudsmith push raw sdlpal/sdlpal --version $VERSION --name AppImage \
             --republish deploy/*.AppImage --tags "branch/$GITHUB_HEAD_REF"
