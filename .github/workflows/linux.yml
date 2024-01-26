@@ -19,6 +19,8 @@ jobs:
       run: cd unix && make CCFLAGS="-DAPPIMAGE=1"
     - name: appimage
       run: cd unix && bash appimage.sh
+      env:
+        TRAVIS_BUILD_DIR: $env:GITHUB_WORKSPACE
     - name: check
       run: cd unix && make check
     - name: deploy
