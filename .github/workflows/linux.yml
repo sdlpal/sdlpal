@@ -20,8 +20,8 @@ jobs:
     - name: appimage
       run: cd unix && TRAVIS_BUILD_DIR=$GITHUB_WORKSPACE bash appimage.sh
     - name: deploy
-      run: cloudsmith push raw sdlpal/sdlpal --version $VERSION --name AppImage \
-            --republish deploy/*.AppImage --tags "branch/$GITHUB_HEAD_REF"
+      run: cloudsmith push raw sdlpal/sdlpal --version $VERSION --name AppImage
+            --republish unix/*.AppImage --tags "branch/$GITHUB_HEAD_REF"
       env:
         CI: $(git show -s --format=%cI)
         DATE: ${CI%T*}
