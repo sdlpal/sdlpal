@@ -11,11 +11,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install libsdl2-dev libfltk1.3-dev upx-ucl
+      run: sudo apt-get install libsdl2-dev libfltk1.3-dev upx-ucl python3-pip && sudo pip3 install cloudsmith-cli
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
     - name: make
-      run: cd unix && make
-    - name: upx
-      run: cd unix && upx --best --lzma sdlpal
+      run: cd unix && make CCFLAGS="-DAPPIMAGE=1"
+    - name: appimage
+      run: cd unix && bash appimage.sh
+    - name: check
+      run: cd unix && make check
+    - name: deploy
+      run: cloudsmith push raw sdlpal/sdlpal --version $env:VERSION --name AppImage \
+            --republish deploy/*.AppImage --tags "branch/$env:GITHUB_HEAD_REF"
+      env:
+        CI: $(git show -s --format=%cI)
+        DATE: ${CI%T*}
+        REV: $(git rev-list --count HEAD)
+        COMMIT: $(git rev-parse --short HEAD)
+        VERSION: v$DATE-r$REV-g$COMMIT
