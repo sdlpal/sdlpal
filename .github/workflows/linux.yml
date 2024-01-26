@@ -22,11 +22,5 @@ jobs:
     - name: check
       run: rm -f main.unix.* && cd unix && make check
     - name: deploy
-      run: cloudsmith push raw sdlpal/sdlpal --version $VERSION --name AppImage
+      run: cloudsmith push raw sdlpal/sdlpal --version `awk -F\" '{print $2;}' generated.h` --name AppImage
             --republish unix/*.AppImage --tags "branch/$GITHUB_HEAD_REF"
-      env:
-        CI: $(git show -s --format=%cI)
-        DATE: ${CI%T*}
-        REV: $(git rev-list --count HEAD)
-        COMMIT: $(git rev-parse --short HEAD)
-        VERSION: v$DATE-r$REV-g$COMMIT
