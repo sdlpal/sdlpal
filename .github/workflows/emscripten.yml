@@ -10,6 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Install Dependencies
+      run: sudo apt-get install python3-pip && sudo pip3 install cloudsmith-cli
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
@@ -21,7 +23,8 @@ jobs:
         docker run -v ${{ github.workspace }}:/src emscripten/emsdk:$TAG /bin/bash -c "git config --global --add safe.directory /src && emmake make -C emscripten"
         mkdir deploy
         cd emscripten && zip ../deploy/sdlpal-emscripten.zip *.{html,js,wasm,wasm.map,png}
-    - name: Deploy
+    - name: Deploy to Demo
+      if: github.event_name != 'pull_request'
       env:
         AUTO_UPDATE_USER: ${{secrets.AUTO_UPDATE_USER}}
         AUTO_UPDATE_PASS: ${{secrets.AUTO_UPDATE_PASS}}
@@ -30,3 +33,8 @@ jobs:
         git config --global user.email ${AUTO_UPDATE_EMAIL}
         git config --global user.name "AutoUpdate"
         bash -c '[[ -f "emscripten/sdlpal.js" ]] && git clone --depth=1 https://github.com/sdlpal/demo ~/demo && cp -f emscripten/*.{html,js,wasm,wasm.map,png} ~/demo && cd ~/demo && git add -A && git commit -mAutoupdate -a && git push "https://${AUTO_UPDATE_USER}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo" || true'
+    - name: Deploy to CloudSmith
+      if: github.event_name != 'pull_request'
+      run: CLOUDSMITH_API_KEY=${{secrets.CLOUDSMITH_API_KEY}} cloudsmith push raw sdlpal/sdlpal
+           --version `awk -F\" '{print $2;}' generated.h` --name Emscripten
+           --republish deploy/*.zip --tags "branch/$GITHUB_HEAD_REF"
