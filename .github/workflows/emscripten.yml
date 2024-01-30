@@ -1,0 +1,19 @@
+name: Emscripten CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the site in the jekyll/builder container
+      env:
+        TAG: 1.39.8-upstream
+      run: |
+        sed -i 's@http://localhost:8080/@https://sdlpal.github.io/demo/@g' emscripten/Makefile
+        docker run -v ${{ github.workspace }}:/sdlpal trzeci/emscripten:$TAG /bin/bash -c "emmake make -C emscripten"
