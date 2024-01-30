@@ -18,4 +18,4 @@ jobs:
         TAG: 1.39.8-upstream
       run: |
         sed -i 's@http://localhost:8080/@https://sdlpal.github.io/demo/@g' emscripten/Makefile
-        docker run -v ${{ github.workspace }}:/sdlpal trzeci/emscripten:$TAG /bin/bash -c "emmake make -C emscripten"
+        docker run -v ${{ github.workspace }}:/src trzeci/emscripten:$TAG /bin/bash -c "emmake make -C emscripten"
