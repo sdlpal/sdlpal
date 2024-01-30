@@ -2,7 +2,7 @@ name: Emscripten CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: '*'
   pull_request:
     branches: [ "master" ]
 
@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
     - name: Build the site in the jekyll/builder container
       env:
         TAG: 1.39.8-upstream
