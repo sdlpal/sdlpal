@@ -15,7 +15,9 @@ jobs:
         submodules: 'recursive'
     - name: Build
       env:
-        TAG: 1.39.8-upstream
+        TAG: 3.1.53
       run: |
         sed -i 's@http://localhost:8080/@https://sdlpal.github.io/demo/@g' emscripten/Makefile
-        docker run -v ${{ github.workspace }}:/src trzeci/emscripten:$TAG /bin/bash -c "emmake make -C emscripten"
+        docker run -v ${{ github.workspace }}:/src emscripten/emsdk:$TAG /bin/bash -c "emmake make -C emscripten"
+        mkdir deploy
+        cd emscripten && zip ../deploy/sdlpal-emscripten.zip *.{html,js,wasm,wasm.map,png}
