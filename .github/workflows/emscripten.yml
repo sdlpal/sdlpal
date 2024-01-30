@@ -26,4 +26,6 @@ jobs:
         AUTO_UPDATE_USER: ${{secrets.AUTO_UPDATE_USER}}
         AUTO_UPDATE_PASS: ${{secrets.AUTO_UPDATE_PASS}}
       run: |
+        git config --global user.email "whistler_wmz@163.com"
+        git config --global user.name "AutoUpdate"
         bash -c '[[ -f "emscripten/sdlpal.js" ]] && git clone --depth=1 https://github.com/sdlpal/demo ~/demo && cp -f emscripten/*.{html,js,wasm,wasm.map,png} ~/demo && cd ~/demo && git add -A && git commit -mAutoupdate -a && git push "https://${AUTO_UPDATE_USER}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo" || true'
