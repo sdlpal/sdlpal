@@ -1296,7 +1296,7 @@ PAL_ItemUseMenu(
    BYTE           bColor, bSelectedColor;
    PAL_LARGE BYTE bufImage[2048];
    DWORD          dwColorChangeTime;
-   static WORD    wSelectedPlayer = 0;
+   static SHORT   sSelectedPlayer = 0;
    SDL_Rect       rect = {110, 2, 200, 180};
    int            i;
 
@@ -1305,9 +1305,9 @@ PAL_ItemUseMenu(
 
    while (TRUE)
    {
-      if (wSelectedPlayer > gpGlobals->wMaxPartyMemberIndex)
+      if (sSelectedPlayer > gpGlobals->wMaxPartyMemberIndex)
       {
-         wSelectedPlayer = 0;
+         sSelectedPlayer = 0;
       }
 
       //
@@ -1335,7 +1335,7 @@ PAL_ItemUseMenu(
       PAL_DrawText(PAL_GetWord(STATUS_LABEL_FLEERATE), PAL_XY(200, 142),
          ITEMUSEMENU_COLOR_STATLABEL, TRUE, FALSE, FALSE);
 
-      i = gpGlobals->rgParty[wSelectedPlayer].wPlayerRole;
+      i = gpGlobals->rgParty[sSelectedPlayer].wPlayerRole;
 
       PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwLevel[i], 4, PAL_XY(240, 20),
          kNumColorYellow, kNumAlignRight);
@@ -1370,7 +1370,7 @@ PAL_ItemUseMenu(
       //
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
-         if (i == wSelectedPlayer)
+         if (i == sSelectedPlayer)
          {
             bColor = bSelectedColor;
          }
@@ -1439,8 +1439,8 @@ PAL_ItemUseMenu(
             // Redraw the selected item.
             //
             PAL_DrawText(
-               PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[gpGlobals->rgParty[wSelectedPlayer].wPlayerRole]),
-               PAL_XY(125, 16 + 20 * wSelectedPlayer), bSelectedColor, FALSE, TRUE, FALSE);
+               PAL_GetWord(gpGlobals->g.PlayerRoles.rgwName[gpGlobals->rgParty[sSelectedPlayer].wPlayerRole]),
+               PAL_XY(125, 16 + 20 * sSelectedPlayer), bSelectedColor, FALSE, TRUE, FALSE);
          }
 
          PAL_ProcessEvent();
@@ -1460,13 +1460,18 @@ PAL_ItemUseMenu(
 
       if (g_InputState.dwKeyPress & (kKeyUp | kKeyLeft))
       {
-         wSelectedPlayer--;
+         sSelectedPlayer--;
+         if (sSelectedPlayer < 0)
+         {
+            sSelectedPlayer = gpGlobals->wMaxPartyMemberIndex;
+         }
       }
       else if (g_InputState.dwKeyPress & (kKeyDown | kKeyRight))
       {
-         if (wSelectedPlayer < gpGlobals->wMaxPartyMemberIndex)
+         sSelectedPlayer++;
+         if (sSelectedPlayer > gpGlobals->wMaxPartyMemberIndex)
          {
-            wSelectedPlayer++;
+            sSelectedPlayer = 0;
          }
       }
       else if (g_InputState.dwKeyPress & kKeyMenu)
@@ -1475,7 +1480,7 @@ PAL_ItemUseMenu(
       }
       else if (g_InputState.dwKeyPress & kKeySearch)
       {
-         return gpGlobals->rgParty[wSelectedPlayer].wPlayerRole;
+         return gpGlobals->rgParty[sSelectedPlayer].wPlayerRole;
       }
    }
 
@@ -1974,7 +1979,7 @@ PAL_EquipItemMenu(
          iCurrentPlayer--;
          if (iCurrentPlayer < 0)
          {
-            iCurrentPlayer = 0;
+            iCurrentPlayer = gpGlobals->wMaxPartyMemberIndex;
          }
       }
       else if (g_InputState.dwKeyPress & (kKeyDown | kKeyRight))
@@ -1982,7 +1987,7 @@ PAL_EquipItemMenu(
          iCurrentPlayer++;
          if (iCurrentPlayer > gpGlobals->wMaxPartyMemberIndex)
          {
-            iCurrentPlayer = gpGlobals->wMaxPartyMemberIndex;
+            iCurrentPlayer = 0;
          }
       }
       else if (g_InputState.dwKeyPress & kKeyMenu)
