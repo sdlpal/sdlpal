@@ -1504,23 +1504,31 @@ PAL_BuyMenu_OnItemChange(
 --*/
 {
    const SDL_Rect      rect = {20, 8, 300, 175};
-   int                 i, n;
+   int                 i, n, x, y;
    PAL_LARGE BYTE      bufImage[2048];
 
+   //
+   // Prepare item bakcground box pos
+   //
+   x = 40, y = 8;
+
    if( __buymenu_firsttime_render )
-      PAL_RLEBlitToSurfaceWithShadow(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX), gpScreen, PAL_XY(35+6, 8+6), TRUE);
+      PAL_RLEBlitToSurfaceWithShadow(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX), gpScreen, PAL_XY(x + 6, y + 6), TRUE);
    //
    // Draw the picture of current selected item
    //
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_ITEMBOX), gpScreen,
-      PAL_XY(35, 8));
+      PAL_XY(x, y));
+
+   //
+   // Prepare item pos
+   //
+   x = 48, y = 15;
 
    if (PAL_MKFReadChunk(bufImage, 2048,
       gpGlobals->g.rgObject[wCurrentItem].item.wBitmap, gpGlobals->f.fpBALL) > 0)
    {
-      if( __buymenu_firsttime_render )
-         PAL_RLEBlitToSurfaceWithShadow(bufImage, gpScreen, PAL_XY(42+6, 16+6), TRUE);
-      PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(42, 16));
+      PAL_RLEBlitToSurface(bufImage, gpScreen, PAL_XY(x, y));
    }
 
    //
@@ -1541,25 +1549,35 @@ PAL_BuyMenu_OnItemChange(
       }
    }
 
+   //
+   // Prepare inventory quantities pos
+   //
+   x = 20, y = 100;
+
    if( __buymenu_firsttime_render )
-      PAL_CreateSingleLineBoxWithShadow(PAL_XY(20, 105), 5, FALSE, 6);
+      PAL_CreateSingleLineBoxWithShadow(PAL_XY(x, y), 5, FALSE, 6);
    else
    //
    // Draw the amount of this item in the inventory
    //
-   PAL_CreateSingleLineBoxWithShadow(PAL_XY(20, 105), 5, FALSE, 0);
-   PAL_DrawText(PAL_GetWord(BUYMENU_LABEL_CURRENT), PAL_XY(30, 115), 0, FALSE, FALSE, FALSE);
-   PAL_DrawNumber(n, 6, PAL_XY(69, 119), kNumColorYellow, kNumAlignRight);
+   PAL_CreateSingleLineBoxWithShadow(PAL_XY(x, y), 5, FALSE, 0);
+   PAL_DrawText(PAL_GetWord(BUYMENU_LABEL_CURRENT), PAL_XY(x + 10, y + 10), 0, FALSE, FALSE, FALSE);
+   PAL_DrawNumber(n, 6, PAL_XY(x + 49, y + 15), kNumColorYellow, kNumAlignRight);
+
+   //
+   // Prepare inventory quantities pos
+   //
+   x = 20, y = 141;
 
    if( __buymenu_firsttime_render )
-      PAL_CreateSingleLineBoxWithShadow(PAL_XY(20, 145), 5, FALSE, 6);
+      PAL_CreateSingleLineBoxWithShadow(PAL_XY(x, y), 5, FALSE, 6);
    else
    //
    // Draw the cash amount
    //
-   PAL_CreateSingleLineBoxWithShadow(PAL_XY(20, 145), 5, FALSE, 0);
-   PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(30, 155), 0, FALSE, FALSE, FALSE);
-   PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(69, 159), kNumColorYellow, kNumAlignRight);
+   PAL_CreateSingleLineBoxWithShadow(PAL_XY(x, y), 5, FALSE, 0);
+   PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(x + 10, y + 10), 0, FALSE, FALSE, FALSE);
+   PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(x + 49, y + 15), kNumColorYellow, kNumAlignRight);
 
    VIDEO_UpdateScreen(&rect);
    
@@ -1592,7 +1610,7 @@ PAL_BuyMenu(
    //
    // create the menu items
    //
-   y = 22;
+   y = 21;
 
    for (i = 0; i < MAX_STORE_ITEM; i++)
    {
@@ -1612,7 +1630,7 @@ PAL_BuyMenu(
    //
    // Draw the box
    //
-   PAL_CreateBox(PAL_XY(125, 8), 8, 8, 1, FALSE);
+   PAL_CreateBox(PAL_XY(122, 8), 8, 8, 1, FALSE);
 
    //
    // Draw the number of prices
@@ -1620,7 +1638,7 @@ PAL_BuyMenu(
    for (y = 0; y < i; y++)
    {
       w = gpGlobals->g.rgObject[rgMenuItem[y].wValue].item.wPrice;
-      PAL_DrawNumber(w, 6, PAL_XY(235, 25 + y * 18), kNumColorCyan, kNumAlignRight);
+      PAL_DrawNumber(w, 6, PAL_XY(238, 26 + y * 18), kNumColorYellow, kNumAlignRight);
    }
 
    w = 0;
