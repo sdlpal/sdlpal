@@ -722,7 +722,7 @@ PAL_RemoveMagic(
    WORD           wMagic
 );
 
-VOID
+BOOL
 PAL_SetPlayerStatus(
    WORD         wPlayerRole,
    WORD         wStatusID,
