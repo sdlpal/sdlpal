@@ -2126,7 +2126,7 @@ PAL_RemoveMagic(
    }
 }
 
-VOID
+BOOL
 PAL_SetPlayerStatus(
    WORD         wPlayerRole,
    WORD         wStatusID,
@@ -2151,6 +2151,8 @@ PAL_SetPlayerStatus(
 
 --*/
 {
+   BOOL           fSuccess = TRUE;
+
 #ifndef PAL_CLASSIC
    if (wStatusID == kStatusSlow &&
       gpGlobals->rgPlayerStatus[wPlayerRole][kStatusHaste] > 0)
@@ -2196,10 +2198,16 @@ PAL_SetPlayerStatus(
       //
       // only allow dead players for "puppet" status
       //
-      if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0 &&
-         gpGlobals->rgPlayerStatus[wPlayerRole][wStatusID] < wNumRound)
+      if (gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole] == 0)
       {
-         gpGlobals->rgPlayerStatus[wPlayerRole][wStatusID] = wNumRound;
+         if (gpGlobals->rgPlayerStatus[wPlayerRole][wStatusID] < wNumRound)
+         {
+            gpGlobals->rgPlayerStatus[wPlayerRole][wStatusID] = wNumRound;
+         }
+      }
+      else
+      {
+         fSuccess = FALSE;
       }
       break;
 
@@ -2221,6 +2229,8 @@ PAL_SetPlayerStatus(
       assert(FALSE);
       break;
    }
+
+   return fSuccess;
 }
 
 VOID

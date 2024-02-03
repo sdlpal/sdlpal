@@ -1329,7 +1329,10 @@ PAL_InterpretInstruction(
       //
       // Set the status for player
       //
-      PAL_SetPlayerStatus(wEventObjectID, pScript->rgwOperand[0], pScript->rgwOperand[1]);
+      if (!PAL_SetPlayerStatus(wEventObjectID, pScript->rgwOperand[0], pScript->rgwOperand[1]))
+      {
+         g_fScriptSuccess = FALSE;
+      }
       break;
 
    case 0x002E:
