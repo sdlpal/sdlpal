@@ -167,14 +167,6 @@ Other platforms
 To be written.
 
 
-Choosing the battle system
-==========================
-
-By default, SDLPAL builds a *"classic"* turn-based battle system which is designed to be 100% the same as the original game.
-
-SDLPAL also provides a revised battle system (***deprecated*** and will be removed in future) which is more exciting yet somewhat harder than the original game. If you prefer this battle system, please define the macro `ENABLE_REVISIED_BATTLE` in *`Makefile`* or in *`common.h`* and recompile the project.
-
-
 Running the game
 ================
 
