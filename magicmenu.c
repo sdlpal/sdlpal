@@ -279,12 +279,17 @@ PAL_MagicSelectionMenuUpdate(
       if (rgMagicItem[g_iCurrentItem].fEnabled)
       {
          j = g_iCurrentItem % iItemsPerLine;
-		 k = (g_iCurrentItem < iItemsPerLine * iPageLineOffset) ? (g_iCurrentItem / iItemsPerLine) : iPageLineOffset;
+         k = (g_iCurrentItem < iItemsPerLine * iPageLineOffset) ? (g_iCurrentItem / iItemsPerLine) : iPageLineOffset;
 
-		 j = 35 + j * iItemTextWidth;
-		 k = 54 + k * 18 + iBoxYOffset;
+         j = 35 + j * iItemTextWidth;
+         k = 54 + k * 18 + iBoxYOffset;
 
          PAL_DrawText(PAL_GetWord(rgMagicItem[g_iCurrentItem].wMagic), PAL_XY(j, k), MENUITEM_COLOR_CONFIRMED, FALSE, TRUE, FALSE);
+
+         //
+         // Draw the cursor on the current selected item
+         //
+         PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_CURSOR), gpScreen, PAL_XY(j + iCursorXOffset, k + 10));
 
          return rgMagicItem[g_iCurrentItem].wMagic;
       }

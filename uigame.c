@@ -727,6 +727,8 @@ PAL_InGameMagicMenu(
          break;
       }
 
+      VIDEO_BackupScreen(gpScreen);
+
       if (gpGlobals->g.rgObject[wMagic].magic.wFlags & kMagicFlagApplyToAll)
       {
          gpGlobals->g.rgObject[wMagic].magic.wScriptOnUse =
@@ -773,13 +775,15 @@ PAL_InGameMagicMenu(
             //
             // Draw the cursor on the selected item
             //
-            rect.x = 70 + 78 * wPlayer;
-            rect.y = 193;
-            rect.w = 9;
+            rect.x = 0;
+            rect.y = 158;
+            rect.w = 320;
             rect.h = 6;
 
-            PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_CURSOR),
-               gpScreen, PAL_XY(rect.x, rect.y));
+            VIDEO_RestoreScreen(gpScreen);
+
+            PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_CURSOR_UP),
+               gpScreen, PAL_XY(75 + 78 * wPlayer, rect.y));
 
             VIDEO_UpdateScreen(&rect);
 
