@@ -1709,23 +1709,27 @@ PAL_SellMenu_OnItemChange(
 
 --*/
 {
+   WORD x = 100, y = 150;
+
    //
    // Draw the cash amount
    //
-   PAL_CreateSingleLineBoxWithShadow(PAL_XY(100, 150), 5, FALSE, 0);
-   PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(110, 160), 0, FALSE, FALSE, FALSE);
-   PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(149, 164), kNumColorYellow, kNumAlignRight);
+   PAL_CreateSingleLineBoxWithShadow(PAL_XY(x, y), 5, FALSE, 0);
+   PAL_DrawText(PAL_GetWord(CASH_LABEL), PAL_XY(x + 10, y + 10), 0, FALSE, FALSE, FALSE);
+   PAL_DrawNumber(gpGlobals->dwCash, 6, PAL_XY(x + 48, y + 15), kNumColorYellow, kNumAlignRight);
+
+   x += 124;
 
    //
    // Draw the price
    //
-   PAL_CreateSingleLineBoxWithShadow(PAL_XY(220, 150), 5, FALSE, 0);
+   PAL_CreateSingleLineBoxWithShadow(PAL_XY(x, y), 5, FALSE, 0);
 
    if (gpGlobals->g.rgObject[wCurrentItem].item.wFlags & kItemFlagSellable)
    {
-      PAL_DrawText(PAL_GetWord(SELLMENU_LABEL_PRICE), PAL_XY(230, 160), 0, FALSE, FALSE, FALSE);
+      PAL_DrawText(PAL_GetWord(SELLMENU_LABEL_PRICE), PAL_XY(x + 10, y + 10), 0, FALSE, FALSE, FALSE);
       PAL_DrawNumber(gpGlobals->g.rgObject[wCurrentItem].item.wPrice / 2, 6,
-         PAL_XY(269, 164), kNumColorYellow, kNumAlignRight);
+         PAL_XY(x + 48, y + 15), kNumColorYellow, kNumAlignRight);
    }
 }
 
