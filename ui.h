@@ -40,7 +40,7 @@
 
 #define MENUITEM_COLOR_EQUIPPEDITEM        0xC8
 
-#define DESCTEXT_COLOR                     0x2E
+#define DESCTEXT_COLOR                     0x3C
 
 #define MAINMENU_BACKGROUND_FBPNUM         (gConfig.fIsWIN95 ? 2 :60)
 
