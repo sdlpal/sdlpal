@@ -769,11 +769,28 @@ PAL_InterpretInstruction(
          w = gpGlobals->g.PlayerRoles.rgwEquipment[i][wEventObjectID];
          gpGlobals->g.PlayerRoles.rgwEquipment[i][wEventObjectID] = pScript->rgwOperand[1];
 
-         PAL_AddItemToInventory(pScript->rgwOperand[1], -1);
-
-         if (w != 0)
+         if (PAL_GetItemIndexToInventory(pScript->rgwOperand[1], &i)
+            && i < MAX_INVENTORY
+            && gpGlobals->rgInventory[i].nAmount == 1
+            && w != 0
+            && !PAL_GetItemIndexToInventory(w, &j))
          {
-            PAL_AddItemToInventory(w, 1);
+            //
+            // When the number of items you want to wear is 1 
+            // and the number of items you are wearing is also 1, 
+            // replace them directly, instead of removing items 
+            // and adding them at the end of the item menu
+            //
+            gpGlobals->rgInventory[i].wItem = w;
+         }
+         else
+         {
+            PAL_AddItemToInventory(pScript->rgwOperand[1], -1);
+
+            if (w != 0)
+            {
+               PAL_AddItemToInventory(w, 1);
+            }
          }
 
          gpGlobals->wLastUnequippedItem = w;

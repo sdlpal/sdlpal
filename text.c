@@ -1139,14 +1139,22 @@ PAL_DrawTextUnescape(
       //
       // Draw the character
       //
-	  int char_width = fUse8x8Font ? 8 : PAL_CharWidth(*lpszText);
+      int char_width = fUse8x8Font ? 8 : PAL_CharWidth(*lpszText);
 
       if (fShadow)
       {
-		  PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y + 1), 0, fUse8x8Font);
+         //
+         // Note: In the original PAL DOS version, 
+         // the text has triple shadows, while Win95 only has one layer. 
+         // It is suspected that there is a bug in the original Win95 version, 
+         // so sdlpal chose to use triple shadows for both.
+         //
+         PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y), 0, fUse8x8Font);
+         PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x, rect.y + 1), 0, fUse8x8Font);
+         PAL_DrawCharOnSurface(*lpszText, gpScreen, PAL_XY(rect.x + 1, rect.y + 1), 0, fUse8x8Font);
       }
-	  PAL_DrawCharOnSurface(*lpszText++, gpScreen, PAL_XY(rect.x, rect.y), bColor, fUse8x8Font);
-	  rect.x += char_width; urect.w += char_width;
+      PAL_DrawCharOnSurface(*lpszText++, gpScreen, PAL_XY(rect.x, rect.y), bColor, fUse8x8Font);
+      rect.x += char_width; urect.w += char_width;
    }
 
    //

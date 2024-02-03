@@ -1017,6 +1017,49 @@ PAL_CountItem(
 }
 
 BOOL
+PAL_GetItemIndexToInventory(
+   WORD          wObjectID,
+   INT          *index
+)
+/*++
+  Purpose:
+
+    Search for the specified item in the inventory.
+
+  Parameters:
+
+    [IN]  wObjectID - object number of the item.
+
+    [IN]  index - use a pointer to receive the retrieved inventory index.
+
+  Return value:
+
+    TRUE if found it, FALSE if not found it.
+
+--*/
+{
+   BOOL         fFound = FALSE;
+
+   *index = 0;
+
+   while (*index < MAX_INVENTORY)
+   {
+      if (gpGlobals->rgInventory[*index].wItem == wObjectID)
+      {
+         fFound = TRUE;
+         break;
+      }
+      else if (gpGlobals->rgInventory[*index].wItem == 0)
+      {
+         break;
+      }
+      (*index)++;
+   }
+
+   return fFound;
+}
+
+BOOL
 PAL_AddItemToInventory(
    WORD          wObjectID,
    INT           iNum
@@ -1057,19 +1100,7 @@ PAL_AddItemToInventory(
    //
    // Search for the specified item in the inventory
    //
-   while (index < MAX_INVENTORY)
-   {
-      if (gpGlobals->rgInventory[index].wItem == wObjectID)
-      {
-         fFound = TRUE;
-         break;
-      }
-      else if (gpGlobals->rgInventory[index].wItem == 0)
-      {
-         break;
-      }
-      index++;
-   }
+   fFound = PAL_GetItemIndexToInventory(wObjectID, &index);
 
    if (iNum > 0)
    {
