@@ -804,6 +804,19 @@ PAL_BattleUIUpdate(
    WORD             wPlayerRole, w;
    static int       s_iFrame = 0;
 
+   struct {
+      int               iSpriteNum;
+      PAL_POS           pos;
+      BATTLEUIACTION    action;
+   } rgItems[] =
+   {
+      {SPRITENUM_BATTLEICON_ATTACK,    PAL_XY(27, 140), kBattleUIActionAttack},
+      {SPRITENUM_BATTLEICON_MAGIC,     PAL_XY(0, 155),  kBattleUIActionMagic},
+      {SPRITENUM_BATTLEICON_COOPMAGIC, PAL_XY(54, 155), kBattleUIActionCoopMagic},
+      {SPRITENUM_BATTLEICON_MISCMENU,  PAL_XY(27, 170), kBattleUIActionMisc}
+   };
+
+
    s_iFrame++;
 
    if (g_Battle.UI.fAutoAttack && !gpGlobals->fAutoBattle)
@@ -1016,18 +1029,6 @@ PAL_BattleUIUpdate(
       // Draw the icons
       //
       {
-         struct {
-            int               iSpriteNum;
-            PAL_POS           pos;
-            BATTLEUIACTION    action;
-         } rgItems[] =
-         {
-            {SPRITENUM_BATTLEICON_ATTACK,    PAL_XY(27, 140), kBattleUIActionAttack},
-            {SPRITENUM_BATTLEICON_MAGIC,     PAL_XY(0, 155),  kBattleUIActionMagic},
-            {SPRITENUM_BATTLEICON_COOPMAGIC, PAL_XY(54, 155), kBattleUIActionCoopMagic},
-            {SPRITENUM_BATTLEICON_MISCMENU,  PAL_XY(27, 170), kBattleUIActionMisc}
-         };
-
          if (g_Battle.UI.MenuState == kBattleMenuMain)
          {
             if (g_InputState.dir == kDirNorth)
@@ -1552,6 +1553,13 @@ PAL_BattleUIUpdate(
          PAL_BattleCommitAction(FALSE);
       }
 #endif
+
+      for (i = 0; i < 4; i++)
+      {
+         PAL_RLEBlitMonoColor(PAL_SpriteGetFrame(gpSpriteUI, rgItems[i].iSpriteNum),
+            gpScreen, rgItems[i].pos, 0, -4);
+      }
+
 
       j = SPRITENUM_BATTLE_ARROW_SELECTEDPLAYER;
       if (s_iFrame & 1)
