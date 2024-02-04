@@ -20,15 +20,15 @@ jobs:
     - name: make sdl
       run: |
         cd 3rd/SDL
-        mkdir ~/cache
+        mkdir $HOME/cache
         CC=i686-w64-mingw32-gcc CXX=i686-w64-mingw32-g++ \
-          bash ./configure --host=i686-w64-mingw32 --prefix=~/cache/SDL2 \
+          bash ./configure --host=i686-w64-mingw32 --prefix=$HOME/cache/SDL2 \
           --enable-static --disable-shared
         make install V=1 SHELL=/bin/bash
     - name: make
       run: |
         cd win32
-        PATH=~/cache/SDL2/bin:$PATH make HOST=i686-w64-mingw32-
+        PATH=$HOME/cache/SDL2/bin:$PATH make HOST=i686-w64-mingw32-
         i686-w64-mingw32-strip -s sdlpal.exe
         upx --best --lzma sdlpal.exe
         zip sdlpal-win32-mingw.zip sdlpal.exe
