@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install binutils-mingw-w64-i686 gcc-mingw-w64-i686 g++-mingw-w64-i686 zip upx-ucl python3-pip fuse && sudo pip3 install cloudsmith-cli
+      run: sudo apt-get install binutils-mingw-w64-i686 gcc-mingw-w64-i686 g++-mingw-w64-i686 zip upx-ucl python3-pip && sudo pip3 install cloudsmith-cli
     - uses: actions/checkout@v3
     - name: submodules
       run: |
