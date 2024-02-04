@@ -41,4 +41,4 @@ jobs:
         CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
       run: cloudsmith push raw sdlpal/sdlpal
            --version `awk -F\" '{print $2;}' generated.h` --name MinGW32
-           --republish deploy/*.zip --tags "branch/`echo $GITHUB_REF | sed s#ref/heads/##"
+           --republish deploy/*.zip --tags "branch/`echo $GITHUB_REF | sed s#ref/heads/##`"
