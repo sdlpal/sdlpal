@@ -32,6 +32,7 @@ jobs:
         i686-w64-mingw32-strip -s sdlpal.exe
         upx --best --lzma sdlpal.exe
         zip sdlpal-win32-mingw.zip sdlpal.exe
+        mkdir ../deploy/
         mv sdlpal-win32-mingw.zip ../deploy/
         cd ..
     - name: deploy
