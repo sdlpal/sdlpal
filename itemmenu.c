@@ -292,10 +292,15 @@ PAL_ItemSelectMenuUpdate(
       {
          if (gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount > 0)
          {
-			 j = (gpGlobals->iCurInvMenuItem < iItemsPerLine * iPageLineOffset) ? (gpGlobals->iCurInvMenuItem / iItemsPerLine) : iPageLineOffset;
-			k = gpGlobals->iCurInvMenuItem % iItemsPerLine;
+            j = (gpGlobals->iCurInvMenuItem < iItemsPerLine * iPageLineOffset) ? (gpGlobals->iCurInvMenuItem / iItemsPerLine) : iPageLineOffset;
+            k = gpGlobals->iCurInvMenuItem % iItemsPerLine;
 
             PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * iItemTextWidth, 12 + j * 18), MENUITEM_COLOR_CONFIRMED, FALSE, FALSE, FALSE);
+
+            //
+            // Draw the cursor on the current selected item
+            //
+            PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_CURSOR), gpScreen, cursorPos);
          }
 
          return wObject;
