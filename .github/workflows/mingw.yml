@@ -23,7 +23,7 @@ jobs:
         mkdir $HOME/cache
         CC=i686-w64-mingw32-gcc CXX=i686-w64-mingw32-g++ \
           bash ./configure --host=i686-w64-mingw32 --prefix=$HOME/cache/SDL2 \
-          --enable-static --disable-shared --disable-tests
+          --enable-static --disable-shared
         make install V=1 SHELL=/bin/bash
     - name: make
       run: |
