@@ -29,4 +29,4 @@ jobs:
       if: github.event_name != 'pull_request'
       run: cloudsmith push raw sdlpal/sdlpal
            --version `awk -F\" '{print $2;}' generated.h` --name AppImage
-           --republish deploy/*.AppImage --tags "branch/$GITHUB_REF"
+           --republish deploy/*.AppImage --tags "branch/`echo $GITHUB_REF | sed s#ref/heads/##"
