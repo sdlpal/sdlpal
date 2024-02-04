@@ -1,0 +1,41 @@
+name: MinGW32 CI
+
+on:
+  push:
+    branches: '*'
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Install Dependencies
+      run: sudo apt-get install binutils-mingw-w64-i686 gcc-mingw-w64-i686 g++-mingw-w64-i686 zip upx-ucl python3-pip fuse && sudo pip3 install cloudsmith-cli
+    - uses: actions/checkout@v3
+    - name: submodules
+      run: |
+        sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
+        git submodule init && git submodule update
+    - name: make sdl
+      run: |
+        cd 3rd/SDL
+        mkdir $HOME/cache
+        CC=i686-w64-mingw32-gcc CXX=i686-w64-mingw32-g++ \
+          bash ./configure --host=i686-w64-mingw32 --prefix=$HOME/cache/SDL2 \
+          --enable-static --disable-shared
+        make install V=1 SHELL=/bin/bash
+    - name: make
+      run: |
+        cd win32
+        PATH=$HOME/cache/SDL2/bin:$PATH make HOST=i686-w64-mingw32-
+        i686-w64-mingw32-strip -s sdlpal.exe
+        upx --best --lzma sdlpal.exe
+        zip sdlpal-win32-mingw.zip sdlpal.exe
+        mv sdlpal-win32-mingw.zip ../deploy/
+        cd ..
+    - name: deploy
+      if: github.event_name != 'pull_request'
+      run: CLOUDSMITH_API_KEY=${{secrets.CLOUDSMITH_API_KEY}} cloudsmith push raw sdlpal/sdlpal
+           --version `awk -F\" '{print $2;}' generated.h` --name MinGW32
+           --republish deploy/*.zip --tags "branch/$GITHUB_HEAD_REF"
