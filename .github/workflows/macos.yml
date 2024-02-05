@@ -1,0 +1,34 @@
+name: macOS CI
+
+on:
+  push:
+    branches: '*'
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v3
+    - name: submodules
+      run: |
+        sed -i.bak 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
+        git submodule init && git submodule update
+    - name: Install Dependencies
+      run: python3 -m ensurepip && pip3 install cloudsmith-cli && brew install coreutils
+    - name: make
+      run: |
+        bash scripts/gengitrev
+        cd macos
+        xcodebuild -project Pal.xcodeproj -configuration Release
+        mkdir ../deploy
+        hdiutil create -srcfolder build/Release/Pal.app -volname "SDLPal" ../deploy/sdlpal-macos.dmg
+    - name: deploy
+      env:
+        CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
+      if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
+      run: |
+        cloudsmith push raw sdlpal/sdlpal \
+          --version `awk -F\" '{print $2;}' generated.h` --name macOS \
+          --republish deploy/*.dmg --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"

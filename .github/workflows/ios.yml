@@ -1,0 +1,38 @@
+name: iOS CI
+
+on:
+  push:
+    branches: '*'
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: macos-11
+    steps:
+    - uses: actions/checkout@v3
+    - name: submodules
+      run: |
+        sed -i.bak 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
+        git submodule init && git submodule update
+    - name: Install Dependencies
+      run: python3 -m ensurepip && pip3 install cloudsmith-cli && brew install coreutils
+    - name: make
+      run: |
+        bash scripts/gengitrev
+        cd ios/SDLPal
+        pod install
+        xcodebuild -workspace SDLPal.xcworkspace -scheme SDLPal ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO -configuration Release CONFIGURATION_BUILD_DIR=/tmp/sdlpal-build
+        mkdir -p Payload
+        mv /tmp/sdlpal-build/SDLPal.app Payload
+        mkdir ../../deploy
+        zip ../../deploy/sdlpal-unsigned.ipa -r Payload
+        cd ../..
+    - name: deploy
+      env:
+        CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
+      if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
+      run: |
+        cloudsmith push raw sdlpal/sdlpal \
+          --version `awk -F\" '{print $2;}' generated.h` --name iOS \
+          --republish deploy/*.ipa --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
