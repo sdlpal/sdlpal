@@ -1,0 +1,47 @@
+name: Linux CI
+
+on:
+  push:
+    branches: '*'
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Dependencies
+      run: sudo apt-get install python3-pip && sudo pip3 install cloudsmith-cli
+    - uses: actions/checkout@v3
+    - name: submodules
+      run: |
+        sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
+        git submodule init && git submodule update
+    - name: setup java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: setup android-sdk
+      uses: android-actions/setup-android@v3
+    - uses: nttld/setup-ndk@v1
+      id: setup-ndk
+      with:
+        ndk-version: r25c
+        link-to-sdk: true
+        local-cache: true
+    - name: make
+      run: |
+        cd android
+        sed -i.bak s/"android:versionCode.*"/"android:versionCode=\"`date +'%s'`\""/g ./app/src/main/AndroidManifest.xml
+        ./gradlew assembleRelease
+        cd ..
+        mkdir deploy
+        jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 1
+    - name: deploy
+      env:
+        CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
+      if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
+      run: cloudsmith push raw sdlpal/sdlpal
+           --version `awk -F\" '{print $2;}' generated.h` --name Android
+           --republish deploy/*.apk --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
