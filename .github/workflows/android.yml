@@ -17,19 +17,6 @@ jobs:
       run: |
         sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
         git submodule init && git submodule update
-    - name: setup java
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    - name: setup android-sdk
-      uses: android-actions/setup-android@v3
-    - uses: nttld/setup-ndk@v1
-      id: setup-ndk
-      with:
-        ndk-version: r25c
-        link-to-sdk: true
-        local-cache: true
     - name: make
       run: |
         cd android
