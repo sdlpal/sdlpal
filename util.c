@@ -906,7 +906,7 @@ UTIL_LogOutput(
 
 	snprintf(_log_buffer, PAL_LOG_BUFFER_EXTRA_SIZE,
 		"%04d-%02d-%02d %02d:%02d:%02d %s: ",
-		tmval->tm_year + 1900, tmval->tm_mon, tmval->tm_mday,
+		tmval->tm_year + 1900, tmval->tm_mon+1, tmval->tm_mday,
 		tmval->tm_hour, tmval->tm_min, tmval->tm_sec,
 		_loglevel_str[level]);
 	if( strlen(_log_prelude) > 0 )
