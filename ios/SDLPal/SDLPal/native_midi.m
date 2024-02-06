@@ -121,7 +121,7 @@ void native_midi_start(NativeMidiSong *song, int looping)
     }
 }
 
-void native_midi_stop()
+void native_midi_stop(NativeMidiSong *song)
 {
     if (currentsong) {
         currentsong->playing = 0;
@@ -129,7 +129,7 @@ void native_midi_stop()
     }
 }
 
-int native_midi_active()
+int native_midi_active(NativeMidiSong *song)
 {
     return currentsong ? currentsong->playing : 0;
 }

@@ -12,6 +12,7 @@ build_script:
     msbuild /nologo /m %solution_name% /p:Configuration=Release %APPX_OPTIONS%
 before_build:
   - |-
+    sed -i.bak 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
     git submodule update --init --recursive
     pip install cloudsmith-cli
 after_build:

@@ -26,7 +26,7 @@ jobs:
         mkdir deploy
         cd emscripten && zip ../deploy/sdlpal-emscripten.zip *.{html,js,wasm,wasm.map,png}
     - name: Deploy to Demo
-      if: github.event_name != 'pull_request'
+      if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
       env:
         AUTO_UPDATE_USER: ${{secrets.AUTO_UPDATE_USER}}
         AUTO_UPDATE_PASS: ${{secrets.AUTO_UPDATE_PASS}}

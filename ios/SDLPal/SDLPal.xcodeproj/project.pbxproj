@@ -2136,7 +2136,7 @@
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
 				INIT_ROUTINE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2182,7 +2182,7 @@
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
 				INIT_ROUTINE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
