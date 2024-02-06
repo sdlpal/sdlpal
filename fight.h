@@ -28,12 +28,13 @@ PAL_C_LINKAGE_BEGIN
 
 INT
 PAL_BattleSelectAutoTargetFrom(
-   INT
+   INT              begin,
+   BATTLEFINDTARGET fFindingMethods
 );
 
 BOOL
 PAL_IsPlayerDying(
-   WORD
+   WORD        wPlayerRole
 );
 
 BOOL

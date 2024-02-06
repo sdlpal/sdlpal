@@ -59,6 +59,12 @@ typedef enum tagBATTLEACTIONTYPE
    kBattleActionAttackMate,    // attack teammate (confused only)
 } BATTLEACTIONTYPE;
 
+typedef enum tagBATTLEFINDTARGET
+{
+   kBattleFindTargetForward,
+   kBattleFindTargetBackwards,
+} BATTLEFINDTARGET;
+
 typedef struct tagBATTLEACTION
 {
    BATTLEACTIONTYPE   ActionType;
