@@ -27,7 +27,7 @@ static BOOL    g_fNoDesc = FALSE;
 
 WORD
 PAL_ItemSelectMenuUpdate(
-   VOID
+   BOOL                      fIsInvMenu
 )
 /*++
   Purpose:
@@ -36,7 +36,7 @@ PAL_ItemSelectMenuUpdate(
 
   Parameters:
 
-    None.
+    [IN]  fIsInvMenu - True if the current menu is inventory, FALSE if the current menu is sell menu.
 
   Return value:
 
@@ -45,6 +45,7 @@ PAL_ItemSelectMenuUpdate(
 --*/
 {
    int                i, j, k, line, item_delta;
+   int               *iCurMenuItem = (fIsInvMenu) ? &gpGlobals->iCurInvMenuItem : &gpGlobals->iCurSellMenuItem;
    WORD               wObject, wScript;
    BYTE               bColor;
    static BYTE        bufImage[2048];
@@ -55,7 +56,7 @@ PAL_ItemSelectMenuUpdate(
    const int          iAmountXOffset = gConfig.dwWordLength * 8 + 1;
    const int          iPageLineOffset = (iLinesPerPage + 1) / 2;
    const int          iPictureYOffset = (gConfig.ScreenLayout.ExtraItemDescLines > 1) ? (gConfig.ScreenLayout.ExtraItemDescLines - 1) * 16 : 0;
-   PAL_POS            cursorPos = PAL_XY(15 + iCursorXOffset, 22);;
+   PAL_POS            cursorPos = PAL_XY(15 + iCursorXOffset, 22);
 
    //
    // Process input
@@ -86,11 +87,11 @@ PAL_ItemSelectMenuUpdate(
    }
    else if (g_InputState.dwKeyPress & kKeyHome)
    {
-      item_delta = -gpGlobals->iCurInvMenuItem;
+      item_delta = -(*iCurMenuItem);
    }
    else if (g_InputState.dwKeyPress & kKeyEnd)
    {
-      item_delta = g_iNumInventory - gpGlobals->iCurInvMenuItem - 1;
+      item_delta = g_iNumInventory - (*iCurMenuItem) - 1;
    }
    else if (g_InputState.dwKeyPress & kKeyMenu)
    {
@@ -104,12 +105,12 @@ PAL_ItemSelectMenuUpdate(
    //
    // Make sure the current menu item index is in bound
    //
-   if (gpGlobals->iCurInvMenuItem + item_delta < 0)
-      gpGlobals->iCurInvMenuItem = 0;
-   else if (gpGlobals->iCurInvMenuItem + item_delta >= g_iNumInventory)
-      gpGlobals->iCurInvMenuItem = g_iNumInventory-1;
+   if ((*iCurMenuItem) + item_delta < 0)
+      (*iCurMenuItem) = 0;
+   else if ((*iCurMenuItem) + item_delta >= g_iNumInventory)
+      (*iCurMenuItem) = g_iNumInventory-1;
    else
-      gpGlobals->iCurInvMenuItem += item_delta;
+      (*iCurMenuItem) += item_delta;
 
    //
    // Redraw the box
@@ -119,7 +120,7 @@ PAL_ItemSelectMenuUpdate(
    //
    // Draw the texts in the current page
    //
-   i = gpGlobals->iCurInvMenuItem / iItemsPerLine * iItemsPerLine - iItemsPerLine * iPageLineOffset;
+   i = (*iCurMenuItem) / iItemsPerLine * iItemsPerLine - iItemsPerLine * iPageLineOffset;
    if (i < 0)
    {
       i = 0;
@@ -143,7 +144,7 @@ PAL_ItemSelectMenuUpdate(
             break;
          }
 
-         if (i == gpGlobals->iCurInvMenuItem)
+         if (i == (*iCurMenuItem))
          {
             if (!(gpGlobals->g.rgObject[wObject].item.wFlags & g_wItemFlags) ||
                (SHORT)gpGlobals->rgInventory[i].nAmount <= (SHORT)gpGlobals->rgInventory[i].nAmountInUse)
@@ -186,7 +187,7 @@ PAL_ItemSelectMenuUpdate(
          //
          PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * iItemTextWidth, 12 + j * 18), bColor, TRUE, FALSE, FALSE);
 
-         if (i == gpGlobals->iCurInvMenuItem)
+         if (i == (*iCurMenuItem))
          {
             cursorPos = PAL_XY(15 + iCursorXOffset + k * iItemTextWidth, 22 + j * 18);
 
@@ -223,7 +224,7 @@ PAL_ItemSelectMenuUpdate(
    //
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_CURSOR), gpScreen, cursorPos);
 
-   wObject = gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem;
+   wObject = gpGlobals->rgInventory[*iCurMenuItem].wItem;
 
    //
    // Draw the description of the selected item
@@ -287,13 +288,13 @@ PAL_ItemSelectMenuUpdate(
    if (g_InputState.dwKeyPress & kKeySearch)
    {
       if ((gpGlobals->g.rgObject[wObject].item.wFlags & g_wItemFlags) &&
-         (SHORT)gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount >
-         (SHORT)gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmountInUse)
+         (SHORT)gpGlobals->rgInventory[*iCurMenuItem].nAmount >
+         (SHORT)gpGlobals->rgInventory[*iCurMenuItem].nAmountInUse)
       {
-         if (gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].nAmount > 0)
+         if (gpGlobals->rgInventory[*iCurMenuItem].nAmount > 0)
          {
-            j = (gpGlobals->iCurInvMenuItem < iItemsPerLine * iPageLineOffset) ? (gpGlobals->iCurInvMenuItem / iItemsPerLine) : iPageLineOffset;
-            k = gpGlobals->iCurInvMenuItem % iItemsPerLine;
+            j = ((*iCurMenuItem) < iItemsPerLine * iPageLineOffset) ? ((*iCurMenuItem) / iItemsPerLine) : iPageLineOffset;
+            k = (*iCurMenuItem) % iItemsPerLine;
 
             PAL_DrawText(PAL_GetWord(wObject), PAL_XY(15 + k * iItemTextWidth, 12 + j * 18), MENUITEM_COLOR_CONFIRMED, FALSE, FALSE, FALSE);
 
@@ -400,18 +401,22 @@ PAL_ItemSelectMenu(
 --*/
 {
    int              iPrevIndex;
+   int             *iCurMenuItem = (wItemFlags != kItemFlagSellable) ? &gpGlobals->iCurInvMenuItem : &gpGlobals->iCurSellMenuItem;
    WORD             w;
    DWORD            dwTime;
 
+   // Special handling in Win version, no longer requiring cursor position recording
+   if (gConfig.fIsWIN95 && wItemFlags == kItemFlagSellable) *iCurMenuItem = 0;
+
    PAL_ItemSelectMenuInit(wItemFlags);
-   iPrevIndex = gpGlobals->iCurInvMenuItem;
+   iPrevIndex = *iCurMenuItem;
 
    PAL_ClearKeyState();
 
    if (lpfnMenuItemChanged != NULL)
    {
       g_fNoDesc = TRUE;
-      (*lpfnMenuItemChanged)(gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem);
+      (*lpfnMenuItemChanged)(gpGlobals->rgInventory[*iCurMenuItem].wItem);
    }
 
    dwTime = SDL_GetTicks();
@@ -423,7 +428,7 @@ PAL_ItemSelectMenu(
          PAL_MakeScene();
       }
 
-      w = PAL_ItemSelectMenuUpdate();
+      w = PAL_ItemSelectMenuUpdate(wItemFlags != kItemFlagSellable);
       VIDEO_UpdateScreen(NULL);
 
       PAL_ClearKeyState();
@@ -447,17 +452,17 @@ PAL_ItemSelectMenu(
          return w;
       }
 
-      if (iPrevIndex != gpGlobals->iCurInvMenuItem)
+      if (iPrevIndex != (*iCurMenuItem))
       {
-         if (gpGlobals->iCurInvMenuItem >= 0 && gpGlobals->iCurInvMenuItem < MAX_INVENTORY)
+         if ((*iCurMenuItem) >= 0 && (*iCurMenuItem) < MAX_INVENTORY)
          {
             if (lpfnMenuItemChanged != NULL)
             {
-               (*lpfnMenuItemChanged)(gpGlobals->rgInventory[gpGlobals->iCurInvMenuItem].wItem);
+               (*lpfnMenuItemChanged)(gpGlobals->rgInventory[(*iCurMenuItem)].wItem);
             }
          }
 
-         iPrevIndex = gpGlobals->iCurInvMenuItem;
+         iPrevIndex = (*iCurMenuItem);
       }
    }
 

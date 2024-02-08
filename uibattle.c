@@ -641,7 +641,7 @@ PAL_BattleUIUseItem(
 {
    WORD       wSelectedItem;
 
-   wSelectedItem = PAL_ItemSelectMenuUpdate();
+   wSelectedItem = PAL_ItemSelectMenuUpdate(TRUE);
 
    if (wSelectedItem != 0xFFFF)
    {
@@ -690,7 +690,7 @@ PAL_BattleUIThrowItem(
 
 --*/
 {
-   WORD wSelectedItem = PAL_ItemSelectMenuUpdate();
+   WORD wSelectedItem = PAL_ItemSelectMenuUpdate(TRUE);
 
    if (wSelectedItem != 0xFFFF)
    {

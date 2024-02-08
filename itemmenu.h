@@ -29,7 +29,7 @@ PAL_C_LINKAGE_BEGIN
 
 WORD
 PAL_ItemSelectMenuUpdate(
-   VOID
+   BOOL                      fIsInvMenu
 );
 
 VOID
