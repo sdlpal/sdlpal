@@ -37,6 +37,14 @@ PAL_MakeScene(
 );
 
 BOOL
+PAL_CheckObstacleWithRange(
+	PAL_POS         pos,
+	BOOL            fCheckEventObjects,
+	WORD            wSelfObject,
+	BOOL			fCheckRange
+);
+
+BOOL
 PAL_CheckObstacle(
    PAL_POS         pos,
    BOOL            fCheckEventObjects,

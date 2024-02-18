@@ -503,9 +503,20 @@ PAL_MakeScene(
 
 BOOL
 PAL_CheckObstacle(
-   PAL_POS         pos,
-   BOOL            fCheckEventObjects,
-   WORD            wSelfObject
+    PAL_POS         pos,
+    BOOL            fCheckEventObjects,
+    WORD            wSelfObject
+)
+{
+    return PAL_CheckObstacleWithRange(pos, fCheckEventObjects, wSelfObject, FALSE);
+}
+
+BOOL
+PAL_CheckObstacleWithRange(
+    PAL_POS         pos,
+    BOOL            fCheckEventObjects,
+    WORD            wSelfObject,
+    BOOL			fCheckRange
 )
 /*++
    Purpose:
@@ -520,6 +531,8 @@ PAL_CheckObstacle(
            check for the map.
 
      [IN]  wSelfObject - the event object which will be skipped.
+
+     [IN]  fCheckRange - whether need to check range.
 
    Return value:
 
@@ -540,6 +553,7 @@ PAL_CheckObstacle(
    //
    // Avoid walk out of range, look out of map
    //
+   if( fCheckRange )
    if (x < blockX || x >= 2048 || y < blockY || y >= 2048 )
    {
       return TRUE;
