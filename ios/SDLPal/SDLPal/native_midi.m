@@ -113,7 +113,7 @@ void native_midi_start(NativeMidiSong *song, int looping)
         currentsong = song;
         currentsong->playing = 1;
         [midiPlayer play:^(){
-            if( currentsong ) {
+            if( looping ) {
                 midiPlayer.currentPosition = 0;
                 native_midi_start(currentsong,looping);
             }
