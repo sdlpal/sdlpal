@@ -241,6 +241,11 @@ PAL_GameUpdate(
       }
    }
 
+   if (--gpGlobals->wChasespeedChangeCycles == 0)
+   {
+      gpGlobals->wChaseRange = 1;
+   }
+
    gpGlobals->dwFrameNum++;
 }
 
@@ -572,11 +577,6 @@ PAL_StartFrame(
       // Quit Game
       //
       PAL_QuitGame();
-   }
-
-   if (--gpGlobals->wChasespeedChangeCycles == 0)
-   {
-      gpGlobals->wChaseRange = 1;
    }
 }
 
