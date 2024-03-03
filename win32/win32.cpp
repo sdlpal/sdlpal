@@ -428,6 +428,9 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 typedef LANGID(__stdcall *GETLANGUAGEID)(void);
 
 extern "C" int UTIL_Platform_Startup(int argc, char *argv[]) {
+	// Disable IME
+	ImmDisableIME(0);
+
 	// Defaults log to debug output
 	UTIL_LogAddOutputCallback([](LOGLEVEL, const char* str, const char*)->void {
 		OutputDebugStringA(str);
