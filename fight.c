@@ -23,6 +23,7 @@
 #include <math.h>
 
 //#define INVINCIBLE 1
+extern WORD g_rgPlayerPos[3][3][2];
 
 BOOL
 PAL_IsPlayerDying(
@@ -2076,13 +2077,43 @@ PAL_BattleShowPlayerAttackAnim(
    y = enemy_y + dist + 20;
 
    g_Battle.rgPlayer[wPlayerIndex].wCurrentFrame = 8;
-   g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
+   if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusDualAttack] > 0 && PAL_PlayerCanAttackAll(wPlayerRole))
+   {
+       x = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][wPlayerIndex][0] - 8;
+       y = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][wPlayerIndex][1] - 4;
+
+       if (g_Battle.rgPlayer[wPlayerIndex].fSecondAttack == FALSE)
+       {
+           g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
+       }
+       if (g_Battle.rgPlayer[wPlayerIndex].fSecondAttack == TRUE)
+       {
+           g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x - 12, y - 8);
+       }
+   }
+   else
+       g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
 
    PAL_BattleDelay(2, 0, TRUE);
 
    x -= 10;
    y -= 2;
-   g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
+   if (gpGlobals->rgPlayerStatus[wPlayerRole][kStatusDualAttack] > 0 && PAL_PlayerCanAttackAll(wPlayerRole))
+   {
+       x = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][wPlayerIndex][0] - 8;
+       y = g_rgPlayerPos[gpGlobals->wMaxPartyMemberIndex][wPlayerIndex][1] - 4;
+
+       if (g_Battle.rgPlayer[wPlayerIndex].fSecondAttack == FALSE)
+       {
+           g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
+       }
+       if (g_Battle.rgPlayer[wPlayerIndex].fSecondAttack == TRUE)
+       {
+           g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x - 12, y - 8);
+       }
+   }
+   else
+       g_Battle.rgPlayer[wPlayerIndex].pos = PAL_XY(x, y);
 
    PAL_BattleDelay(1, 0, TRUE);
 
@@ -2139,7 +2170,23 @@ PAL_BattleShowPlayerAttackAnim(
       PAL_BattleMakeScene();
       VIDEO_CopyEntireSurface(g_Battle.lpSceneBuf, gpScreen);
 
-      PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+      if (PAL_PlayerCanAttackAll(wPlayerRole))
+      {
+          for (j = 0; j < MAX_ENEMIES_IN_TEAM; j++)
+          {
+              if (g_Battle.rgEnemy[j].wObjectID != 0)
+              {
+                  x = gpGlobals->g.EnemyPos.pos[j][g_Battle.wMaxEnemyIndex].x;
+                  y = gpGlobals->g.EnemyPos.pos[j][g_Battle.wMaxEnemyIndex].y;
+                  y += g_Battle.rgEnemy[j].e.wYPosOffset;
+
+                  PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+              }
+          }
+      }
+      else
+          PAL_RLEBlitToSurface(b, gpScreen, PAL_XY(x - PAL_RLEGetWidth(b) / 2, y - PAL_RLEGetHeight(b)));
+
       x -= 16;
       y += 16;
 
@@ -3635,6 +3682,7 @@ PAL_BattlePlayerPerformAction(
          {
             int division = 1;
             const int index[MAX_ENEMIES_IN_TEAM] = {2, 1, 0, 4, 3};
+            int x = 1;
 
             fCritical =
                (RandomLong(0, 5) == 0 || gpGlobals->rgPlayerStatus[wPlayerRole][kStatusBravery] > 0);
@@ -3687,7 +3735,22 @@ PAL_BattlePlayerPerformAction(
                }
             }
 
+            if (t > 0)
+            {
+                if (x == 1)
+                {
+                    g_Battle.rgPlayer[wPlayerIndex].fSecondAttack = TRUE;
+                    x--;
+                }
+                else
+                {
+                    g_Battle.rgPlayer[wPlayerIndex].fSecondAttack = FALSE;
+                }
+            }
+
             PAL_BattleShowPlayerAttackAnim(wPlayerIndex, fCritical);
+
+            PAL_BattleDelay(4, 0, TRUE);
          }
       }
 
