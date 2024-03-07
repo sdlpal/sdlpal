@@ -3754,6 +3754,7 @@ PAL_BattlePlayerPerformAction(
          }
       }
 
+      g_Battle.rgPlayer[wPlayerIndex].fSecondAttack = FALSE;
       PAL_BattleUpdateFighters();
       PAL_BattleMakeScene();
       PAL_BattleDelay(3, 0, TRUE);
