@@ -110,7 +110,7 @@ typedef struct tagBATTLEPLAYER
    BATTLEACTION       action;               // action to perform
    BATTLEACTION       prevAction;           // action of the previous turn
    BOOL               fDefending;           // TRUE if player is defending
-   BOOL               fSecondAttack;           // True for the first full attack, false for the second full attack
+   BOOL               fSecondAttack;           // FALSE for the first full attack, TRUE for the second full attack
    WORD               wPrevHP;              // HP value prior to action
    WORD               wPrevMP;              // MP value prior to action
 #ifndef PAL_CLASSIC
