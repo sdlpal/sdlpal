@@ -147,7 +147,7 @@ PAL_OpeningMenu(
          {
             break;
          }
-         wDefaultItem = 1;
+         wDefaultItem = 0;
       }
    }
 
