@@ -3706,8 +3706,7 @@ PAL_BattlePlayerPerformAction(
                def += (g_Battle.rgEnemy[index[i]].e.wLevel + 6) * 4;
                res = g_Battle.rgEnemy[index[i]].e.wPhysicalResistance;
 
-               sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
-               sDamage += RandomLong(1, 2);
+               FLOAT sDamage = PAL_CalcPhysicalAttackDamage(str, def, res);
 
                if (fCritical)
                {
@@ -3719,8 +3718,6 @@ PAL_BattlePlayerPerformAction(
 
                sDamage /= division;
 
-               sDamage = (SHORT)(sDamage * RandomFloat(1, 1.125));
-
                if (sDamage <= 0)
                {
                   sDamage = 1;
@@ -3728,11 +3725,8 @@ PAL_BattlePlayerPerformAction(
 
                g_Battle.rgEnemy[index[i]].e.wHealth -= sDamage;
 
-               division++;
-               if (division > 3)
-               {
-                  division = 3;
-               }
+               if (g_Battle.rgEnemy[index[i]].wObjectID != 0)
+                    division *= 2;
             }
 
             if (t > 0)
