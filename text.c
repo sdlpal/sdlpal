@@ -558,7 +558,7 @@ PAL_ReadMessageFile(
 		//
 		int idx_msg = 1;
 		g_TextLib.nIndices = (idx_cnt += 1);
-		g_TextLib.nMsgs = maxID + 1;
+		g_TextLib.nMsgs = max(maxID, msg_cnt) + 1;
 		g_TextLib.lpIndexBuf = (int ***)UTIL_calloc(idx_cnt, sizeof(int **));
 		g_TextLib.lpMsgBuf = (LPWSTR *)UTIL_calloc(g_TextLib.nMsgs, sizeof(LPWSTR));
 		g_TextLib.indexMaxCounter = (int *)UTIL_calloc(idx_cnt, sizeof(int *));
