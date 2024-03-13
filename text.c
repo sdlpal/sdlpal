@@ -37,7 +37,7 @@ BOOL      g_fUpdatedInBattle      = FALSE;
 
 static wchar_t internal_wbuffer[PAL_GLOBAL_BUFFER_SIZE];
 
-#define   MESSAGE_MAX_BUFFER_SIZE   512
+#define   MESSAGE_MAX_BUFFER_SIZE   1024
 
 #define INCLUDE_CODEPAGE_H
 #include "codepage.h"
@@ -607,6 +607,7 @@ PAL_ReadMessageFile(
 				if (msg->value)
 				{
 					g_TextLib.lpIndexBuf[item->index][item->indexEnd - item->index][index++] = idx_msg;
+					assert(idx_msg < g_TextLib.nMsgs);
 					g_TextLib.lpMsgBuf[idx_msg++] = msg->value;
 				}
 				else
