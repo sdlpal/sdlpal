@@ -90,6 +90,35 @@ static const int g_KeyMap[][2] = {
    { SDLK_s,         kKeyStatus }
 };
 
+static INT
+PAL_GetCurrDirection(
+   VOID
+)
+/*++
+  Purpose:
+
+    Get the current walking direction.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   INT i, iCurrDir = kDirSouth;
+
+   for (i = 1; i < sizeof(g_InputState.dwKeyOrder) / sizeof(g_InputState.dwKeyOrder[0]); i++)
+      if (g_InputState.dwKeyOrder[iCurrDir] < g_InputState.dwKeyOrder[i]) iCurrDir = i;
+
+   if (!g_InputState.dwKeyOrder[iCurrDir]) iCurrDir = kDirUnknown;
+
+   return iCurrDir;
+}
+
 static VOID
 PAL_KeyDown(
    INT         key,
@@ -110,48 +139,36 @@ PAL_KeyDown(
 
 --*/
 {
-   switch (key)
+   INT iCurrDir = kDirUnknown;
+
+   if (!fRepeat)
    {
-   case kKeyUp:
-      if (g_InputState.dir != kDirNorth && !fRepeat)
+      if (key & kKeyDown)
       {
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirNorth;
+         iCurrDir = kDirSouth;
       }
-      g_InputState.dwKeyPress |= kKeyUp;
-      break;
-
-   case kKeyDown:
-      if (g_InputState.dir != kDirSouth && !fRepeat)
+      else if (key & kKeyLeft)
       {
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirSouth;
+         iCurrDir = kDirWest;
       }
-      g_InputState.dwKeyPress |= kKeyDown;
-      break;
-
-   case kKeyLeft:
-      if (g_InputState.dir != kDirWest && !fRepeat)
+      else if (key & kKeyUp)
       {
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirWest;
+         iCurrDir = kDirNorth;
       }
-      g_InputState.dwKeyPress |= kKeyLeft;
-      break;
-
-   case kKeyRight:
-      if (g_InputState.dir != kDirEast && !fRepeat)
+      else if (key & kKeyRight)
       {
-         g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-         g_InputState.dir = kDirEast;
+         iCurrDir = kDirEast;
       }
-      g_InputState.dwKeyPress |= kKeyRight;
-      break;
 
-   default:
-      g_InputState.dwKeyPress |= key;
-      break;
+      if (iCurrDir != kDirUnknown)
+      {
+         g_InputState.dwKeyMaxCount++;
+         g_InputState.dwKeyOrder[iCurrDir] = g_InputState.dwKeyMaxCount;
+         g_InputState.dir = PAL_GetCurrDirection();
+      }
    }
+
+   g_InputState.dwKeyPress |= key;
 }
 
 static VOID
@@ -173,42 +190,31 @@ PAL_KeyUp(
 
 --*/
 {
-   switch (key)
+   INT iCurrDir = kDirUnknown;
+
+   if (key & kKeyDown)
    {
-   case kKeyUp:
-      if (g_InputState.dir == kDirNorth)
-      {
-         g_InputState.dir = g_InputState.prevdir;
-      }
-      g_InputState.prevdir = kDirUnknown;
-      break;
+      iCurrDir = kDirSouth;
+   }
+   else if (key & kKeyLeft)
+   {
+      iCurrDir = kDirWest;
+   }
+   else if (key & kKeyUp)
+   {
+      iCurrDir = kDirNorth;
+   }
+   else if (key & kKeyRight)
+   {
+      iCurrDir = kDirEast;
+   }
 
-   case kKeyDown:
-      if (g_InputState.dir == kDirSouth)
-      {
-         g_InputState.dir = g_InputState.prevdir;
-      }
-      g_InputState.prevdir = kDirUnknown;
-      break;
-
-   case kKeyLeft:
-      if (g_InputState.dir == kDirWest)
-      {
-         g_InputState.dir = g_InputState.prevdir;
-      }
-      g_InputState.prevdir = kDirUnknown;
-      break;
-
-   case kKeyRight:
-      if (g_InputState.dir == kDirEast)
-      {
-         g_InputState.dir = g_InputState.prevdir;
-      }
-      g_InputState.prevdir = kDirUnknown;
-      break;
-
-   default:
-      break;
+   if (iCurrDir != kDirUnknown)
+   {
+      g_InputState.dwKeyOrder[iCurrDir] = 0;
+      iCurrDir = PAL_GetCurrDirection();
+      g_InputState.dwKeyMaxCount = (iCurrDir == kDirUnknown) ? 0 : g_InputState.dwKeyOrder[iCurrDir];
+      g_InputState.dir = iCurrDir;
    }
 }
 
