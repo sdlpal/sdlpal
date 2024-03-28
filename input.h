@@ -29,6 +29,8 @@ typedef struct tagPALINPUTSTATE
 {
    PALDIRECTION           dir, prevdir;
    DWORD                  dwKeyPress;
+   DWORD                  dwKeyOrder[4];
+   DWORD                  dwKeyMaxCount;
 #if PAL_HAS_JOYSTICKS
    int                    axisX,axisY;
    BOOL                   joystickNeedUpdate;
