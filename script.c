@@ -1937,7 +1937,7 @@ PAL_InterpretInstruction(
       //
       // Jump if player is not poisoned
       //
-      if (!PAL_IsPlayerPoisonedByLevel(wEventObjectID, 1))
+      if (!PAL_IsPlayerPoisonedByLevel(wEventObjectID, 0))
       {
          wScriptEntry = pScript->rgwOperand[0] - 1;
       }
