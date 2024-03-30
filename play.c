@@ -224,7 +224,7 @@ PAL_GameUpdate(
 
             pos = PAL_XY(x, y);
 
-            if (!PAL_CheckObstacle(pos, TRUE, 0))
+            if (!PAL_CheckObstacleWithRange(pos, TRUE, 0, TRUE))
             {
                //
                // move here
