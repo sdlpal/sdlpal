@@ -702,8 +702,8 @@ PAL_UpdatePartyGestures(
          //
          // Adjust the position if there is obstacle
          //
-         if (PAL_CheckObstacle(PAL_XY(gpGlobals->rgParty[i].x + PAL_X(gpGlobals->viewport),
-            gpGlobals->rgParty[i].y + PAL_Y(gpGlobals->viewport)), TRUE, 0))
+         if (PAL_CheckObstacleWithRange(PAL_XY(gpGlobals->rgParty[i].x + PAL_X(gpGlobals->viewport),
+            gpGlobals->rgParty[i].y + PAL_Y(gpGlobals->viewport)), TRUE, 0, TRUE))
          {
             gpGlobals->rgParty[i].x = gpGlobals->rgTrail[1].x - PAL_X(gpGlobals->viewport);
             gpGlobals->rgParty[i].y = gpGlobals->rgTrail[1].y - PAL_Y(gpGlobals->viewport);
@@ -808,7 +808,7 @@ PAL_UpdateParty(
       //
       // Check for obstacles on the destination location
       //
-      if (!PAL_CheckObstacle(PAL_XY(xTarget, yTarget), TRUE, 0))
+      if (!PAL_CheckObstacleWithRange(PAL_XY(xTarget, yTarget), TRUE, 0, TRUE))
       {
          //
          // Player will actually be moved. Store trail.
