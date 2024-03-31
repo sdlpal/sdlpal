@@ -5219,7 +5219,7 @@ PAL_BattleStealFromEnemy(
    offset = ((INT)wTarget - iPlayerIndex) * 8;
 
    x = PAL_X(g_Battle.rgEnemy[wTarget].pos) + 64 - offset;
-   y = PAL_Y(g_Battle.rgEnemy[wTarget].pos) + 20 - offset / 2;
+   y = PAL_Y(g_Battle.rgEnemy[wTarget].pos) + 22 + offset;
 
    g_Battle.rgPlayer[iPlayerIndex].pos = PAL_XY(x, y);
 
