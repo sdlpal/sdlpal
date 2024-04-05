@@ -51,6 +51,11 @@ PAL_WaitForKey(
    WORD      wTimeOut
 );
 
+VOID
+PAL_WaitForAnyKey(
+   WORD      wTimeOut
+);
+
 PAL_C_LINKAGE_END
 
 #endif
