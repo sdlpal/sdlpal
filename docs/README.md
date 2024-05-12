@@ -43,6 +43,8 @@ This program made extensive use of the following libraries:
 
 This program does **NOT** include any code or data files of the original game, which are proprietary and copyrighted by [SoftStar](http://www.softstar.com.tw/) Inc.
 
+It's recommended to buy the original game from [Steam](https://store.steampowered.com/app/1546570/Sword_and_Fairy/), which contains required data files to run SDLPAL.
+
 ## FAQ
 
 See [wiki](../../wiki)
