@@ -1513,7 +1513,7 @@ PAL_BuyMenu_OnItemChange(
 --*/
 {
    const SDL_Rect      rect = {20, 8, 300, 175};
-   int                 i, j, n, x, y;
+   int                 i, j, n, iPlayerID, x, y;
    PAL_LARGE BYTE      bufImage[2048];
 
    //
@@ -1560,9 +1560,11 @@ PAL_BuyMenu_OnItemChange(
 
    for (i = 0; i < MAX_PLAYER_EQUIPMENTS; i++)
    {
-      for (j = 0; j < MAX_PLAYER_ROLES; j++)
+      for (j = 0; j <= gpGlobals->wMaxPartyMemberIndex; j++)
       {
-         if (gpGlobals->g.PlayerRoles.rgwEquipment[i][j] == wCurrentItem) n++;
+         iPlayerID = gpGlobals->rgParty[j].wPlayerRole;
+
+         if (gpGlobals->g.PlayerRoles.rgwEquipment[i][iPlayerID] == wCurrentItem) n++;
       }
    }
 
