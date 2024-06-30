@@ -483,6 +483,19 @@ PAL_MonsterChasePlayer(
          }
       }
    }
+   else
+   {
+      //
+      // Exorcism-Fragrance will cause monsters to spin in place
+      // Switch direction every two frames
+      //
+      if (gpGlobals->dwFrameNum & 1)
+      {
+         pEvtObj->wDirection++;
+
+         if (pEvtObj->wDirection > 3) pEvtObj->wDirection = 0;
+      }
+   }
 
    PAL_NPCWalkOneStep(wEventObjectID, wMonsterSpeed);
 }
