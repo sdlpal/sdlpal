@@ -268,6 +268,16 @@ PAL_SceneDrawSprites(
          if (iFrame == 2)
          {
             iFrame = 0;
+
+            //
+            // Exorcism-Fragrance will cause monsters to spin in place
+            //
+            if (gpGlobals->wChaseRange == 0)
+            {
+               lpEvtObj->wDirection++;
+
+               if (lpEvtObj->wDirection > 3) lpEvtObj->wDirection = 0;
+            }
          }
 
          if (iFrame == 3)
