@@ -1549,7 +1549,7 @@ PAL_StartBattle(
 
 --*/
 {
-   int            i;
+   int            i, j;
    WORD           w, wPrevWaveLevel;
    SHORT          sPrevWaveProgression;
 
@@ -1596,20 +1596,19 @@ PAL_StartBattle(
    //
    // Store all enemies
    //
-   for (i = 0; i < MAX_ENEMIES_IN_TEAM; i++)
+   for (i = 0, j = 0; j < MAX_ENEMIES_IN_TEAM; j++)
    {
-      memset(&(g_Battle.rgEnemy[i]), 0, sizeof(BATTLEENEMY));
-      w = gpGlobals->g.lprgEnemyTeam[wEnemyTeam].rgwEnemy[i];
+      memset(&(g_Battle.rgEnemy[j]), 0, sizeof(BATTLEENEMY));
+      w = gpGlobals->g.lprgEnemyTeam[wEnemyTeam].rgwEnemy[j];
 
       if (w == 0xFFFF)
       {
-         break;
+         continue;
       }
 
       if (w != 0)
       {
          g_Battle.rgEnemy[i].e = gpGlobals->g.lprgEnemy[gpGlobals->g.rgObject[w].enemy.wEnemyID];
-         g_Battle.rgEnemy[i].wObjectID = w;
          g_Battle.rgEnemy[i].state = kFighterWait;
          g_Battle.rgEnemy[i].wScriptOnTurnStart = gpGlobals->g.rgObject[w].enemy.wScriptOnTurnStart;
          g_Battle.rgEnemy[i].wScriptOnBattleEnd = gpGlobals->g.rgObject[w].enemy.wScriptOnBattleEnd;
@@ -1713,6 +1712,8 @@ PAL_StartBattle(
          }
 #endif
       }
+
+      g_Battle.rgEnemy[i++].wObjectID = w;
    }
 
    g_Battle.wMaxEnemyIndex = i - 1;
