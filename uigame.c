@@ -674,6 +674,12 @@ PAL_InGameMagicMenu(
    static WORD      w;
    WORD             wMagic;
 
+   if (gpGlobals->wMaxPartyMemberIndex == 0)
+   {
+      w = gpGlobals->rgParty[0].wPlayerRole;
+      goto start_magicmenu;
+   }
+
    //
    // Draw the player info boxes
    //
@@ -716,6 +722,8 @@ PAL_InGameMagicMenu(
    {
       return;
    }
+
+start_magicmenu:
 
    wMagic = 0;
 
