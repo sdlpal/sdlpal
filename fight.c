@@ -121,7 +121,7 @@ PAL_BattleSelectAutoTargetFrom(
       {
          return i;
       }
-      i = ( i + 1 ) % MAX_ENEMIES_IN_TEAM;
+      i = ( i + 1 ) % (g_Battle.wMaxEnemyIndex + 1);
    }
 
    return -1;
