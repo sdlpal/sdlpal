@@ -39,3 +39,7 @@ jobs:
         cloudsmith push raw sdlpal/sdlpal \
           --version `awk -F\" '{print $2;}' generated.h` --name iOS \
           --republish deploy/*.ipa --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
+    - uses: actions/upload-artifact@v4
+      with:
+        path: deploy
+

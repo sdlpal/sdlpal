@@ -12,7 +12,7 @@ jobs:
     steps:
     - name: Install Dependencies
       run: sudo apt-get install binutils-mingw-w64-i686 gcc-mingw-w64-i686 g++-mingw-w64-i686 zip upx-ucl python3-pip && sudo pip3 install cloudsmith-cli
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: submodules
       run: |
         sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
@@ -42,3 +42,6 @@ jobs:
       run: cloudsmith push raw sdlpal/sdlpal
            --version `awk -F\" '{print $2;}' generated.h` --name MinGW32
            --republish deploy/*.zip --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
+    - uses: actions/upload-artifact@v4
+      with:
+        path: deploy
