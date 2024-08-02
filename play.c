@@ -76,19 +76,6 @@ PAL_GameUpdate(
       }
 
       //
-      // Update the vanish time for all event objects
-      //
-      for (wEventObjectID = 0; wEventObjectID < gpGlobals->g.nEventObject; wEventObjectID++)
-      {
-         p = &gpGlobals->g.lprgEventObject[wEventObjectID];
-
-         if (p->sVanishTime != 0)
-         {
-            p->sVanishTime += ((p->sVanishTime < 0) ? 1 : -1);
-         }
-      }
-
-      //
       // Loop through all event objects in the current scene
       //
       for (wEventObjectID = gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wEventObjectIndex + 1;
@@ -99,6 +86,10 @@ PAL_GameUpdate(
 
          if (p->sVanishTime != 0)
          {
+            //
+            // Update the vanish time for all event objects
+            //
+            p->sVanishTime += ((p->sVanishTime < 0) ? 1 : -1);
             continue;
          }
 
