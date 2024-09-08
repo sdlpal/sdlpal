@@ -6,10 +6,10 @@ environment:
     secure: gryxZxQ1A85JeBI+HHk8GQqY/RQ4y8Oq8kR3yZ2v9zmtnUEmtPmkARFfoypUO0K8
   matrix:
     - solution_name: win32/sdlpal.sln
-      APPX_OPTIONS:
+      OPTIONS: /p:Platform=x64
 build_script:
   - |-
-    msbuild /nologo /m %solution_name% /p:Configuration=Release %APPX_OPTIONS%
+    msbuild /nologo /m %solution_name% /p:Configuration=Release %OPTIONS%
 before_build:
   - |-
     sed -i.bak 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
