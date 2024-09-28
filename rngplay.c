@@ -401,9 +401,15 @@ PAL_RNGPlay(
    uint8_t        *buf = (uint8_t *)malloc(65000);
    FILE           *fp = UTIL_OpenRequiredFile("rng.mkf");
 
+   //
+   // Avoid losing the last frame
+   //
+   if (iEndFrame > 0) iEndFrame++;
+
    for (double iTime = SDL_GetPerformanceCounter(); rng && buf && iStartFrame != iEndFrame; iStartFrame++)
    {
-	  iTime += iDelay;
+      iTime += iDelay;
+
       //
       // Read, decompress and render the frame
       //
