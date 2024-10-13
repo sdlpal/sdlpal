@@ -55,7 +55,7 @@ else ()
   add_library(sdlpal_libretro SHARED ${SOURCES})
   target_link_options(sdlpal_libretro PRIVATE
     -Wl,--version-script=${CMAKE_SOURCE_DIR}/link.T
-    -Wl,--no-undefined
+    -Wl,--no-undefined -lpthread
   )
 endif ()
 
