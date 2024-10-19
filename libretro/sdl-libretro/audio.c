@@ -35,6 +35,7 @@ static Uint8 *DUMMYAUD_GetAudioBuf(_THIS);
 static void DUMMYAUD_CloseAudio(_THIS);
 
 static SDL_AudioSpec *_spec = NULL;
+static Uint8 *_mixbuf = NULL;
 
 /* Audio driver bootstrap functions */
 static int DUMMYAUD_Available(void)
@@ -101,11 +102,20 @@ static Uint8 *DUMMYAUD_GetAudioBuf(_THIS)
 
 static void DUMMYAUD_CloseAudio(_THIS)
 {
+    if (_mixbuf != NULL) {
+        SDL_FreeAudioMem(_mixbuf);
+        _mixbuf = NULL;
+    }
 }
-
 
 static int DUMMYAUD_OpenAudio(_THIS, SDL_AudioSpec *spec)
 {
+    spec->samples = spec->freq / 25;
+    SDL_CalculateAudioSpec(spec);
+    _mixbuf = SDL_AllocAudioMem(spec->size);
+    if (_mixbuf == NULL)
+        return -1;
+
     _spec = spec;
 
     /* Don't spawn thread for SDL_RunAudio */
@@ -114,16 +124,12 @@ static int DUMMYAUD_OpenAudio(_THIS, SDL_AudioSpec *spec)
 
 void SDL_libretro_ProduceAudio(retro_audio_sample_batch_t audio_batch_cb)
 {
-    static int16_t stream[44100 / 60 * 2];
-    size_t size = sizeof(stream);
-    size_t samples = size / 4;
-
     if (SDL_GetAudioStatus() != SDL_AUDIO_PLAYING)
         return;
 
     SDL_LockAudio();
-    SDL_memset(stream, 0, size);
-    _spec->callback(_spec->userdata, (uint8_t *)stream, size);
-    audio_batch_cb(stream, samples);
+    SDL_memset(_mixbuf, 0, _spec->size);
+    _spec->callback(_spec->userdata, _mixbuf, _spec->size);
+    audio_batch_cb((const int16_t *)_mixbuf, _spec->samples);
     SDL_UnlockAudio();
 }

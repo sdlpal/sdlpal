@@ -39,6 +39,7 @@
 #define PAL_PREFIX          "./"
 #define PAL_SAVE_PREFIX     "./"
 #define PAL_HAS_CONFIG_PAGE 0
+#define PAL_HAS_PLATFORM_SPECIFIC_UTILS 1
 
 #define PAL_DEFAULT_WINDOW_WIDTH    320
 #define PAL_DEFAULT_WINDOW_HEIGHT   200
