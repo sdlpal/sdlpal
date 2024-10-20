@@ -86,6 +86,18 @@ void retro_set_environment(retro_environment_t cb)
             .values = {{"OPL2"},{"OPL3"},{NULL}},
             .default_value = "OPL2",
         },
+        {
+            .key = "sdlpal_music_volume",
+            .desc = "Music volume",
+            .values = {{"0"},{"16"},{"32"},{"48"},{"64"},{"80"},{"96"},{"112"},{"128"}},
+            .default_value = "128",
+        },
+        {
+            .key = "sdlpal_sound_volume",
+            .desc = "Sound volume",
+            .values = {{"0"},{"16"},{"32"},{"48"},{"64"},{"80"},{"96"},{"112"},{"128"}},
+            .default_value = "128",
+        },
         { NULL, NULL, NULL, {{0}}, NULL },
     };
     struct retro_input_descriptor inputs[] = {
@@ -363,6 +375,14 @@ INT UTIL_Platform_Init(int argc, char *argv[])
             gConfig.eOPLChip = OPLCHIP_OPL2;
         if (strcmp(var.value, "OPL3") == 0)
             gConfig.eOPLChip = OPLCHIP_OPL3;
+    }
+    var.key = "sdlpal_music_volume";
+    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var)) {
+        gConfig.iMusicVolume = atoi(var.value);
+    }
+    var.key = "sdlpal_sound_volume";
+    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var)) {
+        gConfig.iSoundVolume = atoi(var.value);
     }
 
     platform_init_done = true;
