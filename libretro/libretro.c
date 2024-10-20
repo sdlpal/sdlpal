@@ -88,6 +88,25 @@ void retro_set_environment(retro_environment_t cb)
         },
         { NULL, NULL, NULL, {{0}}, NULL },
     };
+    struct retro_input_descriptor inputs[] = {
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B, "Menu" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y, "Flee" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Status" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START, "Auto" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP, "Up" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN, "Down" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "Left" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Right" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A, "Search" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X, "Repeat" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L, "PageUp" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R, "PageDown" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2, "Defend" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2, "UseItem" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3, "ThrowItem" },
+        { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3, "Force" },
+        { 0, 0, 0, 0, NULL },
+    };
 
     environ_cb = cb;
     if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
@@ -95,6 +114,7 @@ void retro_set_environment(retro_environment_t cb)
 
     environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &no_game);
     environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS, &opts);
+    environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, &inputs);
 }
 
 void retro_set_video_refresh(retro_video_refresh_t cb)
@@ -178,6 +198,11 @@ bool retro_load_game(const struct retro_game_info *game)
     while (!platform_init_done)
         SDL_Delay(10);
 
+    struct retro_keyboard_callback keyboard = {
+        .callback = SDL_libretro_KeyboardCallback,
+    };
+    environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &keyboard);
+
     return true;
 }
 
@@ -201,26 +226,16 @@ void retro_reset(void)
 {
 }
 
-static void pump_keyboard_events(void)
+static void pump_joypad_events(void)
 {
-    static int16_t keys[RETROK_LAST] = {0};
     static SDL_keysym sym;
-    for (int i = 0; i < RETROK_LAST; ++i) {
-        int16_t state = input_state_cb(0, RETRO_DEVICE_KEYBOARD, 0, i);
-        if (keys[i] != state) {
-            keys[i] = state;
-            sym.scancode = i;
-            sym.sym = i;
-            SDL_PrivateKeyboard(state ? SDL_PRESSED : SDL_RELEASED, &sym);
-        }
-    }
 
     static int16_t buttons[16] = {0};
     static const int bkeys[16] = {
         [RETRO_DEVICE_ID_JOYPAD_B]      = SDLK_ESCAPE, /* Menu */
         [RETRO_DEVICE_ID_JOYPAD_Y]      = SDLK_q,      /* Flee */
-        [RETRO_DEVICE_ID_JOYPAD_SELECT] = SDLK_ESCAPE, /* Menu */
-        [RETRO_DEVICE_ID_JOYPAD_START]  = SDLK_RETURN, /* Search */
+        [RETRO_DEVICE_ID_JOYPAD_SELECT] = SDLK_s,      /* Status */
+        [RETRO_DEVICE_ID_JOYPAD_START]  = SDLK_a,      /* Auto */
         [RETRO_DEVICE_ID_JOYPAD_UP]     = SDLK_UP,
         [RETRO_DEVICE_ID_JOYPAD_DOWN]   = SDLK_DOWN,
         [RETRO_DEVICE_ID_JOYPAD_LEFT]   = SDLK_LEFT,
@@ -229,10 +244,10 @@ static void pump_keyboard_events(void)
         [RETRO_DEVICE_ID_JOYPAD_X]      = SDLK_r,      /* Repeat */
         [RETRO_DEVICE_ID_JOYPAD_L]      = SDLK_PAGEUP,
         [RETRO_DEVICE_ID_JOYPAD_R]      = SDLK_PAGEDOWN,
-        [RETRO_DEVICE_ID_JOYPAD_L2]     = SDLK_HOME,
-        [RETRO_DEVICE_ID_JOYPAD_R2]     = SDLK_END,
-        [RETRO_DEVICE_ID_JOYPAD_L3]     = SDLK_s, /* Status */
-        [RETRO_DEVICE_ID_JOYPAD_R3]     = SDLK_a, /* Auto */
+        [RETRO_DEVICE_ID_JOYPAD_L2]     = SDLK_d,      /* Defend */
+        [RETRO_DEVICE_ID_JOYPAD_R2]     = SDLK_e,      /* UseItem */
+        [RETRO_DEVICE_ID_JOYPAD_L3]     = SDLK_w,      /* ThrowItem */
+        [RETRO_DEVICE_ID_JOYPAD_R3]     = SDLK_f,      /* Force */
     };
     for (int i = 0; i < 16; ++i) {
         int16_t state = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, i);
@@ -249,7 +264,7 @@ static void pump_keyboard_events(void)
 void retro_run(void)
 {
     input_poll_cb();
-    pump_keyboard_events();
+    pump_joypad_events();
     SDL_libretro_RefreshVideo(video_cb);
     SDL_libretro_ProduceAudio(audio_batch_cb);
 }
