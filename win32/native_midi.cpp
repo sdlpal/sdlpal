@@ -45,7 +45,11 @@
 #include "native_midi/native_midi.h"
 #include "native_midi/native_midi_common.h"
 
+#include "util.h"
+#include "palcfg.h"
+
 static int native_midi_available = -1;
+static int native_midi_devid = MIDI_MAPPER;
 
 enum class MidiSystemMessage {
 	Exclusive = 0,
@@ -239,7 +243,26 @@ int native_midi_detect()
 	{
 		HMIDIOUT out;
 
-		if (MMSYSERR_NOERROR == midiOutOpen(&out, MIDI_MAPPER, 0, 0, CALLBACK_NULL))
+		int n = midiOutGetNumDevs();
+		UTIL_LogOutput(LOGLEVEL_INFO, "win32 midiout dev number:%d\r\n", n);
+		for (int i = 0; i < n; i++) {
+			MIDIOUTCAPS caps;
+			midiOutGetDevCaps(i, &caps, sizeof(caps));
+			UTIL_LogOutput(LOGLEVEL_INFO, "win32 midiout dev number %d:%s\r\n", i, caps.szPname);
+		}
+
+		if (gConfig.pszMIDIClient != NULL) {
+			native_midi_devid = atoi(gConfig.pszMIDIClient);
+			if (native_midi_devid < 0 || native_midi_devid >= n) {
+				UTIL_LogOutput(LOGLEVEL_WARNING, "specified dev id %d out of the valid range(0-%d). reset\r\n", native_midi_devid, n-1);
+				native_midi_devid = MIDI_MAPPER;
+			}
+		}
+
+
+		UTIL_LogOutput(LOGLEVEL_INFO, "win32 midiout selected device: %s\r\n", native_midi_devid == MIDI_MAPPER ? "Default" : PAL_va(1,"%d", native_midi_devid) );
+
+		if (MMSYSERR_NOERROR == midiOutOpen(&out, native_midi_devid, 0, 0, CALLBACK_NULL))
 		{
 			midiOutClose(out);
 			native_midi_available = 1;
@@ -276,7 +299,7 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
 			MIDItoStream(newsong.get(), eventlist);
 			FreeMIDIEventList(eventlist);
 			
-			if (midiOutOpen(&newsong->Synthesizer, MIDI_MAPPER, NULL, 0, CALLBACK_NULL) == MMSYSERR_NOERROR)
+			if (midiOutOpen(&newsong->Synthesizer, native_midi_devid, NULL, 0, CALLBACK_NULL) == MMSYSERR_NOERROR)
 				return newsong.release();
 		}
 	}
