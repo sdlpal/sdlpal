@@ -90,6 +90,52 @@ static const int g_KeyMap[][2] = {
    { SDLK_s,         kKeyStatus }
 };
 
+
+static VOID
+PAL_DetectJoystick(
+    VOID
+)
+/*++
+  Purpose:
+
+    Detect the joystick.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+    if (SDL_NumJoysticks() > 0 && g_fUseJoystick)
+    {
+        int i;
+        for (i = 0; i < SDL_NumJoysticks(); i++)
+        {
+            if (PAL_IS_VALID_JOYSTICK(SDL_JoystickNameForIndex(i)))
+            {
+                g_pJoy = SDL_JoystickOpen(i);
+                break;
+            }
+        }
+
+        if (g_pJoy != NULL)
+        {
+            //
+            //! CANNOT BE DISABLED OR HOTPLUG STOPS WORK
+            //
+            SDL_JoystickEventState(SDL_ENABLE);
+        }
+    }
+    else
+    {
+        g_pJoy = NULL;
+    }
+}
+
 static INT
 PAL_GetCurrDirection(
    VOID
@@ -548,6 +594,10 @@ PAL_JoystickEventFilter(
 #if PAL_HAS_JOYSTICKS
    switch (lpEvent->type)
    {
+   case SDL_JOYDEVICEADDED:
+   case SDL_JOYDEVICEREMOVED:
+       PAL_DetectJoystick();
+       break;
    case SDL_JOYAXISMOTION:
       g_InputState.joystickNeedUpdate = TRUE;
       //
@@ -1105,29 +1155,6 @@ PAL_InitInput(
    memset((void *)&g_InputState, 0, sizeof(g_InputState));
    g_InputState.dir = kDirUnknown;
    g_InputState.prevdir = kDirUnknown;
-
-   //
-   // Check for joystick
-   //
-#if PAL_HAS_JOYSTICKS
-   if (SDL_NumJoysticks() > 0 && g_fUseJoystick)
-   {
-      int i;
-	  for (i = 0; i < SDL_NumJoysticks(); i++)
-      {
-         if (PAL_IS_VALID_JOYSTICK(SDL_JoystickNameForIndex(i)))
-         {
-            g_pJoy = SDL_JoystickOpen(i);
-            break;
-         }
-      }
-
-      if (g_pJoy != NULL)
-      {
-         SDL_JoystickEventState(SDL_ENABLE);
-      }
-   }
-#endif
 
    input_init_filter();
 }
