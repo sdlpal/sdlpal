@@ -90,7 +90,7 @@ static const int g_KeyMap[][2] = {
    { SDLK_s,         kKeyStatus }
 };
 
-
+#if PAL_HAS_JOYSTICKS
 static VOID
 PAL_DetectJoystick(
     VOID
@@ -135,6 +135,7 @@ PAL_DetectJoystick(
         g_pJoy = NULL;
     }
 }
+#endif
 
 static INT
 PAL_GetCurrDirection(
