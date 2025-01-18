@@ -1157,6 +1157,14 @@ PAL_InitInput(
    g_InputState.dir = kDirUnknown;
    g_InputState.prevdir = kDirUnknown;
 
+   //
+   // Check for joystick
+   // MUST FOR PLATFORMS THAT DOES NOT SUPPORT JOYSTICKS HOTPLUG
+   //
+#if PAL_HAS_JOYSTICKS
+   PAL_DetectJoystick();
+#endif
+
    input_init_filter();
 }
 
