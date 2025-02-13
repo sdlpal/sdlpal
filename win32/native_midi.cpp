@@ -35,6 +35,7 @@
 #include <mutex>
 #include <atomic>
 #include <vector>
+#include <chrono>
 
 #if (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS) && !defined(_LIBCPP_MUTEX)
 #include "mingw.condition_variable.h"
