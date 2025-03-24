@@ -23,7 +23,6 @@
 #include "native_midi/native_midi_common.h"
 #include "palcfg.h"
 
-#include <SDL_thread.h>
 #include <alsa/asoundlib.h>
 
 

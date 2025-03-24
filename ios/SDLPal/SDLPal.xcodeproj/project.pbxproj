@@ -107,14 +107,16 @@
 		C63505731EA6570300186049 /* midi.c in Sources */ = {isa = PBXBuildFile; fileRef = C635056B1EA6570300186049 /* midi.c */; };
 		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
 		C63505801EA6578700186049 /* native_midi.m in Sources */ = {isa = PBXBuildFile; fileRef = C635057D1EA6578700186049 /* native_midi.m */; };
-		C639993920459A8A005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639993820459A8A005B20CE /* video_glsl.c */; };
+		C639993920459A8A005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639993820459A8A005B20CE /* video_glsl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		C65060B720FAA77B00397B73 /* glslp.c in Sources */ = {isa = PBXBuildFile; fileRef = C65060B220FAA77B00397B73 /* glslp.c */; };
 		C66C6CA41ECCB73100CE10C1 /* SDLPal_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */; };
 		C66F6FD81FB16CB200F3F0DA /* iOS Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C66F6FD51FB16CB200F3F0DA /* iOS Launch Screen.storyboard */; };
 		C6743A841ECCAFA700AEF782 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */; };
 		C694CF871EB6197C0006F937 /* gs_instruments.dls in Resources */ = {isa = PBXBuildFile; fileRef = C694CF861EB619660006F937 /* gs_instruments.dls */; };
+		C697DF902D9840BF0030B6B2 /* sdl_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = C697DF8F2D9840BF0030B6B2 /* sdl_compat.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		C69D0A4825C1446A00FF3EFF /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C69D0A4725C1446A00FF3EFF /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		C69D0AAF25C1465200FF3EFF /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C69D0A9B25C1463000FF3EFF /* libSDL2.a */; };
+		C6BE8E3A2DA1866E006AEC57 /* SDL3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C697DFAD2D9847750030B6B2 /* SDL3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C6BE8E3B2DA1867F006AEC57 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C697DFAD2D9847750030B6B2 /* SDL3.framework */; };
 		C6CFDE9723A859F800DEB8F9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDD6723A859F800DEB8F9 /* kiss_fft.c */; };
 		C6CFDE9823A859F800DEB8F9 /* rate.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDD6F23A859F800DEB8F9 /* rate.c */; };
 		C6CFDE9923A859F800DEB8F9 /* opus_mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDD7123A859F800DEB8F9 /* opus_mdct.c */; };
@@ -268,89 +270,39 @@
 		C6D61DF32619A6A4000622C2 /* timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DE32619A6A4000622C2 /* timidity.c */; };
 		C6D61DF72619A6B3000622C2 /* midi_timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DF52619A6B2000622C2 /* midi_timidity.c */; };
 		C6D61DF82619A6B3000622C2 /* midi_tsf.c in Sources */ = {isa = PBXBuildFile; fileRef = C6D61DF62619A6B3000622C2 /* midi_tsf.c */; };
-		C6E89A16286892C800E772A0 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E89A15286892C800E772A0 /* CoreBluetooth.framework */; };
 		F9BC4A0C6F1B983EB45414F3 /* libPods-SDLPal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		C69D0A9225C1463000FF3EFF /* PBXContainerItemProxy */ = {
+		C697DFAC2D9847750030B6B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = BECDF66C0761BA81005FE872;
-			remoteInfo = Framework;
+			remoteInfo = SDL3;
 		};
-		C69D0A9425C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7D88B5423E2437C00DCD162;
-			remoteInfo = "Framework-iOS";
-		};
-		C69D0A9625C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7D88D1523E24BED00DCD162;
-			remoteInfo = "Framework-tvOS";
-		};
-		C69D0A9825C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BECDF6B30761BA81005FE872;
-			remoteInfo = "Static Library";
-		};
-		C69D0A9A25C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7D88E5423E24D3B00DCD162;
-			remoteInfo = "Static Library-iOS";
-		};
-		C69D0A9C25C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A769B23D23E259AE00872273;
-			remoteInfo = "Static Library-tvOS";
-		};
-		C69D0A9E25C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DB31407717554B71006C0E22;
-			remoteInfo = "Shared Library";
-		};
-		C69D0AA025C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FCEB323E25AB700529352;
-			remoteInfo = "Shared Library-iOS";
-		};
-		C69D0AA225C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FD06C23E25AC700529352;
-			remoteInfo = "Shared Library-tvOS";
-		};
-		C69D0AA425C1463000FF3EFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BECDF6BE0761BA81005FE872;
-			remoteInfo = "Standard DMG";
-		};
-		C69D0AAC25C1463C00FF3EFF /* PBXContainerItemProxy */ = {
+		C6BE8E372DA1854B006AEC57 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A7D88D1723E24D3B00DCD162;
-			remoteInfo = "Static Library-iOS";
+			remoteGlobalIDString = BECDF5FE0761BA81005FE872;
+			remoteInfo = SDL3;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C6BE8E362DA18116006AEC57 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C6BE8E3A2DA1866E006AEC57 /* SDL3.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2765B76B4AC93B4F654F1289 /* libPods-SDLPal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SDLPal.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -573,7 +525,7 @@
 		C629A565208643D20015C93C /* nuked_opl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nuked_opl.c; sourceTree = "<group>"; };
 		C629A568208643D20015C93C /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convertopl.h; sourceTree = "<group>"; };
 		C629A569208643D20015C93C /* nuked_opl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nuked_opl.h; sourceTree = "<group>"; };
-		C632BFD325C13BD3005C5580 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; };
+		C632BFD325C13BD3005C5580 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		C635056A1EA6570300186049 /* midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = midi.h; path = ../../../midi.h; sourceTree = "<group>"; };
 		C635056B1EA6570300186049 /* midi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = midi.c; path = ../../../midi.c; sourceTree = "<group>"; };
 		C635057A1EA6578700186049 /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
@@ -590,6 +542,8 @@
 		C6743A831ECCAFA700AEF782 /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
 		C6743A851ECCAFC600AEF782 /* SettingsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		C694CF861EB619660006F937 /* gs_instruments.dls */ = {isa = PBXFileReference; lastKnownFileType = file; name = gs_instruments.dls; path = /System/Library/Components/CoreAudio.component/Contents/Resources/gs_instruments.dls; sourceTree = "<group>"; };
+		C697DF8E2D9840BF0030B6B2 /* sdl_compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sdl_compat.h; sourceTree = "<group>"; };
+		C697DF8F2D9840BF0030B6B2 /* sdl_compat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sdl_compat.c; sourceTree = "<group>"; };
 		C69D09E525C13CE900FF3EFF /* sdlpal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = sdlpal.entitlements; sourceTree = "<group>"; };
 		C69D0A4725C1446A00FF3EFF /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = System/Library/Frameworks/CoreHaptics.framework; sourceTree = SDKROOT; };
 		C6CFDD6223A859F800DEB8F9 /* celt_lpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = celt_lpc.h; sourceTree = "<group>"; };
@@ -840,8 +794,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C69D0AAF25C1465200FF3EFF /* libSDL2.a in Frameworks */,
-				C6E89A16286892C800E772A0 /* CoreBluetooth.framework in Frameworks */,
+				C6BE8E3B2DA1867F006AEC57 /* SDL3.framework in Frameworks */,
 				C69D0A4825C1446A00FF3EFF /* CoreHaptics.framework in Frameworks */,
 				71655292195BBCD6006E1227 /* OpenGLES.framework in Frameworks */,
 				C622BE761E474CFC000C8970 /* AVFoundation.framework in Frameworks */,
@@ -1025,6 +978,7 @@
 			isa = PBXGroup;
 			children = (
 				C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */,
+				C697DF8D2D9840840030B6B2 /* sdl_compat */,
 				C6CFDD6023A859F800DEB8F9 /* libopusfile */,
 				716551E4195BB6DA006E1227 /* adplug */,
 				71655212195BB6DA006E1227 /* libmad */,
@@ -1263,6 +1217,24 @@
 			);
 			name = native_midi;
 			path = ../../native_midi;
+			sourceTree = "<group>";
+		};
+		C697DF8D2D9840840030B6B2 /* sdl_compat */ = {
+			isa = PBXGroup;
+			children = (
+				C697DF8E2D9840BF0030B6B2 /* sdl_compat.h */,
+				C697DF8F2D9840BF0030B6B2 /* sdl_compat.c */,
+			);
+			name = sdl_compat;
+			path = ../../sdl_compat;
+			sourceTree = "<group>";
+		};
+		C697DFA72D9847750030B6B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C697DFAD2D9847750030B6B2 /* SDL3.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		C6CFDD6023A859F800DEB8F9 /* libopusfile */ = {
@@ -1557,23 +1529,6 @@
 			path = ../../timidity;
 			sourceTree = "<group>";
 		};
-		C6E974971E49C22D00F76B17 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				C69D0A9325C1463000FF3EFF /* SDL2.framework */,
-				C69D0A9525C1463000FF3EFF /* SDL2.framework */,
-				C69D0A9725C1463000FF3EFF /* SDL2.framework */,
-				C69D0A9925C1463000FF3EFF /* libSDL2.a */,
-				C69D0A9B25C1463000FF3EFF /* libSDL2.a */,
-				C69D0A9D25C1463000FF3EFF /* libSDL2.a */,
-				C69D0A9F25C1463000FF3EFF /* libSDL2.dylib */,
-				C69D0AA125C1463000FF3EFF /* libSDL2.dylib */,
-				C69D0AA325C1463000FF3EFF /* libSDL2.dylib */,
-				C69D0AA525C1463000FF3EFF /* SDL2 */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1586,11 +1541,12 @@
 				71655059195BB372006E1227 /* Sources */,
 				7165505A195BB372006E1227 /* Frameworks */,
 				7165505B195BB372006E1227 /* Resources */,
+				C6BE8E362DA18116006AEC57 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				C69D0AAD25C1463C00FF3EFF /* PBXTargetDependency */,
+				C6BE8E382DA1854B006AEC57 /* PBXTargetDependency */,
 			);
 			name = SDLPal;
 			productName = SDLPal;
@@ -1628,7 +1584,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = C6E974971E49C22D00F76B17 /* Products */;
+					ProductGroup = C697DFA72D9847750030B6B2 /* Products */;
 					ProjectRef = C622BE4E1E474AAF000C8970 /* SDL.xcodeproj */;
 				},
 			);
@@ -1640,74 +1596,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		C69D0A9325C1463000FF3EFF /* SDL2.framework */ = {
+		C697DFAD2D9847750030B6B2 /* SDL3.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = SDL2.framework;
-			remoteRef = C69D0A9225C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0A9525C1463000FF3EFF /* SDL2.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDL2.framework;
-			remoteRef = C69D0A9425C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0A9725C1463000FF3EFF /* SDL2.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDL2.framework;
-			remoteRef = C69D0A9625C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0A9925C1463000FF3EFF /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = C69D0A9825C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0A9B25C1463000FF3EFF /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = C69D0A9A25C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0A9D25C1463000FF3EFF /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = C69D0A9C25C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0A9F25C1463000FF3EFF /* libSDL2.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libSDL2.dylib;
-			remoteRef = C69D0A9E25C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0AA125C1463000FF3EFF /* libSDL2.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libSDL2.dylib;
-			remoteRef = C69D0AA025C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0AA325C1463000FF3EFF /* libSDL2.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libSDL2.dylib;
-			remoteRef = C69D0AA225C1463000FF3EFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C69D0AA525C1463000FF3EFF /* SDL2 */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = SDL2;
-			remoteRef = C69D0AA425C1463000FF3EFF /* PBXContainerItemProxy */;
+			path = SDL3.framework;
+			remoteRef = C697DFAC2D9847750030B6B2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1964,6 +1857,7 @@
 				C6D61DF02619A6A4000622C2 /* mix.c in Sources */,
 				57FB01491B7A50B0005FCF4C /* floor1.c in Sources */,
 				C6CFDF1C23A859F800DEB8F9 /* wrappers_FLP.c in Sources */,
+				C697DF902D9840BF0030B6B2 /* sdl_compat.c in Sources */,
 				C6CFDF2B23A859F800DEB8F9 /* tables_other.c in Sources */,
 				71655281195BB6DB006E1227 /* play.c in Sources */,
 				C6CFDEB623A859F800DEB8F9 /* init_encoder.c in Sources */,
@@ -2016,10 +1910,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		C69D0AAD25C1463C00FF3EFF /* PBXTargetDependency */ = {
+		C6BE8E382DA1854B006AEC57 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Static Library-iOS";
-			targetProxy = C69D0AAC25C1463C00FF3EFF /* PBXContainerItemProxy */;
+			name = SDL3;
+			targetProxy = C6BE8E372DA1854B006AEC57 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2125,6 +2019,7 @@
 					"DEBUG=1",
 					PAL_HAS_GIT_REVISION,
 					HAVE_CONFIG_H,
+					"USE_SDL3=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2133,16 +2028,17 @@
 					../../liboggvorbis/include,
 					../../liboggvorbis/src,
 					"../../libopusfile/**",
+					../../sdl_compat,
+					../../3rd/SDL/include/build_config,
+					../../3rd/SDL/src,
+					../../3rd/SDL,
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
 				INIT_ROUTINE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
-					"-l\"ActionSheetPicker-3.0\"",
-					"-framework",
-					"\"UIKit\"",
 					"-Wl,-e,_sdlpal_main",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
@@ -2171,6 +2067,7 @@
 					"__IOS__=1",
 					PAL_HAS_GIT_REVISION,
 					HAVE_CONFIG_H,
+					"USE_SDL3=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2179,16 +2076,17 @@
 					../../liboggvorbis/include,
 					../../liboggvorbis/src,
 					"../../libopusfile/**",
+					../../sdl_compat,
+					../../3rd/SDL/include/build_config,
+					../../3rd/SDL/src,
+					../../3rd/SDL,
 				);
 				INFOPLIST_FILE = "SDLPal/SDLPal-Info.plist";
 				INIT_ROUTINE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
-					"-l\"ActionSheetPicker-3.0\"",
-					"-framework",
-					"\"UIKit\"",
 					"-Wl,-e,_sdlpal_main",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;

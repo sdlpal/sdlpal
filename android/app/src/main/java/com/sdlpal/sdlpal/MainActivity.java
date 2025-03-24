@@ -40,7 +40,7 @@ import java.io.*;
 public class MainActivity extends AppCompatActivity {
 
     static {
-        System.loadLibrary("SDL2");
+        System.loadLibrary("SDL3");
         System.loadLibrary("main");
     }
 

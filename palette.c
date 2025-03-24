@@ -48,6 +48,8 @@ PAL_GetPalette(
    INT                   i;
    FILE                 *fp;
 
+   memset(palette, 0xff, sizeof(SDL_Color)*256);
+
    fp = UTIL_OpenRequiredFile("pat.mkf");
 
    //
@@ -153,6 +155,8 @@ PAL_FadeOut(
       palette[i] = VIDEO_GetPalette()[i];
    }
 
+   memset(newpalette, 0xff, sizeof(SDL_Color)*256);
+
    //
    // Start fading out...
    //
@@ -214,6 +218,8 @@ PAL_FadeIn(
    UINT                     time;
    SDL_Color               *palette;
    PAL_LARGE SDL_Color      newpalette[256];
+    
+   memset(newpalette, 0xff, sizeof(SDL_Color)*256);
 
    //
    // Get the new palette...
@@ -280,6 +286,8 @@ PAL_SceneFade(
    SDL_Color            *palette, newpalette[256];
    int                   i, j;
    DWORD                 time;
+
+   memset(newpalette, 0xff, sizeof(SDL_Color)*256);
 
    palette = PAL_GetPalette(iPaletteNum, fNight);
 
@@ -477,6 +485,8 @@ PAL_ColorFade(
    PAL_LARGE SDL_Color        newpalette[256];
    int              i, j;
 
+   memset(newpalette, 0xff, sizeof(SDL_Color)*255);
+
    palette = PAL_GetPalette(gpGlobals->wNumPalette, gpGlobals->fNightPalette);
 
    iDelay *= 10;
@@ -603,6 +613,8 @@ PAL_FadeToRed(
    int                        i, j;
    BYTE                       color;
 
+   memset(newpalette, 0xff, sizeof(SDL_Color)*255);
+    
    palette = PAL_GetPalette(gpGlobals->wNumPalette, gpGlobals->fNightPalette);
    memcpy(newpalette, palette, sizeof(newpalette));
 

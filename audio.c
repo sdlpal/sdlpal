@@ -37,34 +37,7 @@
 
 typedef void(*ResampleMixFunction)(void *, const void *, int, void *, int, int, uint8_t);
 
-typedef struct tagAUDIODEVICE
-{
-   SDL_AudioSpec             spec;		/* Actual-used sound specification */
-   AUDIOPLAYER              *pMusPlayer;
-   AUDIOPLAYER              *pCDPlayer;
-#if PAL_HAS_SDLCD
-   SDL_CD                   *pCD;
-#endif
-   AUDIOPLAYER              *pSoundPlayer;
-   void                     *pSoundBuffer;	/* The output buffer for sound */
-#if SDL_VERSION_ATLEAST(2,0,0)
-   SDL_AudioDeviceID         id;
-#endif
-   INT                       iMusicVolume;	/* The BGM volume ranged in [0, 128] for better performance */
-   INT                       iSoundVolume;	/* The sound effect volume ranged in [0, 128] for better performance */
-   BOOL                      fMusicEnabled; /* Is BGM enabled? */
-   BOOL                      fSoundEnabled; /* Is sound effect enabled? */
-   BOOL                      fOpened;       /* Is the audio device opened? */
-} AUDIODEVICE;
-
-static AUDIODEVICE gAudioDevice;
-
-#if SDL_VERSION_ATLEAST(2,0,0)
-# define SDL_CloseAudio() SDL_CloseAudioDevice(gAudioDevice.id)
-# define SDL_PauseAudio(pause_on) SDL_PauseAudioDevice(gAudioDevice.id, (pause_on))
-# define SDL_OpenAudio(desired, obtained) \
-	((gAudioDevice.id = SDL_OpenAudioDevice((gConfig.iAudioDevice >= 0 ? SDL_GetAudioDeviceName(gConfig.iAudioDevice, 0) : NULL), 0, (desired), (obtained), 0)) > 0 ? gAudioDevice.id : -1)
-#endif
+AUDIODEVICE gAudioDevice;
 
 PAL_FORCE_INLINE
 void
@@ -178,6 +151,20 @@ AUDIO_FillBuffer(
    AVI_FillAudioBuffer(AVI_GetPlayState(), (LPBYTE)stream, len);
 }
 
+#if SDL_VERSION_ATLEAST(3,0,0)
+static void SDLCALL AUDIO_FillBuffer_Wrapper(void* userdata, SDL_AudioStream* stream, int additional_amount, int total_amount)
+{
+	if (additional_amount > 0) {
+		Uint8* data = SDL_stack_alloc(Uint8, additional_amount);
+		if (data) {
+			AUDIO_FillBuffer(userdata, data, additional_amount);
+			SDL_PutAudioStreamData(stream, data, additional_amount);
+			SDL_stack_free(data);
+		}
+	}
+}
+#endif
+
 BOOL
 AUDIO_CD_Available(
    VOID
@@ -241,12 +228,29 @@ AUDIO_OpenDevice(
     } else {
         UTIL_LogOutput(LOGLEVEL_VERBOSE, "Audio subsystem not initialized.\n");
     }
+# if SDL_VERSION_ATLEAST(3,0,0)
+	int i, num_devices;
+	int iSelectedDeviceID = SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK;
+	SDL_AudioDeviceID* devices = SDL_GetAudioPlaybackDevices(&num_devices);
+	if (devices) {
+		for (i = 0; i < num_devices; ++i) {
+			SDL_AudioDeviceID instance_id = devices[i];
+			UTIL_LogOutput(LOGLEVEL_VERBOSE, "Available audio device %d:%s\n", i, SDL_iconv_utf8_ucs2(SDL_GetAudioDeviceName(instance_id)));
+		}
+		if(gConfig.iAudioDevice >= 0 && gConfig.iAudioDevice < num_devices)
+			iSelectedDeviceID = devices[gConfig.iAudioDevice];
+		UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio device: %s\n", (iSelectedDeviceID != SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK ? SDL_GetAudioDeviceName(iSelectedDeviceID) : "default"));
+		SDL_free(devices);
+	}
+# else
     for( int i = 0; i<SDL_GetNumAudioDevices(0);i++)
     {
         UTIL_LogOutput(LOGLEVEL_VERBOSE, "Available audio device %d:%s\n", i, SDL_GetAudioDeviceName(i,0));
     }
     UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio device: %s\n",(gConfig.iAudioDevice >= 0 ? SDL_GetAudioDeviceName(gConfig.iAudioDevice, 0) : "default"));
+# endif
 #endif
+
 
    //
    // Open the audio device.
@@ -254,14 +258,20 @@ AUDIO_OpenDevice(
    gAudioDevice.spec.freq = gConfig.iSampleRate;
    gAudioDevice.spec.format = AUDIO_S16SYS;
    gAudioDevice.spec.channels = gConfig.iAudioChannels;
+
+#if SDL_VERSION_ATLEAST(3,0,0)
+   memcpy(&spec, &gAudioDevice.spec, sizeof(SDL_AudioSpec));
+   SDL_SetHint(SDL_HINT_AUDIO_DEVICE_SAMPLE_FRAMES, PAL_va(0, "%d", gConfig.wAudioBufferSize));
+#else
    gAudioDevice.spec.samples = gConfig.wAudioBufferSize;
    gAudioDevice.spec.callback = AUDIO_FillBuffer;
+#endif
 
-   UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio spec:freq %d, format %d, channels %d, samples %d\n", gAudioDevice.spec.freq, gAudioDevice.spec.format,  gAudioDevice.spec.channels, gAudioDevice.spec.samples);
+   UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio spec:freq %d, format %d, channels %d, samples %d\n", gAudioDevice.spec.freq, gAudioDevice.spec.format,  gAudioDevice.spec.channels);
 
-   if (SDL_OpenAudio(&gAudioDevice.spec, &spec) < 0)
+   if (SDL_OpenAudio(&gAudioDevice.spec, &spec) != SDL_OK)
    {
-      UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio ERROR: %s, got spec:freq %d, format %d, channels %d, samples %d\n", SDL_GetError(), spec.freq, spec.format, spec.channels,  spec.samples);
+      UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio ERROR: %s, got spec:freq %d, format %d, channels %d, samples %d\n", SDL_GetError(), spec.freq, spec.format, spec.channels);
       //
       // Failed
       //
@@ -269,8 +279,14 @@ AUDIO_OpenDevice(
    }
    else
    {
-      UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio succeed, got spec:freq %d, format %d, channels %d, samples %d\n", spec.freq, spec.format, spec.channels,  spec.samples);
-      gAudioDevice.pSoundBuffer = malloc(gConfig.wAudioBufferSize * gConfig.iAudioChannels * sizeof(short));
+      UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio succeed, got spec:freq %d, format %d, channels %d, samples %d\n", spec.freq, spec.format, spec.channels);
+//hackhack
+#if SDL_VERSION_ATLEAST(3,0,0) && __EMSCRIPTEN__
+# define MULTIPLIER 10
+#else
+# define MULTIPLIER 1
+#endif
+      gAudioDevice.pSoundBuffer = malloc(gConfig.wAudioBufferSize * MULTIPLIER * gConfig.iAudioChannels * sizeof(short));
    }
 
    gAudioDevice.fOpened = TRUE;
@@ -355,6 +371,7 @@ AUDIO_OpenDevice(
    //
    // Let the callback function run so that musics will be played.
    //
+
    SDL_PauseAudio(0);
 
    return 0;
@@ -655,11 +672,7 @@ AUDIO_Lock(
 	void
 )
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_LockAudioDevice(gAudioDevice.id);
-#else
 	SDL_LockAudio();
-#endif
 }
 
 void
@@ -667,9 +680,5 @@ AUDIO_Unlock(
 	void
 )
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_UnlockAudioDevice(gAudioDevice.id);
-#else
 	SDL_UnlockAudio();
-#endif
 }

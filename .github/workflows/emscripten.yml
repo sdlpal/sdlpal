@@ -9,20 +9,31 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    env:
+      TAG: 4.0.7
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install python3-pip && pip3 install --user cloudsmith-cli
+      run: |
+        sudo apt-get -y install --no-install-recommends pipx && pipx install cloudsmith-cli
+        id=$(docker run -v $(pwd):/src -t -d emscripten/emsdk:$TAG /bin/bash)
+        export DOCKERRUN="docker exec -e DEBIAN_FRONTEND=noninteractive -e PKG_CONFIG_PATH=/src/install_prefix/lib/pkgconfig -i $id"
+        echo "DOCKERRUN=$DOCKERRUN" >> "$GITHUB_ENV"
+        $DOCKERRUN apt update
+        $DOCKERRUN apt -y install --no-install-recommends pkg-config
     - uses: actions/checkout@v4
     - name: submodules
       run: |
         sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
         git submodule init && git submodule update
+    - name: make sdl
+      run: |
+        $DOCKERRUN git config --global --add safe.directory '*'
+        $DOCKERRUN emcmake cmake -DSDL_SHARED=OFF -DSDL_STATIC=ON -DSDL_TEST_LIBRARY=OFF -DCMAKE_INSTALL_PREFIX:PATH=/src/install_prefix -S /src/3rd/SDL -B /src/3rd/SDL -G Unix\ Makefiles
+        $DOCKERRUN make -C /src/3rd/SDL install
     - name: Build
-      env:
-        TAG: 3.1.53
       run: |
         sed -i 's@http://localhost:8080/@https://sdlpal.github.io/demo/@g' emscripten/Makefile
-        docker run -v ${{ github.workspace }}:/src emscripten/emsdk:$TAG /bin/bash -c "git config --global --add safe.directory /src && emmake make -C emscripten"
+        $DOCKERRUN make -C /src/emscripten
         mkdir deploy
         cd emscripten && zip ../deploy/sdlpal-emscripten.zip *.{html,js,wasm,wasm.map,png}
     - name: Deploy to Demo
@@ -34,16 +45,25 @@ jobs:
       run: |
         git config --global user.email ${AUTO_UPDATE_EMAIL}
         git config --global user.name "AutoUpdate"
-        bash -c '[[ -f "emscripten/sdlpal.js" ]] && git clone --depth=1 https://github.com/sdlpal/demo ~/demo && cp -f emscripten/*.{html,js,wasm,wasm.map,png} ~/demo && cd ~/demo && git add -A && git commit -mAutoupdate -a && git push "https://${AUTO_UPDATE_USER}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo" || true'
+        git clone --depth=1 https://github.com/sdlpal/demo ~/demo
+        cp -f emscripten/*.{html,js,wasm,wasm.map,png} ~/demo
+        cd ~/demo
+        git add -A
+        git commit -m"${{ github.event.head_commit.message }}" -m"sdlpal/sdlpal@${GITHUB_SHA}" -a
+        git push "https://${AUTO_UPDATE_USER}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo"
     - name: Deploy to CloudSmith
       if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
       env:
         CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
-      run: $HOME/.local/bin/cloudsmith push raw sdlpal/sdlpal
+      run: pipx ensurepath && cloudsmith push raw sdlpal/sdlpal
            --version `awk -F\" '{print $2;}' generated.h` --name Emscripten
            --republish deploy/*.zip --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
     - uses: actions/upload-artifact@v4
       with:
         path: deploy
-
-
+    # uncomment belowing section if you want to debug the build
+    # - name: Setup tmate session
+    #   if: ${{ failure() }}
+    #   uses: mxschmitt/action-tmate@v3
+    #   with:
+    #     limit-access-to-actor: true

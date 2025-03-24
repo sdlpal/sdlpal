@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SDL.h"
+#include "timidity/common.h"
 
 #include "timidity.h"
 #include "options.h"

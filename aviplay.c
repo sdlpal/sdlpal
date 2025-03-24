@@ -666,7 +666,11 @@ PAL_PlayAVI(
 
     PAL_ClearKeyState();
 
-    VIDEO_ChangeDepth(avi->surface->format->BitsPerPixel);
+#if SDL_VERSION_ATLEAST(3,0,0)
+	VIDEO_ChangeDepth(SDL_BITSPERPIXEL(avi->surface->format));
+#else
+	VIDEO_ChangeDepth(avi->surface->format->BitsPerPixel);
+#endif
 
 	BOOL       fEndPlay = FALSE;
 	RIFFChunk *buf = (RIFFChunk *)avi->pChunkBuffer;

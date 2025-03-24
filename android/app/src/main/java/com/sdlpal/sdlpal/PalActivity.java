@@ -33,7 +33,7 @@ import java.io.*;
 public class PalActivity extends SDLActivity {
 
     static {
-        System.loadLibrary("SDL2");
+        System.loadLibrary("SDL3");
         System.loadLibrary("main");
     }
 

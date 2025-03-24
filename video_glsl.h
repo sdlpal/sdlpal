@@ -41,6 +41,8 @@ extern void VIDEO_GLSL_Setup();
 
 extern void VIDEO_GLSL_Destroy();
 
+extern GLint VIDEO_GLSL_GetScaleMode();
+
 PAL_C_LINKAGE_END
 
 #endif /* video_glsl_h */

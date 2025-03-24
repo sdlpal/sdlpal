@@ -25,13 +25,12 @@
 /* This is Mac OS X only, using Core MIDI.
    Mac OS 9 support via QuickTime is in native_midi_mac.c */
 
-#include "SDL_config.h"
+#include "sdl_compat.h"
+#include "audio.h"
 
 #include <AudioToolbox/AudioToolbox.h>
 #include <AvailabilityMacros.h>
 
-#include "SDL.h"
-#include "SDL_endian.h"
 #include "native_midi.h"
 
 /* Native Midi song */
@@ -254,7 +253,9 @@ void native_midi_start(NativeMidiSong *song, int looping)
         return;
 
     SDL_PauseAudio(1);
+#if SDL_MAJOR_VERSION < 3
     SDL_UnlockAudio();
+#endif
 
     if (currentsong)
         MusicPlayerStop(currentsong->player);
@@ -283,7 +284,9 @@ void native_midi_start(NativeMidiSong *song, int looping)
     latched_volume++;  /* just make this not match. */
     native_midi_setvolume(song,vol);
 
+#if SDL_MAJOR_VERSION < 3
     SDL_LockAudio();
+#endif
     SDL_PauseAudio(0);
 }
 
@@ -291,10 +294,14 @@ void native_midi_stop(NativeMidiSong *song)
 {
     if (currentsong) {
         SDL_PauseAudio(1);
+#if SDL_MAJOR_VERSION < 3
         SDL_UnlockAudio();
+#endif
         MusicPlayerStop(currentsong->player);
         currentsong = NULL;
+#if SDL_MAJOR_VERSION < 3
         SDL_LockAudio();
+#endif
         SDL_PauseAudio(0);
     }
 }

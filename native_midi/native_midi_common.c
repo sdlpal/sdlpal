@@ -23,7 +23,7 @@
 
 #include "native_midi_common.h"
 
-#include "SDL.h"
+#include "sdl_compat.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -82,7 +82,7 @@ static int GetVLQ(MIDITrack *track, int *currentPos)
 }
 
 /* Create a single MIDIEvent */
-static MIDIEvent *CreateEvent(Uint32 time, Uint8 event, Uint8 a, Uint8 b)
+static MIDIEvent *_CreateEvent(Uint32 time, Uint8 event, Uint8 a, Uint8 b)
 {
 	MIDIEvent *newEvent;
 
@@ -110,7 +110,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
 	Uint8 lastchan = 0;
 	int currentPos = 0;
 	int end = 0;
-	MIDIEvent *head = CreateEvent(0,0,0,0);	/* dummy event to make handling the list easier */
+	MIDIEvent *head = _CreateEvent(0,0,0,0);	/* dummy event to make handling the list easier */
 	MIDIEvent *currentEvent = head;
 
 	while (!end)
@@ -148,7 +148,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
 			len = GetVLQ(track, &currentPos);
 			
 			/* Create an event and attach the extra data, if any */
-			currentEvent->next = CreateEvent(atime, event, type, 0);
+			currentEvent->next = _CreateEvent(atime, event, type, 0);
 			currentEvent = currentEvent->next;
 			if (NULL == currentEvent)
 			{
@@ -183,7 +183,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
 				case MIDI_STATUS_CONTROLLER: /* Control change */
 				case MIDI_STATUS_PITCH_WHEEL: /* Pitch wheel */
 					b = track->data[currentPos++] & 0x7F;
-					currentEvent->next = CreateEvent(atime, (Uint8)((laststatus<<4)+lastchan), a, b);
+					currentEvent->next = _CreateEvent(atime, (Uint8)((laststatus<<4)+lastchan), a, b);
 					currentEvent = currentEvent->next;
 					if (NULL == currentEvent)
 					{
@@ -195,7 +195,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
 				case MIDI_STATUS_PROG_CHANGE: /* Program change */
 				case MIDI_STATUS_PRESSURE: /* Channel pressure */
 					a &= 0x7f;
-					currentEvent->next = CreateEvent(atime, (Uint8)((laststatus<<4)+lastchan), a, 0);
+					currentEvent->next = _CreateEvent(atime, (Uint8)((laststatus<<4)+lastchan), a, 0);
 					currentEvent = currentEvent->next;
 					if (NULL == currentEvent)
 					{
@@ -223,7 +223,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
 static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 {
 	MIDIEvent **track;
-	MIDIEvent *head = CreateEvent(0,0,0,0);	/* dummy event to make handling the list easier */
+	MIDIEvent *head = _CreateEvent(0,0,0,0);	/* dummy event to make handling the list easier */
 	MIDIEvent *currentEvent = head;
 	int trackID;
 

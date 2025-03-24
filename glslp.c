@@ -181,7 +181,7 @@ line_tokenize(
     //
     // Skip leading spaces
     //
-    while (*line && isspace(*line)) line++;
+    while (*line && SDL_isspace(*line)) line++;
     
     //
     // Skip comments
@@ -196,12 +196,12 @@ line_tokenize(
             //
             // Skip tailing spaces
             //
-            while (end > line && isspace(end[-1])) end--;
+            while (end > line && SDL_isspace(end[-1])) end--;
             char *name = (char*)line, *value = end;
-            while (isspace(*value) || *value == '=' ) value++;
+            while (SDL_isspace(*value) || *value == '=' ) value++;
             *end='\0';
             size_t len = strlen(value)-1;
-            while( isspace(value[len]) )
+            while( SDL_isspace(value[len]) )
                 value[len--] = '\0';
 
             len = end - line;

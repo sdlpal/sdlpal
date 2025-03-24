@@ -8,18 +8,17 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
     - name: submodules
       run: |
         sed -i.bak 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
         git submodule init && git submodule update
     - name: Install Dependencies
-      run: python3 -m ensurepip && pip3 install cloudsmith-cli && brew install coreutils
+      run: |
+        brew install coreutils python pipx
+        pipx install cloudsmith-cli
     - name: make
       run: |
         bash scripts/gengitrev
@@ -36,6 +35,7 @@ jobs:
         CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
       if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
       run: |
+        pipx ensurepath
         cloudsmith push raw sdlpal/sdlpal \
           --version `awk -F\" '{print $2;}' generated.h` --name iOS \
           --republish deploy/*.ipa --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"

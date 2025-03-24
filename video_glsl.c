@@ -46,6 +46,24 @@ extern SDL_Texture       *gpTouchOverlay;
 extern SDL_Rect           gOverlayRect;
 extern SDL_Rect           gTextureRect;
 
+GLint VIDEO_GLSL_GetScaleMode()
+{
+    GLint scaleMode = -1;
+    if (scaleMode == -1) {
+        switch (VIDEO_GetScaleMode()) {
+        case 0:
+            scaleMode = GL_NEAREST;
+            break;
+        case 1:
+            scaleMode = GL_LINEAR;
+            break;
+        default:
+            scaleMode = GL_NEAREST;
+        }
+    }
+    return scaleMode;
+}
+
 static int gRendererWidth;
 static int gRendererHeight;
 
@@ -58,7 +76,7 @@ static int gMVPSlots[MAX_INDEX];
 static int gHDRSlot = -1;
 static int gUseTouchOverlaySlot = -1;
 static int gTouchOverlaySlot = -1;
-static int VAOSupported = 1;
+static int VAOSupported = 0;
 static int glversion_major, glversion_minor;
 static int glslversion_major, glslversion_minor;
 
@@ -127,10 +145,10 @@ GLKMatrix4 GLKMatrix4MakeOrtho(float left, float right,
     float fan = farZ + nearZ;
     float fsn = farZ - nearZ;
     
-    GLKMatrix4 m = { 2.0f / rsl, 0.0f, 0.0f, 0.0f,
+    GLKMatrix4 m = { { 2.0f / rsl, 0.0f, 0.0f, 0.0f,
         0.0f, 2.0f / tsb, 0.0f, 0.0f,
         0.0f, 0.0f, -2.0f / fsn, 0.0f,
-        -ral / rsl, -tab / tsb, -fan / fsn, 1.0f };
+        -ral / rsl, -tab / tsb, -fan / fsn, 1.0f } };
     
     return m;
 }
@@ -461,7 +479,7 @@ void setupShaderParams(int pass){
 }
 
 GLint get_gl_clamp_to_border() {
-#ifdef __IOS__
+#if __IOS__ || __EMSCRIPTEN__
     return GL_CLAMP_TO_EDGE;
 #else
     return GL_CLAMP_TO_BORDER;
@@ -481,6 +499,7 @@ GLint get_gl_wrap_mode(enum wrap_mode mode, enum scale_type type) {
             gl_wrap_mode = get_gl_clamp_to_border();
             break;
         default:
+            UTIL_LogOutput(LOGLEVEL_ERROR, "Unknown wrap mode %d\n", mode);
             gl_wrap_mode = GL_INVALID_ENUM;
             break;
     }
@@ -493,10 +512,17 @@ SDL_Texture *load_texture(char *name, char *filename, bool filter_linear, enum w
     SDL_Surface *surf = STBIMG_Load(get_glslp_path(filename));
     if( !surf )
         TerminateOnError("Texture %s cannot be open!", get_glslp_path(filename));
+#if SDL_MAJOR_VERSION<3
     if( filter_linear )
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+#endif
     SDL_Texture *texture = SDL_CreateTextureFromSurface(gpRenderer, surf);
+#if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
+    SDL_SetTextureScaleMode(texture, VIDEO_GetScaleMode());
+#endif
+#if SDL_MAJOR_VERSION<3
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+#endif
     SDL_GL_BindTexture(texture, NULL, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, get_gl_wrap_mode(mode, type));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, get_gl_wrap_mode(mode, type));
@@ -686,9 +712,14 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
     
     SDL_Rect _srcrect,_dstrect;
     
+#if SDL_VERSION_ATLEAST(3,0,0)
+    float w, h;
+    SDL_GetTextureSize(texture, &w, &h);
+#else
     int w, h;
     SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-    
+#endif 
+
     if(!srcrect) {
         srcrect = &_srcrect;
         _srcrect.x = 0;
@@ -759,6 +790,7 @@ int VIDEO_RenderTexture(SDL_Renderer * renderer, SDL_Texture * texture, const SD
 }
 
 //remove all fixed pipeline call in RenderCopy
+#undef SDL_RenderCopy
 #define SDL_RenderCopy CORE_RenderCopy
 PAL_FORCE_INLINE int CORE_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
                     const SDL_Rect * srcrect, const SDL_Rect * dstrect)
@@ -848,10 +880,17 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
         param->FBO.pow_width = next_pow2(param->FBO.width);
         param->FBO.pow_height = next_pow2(param->FBO.height);
         
+#if SDL_MAJOR_VERSION<3
         if( param_next_pass && param_next_pass->filter_linear )
             SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+#endif
         param->pass_sdl_texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, param->FBO.pow_width, param->FBO.pow_height);
+#if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
+        SDL_SetTextureScaleMode(param->pass_sdl_texture, VIDEO_GetScaleMode());
+#endif
+#if SDL_MAJOR_VERSION<3
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+#endif
         SDL_GL_BindTexture(param->pass_sdl_texture, NULL, NULL);
         if( param_next_pass ) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, get_gl_wrap_mode(param_next_pass->wrap_mode, param_next_pass->scale_type_x));
@@ -870,7 +909,10 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
         if( framePrevTextures[i] )
             SDL_DestroyTexture(framePrevTextures[i]);
         framePrevTextures[i] = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gConfig.dwTextureWidth, gConfig.dwTextureHeight);
-    }
+#if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
+        SDL_SetTextureScaleMode(framePrevTextures[i], VIDEO_GetScaleMode());
+#endif
+     }
     return framePrevTextures[0];
 }
 
@@ -880,10 +922,17 @@ void VIDEO_GLSL_RenderCopy()
     if( gpTexture == NULL )
         return;
     
+#if SDL_MAJOR_VERSION<3
     if( gGLSLP.shader_params[0].filter_linear)
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+#endif
     origTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenReal);
+#if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
+    SDL_SetTextureScaleMode(origTexture, VIDEO_GetScaleMode());
+#endif
+#if SDL_MAJOR_VERSION<3
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+#endif
     SDL_GL_BindTexture(origTexture, NULL, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, get_gl_wrap_mode(gGLSLP.shader_params[0].wrap_mode, gGLSLP.shader_params[0].scale_type_x));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, get_gl_wrap_mode(gGLSLP.shader_params[0].wrap_mode, gGLSLP.shader_params[0].scale_type_y));
@@ -946,10 +995,11 @@ void VIDEO_GLSL_Init() {
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &orig_profile);
 #if GLES
     SDL_SetHint( SDL_HINT_RENDER_DRIVER, "opengles2");
-#   if SDL_VIDEO_OPENGL_EGL && (SDL_VIDEO_DRIVER_EMSCRIPTEN || SDL_VIDEO_DRIVER_WINRT)
+//! on SDL3 only GLES3 renders well
+#if SDL_VERSION_ATLEAST(3,0,0)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#   endif
+#endif
 #else
     SDL_SetHint( SDL_HINT_RENDER_DRIVER, "opengl");
 #   if FORCE_OPENGL_CORE_PROFILE
@@ -960,7 +1010,11 @@ void VIDEO_GLSL_Init() {
     Uint32 flags = PAL_VIDEO_INIT_FLAGS | SDL_WINDOW_OPENGL;
     
     UTIL_LogOutput(LOGLEVEL_DEBUG, "requesting to create window with flags: %s %s profile latest available\n", SDL_GetHint( SDL_HINT_RENDER_DRIVER ),  get_gl_profile(get_SDL_GLAttribute(SDL_GL_CONTEXT_PROFILE_MASK)));
+#if SDL_VERSION_ATLEAST(3,0,0)
+    gpWindow = SDL_CreateWindow("Pal", gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
+#else
     gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
+#endif
     if (gpWindow == NULL) {
         UTIL_LogOutput(LOGLEVEL_DEBUG, "failed to create window with ordered flags! %s\n", SDL_GetError());
         UTIL_LogOutput(LOGLEVEL_DEBUG, "reverting to: OpenGL %s profile %d.%d\n", get_gl_profile(orig_profile), orig_major, orig_minor);
@@ -968,7 +1022,11 @@ void VIDEO_GLSL_Init() {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, orig_major);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, orig_minor);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,  orig_profile);
+#if SDL_VERSION_ATLEAST(3,0,0)
+        gpWindow = SDL_CreateWindow("Pal", gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
+#else
         gpWindow = SDL_CreateWindow("Pal", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gConfig.dwScreenWidth, gConfig.dwScreenHeight, flags);
+#endif
     }
 }
 
@@ -984,18 +1042,22 @@ static void dump_preset() {
 
 void VIDEO_GLSL_Setup() {
     SDL_GetRendererOutputSize(gpRenderer, &gRendererWidth, &gRendererHeight);
+    const char* pszRenderName;
+#if SDL_VERSION_ATLEAST(3,0,0)
+    pszRenderName = SDL_GetRendererName(gpRenderer);
+#else
     SDL_RendererInfo rendererInfo;
     SDL_GetRendererInfo(gpRenderer, &rendererInfo);
-    
+    pszRenderName = rendererInfo.name;
+#endif
+    UTIL_LogOutput(LOGLEVEL_DEBUG, "render info:%s\n", pszRenderName);
+
     for( int i = 0; i < MAX_TEXTURES; i++ )
         frame_prev_texture_units[i] = -1;
-    
-    UTIL_LogOutput(LOGLEVEL_DEBUG, "render info:%s\n",rendererInfo.name);
-
     char *glversion = (char*)glGetString(GL_VERSION);
     char *glslversion = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
     SDL_sscanf(glversion, "%d.%d", &glversion_major, &glversion_minor);
-    if(!strncmp(rendererInfo.name, "opengl", 6)) {
+    if(!strncmp(pszRenderName, "opengl", 6)) {
 #     ifndef __APPLE__
         if (!initGLExtensions(glversion_major))
             UTIL_LogOutput(LOGLEVEL_FATAL,  "Couldn't init GL extensions!\n" );
@@ -1041,7 +1103,11 @@ void VIDEO_GLSL_Setup() {
     VAOSupported = 0;
 #endif
 #endif
-    
+
+#if SDL_VERSION_ATLEAST(3,0,0) && FORCE_OPENGL_CORE_PROFILE
+    VAOSupported = 1;
+#endif
+
     struct VertexDataFormat vData[ 4 ];
     GLuint iData[ 4 ];
     //Set rendering indices
@@ -1085,7 +1151,7 @@ void VIDEO_GLSL_Setup() {
         UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] load parametered filter preset\n");
     }else{
         char *origGLSL = NULL;
-        if( SDL_strcasecmp( strrchr(gConfig.pszShader, '.'), ".glsl") == 0 ) {
+        if( SDL_strcasecmp( SDL_strrchr(gConfig.pszShader, '.'), ".glsl") == 0 ) {
             UTIL_LogOutput(LOGLEVEL_DEBUG, "[PASS 2] loading %s\n", gConfig.pszShader);
             FILE *fp = UTIL_OpenFileForMode(MID_GLSLP, "w");
             fputs( PAL_va( 0, glslp_template, gConfig.pszShader, gConfig.pszShader, gConfig.dwTextureWidth, gConfig.dwTextureHeight, "false" ), fp );

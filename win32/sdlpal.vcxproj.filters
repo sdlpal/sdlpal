@@ -82,6 +82,9 @@
     <Filter Include="timidity">
       <UniqueIdentifier>{d7a20b30-e42b-4804-8b48-4ac1cbaf3b10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sdl_compat">
+      <UniqueIdentifier>{1cce886b-c2c5-4321-bd75-eb673a468e9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\battle.c">
@@ -350,9 +353,6 @@
     </ClCompile>
     <ClCompile Include="..\video_glsl.c">
       <Filter>glsl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\glslp.c">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libopusfile\src\opus_analysis.c">
       <Filter>libopusfile</Filter>
@@ -813,6 +813,12 @@
     <ClCompile Include="..\midi_tsf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\sdl_compat\sdl_compat.c">
+      <Filter>sdl_compat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glslp.c">
+      <Filter>glsl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ascii.h">
@@ -1202,9 +1208,6 @@
     <ClInclude Include="..\video_glsl.h">
       <Filter>glsl</Filter>
     </ClInclude>
-    <ClInclude Include="..\glslp.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1447,6 +1450,12 @@
     </ClInclude>
     <ClInclude Include="..\midi_timidity.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdl_compat\sdl_compat.h">
+      <Filter>sdl_compat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glslp.h">
+      <Filter>glsl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

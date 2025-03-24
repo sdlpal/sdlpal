@@ -21,8 +21,7 @@
 */
 
 #include "mad.h"
-#include "SDL_rwops.h"
-#include "SDL_audio.h"
+#include "sdl_compat.h"
 
 #define MAD_INPUT_BUFFER_SIZE	(5*8192)
 #define MAD_OUTPUT_BUFFER_SIZE	8192

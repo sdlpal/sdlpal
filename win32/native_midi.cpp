@@ -22,7 +22,7 @@
 //         @Author: Lou Yihua, 2017
 //
 
-#include "SDL.h"
+#include "sdl_compat.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

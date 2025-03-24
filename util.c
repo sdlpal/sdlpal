@@ -26,10 +26,6 @@
 #include <errno.h>
 
 #include "midi.h"
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-#include "SDL_video.h"
-#include "SDL_messagebox.h"
-#endif
 
 static char internal_buffer[PAL_MAX_GLOBAL_BUFFERS + 1][PAL_GLOBAL_BUFFER_SIZE];
 #define INTERNAL_BUFFER_SIZE_ARGS internal_buffer[PAL_MAX_GLOBAL_BUFFERS], PAL_GLOBAL_BUFFER_SIZE
@@ -325,7 +321,7 @@ TerminateOnError(
 	  int btnid;
 #if PAL_HAS_CONFIG_PAGE
 	  sprintf(buffer, "%sLaunch setting dialog on next start?\n", string);
-	  if (SDL_ShowMessageBox(&mbd, &btnid) == 0 && btnid == 0)
+	  if (SDL_ShowMessageBox(&mbd, &btnid) == SDL_OK && btnid == 0)
 	  {
 		  gConfig.fLaunchSetting = TRUE;
 		  PAL_SaveConfig();
@@ -999,7 +995,7 @@ char *UTIL_basename(const char *filename) {
     char *pos = NULL;
     int broked = 0;
     for( int i=0;i<strlen(PAL_PATH_SEPARATORS);i++)
-        if( (pos = strrchr(basename_buf,PAL_PATH_SEPARATORS[i])) != NULL )
+        if( (pos = SDL_strrchr(basename_buf,PAL_PATH_SEPARATORS[i])) != NULL )
             *pos='\0', broked = 1;
     if( !broked )
         sprintf((char*)basename_buf, "./");

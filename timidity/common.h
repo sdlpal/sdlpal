@@ -8,7 +8,7 @@
 
    common.h
 */
-#include <SDL.h>
+#include "sdl_compat.h"
 
 typedef struct {
   char *path;

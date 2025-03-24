@@ -43,8 +43,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "SDL.h"
-#include "SDL_endian.h"
+#include "sdl_compat.h"
 
 #define __WIDETEXT(quote) L##quote
 #define WIDETEXT(quote) __WIDETEXT(quote)

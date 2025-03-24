@@ -78,7 +78,7 @@
 
 // if you really think you need <SDL2/SDL.h> here instead.. feel free to change it,
 // but the cool kids have path/to/include/SDL2/ in their compilers include path.
-#include <SDL.h>
+#include "sdl_compat.h"
 
 #ifndef SDL_STBIMG_ALLOW_STDIO
   #define STBI_NO_STDIO // don't need STDIO, will use SDL_RWops to open files

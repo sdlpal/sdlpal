@@ -110,6 +110,23 @@ PAL_DetectJoystick(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(3,0,0)
+    int numjoysticks;
+    SDL_JoystickID* joysticks = SDL_GetJoysticks(&numjoysticks);
+    if (numjoysticks > 0 && g_fUseJoystick)
+    {
+        int i;
+        for (i = 0; i < numjoysticks; i++)
+        {
+            SDL_JoystickID instance_id = joysticks[i];
+            if (PAL_IS_VALID_JOYSTICK(SDL_GetJoystickNameForID(instance_id)))
+            {
+                g_pJoy = SDL_OpenJoystick(i);
+                break;
+            }
+        }
+    }
+#else
     if (SDL_NumJoysticks() > 0 && g_fUseJoystick)
     {
         int i;
@@ -130,6 +147,7 @@ PAL_DetectJoystick(
             SDL_JoystickEventState(SDL_ENABLE);
         }
     }
+#endif
     else
     {
         g_pJoy = NULL;
@@ -288,10 +306,17 @@ PAL_UpdateKeyboardState(
    LPCBYTE        keyState = (LPCBYTE)SDL_GetKeyboardState(NULL);
    int            i;
    DWORD          dwCurrentTime = SDL_GetTicks();
+#if SDL_VERSION_ATLEAST(3,0,0)
+   SDL_Keymod     mod;
+#endif
 
    for (i = 0; i < sizeof(g_KeyMap) / sizeof(g_KeyMap[0]); i++)
    {
+#if SDL_VERSION_ATLEAST(3,0,0)
+      if (keyState[SDL_GetScancodeFromKey(g_KeyMap[i][0], &mod)])
+#else
       if (keyState[SDL_GetScancodeFromKey(g_KeyMap[i][0])])
+#endif
       {
          if (dwCurrentTime > rgdwKeyLastTime[i])
          {
@@ -319,7 +344,11 @@ PAL_UpdateKeyboardState(
 
 static VOID
 PAL_KeyboardEventFilter(
+#if SDL_VERSION_ATLEAST(3,0,0)
+   const SDL_Event       *lpEvent3
+#else
    const SDL_Event       *lpEvent
+#endif
 )
 /*++
   Purpose:
@@ -336,6 +365,21 @@ PAL_KeyboardEventFilter(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(3,0,0)
+   typedef struct {
+       SDL_Keycode sym;
+       Uint16 mod;
+   }FAKE_KEYSYM;
+   typedef struct {
+       FAKE_KEYSYM keysym;
+   }FAKE_KEY;
+   typedef struct {
+       Uint32 type;
+       FAKE_KEY key;
+   }Fake_Event;
+   Fake_Event event = { lpEvent3->type, {lpEvent3->key.key, lpEvent3->key.mod} };
+   Fake_Event *lpEvent = &event;
+#endif
    if (lpEvent->type == SDL_KEYDOWN)
    {
       //
@@ -595,10 +639,12 @@ PAL_JoystickEventFilter(
 #if PAL_HAS_JOYSTICKS
    switch (lpEvent->type)
    {
+#if SDL_VERSION_ATLEAST(2,0,0)
    case SDL_JOYDEVICEADDED:
    case SDL_JOYDEVICEREMOVED:
        PAL_DetectJoystick();
        break;
+#endif
    case SDL_JOYAXISMOTION:
       g_InputState.joystickNeedUpdate = TRUE;
       //
@@ -961,7 +1007,11 @@ PAL_TouchRepeatCheck(
 
 static VOID
 PAL_TouchEventFilter(
-   const SDL_Event *lpEvent
+#if SDL_VERSION_ATLEAST(3,0,0)
+   const SDL_Event       *lpEvent3
+#else
+   const SDL_Event       *lpEvent
+#endif
 )
 /*++
   Purpose:
@@ -979,6 +1029,18 @@ PAL_TouchEventFilter(
 --*/
 {
 #if PAL_HAS_TOUCH
+#if SDL_VERSION_ATLEAST(3,0,0)
+   typedef struct {
+       float x,y;
+       Uint64 fingerId;
+   }FAKE_TFINGER;
+   typedef struct {
+       Uint32 type;
+       FAKE_TFINGER tfinger;
+   }Fake_Event;
+   Fake_Event event = { lpEvent3->type, {lpEvent3->tfinger.x, lpEvent3->tfinger.y, lpEvent3->tfinger.fingerID} };
+   Fake_Event *lpEvent = &event;
+#endif
    switch (lpEvent->type)
    {
    case SDL_FINGERDOWN:
@@ -1067,6 +1129,11 @@ PAL_EventFilter(
    switch (lpEvent->type)
    {
 #if SDL_VERSION_ATLEAST(2,0,0)
+# if SDL_VERSION_ATLEAST(3,0,0)
+   case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+       VIDEO_Resize(lpEvent->window.data1, lpEvent->window.data2);
+       break;
+#else
    case SDL_WINDOWEVENT:
       if (lpEvent->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
       {
@@ -1076,6 +1143,7 @@ PAL_EventFilter(
          VIDEO_Resize(lpEvent->window.data1, lpEvent->window.data2);
       }
       break;
+#endif
 
    case SDL_APP_WILLENTERBACKGROUND:
       g_bRenderPaused = TRUE;
