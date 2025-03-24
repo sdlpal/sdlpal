@@ -25,10 +25,8 @@
 
 #include "android_jni.h"
 
-#include "SDL_config.h"
+#include "sdl_compat.h"
 
-#include "SDL.h"
-#include "SDL_endian.h"
 #include "native_midi/native_midi.h"
 
 #include <android/log.h>

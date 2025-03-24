@@ -104,7 +104,6 @@
 		C62600491E62139C00E39DD9 /* test_swprintf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C62600461E62105500E39DD9 /* test_swprintf.cpp */; };
 		C629A55F208642580015C93C /* nuked_opl.c in Sources */ = {isa = PBXBuildFile; fileRef = C629A55B208642460015C93C /* nuked_opl.c */; };
 		C629A560208642580015C93C /* mame_opls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C629A55E208642580015C93C /* mame_opls.cpp */; };
-		C63505C31EB4624B00186049 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505B51EB45F9A00186049 /* libSDL2.a */; };
 		C63505C71EB4627700186049 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505C61EB4627700186049 /* IOKit.framework */; };
 		C63505C91EB4629400186049 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505C81EB4629400186049 /* CoreAudio.framework */; };
 		C63505CD1EB462D600186049 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505CC1EB462D600186049 /* CoreVideo.framework */; };
@@ -116,7 +115,11 @@
 		C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11C1CFAF1780037E9A2 /* overlay.c */; };
 		C65BC11F1CFAF7790037E9A2 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11E1CFAF7790037E9A2 /* audio.c */; };
 		C6972640202E155C00293A73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C697263C202E155C00293A73 /* OpenGL.framework */; };
+		C697DF6C2D97F7C30030B6B2 /* sdl_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = C697DF6B2D97F7C30030B6B2 /* sdl_compat.c */; };
+		C697DF6D2D97F7C30030B6B2 /* sdl_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = C697DF6B2D97F7C30030B6B2 /* sdl_compat.c */; };
 		C6BF8C7420A1498A000AE188 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6BF8C7020A1498A000AE188 /* Metal.framework */; };
+		C6C8BCA42DA19F7800C11697 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C697DF7F2D97F9EE0030B6B2 /* SDL3.framework */; };
+		C6C8BCA52DA19F7800C11697 /* SDL3.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = C697DF7F2D97F9EE0030B6B2 /* SDL3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C6CFDCAB23A858B800DEB8F9 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB8823A858B700DEB8F9 /* kiss_fft.c */; };
 		C6CFDCAC23A858B800DEB8F9 /* rate.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB9023A858B700DEB8F9 /* rate.c */; };
 		C6CFDCAD23A858B800DEB8F9 /* opus_mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CFDB9223A858B700DEB8F9 /* opus_mdct.c */; };
@@ -293,82 +296,19 @@
 			remoteGlobalIDString = 8D1107260486CEB800E47090;
 			remoteInfo = Pal;
 		};
-		C63505B21EB45F9A00186049 /* PBXContainerItemProxy */ = {
+		C697DF7E2D97F9EE0030B6B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = BECDF66C0761BA81005FE872;
-			remoteInfo = Framework;
+			remoteInfo = SDL3;
 		};
-		C63505B41EB45F9A00186049 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BECDF6B30761BA81005FE872;
-			remoteInfo = "Static Library";
-		};
-		C63505B61EB45F9A00186049 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DB31407717554B71006C0E22;
-			remoteInfo = "Shared Library";
-		};
-		C63505B81EB45F9A00186049 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BECDF6BE0761BA81005FE872;
-			remoteInfo = "Standard DMG";
-		};
-		C63505C41EB4625000186049 /* PBXContainerItemProxy */ = {
+		C6BE8E212DA175A3006AEC57 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = BECDF66D0761BA81005FE872;
-			remoteInfo = "Static Library";
-		};
-		C6D61D462619A20C000622C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7D88B5423E2437C00DCD162;
-			remoteInfo = "Framework-iOS";
-		};
-		C6D61D482619A20C000622C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7D88D1523E24BED00DCD162;
-			remoteInfo = "Framework-tvOS";
-		};
-		C6D61D4A2619A20C000622C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7D88E5423E24D3B00DCD162;
-			remoteInfo = "Static Library-iOS";
-		};
-		C6D61D4C2619A20C000622C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A769B23D23E259AE00872273;
-			remoteInfo = "Static Library-tvOS";
-		};
-		C6D61D4E2619A20C000622C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FCEB323E25AB700529352;
-			remoteInfo = "Shared Library-iOS";
-		};
-		C6D61D502619A20C000622C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FD06C23E25AC700529352;
-			remoteInfo = "Shared Library-tvOS";
+			remoteGlobalIDString = BECDF5FE0761BA81005FE872;
+			remoteInfo = SDL3;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -379,6 +319,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				C6C8BCA52DA19F7800C11697 /* SDL3.framework in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -620,6 +561,8 @@
 		C65BC11C1CFAF1780037E9A2 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay.c; sourceTree = "<group>"; };
 		C65BC11E1CFAF7790037E9A2 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; tabWidth = 3; };
 		C697263C202E155C00293A73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		C697DF6A2D97F7C30030B6B2 /* sdl_compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sdl_compat.h; sourceTree = "<group>"; };
+		C697DF6B2D97F7C30030B6B2 /* sdl_compat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sdl_compat.c; sourceTree = "<group>"; };
 		C6BF8C7020A1498A000AE188 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		C6CFDB8323A858B700DEB8F9 /* celt_lpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = celt_lpc.h; sourceTree = "<group>"; };
 		C6CFDB8423A858B700DEB8F9 /* static_modes_fixed_arm_ne10.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_modes_fixed_arm_ne10.h; sourceTree = "<group>"; };
@@ -871,11 +814,11 @@
 				C6BF8C7420A1498A000AE188 /* Metal.framework in Frameworks */,
 				C6972640202E155C00293A73 /* OpenGL.framework in Frameworks */,
 				C63505D41EB4633000186049 /* Carbon.framework in Frameworks */,
+				C6C8BCA42DA19F7800C11697 /* SDL3.framework in Frameworks */,
 				C63505D31EB4631100186049 /* ForceFeedback.framework in Frameworks */,
 				C63505CD1EB462D600186049 /* CoreVideo.framework in Frameworks */,
 				C63505C91EB4629400186049 /* CoreAudio.framework in Frameworks */,
 				C63505C71EB4627700186049 /* IOKit.framework in Frameworks */,
-				C63505C31EB4624B00186049 /* libSDL2.a in Frameworks */,
 				C614646E1EA6430100A76CC9 /* CoreMIDI.framework in Frameworks */,
 				C614646C1EA642F200A76CC9 /* AudioToolbox.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
@@ -923,6 +866,7 @@
 			isa = PBXGroup;
 			children = (
 				C63505AB1EB45F9900186049 /* SDL.xcodeproj */,
+				C697DF662D97F75C0030B6B2 /* sdl_compat */,
 				C6CFDB8123A858B700DEB8F9 /* libopusfile */,
 				5757D21E1B7A3D5800464A74 /* liboggvorbis */,
 				71E23E7013F6D188001287B6 /* libmad */,
@@ -1314,19 +1258,20 @@
 			path = PalTests;
 			sourceTree = "<group>";
 		};
-		C63505AC1EB45F9900186049 /* Products */ = {
+		C697DF662D97F75C0030B6B2 /* sdl_compat */ = {
 			isa = PBXGroup;
 			children = (
-				C63505B31EB45F9A00186049 /* SDL2.framework */,
-				C6D61D472619A20C000622C2 /* SDL2.framework */,
-				C6D61D492619A20C000622C2 /* SDL2.framework */,
-				C63505B51EB45F9A00186049 /* libSDL2.a */,
-				C6D61D4B2619A20C000622C2 /* libSDL2.a */,
-				C6D61D4D2619A20C000622C2 /* libSDL2.a */,
-				C63505B71EB45F9A00186049 /* libSDL2.dylib */,
-				C6D61D4F2619A20C000622C2 /* libSDL2.dylib */,
-				C6D61D512619A20C000622C2 /* libSDL2.dylib */,
-				C63505B91EB45F9A00186049 /* SDL2 */,
+				C697DF6A2D97F7C30030B6B2 /* sdl_compat.h */,
+				C697DF6B2D97F7C30030B6B2 /* sdl_compat.c */,
+			);
+			name = sdl_compat;
+			path = ../sdl_compat;
+			sourceTree = "<group>";
+		};
+		C697DF792D97F9EE0030B6B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C697DF7F2D97F9EE0030B6B2 /* SDL3.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1639,7 +1584,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				C63505C51EB4625000186049 /* PBXTargetDependency */,
+				C6BE8E222DA175A3006AEC57 /* PBXTargetDependency */,
 			);
 			name = Pal;
 			productInstallPath = "$(HOME)/Applications";
@@ -1692,7 +1637,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = C63505AC1EB45F9900186049 /* Products */;
+					ProductGroup = C697DF792D97F9EE0030B6B2 /* Products */;
 					ProjectRef = C63505AB1EB45F9900186049 /* SDL.xcodeproj */;
 				},
 			);
@@ -1705,74 +1650,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		C63505B31EB45F9A00186049 /* SDL2.framework */ = {
+		C697DF7F2D97F9EE0030B6B2 /* SDL3.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = SDL2.framework;
-			remoteRef = C63505B21EB45F9A00186049 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C63505B51EB45F9A00186049 /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = C63505B41EB45F9A00186049 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C63505B71EB45F9A00186049 /* libSDL2.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libSDL2.dylib;
-			remoteRef = C63505B61EB45F9A00186049 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C63505B91EB45F9A00186049 /* SDL2 */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = SDL2;
-			remoteRef = C63505B81EB45F9A00186049 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C6D61D472619A20C000622C2 /* SDL2.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDL2.framework;
-			remoteRef = C6D61D462619A20C000622C2 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C6D61D492619A20C000622C2 /* SDL2.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDL2.framework;
-			remoteRef = C6D61D482619A20C000622C2 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C6D61D4B2619A20C000622C2 /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = C6D61D4A2619A20C000622C2 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C6D61D4D2619A20C000622C2 /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = C6D61D4C2619A20C000622C2 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C6D61D4F2619A20C000622C2 /* libSDL2.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libSDL2.dylib;
-			remoteRef = C6D61D4E2619A20C000622C2 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C6D61D512619A20C000622C2 /* libSDL2.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libSDL2.dylib;
-			remoteRef = C6D61D502619A20C000622C2 /* PBXContainerItemProxy */;
+			path = SDL3.framework;
+			remoteRef = C697DF7E2D97F9EE0030B6B2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1815,7 +1697,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "exec ../scripts/gengitrev";
+			shellScript = "exec ../scripts/gengitrev\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1971,6 +1853,7 @@
 				C6CFDCB923A858B800DEB8F9 /* entdec.c in Sources */,
 				C6CFDCF223A858B800DEB8F9 /* NSQ_del_dec.c in Sources */,
 				C6CFDCAF23A858B800DEB8F9 /* modes.c in Sources */,
+				C697DF6C2D97F7C30030B6B2 /* sdl_compat.c in Sources */,
 				C6CFDD2D23A858B800DEB8F9 /* corrMatrix_FLP.c in Sources */,
 				C6CFDD1523A858B800DEB8F9 /* biquad_alt.c in Sources */,
 				C6CFDCD423A858B800DEB8F9 /* stereo_LR_to_MS.c in Sources */,
@@ -2073,6 +1956,7 @@
 				C6D61D752619A20C000622C2 /* timidity.c in Sources */,
 				C6D61D6F2619A20C000622C2 /* mix.c in Sources */,
 				C6D61D5B2619A20C000622C2 /* tables.c in Sources */,
+				C697DF6D2D97F7C30030B6B2 /* sdl_compat.c in Sources */,
 				C6D61D5F2619A20C000622C2 /* readmidi.c in Sources */,
 				C626003D1E62058F00E39DD9 /* gtest-all.cc in Sources */,
 				C6D61D712619A20C000622C2 /* playmidi.c in Sources */,
@@ -2096,10 +1980,10 @@
 			target = 8D1107260486CEB800E47090 /* Pal */;
 			targetProxy = C604BF6C2233857A00E0A4CF /* PBXContainerItemProxy */;
 		};
-		C63505C51EB4625000186049 /* PBXTargetDependency */ = {
+		C6BE8E222DA175A3006AEC57 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Static Library";
-			targetProxy = C63505C41EB4625000186049 /* PBXContainerItemProxy */;
+			name = SDL3;
+			targetProxy = C6BE8E212DA175A3006AEC57 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2134,6 +2018,7 @@
 					"DEBUG=1",
 					PAL_HAS_GIT_REVISION,
 					HAVE_CONFIG_H,
+					"USE_SDL3=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					../3rd/SDL/include,
@@ -2141,9 +2026,12 @@
 					../liboggvorbis/src,
 					"$(HEADER_SEARCH_PATHS)",
 					"../libopusfile/**",
+					../sdl_compat,
+					..,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;
@@ -2168,6 +2056,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					PAL_HAS_GIT_REVISION,
 					HAVE_CONFIG_H,
+					"USE_SDL3=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					../3rd/SDL/include,
@@ -2175,9 +2064,12 @@
 					../liboggvorbis/src,
 					"$(HEADER_SEARCH_PATHS)",
 					"../libopusfile/**",
+					../sdl_compat,
+					..,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LD_RUNPATH_SEARCH_PATHS = "$(LD_RUNPATH_SEARCH_PATHS_$(IS_MACCATALYST)) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_LDFLAGS = "-Wl,-weak_framework,Metal";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.sdlpal;

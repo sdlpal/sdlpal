@@ -23,16 +23,9 @@
 #if SDL_VIDEO_DRIVER_UIKIT
 
 #include "../src/video/SDL_sysvideo.h"
-#include "SDL_assert.h"
-#include "SDL_hints.h"
-#include "SDL_system.h"
-#include "SDL_main.h"
+#include "sdl_compat.h"
 
 #import "SDLPal_AppDelegate.h"
-#import "../src/video/uikit/SDL_uikitmodes.h"
-#import "../src/video/uikit/SDL_uikitwindow.h"
-
-#include "../src/events/SDL_events_c.h"
 
 #ifdef main
 #undef main
@@ -98,9 +91,9 @@ int sdlpal_main(int argc, char **argv)
 - (void)postFinishLaunch
 {
     /* run the user's application, passing argc and argv */
-    SDL_iPhoneSetEventPump(SDL_TRUE);
+    SDL_SetiOSEventPump(SDL_TRUE);
     exit_status = SDL_main(forward_argc, forward_argv);
-    SDL_iPhoneSetEventPump(SDL_FALSE);
+    SDL_SetiOSEventPump(SDL_FALSE);
 
     /* exit, passing the return status from the user's application */
     /* We don't actually exit to support applications that do setup in their
@@ -155,116 +148,12 @@ int sdlpal_main(int argc, char **argv)
     }
 }
 
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-    SDL_SendAppEvent(SDL_APP_TERMINATING);
-}
-
-- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
-{
-    SDL_SendAppEvent(SDL_APP_LOWMEMORY);
-}
-
 #if !TARGET_OS_TV
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
     // if in game.only support landscape
     return self.isInGame ? UIInterfaceOrientationMaskLandscape : UIInterfaceOrientationMaskAll;
 }
-
-- (void)application:(UIApplication *)application didChangeStatusBarOrientation:(UIInterfaceOrientation)oldStatusBarOrientation
-{
-    BOOL isLandscape = UIInterfaceOrientationIsLandscape(application.statusBarOrientation);
-    SDL_VideoDevice *_this = SDL_GetVideoDevice();
-
-    if (_this && _this->num_displays > 0) {
-        SDL_DisplayMode *desktopmode = &_this->displays[0].desktop_mode;
-        SDL_DisplayMode *currentmode = &_this->displays[0].current_mode;
-
-        /* The desktop display mode should be kept in sync with the screen
-         * orientation so that updating a window's fullscreen state to
-         * SDL_WINDOW_FULLSCREEN_DESKTOP keeps the window dimensions in the
-         * correct orientation. */
-        if (isLandscape != (desktopmode->w > desktopmode->h)) {
-            int height = desktopmode->w;
-            desktopmode->w = desktopmode->h;
-            desktopmode->h = height;
-        }
-
-        /* Same deal with the current mode + SDL_GetCurrentDisplayMode. */
-        if (isLandscape != (currentmode->w > currentmode->h)) {
-            int height = currentmode->w;
-            currentmode->w = currentmode->h;
-            currentmode->h = height;
-        }
-    }
-}
 #endif
-
-- (void)applicationWillResignActive:(UIApplication*)application
-{
-    SDL_VideoDevice *_this = SDL_GetVideoDevice();
-    if (_this) {
-        SDL_Window *window;
-        for (window = _this->windows; window != nil; window = window->next) {
-            SDL_SendWindowEvent(window, SDL_WINDOWEVENT_FOCUS_LOST, 0, 0);
-            SDL_SendWindowEvent(window, SDL_WINDOWEVENT_MINIMIZED, 0, 0);
-        }
-    }
-    SDL_SendAppEvent(SDL_APP_WILLENTERBACKGROUND);
-}
-
-- (void)applicationDidEnterBackground:(UIApplication*)application
-{
-    SDL_SendAppEvent(SDL_APP_DIDENTERBACKGROUND);
-}
-
-- (void)applicationWillEnterForeground:(UIApplication*)application
-{
-    SDL_SendAppEvent(SDL_APP_WILLENTERFOREGROUND);
-}
-
-- (void)applicationDidBecomeActive:(UIApplication*)application
-{
-    SDL_SendAppEvent(SDL_APP_DIDENTERFOREGROUND);
-
-    SDL_VideoDevice *_this = SDL_GetVideoDevice();
-    if (_this) {
-        SDL_Window *window;
-        for (window = _this->windows; window != nil; window = window->next) {
-            SDL_SendWindowEvent(window, SDL_WINDOWEVENT_FOCUS_GAINED, 0, 0);
-            SDL_SendWindowEvent(window, SDL_WINDOWEVENT_RESTORED, 0, 0);
-        }
-    }
-}
-
-- (void)sendDropFileForURL:(NSURL *)url
-{
-    NSURL *fileURL = url.filePathURL;
-    if (fileURL != nil) {
-        SDL_SendDropFile(NULL, fileURL.path.UTF8String);
-    } else {
-        SDL_SendDropFile(NULL, url.absoluteString.UTF8String);
-    }
-    SDL_SendDropComplete(NULL);
-}
-
-#if TARGET_OS_TV
-/* TODO: Use this on iOS 9+ as well? */
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
-{
-    /* TODO: Handle options */
-    [self sendDropFileForURL:url];
-    return YES;
-}
-#endif /* TARGET_OS_TV */
-
-#if !TARGET_OS_TV
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-{
-    [self sendDropFileForURL:url];
-    return YES;
-}
-#endif /* !TARGET_OS_TV */
 
 @end
 

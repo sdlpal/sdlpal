@@ -11,12 +11,20 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install libsdl2-dev libfltk1.3-dev upx-ucl python3-pip fuse imagemagick && pip3 install --user cloudsmith-cli
+      run: sudo apt-get install libfltk1.3-dev libasound2-dev libxrandr-dev upx-ucl pipx fuse imagemagick && pipx install cloudsmith-cli
     - uses: actions/checkout@v4
     - name: submodules
       run: |
         sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
         git submodule init && git submodule update
+    - name: make sdl
+      run: |
+        cd 3rd/SDL
+        mkdir $HOME/cache
+        cmake -DSDL_SHARED=OFF -DSDL_STATIC=ON -DSDL_TEST_LIBRARY=OFF -DCMAKE_INSTALL_PREFIX:PATH=$HOME/cache . -G Unix\ Makefiles
+        cmake --build . --config Release -v
+        cmake --install .
+        echo "PKG_CONFIG_PATH=$HOME/cache/lib/pkgconfig" >> "$GITHUB_ENV"
     - name: make
       run: cd unix && make CCFLAGS="-DAPPIMAGE=1"
     - name: appimage
@@ -27,7 +35,7 @@ jobs:
       env:
         CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
       if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
-      run: $HOME/.local/bin/cloudsmith push raw sdlpal/sdlpal
+      run: pipx ensurepath && cloudsmith push raw sdlpal/sdlpal
            --version `awk -F\" '{print $2;}' generated.h` --name AppImage
            --republish deploy/*.AppImage --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
     - uses: actions/upload-artifact@v4

@@ -17,10 +17,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SDL.h"
-
 #include "options.h"
-#include "common.h"
+#include "timidity/common.h"
 
 /* The paths in this list will be tried whenever we're reading a file */
 static PathList *pathlist = NULL; /* This is a linked list */

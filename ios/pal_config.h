@@ -75,5 +75,6 @@ PAL_C_LINKAGE_END
 #include <sys/time.h>
 
 #define PAL_HAS_GLSL 1
+#define PLATFORM_DEFAULT_SAMPLERATE 48000
 
 #endif

@@ -15,7 +15,7 @@
 #  include <config.h>
 #endif
 
-#include "SDL.h"
+#include "timidity/common.h"
 
 #include "options.h"
 #include "output.h"

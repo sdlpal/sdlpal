@@ -23,19 +23,27 @@
 #ifndef mini_glloader_h
 #define mini_glloader_h
 
+#include "sdl_compat.h"
+
+#if USE_SDL3
+#	include <SDL3/SDL_opengl.h>
+#		if __IOS__
+#			include <SDL3/SDL_opengles.h>
+#			include <SDL3/SDL_opengles2.h>
+#		endif
+#else
+#	include <SDL_opengl.h>
+#		if __IOS__
+#			include <SDL_opengles.h>
+#			include <SDL_opengles2.h>
+#		endif
+#endif
+
 #if __IOS__
-#include <SDL_opengles.h>
-#include <SDL_opengles2.h>
 #include <OpenGLES/ES3/gl.h>
 #include <OpenGLES/ES3/glext.h>
 #define glGenVertexArrays glGenVertexArraysOES
 #define glBindVertexArray glBindVertexArrayOES
-#else
-#ifdef __APPLE__
-#define GL_GLEXT_PROTOTYPES
-#endif
-#include <SDL_video.h>
-#include <SDL_opengl.h>
 #endif
 
 #if __IOS__ || __ANDROID__ || __EMSCRIPTEN__ || __WINRT__ || SDL_VIDEO_DRIVER_RPI
@@ -76,6 +84,7 @@
 #define glActiveTexture _glActiveTexture
 #define glGetUniformLocation _glGetUniformLocation
 #define glGetStringi _glGetStringi
+#define glActiveTextureARB _glActiveTextureARB
 
 extern PFNGLCREATESHADERPROC glCreateShader;
 extern PFNGLSHADERSOURCEPROC glShaderSource;
@@ -107,6 +116,7 @@ extern PFNGLUNIFORM1FPROC glUniform1f;
 extern PFNGLACTIVETEXTUREPROC glActiveTexture;
 extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 extern PFNGLGETSTRINGIPROC glGetStringi;
+extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
 
 extern int initGLExtensions(int major);
 #endif

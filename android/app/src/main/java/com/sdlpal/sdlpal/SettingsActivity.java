@@ -47,7 +47,7 @@ import java.util.List;
 public class SettingsActivity extends AppCompatActivity {
 
     static {
-        System.loadLibrary("SDL2");
+        System.loadLibrary("SDL3");
         System.loadLibrary("main");
     }
 

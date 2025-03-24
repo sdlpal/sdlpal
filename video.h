@@ -150,6 +150,13 @@ VIDEO_SetupTouchArea(
     int draw_h
 );
 
+#if SDL_VERSION_ATLEAST(3,0,0)
+SDL_ScaleMode
+VIDEO_GetScaleMode(
+	VOID
+);
+#endif
+
 PAL_C_LINKAGE_END
 
 #endif

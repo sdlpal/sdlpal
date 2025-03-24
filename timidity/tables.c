@@ -13,7 +13,7 @@
 
 #include <stdio.h>
 
-#include "SDL.h"
+#include "timidity/common.h"
 
 #include "tables.h"
 

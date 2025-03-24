@@ -15,12 +15,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SDL.h"
-
+#include "timidity/common.h"
 #include "timidity.h"
 
+#include "palcfg.h"
+
 #include "options.h"
-#include "common.h"
 #include "instrum.h"
 #include "playmidi.h"
 #include "readmidi.h"
@@ -535,11 +535,13 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
   case AUDIO_S16MSB:
 	  song->write = s32tos16b;
 	  break;
+#if !SDL_VERSION_ATLEAST(3,0,0)
   case AUDIO_U16LSB:
 	  song->write = s32tou16l;
 	  break;
   case AUDIO_U16MSB:
 	  song->write = s32tou16b;
+#endif
 	  break;
 #if SDL_VERSION_ATLEAST(2,0,0)
   case AUDIO_S32LSB:
@@ -558,9 +560,10 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
 	  return NULL;
   }
 
-  song->buffer_size = audio->samples;
-  song->resample_buffer = safe_malloc(audio->samples * sizeof(sample_t));
-  song->common_buffer = safe_malloc(audio->samples * 2 * sizeof(Sint32));
+  uint32_t samples = gConfig.wAudioBufferSize;
+  song->buffer_size = samples;
+  song->resample_buffer = safe_malloc(samples * sizeof(sample_t));
+  song->common_buffer = safe_malloc(samples * 2 * sizeof(Sint32));
   
   song->control_ratio = audio->freq / CONTROLS_PER_SECOND;
   if (song->control_ratio < 1)

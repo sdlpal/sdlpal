@@ -15,11 +15,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SDL.h"
-
 #include "options.h"
+#include "timidity/common.h"
 #include "timidity.h"
-#include "common.h"
 #include "instrum.h"
 #include "playmidi.h"
 

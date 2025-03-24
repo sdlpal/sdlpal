@@ -22,10 +22,8 @@
 // Copyright (C) 2017  SDLPal team
 //
 
-#include "SDL_config.h"
+#include "sdl_compat.h"
 
-#include "SDL.h"
-#include "SDL_endian.h"
 #include "native_midi/native_midi.h"
 
 #import <Foundation/Foundation.h>

@@ -22,6 +22,13 @@
 #include "main.h"
 #include <setjmp.h>
 
+#if SDL_VERSION_ATLEAST(3,0,0)
+#if __EMSCRIPTEN__
+#define SDL_MAIN_HANDLED
+#endif
+    #include <SDL3/SDL_main.h>
+#endif
+
 #if defined(PAL_HAS_GIT_REVISION)
 # undef PAL_GIT_REVISION
 # include "generated.h"
@@ -156,11 +163,14 @@ PAL_Shutdown(
    PAL_FreeGlobals();
 
    g_exit_code = exit_code;
-#if !__EMSCRIPTEN__
+#if !__EMSCRIPTEN__ && SDL_MAJOR_VERSION < 3
    longjmp(g_exit_jmp_buf, 1);
 #else
    SDL_Quit();
    UTIL_Platform_Quit();
+#if !__WINRT__ && !__IOS__
+   exit(0);
+#endif
    return;
 #endif
 }
@@ -221,6 +231,8 @@ PAL_SplashScreen(
    int            cranepos[9][3], i, iImgPos = 200, iCraneFrame = 0, iTitleHeight;
    DWORD          dwTime, dwBeginTime;
    BOOL           fUseCD = TRUE;
+
+   memset(rgCurrentPalette, 0xff, sizeof(SDL_Color) * 256);
 
    if (PAL_PlayAVI("2.avi")) return;
 
@@ -476,7 +488,7 @@ main(
    UTIL_Platform_Startup(argc,argv);
 #endif
 
-#if !__EMSCRIPTEN__
+#if !__EMSCRIPTEN__ && SDL_MAJOR_VERSION < 3
    if (setjmp(g_exit_jmp_buf) != 0)
    {
 	   // A longjmp is made, should exit here
@@ -490,7 +502,7 @@ main(
    //
    // Initialize SDL
    //
-   if (SDL_Init(PAL_SDL_INIT_FLAGS) == -1)
+   if (SDL_Init(PAL_SDL_INIT_FLAGS) == SDL_FAIL)
    {
 	   TerminateOnError("Could not initialize SDL: %s.\n", SDL_GetError());
    }
