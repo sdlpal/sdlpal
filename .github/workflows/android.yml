@@ -11,7 +11,18 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install python3-pip && pip3 install --user cloudsmith-cli
+      run: sudo apt-get install pipx && pipx install cloudsmith-cli
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    - name: Setup Android build-tools
+      run: |
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;36.0.0"
+        echo "$ANDROID_HOME/build-tools/36.0.0" >> "$GITHUB_PATH"
     - uses: actions/checkout@v4
     - name: submodules
       run: |
@@ -24,12 +35,13 @@ jobs:
         ./gradlew assembleRelease
         cd ..
         mkdir deploy
-        jarsigner -storetype pkcs12 -keystore winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx -sigalg SHA1withRSA -digestalg SHA1 -signedjar deploy/sdlpal-release.apk -storepass "" android/app/build/outputs/apk/release/app-release-unsigned.apk 1
+        zipalign -f -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk deploy/sdlpal.apk
+        apksigner sign --v1-signing-enabled --v2-signing-enabled --v3-signing-enabled --v4-signing-enabled --ks winrt/SDLPal.UWP/SDLPal_TemporaryKey.pfx --ks-pass pass:"" deploy/sdlpal.apk
     - name: deploy
       env:
         CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
       if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
-      run: $HOME/.local/bin/cloudsmith push raw sdlpal/sdlpal
+      run: pipx ensurepath && cloudsmith push raw sdlpal/sdlpal
            --version `awk -F\" '{print $2;}' generated.h` --name Android
            --republish deploy/*.apk --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
     - uses: actions/upload-artifact@v4

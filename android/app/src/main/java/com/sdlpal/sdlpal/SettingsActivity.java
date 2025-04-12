@@ -24,22 +24,26 @@ package com.sdlpal.sdlpal;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.AppCompatSpinner;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import com.nononsenseapps.filepicker.*;
+import android.provider.DocumentsContract;
+import android.util.Log;
+import android.database.Cursor;
+import android.media.AudioManager;
 
 import java.io.File;
 import java.util.List;
@@ -50,6 +54,8 @@ public class SettingsActivity extends AppCompatActivity {
         System.loadLibrary("SDL3");
         System.loadLibrary("main");
     }
+
+    private static final String TAG = "settings-debug";
 
     public static native boolean loadConfigFile();
     public static native boolean saveConfigFile();
@@ -77,8 +83,9 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String MusicVolume = "MusicVolume";
     private static final String SoundVolume = "SoundVolume";
     private static final String CDFormat = "CD";
-    private static final String GamePath = "GamePath";
+    public  static final String GamePath = "GamePath";
     private static final String SavePath = "SavePath";
+    private static final String ShaderPath = "ShaderPath";
     private static final String MessageFileName = "MessageFileName";
     private static final String LogFileName = "LogFileName";
     private static final String FontFileName = "FontFileName";
@@ -91,7 +98,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String TextureWidth = "TextureWidth";
     private static final String TextureHeight = "TextureHeight";
 
-    private static final int AudioSampleRates[] = { 11025, 22050, 44100 };
+    private static final int AudioSampleRates[] = { 11025, 22050, 44100, 48000 };
     private static final int AudioBufferSizes[] = { 512, 1024, 2048, 4096, 8192 };
     private static final int OPLSampleRates[] = { 11025, 12429, 22050, 24858, 44100, 49716 };
     private static final String CDFormats[] = { "None", "MP3", "OGG", "OPUS" };
@@ -101,19 +108,31 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String AspectRatios[] = { "16:10", "4:3" };
 
     private SettingsActivity mInstance = this;
+    private static SettingsActivity mSingleton = null;
 
     private static final int BROWSE_GAMEDIR_CODE = 30001;
     private static final int BROWSE_MSGFILE_CODE = 30002;
     private static final int BROWSE_FONTFILE_CODE = 30003;
     private static final int BROWSE_SHADER_CODE = 30004;
 
+    private static int nativeSampleRate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mSingleton = this;
         super.onCreate(savedInstanceState);
+
+        AudioManager audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        if (audioManager != null) {
+            nativeSampleRate = audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE) != null ? Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)) : 48000;
+        }
+
         setContentView(R.layout.activity_settings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setSubtitle(getResources().getString(R.string.title_settings) + " (" + getGitRevision() + ")");
+
+        findViewById(R.id.edFolder).setFocusable(false);
 
         ((SwitchCompat)findViewById(R.id.swMsgFile)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -212,11 +231,9 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.btnBrowseFolder).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(mInstance, FilePickerActivity.class);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
-                i.putExtra(FilePickerActivity.EXTRA_START_PATH, ((EditText)findViewById(R.id.edFolder)).getText().toString());
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                i.putExtra(DocumentsContract.EXTRA_INITIAL_URI, MainActivity.getDocTreeUri());
 
                 startActivityForResult(i, BROWSE_GAMEDIR_CODE);
             }
@@ -225,11 +242,9 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.btnBrowseMsgFile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(mInstance, FilePickerActivity.class);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                i.putExtra(FilePickerActivity.EXTRA_START_PATH, ((EditText)findViewById(R.id.edFolder)).getText().toString());
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.putExtra(DocumentsContract.EXTRA_INITIAL_URI, MainActivity.getDocumentUriFromPath(MainActivity.getBasePath()+((EditText)findViewById(R.id.edMsgFile)).getText().toString()));
+                i.setType("*/*");
 
                 startActivityForResult(i, BROWSE_MSGFILE_CODE);
             }
@@ -238,11 +253,9 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.btnBrowseFontFile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(mInstance, FilePickerActivity.class);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                i.putExtra(FilePickerActivity.EXTRA_START_PATH, ((EditText)findViewById(R.id.edFolder)).getText().toString());
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.putExtra(DocumentsContract.EXTRA_INITIAL_URI, MainActivity.getDocumentUriFromPath(MainActivity.getBasePath()+((EditText)findViewById(R.id.edFontFile)).getText().toString()));
+                i.setType("*/*");
 
                 startActivityForResult(i, BROWSE_FONTFILE_CODE);
             }
@@ -251,17 +264,18 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.btnBrowseShader).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(mInstance, FilePickerActivity.class);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                i.putExtra(FilePickerActivity.EXTRA_START_PATH, ((EditText)findViewById(R.id.edFolder)).getText().toString());
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.putExtra(DocumentsContract.EXTRA_INITIAL_URI, MainActivity.getDocumentUriFromPath(MainActivity.getBasePath()+((EditText)findViewById(R.id.edShader)).getText().toString()));
+                i.setType("*/*");
 
                 startActivityForResult(i, BROWSE_SHADER_CODE);
             }
         });
 
         resetConfigs();
+
+        //1st time override for android
+        ((EditText)findViewById(R.id.edFolder)).setText(MainActivity.getBasePath());
 
         if (PalActivity.crashed) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -278,18 +292,40 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         if (resultCode == Activity.RESULT_OK) {
             String filePath = null;
-            try {
-                List<Uri> files = Utils.getSelectedFilesFromResult(intent);
-                for (Uri uri : files) {
-                    File file = Utils.getFileForUri(uri);
-                    filePath = file.getAbsolutePath();
-                    break;
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                filePath = MainActivity.getPath(uri);
+                String basePath = MainActivity.getBasePath();
+                if( requestCode == BROWSE_GAMEDIR_CODE ) {
+                    if( !basePath.equals(filePath) ) {
+                        getContentResolver().releasePersistableUriPermission(MainActivity.getDocTreeUri(), Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        MainActivity.setPersistedUri(uri);
+                        loadConfigFile();
+                        resetConfigs();
+                    }
+                }else{
+                    if( filePath.isEmpty() || !filePath.startsWith(basePath) ) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setMessage(R.string.msg_path_unsuitable);
+                        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        builder.create().show();
+                        return;
+                    }
+                    filePath = filePath.replace(basePath, "");
+                    if(filePath.startsWith("/")) {
+                        filePath = filePath.substring(1);
+                    }
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
             if (filePath != null) {
                 if (requestCode == BROWSE_GAMEDIR_CODE) {
@@ -336,11 +372,8 @@ public class SettingsActivity extends AppCompatActivity {
         ((SeekBar)findViewById(R.id.sbSFXVol)).setProgress(getConfigInt(SoundVolume, true));
         ((SeekBar)findViewById(R.id.sbQuality)).setProgress(getConfigInt(ResampleQuality, true));
 
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            ((EditText)findViewById(R.id.edFolder)).setText(Environment.getExternalStorageDirectory().getPath() + "/sdlpal/");
-        } else {
-            ((EditText)findViewById(R.id.edFolder)).setText("/sdcard/sdlpal/");
-        }
+        ((EditText)findViewById(R.id.edFolder)).setText(MainActivity.getBasePath());
+
         ((EditText)findViewById(R.id.edMsgFile)).setText("");
         ((EditText)findViewById(R.id.edFontFile)).setText("");
         ((EditText)findViewById(R.id.edLogFile)).setText("");
@@ -355,7 +388,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((SwitchCompat)findViewById(R.id.swStereo)).setChecked(getConfigBoolean(Stereo, true));
 
         ((AppCompatSpinner)findViewById(R.id.spLogLevel)).setSelection(getConfigInt(LogLevel, true));
-        ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, true), AudioSampleRates, 2));    // 44100Hz
+        ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(nativeSampleRate, AudioSampleRates, 3));    // 48000Hz
         ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, true), AudioBufferSizes, 1));    // 1024
         ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, true), CDFormats, 1));     // None
         ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, true), MusicFormats, 1));    // RIX
@@ -399,7 +432,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((SwitchCompat)findViewById(R.id.swEnableHDR)).setChecked(getConfigBoolean(EnableHDR, false));
 
         ((AppCompatSpinner)findViewById(R.id.spLogLevel)).setSelection(getConfigInt(LogLevel, false));
-        ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, false), AudioSampleRates, 2));
+        ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, false), AudioSampleRates, 3));
         ((AppCompatSpinner)findViewById(R.id.spBuffer)).setSelection(findMatchedIntIndex(getConfigInt(AudioBufferSize, false), AudioBufferSizes, 1));
         ((AppCompatSpinner)findViewById(R.id.spCDFmt)).setSelection(findMatchedStringIndex(getConfigString(CDFormat, false), CDFormats, 1));
         ((AppCompatSpinner)findViewById(R.id.spMusFmt)).setSelection(findMatchedStringIndex(getConfigString(MusicFormat, false), MusicFormats, 1));
@@ -431,17 +464,8 @@ public class SettingsActivity extends AppCompatActivity {
         setConfigInt(ResampleQuality, ((SeekBar)findViewById(R.id.sbQuality)).getProgress());
 
         setConfigString(GamePath, ((EditText)findViewById(R.id.edFolder)).getText().toString());
-        if (isDirWritable(((EditText)findViewById(R.id.edFolder)).getText().toString())) {
-            setConfigString(SavePath, ((EditText)findViewById(R.id.edFolder)).getText().toString());
-        } else {
-            String savePath = Environment.getExternalStorageDirectory().getPath() + "/sdlpal/";
-            if (isDirWritable(savePath)) {
-                setConfigString(SavePath, savePath);
-            } else {
-                savePath = getApplicationContext().getFilesDir().getPath();
-                setConfigString(SavePath, savePath);
-            }
-        }
+        setConfigString(SavePath, ((EditText)findViewById(R.id.edFolder)).getText().toString());
+        setConfigString(ShaderPath, ((EditText)findViewById(R.id.edFolder)).getText().toString());
         setConfigString(MessageFileName, ((SwitchCompat)findViewById(R.id.swMsgFile)).isChecked() ? ((EditText)findViewById(R.id.edMsgFile)).getText().toString() : null);
         setConfigString(FontFileName, ((SwitchCompat)findViewById(R.id.swFontFile)).isChecked() ? ((EditText)findViewById(R.id.edFontFile)).getText().toString() : null);
         setConfigString(LogFileName, ((SwitchCompat)findViewById(R.id.swLogFile)).isChecked() ? ((EditText)findViewById(R.id.edLogFile)).getText().toString() : null);

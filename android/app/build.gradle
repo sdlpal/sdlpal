@@ -7,16 +7,21 @@ android {
         checkReleaseBuilds false
     }
 
-    compileSdkVersion 33
+    tasks.withType(JavaCompile) {
+        //options.deprecation = true
+    }
+
+    compileSdkVersion 36
 
     defaultConfig {
         applicationId "com.sdlpal.sdlpal"
-        minSdkVersion 10
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 36
+        ndkVersion "23.1.7779620"
         multiDexEnabled true
         externalNativeBuild {
             ndkBuild {
-                arguments "NDK_APPLICATION_MK:=src/main/cpp/Application.mk"
+                arguments "NDK_APPLICATION_MK:=src/main/cpp/Application.mk", "-j"
                 abiFilters "armeabi-v7a", "arm64-v8a"
             }
         }
@@ -49,15 +54,14 @@ android {
 }
 
 dependencies {
+	def appcompat_version = "1.7.0"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    implementation 'com.android.support:appcompat-v7:25.3.1'
-    implementation 'com.android.support:gridlayout-v7:25.3.1'
-    implementation 'com.android.support:design:25.3.1'
-    implementation 'com.nononsenseapps:filepicker:4.2.1'
-    implementation 'com.android.support:multidex:1.0.3'
-    androidTestImplementation 'com.android.support:multidex:1.0.2'
-    androidTestImplementation 'com.android.support:multidex-instrumentation:1.0.2'
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    // For loading and tinting drawables on older versions of the platform
+    implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
+    implementation "androidx.gridlayout:gridlayout:1.1.0"
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation "androidx.documentfile:documentfile:1.0.1"
 }

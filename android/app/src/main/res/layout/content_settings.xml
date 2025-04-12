@@ -51,7 +51,7 @@
                     android:text="@string/action_browse" />
             </LinearLayout>
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swMsgFile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                     android:text="@string/action_browse" />
             </LinearLayout>
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swFontFile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
                     android:text="@string/action_browse" />
             </LinearLayout>
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swTouch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="228dp" />
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swAVI"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="228dp" />
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swAspect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
                 android:ems="10"
                 android:inputType="numberSigned" />
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swEnableGLSL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -188,7 +188,7 @@
                         android:text="@string/action_browse" />
                 </LinearLayout>
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/swEnableHDR"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -198,7 +198,7 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swStereo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -244,7 +244,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_audrate" />
 
-            <android.support.v7.widget.AppCompatSpinner
+            <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spSample"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -255,7 +255,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_bufsize" />
 
-            <android.support.v7.widget.AppCompatSpinner
+            <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spBuffer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -266,7 +266,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_cdfmt" />
 
-            <android.support.v7.widget.AppCompatSpinner
+            <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spCDFmt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -277,7 +277,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_musfmt" />
 
-            <android.support.v7.widget.AppCompatSpinner
+            <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spMusFmt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -294,7 +294,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/label_oplrate" />
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/spOPLRate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -305,7 +305,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/label_oplcore" />
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/spOPLCore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -316,13 +316,13 @@
                     android:layout_height="wrap_content"
                     android:text="@string/label_oplchip" />
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/spOPLChip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:entries="@array/opl_chip" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/swSurround"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -335,13 +335,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_loglevel" />
 
-            <android.support.v7.widget.AppCompatSpinner
+            <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spLogLevel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/log_level" />
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swLogFile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -354,7 +354,7 @@
                 android:ems="10"
                 android:inputType="textUri" />
 
-            <android.support.v7.widget.GridLayout
+            <androidx.gridlayout.widget.GridLayout
                 app:columnCount="3"
                 app:rowCount="1"
                 android:layout_width="match_parent"
@@ -392,7 +392,7 @@
                     android:text="@string/action_finish"
                     app:layout_column="2"
                     app:layout_columnWeight="1" />
-            </android.support.v7.widget.GridLayout>
+            </androidx.gridlayout.widget.GridLayout>
 
         </LinearLayout>
     </ScrollView>

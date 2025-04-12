@@ -28,6 +28,7 @@
 #include "sdl_compat.h"
 
 #include "native_midi/native_midi.h"
+#include <stdlib.h>
 
 #include <android/log.h>
 #define TAG "sdlpal-jni"
