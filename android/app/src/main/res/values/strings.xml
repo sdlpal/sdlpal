@@ -25,6 +25,7 @@
     <string name="msg_exit">Settings have been saved and the game will be started directly on next launch. You can use the main menu option inside the game to return to this page.</string>
     <string name="msg_crash">The program is abnormally terminated last time. The setting page has been launched for you. Please check if there are any incorrect settings.</string>
     <string name="msg_empty">The game resource folder must be specified!</string>
+    <string name="msg_path_unsuitable">The file must be put in within the resources folder!</string>
     <string name="label_loglevel">Logging level</string>
     <string name="action_usemsgfile">Customized message file</string>
     <string name="action_usefontfile">Customized font file</string>

@@ -45,7 +45,6 @@ public class PalActivity extends SDLActivity {
     public static boolean crashed = false;
 
     private static MediaPlayer JNI_mediaplayer_load(String filename){
-        Log.v(TAG, "loading midi:" + filename);
         if (mediaPlayer == null) {
             mediaPlayer = new MediaPlayer();
         }

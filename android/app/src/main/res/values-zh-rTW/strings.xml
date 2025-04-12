@@ -22,6 +22,7 @@
     <string name="label_oplchip">OPL 模拟晶片</string>
     <string name="msg_crash">上次程式異常退出，已顯示設定頁供您檢查設定是否正確。</string>
     <string name="msg_empty">必須指定遊戲資料檔所在資料夾！</string>
+    <string name="msg_path_unsuitable">該檔案必須存放於遊戲資料檔所在資料夾內!</string>
     <string name="msg_exit">您的設定已保存，下次開啟時將直接開始遊戲。在遊戲中，您可以通過「系統」功能表的「返回設定」項回到本設定頁。</string>
     <string name="action_restore">撤銷修改</string>
     <string name="label_loglevel">日誌記錄級別</string>

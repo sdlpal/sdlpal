@@ -41,6 +41,8 @@
 #include <sys/stat.h>
 #include <string>
 
+#include <fcntl.h>
+
 static std::string g_basepath, g_configpath, g_cachepath, g_midipath;
 static int g_screenWidth = 640, g_screenHeight = 400;
 const char* midiInterFile;
@@ -376,4 +378,41 @@ UTIL_Platform_Quit(
 )
 {
     unlink((g_cachepath + "running").c_str());
+}
+
+EXTERN_C_LINKAGE
+int SAF_access(const char *path, int mode)
+{
+    if( strncmp(path, "/data", 5) == 0 ) {
+        struct stat   buffer;   
+        return stat(path, &buffer);
+    }
+    JNIEnv* env = getJNIEnv();
+    jclass clazz = env->FindClass("com/sdlpal/sdlpal/MainActivity");
+    jmethodID mid = env->GetStaticMethodID(clazz, "SAF_access", "(Ljava/lang/String;I)I");
+    jstring str = env->NewStringUTF(path);
+    int ret = env->CallStaticIntMethod(clazz, mid, str, mode);
+    env->DeleteLocalRef(str);
+    env->DeleteLocalRef(clazz);
+    return ret;
+}
+
+EXTERN_C_LINKAGE
+FILE *SAF_fopen(const char *path, const char *mode)
+{
+    JNIEnv* env = getJNIEnv();
+    jclass clazz = env->FindClass("com/sdlpal/sdlpal/MainActivity");
+    jmethodID mid = env->GetStaticMethodID(clazz, "SAF_fopen", "(Ljava/lang/String;Ljava/lang/String;)I");
+    jstring str = env->NewStringUTF(path);
+    jstring str2 = env->NewStringUTF(mode);
+    int fd = env->CallStaticIntMethod(clazz, mid, str, str2);
+    env->DeleteLocalRef(str);
+    env->DeleteLocalRef(str2);
+    env->DeleteLocalRef(clazz);
+    //fix android 10+ w mode dont truncate problem
+    if(strncmp(mode,"w",1) == 0) {
+        ftruncate(fd, 0);
+    }
+    FILE *fp = fdopen(fd, mode);
+    return fp;
 }

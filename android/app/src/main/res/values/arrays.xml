@@ -3,6 +3,7 @@
         <item>11025</item>
         <item>22050</item>
         <item>44100</item>
+        <item>48000</item>
     </string-array>
     <string-array name="buffer_size" translatable="false">
         <item>512</item>
