@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install python3-pip && sudo pip3 install cloudsmith-cli
+      run: sudo apt-get install python3-pip && sudo pip3 install --user cloudsmith-cli
     - uses: actions/checkout@v4
     - name: submodules
       run: |
