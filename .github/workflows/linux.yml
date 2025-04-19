@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Install Dependencies
       run: sudo apt-get install libsdl2-dev libfltk1.3-dev upx-ucl python3-pip fuse && sudo pip3 install cloudsmith-cli
