@@ -985,31 +985,33 @@ PAL_InterpretInstruction(
       }
       if (x <= PAL_CountItem(pScript->rgwOperand[0]) || pScript->rgwOperand[2] == 0)
       {
-      if (!PAL_AddItemToInventory(pScript->rgwOperand[0], -x))
-      {
-         //
-         // Try removing equipped item
-         //
-         for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
+         if (!PAL_AddItemToInventory(pScript->rgwOperand[0], -x))
          {
-            w = gpGlobals->rgParty[i].wPlayerRole;
+            x -= gpGlobals->nLastRemovedItem;
 
-            for (j = 0; j < MAX_PLAYER_EQUIPMENTS; j++)
+            //
+            // Try removing equipped item
+            //
+            for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
             {
-               if (gpGlobals->g.PlayerRoles.rgwEquipment[j][w] == pScript->rgwOperand[0])
-               {
-                  PAL_RemoveEquipmentEffect(w, j);
-                  gpGlobals->g.PlayerRoles.rgwEquipment[j][w] = 0;
+               w = gpGlobals->rgParty[i].wPlayerRole;
 
-                  if (--x == 0)
+               for (j = 0; j < MAX_PLAYER_EQUIPMENTS; j++)
+               {
+                  if (gpGlobals->g.PlayerRoles.rgwEquipment[j][w] == pScript->rgwOperand[0])
                   {
-                     i = 9999;
-                     break;
+                     PAL_RemoveEquipmentEffect(w, j);
+                     gpGlobals->g.PlayerRoles.rgwEquipment[j][w] = 0;
+
+                     if (--x == 0)
+                     {
+                        i = 9999;
+                        break;
+                     }
                   }
                }
             }
          }
-      }
       }
       else
           wScriptEntry = pScript->rgwOperand[2] - 1;
