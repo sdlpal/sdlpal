@@ -540,6 +540,7 @@ typedef struct tagGLOBALVARS
    WORD             wChaseRange;
    WORD             wChasespeedChangeCycles;
    USHORT           nFollower;
+   SHORT            nLastRemovedItem;    // The number of items removed last time in the inventory
 
    DWORD            dwCash;              // amount of cash
 

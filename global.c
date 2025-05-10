@@ -1151,6 +1151,7 @@ PAL_AddItemToInventory(
             //
             // This item has been run out
             //
+            gpGlobals->nLastRemovedItem = gpGlobals->rgInventory[index].nAmount;
             gpGlobals->rgInventory[index].nAmount = 0;
             return FALSE;
          }
