@@ -985,9 +985,16 @@ PAL_InterpretInstruction(
       }
       if (x <= PAL_CountItem(pScript->rgwOperand[0]) || pScript->rgwOperand[2] == 0)
       {
-      x = PAL_AddItemToInventory(pScript->rgwOperand[0], -x);
-      if (x <= 0)
+      y = PAL_AddItemToInventory(pScript->rgwOperand[0], -x);
+      if (y <= 0)
       {
+         //
+         // Check if it's a partial removal and set the remaining amount
+         //
+         if (y < 0)
+         {
+            x = -y;
+         }
          //
          // Try removing equipped item
          //
