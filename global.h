@@ -601,7 +601,7 @@ PAL_GetItemIndexToInventory(
    INT* index
 );
 
-BOOL
+INT
 PAL_AddItemToInventory(
    WORD          wObjectID,
    INT           iNum

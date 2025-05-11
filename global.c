@@ -1059,7 +1059,7 @@ PAL_GetItemIndexToInventory(
    return fFound;
 }
 
-BOOL
+INT
 PAL_AddItemToInventory(
    WORD          wObjectID,
    INT           iNum
@@ -1077,7 +1077,9 @@ PAL_AddItemToInventory(
 
   Return value:
 
-    TRUE if succeeded, FALSE if failed.
+    TRUE(1) if succeeded.
+    FALSE(0) if failed and inventory keeps unmodified.
+    Negative value indicates that a run-out case happened and inventory is cleared.
 
 --*/
 {
@@ -1149,10 +1151,11 @@ PAL_AddItemToInventory(
          if (gpGlobals->rgInventory[index].nAmount < iNum)
          {
             //
-            // This item has been run out
+            // This item has been run out, should return the shortage amount for further processing
             //
+            iNum -= gpGlobals->rgInventory[index].nAmount;
             gpGlobals->rgInventory[index].nAmount = 0;
-            return FALSE;
+            return -iNum;
          }
 
          gpGlobals->rgInventory[index].nAmount -= iNum;
