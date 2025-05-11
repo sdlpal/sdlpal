@@ -985,7 +985,8 @@ PAL_InterpretInstruction(
       }
       if (x <= PAL_CountItem(pScript->rgwOperand[0]) || pScript->rgwOperand[2] == 0)
       {
-      if (!PAL_AddItemToInventory(pScript->rgwOperand[0], -x))
+      x = PAL_AddItemToInventory(pScript->rgwOperand[0], -x);
+      if (x <= 0)
       {
          //
          // Try removing equipped item
