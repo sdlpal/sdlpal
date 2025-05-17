@@ -216,13 +216,21 @@ VIDEO_Startup(
 
 #if SDL_VERSION_ATLEAST(3,0,0)
     gpRenderer = SDL_CreateRenderer(gpWindow, NULL);
-    SDL_SetRenderVSync(gpRenderer, 1);
+    UTIL_LogOutput(LOGLEVEL_DEBUG, "renderer backend:%s\n", SDL_GetRendererName(gpRenderer));
+    UTIL_LogOutput(LOGLEVEL_DEBUG, "Trying to enable VRR\n");
+    if (SDL_SetRenderVSync(gpRenderer, SDL_RENDERER_VSYNC_ADAPTIVE) != SDL_OK) {
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "Failed, fallback to vsync\n");
+        SDL_SetRenderVSync(gpRenderer, 1);
+    }
+    else {
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "Got VRR works\n");
+    }
 #else
    gpRenderer = SDL_CreateRenderer(gpWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 #endif
 
 #if SDL_VERSION_ATLEAST(3,3,0)
-   SDL_SetDefaultTextureScaleMode(gpRenderer, getScaleMode());
+   SDL_SetDefaultTextureScaleMode(gpRenderer, VIDEO_GetScaleMode());
 #endif
 
    gRenderBackend.Setup();
