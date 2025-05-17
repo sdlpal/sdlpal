@@ -408,6 +408,8 @@ PAL_PaletteFade(
    PAL_LARGE SDL_Color      palette[256];
    PAL_LARGE SDL_Color		t[256];
 
+   memset(t, 0xff, sizeof(t));
+
    if (newpalette == NULL)
    {
       return;
