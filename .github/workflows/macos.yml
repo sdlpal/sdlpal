@@ -3,6 +3,7 @@ name: macOS CI
 on:
   push:
     branches: '*'
+    tags: 'v*'
   pull_request:
     branches: [ "master" ]
 
@@ -38,4 +39,11 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         path: deploy
+    - uses: xresloader/upload-to-github-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        file: deploy/*
+        tags: true
+        draft: true
 
