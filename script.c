@@ -2519,7 +2519,7 @@ PAL_InterpretInstruction(
       //
       // Jump if the specified item is not equipped
       //
-      y = FALSE;
+      y = 0;
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
          w = gpGlobals->rgParty[i].wPlayerRole;
@@ -2527,13 +2527,11 @@ PAL_InterpretInstruction(
          {
             if (gpGlobals->g.PlayerRoles.rgwEquipment[x][w] == pScript->rgwOperand[0])
             {
-               y = TRUE;
-               i = 999;
-               break;
+               y++;
             }
          }
       }
-      if (!y)
+      if (y < pScript->rgwOperand[1])
       {
          wScriptEntry = pScript->rgwOperand[2] - 1;
       }
