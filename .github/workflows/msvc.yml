@@ -1,0 +1,71 @@
+name: MSVC CI
+
+on:
+  push:
+    branches: '*'
+    tags: 'v*'
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-2025
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+    - name: Install Dependencies
+      run: |
+        pip install pipx
+        pipx install cloudsmith-cli
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+    - name: Install UPX
+      uses: crazy-max/ghaction-upx@v3
+      with:
+        install-only: true
+    - uses: actions/checkout@v4
+    - name: submodules
+      run: |
+        sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
+        git submodule init && git submodule update
+    - name: build
+      run: |
+        cd win32
+        msbuild /nologo /m sdlpal.sln /p:Configuration=Release /p:Platform=x64
+        cp x64\Release\sdlpal.exe sdlpal.exe
+        upx --best --lzma sdlpal.exe
+        Compress-Archive -path sdlpal.exe -DestinationPath sdlpal-win32-msvc.zip 
+        mkdir ../deploy/
+        mv sdlpal-win32-msvc.zip ../deploy/
+        cd ..
+    - name: deploy
+      if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
+      env:
+        CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
+      run: |
+        pipx ensurepath
+        $COMMIT_DATE=((git show -s --format=%cs)|out-string).trim()
+        $REV=((git rev-list --count HEAD)|out-string).trim()
+        $COMMIT_ID=((git rev-parse --short HEAD)|out-string).trim()
+        $VERSION="v$COMMIT_DATE-r$REV-g$COMMIT_ID"
+        cloudsmith upload raw sdlpal/sdlpal "deploy/sdlpal-win32-msvc.zip" --version $VERSION --name win32-msvc --republish --tags "branch/$env:GITHUB_REF_NAME"
+    - uses: actions/upload-artifact@v4
+      with:
+        path: deploy
+    - uses: xresloader/upload-to-github-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        file: deploy/*
+        tags: true
+        draft: true
+    # uncomment belowing section if you want to debug the build
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
