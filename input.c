@@ -121,10 +121,14 @@ PAL_DetectJoystick(
             SDL_JoystickID instance_id = joysticks[i];
             if (PAL_IS_VALID_JOYSTICK(SDL_GetJoystickNameForID(instance_id)))
             {
-                g_pJoy = SDL_OpenJoystick(i);
+                g_pJoy = SDL_OpenJoystick(instance_id);
                 break;
             }
         }
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "PAL_DetectJoystick: %d joysticks found; choose %s\n", numjoysticks, SDL_GetJoystickName(g_pJoy));
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "This joystick has %d axes, %d hats, %d balls, and %d buttons\n",
+            SDL_GetNumJoystickAxes(g_pJoy), SDL_GetNumJoystickHats(g_pJoy),
+            SDL_GetNumJoystickBalls(g_pJoy), SDL_GetNumJoystickButtons(g_pJoy));
     }
 #else
     if (SDL_NumJoysticks() > 0 && g_fUseJoystick)
