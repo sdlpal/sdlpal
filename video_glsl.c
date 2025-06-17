@@ -46,6 +46,7 @@ extern SDL_Texture       *gpTouchOverlay;
 extern SDL_Rect           gOverlayRect;
 extern SDL_Rect           gTextureRect;
 
+#if SDL_VERSION_ATLEAST(3,0,0)
 GLint VIDEO_GLSL_GetScaleMode()
 {
     GLint scaleMode = -1;
@@ -63,6 +64,7 @@ GLint VIDEO_GLSL_GetScaleMode()
     }
     return scaleMode;
 }
+#endif
 
 static int gRendererWidth;
 static int gRendererHeight;

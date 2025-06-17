@@ -251,6 +251,8 @@ extern SDL_DECLSPEC int SDLCALL SDL_ConvertAudio(SDL_AudioCVT* cvt);
 #define SDL_JoystickEventState SDL_SetJoystickEventsEnabled
 #undef SDL_JoystickClose
 #define SDL_JoystickClose SDL_CloseJoystick
+#undef SDL_JoystickGetAxis
+#define SDL_JoystickGetAxis SDL_GetJoystickAxis
 
 #undef SDL_FINGERDOWN
 #define SDL_FINGERDOWN SDL_EVENT_FINGER_DOWN

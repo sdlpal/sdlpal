@@ -269,7 +269,7 @@ AUDIO_OpenDevice(
 
    UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio: requesting audio spec:freq %d, format %d, channels %d, samples %d\n", gAudioDevice.spec.freq, gAudioDevice.spec.format,  gAudioDevice.spec.channels);
 
-   if (SDL_OpenAudio(&gAudioDevice.spec, &spec) != SDL_OK)
+   if (SDL_OpenAudio(&gAudioDevice.spec, &spec) < 0)
    {
       UTIL_LogOutput(LOGLEVEL_VERBOSE, "OpenAudio ERROR: %s, got spec:freq %d, format %d, channels %d, samples %d\n", SDL_GetError(), spec.freq, spec.format, spec.channels);
       //
