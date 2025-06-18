@@ -910,20 +910,16 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
     for( int i = 0; i < MAX_TEXTURES; i++ ) {
         if( framePrevTextures[i] )
             SDL_DestroyTexture(framePrevTextures[i]);
-        framePrevTextures[i] = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gConfig.dwTextureWidth, gConfig.dwTextureHeight);
+        framePrevTextures[i] = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, gConfig.dwTextureWidth, gConfig.dwTextureHeight);
 #if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
         SDL_SetTextureScaleMode(framePrevTextures[i], VIDEO_GetScaleMode());
 #endif
-     }
-    return framePrevTextures[0];
+    }
+    return SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gConfig.dwScreenWidth, gConfig.dwScreenHeight);
 }
 
 void VIDEO_GLSL_RenderCopy()
 {
-    gpTexture = framePrevTextures[0]; //...
-    if( gpTexture == NULL )
-        return;
-    
 #if SDL_MAJOR_VERSION<3
     if( gGLSLP.shader_params[0].filter_linear)
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
@@ -967,8 +963,6 @@ void VIDEO_GLSL_RenderCopy()
     for( int i = PREV_TEXTURES; i > 0; i-- )
         framePrevTextures[i] = framePrevTextures[i-1];
     framePrevTextures[0] = prevTexture;
-    
-    gpTexture = NULL; //prevent its deleted when resize...-_-|||
 }
 
 const char *get_gl_profile(int flags) {
