@@ -1218,7 +1218,6 @@ void VIDEO_GLSL_Destroy() {
         if( framePrevTextures[i] )
             SDL_DestroyTexture(framePrevTextures[i]);
     memset(framePrevTextures,0,sizeof(framePrevTextures));
-    gpTexture = NULL;
 }
 
 static int slot = 0;
