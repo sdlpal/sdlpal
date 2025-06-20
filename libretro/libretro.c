@@ -34,6 +34,8 @@ static retro_audio_sample_batch_t  audio_batch_cb;
 static retro_environment_t         environ_cb;
 static SDL_Thread                 *sdlpal_thread;
 static bool                        platform_init_done = false;
+static double                      speed_scale = 1.0;
+static Uint32                      ticks = 0;
 
 
 static void fallback_log(enum retro_log_level level, const char *fmt, ...)
@@ -50,53 +52,65 @@ unsigned retro_api_version(void)
     return RETRO_API_VERSION;
 }
 
+static void frame_cb(retro_usec_t usec)
+{
+    ticks += speed_scale * usec / 1000;
+}
+
 void retro_set_environment(retro_environment_t cb)
 {
     struct retro_log_callback log;
+    struct retro_frame_time_callback frame;
     bool no_game = true;
 
     struct retro_core_option_definition opts[] = {
         {
+            .key = "sdlpal_speed_scale",
+            .desc = "Game speed scale",
+            .values = {{"0.5"},{"1.0"},{"2.0"},{"3.0"},{"4.0"},{"5.0"},{"6.0"},{"7.0"},{"8.0"},{"9.0"},{"10.0"}},
+            .default_value = "1.0",
+        },
+        {
             .key = "sdlpal_sample_rate",
-            .desc = "Audio sample rate",
+            .desc = "Audio sample rate (restart required)",
             .values = {{"44100"},{"22050"},{NULL}},
             .default_value = "44100",
         },
         {
             .key = "sdlpal_resample_quality",
-            .desc = "Audio quality",
+            .desc = "Audio quality (restart required)",
             .values = {{"0"},{"1"},{"2"},{"3"},{"4"},{NULL}},
             .default_value = "4",
         },
         {
             .key = "sdlpal_surround_opl",
-            .desc = "Use surround OPL",
+            .desc = "Use surround OPL (restart required)",
             .values = {{"true"},{"false"},{NULL}},
             .default_value = "true",
         },
         {
             .key = "sdlpal_opl_core",
-            .desc = "OPL emulator core",
+            .desc = "OPL emulator core (restart required)",
             .values = {{"MAME"},{"DBINT"},{"DBFLT"},{"NUKED"},{NULL}},
             .default_value = "DBFLT",
         },
         {
             .key = "sdlpal_opl_chip",
-            .desc = "OPL chip type",
+            .desc = "OPL chip type (restart required)",
             .values = {{"OPL2"},{"OPL3"},{NULL}},
             .default_value = "OPL2",
         },
         {
             .key = "sdlpal_music_volume",
-            .desc = "Music volume",
-            .values = {{"0"},{"16"},{"32"},{"48"},{"64"},{"80"},{"96"},{"112"},{"128"}},
-            .default_value = "128",
+            .desc = "Music volume (restart required)",
+            .values = {{"0"},{"20"},{"40"},{"60"},{"80"},{"100"}},
+            .default_value = "100",
         },
         {
             .key = "sdlpal_sound_volume",
-            .desc = "Sound volume",
-            .values = {{"0"},{"16"},{"32"},{"48"},{"64"},{"80"},{"96"},{"112"},{"128"}},
-            .default_value = "128",
+            .desc = "Sound volume (restart required)",
+            .values = {{"0"},{"20"},{"40"},{"60"},{"80"},{"100"}},
+            .default_value = "100",
         },
         { NULL, NULL, NULL, {{0}}, NULL },
     };
@@ -127,6 +141,10 @@ void retro_set_environment(retro_environment_t cb)
     environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &no_game);
     environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS, &opts);
     environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, &inputs);
+
+    frame.callback = frame_cb;
+    frame.reference = 1000000 / 60;
+    environ_cb(RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK, &frame);
 }
 
 void retro_set_video_refresh(retro_video_refresh_t cb)
@@ -171,7 +189,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
     info->geometry.max_width    = width;
     info->geometry.max_height   = height;
     info->geometry.aspect_ratio = 0.0;
-    info->timing.fps            = 25;     // BATTLE_FPS
+    info->timing.fps            = 60;
     info->timing.sample_rate    = gConfig.iSampleRate;
 }
 
@@ -273,12 +291,22 @@ static void pump_joypad_events(void)
     }
 }
 
+static void apply_variables(void)
+{
+    struct retro_variable var = {0};
+    var.key = "sdlpal_speed_scale";
+    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var)) {
+        speed_scale = SDL_atof(var.value);
+    }
+}
+
 void retro_run(void)
 {
     input_poll_cb();
     pump_joypad_events();
     SDL_libretro_RefreshVideo(video_cb);
     SDL_libretro_ProduceAudio(audio_batch_cb);
+    apply_variables();
 }
 
 size_t retro_serialize_size(void)
@@ -343,7 +371,7 @@ INT UTIL_Platform_Init(int argc, char *argv[])
         gConfig.iSampleRate = atoi(var.value);
     }
     gConfig.wAudioBufferSize = 1;
-    while (gConfig.wAudioBufferSize < 4 * gConfig.iSampleRate / 25)
+    while (gConfig.wAudioBufferSize < 4 * gConfig.iSampleRate / 60)
         gConfig.wAudioBufferSize *= 2;
 
     var.key = "sdlpal_resample_quality";
@@ -391,4 +419,9 @@ INT UTIL_Platform_Init(int argc, char *argv[])
 
 VOID UTIL_Platform_Quit(VOID)
 {
+}
+
+Uint32 SDL_GetTicksReal(void)
+{
+    return ticks;
 }
