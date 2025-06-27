@@ -167,7 +167,9 @@ VIDEO_Startup(
 --*/
 {
 	extern SDL_Surface* STBIMG_Load(const char* file);
+#ifndef __DJGPP__
 	extern char *dirname(char *path);
+#endif
 #if APPIMAGE
 	SDL_Surface *surf = STBIMG_Load( PAL_va(0, "%s%s", dirname(dirname(dirname(gExecutablePath))), "/usr/share/icons/hicolor/256x256/apps/sdlpal.png" ) );
 #endif
