@@ -45,6 +45,13 @@ char gExecutablePath[PAL_MAX_PATH];
 #define SPRITENUM_SPLASH_CRANE      0x49
 #define NUM_RIX_TITLE               0x05
 
+void SDL_LogToFile(void* userdata, int category, SDL_LogPriority priority, const char* message) {
+    FILE* logFile = fopen("sdl_log.txt", "a"); // 追加模式
+    if (logFile) {
+        fprintf(logFile, "%s\n", message);
+        fclose(logFile);
+    }
+}
 
 static VOID
 PAL_Init(
@@ -66,6 +73,11 @@ PAL_Init(
 --*/
 {
    int           e;
+
+   SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+   SDL_LogSetOutputFunction(SDL_LogToFile, NULL);
+   SDL_Log("Logging to file now!\n");
+
 #if PAL_HAS_GIT_REVISION
    UTIL_LogOutput(LOGLEVEL_DEBUG, "SDLPal build revision: %s\n", PAL_GIT_REVISION);
 #endif
@@ -163,7 +175,7 @@ PAL_Shutdown(
    PAL_FreeGlobals();
 
    g_exit_code = exit_code;
-#if !__EMSCRIPTEN__ && SDL_MAJOR_VERSION < 3
+#if !__EMSCRIPTEN__ && SDL_MAJOR_VERSION < 3 && !__DJGPP__
    longjmp(g_exit_jmp_buf, 1);
 #else
    SDL_Quit();
@@ -488,7 +500,7 @@ main(
    UTIL_Platform_Startup(argc,argv);
 #endif
 
-#if !__EMSCRIPTEN__ && SDL_MAJOR_VERSION < 3
+#if !__EMSCRIPTEN__ && SDL_MAJOR_VERSION < 3 && !__DJGPP__
    if (setjmp(g_exit_jmp_buf) != 0)
    {
 	   // A longjmp is made, should exit here
