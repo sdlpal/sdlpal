@@ -114,7 +114,7 @@ UTIL_GetScreenSize(
 	DWORD *pdwScreenHeight
 )
 {
-	return FALSE;
+	return (pdwScreenWidth && pdwScreenHeight && *pdwScreenWidth && *pdwScreenHeight);
 }
 
 BOOL UTIL_IsAbsolutePath(LPCSTR  lpszFileName)
