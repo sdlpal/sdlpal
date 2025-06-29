@@ -258,6 +258,24 @@ VIDEO_Startup(
    gfUseGPU = gConfig.fEnableGPU && !gConfig.fEnableGLSL && bScaleScreen && VIDEO_GPU_Init();
 #endif
 
+   UTIL_LogOutput(LOGLEVEL_DEBUG, "Probing Video Modes\n");
+   for( int i=0; i<SDL_GetNumVideoDisplays(); i++ )
+   {
+      int num_modes = SDL_GetNumDisplayModes(i);
+      if( num_modes > 0 )
+      {
+         UTIL_LogOutput(LOGLEVEL_DEBUG, "Display %d has %d modes\n", i, num_modes);
+         for( int j=0; j<num_modes; j++ )
+         {
+            SDL_DisplayMode mode;
+            if( SDL_GetDisplayMode(i, j, &mode) == 0 && mode.format == SDL_PIXELFORMAT_RGB888)
+            {
+               UTIL_LogOutput(LOGLEVEL_DEBUG, "Display %d mode %d: fmt %s %dx%d@%dHz\n", i, j, SDL_GetPixelFormatName(mode.format), mode.w, mode.h, mode.refresh_rate);
+            }
+         }
+      }
+   }>>>>>>> 86ae8f7 (allow custom screen size(may not same as specified, will choose closest))
+
    //
    // Before we can render anything, we need a window and a renderer.
    //
@@ -273,6 +291,14 @@ VIDEO_Startup(
    if (gpWindow == NULL)
    {
       return -1;
+   }
+   else
+   {
+      int w,h;
+      SDL_GetWindowSize(gpWindow, &w, &h);
+      UTIL_LogOutput(LOGLEVEL_DEBUG, "Actual created window fmt:%s size: %dx%d@\n", SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), w, h);
+      gConfig.dwScreenWidth = w;
+      gConfig.dwScreenHeight = h;
    }
 
 # if APPIMAGE
