@@ -91,7 +91,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "OPUS", "RAW" };
 static const char* synth_types[] = { "native", "timidity", "tinysoundfont" };
 static const char *cd_types[] = { "NONE", "MP3", "OGG", "OPUS", "RAW" };
-static const char *opl_cores[] = { "MAME", "DBFLT", "DBINT", "NUKED" };
+static const char *opl_cores[] = { "REAL", "MAME", "DBFLT", "DBINT", "NUKED" };
 static const char *opl_chips[] = { "OPL2", "OPL3" };
 
 static char * ParseStringValue(const char *sValue, char *original)
@@ -473,7 +473,9 @@ PAL_LoadConfig(
 				}
 				case PALCFG_OPL_CORE:
 				{
-					if (SDL_strncasecmp(value.sValue, "DBINT", slen) == 0)
+					if (SDL_strncasecmp(value.sValue, "REAL", slen) == 0)
+						eOPLCore = OPLCORE_REAL;
+					else if (SDL_strncasecmp(value.sValue, "DBINT", slen) == 0)
 						eOPLCore = OPLCORE_DBINT;
 					else if (SDL_strncasecmp(value.sValue, "DBFLT", slen) == 0)
 						eOPLCore = OPLCORE_DBFLT;
