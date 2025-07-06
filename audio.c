@@ -30,6 +30,8 @@
 #include "aviplay.h"
 #include <math.h>
 
+#include <time.h>
+
 /* WASAPI need fewer samples for less gapping */
 #ifndef PAL_AUDIO_FORCE_BUFFER_SIZE_WASAPI
 # define PAL_AUDIO_FORCE_BUFFER_SIZE_WASAPI   512
