@@ -74,10 +74,6 @@ PAL_Init(
 {
    int           e;
 
-   SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
-   SDL_LogSetOutputFunction(SDL_LogToFile, NULL);
-   SDL_Log("Logging to file now!\n");
-
 #if PAL_HAS_GIT_REVISION
    UTIL_LogOutput(LOGLEVEL_DEBUG, "SDLPal build revision: %s\n", PAL_GIT_REVISION);
 #endif
@@ -491,6 +487,10 @@ main(
 
 --*/
 {
+   SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+   SDL_LogSetOutputFunction(SDL_LogToFile, NULL);
+   SDL_Log("Logging to file now!\n");
+
 #if !defined( __EMSCRIPTEN__ ) && !defined(__WINRT__) && !defined(__N3DS__)
    memset(gExecutablePath,0,PAL_MAX_PATH);
    strncpy(gExecutablePath, argv[0], PAL_MAX_PATH);
