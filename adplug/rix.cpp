@@ -26,6 +26,11 @@
 #include <cstdlib>
 #include "rix.h"
 
+#ifdef __DJGPP__
+#undef __STRICT_ANSI__
+#include <dos.h>
+#endif
+
 using namespace std;
 
 #if defined(__hppa__) || \
@@ -47,6 +52,8 @@ using namespace std;
 #else
 #define RELEASE_INLINE inline
 #endif
+
+static volatile int interrupt_mutex = 0; // mutex for interrupt
 
 const uint8_t CrixPlayer::adflag[] = {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1};
 const uint8_t CrixPlayer::reg_data[] = {0,1,2,3,4,5,8,9,10,11,12,13,16,17,18,19,20,21};
@@ -268,6 +275,7 @@ RELEASE_INLINE void CrixPlayer::set_new_int()
 {
 //   if(!ad_initial()) exit(1);
   ad_initial();
+  interrupt_mutex = 0;
 }
 /*----------------------------------------------------------*/
 RELEASE_INLINE void CrixPlayer::Pause()
@@ -354,27 +362,32 @@ RELEASE_INLINE void CrixPlayer::ad_bop(uint16_t reg,uint16_t value)
 }
 /*--------------------------------------------------------------*/
 RELEASE_INLINE void CrixPlayer::int_08h_entry()
-  {   
+{   
     uint16_t band_sus = 1;   
-    while(band_sus)   
-      {   
+    while(band_sus && interrupt_mutex == 0)   
+    {   
         if(sustain <= 0)   
-          {
+        {
+            interrupt_mutex ++;
+		        enable();
             band_sus = rix_proc();   
-            if(band_sus) sustain += band_sus; 
-            else
-              {   
-                play_end=1;   
+		        disable();
+            sustain += band_sus; 
+            interrupt_mutex --;
+		        enable(); 
+            if(!sustain)
+            {   
+                play_end=1;  
                 break;   
-              }   
-          }   
+            }   
+        }   
         else   
-          {   
+        {   
             if(band_sus) sustain -= 14; /* aging */   
             break;   
-          }   
-      }   
-  }   
+        }   
+    }   
+}   
 /*--------------------------------------------------------------*/ 
 RELEASE_INLINE uint16_t CrixPlayer::rix_proc()
 {
