@@ -676,7 +676,7 @@ PAL_InGameMagicMenu(
 
    if (gpGlobals->wMaxPartyMemberIndex == 0)
    {
-      w = gpGlobals->rgParty[0].wPlayerRole;
+      w = gpGlobals->rgParty[1].wPlayerRole;
       goto start_magicmenu;
    }
 
