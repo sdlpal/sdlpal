@@ -2165,26 +2165,60 @@ PAL_InterpretInstruction(
       //
       // Set the player party
       //
-      gpGlobals->wMaxPartyMemberIndex = 0;
-      for (i = 0; i < 3; i++)
-      {
-         if (pScript->rgwOperand[i] != 0)
-         {
-            gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex].wPlayerRole =
-               pScript->rgwOperand[i] - 1;
+       gpGlobals->wMaxPartyMemberIndex = 0;
+       int zeroHandled = 0;
+       int allZero = (pScript->rgwOperand[0] == 0 && pScript->rgwOperand[1] == 0 && pScript->rgwOperand[2] == 0);
 
-            gpGlobals->wMaxPartyMemberIndex++;
-         }
-      }
-
-      if (gpGlobals->wMaxPartyMemberIndex == 0)
-      {
-         // HACK for Dream 2.11
-         gpGlobals->rgParty[0].wPlayerRole = 0;
-         gpGlobals->wMaxPartyMemberIndex = 1;
-      }
-
-      gpGlobals->wMaxPartyMemberIndex--;
+       if (allZero)
+       {
+           // 全部为0，只处理第一个0
+           gpGlobals->rgParty[0].wPlayerRole = 0;
+           gpGlobals->wMaxPartyMemberIndex = 0;
+       }
+       else if (pScript->rgwOperand[0] == 0)
+       {
+           // 第一个为0，后面有大于0的，只处理大于0的
+           for (int i = 0; i < 3; i++)
+           {
+               if (pScript->rgwOperand[i] == 0 && !zeroHandled)
+               {
+                   gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex].wPlayerRole = 0;
+                   gpGlobals->wMaxPartyMemberIndex++;
+                   zeroHandled = 1;
+               }
+               else if (pScript->rgwOperand[i] > 0)
+               {
+                   gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex].wPlayerRole = pScript->rgwOperand[i] - 1;
+                   gpGlobals->wMaxPartyMemberIndex++;
+               }
+               // 其余为0的忽略
+           }
+           if (gpGlobals->wMaxPartyMemberIndex > 0)
+           {
+               gpGlobals->wMaxPartyMemberIndex--;
+           }
+       }
+       else
+       {
+           // 第一个大于0
+           gpGlobals->rgParty[0].wPlayerRole = pScript->rgwOperand[0] - 1;
+           gpGlobals->wMaxPartyMemberIndex = 0;
+           // 只处理后两个大于0的，忽略0
+           for (int i = 1; i < 3; i++)
+           {
+               if (pScript->rgwOperand[i] > 0)
+               {
+                   gpGlobals->wMaxPartyMemberIndex++;
+                   gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex].wPlayerRole = pScript->rgwOperand[i] - 1;
+               }
+               // 如果第一个和第三个都大于0，第二个为0，也要处理第二个0
+               else if (i == 1 && pScript->rgwOperand[0] > 0 && pScript->rgwOperand[2] > 0 && pScript->rgwOperand[1] == 0)
+               {
+                   gpGlobals->wMaxPartyMemberIndex++;
+                   gpGlobals->rgParty[gpGlobals->wMaxPartyMemberIndex].wPlayerRole = 0;
+               }
+           }
+       }
 
       //
       // Reload the player sprites
