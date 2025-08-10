@@ -1716,8 +1716,17 @@ PAL_BattleStartFrame(
             if (g_Battle.iHidingTime == 0 && !fOnlyPuppet &&
                g_Battle.rgEnemy[i].wObjectID != 0)
             {
-               g_Battle.rgEnemy[i].wScriptOnReady =
-                  PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnReady, i);
+               if (g_Battle.rgEnemy[i].rgwStatus[kStatusConfused] == 0 &&
+                  g_Battle.rgEnemy[i].rgwStatus[kStatusParalyzed] == 0 &&
+                  g_Battle.rgEnemy[i].rgwStatus[kStatusSleep] == 0)
+               {
+                  //
+                  // When it is detected that the enemy is in a bad state,
+                  // the enemy's ready-to-action script will not be executed in this turn.
+                  //
+                  g_Battle.rgEnemy[i].wScriptOnReady =
+                     PAL_RunTriggerScript(g_Battle.rgEnemy[i].wScriptOnReady, i);
+               }
 
                g_Battle.fEnemyMoving = TRUE;
                PAL_BattleEnemyPerformAction(i);
