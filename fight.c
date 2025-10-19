@@ -3108,14 +3108,6 @@ PAL_BattleShowPlayerSummonMagicAnim(
    assert(wEffectMagicID < MAX_OBJECTS);
 
    //
-   // Sound should be played before magic begins
-   //
-   if (gConfig.fIsWIN95)
-   {
-	   AUDIO_PlaySound(lpSummonGod->wSound);
-   }
-
-   //
    // Brighten the players
    //
    for (i = 1; i <= 10; i++)
@@ -3145,6 +3137,14 @@ PAL_BattleShowPlayerSummonMagicAnim(
       165 + (SHORT)(lpSummonGod->wYOffset));
    g_Battle.sBackgroundColorShift = (SHORT)(lpSummonGod->sColorShift);
    g_Battle.fSummonColorShift = TRUE;
+
+   //
+   // Sound should be played before magic begins
+   //
+   if (gConfig.fIsWIN95)
+   {
+      AUDIO_PlaySound(lpSummonGod->wSound);
+   }
 
    //
    // Fade in the summoned god
