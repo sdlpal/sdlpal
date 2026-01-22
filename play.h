@@ -41,6 +41,16 @@ PAL_GameEquipItem(
    VOID
 );
 
+TRIGGERRANGE
+PAL_GetSearchTriggerRange(
+   VOID
+);
+
+VOID
+PAL_Search(
+   VOID
+);
+
 VOID
 PAL_StartFrame(
    VOID

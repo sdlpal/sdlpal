@@ -358,14 +358,14 @@ PAL_GameEquipItem(
    }
 }
 
-VOID
-PAL_Search(
+TRIGGERRANGE
+PAL_GetSearchTriggerRange(
    VOID
 )
 /*++
   Purpose:
 
-    Process searching trigger events.
+    Calculate 13 checkpoint coordinates for manual event search.
 
   Parameters:
 
@@ -377,9 +377,9 @@ PAL_Search(
 
 --*/
 {
-   int                x, y, xOffset, yOffset, dx, dy, dh, ex, ey, eh, i, k, l;
+   int                x, y, xOffset, yOffset, i;
    LPEVENTOBJECT      p;
-   PAL_POS            rgPos[13];
+   TRIGGERRANGE       rgRange;
 
    //
    // Get the party location
@@ -405,25 +405,53 @@ PAL_Search(
       yOffset = -8;
    }
 
-   rgPos[0] = PAL_XY(x, y);
+   rgRange.rgPos[0] = PAL_XY(x, y);
 
    for (i = 0; i < 4; i++)
    {
-      rgPos[i * 3 + 1] = PAL_XY(x + xOffset, y + yOffset);
-      rgPos[i * 3 + 2] = PAL_XY(x, y + yOffset * 2);
-      rgPos[i * 3 + 3] = PAL_XY(x + xOffset, y);
+      rgRange.rgPos[i * 3 + 1] = PAL_XY(x + xOffset, y + yOffset);
+      rgRange.rgPos[i * 3 + 2] = PAL_XY(x, y + yOffset * 2);
+      rgRange.rgPos[i * 3 + 3] = PAL_XY(x + 2 * xOffset, y);
       x += xOffset;
       y += yOffset;
    }
+
+   return rgRange;
+}
+
+VOID
+PAL_Search(
+   VOID
+)
+/*++
+  Purpose:
+
+    Process searching trigger events.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int                x, y, xOffset, yOffset, dx, dy, dh, ex, ey, eh, i, k, l;
+   LPEVENTOBJECT      p;
+   TRIGGERRANGE       rgRange;
+
+   rgRange = PAL_GetSearchTriggerRange();
 
    for (i = 0; i < 13; i++)
    {
       //
       // Convert to map location
       //
-      dh = ((PAL_X(rgPos[i]) % 32) ? 1 : 0);
-      dx = PAL_X(rgPos[i]) / 32;
-      dy = PAL_Y(rgPos[i]) / 16;
+      dh = ((PAL_X(rgRange.rgPos[i]) % 32) ? 1 : 0);
+      dx = PAL_X(rgRange.rgPos[i]) / 32;
+      dy = PAL_Y(rgRange.rgPos[i]) / 16;
 
       //
       // Loop through all event objects
