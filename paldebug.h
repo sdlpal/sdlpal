@@ -19,45 +19,26 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef PALDEBUG_H
+#define PALDEBUG_H
 
 #include "common.h"
-#include "util.h"
-#include "palcommon.h"
-#include "paldebug.h"
-#include "font.h"
-#include "global.h"
-#include "palcfg.h"
-#include "map.h"
-#include "res.h"
-#include "scene.h"
-#include "players.h"
-#include "audio.h"
-#include "video.h"
-#include "input.h"
-#include "text.h"
-#include "ui.h"
-#include "uigame.h"
-#include "uibattle.h"
-#include "magicmenu.h"
-#include "itemmenu.h"
-#include "palette.h"
-#include "rngplay.h"
-#include "ending.h"
-#include "script.h"
-#include "battle.h"
-#include "fight.h"
-#include "play.h"
-#include "game.h"
-#include "midi.h"
-#include "aviplay.h"
 
+# define PAL_DEBUG      0
+
+#if PAL_DEBUG
+# define PAL_DEBUG_SHOW_SEARCH_TRIGGER_RANGE    0
+#endif
+
+PAL_C_LINKAGE_BEGIN
+
+#if PAL_DEBUG_SHOW_SEARCH_TRIGGER_RANGE
 VOID
-PAL_Shutdown(
-   int exit_code
+PAL_ShowSearchTriggerRange(
+   VOID
 );
+#endif
 
-extern char gExecutablePath[PAL_MAX_PATH];
+PAL_C_LINKAGE_END
 
 #endif
