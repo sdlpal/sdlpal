@@ -19,45 +19,36 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef MAIN_H
-#define MAIN_H
+#include "main.h"
 
-#include "common.h"
-#include "util.h"
-#include "palcommon.h"
-#include "paldebug.h"
-#include "font.h"
-#include "global.h"
-#include "palcfg.h"
-#include "map.h"
-#include "res.h"
-#include "scene.h"
-#include "players.h"
-#include "audio.h"
-#include "video.h"
-#include "input.h"
-#include "text.h"
-#include "ui.h"
-#include "uigame.h"
-#include "uibattle.h"
-#include "magicmenu.h"
-#include "itemmenu.h"
-#include "palette.h"
-#include "rngplay.h"
-#include "ending.h"
-#include "script.h"
-#include "battle.h"
-#include "fight.h"
-#include "play.h"
-#include "game.h"
-#include "midi.h"
-#include "aviplay.h"
-
+#if PAL_DEBUG_SHOW_SEARCH_TRIGGER_RANGE
 VOID
-PAL_Shutdown(
-   int exit_code
-);
+PAL_ShowSearchTriggerRange(
+   VOID
+)
+/*++
+  Purpose:
 
-extern char gExecutablePath[PAL_MAX_PATH];
+    Display the coordinates of 13 checkpoints used for manual
+    event search on the map.
 
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   const int          iPosNum[] = { 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3 };
+   int                i;
+   TRIGGERRANGE       range;
+
+   range = PAL_GetSearchTriggerRange();
+
+   for (i = 0; i < 13; i++)
+      PAL_DrawNumber(iPosNum[i], 1, range.rgPos[i] - gpGlobals->viewport + PAL_XY(-2, -6), iPosNum[i] - 1, kNumAlignLeft);
+}
 #endif
