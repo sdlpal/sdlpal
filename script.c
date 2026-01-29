@@ -1,4 +1,4 @@
-/* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
+﻿/* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
 // Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
 // Copyright (c) 2011-2024, SDLPAL development team.
@@ -2519,6 +2519,8 @@ PAL_InterpretInstruction(
       //
       // Jump if the specified item is not equipped
       //
+      if (pScript->rgwOperand[1] == 0) 
+           pScript->rgwOperand[1] = 1;
       y = 0;
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
