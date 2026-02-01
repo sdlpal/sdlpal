@@ -92,6 +92,7 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C602B0021CEF3E6C003A7B09 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C602B0011CEF3E6C003A7B09 /* palcfg.c */; };
 		C604BF6F2233886D00E0A4CF /* test_unescape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C604BF6E2233886D00E0A4CF /* test_unescape.cpp */; };
+		C60C921D2F2F38FB00F44BD3 /* paldebug.c in Sources */ = {isa = PBXBuildFile; fileRef = C60C921A2F2F38FB00F44BD3 /* paldebug.c */; };
 		C61464681EA6425700A76CC9 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C61464641EA6425700A76CC9 /* native_midi_common.c */; };
 		C61464691EA6425700A76CC9 /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = C61464661EA6425700A76CC9 /* native_midi_macosx.c */; };
 		C614646C1EA642F200A76CC9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C614646B1EA642F200A76CC9 /* AudioToolbox.framework */; };
@@ -521,6 +522,8 @@
 		8D1107320486CEB800E47090 /* Pal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C602B0011CEF3E6C003A7B09 /* palcfg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = palcfg.c; sourceTree = "<group>"; };
 		C604BF6E2233886D00E0A4CF /* test_unescape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = test_unescape.cpp; path = ../../tests/test_unescape.cpp; sourceTree = "<group>"; };
+		C60C921A2F2F38FB00F44BD3 /* paldebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = paldebug.c; sourceTree = "<group>"; };
+		C60C921E2F2F390F00F44BD3 /* paldebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = paldebug.h; sourceTree = "<group>"; };
 		C61464631EA6425700A76CC9 /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		C61464641EA6425700A76CC9 /* native_midi_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_common.c; sourceTree = "<group>"; };
 		C61464651EA6425700A76CC9 /* native_midi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_midi_common.h; sourceTree = "<group>"; };
@@ -886,6 +889,7 @@
 		29B97315FDCFA39411CA2CEA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				C60C921A2F2F38FB00F44BD3 /* paldebug.c */,
 				713765621ED86C930084F495 /* aviplay.c */,
 				7104FD3A0D772F6300A97E53 /* battle.c */,
 				71F0F6D10DAA63B400F88C16 /* ending.c */,
@@ -1202,6 +1206,7 @@
 		C61464761EA643E600A76CC9 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				C60C921E2F2F390F00F44BD3 /* paldebug.h */,
 				C650609520F653B300397B73 /* glslp.h */,
 				C626FFC31E5BD49100E39DD9 /* pal_config.h */,
 				7104FD390D772F6300A97E53 /* ascii.h */,
@@ -1803,6 +1808,7 @@
 				C6CFDCEF23A858B800DEB8F9 /* LPC_inv_pred_gain.c in Sources */,
 				C6CFDD3623A858B800DEB8F9 /* resampler_rom.c in Sources */,
 				C6CFDCEA23A858B800DEB8F9 /* NLSF_stabilize.c in Sources */,
+				C60C921D2F2F38FB00F44BD3 /* paldebug.c in Sources */,
 				C6CFDCF123A858B800DEB8F9 /* sigm_Q15.c in Sources */,
 				C6D61D742619A20C000622C2 /* timidity.c in Sources */,
 				C61464681EA6425700A76CC9 /* native_midi_common.c in Sources */,
