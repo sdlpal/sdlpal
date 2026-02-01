@@ -67,6 +67,7 @@ target_include_directories(sdlpal_libretro PRIVATE
   sdl-libretro
   ../3rd/SDL/include
   ../timidity
+  ../sdl_compat
 )
 
 
