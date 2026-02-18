@@ -110,7 +110,7 @@ static void DUMMYAUD_CloseAudio(_THIS)
 
 static int DUMMYAUD_OpenAudio(_THIS, SDL_AudioSpec *spec)
 {
-    spec->samples = spec->freq / 25;
+    spec->samples = spec->freq / 60;
     SDL_CalculateAudioSpec(spec);
     _mixbuf = SDL_AllocAudioMem(spec->size);
     if (_mixbuf == NULL)
