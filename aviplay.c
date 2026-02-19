@@ -146,7 +146,7 @@ PAL_ReadAVIInfo(
 		next_pos[current_level] = (pos += sizeof(RIFFHeader)) + hdr.length;
 		block_type[current_level++] = hdr.type;
 	}
-    
+
     while (!feof(fp) && current_level > 0)
     {
 		RIFFBlockHeader block;
@@ -546,14 +546,14 @@ PAL_RenderAVIFrameToSurface(
                 total_blocks--;
                 continue;
             }
-            
+
             int pixel_ptr = block_ptr;
-            
+
             // get the next two bytes in the encoded data stream
             CHECK_STREAM_PTR(2);
             uint8_t byte_a = lpChunk->data[stream_ptr++];
 			uint8_t byte_b = lpChunk->data[stream_ptr++];
-            
+
             // check if the decode is finished
             if ((byte_a == 0) && (byte_b == 0) && (total_blocks == 0))
             {
@@ -569,13 +569,13 @@ PAL_RenderAVIFrameToSurface(
                 // 2- or 8-color encoding modes
                 uint16_t flags = (byte_b << 8) | byte_a;
 				uint16_t colors[8];
-                
+
                 CHECK_STREAM_PTR(4);
                 colors[0] = AV_RL16(&lpChunk->data[stream_ptr]);
                 stream_ptr += 2;
                 colors[1] = AV_RL16(&lpChunk->data[stream_ptr]);
                 stream_ptr += 2;
-                
+
                 if (colors[0] & 0x8000)
                 {
                     // 8-color encoding
@@ -592,7 +592,7 @@ PAL_RenderAVIFrameToSurface(
                     stream_ptr += 2;
                     colors[7] = AV_RL16(&lpChunk->data[stream_ptr]);
                     stream_ptr += 2;
-                    
+
                     for (int pixel_y = 0; pixel_y < 4; pixel_y++)
                     {
                         for (int pixel_x = 0; pixel_x < 4; pixel_x++, flags >>= 1)
@@ -631,7 +631,7 @@ PAL_RenderAVIFrameToSurface(
                     pixel_ptr -= row_dec;
                 }
             }
-            
+
             block_ptr += block_inc;
             total_blocks--;
         }
@@ -675,7 +675,7 @@ PAL_PlayAVI(
 	BOOL       fEndPlay = FALSE;
 	RIFFChunk *buf = (RIFFChunk *)avi->pChunkBuffer;
 	uint32_t   len = avi->dwBufferSize;
-	uint32_t   dwMicroSecChange = 0;
+	uint32_t   dwFrameNumber = 0;
 	uint32_t   dwCurrentTime = SDL_GetTicks();
 	uint32_t   dwNextFrameTime;
 	uint32_t   dwFrameStartTime = dwCurrentTime;
@@ -693,20 +693,17 @@ PAL_PlayAVI(
             //
             // Video frame
             //
-			dwNextFrameTime = dwFrameStartTime + (avi->dwMicroSecPerFrame / 1000);
-
-			dwMicroSecChange += avi->dwMicroSecPerFrame % 1000;
-			dwNextFrameTime += dwMicroSecChange / 1000;
-			dwMicroSecChange %= 1000;
+			dwNextFrameTime = dwFrameStartTime + ((dwFrameNumber * avi->dwMicroSecPerFrame) / 1000);
+			dwFrameNumber++;
 
 			PAL_RenderAVIFrameToSurface(avi->surface, chunk);
-            VIDEO_DrawSurfaceToScreen(avi->surface);
 
             dwCurrentTime = SDL_GetTicks();
 
             // Check input states here
-            UTIL_Delay(dwCurrentTime >= dwNextFrameTime ? 1 : dwNextFrameTime - dwCurrentTime);
-            dwFrameStartTime = SDL_GetTicks();
+            UTIL_Delay(dwCurrentTime >= dwNextFrameTime ? 0 : dwNextFrameTime - dwCurrentTime);
+
+            VIDEO_DrawSurfaceToScreen(avi->surface);
 
             if (g_InputState.dwKeyPress & (kKeyMenu | kKeySearch))
             {
