@@ -38,10 +38,6 @@ POSTCOMPILE = @mv -f $*$(INTER).Td $*$(INTER).d && touch $@
 
 all: $(TARGET)
 
-install: all
-	md5sum $(TARGET) 
-	@cp -f $(TARGET) /mnt/j/pal
-
 $(TARGET): $(OBJFILES)
 	@echo [LD] $@
 	@$(HOST)g++ $^ -o $@ $(LDFLAGS)
@@ -81,3 +77,4 @@ check: $(TEST_TARGET)
 	@echo [EXEC] $(TEST_TARGET)
 	@chmod +x $(TEST_TARGET)
 	@exec $(TEST_TARGET)
+
