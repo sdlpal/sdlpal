@@ -52,6 +52,9 @@
 #include <stdint.h>
 #include "opl.h"
 
+//#include "util.h"
+#define UTIL_LogOutput(args...)  
+
 class CSurroundopl : public Copl
 {
 private:
@@ -83,9 +86,12 @@ private:
 public:
 	CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2 = NULL);
 	~CSurroundopl() {
+		UTIL_LogOutput(LOGLEVEL_DEBUG, "CSurroundopl::~CSurroundopl()\n");
+		if (opls[0]) opls[0]->write(OPL3_MODE_REGISTER, 0);
 		if (opls[0]) delete opls[0];
 		if (opls[1]) delete opls[1];
 		if (buffer) delete[] buffer;
+  UTIL_LogOutput(LOGLEVEL_DEBUG, "CSurroundopl::~CSurroundopl() finished\n");
 	}
 
 	bool getstereo() { return true; }
@@ -93,9 +99,11 @@ public:
 	void write(int reg, int val) { (this->*writer)(reg, val); }
 
 	void init() {
+		UTIL_LogOutput(LOGLEVEL_DEBUG, "CSurroundopl::init()\n");
 		if (opls[0]) opls[0]->init();
 		if (opls[1]) opls[1]->init();
 		percussion = false;
+  UTIL_LogOutput(LOGLEVEL_DEBUG, "CSurroundopl::init() finished\n");
 	}
 };
 #endif

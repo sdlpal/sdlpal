@@ -203,7 +203,7 @@ VIDEO_Startup(
          for( int j=0; j<num_modes; j++ )
          {
             SDL_DisplayMode mode;
-            if( SDL_GetDisplayMode(i, j, &mode) == 0 && mode.format == SDL_PIXELFORMAT_RGB888)
+            if( SDL_GetDisplayMode(i, j, &mode) == 0)
             {
                UTIL_LogOutput(LOGLEVEL_DEBUG, "Display %d mode %d: fmt %s %dx%d@%dHz\n", i, j, SDL_GetPixelFormatName(mode.format), mode.w, mode.h, mode.refresh_rate);
             }
