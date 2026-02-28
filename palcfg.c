@@ -66,7 +66,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MusicVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_REALOPLUPDATEFREQ, PALCFG_UNSIGNED, "RealOPLUpdateFreq", 17, MAKE_UNSIGNED(50,                            0,                     UINT32_MAX) },
-	{ PALCFG_REALOPLPORT,       PALCFG_UNSIGNED, "RealOPLPort",       11, MAKE_UNSIGNED(0x388,                         0,                     0xFFFF) },
+	{ PALCFG_REALOPLPORT,       PALCFG_UNSIGNED, "RealOPLPort",       11, MAKE_UNSIGNED(0x220,                         0,                     0xFFFF) },
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
 	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WindowWidth",       11, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_WIDTH,      0,                     UINT32_MAX) },
     { PALCFG_TEXTUREHEIGHT,     PALCFG_UNSIGNED, "TextureHeight",     13, MAKE_UNSIGNED(PAL_DEFAULT_TEXTURE_HEIGHT,    0,                     UINT32_MAX) },
@@ -392,6 +392,12 @@ PAL_LoadConfig(
 	};
 
 	for (PALCFG_ITEM i = PALCFG_ALL_MIN; i < PALCFG_ALL_MAX; i++) values[i] = gConfigItems[i].DefaultValue;
+
+#ifdef __DJGPP__
+	// DOS-specific defaults
+	values[PALCFG_OPL_CORE].sValue = "REAL";
+	values[PALCFG_USESURROUNDOPL].bValue = FALSE;
+#endif
 
 	if (fFromFile && (fp = UTIL_OpenFileAtPathForMode(PAL_CONFIG_PREFIX, "sdlpal.cfg", "r")))
 	{
