@@ -163,21 +163,26 @@ CSurroundopl::CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2)
 	opls[1] = opl2;
 	init();
 
+	UTIL_LogOutput(LOGLEVEL_DEBUG, "Creating CSurroundopl: rate=%.2f offset=%.2f\n", rate, offset);
 	if (opl1->gettype() == TYPE_OPL3 || opl1->gettype() == TYPE_DUAL_OPL2)
 	{
+		UTIL_LogOutput(LOGLEVEL_DEBUG, "Created with OPL3 or Dual-OPL2\n");
 		updater = &CSurroundopl::update_opl3;
 		if (opl1->gettype() == TYPE_OPL3)
 		{
+			UTIL_LogOutput(LOGLEVEL_DEBUG, "Created with OPL3, using OPL3 write method\n");
 			writer = &CSurroundopl::write_opl3;
 			opl1->write(OPL3_MODE_REGISTER, 1);
 		}
 		else
 		{
+			UTIL_LogOutput(LOGLEVEL_DEBUG, "Created with Dual-OPL2, using dual-OPL2 write method\n");
 			writer = &CSurroundopl::write_dual_opl2;
 		}
 	}
 	else
 	{
+		UTIL_LogOutput(LOGLEVEL_DEBUG, "Created with OPL2, using OPL2 mode\n");
 		opl1->setchip(0);
 		opl2->setchip(0);
 		if (opl1->getstereo() && opl2->getstereo())
@@ -272,6 +277,7 @@ void CSurroundopl::write_dual_opl2(int reg, int val)
 
 void CSurroundopl::write_opl3(int reg, int val)
 {
+	UTIL_LogOutput(LOGLEVEL_DEBUG, "CSurroundopl::write_opl3 reg=0x%02X val=0x%02X\n", reg, val);
 	// Transpose the other channel to produce the harmonic effect
 	int group = reg >> 4;
 
