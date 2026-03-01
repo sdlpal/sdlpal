@@ -7,7 +7,7 @@ TEST_TARGET = sdlpal-tests.exe
 
 INTER=.dos
 
-HOST = i586-pc-msdosdjgpp-
+HOST = i386-pc-msdosdjgpp-
 TEST_CCFLAGS =
 
 GENERATED = -DPAL_HAS_GIT_REVISION $(shell ../scripts/gengitrev)
