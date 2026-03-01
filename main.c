@@ -73,15 +73,8 @@ PAL_Init(
 --*/
 {
    int           e;
-<<<<<<< HEAD
    char         *pszTitle;
    const char   *pszGPUDriver;
-   SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
-   SDL_LogSetOutputFunction(SDL_LogToFile, NULL);
-   SDL_Log("Logging to file now!\n");
-=======
-
->>>>>>> bacd699 (Move initialization of SDL file log as early as possible)
 #if PAL_HAS_GIT_REVISION
    UTIL_LogOutput(LOGLEVEL_DEBUG, "SDLPal build revision: %s\n", PAL_GIT_REVISION);
 #endif

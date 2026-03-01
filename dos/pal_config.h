@@ -64,9 +64,31 @@ PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 # define PAL_HAS_OPUS          0
 # define PAL_HAS_NATIVEMIDI    0 //388!
 
+#define USE_RIX_MKF_FILE_BUFFER
+#define PAL_HAS_PLATFORM_STARTUP 1
+
 #include <malloc.h>
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
 #include <wctype.h>
 #include <math.h>
+
+#define JWT_DJGPP 1
+
+#if JWT_DJGPP
+
+PAL_C_LINKAGE int iswspace(int c);
+PAL_C_LINKAGE wchar_t *wcscpy(wchar_t *dest, const wchar_t *src);
+PAL_C_LINKAGE wchar_t *wcsncpy(wchar_t *dest, const wchar_t *src, size_t n);
+PAL_C_LINKAGE size_t wcslen(const wchar_t *s);
+PAL_C_LINKAGE wchar_t *wcschr(const wchar_t *s, wchar_t c);
+PAL_C_LINKAGE wchar_t *wcsstr(const wchar_t *haystack, const wchar_t *needle);
+PAL_C_LINKAGE int wcstol(const wchar_t *nptr, wchar_t **endptr, int base);
+PAL_C_LINKAGE int vswprintf(wchar_t *buffer, size_t count, const wchar_t *format, va_list argptr);
+
+#undef min
+#undef max
+static inline int min(int a, int b) { return (a < b) ? a : b; }
+static inline int max(int a, int b) { return (a > b) ? a : b; }
+#endif

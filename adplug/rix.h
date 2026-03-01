@@ -44,6 +44,7 @@ class CrixPlayer: public CPlayer
   void rewind(int subsong);
   void rewindReInit(int subsong, bool reinit); /* For seamless continuous */
   float getrefresh();
+  void setrefresh(float refresh);
   unsigned int getsubsongs();
 
   std::string gettype()
@@ -102,6 +103,8 @@ class CrixPlayer: public CPlayer
   uint8_t bd_modify;
   int sustain;
   int play_end;
+  float refresh_rate;
+  int sustain_ms;
 
 #define ad_08_reg() ad_bop(8,0)    /**/
   void ad_20_reg(uint16_t);              /**/
