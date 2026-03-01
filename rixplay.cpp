@@ -34,7 +34,9 @@
 #include "adplug/convertopl.h"
 #include "adplug/rix.h"
 
-#include <vclock.h>
+#ifdef __DJGPP__
+#	include <vclock.h>
+#endif
 
 typedef struct tagRIXPLAYER :
 	public AUDIOPLAYER
@@ -52,6 +54,7 @@ typedef struct tagRIXPLAYER :
    enum { NONE, FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
    BOOL                       fNextLoop;
    BOOL                       fReady;
+   INT                        iTimerID;
 } RIXPLAYER, *LPRIXPLAYER;
 
 extern "C"
@@ -71,7 +74,7 @@ VOID RIX_Update(
 	if (pRixPlayer == NULL || !pRixPlayer->fReady)
 	{
 		//
-		// Not initialized
+		// Not initialized or not ready
 		//
 		return;
 	}
@@ -329,6 +332,15 @@ RIX_Shutdown(
 		delete pRixPlayer->rix;
 		delete pRixPlayer->opl;
 		delete pRixPlayer;
+
+		if(gConfig.eOPLCore == OPLCORE_REAL)
+		{
+#ifdef __DJGPP__
+			vhook_unregister(RIX_Update);
+#else
+			SDL_RemoveTimer(pRixPlayer->iTimerID);
+#endif
+		}
 	}
 }
 
@@ -374,6 +386,13 @@ RIX_Play(
 		   just change the loop attribute */
 		pRixPlayer->fLoop = fLoop;
 		return TRUE;
+	}
+
+	if (iNumRIX == 0)
+	{
+		pRixPlayer->iNextMusic = 0;
+		pRixPlayer->fReady = FALSE;
+		return FALSE;
 	}
 
 	if (pRixPlayer->FadeType != RIXPLAYER::FADE_OUT)
@@ -447,24 +466,19 @@ RIX_Init(
 		pRixPlayer->Play = RIX_Play;
 	}
 
-	if (gConfig.eOPLCore == OPLCORE_REAL)
-	{
-		if( vhook_register(RIX_Update, 70, pRixPlayer) != 0) {
-			UTIL_LogOutput(LOGLEVEL_ERROR, "RIX_Play: Failed to register RIX_Update callback.");
-		}else {
-			UTIL_LogOutput(LOGLEVEL_DEBUG, "RIX_Play: registered RIX_Update callback!");
-		}
-
-		pRixPlayer->opl = new CRealopl();
-	}else
-	{
 	auto chip = (Copl::ChipType)gConfig.eOPLChip;
 	if (chip == Copl::TYPE_OPL2 && gConfig.fUseSurroundOPL)
 	{
 		chip = Copl::TYPE_DUAL_OPL2;
+		if (gConfig.eOPLCore == OPLCORE_REAL) // Dual OPL2 is not supported NOW, fallback to OPL3
+			chip = Copl::TYPE_OPL3;
 	}
 
-	Copl* opl = CEmuopl::CreateEmuopl((OPLCORE::TYPE)gConfig.eOPLCore, chip, gConfig.iOPLSampleRate);
+	Copl *opl = nullptr;
+	if (gConfig.eOPLCore == OPLCORE_REAL)
+		opl = new CRealopl(gConfig.iRealOPLPort);
+	else
+	opl = CEmuopl::CreateEmuopl((OPLCORE::TYPE)gConfig.eOPLCore, chip, gConfig.iOPLSampleRate);
 	if (NULL == opl)
 	{
 		delete pRixPlayer;
@@ -482,7 +496,14 @@ RIX_Init(
 		}
 		opl = tmpopl;
 	}
+	else
+	{
+		opl->settype(Copl::TYPE_OPL2);
+	}
 
+	if (gConfig.eOPLCore == OPLCORE_REAL) {
+		pRixPlayer->opl = opl;
+	}else
 	pRixPlayer->opl = new CConvertopl(opl, true, gConfig.iAudioChannels == 2);
 	if (pRixPlayer->opl == NULL)
 	{
@@ -490,13 +511,23 @@ RIX_Init(
 		delete pRixPlayer;
 		return NULL;
 	}
-	}
+
 	pRixPlayer->rix = new CrixPlayer(pRixPlayer->opl);
 	if (pRixPlayer->rix == NULL)
 	{
 		delete pRixPlayer->opl;
 		delete pRixPlayer;
 		return NULL;
+	}
+
+	if (gConfig.eOPLCore == OPLCORE_REAL)
+	{
+		pRixPlayer->rix->setrefresh(gConfig.iRealOPLUpdateFreq);
+#ifdef __DJGPP__
+		vhook_register(RIX_Update, gConfig.iRealOPLUpdateFreq, pRixPlayer);
+#else
+		pRixPlayer->iTimerID = SDL_AddTimer(1000 / gConfig.iRealOPLUpdateFreq, RIX_Update);
+#endif
 	}
 
 	//
