@@ -125,7 +125,7 @@ To compile, open *`Pal.xcodeproj`* with `Xcode`, and click Build. You need to ha
 iOS
 ---
 
-To compile, please first install dependencies via CocoaPods following the above instruments, then open the project *`ios/SDLPal/SDLPal.xcworkplace`* with `Xcode`, and click Build.
+To compile, please first install dependencies via CocoaPods following the above instruments, then open the project *`ios/SDLPal/SDLPal.xcworkspace`* with `Xcode`, and click Build.
 ```shell
 $ cd iOS/SDLPAL
 $ sudo gem install cocoapods # ONLY need do once on one machine
