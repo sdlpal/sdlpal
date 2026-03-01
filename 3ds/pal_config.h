@@ -32,7 +32,7 @@
 
 # define PAL_AUDIO_DEFAULT_BUFFER_SIZE   2048
 
-# define PAL_HAS_JOYSTICKS     0
+# define PAL_HAS_JOYSTICKS     1
 # define PAL_HAS_MP3           0
 # define PAL_HAS_OGG           0
 # define PAL_HAS_OPUS          0
@@ -45,7 +45,11 @@
 
 # define PAL_VIDEO_INIT_FLAGS  (SDL_SWSURFACE | SDL_TOPSCR | SDL_CONSOLEBOTTOM | SDL_FULLSCREEN)
 
-# define PAL_SDL_INIT_FLAGS	   (SDL_INIT_VIDEO | SDL_INIT_AUDIO)
+#if PAL_HAS_JOYSTICKS
+	# define PAL_SDL_INIT_FLAGS	   (SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK)
+#else
+	# define PAL_SDL_INIT_FLAGS	   (SDL_INIT_VIDEO | SDL_INIT_AUDIO)
+#endif
 
 # define PAL_PLATFORM         "Nintendo 3DS"
 # define PAL_CREDIT           "ZephRay"
