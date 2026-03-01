@@ -86,7 +86,7 @@ CPlayer *CrixPlayer::factory(Copl *newopl)
 }
 
 CrixPlayer::CrixPlayer(Copl *newopl)
-  : CPlayer(newopl), flag_mkf(0)
+  : CPlayer(newopl), flag_mkf(0), refresh_rate(70.0f)
 #if USE_RIX_EXTRA_INIT
 	, extra_regs(NULL), extra_vals(NULL), extra_length(0)
 #endif
@@ -95,6 +95,7 @@ CrixPlayer::CrixPlayer(Copl *newopl)
 #endif
     , fp(NULL), rix_buf(0)
 {
+  setrefresh(refresh_rate);
 }
 
 CrixPlayer::~CrixPlayer()
@@ -267,7 +268,13 @@ unsigned int CrixPlayer::getsubsongs()
 
 float CrixPlayer::getrefresh()
 {
-	return 70.0f;
+	return refresh_rate;
+}
+
+void CrixPlayer::setrefresh(float refresh)
+{
+  refresh_rate = refresh;
+  sustain_ms = (int)(1000.0 / refresh_rate);
 }
 
 /*------------------Implemention----------------------------*/
@@ -383,7 +390,7 @@ RELEASE_INLINE void CrixPlayer::int_08h_entry()
         }   
         else   
         {   
-            if(band_sus) sustain -= 14; /* aging */   
+            if(band_sus) sustain -= sustain_ms; /* aging */   
             break;   
         }   
     }   
