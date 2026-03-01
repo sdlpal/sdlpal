@@ -54,6 +54,10 @@ public:
       return currType;
    }
 
+   ChipType settype(ChipType type) {
+      return currType = type;
+   }
+
    virtual bool getstereo() {	// return if this OPL chip output stereo
       return currType == TYPE_OPL3 || currType == TYPE_DUAL_OPL2;
    }

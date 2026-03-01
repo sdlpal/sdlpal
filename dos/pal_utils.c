@@ -20,6 +20,7 @@
 //
 
 #include "main.h"
+#include <vclock.h>
 
 double fmax(double a, double b) {
 	return (a > b) ? a : b;
@@ -28,7 +29,7 @@ double fmin(double a, double b) {
 	return (a > b) ? b : a;
 }
 
-BOOL iswspace(char c)
+int iswspace(int c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v');
 }
@@ -97,6 +98,7 @@ int wcstol(const wchar_t *nptr, wchar_t **endptr, int base)
 {
 	// Convert wide string to long integer
 	char buffer[256];
+	char *end = NULL;
 	size_t len = wcslen(nptr);
 	if (len >= sizeof(buffer)) {
 		len = sizeof(buffer) - 1; // Prevent overflow
@@ -105,7 +107,11 @@ int wcstol(const wchar_t *nptr, wchar_t **endptr, int base)
 		buffer[i] = (char)nptr[i];
 	}
 	buffer[len] = '\0'; // Null-terminate the buffer
-	return strtol(buffer, endptr, base);
+	long value = strtol(buffer, endptr ? &end : NULL, base);
+	if (endptr) {
+		*endptr = (wchar_t *)(nptr + (end ? (size_t)(end - buffer) : 0));
+	}
+	return value;
 }
 
 BOOL
@@ -120,6 +126,12 @@ UTIL_GetScreenSize(
 BOOL UTIL_IsAbsolutePath(LPCSTR  lpszFileName)
 {
 	return FALSE;
+}
+
+INT UTIL_Platform_Startup(int argc, char* argv[])
+{
+	printf("invoking program with name: %s\n", argv[0]);
+	return 0;
 }
 
 INT
