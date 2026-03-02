@@ -490,6 +490,13 @@ PAL_MakeScene(
    //
    PAL_SceneDrawSprites();
 
+#if PAL_DEBUG_SHOW_SEARCH_TRIGGER_RANGE
+   //
+   // Display the effective search trigger range
+   //
+   PAL_ShowSearchTriggerRange();
+#endif
+
    //
    // Check if we need to fade in.
    //

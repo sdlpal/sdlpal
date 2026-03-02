@@ -96,6 +96,7 @@
 		71DCB6961ED9CBB000F120DB /* aviplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 71DCB6941ED9CBB000F120DB /* aviplay.c */; };
 		71DCB6991ED9CCFE00F120DB /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C622BE731E474CE2000C8970 /* GameController.framework */; };
 		C60441781ED9AF3C006C7A7C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C604417A1ED9AF3C006C7A7C /* Settings.storyboard */; };
+		C60C92242F2F39B000F44BD3 /* paldebug.c in Sources */ = {isa = PBXBuildFile; fileRef = C60C92232F2F39B000F44BD3 /* paldebug.c */; };
 		C6153B9D1EEE2ECD00DFFCAA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C6153B9F1EEE2ECD00DFFCAA /* Localizable.strings */; };
 		C622BE661E474B5E000C8970 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE641E474B5E000C8970 /* audio.c */; };
 		C622BE6C1E474C01000C8970 /* palcfg.c in Sources */ = {isa = PBXBuildFile; fileRef = C622BE6A1E474C01000C8970 /* palcfg.c */; };
@@ -509,6 +510,8 @@
 		C604417B1ED9B500006C7A7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		C604417D1ED9B521006C7A7C /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Settings.strings"; sourceTree = "<group>"; };
 		C604417E1ED9B60C006C7A7C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings.strings"; sourceTree = "<group>"; };
+		C60C92202F2F39A400F44BD3 /* paldebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = paldebug.h; path = ../../../paldebug.h; sourceTree = "<group>"; };
+		C60C92232F2F39B000F44BD3 /* paldebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = paldebug.c; path = ../../../paldebug.c; sourceTree = "<group>"; };
 		C6153B9E1EEE2ECD00DFFCAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C6153BA01EEE2ED300DFFCAA /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C6153BA11EEE2ED600DFFCAA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -1066,6 +1069,7 @@
 				C622BE641E474B5E000C8970 /* audio.c */,
 				C622BE6A1E474C01000C8970 /* palcfg.c */,
 				C622BE6F1E474CA9000C8970 /* overlay.c */,
+				C60C92232F2F39B000F44BD3 /* paldebug.c */,
 			);
 			path = SDLPal;
 			sourceTree = "<group>";
@@ -1202,6 +1206,7 @@
 				71655254195BB6DB006E1227 /* video.h */,
 				C639993A20459A9A005B20CE /* video_glsl.h */,
 				C622BE6B1E474C01000C8970 /* palcfg.h */,
+				C60C92202F2F39A400F44BD3 /* paldebug.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -1765,6 +1770,7 @@
 				71655266195BB6DB006E1227 /* font.c in Sources */,
 				C6CFDEC923A859F800DEB8F9 /* stereo_find_predictor.c in Sources */,
 				71655267195BB6DB006E1227 /* game.c in Sources */,
+				C60C92242F2F39B000F44BD3 /* paldebug.c in Sources */,
 				C6CFDEC723A859F800DEB8F9 /* decode_indices.c in Sources */,
 				C6CFDF3023A859F800DEB8F9 /* NLSF2A.c in Sources */,
 				C6CFDEC623A859F800DEB8F9 /* table_LSF_cos.c in Sources */,

@@ -19,52 +19,25 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef PLAY_H
-#define PLAY_H
+#ifndef PALDEBUG_H
+#define PALDEBUG_H
 
 #include "common.h"
 
+# define PAL_DEBUG      0
+
+#if PAL_DEBUG
+# define PAL_DEBUG_SHOW_SEARCH_TRIGGER_RANGE    0
+#endif
+
 PAL_C_LINKAGE_BEGIN
 
+#if PAL_DEBUG_SHOW_SEARCH_TRIGGER_RANGE
 VOID
-PAL_GameUpdate(
-   BOOL       fTrigger
-);
-
-VOID
-PAL_GameUseItem(
+PAL_ShowSearchTriggerRange(
    VOID
 );
-
-VOID
-PAL_GameEquipItem(
-   VOID
-);
-
-TRIGGERRANGE
-PAL_GetSearchTriggerRange(
-   VOID
-);
-
-VOID
-PAL_Search(
-   VOID
-);
-
-VOID
-PAL_StartFrame(
-   VOID
-);
-
-VOID
-PAL_WaitForKey(
-   WORD      wTimeOut
-);
-
-VOID
-PAL_WaitForAnyKey(
-   WORD      wTimeOut
-);
+#endif
 
 PAL_C_LINKAGE_END
 

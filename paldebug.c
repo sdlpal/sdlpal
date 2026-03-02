@@ -19,53 +19,36 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef PLAY_H
-#define PLAY_H
+#include "main.h"
 
-#include "common.h"
-
-PAL_C_LINKAGE_BEGIN
-
+#if PAL_DEBUG_SHOW_SEARCH_TRIGGER_RANGE
 VOID
-PAL_GameUpdate(
-   BOOL       fTrigger
-);
-
-VOID
-PAL_GameUseItem(
+PAL_ShowSearchTriggerRange(
    VOID
-);
+)
+/*++
+  Purpose:
 
-VOID
-PAL_GameEquipItem(
-   VOID
-);
+    Display the coordinates of 13 checkpoints used for manual
+    event search on the map.
 
-TRIGGERRANGE
-PAL_GetSearchTriggerRange(
-   VOID
-);
+  Parameters:
 
-VOID
-PAL_Search(
-   VOID
-);
+    None.
 
-VOID
-PAL_StartFrame(
-   VOID
-);
+  Return value:
 
-VOID
-PAL_WaitForKey(
-   WORD      wTimeOut
-);
+    None.
 
-VOID
-PAL_WaitForAnyKey(
-   WORD      wTimeOut
-);
+--*/
+{
+   const int          iPosNum[] = { 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3 };
+   int                i;
+   TRIGGERRANGE       range;
 
-PAL_C_LINKAGE_END
+   range = PAL_GetSearchTriggerRange();
 
+   for (i = 0; i < 13; i++)
+      PAL_DrawNumber(iPosNum[i], 1, range.rgPos[i] - gpGlobals->viewport + PAL_XY(-2, -6), iPosNum[i] - 1, kNumAlignLeft);
+}
 #endif

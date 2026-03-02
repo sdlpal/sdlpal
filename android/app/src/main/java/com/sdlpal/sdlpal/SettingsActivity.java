@@ -471,6 +471,7 @@ public class SettingsActivity extends AppCompatActivity {
         setConfigString(LogFileName, ((SwitchCompat)findViewById(R.id.swLogFile)).isChecked() ? ((EditText)findViewById(R.id.edLogFile)).getText().toString() : null);
         setConfigString(Shader, ((EditText)findViewById(R.id.edShader)).getText().toString());
 
+        setConfigBoolean(EnableAviPlay, ((SwitchCompat)findViewById(R.id.swAVI)).isChecked());
         setConfigBoolean(UseTouchOverlay, ((SwitchCompat)findViewById(R.id.swTouch)).isChecked());
         setConfigBoolean(KeepAspectRatio, ((SwitchCompat)findViewById(R.id.swAspect)).isChecked());
         setConfigBoolean(UseSurroundOPL, ((SwitchCompat)findViewById(R.id.swSurround)).isChecked());

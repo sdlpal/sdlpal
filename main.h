@@ -25,6 +25,7 @@
 #include "common.h"
 #include "util.h"
 #include "palcommon.h"
+#include "paldebug.h"
 #include "font.h"
 #include "global.h"
 #include "palcfg.h"

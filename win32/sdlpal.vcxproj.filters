@@ -819,6 +819,9 @@
     <ClCompile Include="..\glslp.c">
       <Filter>glsl</Filter>
     </ClCompile>
+    <ClCompile Include="..\paldebug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ascii.h">
@@ -1456,6 +1459,9 @@
     </ClInclude>
     <ClInclude Include="..\glslp.h">
       <Filter>glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\paldebug.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
