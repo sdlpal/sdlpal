@@ -29,6 +29,9 @@
 #ifdef __DJGPP__
 #undef __STRICT_ANSI__
 #include <dos.h>
+#else 
+#define enable()
+#define disable()
 #endif
 
 using namespace std;

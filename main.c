@@ -487,9 +487,11 @@ main(
 
 --*/
 {
+#ifdef  __DJGPP__
    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
    SDL_LogSetOutputFunction(SDL_LogToFile, NULL);
-   SDL_Log("Logging to file now!\n");
+   SDL_Log("SDL Logging to file now!\n");
+#endif
 
 #if !defined( __EMSCRIPTEN__ ) && !defined(__WINRT__) && !defined(__N3DS__)
    memset(gExecutablePath,0,PAL_MAX_PATH);

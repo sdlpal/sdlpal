@@ -294,6 +294,7 @@
     <ClCompile Include="..\adplug\dosbox_opls.cpp" />
     <ClCompile Include="..\adplug\mame_opls.cpp" />
     <ClCompile Include="..\adplug\nuked_opl.c" />
+    <ClCompile Include="..\adplug\realopl.cpp" />
     <ClCompile Include="..\audio.c" />
     <ClCompile Include="..\aviplay.c" />
     <ClCompile Include="..\battle.c" />
@@ -564,6 +565,7 @@
     <ClInclude Include="..\adplug\nuked\opl3.h" />
     <ClInclude Include="..\adplug\nuked_opl.h" />
     <ClInclude Include="..\adplug\opltypes.h" />
+    <ClInclude Include="..\adplug\realopl.h" />
     <ClInclude Include="..\ascii.h" />
     <ClInclude Include="..\aviplay.h" />
     <ClInclude Include="..\battle.h" />
