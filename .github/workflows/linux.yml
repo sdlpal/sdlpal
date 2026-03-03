@@ -41,6 +41,7 @@ jobs:
            --republish deploy/*.AppImage --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
     - uses: actions/upload-artifact@v4
       with:
+        name: linux-${{ github.sha }}
         path: deploy
     - uses: xresloader/upload-to-github-release@v1
       env:
