@@ -45,6 +45,7 @@ jobs:
            --republish deploy/*.zip --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
     - uses: actions/upload-artifact@v4
       with:
+        name: mingw-${{ github.sha }}
         path: deploy
     - uses: xresloader/upload-to-github-release@v1
       env:
