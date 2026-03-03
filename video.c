@@ -258,6 +258,7 @@ VIDEO_Startup(
    gfUseGPU = gConfig.fEnableGPU && !gConfig.fEnableGLSL && bScaleScreen && VIDEO_GPU_Init();
 #endif
 
+#ifdef __DJGPP__
    UTIL_LogOutput(LOGLEVEL_DEBUG, "Probing Video Modes\n");
    for( int i=0; i<SDL_GetNumVideoDisplays(); i++ )
    {
@@ -274,7 +275,8 @@ VIDEO_Startup(
             }
          }
       }
-   }>>>>>>> 86ae8f7 (allow custom screen size(may not same as specified, will choose closest))
+   }
+#endif
 
    //
    // Before we can render anything, we need a window and a renderer.
