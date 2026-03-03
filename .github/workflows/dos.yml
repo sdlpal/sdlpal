@@ -11,12 +11,14 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     env:
-      DJGPP_PREFIX: ${{ runner.home }}/.cache/djgpp
-      PKG_CONFIG_PATH: ${{ runner.home }}/.cache/djgpp/lib/pkgconfig
       DOS_SDL_BRANCH: dos_vclock
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install wget bzip2 upx-ucl zip pipx && pipx install cloudsmith-cli
+      run: sudo apt-get install wget bzip2 upx-ucl zip pipx libfl2 && pipx install cloudsmith-cli
+    - name: Initialize environment variables
+      run: |
+        echo "DJGPP_PREFIX=$HOME/.cache/djgpp" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=$HOME/.cache/djgpp/lib/pkgconfig" >> $GITHUB_ENV
     - name: Cache DJGPP Toolchain
       uses: actions/cache@v3
       with:
@@ -28,13 +30,14 @@ jobs:
       run: |
         mkdir -p $DJGPP_PREFIX
         if [ ! -f "$DJGPP_PREFIX/bin/i586-pc-msdosdjgpp-gcc" ]; then
-          cd $DJGPP_PREFIX
+          cd $(dirname $DJGPP_PREFIX)
           wget -q https://github.com/andrewwutw/build-djgpp/releases/download/v3.4/djgpp-linux64-gcc1220.tar.bz2
           tar xjf djgpp-linux64-gcc1220.tar.bz2
           rm djgpp-linux64-gcc1220.tar.bz2
         fi
-        echo "$DJGPP_PREFIX/bin" >> $GITHUB_PATH
-        echo "DJGPP=$DJGPP_PREFIX/i586-pc-msdosdjgpp" >> $GITHUB_ENV
+        source $DJGPP_PREFIX/setenv
+        env | grep -v "^PATH=" >> $GITHUB_ENV
+        echo "PATH=$PATH" >> $GITHUB_ENV
     - uses: actions/checkout@v4
     - name: submodules
       run: |
@@ -56,9 +59,8 @@ jobs:
         cd dos
         i586-pc-msdosdjgpp-strip -s sdlpal.exe
         upx --best --lzma sdlpal.exe
-        zip sdlpal-dos.zip sdlpal.exe
         mkdir ../deploy/
-        mv sdlpal-dos.zip ../deploy/
+        mv sdlpal.exe ../deploy/
         cd ..
     - name: deploy
       if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
@@ -66,9 +68,10 @@ jobs:
         CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
       run: pipx ensurepath && cloudsmith push raw sdlpal/sdlpal
            --version `awk -F\" '{print $2;}' generated.h` --name DOS
-           --republish deploy/*.zip --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
+           --republish deploy/*.exe --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
     - uses: actions/upload-artifact@v4
       with:
+        name: dos-${{ github.sha }}
         path: deploy
     - uses: xresloader/upload-to-github-release@v1
       env:
