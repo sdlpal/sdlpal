@@ -126,6 +126,9 @@ RIX_FillBuffer(
 		return;
 	}
 
+	if (gConfig.eOPLCore == OPLCORE_REAL)
+		return;
+
 	while (len > 0)
 	{
 		INT       volume, delta_samples = 0, vol_delta = 0;
