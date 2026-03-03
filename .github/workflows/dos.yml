@@ -1,0 +1,80 @@
+name: DOS CI
+
+on:
+  push:
+    branches: '*'
+    tags: 'v*'
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    env:
+      DJGPP_PREFIX: ${{ runner.home }}/.cache/djgpp
+      PKG_CONFIG_PATH: ${{ runner.home }}/.cache/djgpp/lib/pkgconfig
+      DOS_SDL_BRANCH: dos_vclock
+    steps:
+    - name: Install Dependencies
+      run: sudo apt-get install wget bzip2 upx-ucl zip pipx && pipx install cloudsmith-cli
+    - name: Cache DJGPP Toolchain
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.DJGPP_PREFIX }}
+        key: djgpp-linux64-gcc1220
+        restore-keys: |
+          djgpp-linux64
+    - name: Download and Setup DJGPP Toolchain
+      run: |
+        mkdir -p $DJGPP_PREFIX
+        if [ ! -f "$DJGPP_PREFIX/bin/i586-pc-msdosdjgpp-gcc" ]; then
+          cd $DJGPP_PREFIX
+          wget -q https://github.com/andrewwutw/build-djgpp/releases/download/v3.4/djgpp-linux64-gcc1220.tar.bz2
+          tar xjf djgpp-linux64-gcc1220.tar.bz2
+          rm djgpp-linux64-gcc1220.tar.bz2
+        fi
+        echo "$DJGPP_PREFIX/bin" >> $GITHUB_PATH
+        echo "DJGPP=$DJGPP_PREFIX/i586-pc-msdosdjgpp" >> $GITHUB_ENV
+    - uses: actions/checkout@v4
+    - name: submodules
+      run: |
+        sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
+        git submodule update --init
+        cd 3rd/SDL
+        git fetch origin $DOS_SDL_BRANCH
+        git checkout $DOS_SDL_BRANCH
+    - name: Setup SDL2-config for DJGPP
+      run: |
+        cd 3rd/SDL
+        ./configure --host=i586-pc-msdosdjgpp CC=i586-pc-msdosdjgpp-gcc CXX=i586-pc-msdosdjgpp-g++ CXXCPP=i586-pc-msdosdjgpp-cpp --prefix=$DJGPP_PREFIX --disable-shared --enable-static CFLAGS="-O2 -march=i386" CXXFLAGS="-O2 -march=i386"
+        make
+        make install
+    - name: Build DOS version
+      run: cd dos && make
+    - name: Strip and Compress
+      run: |
+        cd dos
+        i586-pc-msdosdjgpp-strip -s sdlpal.exe
+        upx --best --lzma sdlpal.exe
+        zip sdlpal-dos.zip sdlpal.exe
+        mkdir ../deploy/
+        mv sdlpal-dos.zip ../deploy/
+        cd ..
+    - name: deploy
+      if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
+      env:
+        CLOUDSMITH_API_KEY: ${{secrets.CLOUDSMITH_API_KEY}}
+      run: pipx ensurepath && cloudsmith push raw sdlpal/sdlpal
+           --version `awk -F\" '{print $2;}' generated.h` --name DOS
+           --republish deploy/*.zip --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
+    - uses: actions/upload-artifact@v4
+      with:
+        path: deploy
+    - uses: xresloader/upload-to-github-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        file: deploy/*
+        tags: true
+        draft: true
+
