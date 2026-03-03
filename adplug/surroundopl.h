@@ -53,7 +53,7 @@
 #include "opl.h"
 
 //#include "util.h"
-#define UTIL_LogOutput(args...)  
+#define UTIL_LogOutput(...)  
 
 class CSurroundopl : public Copl
 {

@@ -193,6 +193,7 @@ VIDEO_Startup(
 	
    gRenderBackend.Init();
 
+#ifdef __DJGPP__
    UTIL_LogOutput(LOGLEVEL_DEBUG, "Probing Video Modes\n");
    for( int i=0; i<SDL_GetNumVideoDisplays(); i++ )
    {
@@ -210,6 +211,7 @@ VIDEO_Startup(
          }
       }
    }
+#endif
 
    //
    // Before we can render anything, we need a window and a renderer.
