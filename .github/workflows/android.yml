@@ -47,6 +47,7 @@ jobs:
            --republish deploy/*.apk --tags "branch/`echo $GITHUB_REF | sed s#refs/heads/##`"
     - uses: actions/upload-artifact@v4
       with:
+        name: android-${{ github.sha }}
         path: deploy
     - uses: xresloader/upload-to-github-release@v1
       env:
