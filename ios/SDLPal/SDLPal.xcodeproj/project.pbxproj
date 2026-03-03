@@ -47,10 +47,11 @@
 		71655257195BB6DB006E1227 /* binio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551E7195BB6DA006E1227 /* binio.cpp */; };
 		71655258195BB6DB006E1227 /* dosbox_opls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551EA195BB6DA006E1227 /* dosbox_opls.cpp */; };
 		71655259195BB6DB006E1227 /* emuopls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551EC195BB6DA006E1227 /* emuopls.cpp */; };
-		7165525B195BB6DB006E1227 /* fprovide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551F0195BB6DA006E1227 /* fprovide.cpp */; };
-		71655260195BB6DB006E1227 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551F8195BB6DA006E1227 /* player.cpp */; };
-		71655261195BB6DB006E1227 /* rix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551FA195BB6DA006E1227 /* rix.cpp */; };
-		71655262195BB6DB006E1227 /* surroundopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551FC195BB6DA006E1227 /* surroundopl.cpp */; };
+		7165525A195BB6DB006E1227 /* realopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551EE195BB6DA006E1227 /* realopl.cpp */; };
+		7165525B195BB6DB006E1227 /* fprovide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551F1195BB6DA006E1227 /* fprovide.cpp */; };
+		71655260195BB6DB006E1227 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551F4195BB6DA006E1227 /* player.cpp */; };
+		71655261195BB6DB006E1227 /* rix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551F6195BB6DA006E1227 /* rix.cpp */; };
+		71655262195BB6DB006E1227 /* surroundopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716551F8195BB6DA006E1227 /* surroundopl.cpp */; };
 		71655263195BB6DB006E1227 /* battle.c in Sources */ = {isa = PBXBuildFile; fileRef = 716551FF195BB6DA006E1227 /* battle.c */; };
 		71655264195BB6DB006E1227 /* ending.c in Sources */ = {isa = PBXBuildFile; fileRef = 71655202195BB6DA006E1227 /* ending.c */; };
 		71655265195BB6DB006E1227 /* fight.c in Sources */ = {isa = PBXBuildFile; fileRef = 71655204195BB6DA006E1227 /* fight.c */; };
@@ -406,17 +407,19 @@
 		716551EB195BB6DA006E1227 /* dosbox_opls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dosbox_opls.h; sourceTree = "<group>"; };
 		716551EC195BB6DA006E1227 /* emuopls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = emuopls.cpp; sourceTree = "<group>"; };
 		716551ED195BB6DA006E1227 /* emuopls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emuopls.h; sourceTree = "<group>"; };
-		716551EF195BB6DA006E1227 /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convertopl.h; sourceTree = "<group>"; };
-		716551F0195BB6DA006E1227 /* fprovide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fprovide.cpp; sourceTree = "<group>"; };
-		716551F1195BB6DA006E1227 /* fprovide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fprovide.h; sourceTree = "<group>"; };
-		716551F7195BB6DA006E1227 /* opl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl.h; sourceTree = "<group>"; };
-		716551F8195BB6DA006E1227 /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = player.cpp; sourceTree = "<group>"; };
-		716551F9195BB6DA006E1227 /* player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = player.h; sourceTree = "<group>"; };
-		716551FA195BB6DA006E1227 /* rix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rix.cpp; sourceTree = "<group>"; };
-		716551FB195BB6DA006E1227 /* rix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rix.h; sourceTree = "<group>"; };
-		716551FC195BB6DA006E1227 /* surroundopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = surroundopl.cpp; sourceTree = "<group>"; };
-		716551FD195BB6DA006E1227 /* surroundopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = surroundopl.h; sourceTree = "<group>"; };
-		716551FE195BB6DA006E1227 /* ascii.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ascii.h; path = ../../../ascii.h; sourceTree = "<group>"; };
+		716551EE195BB6DA006E1227 /* realopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = realopl.cpp; sourceTree = "<group>"; };
+		716551EF195BB6DA006E1227 /* realopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = realopl.h; sourceTree = "<group>"; };
+		716551F0195BB6DA006E1227 /* convertopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convertopl.h; sourceTree = "<group>"; };
+		716551F1195BB6DA006E1227 /* fprovide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fprovide.cpp; sourceTree = "<group>"; };
+		716551F2195BB6DA006E1227 /* fprovide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fprovide.h; sourceTree = "<group>"; };
+		716551F3195BB6DA006E1227 /* opl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl.h; sourceTree = "<group>"; };
+		716551F4195BB6DA006E1227 /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = player.cpp; sourceTree = "<group>"; };
+		716551F5195BB6DA006E1227 /* player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = player.h; sourceTree = "<group>"; };
+		716551F6195BB6DA006E1227 /* rix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rix.cpp; sourceTree = "<group>"; };
+		716551F7195BB6DA006E1227 /* rix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rix.h; sourceTree = "<group>"; };
+		716551F8195BB6DA006E1227 /* surroundopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = surroundopl.cpp; sourceTree = "<group>"; };
+		716551F9195BB6DA006E1227 /* surroundopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = surroundopl.h; sourceTree = "<group>"; };
+		716551FA195BB6DA006E1227 /* ascii.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ascii.h; path = ../../../ascii.h; sourceTree = "<group>"; };
 		716551FF195BB6DA006E1227 /* battle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = battle.c; path = ../../../battle.c; sourceTree = "<group>"; };
 		71655200195BB6DA006E1227 /* battle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = battle.h; path = ../../../battle.h; sourceTree = "<group>"; };
 		71655201195BB6DA006E1227 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../../../common.h; sourceTree = "<group>"; };
@@ -1114,16 +1117,18 @@
 				716551EB195BB6DA006E1227 /* dosbox_opls.h */,
 				716551EC195BB6DA006E1227 /* emuopls.cpp */,
 				716551ED195BB6DA006E1227 /* emuopls.h */,
-				716551EF195BB6DA006E1227 /* convertopl.h */,
-				716551F0195BB6DA006E1227 /* fprovide.cpp */,
-				716551F1195BB6DA006E1227 /* fprovide.h */,
-				716551F7195BB6DA006E1227 /* opl.h */,
-				716551F8195BB6DA006E1227 /* player.cpp */,
-				716551F9195BB6DA006E1227 /* player.h */,
-				716551FA195BB6DA006E1227 /* rix.cpp */,
-				716551FB195BB6DA006E1227 /* rix.h */,
-				716551FC195BB6DA006E1227 /* surroundopl.cpp */,
-				716551FD195BB6DA006E1227 /* surroundopl.h */,
+				716551EE195BB6DA006E1227 /* realopl.cpp */,
+				716551EF195BB6DA006E1227 /* realopl.h */,
+				716551F0195BB6DA006E1227 /* convertopl.h */,
+				716551F1195BB6DA006E1227 /* fprovide.cpp */,
+				716551F2195BB6DA006E1227 /* fprovide.h */,
+				716551F3195BB6DA006E1227 /* opl.h */,
+				716551F4195BB6DA006E1227 /* player.cpp */,
+				716551F5195BB6DA006E1227 /* player.h */,
+				716551F6195BB6DA006E1227 /* rix.cpp */,
+				716551F7195BB6DA006E1227 /* rix.h */,
+				716551F8195BB6DA006E1227 /* surroundopl.cpp */,
+				716551F9195BB6DA006E1227 /* surroundopl.h */,
 			);
 			name = adplug;
 			path = ../../adplug;
@@ -1744,6 +1749,7 @@
 				71655257195BB6DB006E1227 /* binio.cpp in Sources */,
 				71655258195BB6DB006E1227 /* dosbox_opls.cpp in Sources */,
 				71655259195BB6DB006E1227 /* emuopls.cpp in Sources */,
+				7165525A195BB6DB006E1227 /* realopl.cpp in Sources */,
 				7165525B195BB6DB006E1227 /* fprovide.cpp in Sources */,
 				57FB014E1B7A50B0005FCF4C /* lsp.c in Sources */,
 				71655260195BB6DB006E1227 /* player.cpp in Sources */,
