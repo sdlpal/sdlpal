@@ -54,21 +54,15 @@ typedef struct tagRIXPLAYER :
    enum { NONE, FADE_IN, FADE_OUT } FadeType; // fade in or fade out ?
    BOOL                       fNextLoop;
    BOOL                       fReady;
-   INT                        iTimerID;
+   INT                        iRealOPLTimerID;
 } RIXPLAYER, *LPRIXPLAYER;
 
 extern "C"
-VOID RIX_Update(
-	VOID *object
+UINT32 RIX_Update_Timer(
+	VOID *object,
+	UINT32 timer_id,
+	UINT32 interval
 )
-/*++
-	Purpose:
-	Update the RIX player. Called by the DOS SDL callback function only.
-	Parameters:
-	[IN] object - pointer to the RIX player object.
-	Return value:
-	None.
---*/
 {
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
 	if (pRixPlayer == NULL || !pRixPlayer->fReady)
@@ -76,7 +70,7 @@ VOID RIX_Update(
 		//
 		// Not initialized or not ready
 		//
-		return;
+		goto retn;
 	}
 	if (!pRixPlayer->rix->update())
 	{
@@ -86,10 +80,19 @@ VOID RIX_Update(
 			// Not loop, simply terminate the music
 			//
 			pRixPlayer->iMusic = -1;
-			return;
+			goto retn;
 		}
 		pRixPlayer->rix->rewindReInit(pRixPlayer->iMusic, false);
 	}
+retn:
+	return interval;
+}
+
+void RIX_Update_vhook(
+	VOID *object
+)
+{
+	RIX_Update_Timer(object, 0, 0);
 }
 
 static VOID
@@ -328,6 +331,16 @@ RIX_Shutdown(
 	if (object != NULL)
 	{
 		LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
+
+		if (gConfig.eOPLCore == OPLCORE_REAL)
+		{
+#ifdef __DJGPP__
+			vhook_unregister(RIX_Update_vhook);
+#else
+			SDL_RemoveTimer(pRixPlayer->iRealOPLTimerID);
+#endif
+		}
+
 		pRixPlayer->fReady = FALSE;
 		for (int i = 0; i < gConfig.iAudioChannels; i++)
 			if (pRixPlayer->resampler[i])
@@ -335,15 +348,6 @@ RIX_Shutdown(
 		delete pRixPlayer->rix;
 		delete pRixPlayer->opl;
 		delete pRixPlayer;
-
-		if(gConfig.eOPLCore == OPLCORE_REAL)
-		{
-#ifdef __DJGPP__
-			vhook_unregister(RIX_Update);
-#else
-			SDL_RemoveTimer(pRixPlayer->iTimerID);
-#endif
-		}
 	}
 }
 
@@ -527,9 +531,9 @@ RIX_Init(
 	{
 		pRixPlayer->rix->setrefresh(gConfig.iRealOPLUpdateFreq);
 #ifdef __DJGPP__
-		vhook_register(RIX_Update, gConfig.iRealOPLUpdateFreq, pRixPlayer);
+		vhook_register(RIX_Update_vhook, gConfig.iRealOPLUpdateFreq, pRixPlayer);
 #else
-		pRixPlayer->iTimerID = SDL_AddTimer(1000 / gConfig.iRealOPLUpdateFreq, RIX_Update);
+		pRixPlayer->iRealOPLTimerID = SDL_AddTimer(1000 / gConfig.iRealOPLUpdateFreq, RIX_Update_Timer, pRixPlayer);
 #endif
 	}
 

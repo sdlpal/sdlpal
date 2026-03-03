@@ -395,7 +395,7 @@ PAL_LoadConfig(
 
 #ifdef __DJGPP__
 	// DOS-specific defaults
-	values[PALCFG_OPL_CORE].sValue = "REAL";
+	eOPLCore = OPLCORE_REAL;  // Only need to set enum variable, not values array
 	values[PALCFG_USESURROUNDOPL].bValue = FALSE;
 #endif
 
