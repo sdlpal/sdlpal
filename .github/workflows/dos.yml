@@ -9,35 +9,40 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       DOS_SDL_BRANCH: dos_vclock
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install wget bzip2 upx-ucl zip pipx libfl2 && pipx install cloudsmith-cli
+      run: sudo apt-get install wget bzip2 zstd upx-ucl zip pipx libfl2 && pipx install cloudsmith-cli
     - name: Initialize environment variables
       run: |
-        echo "DJGPP_PREFIX=$HOME/.cache/djgpp" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=$HOME/.cache/djgpp/lib/pkgconfig" >> $GITHUB_ENV
+        echo "DJGPP_PREFIX=/opt/i386-pc-msdosdjgpp-toolchain" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=/opt/i386-pc-msdosdjgpp-toolchain/lib/pkgconfig" >> $GITHUB_ENV
     - name: Cache DJGPP Toolchain
       uses: actions/cache@v3
       with:
         path: ${{ env.DJGPP_PREFIX }}
-        key: djgpp-linux64-gcc1220
+        key: djgpp-i386-linux64-gcc1420
         restore-keys: |
           djgpp-linux64
     - name: Download and Setup DJGPP Toolchain
       run: |
         mkdir -p $DJGPP_PREFIX
-        if [ ! -f "$DJGPP_PREFIX/bin/i586-pc-msdosdjgpp-gcc" ]; then
-          cd $(dirname $DJGPP_PREFIX)
-          wget -q https://github.com/andrewwutw/build-djgpp/releases/download/v3.4/djgpp-linux64-gcc1220.tar.bz2
-          tar xjf djgpp-linux64-gcc1220.tar.bz2
-          rm djgpp-linux64-gcc1220.tar.bz2
+        if [ ! -f "$DJGPP_PREFIX/bin/i386-pc-msdosdjgpp-gcc" ]; then
+          cd /tmp
+          wget -q -O djgpp-i386-linux64-gcc1420.tar.zst \
+            https://media.githubusercontent.com/media/sdlpal/tools/refs/heads/master/djgpp-i386-linux64-gcc1420.tar.zst || \
+            { echo "Download failed"; exit 1; }
+          tar xf djgpp-i386-linux64-gcc1420.tar.zst || { echo "Extract failed"; exit 1; }
+          mv i386-pc-msdosdjgpp-toolchain/* $DJGPP_PREFIX/
+          rm -rf i386-pc-msdosdjgpp-toolchain djgpp-i386-linux64-gcc1420.tar.zst
+          sudo mkdir -p /opt && sudo ln -sf $DJGPP_PREFIX /opt/i386-pc-msdosdjgpp-toolchain
         fi
-        source $DJGPP_PREFIX/setenv
-        env | grep -v "^PATH=" >> $GITHUB_ENV
-        echo "PATH=$PATH" >> $GITHUB_ENV
+        source $DJGPP_PREFIX/bin/i386-pc-msdosdjgpp-setenv
+        which i386-pc-msdosdjgpp-gcc > /dev/null || { echo "GCC not found"; exit 1; }
+        env >> $GITHUB_ENV
+        echo "$PATH" >> $GITHUB_PATH
     - uses: actions/checkout@v4
     - name: submodules
       run: |
@@ -48,8 +53,10 @@ jobs:
         git checkout $DOS_SDL_BRANCH
     - name: Setup SDL2-config for DJGPP
       run: |
+        echo "SHELL=$SHELL"
+        echo "PATH=$PATH"
         cd 3rd/SDL
-        ./configure --host=i586-pc-msdosdjgpp CC=i586-pc-msdosdjgpp-gcc CXX=i586-pc-msdosdjgpp-g++ CXXCPP=i586-pc-msdosdjgpp-cpp --prefix=$DJGPP_PREFIX --disable-shared --enable-static CFLAGS="-O2 -march=i386" CXXFLAGS="-O2 -march=i386"
+        ./configure --host=i386-pc-msdosdjgpp CC=i386-pc-msdosdjgpp-gcc CXX=i386-pc-msdosdjgpp-g++ CXXCPP=i386-pc-msdosdjgpp-cpp --prefix=$DJGPP_PREFIX --disable-shared --enable-static CFLAGS="-O2" CXXFLAGS="-O2" || { cat config.log; exit 1; }
         make
         make install
     - name: Build DOS version
@@ -57,7 +64,7 @@ jobs:
     - name: Strip and Compress
       run: |
         cd dos
-        i586-pc-msdosdjgpp-strip -s sdlpal.exe
+        i386-pc-msdosdjgpp-strip -s sdlpal.exe
         upx --best --lzma sdlpal.exe
         mkdir ../deploy/
         mv sdlpal.exe ../deploy/
