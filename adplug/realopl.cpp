@@ -20,8 +20,10 @@
  *             - Linux support by Tomas Pollak <tomas@forkhq.com>
  */
 
+#define USE_INPOUT32 0
+
 #if USE_INPOUT32
-#  include <inpout32.h>
+#  include "inpout32_dyn.h"
 #  define INP Inp32
 #  define OUTP Out32
 #elif defined(_MSC_VER)     // Microsoft Visual C++
@@ -219,11 +221,11 @@ void CRealopl::hardwrite(int reg, int val) {
   //hack!
   if(currType == TYPE_OPL3)
     adp += ((reg >> 7) & 0x2);
-  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::hardwrite adp: 0x%04X\n", adp);
 
   if (nowrite)
     return;
 
+  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::hardwrite adp: 0x%04X\n", adp);
   UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::hardwrite reg=0x%02X val=0x%02X\n", reg, val);
 
 #if defined(linux) && defined(HAVE_SYS_IO_H) // see whether we can access the port
