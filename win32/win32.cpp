@@ -425,6 +425,81 @@ INT_PTR CALLBACK LauncherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 	}
 }
 
+#include "inpout32_dyn.h"
+
+#ifdef _WIN64
+#define INPOUT_DLL_NAME "inpoutx64.dll"
+#else
+#define INPOUT_DLL_NAME "inpout32.dll"
+#endif
+
+/* 函数指针类型定义 */
+typedef void(__stdcall* Out32Func)(short, short);
+typedef short(__stdcall* Inp32Func)(short);
+typedef BOOL(__stdcall* IsOpenFunc)(void);
+typedef BOOL(__stdcall* Is64Func)(void);
+
+/* 静态变量：DLL 句柄及各函数指针，初始均为 NULL */
+static HMODULE  hInpOut = NULL;
+static Out32Func fpOut32 = NULL;
+static Inp32Func fpInp32 = NULL;
+static IsOpenFunc fpIsOpen = NULL;
+static Is64Func   fpIs64 = NULL;
+
+/**
+ * 内部函数：确保 DLL 被加载且函数指针已获取。
+ * 返回 TRUE 表示 DLL 加载成功（但函数指针可能仍为 NULL）。
+ * 若加载失败，将 hInpOut 设为 (HMODULE)-1 以避免重复尝试。
+ */
+static BOOL EnsureLoaded(void)
+{
+	if (hInpOut != NULL) {
+		return (hInpOut != (HMODULE)-1);
+	}
+
+	hInpOut = LoadLibraryA(INPOUT_DLL_NAME);
+	if (hInpOut == NULL) {
+		hInpOut = (HMODULE)-1;   /* 标记失败 */
+		return FALSE;
+	}
+
+	fpOut32 = (Out32Func)GetProcAddress(hInpOut, "Out32");
+	fpInp32 = (Inp32Func)GetProcAddress(hInpOut, "Inp32");
+	fpIsOpen = (IsOpenFunc)GetProcAddress(hInpOut, "IsInpOutDriverOpen");
+	fpIs64 = (Is64Func)GetProcAddress(hInpOut, "IsXP64Bit");
+
+	return TRUE;
+}
+
+/* ---------- 公开函数实现（懒加载），使用 extern "C" 保证与头文件声明一致 ---------- */
+extern "C" void __stdcall Out32(short PortAddress, short data)
+{
+	if (!EnsureLoaded() || fpOut32 == NULL)
+		return;
+	fpOut32(PortAddress, data);
+}
+
+extern "C" short __stdcall Inp32(short PortAddress)
+{
+	if (!EnsureLoaded() || fpInp32 == NULL)
+		return 0;
+	return fpInp32(PortAddress);
+}
+
+extern "C" BOOL __stdcall IsInpOutDriverOpen(void)
+{
+	if (!EnsureLoaded() || fpIsOpen == NULL)
+		return FALSE;
+	return fpIsOpen();
+}
+
+extern "C" BOOL __stdcall IsXP64Bit(void)
+{
+	if (!EnsureLoaded() || fpIs64 == NULL)
+		return FALSE;
+	return fpIs64();
+}
+
 typedef LANGID(__stdcall *GETLANGUAGEID)(void);
 
 extern "C" int UTIL_Platform_Startup(int argc, char *argv[]) {
