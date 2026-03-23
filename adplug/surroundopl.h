@@ -87,7 +87,6 @@ public:
 	CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2 = NULL);
 	~CSurroundopl() {
 		UTIL_LogOutput(LOGLEVEL_DEBUG, "CSurroundopl::~CSurroundopl()\n");
-		if (opls[0]) opls[0]->write(OPL3_MODE_REGISTER, 0);
 		if (opls[0]) delete opls[0];
 		if (opls[1]) delete opls[1];
 		if (buffer) delete[] buffer;
