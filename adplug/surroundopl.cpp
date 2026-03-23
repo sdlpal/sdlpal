@@ -47,6 +47,7 @@
  */
 
 #include <math.h> // for pow()
+#include <string.h> // for memset()
 #include <stdlib.h>
 #include "surroundopl.h"
 
@@ -161,6 +162,8 @@ CSurroundopl::CSurroundopl(double rate, double offset, Copl* opl1, Copl* opl2)
 {
 	opls[0] = opl1;
 	opls[1] = opl2;
+	memset(iFMReg, 0, sizeof(iFMReg));
+	memset(iTweakedFMReg, 0, sizeof(iTweakedFMReg));
 	init();
 
 	UTIL_LogOutput(LOGLEVEL_DEBUG, "Creating CSurroundopl: rate=%.2f offset=%.2f\n", rate, offset);
