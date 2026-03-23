@@ -258,7 +258,7 @@ void CrixPlayer::rewindReInit(int subsong, bool reinit)
 	if (reinit)
 	{
 		opl->init();
-		opl->write(1, 32);	// go to OPL2 mode
+		//opl->write(1, 32);	// go to OPL2 mode
 		set_new_int();
 		data_initial();
 	}
@@ -355,12 +355,12 @@ RELEASE_INLINE uint16_t CrixPlayer::ad_initial()
 			addrs_head[k] = j;
 			k++;
       }
-  ad_bd_reg();
-  ad_08_reg();
-  for(i=0;i<9;i++) ad_a0b0_reg(i);
+  //ad_bd_reg();
+  //ad_08_reg();
+  //for (i = 0; i < 9; i++) ad_a0b0_reg(i);
   e0_reg_flag = 0x20;
-  for(i=0;i<18;i++) ad_bop(0xE0+reg_data[i],0);
-  ad_bop(1,e0_reg_flag);
+  //for (i = 0; i < 18; i++) ad_bop(0xE0 + reg_data[i], 0);
+  //ad_bop(1, e0_reg_flag);
   return 1;//ad_test();
 }
 /*----------------------------------------------------------*/
