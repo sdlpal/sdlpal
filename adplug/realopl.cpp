@@ -63,6 +63,7 @@
 
 #define SHORTDELAY  6   // short delay in I/O port-reads after OPL hardware output
 #define LONGDELAY   35  // long delay in I/O port-reads after OPL hardware output
+#define OPL3_LONGDELAY   26  // long delay in I/O port-reads after OPL3 hardware output
 
 const unsigned char CRealopl::op_table[9] =
 {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
@@ -102,17 +103,13 @@ CRealopl::~CRealopl()
 {
   UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::~CRealopl()\n");
     int i, j;
-    for (j = 0; j < 2; j++) {
+    if (currType != TYPE_OPL3)
+    for (j = 0; j < (currType == TYPE_DUAL_OPL2 ? 2 : 1); j++) {
         setchip(j);
         // Key off all channels
         for (i = 0; i < 9; i++) {
             hardwrite(0xb0 + i, 0);               // key off
             hardwrite(0x80 + op_table[i], 0xff);  // fastest release
-        }
-        // Key off all secondary channels
-        for (i = 0; i < 9; i++) {
-            hardwrite(0x1b0 + i, 0);               // key off
-            hardwrite(0x180 + op_table[i], 0xff);  // fastest release
         }
         // Clear misc register
         hardwrite(0xbd, 0);
@@ -122,12 +119,24 @@ CRealopl::~CRealopl()
         }
     }
     setchip(0);
-		if (currType == TYPE_OPL3)
-		{
-			hardwrite(OPL3_MODE_REGISTER, 0);
-		 	//hardwrite(OPL3_4OP_REGISTER, 0);
-		}
-  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::~CRealopl() finished\n");
+	if (currType == TYPE_OPL3)
+	{
+        for (i = 0; i < 9; i++) {
+            hardwrite(0xa0 + i, 0);               // key off
+            hardwrite(0xb0 + i, 0);               // key off
+            hardwrite(0x80 + op_table[i], 0xff);  // fastest release
+            hardwrite(0x1a0 + i, 0);               // key off
+            hardwrite(0x1b0 + i, 0);               // key off
+            hardwrite(0x180 + op_table[i], 0xff);  // fastest release
+        }
+        for (i = 0; i < 512; i++) {
+            if (i == OPL3_MODE_REGISTER)
+                continue;
+            write(i, 0);
+        }
+	}
+    hardwrite(OPL3_MODE_REGISTER, 0);
+    UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::~CRealopl() finished\n");
 }
 
 bool CRealopl::harddetect() {
@@ -239,12 +248,12 @@ void CRealopl::hardwrite(int reg, int val) {
 
   OUTP(adp, reg);   // set register
 
-  for (i = 0; i < SHORTDELAY; i++) // wait for adlib
+  for (i = 0; i < (currType == TYPE_OPL3 ? 0 : SHORTDELAY); i++) // wait for adlib
     INP(adp);
 
   OUTP(adp + 1, val); // set value
 
-  for (i = 0; i < LONGDELAY; i++) // wait for adlib
+  for (i = 0; i < (currType == TYPE_OPL3 ? OPL3_LONGDELAY : LONGDELAY); i++) // wait for adlib
     INP(adp);
 }
 
@@ -281,8 +290,10 @@ void CRealopl::init() {
   int i, j;
   UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::init()\n");
 
-  for (j = 0; j < 2; j++) {
+  if (currType != TYPE_OPL3)
+  for (j = 0; j < (currType == TYPE_DUAL_OPL2 ? 2 : 1); j++) {
     setchip(j);
+    hardwrite(OPL3_MODE_REGISTER, 0);
 
     // set all registers to zero
     for (i = 0; i < 256; i++) {
@@ -295,19 +306,24 @@ void CRealopl::init() {
       hardwrite(0x80 + op_table[i], 0xff);  // fastest release
     }
 
-    // stop OPL3 additional instruments
-    for (i = 0; i < 9; i++) {
-      hardwrite(0x1b0 + i, 0);               // key off
-      hardwrite(0x180 + op_table[i], 0xff);  // fastest release
-    }
-
     hardwrite(0xbd, 0); // clear misc. register
 
-		if (currType == TYPE_OPL3)
-		{
+  }
+  if (currType == TYPE_OPL3)
+  {
       hardwrite(OPL3_MODE_REGISTER, 1);
-		 	//hardwrite(OPL3_4OP_REGISTER, 0);
-		}
+      //hardwrite(OPL3_4OP_REGISTER, 0);
+      for (i = 0; i < 512; i++) {
+          if (i == OPL3_MODE_REGISTER)
+              continue;
+          write(i, 0);
+      }
+      for (i = 0; i < 9; i++) {
+          hardwrite(0xb0 + i, 0);               // key off
+          hardwrite(0x80 + op_table[i], 0xff);  // fastest release
+          hardwrite(0x1b0 + i, 0);               // key off
+          hardwrite(0x180 + op_table[i], 0xff);  // fastest release
+      }
   }
 
   setchip(0);

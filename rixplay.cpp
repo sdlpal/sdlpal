@@ -350,6 +350,7 @@ RIX_Shutdown(
 	if (object != NULL)
 	{
 		LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
+		pRixPlayer->fReady = FALSE;
 
 		if (gConfig.eOPLCore == OPLCORE_REAL)
 		{
@@ -360,7 +361,6 @@ RIX_Shutdown(
 #endif
 		}
 
-		pRixPlayer->fReady = FALSE;
 		for (int i = 0; i < gConfig.iAudioChannels; i++)
 			if (pRixPlayer->resampler[i])
 				resampler_delete(pRixPlayer->resampler[i]);
@@ -541,7 +541,7 @@ RIX_Init(
 		}
 		opl = tmpopl;
 	}
-	else
+	else if(gConfig.eOPLCore == OPLCORE_REAL)
 	{
 		opl->settype(Copl::TYPE_OPL2);
 	}
