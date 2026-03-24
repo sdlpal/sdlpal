@@ -103,7 +103,6 @@ CRealopl::CRealopl(unsigned short initport)
 // Ensure OPL is silenced on exit
 CRealopl::~CRealopl()
 {
-  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::~CRealopl()\n");
     int i, j;
     if (currType != TYPE_OPL3)
     for (j = 0; j < (currType == TYPE_DUAL_OPL2 ? 2 : 1); j++) {
@@ -138,11 +137,9 @@ CRealopl::~CRealopl()
         }
 	}
     hardwrite(OPL3_MODE_REGISTER, 0);
-    UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::~CRealopl() finished\n");
 }
 
 bool CRealopl::harddetect() {
-  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::harddetect()\n");
   unsigned char   stat1, stat2, i;
   unsigned short  adp = (currChip == 0 ? adlport : adlport + 2);
 
@@ -156,8 +153,6 @@ bool CRealopl::harddetect() {
   stat2 = INP(adp);
   hardwrite(4, 0x60); hardwrite(4, 0x80);
 
-  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::harddetect() finished\n");
-
   if (((stat1 & 0xe0) == 0) && ((stat2 & 0xe0) == 0xc0))
     return true;
   else
@@ -170,24 +165,23 @@ bool CRealopl::detect() {
   setchip(0);
 
   if (harddetect()) {
-    UTIL_LogOutput(LOGLEVEL_DEBUG, "Adplug: Real OPL hardware detected at port 0x%04x\n", adlport);
     // is at least OPL2, check for OPL3
     currType = TYPE_OPL2;
 
     stat = INP(adlport);
 
     if (stat & 6) {
-    UTIL_LogOutput(LOGLEVEL_DEBUG, "not OPL3, try dual-OPL2\n");
+      UTIL_LogOutput(LOGLEVEL_DEBUG, "not OPL3, try dual-OPL2\n");
       // not OPL3, try dual-OPL2
       setchip(1);
 
       if (harddetect()) {
-    UTIL_LogOutput(LOGLEVEL_DEBUG, "dual-OPL2 detected\n");
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "dual-OPL2 detected\n");
         currType = TYPE_DUAL_OPL2;
       }
 
     } else {
-    UTIL_LogOutput(LOGLEVEL_DEBUG, "OPL3 detected\n");
+      UTIL_LogOutput(LOGLEVEL_DEBUG, "OPL3 detected\n");
       currType = TYPE_OPL3;
     }
 
@@ -236,8 +230,8 @@ void CRealopl::hardwrite(int reg, int val) {
   if (nowrite)
     return;
 
-  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::hardwrite adp: 0x%04X\n", adp);
-  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::hardwrite reg=0x%02X val=0x%02X\n", reg, val);
+  //UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::hardwrite adp: 0x%04X\n", adp);
+  //UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::hardwrite reg=0x%02X val=0x%02X\n", reg, val);
 
 #if defined(linux) && defined(HAVE_SYS_IO_H) // see whether we can access the port
   if (!gotperms) {
@@ -290,7 +284,7 @@ void CRealopl::write(int reg, int val) {
 
 void CRealopl::init() {
   int i, j;
-  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::init()\n");
+  //UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::init()\n");
 
   if (currType != TYPE_OPL3)
   for (j = 0; j < (currType == TYPE_DUAL_OPL2 ? 2 : 1); j++) {
@@ -329,5 +323,5 @@ void CRealopl::init() {
   }
 
   setchip(0);
-  UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::init() finished\n");
+  //UTIL_LogOutput(LOGLEVEL_DEBUG, "CRealopl::init() finished\n");
 }
