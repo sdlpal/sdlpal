@@ -31,6 +31,7 @@
 #include "palcfg.h"
 
 #include <syslog.h>
+#include <sys/io.h>
 
 #ifndef PAL_NO_LAUNCH_UI
 
@@ -342,6 +343,10 @@ UTIL_Platform_Init(
 		};
 		syslog(priorities[level], "%s", str);
 	}, PAL_DEFAULT_LOGLEVEL);
+
+#ifdef PAL_USE_REALOPL
+	UTIL_LogOutput(LOGLEVEL_DEBUG,"granting iopl result:%d\n", ioperm(gConfig.iRealOPLPort, 0x10, 1));
+#endif
 
 #if !defined(UNIT_TEST) && !defined(PAL_NO_LAUNCH_UI)
    if (gConfig.fLaunchSetting)
