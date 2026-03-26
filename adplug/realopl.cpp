@@ -50,7 +50,7 @@
   # include <pc.h>
   # define INP  inportb
   # define OUTP outportb
-#elif defined(__linux__)
+#elif defined(__linux__) && !defined(__ANDROID__)
   # include <sys/io.h>
   # define INP inb
   # define OUTP(reg,val) outb(val,reg)
