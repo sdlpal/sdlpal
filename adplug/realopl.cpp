@@ -20,7 +20,9 @@
  *             - Linux support by Tomas Pollak <tomas@forkhq.com>
  */
 
-#define USE_INPOUT32 0
+#if defined(WIN32) && PAL_USE_REALOPL
+#define USE_INPOUT32 1
+#endif
 
 #if USE_INPOUT32
 #  include "inpout32_dyn.h"
@@ -48,7 +50,7 @@
   # include <pc.h>
   # define INP  inportb
   # define OUTP outportb
-#elif defined(linux) && defined(HAVE_SYS_IO_H)
+#elif defined(__linux__)
   # include <sys/io.h>
   # define INP inb
   # define OUTP(reg,val) outb(val,reg)
@@ -58,8 +60,8 @@
 #endif
 
 #include "realopl.h"
-//#include "util.h"
-#define UTIL_LogOutput(...)  
+#include "util.h"
+//#define UTIL_LogOutput(...)  
 
 #define SHORTDELAY  6   // short delay in I/O port-reads after OPL hardware output
 #define LONGDELAY   35  // long delay in I/O port-reads after OPL hardware output

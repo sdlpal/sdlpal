@@ -82,6 +82,8 @@ PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 
 #define PAL_HAS_PLATFORM_STARTUP 1
 
+#define PAL_USE_REALOPL 1
+
 #ifdef __MINGW__
 #define PAL_CONVERT_UTF8 SDL_iconv_utf8_locale
 #endif
