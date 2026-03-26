@@ -24,6 +24,7 @@
 
 #include "main.h"
 #include <errno.h>
+#include <wctype.h>
 
 #define   FONT_COLOR_DEFAULT        0x4F
 #define   FONT_COLOR_YELLOW         0x2D
