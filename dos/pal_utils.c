@@ -21,6 +21,12 @@
 
 #include "main.h"
 #include <vclock.h>
+#if defined(PAL_HAS_GIT_REVISION)
+# undef PAL_GIT_REVISION
+# include "generated.h"
+#endif
+#define CRASH_HANDLER_DOS_IMPLEMENTATION
+#include "crash_handler_dos.h"
 
 double fmax(double a, double b) {
 	return (a > b) ? a : b;
@@ -131,6 +137,7 @@ BOOL UTIL_IsAbsolutePath(LPCSTR  lpszFileName)
 INT UTIL_Platform_Startup(int argc, char* argv[])
 {
 	printf("invoking program with name: %s\n", argv[0]);
+	init_crash_handler();
 	return 0;
 }
 
