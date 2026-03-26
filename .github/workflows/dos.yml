@@ -56,7 +56,7 @@ jobs:
         echo "SHELL=$SHELL"
         echo "PATH=$PATH"
         cd 3rd/SDL
-        ./configure --host=i386-pc-msdosdjgpp CC=i386-pc-msdosdjgpp-gcc CXX=i386-pc-msdosdjgpp-g++ CXXCPP=i386-pc-msdosdjgpp-cpp --prefix=$DJGPP_PREFIX --disable-shared --enable-static CFLAGS="-O2" CXXFLAGS="-O2" || { cat config.log; exit 1; }
+        ./configure --host=i386-pc-msdosdjgpp CC=i386-pc-msdosdjgpp-gcc CXX=i386-pc-msdosdjgpp-g++ CXXCPP=i386-pc-msdosdjgpp-cpp --prefix=$DJGPP_PREFIX --disable-shared --enable-static CFLAGS="-O2 -ggdb" CXXFLAGS="-O2 -ggdb" || { cat config.log; exit 1; }
         make
         make install
     - name: Build DOS version
@@ -64,7 +64,7 @@ jobs:
     - name: Strip and Compress
       run: |
         cd dos
-        i386-pc-msdosdjgpp-strip -s sdlpal.exe
+        #i386-pc-msdosdjgpp-strip -s sdlpal.exe
         upx --best --lzma sdlpal.exe
         mkdir ../deploy/
         mv sdlpal.exe ../deploy/
