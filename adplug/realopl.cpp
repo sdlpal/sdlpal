@@ -20,7 +20,11 @@
  *             - Linux support by Tomas Pollak <tomas@forkhq.com>
  */
 
+#include "common.h"
+
 #if defined(WIN32) && PAL_USE_REALOPL
+#define INPOUT32_DYN_IMPLEMENTATION
+#include "inpout32_dyn.h"
 #define USE_INPOUT32 1
 #endif
 
