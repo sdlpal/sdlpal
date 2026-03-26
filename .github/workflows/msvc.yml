@@ -65,8 +65,8 @@ jobs:
         tags: true
         draft: true
     # uncomment belowing section if you want to debug the build
-    - name: Setup tmate session
-      if: ${{ failure() }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
+    #- name: Setup tmate session
+    #  if: ${{ failure() }}
+    #  uses: mxschmitt/action-tmate@v3
+    #  with:
+    #    limit-access-to-actor: true
