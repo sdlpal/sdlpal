@@ -54,4 +54,14 @@
 #include <sys/time.h>
 #include <ctype.h>
 
+/* for sdlpal_speed_scale */
+#ifdef __cplusplus
+extern "C" {
+#endif
+Uint32 SDL_GetTicksReal(void);
+#ifdef __cplusplus
+}
+#endif
+#define SDL_GetTicks SDL_GetTicksReal
+
 #endif
