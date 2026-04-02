@@ -1,212 +1,137 @@
-SDLPAL
-======
-[![GitHub CI](https://github.com/sdlpal/sdlpal/actions/workflows/linux.yml/badge.svg)](https://github.com/sdlpal/sdlpal/actions)
-[![Download](https://api-prd.cloudsmith.io/badges/version/sdlpal/sdlpal/raw/MinGW32/latest/x/?render=true) ](https://cloudsmith.io/~sdlpal/repos/sdlpal/groups)
+# SDLPAL
 
-***SDLPAL*** is an SDL-based cross-platform reimplementation of the classic Chinese RPG game known as *PAL*.
+[](https://github.com/sdlpal/sdlpal/actions)
+[](https://cloudsmith.io/~sdlpal/repos/sdlpal/groups)
 
-[Try the online demo for now!](https://sdlpal.github.io/demo/sdlpal.html)
-=======
-Check the link above for a Web-based demo of SDLPAL. It should work on most of modern browsers (e.g., Google Chrome, Mozilla Firefox, Safari, ...), but problems might exist on some browsers. Before you can enjoy the game, please prepare a zipped file containing the game resource data.
+**SDLPAL** is an SDL-based cross-platform reimplementation of the classic Chinese RPG *Legend of Sword and Fairy* (also known as *PAL*).
 
-gitee镜像
-=======
-中国大陆地区用户如从GitHub下载代码存在困难，请使用[gitee镜像](https://gitee.com/sdlpal/sdlpal) (每小时自动更新)。
+[Try the online demo\!](https://sdlpal.github.io/demo/sdlpal.html)
 
-LICENSE
-=======
+Check the link above for a web-based demo of SDLPAL. It should work on most modern browsers (e.g., Google Chrome, Mozilla Firefox, Safari), though compatibility issues may exist on some platforms. To play, please prepare a ZIP file containing the original game resource data.
 
-SDLPAL was originally created by [Wei Mingzhi](https://github.com/weimzh/) from 2009. Now it is owned by the SDLPAL development team. Please see [AUTHORS](AUTHORS) for full author list.
-```
+## Gitee Mirror (Gitee 镜像)
+
+If you experience difficulties downloading code from GitHub in mainland China, please use our [Gitee mirror](https://gitee.com/sdlpal/sdlpal) (updated hourly).
+
+-----
+
+## License
+
+SDLPAL was originally created by [Wei Mingzhi](https://github.com/weimzh/). It is now maintained by the SDLPAL development team. Please see [AUTHORS](https://www.google.com/search?q=AUTHORS) for the full list of contributors.
+
+```text
 Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
 Copyright (c) 2011-2024, SDLPAL development team.
 All rights reserved.
 ```
-SDLPAL is distributed under the terms of **GNU General Public License, version 3** as published by the [Free Software Foundation](http://www.fsf.org/). See [LICENSE](LICENSE) for details.
 
-Many of the ideas of this program are based on documents from [PAL Research Project](https://github.com/palxex/palresearch), and portions of the code are based on the work done by Baldur and [louyihua](https://github.com/louyihua).
+SDLPAL is distributed under the terms of the **GNU General Public License, version 3**, as published by the [Free Software Foundation](http://www.fsf.org/). See [LICENSE](https://www.google.com/search?q=LICENSE) for details.
 
-This program made extensive use of the following libraries:
-* [SDL](http://www.libsdl.org/)
-* [SDL_mixer](http://www.libsdl.org/projects/SDL_mixer/)
-* [libmad](http://www.underbit.com/products/mad/)
-* [libogg & libvorbis](http://www.vorbis.com/)
-* [libopus & opusfile](https://www.opus-codec.org/)
-* [FLTK](http://www.fltk.org)
-* [TinySoundFont](https://github.com/schellingb/TinySoundFont)
-* OPL player from [Adplug](http://adplug.sourceforge.net/)
-* OPL emulation cores from [DOSBOX project](http://www.dosbox.com), [MAME project](http://mamedev.org/) and [Chocolate Doom project](https://github.com/chocolate-doom/chocolate-doom)
-* Audio resampler from [foo_input_adplug](https://www.foobar2000.org/components/view/foo_input_adplug)
-* AVI player from [ffmpeg](https://ffmpeg.org/)
-* Image decoder from [stb](https://github.com/nothings/stb)
+Many concepts in this program are based on documents from the [PAL Research Project](https://github.com/palxex/palresearch), and portions of the code are based on work by Baldur and [louyihua](https://github.com/louyihua).
 
-This program does **NOT** include any code or data files of the original game, which are proprietary and copyrighted by [SoftStar](http://www.softstar.com.tw/) Inc.
+This program makes extensive use of the following libraries:
 
-It's recommended to buy the original game from [Steam](https://store.steampowered.com/app/1546570/Sword_and_Fairy/), which contains required data files to run SDLPAL.
+  * **SDL** / **SDL\_mixer**
+  * **libmad**, **libogg** & **libvorbis**, **libopus** & **opusfile**
+  * **FLTK**, **TinySoundFont**
+  * OPL player from **Adplug**
+  * OPL emulation cores from **DOSBOX**, **MAME**, and **Chocolate Doom** projects
+  * Audio resampler from **foo\_input\_adplug**
+  * AVI player from **FFmpeg**
+  * Image decoder from **stb**
+
+This program does **NOT** include any code or data files from the original game, which are proprietary and copyrighted by **SoftStar Inc.**
+
+We recommend purchasing the original game from [Steam](https://store.steampowered.com/app/1546570/Sword_and_Fairy/) to obtain the required data files.
+
+-----
 
 ## FAQ
 
-See [wiki](../../wiki)
+Please refer to the [Wiki](https://www.google.com/search?q=../../wiki).
 
-Building the game
-=================
-
-Currently, SDLPAL supports the following platforms:
-* Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*), *GNU/Linux* and *macOS*
-* Mobile platforms: *Android*, *iOS* and *Windows*
-* Home consoles: *3DS*, *WII*, *PSP* and others (some of them are not actively maintained now)
-
-Before start building, you may find some inspiration from reading [Our travis scripts](.travis.yml).
-
-To build SDLPAL, there are three major steps you need to do:
-1. Clone the source code from GitHub into your local folder using `git` or through corresponding GUI:
-```shell
-$ cd <parent-path-of-sdlpal>
-$ git clone https://github.com/sdlpal/sdlpal.git
-```
-2. Update all the submodules used by SDLPAL using `git submodule` or through corresponding GUI:
-```shell
-$ cd <parent-path-of-sdlpal>/sdlpal
-$ git submodule update --init --recursive
-```
-3. Follow the platform-specific steps listed below.
-
-Windows
--------
-
-### Visual Studio
-
-To build SDLPAL as a Windows **desktop** app, you can use ***Microsoft Visual Studio 2017*** to open the solution file *`sdlpal.sln`* under the *`win32`* directory.
-
-To build SDLPAL as a **Universal Windows Platform** app, you can use ***Microsoft Visual Studio 2017*** to open the solution file *`SDLPal.UWP.sln`* under the *`winrt`* directory.
-
-### MinGW
-
-To build SDLPAL as a Windows **desktop** app, you can also use ***MinGW***. Steps for building under MinGW varies depends on the compiling environment you have:
-
-* If you need to compile SDLPAL under **Windows** shell environment, please go to the root of the source code tree and type:
-```cmd
-C:\sdlpal> cd win32
-C:\sdlpal> make -f Makefile.mingw
-```
-
-* If you need to compile SDLPAL under **msys** shell environment, please go to the root of the source code tree and type:
-```bash
-$ cd win32
-$ make
-```
-
-* If you need to cross-compile SDLPAL under **GNU/Linux** shell environment, please go to the root of the source code tree and type:
-```bash
-$ cd win32
-$ # This builds a 32-bit executable.
-$ make HOST=i686-w64-mingw32-
-$ # This builds a 64-bit executable.
-$ make HOST=x86_64-w64-mingw32-
-```
-
-
-GNU/Linux or Unix
------------------
-
-To build the game, please go to the root of the source code tree and type:
-```shell
-$ cd unix
-$ make
-```
-You also need to have SDL 2.0 development files installed in the system. The compiled executable should be generated with the filename *`sdlpal`* at the current directory. By default, SDLPAL uses the FLTK library to provide setting GUI at launch. If you do not want to use the library, please define he macro `PAL_NO_LAUNCH_UI` in the `Makefile`. SDLPAL should also be able to compile and run under other Unix-like systems, however it's not tested.
-
-
-macOS
 -----
 
-To compile, open *`Pal.xcodeproj`* with `Xcode`, and click Build. You need to have SDL framework installed at *`/Library/Frameworks`*.
+## Building the Game
 
-iOS
----
+SDLPAL currently supports the following platforms:
 
-To compile, please first install dependencies via CocoaPods following the above instruments, then open the project *`ios/SDLPal/SDLPal.xcworkspace`* with `Xcode`, and click Build.
+  * **Desktop:** Windows (Desktop & UWP), GNU/Linux, and macOS.
+  * **Mobile:** Android, iOS, and Windows Phone/Mobile.
+  * **Consoles:** 3DS, Wii, PSP, and others (some may not be actively maintained).
+
+For build environment inspiration, you can review our [CI scripts](https://www.google.com/search?q=.travis.yml).
+
+### General Build Steps
+
+1.  **Clone the repository:**
+    ```shell
+    $ git clone https://github.com/sdlpal/sdlpal.git
+    $ cd sdlpal
+    ```
+2.  **Update submodules:**
+    ```shell
+    $ git submodule update --init --recursive
+    ```
+3.  **Follow platform-specific instructions:**
+
+### Windows
+
+  * **Visual Studio:** - For **Desktop**, open `win32/sdlpal.sln` in Visual Studio 2017 or later.
+      - For **UWP**, open `winrt/SDLPal.UWP.sln`.
+  * **MinGW:**
+      - **Windows CMD:** `cd win32 && make -f Makefile.mingw`
+      - **MSYS:** `cd win32 && make`
+      - **Linux Cross-compile:** `cd win32 && make HOST=i686-w64-mingw32-` (or `x86_64` for 64-bit).
+
+### GNU/Linux or Unix
+
+Run `cd unix && make`. Ensure SDL 2.0 development files are installed. The executable `sdlpal` will be generated in the current directory. By default, it uses FLTK for the launch GUI; to disable this, define `PAL_NO_LAUNCH_UI` in the `Makefile`.
+
+### macOS
+
+Open `Pal.xcodeproj` with Xcode and build. Ensure the SDL framework is installed in `/Library/Frameworks`.
+
+### iOS
+
+Install dependencies via CocoaPods, then open `ios/SDLPal/SDLPal.xcworkspace` in Xcode.
+
 ```shell
 $ cd iOS/SDLPAL
-$ sudo gem install cocoapods # ONLY need do once on one machine
-$ pod install # ONLY need do once in one repository
+$ pod install
 ```
 
-Android
--------
+### Android
 
-To build the game, open the `android` directory through ***Android Studio***, and click `Make Project`.
+Open the `android` directory in **Android Studio** and select `Make Project`.
 
-* NOTE: `android/app/src/main/java/org/libsdl/app` is a link to `3rd/SDL/android-project/app/src/main/java/org/libsdl/app`. Deal with it properly if your git system does not create link automatically.
+  * **Note:** `android/app/src/main/java/org/libsdl/app` is a symlink. Ensure your Git client handles symbolic links correctly.
+  * **Tip:** On Windows, keep the repository path short (e.g., at the drive root) to avoid path length issues.
 
-* NOTE: For Windows users, please put the repo at the root of a disk partition. A long path may cause compilation to fail.
+-----
 
-Nintendo 3DS
-------------
+## Running the Game
 
-To build the game, please go to the root of the source code tree and type:
-```shell
-cd 3ds
-make
-make cia
-```
-You need to have *DevkitPro ARM* and *SDL 1.2* for 3DS portlib installed. Creating a CIA package is not required to play the game, but in order to to that, a seperate *makerom* tool is required. The compiled executable should be generated with the filename *`sdlpal`* at the current directory.
- 
-Nintendo Wii
-------------
+Resource files are not included. You must copy the original game data files into a directory, place the built SDLPAL executable in that same directory, and then run it.
 
-To build the game, please go to the root of the source code tree and type:
-```shell
-cd wii
-make
-```
-You need to have *DevkitPro PPC* and *SDL 1.2* for Wii portlib installed.
+**Important:** On case-sensitive filesystems (like Linux/macOS), ensure all game data filenames are in **lower-case**.
 
-Other platforms
----------------
+### MIDI Support
 
-To be written.
+MIDI support varies by platform. It is officially supported on **Windows, Android, iOS, and macOS**. GNU/Linux support is preliminary and requires the `timidity` package. Other platforms do not currently support MIDI.
 
+-----
 
-Running the game
-================
+## Configuration
 
-The data files required for running the game are not included with the source package due to copyright issues. You need to obtain them from a licensed copy of the game before you can run the game.
+SDLPAL supports various versions of the original game through configuration.
 
-To run the game, copy all the files in the original game CD to a directory, then copy the built SDLPAL executable to the same directory, and run the executable.
+1.  **GUI:** On the first launch, a configuration window will appear. You can access it later via the in-game menu or after a crash. (Currently unavailable on macOS).
+2.  **Manual:** Create a `sdlpal.cfg` file in the game directory. Refer to [sdlpal.cfg.example](https://www.google.com/search?q=sdlpal.cfg.example) for the format.
 
-Note that the filenames of data files should be all in lower-case under systems that use case-sensitive filesystems such as GNU/Linux or other Unix-like operating systems.
+-----
 
-If you prefer using MIDI as background music source, please note that the MIDI playing feature is not yet complete under every supported platform. Currently, **offical** support is provided under *Windows Desktop*, *Universal Windows Platform*, *Android*, *iOS* and *macOS*. There is also a preliminary support for *GNU/Linux* that relys upon package *timidity*. Other platforms do not support playing MIDI for now.
+## Contributing & Issues
 
-
-Configuring the game
-====================
-
-PAL has several variants using different and incompatible resource files, and SDLPAL supports several configuration options for supporting such variants. The default values are used to support the resources from original DOS version. If you want to change these configurations, you have two options: through the configuration GUI or by manipulating the configuration file *`sdlpal.cfg`* manually.
-
-GUI
----
-The configuration GUI provides options for you to change the most common configuration options. If you launch SDLPAL for the first time, it will bring you to the configuration GUI by default. Once you have saved configurations from the GUI, the GUI will not to show again on subsequent launches. However, you have the opportunity to bring the GUI back on fatal game program errors or through the in-game system menu.
-
-Currently, the configuration GUI is available under the following platforms:
-* Desktop platforms: *Windows* (both *Windows Desktop* and *Universal Windows Platform*) and *GNU/Linux*
-* Mobile platforms: *Android*, *Windows* and *iOS*
-
-Configuration GUIs for *macOS* is still unavailable for now and we welcome contributions to implement it.
-
-Manually
---------
-To set the configuration options manually, create a file named as *`sdlpal.cfg`* (make sure to use lower-case file name in case-sensitive filesystems) in the game directory created by the above step. Please refer to the [example file](sdlpal.cfg.example) for format specfication.
-
-
-Reporting issues
-================
-
-If you find any issues of SDLPAL, please feel free to report them to the development team through GitHub's issue tracking system using either English or Chinese.
-
-
-Contributing to the game
-========================
-
-Any original code & documentation contributions are welcomed as long as the contributed code & documentation is licensed under GPL. You can use GitHub's pull request system to submit your changes to the main repository here. But remember, as a step to keep the quality of code, you should write corresponding unit tests before your changes can be merged. The guidance of writting unit tests can be found [here](https://github.com/sdlpal/sdlpal/tree/master/tests).
+  * **Issues:** Report bugs via GitHub Issues in English or Chinese.
+  * **Contributions:** PRs are welcome\! Code must be licensed under the GPL. To maintain code quality, please include **unit tests** for new features. See the [testing guide](https://github.com/sdlpal/sdlpal/tree/master/tests) for details.
