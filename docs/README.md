@@ -17,7 +17,7 @@ If you experience difficulties downloading code from GitHub in mainland China, p
 
 ## License
 
-SDLPAL was originally created by [Wei Mingzhi](https://github.com/weimzh/). It is now maintained by the SDLPAL development team. Please see [AUTHORS](https://www.google.com/search?q=AUTHORS) for the full list of contributors.
+SDLPAL was originally created by [Wei Mingzhi](https://github.com/weimzh/). It is now maintained by the SDLPAL development team. Please see [AUTHORS](AUTHORS) for the full list of contributors.
 
 ```text
 Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
@@ -25,7 +25,7 @@ Copyright (c) 2011-2024, SDLPAL development team.
 All rights reserved.
 ```
 
-SDLPAL is distributed under the terms of the **GNU General Public License, version 3**, as published by the [Free Software Foundation](http://www.fsf.org/). See [LICENSE](https://www.google.com/search?q=LICENSE) for details.
+SDLPAL is distributed under the terms of the **GNU General Public License, version 3**, as published by the [Free Software Foundation](http://www.fsf.org/). See [LICENSE](LICENSE) for details.
 
 Many concepts in this program are based on documents from the [PAL Research Project](https://github.com/palxex/palresearch), and portions of the code are based on work by Baldur and [louyihua](https://github.com/louyihua).
 
@@ -127,7 +127,7 @@ MIDI support varies by platform. It is officially supported on **Windows, Androi
 SDLPAL supports various versions of the original game through configuration.
 
 1.  **GUI:** On the first launch, a configuration window will appear. You can access it later via the in-game menu or after a crash. (Currently unavailable on macOS).
-2.  **Manual:** Create a `sdlpal.cfg` file in the game directory. Refer to [sdlpal.cfg.example](https://www.google.com/search?q=sdlpal.cfg.example) for the format.
+2.  **Manual:** Create a `sdlpal.cfg` file in the game directory. Refer to [sdlpal.cfg.example](sdlpal.cfg.example) for the format.
 
 -----
 
