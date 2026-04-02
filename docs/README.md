@@ -1,7 +1,7 @@
 # SDLPAL
 
-[](https://github.com/sdlpal/sdlpal/actions)
-[](https://cloudsmith.io/~sdlpal/repos/sdlpal/groups)
+[![GitHub CI](https://github.com/sdlpal/sdlpal/actions/workflows/linux.yml/badge.svg)](https://github.com/sdlpal/sdlpal/actions)
+[![Download](https://api-prd.cloudsmith.io/badges/version/sdlpal/sdlpal/raw/MinGW32/latest/x/?render=true) ](https://cloudsmith.io/~sdlpal/repos/sdlpal/groups)
 
 **SDLPAL** is an SDL-based cross-platform reimplementation of the classic Chinese RPG *Legend of Sword and Fairy* (also known as *PAL*).
 
