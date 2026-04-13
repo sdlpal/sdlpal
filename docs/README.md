@@ -32,7 +32,7 @@ Many concepts in this program are based on documents from the [PAL Research Proj
 This program makes extensive use of the following libraries:
 
   * **SDL** / **SDL\_mixer**
-  * **libmad**, **libogg** & **libvorbis**, **libopus** & **opusfile**
+  * **dr\_mp3**, **stb\_vorbis**
   * **FLTK**, **TinySoundFont**
   * OPL player from **Adplug**
   * OPL emulation cores from **DOSBOX**, **MAME**, and **Chocolate Doom** projects

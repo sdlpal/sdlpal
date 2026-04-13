@@ -3,7 +3,7 @@
 
 TARGET = sdlpal.js
 EMFILES = sdlpal.{js,mem,bc,wast,wasm,wasm.map}
-EMPORTS = -s USE_OGG=1 -s USE_VORBIS=1
+EMPORTS =
 
 INTER=.emscripten
 
@@ -13,7 +13,7 @@ GENERATED = -DPAL_HAS_GIT_REVISION $(shell ../scripts/gengitrev)
 
 DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
-CFILES = $(wildcard ../sdl_compat/*.c) $(wildcard ../adplug/*.c) $(wildcard ../libmad/*.c) $(wildcard ../timidity/*.c) $(wildcard ../*.c)
+CFILES = $(wildcard ../sdl_compat/*.c) $(wildcard ../adplug/*.c) $(wildcard ../timidity/*.c) $(wildcard ../*.c)
 CPPFILES = $(wildcard ../adplug/*.cpp) $(wildcard ../*.cpp) emscripten_adapter.cpp
 OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(OBJFILES:.o=.d)

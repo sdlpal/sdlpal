@@ -61,7 +61,6 @@ char *_stringtolower(char *);
 #define strcasestr(a,b) strstr(_stringtolower((a)),_stringtolower((b)))
 
 #define PAL_HAS_GLSL 1
-#define PAL_HAS_OPUS 0
 
 #define PAL_HAS_PLATFORM_STARTUP 1
 

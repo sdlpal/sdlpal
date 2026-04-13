@@ -102,8 +102,8 @@
     AudioSampleRates = @[ @"11025", @"22050", @"44100", @"48000", @"49716" ];
     AudioBufferSizes = @[ @"512", @"1024", @"2048", @"4096", @"8192" ];
     OPLSampleRates = @[ @"12429", @"24858", @"49716", @"11025", @"22050", @"44100" ];
-    CDFormats = @[ @"None", @"MP3", @"OGG", @"OPUS" ];
-    MusicFormats = @[ @"MIDI", @"RIX", @"MP3", @"OGG", @"OPUS" ];
+    CDFormats = @[ @"None", @"MP3", @"OGG" ];
+    MusicFormats = @[ @"MIDI", @"RIX", @"MP3", @"OGG" ];
     MIDISynthesizers = @[ @"native", @"timidity", @"tinysoundfont" ];
     OPLCores = @[ @"MAME", @"DBFLT", @"DBINT", @"NUKED" ];
     OPLChips = @[ @"OPL2", @"OPL3" ];

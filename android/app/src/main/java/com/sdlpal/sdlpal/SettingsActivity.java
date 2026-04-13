@@ -101,8 +101,8 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int AudioSampleRates[] = { 11025, 22050, 44100, 48000 };
     private static final int AudioBufferSizes[] = { 512, 1024, 2048, 4096, 8192 };
     private static final int OPLSampleRates[] = { 11025, 12429, 22050, 24858, 44100, 49716 };
-    private static final String CDFormats[] = { "None", "MP3", "OGG", "OPUS" };
-    private static final String MusicFormats[] = { "MIDI", "RIX", "MP3", "OGG", "OPUS" };
+    private static final String CDFormats[] = { "None", "MP3", "OGG" };
+    private static final String MusicFormats[] = { "MIDI", "RIX", "MP3", "OGG" };
     private static final String OPLCores[] = { "MAME", "DBFLT", "DBINT", "NUKED" };
     private static final String OPLChips[] = { "OPL2", "OPL3" };
     private static final String AspectRatios[] = { "16:10", "4:3" };

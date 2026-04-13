@@ -101,8 +101,7 @@ typedef enum tagMUSICTYPE
 	MUSIC_MIDI,
 	MUSIC_RIX,
     MUSIC_MP3,
-    MUSIC_OGG,
-	MUSIC_OPUS
+    MUSIC_OGG
 } MUSICTYPE, *LPMUSICTYPE;
 
 typedef enum tagCDTYPE
@@ -110,7 +109,6 @@ typedef enum tagCDTYPE
     CD_NONE,
     CD_MP3,
 	CD_OGG,
-    CD_OPUS,
 	CD_SDLCD
 } CDTYPE, *LPCDTYPE;
 

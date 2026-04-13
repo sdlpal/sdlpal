@@ -1,5 +1,7 @@
 # Makefile for win32 platforms with mingw under win32
 
+SHELL := cmd.exe
+
 TARGET = sdlpal-mingw.exe
 TEST_TARGET = sdlpal-mingw-tests.exe
 
@@ -14,19 +16,20 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $*$(INTER).Td
 
 GTEST_DIR = ../3rd/googletest/googletest
 
-SOURCES = . .. ../adplug ../liboggvorbis/src ../libopusfile/src ../libopusfile/celt ../libopusfile/silk ../libopusfile/silk/float ../libmad ../native_midi ../timidity
+SOURCES = . .. ../sdl_compat ../adplug ../native_midi ../timidity
 CFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.c))
 CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp))
+CFILES := $(CFILES)
 RCFILES = $(wildcard ./sdlpal.rc)
 OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o) $(RCFILES:.rc=$(INTER).o)
 DEPFILES = $(CFILES:.c=$(INTER).d) $(CPPFILES:.cpp=$(INTER).d)
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 
-override CCFLAGS += -g -msse2 -Wall -O2 -fno-strict-aliasing -I../3rd/mingw-std-threads -I../3rd/SDL/include $(EXTRA_CCFLAGS) $(TEST_CCFLAGS) $(GENERATED)
+override CCFLAGS += -g -msse2 -Wall -O2 -fno-strict-aliasing -DUSE_SDL3=1 -I../sdl_compat -I../3rd/mingw-std-threads $(EXTRA_CCFLAGS) $(TEST_CCFLAGS) $(GENERATED)
 CXXFLAGS = $(CCFLAGS) -std=c++11
 CFLAGS = $(CCFLAGS) -std=gnu99
-LDFLAGS = -lopengl32 -lmingw32 -lSDL2main -lSDL2 -mwindows -lm -lwinmm -lole32 -loleaut32 -limm32 -lcomctl32 -luuid -ldxguid -lversion -lsetupapi -static -static-libgcc -static-libstdc++
+LDFLAGS = -lSDL3 -lopengl32 -lmingw32 -mwindows -lm -lwinmm -lole32 -loleaut32 -limm32 -lcomctl32 -luuid -ldxguid -lversion -lsetupapi -static -static-libgcc -static-libstdc++
 TEST_CXXFLAGS += -isystem $(GTEST_DIR)/include -I $(GTEST_DIR) -g -Wall -Wextra -pthread
 
 POSTCOMPILE = @move /Y $(subst /,\,$*)$(INTER).Td $(subst /,\,$*)$(INTER).d > NUL 2>&1 && type NUL >> $(subst /,\,$@)
@@ -70,9 +73,7 @@ clean:
 
 -include $(DEPFILES)
 
-../liboggvorbis/%$(INTER).o: EXTRA_CCFLAGS := -I../liboggvorbis/include -I../liboggvorbis/src
-../libopusfile/%$(INTER).o: EXTRA_CCFLAGS := -I../liboggvorbis/include -I../libopusfile/include -I../libopusfile/src -I../libopusfile/celt -I../libopusfile/silk -I../libopusfile/silk/float -DHAVE_CONFIG_H
-%$(INTER).o: EXTRA_CCFLAGS := -I. -I.. -I../liboggvorbis/include -I../libopusfile/include -I../timidity -DPAL_HAS_PLATFORM_SPECIFIC_UTILS
+%$(INTER).o: EXTRA_CCFLAGS := -I. -I.. -I../timidity -DPAL_HAS_PLATFORM_SPECIFIC_UTILS
 check: TEST_CCFLAGS = -I. -I.. -DUNIT_TEST=1 -isystem $(GTEST_DIR)/include
 check: $(TEST_TARGET)
 	@echo [EXEC] $(TEST_TARGET)

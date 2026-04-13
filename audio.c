@@ -310,9 +310,6 @@ AUDIO_OpenDevice(
    case MUSIC_OGG:
 	   gAudioDevice.pMusPlayer = OGG_Init();
 	   break;
-   case MUSIC_OPUS:
-	   gAudioDevice.pMusPlayer = OPUS_Init();
-	   break;
    case MUSIC_MIDI:
 	   if (gConfig.eMIDISynth == SYNTH_TIMIDITY)
 		   gAudioDevice.pMusPlayer = TIMIDITY_Init();
@@ -359,9 +356,6 @@ AUDIO_OpenDevice(
 	   break;
    case CD_OGG:
 	   gAudioDevice.pCDPlayer = OGG_Init();
-	   break;
-   case CD_OPUS:
-	   gAudioDevice.pCDPlayer = OPUS_Init();
 	   break;
    default:
       gAudioDevice.pCDPlayer = NULL;

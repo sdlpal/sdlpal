@@ -258,8 +258,8 @@ Fl_Window* InitWindow()
    gWidgets.shaderfile = new Fl_Input(100, 235, 530, 22, gLabels[lang].shaderfile);
 
    (new Fl_Box(FL_BORDER_BOX, 5, 280, 630, 130, gLabels[lang].audio))->align(FL_ALIGN_TOP);
-   (gWidgets.cd = new Fl_Choice(84, 289, 60, 22, gLabels[lang].cd))->add("NONE|MP3|OGG|OPUS");
-   (gWidgets.bgm = new Fl_Choice(84, 319, 60, 22, gLabels[lang].bgm))->add("MIDI|RIX|MP3|OGG|OPUS");
+   (gWidgets.cd = new Fl_Choice(84, 289, 60, 22, gLabels[lang].cd))->add("NONE|MP3|OGG");
+   (gWidgets.bgm = new Fl_Choice(84, 319, 60, 22, gLabels[lang].bgm))->add("MIDI|RIX|MP3|OGG");
    gWidgets.stereo = new Fl_Check_Button(lang ? 425 : 435, 320, 70, 20, gLabels[lang].stereo);
    gWidgets.samplerate = new Fl_Int_Input(570, 289, 60, 22, gLabels[lang].samplerate);
    (gWidgets.oplcore = new Fl_Choice(224, 289, 75, 22, gLabels[lang].oplcore))->add("MAME|DBFLT|DBINT|NUKED");
