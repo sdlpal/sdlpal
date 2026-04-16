@@ -35,7 +35,6 @@
 # define PAL_HAS_JOYSTICKS     0
 # define PAL_HAS_MP3           0
 # define PAL_HAS_OGG           0
-# define PAL_HAS_OPUS          0
 # define PAL_HAS_TOUCH         0
 
 # define PAL_DEFAULT_WINDOW_WIDTH   320

@@ -29,7 +29,7 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	sdlpal
 BUILD		:=	build
-SOURCES		:=	. .. ../adplug ../libmad ../timidity
+SOURCES		:=	. .. ../adplug ../timidity
 
 APP_TITLE	:=	SDLPAL
 APP_DESCRIPTION :=	Pal DOS for 3DS

@@ -88,9 +88,9 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_SHADER,            PALCFG_STRING,   "Shader",             6, MAKE_STRING(NULL) },
 };
 
-static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "OPUS", "RAW" };
+static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "RAW" };
 static const char* synth_types[] = { "native", "timidity", "tinysoundfont" };
-static const char *cd_types[] = { "NONE", "MP3", "OGG", "OPUS", "RAW" };
+static const char *cd_types[] = { "NONE", "MP3", "OGG", "RAW" };
 static const char *opl_cores[] = { "MAME", "DBFLT", "DBINT", "NUKED" };
 static const char *opl_chips[] = { "OPL2", "OPL3" };
 
@@ -441,8 +441,6 @@ PAL_LoadConfig(
 						eCDType = CD_MP3;
 					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", slen) == 0)
 						eCDType = CD_OGG;
-					else if (PAL_HAS_OPUS && SDL_strncasecmp(value.sValue, "OPUS", slen) == 0)
-						eCDType = CD_OPUS;
 					else if (PAL_HAS_SDLCD && SDL_strncasecmp(value.sValue, "RAW", slen) == 0)
 						eCDType = CD_SDLCD;
 					break;
@@ -455,8 +453,6 @@ PAL_LoadConfig(
 						eMusicType = MUSIC_MP3;
 					else if (PAL_HAS_OGG && SDL_strncasecmp(value.sValue, "OGG", slen) == 0)
 						eMusicType = MUSIC_OGG;
-					else if (PAL_HAS_OPUS && SDL_strncasecmp(value.sValue, "OPUS", slen) == 0)
-						eMusicType = MUSIC_OPUS;
 					else if (SDL_strncasecmp(value.sValue, "RIX", slen) == 0)
 						eMusicType = MUSIC_RIX;
 					break;

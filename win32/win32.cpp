@@ -278,13 +278,11 @@ INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("None"));
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("MP3"));
 	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("OGG"));
-	ComboBox_AddString(hwndDlg, IDC_CD, TEXT("OPUS"));
 
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("MIDI"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("RIX"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("MP3"));
 	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("OGG"));
-	ComboBox_AddString(hwndDlg, IDC_BGM, TEXT("OPUS"));
 
 	ComboBox_AddString(hwndDlg, IDC_OPL_CORE, TEXT("MAME"));
 	ComboBox_AddString(hwndDlg, IDC_OPL_CORE, TEXT("DBFLT"));
