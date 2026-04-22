@@ -7,7 +7,7 @@ TEST_TARGET = sdlpal-tests.exe
 
 INTER=.dos
 
-HOST = i386-pc-msdosdjgpp-
+HOST = i586-pc-msdosdjgpp-
 TEST_CCFLAGS =
 
 GENERATED = -DPAL_HAS_GIT_REVISION $(shell ../scripts/gengitrev)
@@ -23,9 +23,9 @@ OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
 DEPFILES = $(CFILES:.c=$(INTER).d) $(CPPFILES:.cpp=$(INTER).d)
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
-SDL_CONFIG = sdl2-config
+SDL_CONFIG = pkg-config sdl3
 
-override CCFLAGS += `$(SDL_CONFIG) --cflags` -I../sdl_compat -I../3rd/mingw-std-threads -ggdb -ansi -Wall -Ofast -fno-strict-aliasing $(EXTRA_CCFLAGS) $(TEST_CCFLAGS) $(GENERATED)
+override CCFLAGS += `$(SDL_CONFIG) --cflags` -DUSE_SDL3=1 -I../sdl_compat -I../3rd/mingw-std-threads -ggdb -ansi -Wall -Ofast -fno-strict-aliasing $(EXTRA_CCFLAGS) $(TEST_CCFLAGS) $(GENERATED)
 CXXFLAGS = $(CCFLAGS) -std=c++11
 CFLAGS = $(CCFLAGS) -std=gnu99
 OPENGL_LIBS =

@@ -20,7 +20,7 @@
 //
 
 #include "main.h"
-#include <vclock.h>
+
 #if defined(PAL_HAS_GIT_REVISION)
 # undef PAL_GIT_REVISION
 # include "generated.h"
@@ -147,6 +147,10 @@ UTIL_Platform_Init(
 	char* argv[]
 )
 {
+#if PAL_HAS_MOUSE != 1
+	SDL_HideCursor();
+#endif
+	SDL_SetHint(SDL_HINT_DOS_ALLOW_DIRECT_FRAMEBUFFER, "1");
 	gConfig.fLaunchSetting = FALSE;
 	vclock_setup(gConfig.iVClockBaseFreq);
 	return 0;
