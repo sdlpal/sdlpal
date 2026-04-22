@@ -487,6 +487,10 @@ main(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(3,0,0)
+   SDL_SetAppMetadata("SDLPal", PAL_GIT_REVISION, "io.github.sdlpal");
+#endif
+
 #ifdef  __DJGPP__
    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
    SDL_LogSetOutputFunction(SDL_LogToFile, NULL);
