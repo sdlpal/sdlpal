@@ -193,8 +193,45 @@ VIDEO_Startup(
 	
    gRenderBackend.Init();
 
-#ifdef __DJGPP__
    UTIL_LogOutput(LOGLEVEL_DEBUG, "Probing Video Modes\n");
+#if SDL_VERSION_ATLEAST(3,0,0)
+   {
+      int num_displays = 0;
+      SDL_DisplayID *displays = SDL_GetDisplays(&num_displays);
+
+      for (int i = 0; i < num_displays; i++) {
+         SDL_DisplayID display_id = displays[i];
+         
+         int num_modes = 0;
+         SDL_DisplayMode **modes = SDL_GetFullscreenDisplayModes(display_id, &num_modes);
+         
+         if (num_modes > 0 && modes) {
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "Display %d (ID: %u) has %d modes\n", i, display_id, num_modes);
+            
+            for (int j = 0; j < num_modes; j++) {
+                  SDL_DisplayMode *mode = modes[j];
+                  
+                  // 计算准确的刷新率
+                  float refresh_rate = mode->refresh_rate; // 预计算的浮点值
+                  if (refresh_rate == 0.0f && mode->refresh_rate_numerator > 0) {
+                     refresh_rate = (float)mode->refresh_rate_numerator / (float)mode->refresh_rate_denominator;
+                  }
+                  
+                  UTIL_LogOutput(LOGLEVEL_DEBUG,
+                                 "Display %d mode %d: fmt %s %dx%d @ %.2fHz\n",
+                                 i, j,
+                                 SDL_GetPixelFormatName(mode->format),
+                                 mode->w, mode->h,
+                                 refresh_rate);
+            }
+            SDL_free(modes);
+         }
+      }
+
+      SDL_free(displays);
+
+   }
+#else
    for( int i=0; i<SDL_GetNumVideoDisplays(); i++ )
    {
       int num_modes = SDL_GetNumDisplayModes(i);
