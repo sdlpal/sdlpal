@@ -21,7 +21,7 @@ SDLPAL was originally created by [Wei Mingzhi](https://github.com/weimzh/). It i
 
 ```text
 Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
-Copyright (c) 2011-2024, SDLPAL development team.
+Copyright (c) 2011-2026, SDLPAL development team.
 All rights reserved.
 ```
 
