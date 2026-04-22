@@ -20,7 +20,7 @@
 //
 
 #include "main.h"
-#include <vclock.h>
+
 #if defined(PAL_HAS_GIT_REVISION)
 # undef PAL_GIT_REVISION
 # include "generated.h"

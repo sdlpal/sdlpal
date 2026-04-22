@@ -34,6 +34,8 @@
 #include "adplug/convertopl.h"
 #include "adplug/rix.h"
 
+#undef __DJGPP__
+
 #ifdef __DJGPP__
 #	include <vclock.h>
 #endif
@@ -58,10 +60,10 @@ typedef struct tagRIXPLAYER :
 } RIXPLAYER, *LPRIXPLAYER;
 
 extern "C"
-UINT32 RIX_Update_Timer(
+long unsigned RIX_Update_Timer(
 	VOID *object,
-	UINT32 timer_id,
-	UINT32 interval
+	long unsigned timer_id,
+	long unsigned interval
 )
 {
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;

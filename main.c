@@ -34,6 +34,8 @@
 # include "generated.h"
 #endif
 
+#undef __DJGPP__
+
 static jmp_buf g_exit_jmp_buf;
 static int g_exit_code = 0;
 
