@@ -273,6 +273,10 @@ extern SDL_DECLSPEC int SDLCALL SDL_ConvertAudio(SDL_AudioCVT* cvt);
 #undef SDL_SemWait
 #define SDL_SemWait SDL_WaitSemaphore
 
+#undef SDL_LogSetAllPriority
+#define SDL_LogSetAllPriority SDL_SetLogPriorities
+#undef SDL_LogSetOutputFunction
+#define SDL_LogSetOutputFunction SDL_SetLogOutputFunction
 
 #endif
 
