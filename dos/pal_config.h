@@ -33,7 +33,7 @@
 
 #define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | (gConfig.fFullScreen ? SDL_WINDOW_FULLSCREEN : 0))
 
-#define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK)
+#define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK)
 
 #undef SDL_RENDERER_ACCELERATED
 #define SDL_RENDERER_ACCELERATED 0
@@ -56,12 +56,12 @@ PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 #define PAL_NEED_STRCASESTR 1
 
 # define PAL_HAS_GLSL          0
-# define PAL_HAS_JOYSTICKS     0
+# define PAL_HAS_JOYSTICKS     1
 # define PAL_HAS_TOUCH         0
 # define PAL_HAS_MOUSE         0
-# define PAL_HAS_MP3           0
-# define PAL_HAS_OGG           0
-# define PAL_HAS_OPUS          0
+# define PAL_HAS_MP3           1
+# define PAL_HAS_OGG           1
+# define PAL_HAS_OPUS          1
 # define PAL_HAS_NATIVEMIDI    0 //388!
 
 #define USE_RIX_MKF_FILE_BUFFER

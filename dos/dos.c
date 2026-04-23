@@ -147,6 +147,9 @@ UTIL_Platform_Init(
 	char* argv[]
 )
 {
+#if PAL_HAS_MOUSE != 1
+	SDL_HideCursor();
+#endif
 	gConfig.fLaunchSetting = FALSE;
 	return 0;
 }
