@@ -150,6 +150,7 @@ UTIL_Platform_Init(
 #if PAL_HAS_MOUSE != 1
 	SDL_HideCursor();
 #endif
+	SDL_SetHint(SDL_HINT_DOS_ALLOW_DIRECT_FRAMEBUFFER, "1");
 	gConfig.fLaunchSetting = FALSE;
 	return 0;
 }
