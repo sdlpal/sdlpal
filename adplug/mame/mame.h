@@ -1,6 +1,6 @@
 /*
  * SDLPAL
- * Copyright (c) 2011-2024, SDLPAL development team.
+ * Copyright (c) 2011-2026, SDLPAL development team.
  * All rights reserved.
  *
  * This file is part of SDLPAL.
