@@ -17,7 +17,7 @@ If you experience difficulties downloading code from GitHub in mainland China, p
 
 ## License
 
-SDLPAL was originally created by [Wei Mingzhi](https://github.com/weimzh/). It is now maintained by the SDLPAL development team. Please see [AUTHORS](AUTHORS) for the full list of contributors.
+SDLPAL was originally created by [Wei Mingzhi](https://github.com/weimzh/). It is now maintained by the SDLPAL development team. Please see [AUTHORS](AUTHORS.md) for the full list of contributors.
 
 ```text
 Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
