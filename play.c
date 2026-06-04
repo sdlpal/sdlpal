@@ -531,6 +531,9 @@ PAL_StartFrame(
    //
    // Run the game logic of one frame
    //
+#ifdef __PS2__
+   input_ps2_filter();
+#endif
    PAL_GameUpdate(TRUE);
    if (gpGlobals->fEnteringScene)
    {

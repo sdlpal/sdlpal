@@ -96,6 +96,10 @@ PAL_RegisterInputFilter(
    void (*shutdown_filter)()
 );
 
+#ifdef __PS2__
+int input_ps2_filter();
+#endif
+
 extern volatile PALINPUTSTATE g_InputState;
 
 extern BOOL g_fUseJoystick;
