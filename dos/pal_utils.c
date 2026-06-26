@@ -148,6 +148,7 @@ UTIL_Platform_Init(
 )
 {
 	gConfig.fLaunchSetting = FALSE;
+	vclock_setup(gConfig.iVClockBaseFreq);
 	return 0;
 }
 
