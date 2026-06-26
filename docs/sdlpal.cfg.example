@@ -62,6 +62,9 @@
 #                is 49716, but other values may also be used.
 #OPLSampleRate=49716
 
+# VClockBaseFreq: Indicates the virtual clock base frequency. Default is 100.
+#VClockBaseFreq=100
+
 # SurroundOPLOffset: Indicates the frequency offset of surround opl. The default and
 #                    recommended value is 384.0, but other values may also be used.
 #SurroundOPLOffset=384.0

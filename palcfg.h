@@ -68,6 +68,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_MUSICVOLUME,
 	PALCFG_SOUNDVOLUME,
 	PALCFG_REALOPLUPDATEFREQ,
+	PALCFG_VCLOCKBASEFREQ,
 	PALCFG_REALOPLPORT,
 	PALCFG_WINDOWHEIGHT,
 	PALCFG_WINDOWWIDTH,
@@ -207,6 +208,7 @@ typedef struct tagCONFIGURATION
 	INT              iMusicVolume;
 	INT              iSoundVolume;
 	INT              iRealOPLUpdateFreq;
+	INT              iVClockBaseFreq;
 	INT              iRealOPLPort;
 	LOGLEVEL         iLogLevel;
 	MUSICTYPE        eMusicType;
