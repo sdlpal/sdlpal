@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     env:
-      DOS_SDL_BRANCH: dos_vclock
+      DOS_SDL_BRANCH: sdl3_main_fix
     steps:
     - name: Install Dependencies
       run: sudo apt-get install wget bzip2 zstd upx-ucl zip pipx libfl2 && pipx install cloudsmith-cli
@@ -51,14 +51,14 @@ jobs:
         cd 3rd/SDL
         git fetch origin $DOS_SDL_BRANCH
         git checkout $DOS_SDL_BRANCH
-    - name: Setup SDL2-config for DJGPP
+    - name: Compile and Setup SDL3 for DJGPP
       run: |
         echo "SHELL=$SHELL"
         echo "PATH=$PATH"
         cd 3rd/SDL
-        ./configure --host=i386-pc-msdosdjgpp CC=i386-pc-msdosdjgpp-gcc CXX=i386-pc-msdosdjgpp-g++ CXXCPP=i386-pc-msdosdjgpp-cpp --prefix=$DJGPP_PREFIX --disable-shared --enable-static CFLAGS="-O2 -ggdb" CXXFLAGS="-O2 -ggdb" || { cat config.log; exit 1; }
-        make
-        make install
+        cmake -S. -Bbuild_dos_sdl3 -DCMAKE_TOOLCHAIN_FILE=build-scripts/i586-pc-msdosdjgpp.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo  -DCMAKE_INSTALL_PREFIX:PATH=$DJGPP_PREFIX -DSDL_STATIC=ON -DSDL_SHARED=OFF -DSDL_TEST_LIBRARY=OFF -DSDL_EXAMPLES=OFF
+        cmake --build build_dos_sdl3 --target install
+        echo "PKG_CONFIG_PATH=$DJGPP_PREFIX/lib/pkgconfig" >> "$GITHUB_ENV"
     - name: Build DOS version
       run: cd dos && make
     - name: Strip and Compress
