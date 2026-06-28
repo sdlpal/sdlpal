@@ -34,10 +34,12 @@
 #include "adplug/convertopl.h"
 #include "adplug/rix.h"
 
-#if SDL_VERSION_ATLEAST(3,0,0)
+#ifdef __DJGPP__
+#  if SDL_VERSION_ATLEAST(3,0,0)
 #	include "vclock.h"
-#else
+#  else
 #	include <vclock.h>
+#  endif
 #endif
 
 typedef struct tagRIXPLAYER :
@@ -59,11 +61,17 @@ typedef struct tagRIXPLAYER :
    INT                        iRealOPLTimerID;
 } RIXPLAYER, *LPRIXPLAYER;
 
+#if SDL_VERSION_ATLEAST(3,0,0)
+#define UINT32 Uint32
+#else
+#define UINT32 long unsigned
+#endif
+
 extern "C"
-long unsigned RIX_Update_Timer(
+UINT32 RIX_Update_Timer(
 	VOID *object,
-	long unsigned timer_id,
-	long unsigned interval
+	UINT32 timer_id,
+	UINT32 interval
 )
 {
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)object;
