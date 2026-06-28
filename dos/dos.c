@@ -28,6 +28,14 @@
 #define CRASH_HANDLER_DOS_IMPLEMENTATION
 #include "crash_handler_dos.h"
 
+#ifdef __DJGPP__
+#  if SDL_VERSION_ATLEAST(3,0,0)
+#	include "vclock.h"
+#  else
+#	include <vclock.h>
+#  endif
+#endif
+
 double fmax(double a, double b) {
 	return (a > b) ? a : b;
 }

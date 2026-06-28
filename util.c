@@ -968,6 +968,7 @@ UTIL_LogSetPrelude(
 }
 
 #if PAL_NEED_STRCASESTR
+#include <ctype.h>
 PAL_FORCE_INLINE char* stoupper(const char* s)
 {
 	char* p = strdup(s);

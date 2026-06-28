@@ -142,7 +142,7 @@ static inline void bios_tick_add(int step)
  * Increments internal time counter and dispatches user hooks.
  * This function is called via assembly wrapper for proper interrupt handling.
  */
-static void vclock_irq0_handler(void)
+static void __attribute__((no_reorder)) vclock_irq0_handler(void)
 {
     int i;
 
@@ -172,7 +172,7 @@ static void vclock_irq0_handler(void)
     }
 }
 
-static int
+static int __attribute__((no_reorder))
 vclock_lockisr(void)
 {
     size_t len = (void *)vclock_lockisr - (void *)vclock_irq0_handler;
