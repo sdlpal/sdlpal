@@ -48,6 +48,8 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_ENABLEAVIPLAY,
     PALCFG_ENABLEGLSL,
     PALCFG_ENABLEHDR,
+	PALCFG_DOSFORCEMODE13H,
+	PALCFG_DOSLOWENDOPT,
 
 	/* Booleans */
 	PALCFG_BOOLEAN_MAX,
@@ -69,7 +71,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_MUSICVOLUME,
 	PALCFG_SOUNDVOLUME,
 	PALCFG_REALOPLUPDATEFREQ,
-	PALCFG_VCLOCKBASEFREQ,
+	PALCFG_DOSBASECLOCKFREQ,
 	PALCFG_REALOPLPORT,
 	PALCFG_WINDOWHEIGHT,
 	PALCFG_WINDOWWIDTH,
@@ -209,7 +211,7 @@ typedef struct tagCONFIGURATION
 	INT              iMusicVolume;
 	INT              iSoundVolume;
 	INT              iRealOPLUpdateFreq;
-	INT              iVClockBaseFreq;
+	INT              iDOSBaseClockFreq;
 	INT              iRealOPLPort;
 	LOGLEVEL         iLogLevel;
 	MUSICTYPE        eMusicType;
@@ -230,6 +232,8 @@ typedef struct tagCONFIGURATION
 	BOOL             fEnableAviPlay;
 	BOOL             fEnableGLSL;
     BOOL             fEnableHDR;
+	BOOL             fDOSForceMode13h;
+	BOOL             fDOSLowEndOpt;
 
 #if USE_RIX_EXTRA_INIT
 	uint32_t        *pExtraFMRegs;

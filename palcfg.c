@@ -54,6 +54,8 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_ENABLEAVIPLAY,     PALCFG_BOOLEAN,  "EnableAviPlay",     13, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
 	{ PALCFG_ENABLEGLSL,        PALCFG_BOOLEAN,  "EnableGLSL",        10, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
     { PALCFG_ENABLEHDR,         PALCFG_BOOLEAN,  "EnableHDR",          9, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
+	{ PALCFG_DOSFORCEMODE13H,   PALCFG_BOOLEAN,  "DOSForceMode13h",   15, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
+	{ PALCFG_DOSLOWENDOPT,      PALCFG_BOOLEAN,  "DOSLowEndOpt",      12, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
 
 	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SurroundOPLOffset", 17, MAKE_INTEGER(384,                           INT32_MIN,             INT32_MAX) },
 	{ PALCFG_LOGLEVEL,          PALCFG_INTEGER,  "LogLevel",           8, MAKE_INTEGER(PAL_DEFAULT_LOGLEVEL,          LOGLEVEL_MIN,          LOGLEVEL_MAX) },
@@ -66,7 +68,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MusicVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_REALOPLUPDATEFREQ, PALCFG_UNSIGNED, "RealOPLUpdateFreq", 17, MAKE_UNSIGNED(50,                            0,                     UINT32_MAX) },
-	{ PALCFG_VCLOCKBASEFREQ,    PALCFG_UNSIGNED, "VClockBaseFreq",    14, MAKE_UNSIGNED(100,                           0,                     UINT32_MAX) },
+	{ PALCFG_DOSBASECLOCKFREQ,  PALCFG_UNSIGNED, "DOSBaseClockFreq",  16, MAKE_UNSIGNED(100,                           0,                     UINT32_MAX) },
 	{ PALCFG_REALOPLPORT,       PALCFG_UNSIGNED, "RealOPLPort",       11, MAKE_UNSIGNED(0x220,                         0,                     0xFFFF) },
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
 	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WindowWidth",       11, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_WIDTH,      0,                     UINT32_MAX) },
@@ -591,6 +593,8 @@ PAL_LoadConfig(
 	gConfig.fEnableAviPlay = values[PALCFG_ENABLEAVIPLAY].bValue;
 	gConfig.fEnableGLSL = values[PALCFG_ENABLEGLSL].bValue;
     gConfig.fEnableHDR = values[PALCFG_ENABLEHDR].bValue;
+	gConfig.fDOSForceMode13h = values[PALCFG_DOSFORCEMODE13H].bValue;
+	gConfig.fDOSLowEndOpt = values[PALCFG_DOSLOWENDOPT].bValue;
 	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
 
 	gConfig.iSurroundOPLOffset = values[PALCFG_SURROUNDOPLOFFSET].iValue;
@@ -604,7 +608,7 @@ PAL_LoadConfig(
 	gConfig.iMusicVolume = values[PALCFG_MUSICVOLUME].uValue;
 	gConfig.iSoundVolume = values[PALCFG_SOUNDVOLUME].uValue;
 	gConfig.iRealOPLUpdateFreq = values[PALCFG_REALOPLUPDATEFREQ].uValue;
-	gConfig.iVClockBaseFreq = values[PALCFG_VCLOCKBASEFREQ].uValue;
+	gConfig.iDOSBaseClockFreq = values[PALCFG_DOSBASECLOCKFREQ].uValue;
 	gConfig.iRealOPLPort = values[PALCFG_REALOPLPORT].uValue;
 
 	gConfig.dwTextureWidth  = values[PALCFG_TEXTUREWIDTH].uValue;
@@ -658,6 +662,8 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_ENABLEAVIPLAY), gConfig.fEnableAviPlay); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_ENABLEGLSL), gConfig.fEnableGLSL); fputs(buf, fp);
         sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_ENABLEHDR), gConfig.fEnableHDR); fputs(buf, fp);
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_DOSFORCEMODE13H), gConfig.fDOSForceMode13h); fputs(buf, fp);
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_DOSLOWENDOPT), gConfig.fDOSLowEndOpt); fputs(buf, fp);
 
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_SURROUNDOPLOFFSET), gConfig.iSurroundOPLOffset); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_LOGLEVEL), gConfig.iLogLevel); fputs(buf, fp);
@@ -670,7 +676,7 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_MUSICVOLUME), gConfig.iMusicVolume); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_SOUNDVOLUME), gConfig.iSoundVolume); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_REALOPLUPDATEFREQ), gConfig.iRealOPLUpdateFreq); fputs(buf, fp);
-		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_VCLOCKBASEFREQ), gConfig.iVClockBaseFreq); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_DOSBASECLOCKFREQ), gConfig.iDOSBaseClockFreq); fputs(buf, fp);
 		sprintf(buf, "%s=0x%X\n", PAL_ConfigName(PALCFG_REALOPLPORT), (unsigned int)gConfig.iRealOPLPort); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_WINDOWHEIGHT), gConfig.dwScreenHeight); fputs(buf, fp);
         sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_WINDOWWIDTH), gConfig.dwScreenWidth); fputs(buf, fp);
@@ -724,6 +730,8 @@ PAL_GetConfigItem(
 		case PALCFG_ENABLEAVIPLAY:     value.bValue = gConfig.fEnableAviPlay; break;
 		case PALCFG_ENABLEGLSL:        value.bValue = gConfig.fEnableGLSL; break;
 		case PALCFG_ENABLEHDR:        value.bValue = gConfig.fEnableHDR; break;
+		case PALCFG_DOSFORCEMODE13H:   value.bValue = gConfig.fDOSForceMode13h; break;
+		case PALCFG_DOSLOWENDOPT:      value.bValue = gConfig.fDOSLowEndOpt; break;
 		case PALCFG_SURROUNDOPLOFFSET: value.iValue = gConfig.iSurroundOPLOffset; break;
 		case PALCFG_LOGLEVEL:          value.iValue = gConfig.iLogLevel; break;
 		case PALCFG_AUDIODEVICE:       value.iValue = gConfig.iAudioDevice; break;
@@ -735,7 +743,7 @@ PAL_GetConfigItem(
 		case PALCFG_MUSICVOLUME:       value.uValue = gConfig.iMusicVolume; break;
 		case PALCFG_SOUNDVOLUME:       value.uValue = gConfig.iSoundVolume; break;
 		case PALCFG_REALOPLUPDATEFREQ: value.uValue = gConfig.iRealOPLUpdateFreq; break;
-		case PALCFG_VCLOCKBASEFREQ:    value.uValue = gConfig.iVClockBaseFreq; break;
+		case PALCFG_DOSBASECLOCKFREQ:  value.uValue = gConfig.iDOSBaseClockFreq; break;
 		case PALCFG_REALOPLPORT:       value.uValue = gConfig.iRealOPLPort; break;
 		case PALCFG_WINDOWHEIGHT:      value.uValue = gConfig.dwScreenHeight; break;
 		case PALCFG_WINDOWWIDTH:       value.uValue = gConfig.dwScreenWidth; break;
@@ -781,6 +789,8 @@ PAL_SetConfigItem(
 	case PALCFG_ENABLEAVIPLAY:     gConfig.fEnableAviPlay = value.bValue; break;
 	case PALCFG_ENABLEGLSL:        gConfig.fEnableGLSL = value.bValue; break;
 	case PALCFG_ENABLEHDR:         gConfig.fEnableHDR = value.bValue; break;
+	case PALCFG_DOSFORCEMODE13H:   gConfig.fDOSForceMode13h = value.bValue; break;
+	case PALCFG_DOSLOWENDOPT:      gConfig.fDOSLowEndOpt = value.bValue; break;
 	case PALCFG_SURROUNDOPLOFFSET: gConfig.iSurroundOPLOffset = value.iValue; break;
 	case PALCFG_LOGLEVEL:          gConfig.iLogLevel = value.iValue; break;
 	case PALCFG_AUDIODEVICE:       gConfig.iAudioDevice = value.iValue; break;
@@ -792,7 +802,7 @@ PAL_SetConfigItem(
 	case PALCFG_MUSICVOLUME:       gConfig.iMusicVolume = value.uValue; break;
 	case PALCFG_SOUNDVOLUME:       gConfig.iSoundVolume = value.uValue; break;
 	case PALCFG_REALOPLUPDATEFREQ: gConfig.iRealOPLUpdateFreq = value.uValue; break;
-	case PALCFG_VCLOCKBASEFREQ:    gConfig.iVClockBaseFreq = value.uValue; break;
+	case PALCFG_DOSBASECLOCKFREQ:  gConfig.iDOSBaseClockFreq = value.uValue; break;
 	case PALCFG_REALOPLPORT:       gConfig.iRealOPLPort = value.uValue; break;
 	case PALCFG_WINDOWHEIGHT:      gConfig.dwScreenHeight = value.uValue; break;
 	case PALCFG_WINDOWWIDTH:       gConfig.dwScreenWidth = value.uValue; break;
