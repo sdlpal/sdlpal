@@ -21,6 +21,8 @@
 #include <float.h>
 #include "main.h"
 
+static bool forceMode13h = true;
+
 // Screen buffer
 SDL_Surface              *gpScreen           = NULL;
 
@@ -136,6 +138,11 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 	//
 	// Create texture for screen.
 	//
+   if( forceMode13h )
+   {
+      texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_INDEX8, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
+   }
+   else
 	texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
 #if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
     SDL_SetTextureScaleMode(texture, VIDEO_GetScaleMode());
@@ -167,9 +174,11 @@ VIDEO_Startup(
 --*/
 {
 	extern SDL_Surface* STBIMG_Load(const char* file);
+   SDL_DisplayMode mode13h;
 #ifndef __DJGPP__
 	extern char *dirname(char *path);
 #endif
+   forceMode13h = gConfig.fDOSForceMode13h ? true : false;
 #if APPIMAGE
 	SDL_Surface *surf = STBIMG_Load( PAL_va(0, "%s%s", dirname(dirname(dirname(gExecutablePath))), "/usr/share/icons/hicolor/256x256/apps/sdlpal.png" ) );
 #endif
@@ -211,6 +220,12 @@ VIDEO_Startup(
             for (int j = 0; j < num_modes; j++) {
                   SDL_DisplayMode *mode = modes[j];
                   
+                  if (mode->w == 320 && mode->h == 200 && mode->format == SDL_PIXELFORMAT_INDEX8)
+                  {
+                     UTIL_LogOutput(LOGLEVEL_DEBUG, "found mode13h! display id: %d \n", mode->displayID);
+                     mode13h = *mode;
+                  }
+
                   // 计算准确的刷新率
                   float refresh_rate = mode->refresh_rate; // 预计算的浮点值
                   if (refresh_rate == 0.0f && mode->refresh_rate_numerator > 0) {
@@ -271,6 +286,16 @@ VIDEO_Startup(
       int w,h;
       SDL_GetWindowSize(gpWindow, &w, &h);
       UTIL_LogOutput(LOGLEVEL_DEBUG, "Actual created window fmt:%s size: %dx%d@\n", SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), w, h);
+      if(forceMode13h)
+         if(w == 320 && h == 200 && SDL_GetWindowPixelFormat(gpWindow) == SDL_PIXELFORMAT_INDEX8)
+         {
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "Already in mode13h\n");
+         }
+         else
+         {
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "Setting window to mode13h result:%d\n", SDL_SetWindowFullscreenMode(gpWindow, &mode13h));
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "After force set window fmt:%s size: %dx%d@\n", SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), w, h);
+         }
       gConfig.dwScreenWidth = w;
       gConfig.dwScreenHeight = h;
    }
@@ -317,6 +342,9 @@ VIDEO_Startup(
    //
    gpScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
    gpScreenBak = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+   if(forceMode13h)
+      gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+   else
    gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,
                                        0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
@@ -341,7 +369,7 @@ VIDEO_Startup(
    //
    // Failed?
    //
-   if (gpScreen == NULL || gpScreenBak == NULL || gpScreenReal == NULL || gpTexture == NULL || gpPalette == NULL)
+   if (gpScreen == NULL || gpScreenBak == NULL || gpScreenReal == NULL || (gpTexture == NULL && !forceMode13h) || gpPalette == NULL)
    {
       VIDEO_Shutdown();
       return -2;
@@ -550,6 +578,13 @@ VIDEO_RenderCopy(
 	void *texture_pixels;
 	int texture_pitch;
 
+   if( gConfig.fDOSLowEndOpt ) {
+      SDL_Surface *windowSurface = SDL_GetWindowSurface(gpWindow);
+      SDL_BlitScaled(gpScreenReal, NULL, windowSurface, NULL);
+      SDL_UpdateWindowSurface(gpWindow);
+      return;
+   }
+
 	SDL_LockTexture(gpTexture, NULL, &texture_pixels, &texture_pitch);
 	memset(texture_pixels, 0, gTextureRect.y * texture_pitch);
 	uint8_t *pixels = (uint8_t *)texture_pixels + gTextureRect.y * texture_pitch;
@@ -730,6 +765,7 @@ VIDEO_SetPalette(
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
    SDL_Rect rect;
+   SDL_Surface *windowSurface = SDL_GetWindowSurface(gpWindow);
 
    SDL_SetPaletteColors(gpPalette, rgPalette, 0, 256);
 
@@ -744,6 +780,15 @@ VIDEO_SetPalette(
    SDL_SetSurfaceColorMod(gpScreen, 0xFF, 0xFF, 0xFF);
    SDL_SetSurfaceColorMod(gpScreenBak, 0, 0, 0);
    SDL_SetSurfaceColorMod(gpScreenBak, 0xFF, 0xFF, 0xFF);
+
+   if(forceMode13h) {
+      SDL_SetSurfacePalette(gpScreenReal, gpPalette);
+      SDL_SetSurfaceColorMod(gpScreenReal, 0, 0, 0);
+      SDL_SetSurfaceColorMod(gpScreenReal, 0xFF, 0xFF, 0xFF);
+      SDL_SetSurfacePalette(windowSurface, gpPalette);
+      SDL_SetSurfaceColorMod(windowSurface, 0, 0, 0);
+      SDL_SetSurfaceColorMod(windowSurface, 0xFF, 0xFF, 0xFF);
+   }
 
    rect.x = 0;
    rect.y = 0;
