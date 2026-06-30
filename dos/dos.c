@@ -160,7 +160,7 @@ UTIL_Platform_Init(
 #endif
 	SDL_SetHint(SDL_HINT_DOS_ALLOW_DIRECT_FRAMEBUFFER, "1");
 	gConfig.fLaunchSetting = FALSE;
-	vclock_setup(gConfig.iVClockBaseFreq);
+	vclock_setup(gConfig.iDOSBaseClockFreq);
 	return 0;
 }
 
