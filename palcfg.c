@@ -399,7 +399,7 @@ PAL_LoadConfig(
 #ifdef __DJGPP__
 	// DOS-specific defaults
 	eOPLCore = OPLCORE_REAL;  // Only need to set enum variable, not values array
-	values[PALCFG_USESURROUNDOPL].bValue = FALSE;
+	values[PALCFG_ENABLEAVIPLAY].bValue = FALSE;
 #endif
 
 	if (fFromFile && (fp = UTIL_OpenFileAtPathForMode(PAL_CONFIG_PREFIX, "sdlpal.cfg", "r")))
