@@ -522,6 +522,10 @@ main(
    //
    if (SDL_Init(PAL_SDL_INIT_FLAGS) == SDL_FAIL)
    {
+#if __DJGPP__
+      // Since DOS has opl/mpu which may sound without audio subsystem
+      if(SDL_Init(PAL_SDL_INIT_FLAGS & ~SDL_INIT_AUDIO ) == SDL_FAIL)
+#endif
 	   TerminateOnError("Could not initialize SDL: %s.\n", SDL_GetError());
    }
 
