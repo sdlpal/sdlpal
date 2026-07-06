@@ -59,6 +59,7 @@
 #include "video.h"
 #include "riff.h"
 #include "palcfg.h"
+#include "palette.h"
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
@@ -106,6 +107,65 @@ typedef struct AVIPlayState
 } AVIPlayState;
 
 static AVIPlayState gAVIPlayState;
+static SDL_Palette *g_pRGB332Palette = NULL;
+
+static uint8_t
+AVI_RGB555ToRGB332(uint16_t rgb555)
+{
+    uint8_t r = (rgb555 >> 10) & 0x1F;
+    uint8_t g = (rgb555 >> 5) & 0x1F;
+    uint8_t b = rgb555 & 0x1F;
+
+    return (r >> 2 << 5) | (g >> 2 << 2) | (b >> 3);
+}
+
+static void
+AVI_CreateRGB332Palette(SDL_Color colors[256])
+{
+    for (int i = 0; i < 256; i++)
+    {
+        uint8_t r_idx = (i >> 5) & 0x07;
+        uint8_t g_idx = (i >> 2) & 0x07;
+        uint8_t b_idx = i & 0x03;
+
+        colors[i].r = (r_idx * 255) / 7;
+        colors[i].g = (g_idx * 255) / 7;
+        colors[i].b = (b_idx * 255) / 3;
+        colors[i].a = 255;
+    }
+}
+
+static SDL_Color *
+AVI_GetRGB332Colors(void)
+{
+    static SDL_Color colors[256];
+    static BOOL initialized = FALSE;
+
+    if (!initialized)
+    {
+        AVI_CreateRGB332Palette(colors);
+        initialized = TRUE;
+    }
+
+    return colors;
+}
+
+static SDL_Palette *
+AVI_GetRGB332Palette(void)
+{
+    if (g_pRGB332Palette == NULL)
+    {
+        g_pRGB332Palette = SDL_AllocPalette(256);
+        if (g_pRGB332Palette == NULL)
+        {
+            UTIL_LogOutput(LOGLEVEL_ERROR, "Failed to create RGB332 SDL palette!");
+            return NULL;
+        }
+        SDL_SetPaletteColors(g_pRGB332Palette, AVI_GetRGB332Colors(), 0, 256);
+    }
+
+    return g_pRGB332Palette;
+}
 
 static AVIPlayState *
 PAL_ReadAVIInfo(
@@ -273,9 +333,29 @@ PAL_ReadAVIInfo(
 			//
 			// Create surface
 			//
-			avi->surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-				bih.biWidth, bih.biHeight, bih.biBitCount,
-				0x7C00, 0x03E0, 0x001F, 0x0000);
+			if (gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt)
+			{
+				avi->surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+									bih.biWidth, bih.biHeight, 8,
+									0, 0, 0, 0);
+				if (avi->surface == NULL)
+				{
+					UTIL_LogOutput(LOGLEVEL_WARNING, "Failed to create AVI surface!");
+					return NULL;
+				}
+				SDL_SetSurfacePalette(avi->surface, AVI_GetRGB332Palette());
+			}
+			else
+			{
+				avi->surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+					bih.biWidth, bih.biHeight, bih.biBitCount,
+					0x7C00, 0x03E0, 0x001F, 0x0000);
+			}
+			if (avi->surface == NULL)
+			{
+				UTIL_LogOutput(LOGLEVEL_WARNING, "Failed to create AVI surface!");
+				return NULL;
+			}
 			//
 			// Build SDL audio conversion info
 			//
@@ -511,6 +591,11 @@ PAL_AVIShutdown(
 	void
 )
 {
+    if (g_pRGB332Palette != NULL)
+    {
+        SDL_FreePalette(g_pRGB332Palette);
+        g_pRGB332Palette = NULL;
+    }
     SDL_DestroyMutex(gAVIPlayState.selfMutex);
 }
 
@@ -526,12 +611,19 @@ PAL_RenderAVIFrameToSurface(
     /* decoding parameters */
 	uint16_t *pixels = (unsigned short *)lpSurface->pixels;
 	uint32_t  stream_ptr = 0, skip_blocks = 0;
-	uint32_t  stride = lpSurface->pitch >> 1;
+	uint32_t  stride;
 	const int block_inc = 4;
-	const int row_dec = stride + 4;
+	int row_dec;
 	const int blocks_wide = lpSurface->w >> 2; // width in 4x4 blocks
 	const int blocks_high = lpSurface->h >> 2; // height in 4x4 blocks
 	uint32_t  total_blocks = blocks_wide * blocks_high;
+
+	uint8_t *pixels8 = (uint8_t *)lpSurface->pixels;
+	uint16_t color;
+	BOOL fLowEndOpt = (gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt);
+
+	stride = fLowEndOpt ? lpSurface->pitch : (lpSurface->pitch >> 1);
+	row_dec = stride + 4;
 
     for (int block_y = blocks_high; block_y > 0; block_y--)
     {
@@ -552,7 +644,7 @@ PAL_RenderAVIFrameToSurface(
             // get the next two bytes in the encoded data stream
             CHECK_STREAM_PTR(2);
             uint8_t byte_a = lpChunk->data[stream_ptr++];
-			uint8_t byte_b = lpChunk->data[stream_ptr++];
+            uint8_t byte_b = lpChunk->data[stream_ptr++];
 
             // check if the decode is finished
             if ((byte_a == 0) && (byte_b == 0) && (total_blocks == 0))
@@ -568,7 +660,7 @@ PAL_RenderAVIFrameToSurface(
             {
                 // 2- or 8-color encoding modes
                 uint16_t flags = (byte_b << 8) | byte_a;
-				uint16_t colors[8];
+                uint16_t colors[8];
 
                 CHECK_STREAM_PTR(4);
                 colors[0] = AV_RL16(&lpChunk->data[stream_ptr]);
@@ -597,9 +689,12 @@ PAL_RenderAVIFrameToSurface(
                     {
                         for (int pixel_x = 0; pixel_x < 4; pixel_x++, flags >>= 1)
                         {
-                            pixels[pixel_ptr++] =
-                            colors[((pixel_y & 0x2) << 1) +
-                                   (pixel_x & 0x2) + ((flags & 0x1) ^ 1)];
+                            color = colors[((pixel_y & 0x2) << 1) +
+                                           (pixel_x & 0x2) + ((flags & 0x1) ^ 1)];
+                            if (fLowEndOpt)
+                                pixels8[pixel_ptr++] = AVI_RGB555ToRGB332(color);
+                            else
+                                pixels[pixel_ptr++] = color;
                         }
                         pixel_ptr -= row_dec;
                     }
@@ -611,7 +706,11 @@ PAL_RenderAVIFrameToSurface(
                     {
                         for (int pixel_x = 0; pixel_x < 4; pixel_x++, flags >>= 1)
                         {
-                            pixels[pixel_ptr++] = colors[(flags & 0x1) ^ 1];
+                            color = colors[(flags & 0x1) ^ 1];
+                            if (fLowEndOpt)
+                                pixels8[pixel_ptr++] = AVI_RGB555ToRGB332(color);
+                            else
+                                pixels[pixel_ptr++] = color;
                         }
                         pixel_ptr -= row_dec;
                     }
@@ -620,13 +719,16 @@ PAL_RenderAVIFrameToSurface(
             else
             {
                 // otherwise, it's a 1-color block
-				uint16_t color = (byte_b << 8) | byte_a;
+                uint16_t solid_color = (byte_b << 8) | byte_a;
 
                 for (int pixel_y = 0; pixel_y < 4; pixel_y++)
                 {
                     for (int pixel_x = 0; pixel_x < 4; pixel_x++)
                     {
-                        pixels[pixel_ptr++] = color;
+                        if (fLowEndOpt)
+                            pixels8[pixel_ptr++] = AVI_RGB555ToRGB332(solid_color);
+                        else
+                            pixels[pixel_ptr++] = solid_color;
                     }
                     pixel_ptr -= row_dec;
                 }
@@ -637,7 +739,6 @@ PAL_RenderAVIFrameToSurface(
         }
     }
 }
-
 
 BOOL
 PAL_PlayAVI(
@@ -670,6 +771,11 @@ PAL_PlayAVI(
 	VIDEO_ChangeDepth(SDL_BITSPERPIXEL(avi->surface->format));
 #else
 	VIDEO_ChangeDepth(avi->surface->format->BitsPerPixel);
+#endif
+
+#if __DJGPP__
+	if (gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt)
+		VIDEO_SetPalette(AVI_GetRGB332Colors());
 #endif
 
 	BOOL       fEndPlay = FALSE;
