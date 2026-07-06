@@ -308,7 +308,8 @@ VIDEO_Startup(
             UTIL_LogOutput(LOGLEVEL_DEBUG, "Setting window to mode13h result:%d\n", bInMode13h);
             UTIL_LogOutput(LOGLEVEL_DEBUG, "After force set window fmt:%s size: %dx%d@\n", SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), w, h);
          }
-         bShortcut = bInMode13h ? gConfig.fDOSLowEndOpt : 0;
+         //HACK
+         bShortcut = true; //bInMode13h ? gConfig.fDOSLowEndOpt : 0;
          UTIL_LogOutput(LOGLEVEL_DEBUG, "Shortcut rendering:%d\n", bShortcut);
       }
 #endif
@@ -1087,32 +1088,55 @@ VIDEO_ChangeDepth(
 {
 #if SDL_VERSION_ATLEAST(3,0,0)
 # if __DJGPP__
-    if( gConfig.fDOSForceMode13h ) {
-      if(bpp == 0)
+    // if not in mode 13h, no mode setting is needed since VESA xRGB could handle both
+    if( gConfig.fDOSForceMode13h ) 
+    { 
+      //revert to normal gaming
+      if(bpp == 0) 
       {
-         bInMode13h = true;
-         bShortcut = true;
-         SDL_DestroyWindowSurface(gpWindow);
-         SDL_SetWindowFullscreenMode(gpWindow, &gMode13h);
-         SDL_DestroySurface(gpScreenReal);
-         gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
-         UTIL_LogOutput(LOGLEVEL_DEBUG, "Change Display Mode to Mode13h, blitting:%s\n", bShortcut?"shortcut":"render");
-      }
-      if(bpp != 0)
-      {
-         bInMode13h = true;
-         int w,h;
-         SDL_DestroyWindowSurface(gpWindow);
-         SDL_SetWindowFullscreenMode(gpWindow, &gOrig);
-         SDL_GetWindowSize(gpWindow, &w,&h);
-         SDL_DestroySurface(gpScreenReal);
-         if(gConfig.fDOSLowEndOpt) {
+         if( bInMode13h )
+         {
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "Already in mode13h, blitting:%s\n", bShortcut?"shortcut":"render");
+         }
+         else
+         {
+            SDL_DestroyWindowSurface(gpWindow);
+            SDL_SetWindowFullscreenMode(gpWindow, &gMode13h);
+            SDL_DestroySurface(gpScreenReal);
             gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+            bInMode13h = true;
             bShortcut = true;
             UTIL_LogOutput(LOGLEVEL_DEBUG, "Change Display Mode to Mode13h, blitting:%s\n", bShortcut?"shortcut":"render");
-         }else {
+         }
+      }
+      //playing avi
+      else 
+      {
+         int w,h;
+         // makes VGA-only machine could play avi via high-cost palette requant
+         if(gConfig.fDOSLowEndOpt) { 
+            if( bInMode13h )
+            {
+               UTIL_LogOutput(LOGLEVEL_DEBUG, "HACK Already in mode13h, blitting:%s\n", bShortcut?"shortcut":"render");
+            }
+            else
+            {
+               SDL_DestroyWindowSurface(gpWindow);
+               SDL_SetWindowFullscreenMode(gpWindow, &gMode13h);
+               SDL_DestroySurface(gpScreenReal);
+               gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+               bInMode13h = true;
+               bShortcut = true;
+               UTIL_LogOutput(LOGLEVEL_DEBUG, "HACK Change Display Mode to Mode13h, blitting:%s\n", bShortcut?"shortcut":"render");
+            }
+         }else{
+            SDL_DestroyWindowSurface(gpWindow);
+            SDL_SetWindowFullscreenMode(gpWindow, &gOrig);
+            SDL_GetWindowSize(gpWindow, &w,&h);
+            SDL_DestroySurface(gpScreenReal);
             gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,
                                                 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+            bInMode13h = false;
             bShortcut = false;
             UTIL_LogOutput(LOGLEVEL_DEBUG, "Change Display Mode to width %d height %d format:%s, blitting:%s\n", w, h, SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), bShortcut?"shortcut":"render");
          }
@@ -1619,20 +1643,6 @@ VIDEO_DrawSurfaceToScreen(
 
 --*/
 {
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-# if __DJGPP__
-   SDL_Surface *palettedSurface = NULL;
-   if( gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt ) {
-      PAL_SetPalette(0,FALSE);
-      palettedSurface = SDL_ConvertSurfaceAndColorspace(pSurface, SDL_PIXELFORMAT_INDEX8, gpPalette, SDL_COLORSPACE_SRGB, 0);
-      if(!palettedSurface) {
-         UTIL_LogOutput(LOGLEVEL_DEBUG, "AVI convert error!%s\n", SDL_GetError());
-      }
-      pSurface = palettedSurface;
-      g_bRenderPaused = FALSE;
-   }
-# endif
-#endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    //
    // Draw the surface to screen.
@@ -1665,13 +1675,5 @@ VIDEO_DrawSurfaceToScreen(
 
    SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
    SDL_FreeSurface(pCompatSurface);
-#endif
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-# if __DJGPP__
-   if( gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt && palettedSurface ) {
-      SDL_DestroySurface(palettedSurface);
-      g_bRenderPaused = TRUE;
-   }
-# endif
 #endif
 }
