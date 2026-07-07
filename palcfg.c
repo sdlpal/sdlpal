@@ -67,8 +67,8 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_SAMPLERATE,        PALCFG_UNSIGNED, "SampleRate",        10, MAKE_UNSIGNED(DEFAULT_SAMPLERATE,            0,                     PAL_MAX_SAMPLERATE) },
 	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MusicVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
-	{ PALCFG_REALOPLUPDATEFREQ, PALCFG_UNSIGNED, "RealOPLUpdateFreq", 17, MAKE_UNSIGNED(50,                            0,                     UINT32_MAX) },
-	{ PALCFG_DOSBASECLOCKFREQ,  PALCFG_UNSIGNED, "DOSBaseClockFreq",  16, MAKE_UNSIGNED(100,                           0,                     UINT32_MAX) },
+	{ PALCFG_REALOPLUPDATEFREQ, PALCFG_UNSIGNED, "RealOPLUpdateFreq", 17, MAKE_UNSIGNED(30,                            0,                     UINT32_MAX) },
+	{ PALCFG_DOSBASECLOCKFREQ,  PALCFG_UNSIGNED, "DOSBaseClockFreq",  16, MAKE_UNSIGNED(120,                           0,                     UINT32_MAX) },
 	{ PALCFG_REALOPLPORT,       PALCFG_UNSIGNED, "RealOPLPort",       11, MAKE_UNSIGNED(0x220,                         0,                     0xFFFF) },
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
 	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WindowWidth",       11, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_WIDTH,      0,                     UINT32_MAX) },
@@ -398,8 +398,8 @@ PAL_LoadConfig(
 
 #ifdef __DJGPP__
 	// DOS-specific defaults
-	eOPLCore = OPLCORE_REAL;  // Only need to set enum variable, not values array
-	values[PALCFG_ENABLEAVIPLAY].bValue = FALSE;
+	eOPLCore = OPLCORE_DBINT;  // Only need to set enum variable, not values array
+	values[PALCFG_SAMPLERATE].uValue = 22050;
 #endif
 
 	if (fFromFile && (fp = UTIL_OpenFileAtPathForMode(PAL_CONFIG_PREFIX, "sdlpal.cfg", "r")))
