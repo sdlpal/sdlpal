@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     env:
-      DOS_SDL_BRANCH: sdl3_main_fix
+      DOS_SDL_BRANCH: main
     steps:
     - name: Install Dependencies
       run: sudo apt-get install wget bzip2 zstd upx-ucl zip pipx libfl2 && pipx install cloudsmith-cli
@@ -49,7 +49,8 @@ jobs:
         sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
         git submodule update --init
         cd 3rd/SDL
-        git fetch origin $DOS_SDL_BRANCH
+        git remote add upstream https://github.com/libsdl-org/SDL.git
+        git fetch upstream $DOS_SDL_BRANCH
         git checkout $DOS_SDL_BRANCH
     - name: Compile and Setup SDL3 for DJGPP
       run: |
