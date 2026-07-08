@@ -60,6 +60,9 @@
 #include "riff.h"
 #include "palcfg.h"
 #include "palette.h"
+#if __DJGPP__
+#include "dos/avi_lut.h"
+#endif
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
@@ -102,70 +105,71 @@ typedef struct AVIPlayState
 	uint32_t       dwAudBufLen;
 	uint32_t       dwAudioReadPos;
 	uint32_t       dwAudioWritePos;
+	int            aviIndex;
 
 	BOOL          fInterleaved;
 } AVIPlayState;
 
 static AVIPlayState gAVIPlayState;
-static SDL_Palette *g_pRGB332Palette = NULL;
 
-static uint8_t
-AVI_RGB555ToRGB332(uint16_t rgb555)
+#if __DJGPP__
+static SDL_Palette *gAviPalettes[AVI_LUT_FILE_COUNT] = { NULL };
+
+static int
+AVI_GetResourceIndexFromPath(const char *lpszPath)
 {
-    uint8_t r = (rgb555 >> 10) & 0x1F;
-    uint8_t g = (rgb555 >> 5) & 0x1F;
-    uint8_t b = rgb555 & 0x1F;
+	size_t len;
+	char avi_no;
 
-    return (r >> 2 << 5) | (g >> 2 << 2) | (b >> 3);
-}
+	if (lpszPath == NULL)
+		return -1;
 
-static void
-AVI_CreateRGB332Palette(SDL_Color colors[256])
-{
-    for (int i = 0; i < 256; i++)
-    {
-        uint8_t r_idx = (i >> 5) & 0x07;
-        uint8_t g_idx = (i >> 2) & 0x07;
-        uint8_t b_idx = i & 0x03;
+	len = strlen(lpszPath);
+	if (len < 5)
+		return -1;
 
-        colors[i].r = (r_idx * 255) / 7;
-        colors[i].g = (g_idx * 255) / 7;
-        colors[i].b = (b_idx * 255) / 3;
-        colors[i].a = 255;
-    }
-}
+	if (SDL_strcasecmp(lpszPath + len - 4, ".avi") != 0)
+		return -1;
 
-static SDL_Color *
-AVI_GetRGB332Colors(void)
-{
-    static SDL_Color colors[256];
-    static BOOL initialized = FALSE;
+	avi_no = lpszPath[len - 5];
+	if (avi_no < '1' || avi_no > '6')
+		return -1;
 
-    if (!initialized)
-    {
-        AVI_CreateRGB332Palette(colors);
-        initialized = TRUE;
-    }
-
-    return colors;
+	return avi_no - '1';
 }
 
 static SDL_Palette *
-AVI_GetRGB332Palette(void)
+AVI_GetSDLPalette(int aviIndex)
 {
-    if (g_pRGB332Palette == NULL)
-    {
-        g_pRGB332Palette = SDL_AllocPalette(256);
-        if (g_pRGB332Palette == NULL)
-        {
-            UTIL_LogOutput(LOGLEVEL_ERROR, "Failed to create RGB332 SDL palette!");
-            return NULL;
-        }
-        SDL_SetPaletteColors(g_pRGB332Palette, AVI_GetRGB332Colors(), 0, 256);
-    }
+	if (aviIndex < 0 || aviIndex >= AVI_LUT_FILE_COUNT)
+	{
+		UTIL_LogOutput(LOGLEVEL_WARNING, "Invalid AVI palette index: %d", aviIndex);
+		return NULL;
+	}
 
-    return g_pRGB332Palette;
+	if (gAviPalettes[aviIndex] == NULL)
+	{
+		gAviPalettes[aviIndex] = SDL_AllocPalette(256);
+		if (gAviPalettes[aviIndex] == NULL)
+		{
+			UTIL_LogOutput(LOGLEVEL_ERROR, "Failed to create AVI SDL palette for %d.avi!", aviIndex + 1);
+			return NULL;
+		}
+		SDL_SetPaletteColors(gAviPalettes[aviIndex], AVI_PALETTE_TABLE[aviIndex], 0, 256);
+	}
+
+	return gAviPalettes[aviIndex];
 }
+
+static const uint8_t *
+AVI_GetRGB555ToIndexLUT(int aviIndex)
+{
+	if (aviIndex < 0 || aviIndex >= AVI_LUT_FILE_COUNT)
+		return NULL;
+
+	return AVI_RGB555_TO_INDEX_LUT[aviIndex];
+}
+#endif
 
 static AVIPlayState *
 PAL_ReadAVIInfo(
@@ -333,8 +337,11 @@ PAL_ReadAVIInfo(
 			//
 			// Create surface
 			//
+#if __DJGPP__
 			if (gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt)
 			{
+				SDL_Palette *palette;
+
 				avi->surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 									bih.biWidth, bih.biHeight, 8,
 									0, 0, 0, 0);
@@ -343,9 +350,17 @@ PAL_ReadAVIInfo(
 					UTIL_LogOutput(LOGLEVEL_WARNING, "Failed to create AVI surface!");
 					return NULL;
 				}
-				SDL_SetSurfacePalette(avi->surface, AVI_GetRGB332Palette());
+				palette = AVI_GetSDLPalette(avi->aviIndex);
+				if (palette == NULL)
+				{
+					SDL_FreeSurface(avi->surface);
+					avi->surface = NULL;
+					return NULL;
+				}
+				SDL_SetSurfacePalette(avi->surface, palette);
 			}
 			else
+#endif
 			{
 				avi->surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 					bih.biWidth, bih.biHeight, bih.biBitCount,
@@ -584,6 +599,9 @@ PAL_AVIInit(
 )
 {
     gAVIPlayState.selfMutex = SDL_CreateMutex();
+#if __DJGPP__
+	gAVIPlayState.aviIndex = -1;
+#endif
 }
 
 void
@@ -591,12 +609,17 @@ PAL_AVIShutdown(
 	void
 )
 {
-    if (g_pRGB332Palette != NULL)
-    {
-        SDL_FreePalette(g_pRGB332Palette);
-        g_pRGB332Palette = NULL;
-    }
-    SDL_DestroyMutex(gAVIPlayState.selfMutex);
+#if __DJGPP__
+	for (int i = 0; i < AVI_LUT_FILE_COUNT; i++)
+	{
+		if (gAviPalettes[i] != NULL)
+		{
+			SDL_FreePalette(gAviPalettes[i]);
+			gAviPalettes[i] = NULL;
+		}
+	}
+#endif
+	SDL_DestroyMutex(gAVIPlayState.selfMutex);
 }
 
 static void
@@ -618,9 +641,16 @@ PAL_RenderAVIFrameToSurface(
 	const int blocks_high = lpSurface->h >> 2; // height in 4x4 blocks
 	uint32_t  total_blocks = blocks_wide * blocks_high;
 
+	BOOL fLowEndOpt = FALSE;
 	uint8_t *pixels8 = (uint8_t *)lpSurface->pixels;
 	uint16_t color;
-	BOOL fLowEndOpt = (gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt);
+
+#if __DJGPP__
+	const uint8_t *rgb555ToIndexLUT = AVI_GetRGB555ToIndexLUT(gAVIPlayState.aviIndex);
+	fLowEndOpt = (gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt);
+#else
+	const uint8_t *rgb555ToIndexLUT = NULL;
+#endif
 
 	stride = fLowEndOpt ? lpSurface->pitch : (lpSurface->pitch >> 1);
 	row_dec = stride + 4;
@@ -692,7 +722,7 @@ PAL_RenderAVIFrameToSurface(
                             color = colors[((pixel_y & 0x2) << 1) +
                                            (pixel_x & 0x2) + ((flags & 0x1) ^ 1)];
                             if (fLowEndOpt)
-                                pixels8[pixel_ptr++] = AVI_RGB555ToRGB332(color);
+                                pixels8[pixel_ptr++] = rgb555ToIndexLUT[color & 0x7FFF];
                             else
                                 pixels[pixel_ptr++] = color;
                         }
@@ -708,7 +738,7 @@ PAL_RenderAVIFrameToSurface(
                         {
                             color = colors[(flags & 0x1) ^ 1];
                             if (fLowEndOpt)
-                                pixels8[pixel_ptr++] = AVI_RGB555ToRGB332(color);
+                                pixels8[pixel_ptr++] = rgb555ToIndexLUT[color & 0x7FFF];
                             else
                                 pixels[pixel_ptr++] = color;
                         }
@@ -726,7 +756,7 @@ PAL_RenderAVIFrameToSurface(
                     for (int pixel_x = 0; pixel_x < 4; pixel_x++)
                     {
                         if (fLowEndOpt)
-                            pixels8[pixel_ptr++] = AVI_RGB555ToRGB332(solid_color);
+                            pixels8[pixel_ptr++] = rgb555ToIndexLUT[solid_color & 0x7FFF];
                         else
                             pixels[pixel_ptr++] = solid_color;
                     }
@@ -757,6 +787,9 @@ PAL_PlayAVI(
 		return FALSE;
 	}
 
+#if __DJGPP__
+	gAVIPlayState.aviIndex = AVI_GetResourceIndexFromPath(lpszPath);
+#endif
 	AVIPlayState *avi = PAL_ReadAVIInfo(fp, &gAVIPlayState);
 	if (avi == NULL)
 	{
@@ -764,6 +797,15 @@ PAL_PlayAVI(
 		fclose(fp);
 		return FALSE;
 	}
+
+#if __DJGPP__
+	if (gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt && gAVIPlayState.aviIndex < 0)
+	{
+		UTIL_LogOutput(LOGLEVEL_WARNING, "Unsupported AVI resource name for indexed playback: %s!\n", lpszPath);
+		fclose(fp);
+		return FALSE;
+	}
+#endif
 
     PAL_ClearKeyState();
 
@@ -775,7 +817,7 @@ PAL_PlayAVI(
 
 #if __DJGPP__
 	if (gConfig.fDOSForceMode13h && gConfig.fDOSLowEndOpt)
-		VIDEO_SetPalette(AVI_GetRGB332Colors());
+		VIDEO_SetPalette((SDL_Color *)AVI_PALETTE_TABLE[avi->aviIndex]);
 #endif
 
 	BOOL       fEndPlay = FALSE;
