@@ -235,7 +235,7 @@ AUDIO_OpenDevice(
 	if (devices) {
 		for (i = 0; i < num_devices; ++i) {
 			SDL_AudioDeviceID instance_id = devices[i];
-			UTIL_LogOutput(LOGLEVEL_VERBOSE, "Available audio device %d:%s\n", i, SDL_iconv_utf8_ucs2(SDL_GetAudioDeviceName(instance_id)));
+			UTIL_LogOutput(LOGLEVEL_VERBOSE, "Available audio device %d:%s\n", i, SDL_GetAudioDeviceName(instance_id));
 		}
 		if(gConfig.iAudioDevice >= 0 && gConfig.iAudioDevice < num_devices)
 			iSelectedDeviceID = devices[gConfig.iAudioDevice];
