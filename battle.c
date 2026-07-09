@@ -628,6 +628,9 @@ PAL_BattleFadeScene(
    DWORD             time;
    BYTE              a, b;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
+   bool              fDropFrame = false;
+   static int reentCount = 0;
+   reentCount++;
    
    time = SDL_GetTicks();
 
@@ -635,8 +638,8 @@ PAL_BattleFadeScene(
    {
       for (j = 0; j < 6; j++)
       {
-         PAL_DelayUntil(time);
-         time = SDL_GetTicks() + 16;
+         time += 16;
+         fDropFrame = (SDL_TICKS_PASSED(SDL_GetTicks(), (time)));
 
          //
          // Blend the pixels in the 2 buffers, and put the result into the
@@ -662,13 +665,19 @@ PAL_BattleFadeScene(
             ((LPBYTE)(gpScreenBak->pixels))[k] = ((a & 0xF0) | (b & 0x0F));
          }
 
+         if (fDropFrame)
+             continue;
+
          //
          // Draw the backup buffer to the screen
          //
-		 VIDEO_RestoreScreen(gpScreen);
+		   VIDEO_RestoreScreen(gpScreen);
 
          PAL_BattleUIUpdate();
+
          VIDEO_UpdateScreen(NULL);
+         
+         PAL_DelayUntil(time);
       }
    }
 

@@ -21,8 +21,8 @@
 #include <float.h>
 #include "main.h"
 
-#if __DJGPP__
 SDL_DisplayMode gOrig;
+#if __DJGPP__
 SDL_DisplayMode gMode13h;
 bool bInMode13h = false;
 bool bShortcut = false;
@@ -293,8 +293,10 @@ VIDEO_Startup(
       SDL_GetWindowSize(gpWindow, &w, &h);
 #if __DJGPP__
       gOrig =*SDL_GetWindowFullscreenMode(gpWindow);
+#else
+      gOrig = *SDL_GetCurrentDisplayMode(SDL_GetDisplayForWindow(gpWindow));
 #endif
-      UTIL_LogOutput(LOGLEVEL_DEBUG, "Actual created window fmt:%s size: %dx%d@\n", SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), w, h);
+      UTIL_LogOutput(LOGLEVEL_DEBUG, "Actual created window fmt:%s size: %dx%d@%fHz\n", SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), w, h, gOrig.refresh_rate);
 #if __DJGPP__
       if(gConfig.fDOSForceMode13h) {
          if(w == 320 && h == 200 && SDL_GetWindowPixelFormat(gpWindow) == SDL_PIXELFORMAT_INDEX8)
@@ -1282,6 +1284,9 @@ VIDEO_SwitchScreen(
    short             screenRealHeight = gpScreenReal->h;
    short             screenRealY = 0;
 
+   DWORD             time = SDL_GetTicks();
+   bool              fDropFrame = false;
+
    if (!bScaleScreen)
    {
       screenRealHeight -= offset;
@@ -1293,6 +1298,9 @@ VIDEO_SwitchScreen(
 
    for (i = 0; i < 6; i++)
    {
+      time += wSpeed;
+      fDropFrame = (SDL_TICKS_PASSED(SDL_GetTicks(), (time)));
+
       for (j = rgIndex[i]; j < gpScreen->pitch * gpScreen->h; j += 6)
       {
          ((LPBYTE)(gpScreenBak->pixels))[j] = ((LPBYTE)(gpScreen->pixels))[j];
@@ -1313,6 +1321,10 @@ VIDEO_SwitchScreen(
 	  }
 
       SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
+
+      if( fDropFrame )
+         continue;
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       gRenderBackend.RenderCopy();
 #else
@@ -1324,8 +1336,14 @@ VIDEO_SwitchScreen(
 		  SDL_UnlockSurface(gpScreenReal);
 	  }
 
-      UTIL_Delay(wSpeed);
+      PAL_DelayUntil(time);
    }
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+      gRenderBackend.RenderCopy();
+#else
+      SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+#endif
 }
 
 VOID
@@ -1356,6 +1374,7 @@ VIDEO_FadeScreen(
    short             offset = 240 - 200;
    short             screenRealHeight = gpScreenReal->h;
    short             screenRealY = 0;
+   bool              fDropFrame = false;
 
    //
    // Lock surface if needed
@@ -1381,13 +1400,8 @@ VIDEO_FadeScreen(
    {
       for (j = 0; j < 6; j++)
       {
-         PAL_ProcessEvent();
-         while (!SDL_TICKS_PASSED(SDL_GetTicks(), time))
-         {
-            PAL_ProcessEvent();
-            SDL_Delay(5);
-         }
-         time = SDL_GetTicks() + wSpeed;
+         time += wSpeed;
+         fDropFrame = (SDL_TICKS_PASSED(SDL_GetTicks(), (time)));
 
          //
          // Blend the pixels in the 2 buffers, and put the result into the
@@ -1442,6 +1456,7 @@ VIDEO_FadeScreen(
                dstrect.y = (screenRealY + g_wShakeLevel) * screenRealHeight / gpScreen->h;
             }
 
+            if (!fDropFrame)
             SDL_SoftStretch(gpScreenBak, &srcrect, gpScreenReal, &dstrect);
 
             if (g_wShakeTime & 1)
@@ -1455,11 +1470,16 @@ VIDEO_FadeScreen(
 
             dstrect.h = g_wShakeLevel * screenRealHeight / gpScreen->h;
 
+            if (fDropFrame)
+                continue;
+
+            PAL_DelayUntil(time);
+
             SDL_FillRect(gpScreenReal, &dstrect, 0);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
             gRenderBackend.RenderCopy();
 #else
-			SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+            SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 #endif
             g_wShakeTime--;
          }
@@ -1469,6 +1489,9 @@ VIDEO_FadeScreen(
             dstrect.y = screenRealY;
             dstrect.w = gpScreenReal->w;
             dstrect.h = screenRealHeight;
+
+            if (fDropFrame)
+                continue;
 
             SDL_SoftStretch(gpScreenBak, NULL, gpScreenReal, &dstrect);
 #if SDL_VERSION_ATLEAST(2, 0, 0)

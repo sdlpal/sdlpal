@@ -3195,9 +3195,9 @@ PAL_RunTriggerScript(
    {
       pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
 
-      UTIL_LogOutput(LOGLEVEL_DEBUG, "[SCRIPT] %.4x: %.4x %.4x %.4x %.4x\n", wScriptEntry,
-         pScript->wOperation, pScript->rgwOperand[0],
-         pScript->rgwOperand[1], pScript->rgwOperand[2]);
+      // UTIL_LogOutput(LOGLEVEL_DEBUG, "[SCRIPT] %.4x: %.4x %.4x %.4x %.4x\n", wScriptEntry,
+      //    pScript->wOperation, pScript->rgwOperand[0],
+      //    pScript->rgwOperand[1], pScript->rgwOperand[2]);
 
       switch (pScript->wOperation)
       {
@@ -3507,9 +3507,9 @@ begin:
    pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
    pEvtObj = &(gpGlobals->g.lprgEventObject[wEventObjectID - 1]);
 
-   UTIL_LogOutput(LOGLEVEL_DEBUG, "[AUTOSCRIPT] %04x %.4x: %.4x %.4x %.4x %.4x\n", wEventObjectID, wScriptEntry,
-       pScript->wOperation, pScript->rgwOperand[0],
-       pScript->rgwOperand[1], pScript->rgwOperand[2]);
+   // UTIL_LogOutput(LOGLEVEL_DEBUG, "[AUTOSCRIPT] %04x %.4x: %.4x %.4x %.4x %.4x\n", wEventObjectID, wScriptEntry,
+   //     pScript->wOperation, pScript->rgwOperand[0],
+   //     pScript->rgwOperand[1], pScript->rgwOperand[2]);
 
    //
    // For autoscript, we should interpret one instruction per frame (except
