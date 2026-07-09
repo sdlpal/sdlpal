@@ -27,6 +27,7 @@ SDL_DisplayMode gMode13h;
 bool bInMode13h = false;
 bool bShortcut = false;
 #endif
+bool bInPaletteAnim = false;
 
 // Screen buffer
 SDL_Surface              *gpScreen           = NULL;
@@ -599,10 +600,16 @@ VIDEO_RenderCopy(
 
 #if __DJGPP__
    if( bShortcut ) {
-      //UTIL_LogOutput(LOGLEVEL_DEBUG, "blitting in shortcut\n");
-      SDL_Surface *windowSurface = SDL_GetWindowSurface(gpWindow);
-      SDL_BlitScaled(gpScreenReal, NULL, windowSurface, NULL);
-      SDL_UpdateWindowSurface(gpWindow);
+      if( bInPaletteAnim ) {
+         // UTIL_LogOutput(LOGLEVEL_DEBUG, "no blitting pure palette anim!\n");
+         SDL_SetHint("HINT_PURE_PALATTE_ANIM", bInPaletteAnim ? "1" : "0");
+         SDL_UpdateWindowSurfaceRects(gpWindow, NULL, 0);
+      }else{
+         // UTIL_LogOutput(LOGLEVEL_DEBUG, "blitting in shortcut\n");
+         SDL_Surface *windowSurface = SDL_GetWindowSurface(gpWindow);
+         SDL_BlitScaled(gpScreenReal, NULL, windowSurface, NULL);
+         SDL_UpdateWindowSurface(gpWindow);
+      }
       return;
    }//else UTIL_LogOutput(LOGLEVEL_DEBUG, "blitting in renderer\n");
 #endif
