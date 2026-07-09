@@ -21,6 +21,8 @@
 
 #include "main.h"
 
+extern bool bInPaletteAnim;
+
 SDL_Color *
 PAL_GetPalette(
    INT         iPaletteNum,
@@ -159,6 +161,8 @@ PAL_FadeOut(
    //
    time = SDL_GetTicks() + iDelay * 10 * 60;
 
+   bInPaletteAnim = true;
+
    while (TRUE)
    {
       //
@@ -187,6 +191,7 @@ PAL_FadeOut(
 
    memset(newpalette, 0, sizeof(newpalette));
    VIDEO_SetPalette(newpalette);
+   bInPaletteAnim = false;
 }
 
 VOID
@@ -230,6 +235,9 @@ PAL_FadeIn(
    // Start fading in...
    //
    time = SDL_GetTicks() + iDelay * 10 * 60;
+
+   bInPaletteAnim = true;
+
    while (TRUE)
    {
       //
@@ -259,6 +267,7 @@ PAL_FadeIn(
    }
 
    VIDEO_SetPalette(palette);
+   bInPaletteAnim = false;
 }
 
 VOID
@@ -506,6 +515,8 @@ PAL_ColorFade(
       iDelay = 10;
    }
 
+   bInPaletteAnim = true;
+
    if (fFrom)
    {
       for (i = 0; i < 256; i++)
@@ -610,6 +621,7 @@ PAL_ColorFade(
 
       VIDEO_SetPalette(newpalette);
    }
+   bInPaletteAnim = false;
 }
 
 VOID
@@ -654,6 +666,8 @@ PAL_FadeToRed(
 
    VIDEO_UpdateScreen(NULL);
 
+   bInPaletteAnim = true;
+
    for (i = 0; i < 32; i++)
    {
       if (VIDEO_SetPaletteFade(kPaletteFadeToRed, palette, NULL, i + 1, 0))
@@ -694,4 +708,5 @@ PAL_FadeToRed(
       VIDEO_SetPalette(newpalette);
       UTIL_Delay(75);
    }
+   bInPaletteAnim = false;
 }
