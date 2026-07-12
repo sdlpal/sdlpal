@@ -187,6 +187,27 @@ PAL_SetLoadFlags(
    gpResources->bLoadFlags |= bFlags;
 }
 
+BYTE
+PAL_GetLoadFlags(
+)
+/*++
+  Purpose:
+
+    Get the current load flags.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    The current load flags.
+
+--*/
+{
+	return gpResources->bLoadFlags;
+}
+
 VOID
 PAL_LoadResources(
    VOID
@@ -302,6 +323,17 @@ PAL_LoadResources(
 
       fclose(fpGOP);
       fclose(fpMAP);
+
+      int iCurrScene = gpGlobals->wNumScene;
+
+      i = gpGlobals->wNumScene - 1;
+      BYTE bakLoadFlags = gpResources->bLoadFlags;
+      gpResources->bLoadFlags = 0;
+      gpGlobals->g.rgScene[i].wScriptOnEnter = PAL_RunTriggerScript(gpGlobals->g.rgScene[i].wScriptOnEnter, 0xFFFF);
+      gpGlobals->fEnteringScene = FALSE;
+      gpResources->bLoadFlags |= bakLoadFlags;
+      if (iCurrScene != gpGlobals->wNumScene) 
+          PAL_LoadResources();
    }
 
    //

@@ -1763,6 +1763,8 @@ PAL_InterpretInstruction(
       //
       PAL_FadeOut(1);
       PAL_ReloadInNextTick(gpGlobals->bCurrentSaveSlot);
+      // trigger scene reload
+      gpGlobals->wNumScene = 0;
       return 0; // don't go further
 
    case 0x004F:
