@@ -434,6 +434,7 @@ PAL_RNGPlay(
       {
          PAL_FadeIn(gpGlobals->wNumPalette, gpGlobals->fNightPalette, 1);
          gpGlobals->fNeedToFadeIn = FALSE;
+         iTime = SDL_GetPerformanceCounter() + iDelay / 2;
       }
 
       //
