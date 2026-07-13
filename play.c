@@ -465,7 +465,7 @@ PAL_Search(
          eh = ((p->x % 32) ? 1 : 0);
 
          if (p->sState <= 0 || p->wTriggerMode >= kTriggerTouchNear ||
-            p->wTriggerMode * 6 - 4 < i || dx != ex || dy != ey || dh != eh)
+            p->wTriggerMode * 6 - 4 <= i || dx != ex || dy != ey || dh != eh)
          {
             continue;
          }
