@@ -248,23 +248,18 @@ PAL_LoadResources(
    //
    // Load scene
    //
-   if (gpResources->bLoadFlags & kLoadScene)
+   if (gpGlobals->wNumScene != gpGlobals->wNumSceneToLoad)
    {
       FILE              *fpMAP, *fpGOP;
+
+      gpGlobals->wNumScene = gpGlobals->wNumSceneToLoad;
 
       fpMAP = UTIL_OpenRequiredFile("map.mkf");
       fpGOP = UTIL_OpenRequiredFile("gop.mkf");
 
-      if (gpGlobals->fEnteringScene)
-      {
-         gpGlobals->wScreenWave = 0;
-         gpGlobals->sWaveProgression = 0;
-      }
-
       //
-      // Free previous loaded scene (sprites and map)
+      // Free previous loaded scene (map)
       //
-      PAL_FreeEventObjectSprites();
       PAL_FreeMap(gpResources->lpMap);
 
       //
@@ -282,6 +277,26 @@ PAL_LoadResources(
          TerminateOnError("PAL_LoadResources(): Fail to load map #%d (scene #%d) !",
             gpGlobals->g.rgScene[i].wMapNum, gpGlobals->wNumScene);
       }
+
+      gpGlobals->partyoffset = PAL_XY(160, 112);
+
+      fclose(fpGOP);
+      fclose(fpMAP);
+   }
+
+   if (gpResources->bLoadFlags & kLoadScene) {
+      BYTE bakLoadFlags = gpResources->bLoadFlags;
+
+      if (gpGlobals->fEnteringScene)
+      {
+         gpGlobals->wScreenWave = 0;
+         gpGlobals->sWaveProgression = 0;
+      }
+
+      //
+      // Free previous loaded scene (sprites)
+      //
+      PAL_FreeEventObjectSprites();
 
       //
       // Load sprites
@@ -320,20 +335,12 @@ PAL_LoadResources(
          }
       }
 
-      gpGlobals->partyoffset = PAL_XY(160, 112);
-
-      fclose(fpGOP);
-      fclose(fpMAP);
-
-      int iCurrScene = gpGlobals->wNumScene;
-
       i = gpGlobals->wNumScene - 1;
-      BYTE bakLoadFlags = gpResources->bLoadFlags;
       gpResources->bLoadFlags = 0;
       gpGlobals->g.rgScene[i].wScriptOnEnter = PAL_RunTriggerScript(gpGlobals->g.rgScene[i].wScriptOnEnter, 0xFFFF);
       gpGlobals->fEnteringScene = FALSE;
       gpResources->bLoadFlags |= bakLoadFlags;
-      if (iCurrScene != gpGlobals->wNumScene) 
+      if (gpGlobals->wNumSceneToLoad != gpGlobals->wNumScene) 
           PAL_LoadResources();
 
       gpResources->bLoadFlags &= (~kLoadScene);

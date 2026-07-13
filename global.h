@@ -529,6 +529,7 @@ typedef struct tagGLOBALVARS
    TRAIL            rgTrail[MAX_PLAYABLE_PLAYER_ROLES]; // player trail
    WORD             wPartyDirection;     // direction of the party
    WORD             wNumScene;           // current scene number
+   WORD             wNumSceneToLoad;     // scene number to load in next tick
    WORD             wNumPalette;         // current palette number
    BOOL             fNightPalette;       // TRUE if use the darker night palette
    WORD             wNumMusic;           // current music number
