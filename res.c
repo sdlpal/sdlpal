@@ -242,6 +242,7 @@ PAL_LoadResources(
    {
       PAL_InitGameData(gpGlobals->bCurrentSaveSlot);
       AUDIO_PlayMusic(gpGlobals->wNumMusic, TRUE, 1);
+      gpResources->bLoadFlags &= (~kLoadGlobalData);
    }
 
    //
@@ -334,6 +335,8 @@ PAL_LoadResources(
       gpResources->bLoadFlags |= bakLoadFlags;
       if (iCurrScene != gpGlobals->wNumScene) 
           PAL_LoadResources();
+
+      gpResources->bLoadFlags &= (~kLoadScene);
    }
 
    //
@@ -378,6 +381,8 @@ PAL_LoadResources(
          PAL_MKFDecompressChunk(gpResources->rglpPlayerSprite[(short)gpGlobals->wMaxPartyMemberIndex+i], l, wSpriteNum,
             gpGlobals->f.fpMGO);
       }
+
+      gpResources->bLoadFlags &= (~kLoadPlayerSprite);
    }
 
    //
