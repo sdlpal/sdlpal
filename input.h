@@ -96,6 +96,21 @@ PAL_RegisterInputFilter(
    void (*shutdown_filter)()
 );
 
+VOID
+PAL_LoadDefaultKeyMap(
+   VOID
+);
+
+VOID
+PAL_LoadKeyMapFromConfig(
+   VOID
+);
+
+VOID
+PAL_PopulateDefaultKeyMapConfig(
+   VOID
+);
+
 extern volatile PALINPUTSTATE g_InputState;
 
 extern BOOL g_fUseJoystick;

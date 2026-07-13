@@ -54,7 +54,7 @@ static void (*input_init_filter)() = _default_init_filter;
 static int (*input_event_filter)(const SDL_Event *, volatile PALINPUTSTATE *) = _default_input_event_filter;
 static void (*input_shutdown_filter)() = _default_input_shutdown_filter;
 
-static const int g_KeyMap[][2] = {
+static const int g_DefaultKeyMap[][2] = {
    { SDLK_UP,        kKeyUp },
    { SDLK_KP_8,      kKeyUp },
    { SDLK_DOWN,      kKeyDown },
@@ -89,6 +89,11 @@ static const int g_KeyMap[][2] = {
    { SDLK_f,         kKeyForce },
    { SDLK_s,         kKeyStatus }
 };
+
+#define PAL_MAX_KEYMAP_ENTRIES (sizeof(g_DefaultKeyMap) / sizeof(g_DefaultKeyMap[0]))
+
+static int g_KeyMap[PAL_MAX_KEYMAP_ENTRIES * 4][2];
+static int g_iKeyMapEntries = 0;
 
 #if PAL_HAS_JOYSTICKS
 static VOID
@@ -306,7 +311,7 @@ PAL_UpdateKeyboardState(
 
 --*/
 {
-   static DWORD   rgdwKeyLastTime[sizeof(g_KeyMap) / sizeof(g_KeyMap[0])] = {0};
+   static DWORD   rgdwKeyLastTime[PAL_MAX_KEYMAP_ENTRIES * 4] = {0};
    LPCBYTE        keyState = (LPCBYTE)SDL_GetKeyboardState(NULL);
    int            i;
    DWORD          dwCurrentTime = SDL_GetTicks();
@@ -314,7 +319,7 @@ PAL_UpdateKeyboardState(
    SDL_Keymod     mod;
 #endif
 
-   for (i = 0; i < sizeof(g_KeyMap) / sizeof(g_KeyMap[0]); i++)
+   for (i = 0; i < g_iKeyMapEntries; i++)
    {
 #if SDL_VERSION_ATLEAST(3,0,0)
       if (keyState[SDL_GetScancodeFromKey(g_KeyMap[i][0], &mod)])
@@ -1206,6 +1211,239 @@ PAL_ClearKeyState(
    g_InputState.dwKeyPress = 0;
 }
 
+static char *
+PAL_GenerateDefaultKeyString(
+   int action
+)
+/*++
+  Purpose:
+
+    Generate a comma-separated string of default key names for a specific action.
+
+  Parameters:
+
+    [IN]  action - The game action to generate key string for.
+
+  Return value:
+
+    A newly allocated string containing comma-separated key names, or NULL if no keys found.
+    Caller is responsible for freeing the returned string.
+
+--*/
+{
+   char buf[512] = "";
+   int first = 1;
+   int i;
+
+   for (i = 0; i < PAL_MAX_KEYMAP_ENTRIES; i++)
+   {
+      if (g_DefaultKeyMap[i][1] == action)
+      {
+         const char *keyName = SDL_GetKeyName(g_DefaultKeyMap[i][0]);
+         if (keyName && *keyName)
+         {
+            if (!first)
+               strcat(buf, ", ");
+            strcat(buf, keyName);
+            first = 0;
+         }
+      }
+   }
+
+   return *buf ? strdup(buf) : NULL;
+}
+
+VOID
+PAL_LoadDefaultKeyMap(
+   VOID
+)
+/*++
+  Purpose:
+
+    Load the default keyboard mapping.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int i;
+   g_iKeyMapEntries = 0;
+
+   for (i = 0; i < PAL_MAX_KEYMAP_ENTRIES; i++)
+   {
+      g_KeyMap[i][0] = g_DefaultKeyMap[i][0];
+      g_KeyMap[i][1] = g_DefaultKeyMap[i][1];
+   }
+   g_iKeyMapEntries = PAL_MAX_KEYMAP_ENTRIES;
+}
+
+static VOID
+PAL_ParseKeyString(
+   const char *keyStr,
+   int action
+)
+/*++
+  Purpose:
+
+    Parse a comma-separated string of key names and add them to the key map.
+
+  Parameters:
+
+    [IN]  keyStr - Comma-separated list of SDL key names.
+    [IN]  action - The game action to map to these keys.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   if (!keyStr || !*keyStr || g_iKeyMapEntries >= PAL_MAX_KEYMAP_ENTRIES * 4)
+      return;
+
+   char *str = strdup(keyStr);
+   char *token = strtok(str, ",");
+
+   while (token && g_iKeyMapEntries < PAL_MAX_KEYMAP_ENTRIES * 4)
+   {
+      while (*token == ' ' || *token == '\t') token++;
+
+      SDL_Keycode key = SDL_GetKeyFromName(token);
+      if (key != SDLK_UNKNOWN)
+      {
+         g_KeyMap[g_iKeyMapEntries][0] = key;
+         g_KeyMap[g_iKeyMapEntries][1] = action;
+         g_iKeyMapEntries++;
+      }
+
+      token = strtok(NULL, ",");
+   }
+
+   free(str);
+}
+
+VOID
+PAL_LoadKeyMapFromConfig(
+   VOID
+)
+/*++
+  Purpose:
+
+    Load keyboard mapping from configuration.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   PAL_LoadDefaultKeyMap();
+
+   PAL_ParseKeyString(gConfig.pszKeyMenu, kKeyMenu);
+   PAL_ParseKeyString(gConfig.pszKeySearch, kKeySearch);
+   PAL_ParseKeyString(gConfig.pszKeyDown, kKeyDown);
+   PAL_ParseKeyString(gConfig.pszKeyLeft, kKeyLeft);
+   PAL_ParseKeyString(gConfig.pszKeyUp, kKeyUp);
+   PAL_ParseKeyString(gConfig.pszKeyRight, kKeyRight);
+   PAL_ParseKeyString(gConfig.pszKeyPgUp, kKeyPgUp);
+   PAL_ParseKeyString(gConfig.pszKeyPgDn, kKeyPgDn);
+   PAL_ParseKeyString(gConfig.pszKeyRepeat, kKeyRepeat);
+   PAL_ParseKeyString(gConfig.pszKeyAuto, kKeyAuto);
+   PAL_ParseKeyString(gConfig.pszKeyDefend, kKeyDefend);
+   PAL_ParseKeyString(gConfig.pszKeyUseItem, kKeyUseItem);
+   PAL_ParseKeyString(gConfig.pszKeyThrowItem, kKeyThrowItem);
+   PAL_ParseKeyString(gConfig.pszKeyFlee, kKeyFlee);
+   PAL_ParseKeyString(gConfig.pszKeyStatus, kKeyStatus);
+   PAL_ParseKeyString(gConfig.pszKeyForce, kKeyForce);
+   PAL_ParseKeyString(gConfig.pszKeyHome, kKeyHome);
+   PAL_ParseKeyString(gConfig.pszKeyEnd, kKeyEnd);
+}
+
+VOID
+PAL_PopulateDefaultKeyMapConfig(
+   VOID
+)
+/*++
+  Purpose:
+
+    Populate configuration structure with default key mappings if they are NULL.
+    This ensures default key mappings are saved to the config file.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   if (!gConfig.pszKeyMenu)
+      gConfig.pszKeyMenu = PAL_GenerateDefaultKeyString(kKeyMenu);
+
+   if (!gConfig.pszKeySearch)
+      gConfig.pszKeySearch = PAL_GenerateDefaultKeyString(kKeySearch);
+
+   if (!gConfig.pszKeyDown)
+      gConfig.pszKeyDown = PAL_GenerateDefaultKeyString(kKeyDown);
+
+   if (!gConfig.pszKeyLeft)
+      gConfig.pszKeyLeft = PAL_GenerateDefaultKeyString(kKeyLeft);
+
+   if (!gConfig.pszKeyUp)
+      gConfig.pszKeyUp = PAL_GenerateDefaultKeyString(kKeyUp);
+
+   if (!gConfig.pszKeyRight)
+      gConfig.pszKeyRight = PAL_GenerateDefaultKeyString(kKeyRight);
+
+   if (!gConfig.pszKeyPgUp)
+      gConfig.pszKeyPgUp = PAL_GenerateDefaultKeyString(kKeyPgUp);
+
+   if (!gConfig.pszKeyPgDn)
+      gConfig.pszKeyPgDn = PAL_GenerateDefaultKeyString(kKeyPgDn);
+
+   if (!gConfig.pszKeyRepeat)
+      gConfig.pszKeyRepeat = PAL_GenerateDefaultKeyString(kKeyRepeat);
+
+   if (!gConfig.pszKeyAuto)
+      gConfig.pszKeyAuto = PAL_GenerateDefaultKeyString(kKeyAuto);
+
+   if (!gConfig.pszKeyDefend)
+      gConfig.pszKeyDefend = PAL_GenerateDefaultKeyString(kKeyDefend);
+
+   if (!gConfig.pszKeyUseItem)
+      gConfig.pszKeyUseItem = PAL_GenerateDefaultKeyString(kKeyUseItem);
+
+   if (!gConfig.pszKeyThrowItem)
+      gConfig.pszKeyThrowItem = PAL_GenerateDefaultKeyString(kKeyThrowItem);
+
+   if (!gConfig.pszKeyFlee)
+      gConfig.pszKeyFlee = PAL_GenerateDefaultKeyString(kKeyFlee);
+
+   if (!gConfig.pszKeyStatus)
+      gConfig.pszKeyStatus = PAL_GenerateDefaultKeyString(kKeyStatus);
+
+   if (!gConfig.pszKeyForce)
+      gConfig.pszKeyForce = PAL_GenerateDefaultKeyString(kKeyForce);
+
+   if (!gConfig.pszKeyHome)
+      gConfig.pszKeyHome = PAL_GenerateDefaultKeyString(kKeyHome);
+
+   if (!gConfig.pszKeyEnd)
+      gConfig.pszKeyEnd = PAL_GenerateDefaultKeyString(kKeyEnd);
+}
+
 VOID
 PAL_InitInput(
    VOID
@@ -1228,6 +1466,11 @@ PAL_InitInput(
    memset((void *)&g_InputState, 0, sizeof(g_InputState));
    g_InputState.dir = kDirUnknown;
    g_InputState.prevdir = kDirUnknown;
+
+   //
+   // Load keyboard mapping from configuration
+   //
+   PAL_LoadKeyMapFromConfig();
 
    //
    // Check for joystick

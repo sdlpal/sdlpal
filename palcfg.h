@@ -91,6 +91,24 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_SOUNDBANK,
 	PALCFG_SCALEQUALITY,
 	PALCFG_SHADER,
+	PALCFG_KEYMENU,
+	PALCFG_KEYSEARCH,
+	PALCFG_KEYDOWN,
+	PALCFG_KEYLEFT,
+	PALCFG_KEYUP,
+	PALCFG_KEYRIGHT,
+	PALCFG_KEYPGUP,
+	PALCFG_KEYPGDN,
+	PALCFG_KEYREPEAT,
+	PALCFG_KEYAUTO,
+	PALCFG_KEYDEFEND,
+	PALCFG_KEYUSEITEM,
+	PALCFG_KEYTHROWITEM,
+	PALCFG_KEYFLEE,
+	PALCFG_KEYSTATUS,
+	PALCFG_KEYFORCE,
+	PALCFG_KEYHOME,
+	PALCFG_KEYEND,
 	/* Strings */
 	PALCFG_STRING_MAX,
 
@@ -190,6 +208,24 @@ typedef struct tagCONFIGURATION
 	char            *pszLogFile;
 	char            *pszScaleQuality;
 	char            *pszShader;
+	char            *pszKeyMenu;
+	char            *pszKeySearch;
+	char            *pszKeyDown;
+	char            *pszKeyLeft;
+	char            *pszKeyUp;
+	char            *pszKeyRight;
+	char            *pszKeyPgUp;
+	char            *pszKeyPgDn;
+	char            *pszKeyRepeat;
+	char            *pszKeyAuto;
+	char            *pszKeyDefend;
+	char            *pszKeyUseItem;
+	char            *pszKeyThrowItem;
+	char            *pszKeyFlee;
+	char            *pszKeyStatus;
+	char            *pszKeyForce;
+	char            *pszKeyHome;
+	char            *pszKeyEnd;
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;
 	DWORD            dwScreenHeight;
