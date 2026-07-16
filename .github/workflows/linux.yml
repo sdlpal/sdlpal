@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Install Dependencies
-      run: sudo apt-get install libfltk1.3-dev libasound2-dev libxrandr-dev upx-ucl pipx fuse imagemagick && pipx install cloudsmith-cli
+      run: |
+        sudo apt update
+        sudo apt-get install libfltk1.3-dev libasound2-dev libxrandr-dev upx-ucl pipx fuse imagemagick && pipx install cloudsmith-cli
     - uses: actions/checkout@v4
     - name: submodules
       run: |
