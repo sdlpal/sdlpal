@@ -48,7 +48,7 @@ We recommend purchasing the original game from [Steam](https://store.steampowere
 
 ## FAQ
 
-Please refer to the [Wiki](https://www.google.com/search?q=../../wiki).
+Please refer to the [Wiki](https://github.com/sdlpal/sdlpal/wiki).
 
 -----
 
