@@ -21,13 +21,9 @@
 #include <float.h>
 #include "main.h"
 
-#if __DJGPP__
-SDL_DisplayMode gOrig;
-SDL_DisplayMode gMode13h;
-bool bInMode13h = false;
-bool bShortcut = false;
-#endif
-bool bInPaletteAnim = false;
+bool bUseIndex8Path = false;
+bool bBypassRenderer = false;
+bool bColorCycling = false;
 
 // Screen buffer
 SDL_Surface              *gpScreen           = NULL;
@@ -144,12 +140,13 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 	//
 	// Create texture for screen.
 	//
-   //if( gConfig.fDOSForceMode13h )
-   //{
-   //   texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_INDEX8, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
-   //}
-   //else
+   if( bUseIndex8Path )
+   {
+      texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_INDEX8, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
+   }
+   else
 	texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
+
 #if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
     SDL_SetTextureScaleMode(texture, VIDEO_GetScaleMode());
 #endif
@@ -179,6 +176,8 @@ VIDEO_Startup(
 
 --*/
 {
+    SDL_DisplayMode displayMode13h = { -1 };
+
 	extern SDL_Surface* STBIMG_Load(const char* file);
 #ifndef __DJGPP__
 	extern char *dirname(char *path);
@@ -204,6 +203,11 @@ VIDEO_Startup(
    }
 #endif
 	
+#if SDL_VERSION_ATLEAST(3,5,0)
+   if(gConfig.fDOSForceMode13h)
+      bUseIndex8Path = true;
+#endif
+
    gRenderBackend.Init();
 
    UTIL_LogOutput(LOGLEVEL_DEBUG, "Probing Video Modes\n");
@@ -217,6 +221,11 @@ VIDEO_Startup(
          
          int num_modes = 0;
          SDL_DisplayMode **modes = SDL_GetFullscreenDisplayModes(display_id, &num_modes);
+         SDL_DisplayMode *desktopMode = SDL_GetDesktopDisplayMode(display_id);
+         UTIL_LogOutput(LOGLEVEL_DEBUG, "Display %d (ID: %u) desktop mode: fmt %s %dx%d @ %.2fHz\n", i, display_id,
+                        SDL_GetPixelFormatName(desktopMode->format),
+                        desktopMode->w, desktopMode->h,
+                        desktopMode->refresh_rate);
          
          if (num_modes > 0 && modes) {
             UTIL_LogOutput(LOGLEVEL_DEBUG, "Display %d (ID: %u) has %d modes\n", i, display_id, num_modes);
@@ -224,13 +233,11 @@ VIDEO_Startup(
             for (int j = 0; j < num_modes; j++) {
                   SDL_DisplayMode *mode = modes[j];
                   
-#if __DJGPP__
                   if (mode->w == 320 && mode->h == 200 && mode->format == SDL_PIXELFORMAT_INDEX8)
                   {
                      UTIL_LogOutput(LOGLEVEL_DEBUG, "found mode13h! display id: %d \n", mode->displayID);
-                     gMode13h = *mode;
+                     displayMode13h = *mode;
                   }
-#endif
 
                   // 计算准确的刷新率
                   float refresh_rate = mode->refresh_rate; // 预计算的浮点值
@@ -247,6 +254,8 @@ VIDEO_Startup(
             }
             SDL_free(modes);
          }
+         if (displayMode13h.displayID == -1)
+             displayMode13h = *desktopMode;
       }
 
       SDL_free(displays);
@@ -291,29 +300,24 @@ VIDEO_Startup(
    {
       int w,h;
       SDL_GetWindowSize(gpWindow, &w, &h);
-#if __DJGPP__
-      gOrig =*SDL_GetWindowFullscreenMode(gpWindow);
-#endif
       UTIL_LogOutput(LOGLEVEL_DEBUG, "Actual created window fmt:%s size: %dx%d@\n", SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), w, h);
-#if __DJGPP__
+
       if(gConfig.fDOSForceMode13h) {
          if(w == 320 && h == 200 && SDL_GetWindowPixelFormat(gpWindow) == SDL_PIXELFORMAT_INDEX8)
          {
             UTIL_LogOutput(LOGLEVEL_DEBUG, "Already in mode13h\n");
-            bInMode13h = true;
          }
          else
          {
-            bInMode13h = SDL_SetWindowFullscreenMode(gpWindow, &gMode13h);
+            bool bInMode13h = SDL_SetWindowFullscreenMode(gpWindow, &displayMode13h);
             SDL_GetWindowSize(gpWindow, &w, &h);
             UTIL_LogOutput(LOGLEVEL_DEBUG, "Setting window to mode13h result:%d\n", bInMode13h);
             UTIL_LogOutput(LOGLEVEL_DEBUG, "After force set window fmt:%s size: %dx%d@\n", SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), w, h);
          }
-         //HACK
-         bShortcut = true; //bInMode13h ? gConfig.fDOSLowEndOpt : 0;
-         UTIL_LogOutput(LOGLEVEL_DEBUG, "Shortcut rendering:%d\n", bShortcut);
       }
-#endif
+      bBypassRenderer = gConfig.fDOSLowEndOpt;
+      UTIL_LogOutput(LOGLEVEL_DEBUG, "Bypass renderer:%d\n", bBypassRenderer);
+
       gConfig.dwScreenWidth = w;
       gConfig.dwScreenHeight = h;
    }
@@ -360,11 +364,9 @@ VIDEO_Startup(
    //
    gpScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
    gpScreenBak = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
-#if __DJGPP__
-   if(gConfig.fDOSForceMode13h)
+   if(bUseIndex8Path)
       gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
    else
-#endif
    gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,
                                        0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
@@ -597,33 +599,35 @@ VIDEO_RenderCopy(
 {
 	void *texture_pixels;
 	int texture_pitch;
+	int bpp_shift = bUseIndex8Path ? 0 : 2;
 
+   if( bBypassRenderer ) {
+       // Native palette animation is a DOS/VGA hardware feature. 
+       // On other platforms, we emulate it by blitting.
 #if __DJGPP__
-   if( bShortcut ) {
-      if( bInPaletteAnim ) {
-         // UTIL_LogOutput(LOGLEVEL_DEBUG, "no blitting pure palette anim!\n");
-         SDL_SetHint("HINT_PURE_PALATTE_ANIM", bInPaletteAnim ? "1" : "0");
+      if( bUseIndex8Path && bColorCycling ) {
          SDL_UpdateWindowSurfaceRects(gpWindow, NULL, 0);
       }else{
-         // UTIL_LogOutput(LOGLEVEL_DEBUG, "blitting in shortcut\n");
+#endif
          SDL_Surface *windowSurface = SDL_GetWindowSurface(gpWindow);
          SDL_BlitScaled(gpScreenReal, NULL, windowSurface, NULL);
          SDL_UpdateWindowSurface(gpWindow);
+#if __DJGPP__
       }
-      return;
-   }//else UTIL_LogOutput(LOGLEVEL_DEBUG, "blitting in renderer\n");
 #endif
+      return;
+   }
 
 	SDL_LockTexture(gpTexture, NULL, &texture_pixels, &texture_pitch);
 	memset(texture_pixels, 0, gTextureRect.y * texture_pitch);
 	uint8_t *pixels = (uint8_t *)texture_pixels + gTextureRect.y * texture_pitch;
 	uint8_t *src = (uint8_t *)gpScreenReal->pixels;
-	int left_pitch = gTextureRect.x << 2;
-	int right_pitch = texture_pitch - ((gTextureRect.x + gTextureRect.w) << 2);
+	int left_pitch = gTextureRect.x << bpp_shift;
+	int right_pitch = texture_pitch - ((gTextureRect.x + gTextureRect.w) << bpp_shift);
 	for (int y = 0; y < gTextureRect.h; y++, src += gpScreenReal->pitch)
 	{
 		memset(pixels, 0, left_pitch); pixels += left_pitch;
-		memcpy(pixels, src, 320 << 2); pixels += 320 << 2;
+		memcpy(pixels, src, 320 << bpp_shift); pixels += 320 << bpp_shift;
 		memset(pixels, 0, right_pitch); pixels += right_pitch;
 	}
 	memset(pixels, 0, gTextureRect.y * texture_pitch);
@@ -810,16 +814,19 @@ VIDEO_SetPalette(
    SDL_SetSurfaceColorMod(gpScreenBak, 0, 0, 0);
    SDL_SetSurfaceColorMod(gpScreenBak, 0xFF, 0xFF, 0xFF);
 
-#if __DJGPP__
-   if(bInMode13h && bShortcut) {
+   if(bUseIndex8Path) {
       SDL_SetSurfacePalette(gpScreenReal, gpPalette);
       SDL_SetSurfaceColorMod(gpScreenReal, 0, 0, 0);
       SDL_SetSurfaceColorMod(gpScreenReal, 0xFF, 0xFF, 0xFF);
+
       SDL_SetSurfacePalette(windowSurface, gpPalette);
       SDL_SetSurfaceColorMod(windowSurface, 0, 0, 0);
       SDL_SetSurfaceColorMod(windowSurface, 0xFF, 0xFF, 0xFF);
-   }
+
+#if SDL_VERSION_ATLEAST(3,4,0)
+      SDL_SetTexturePalette(gpTexture, gpPalette);
 #endif
+   }
 
    rect.x = 0;
    rect.y = 0;
@@ -1094,63 +1101,6 @@ VIDEO_ChangeDepth(
 --*/
 {
 #if SDL_VERSION_ATLEAST(3,0,0)
-# if __DJGPP__
-    // if not in mode 13h, no mode setting is needed since VESA xRGB could handle both
-    if( gConfig.fDOSForceMode13h ) 
-    { 
-      //revert to normal gaming
-      if(bpp == 0) 
-      {
-         if( bInMode13h )
-         {
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "Already in mode13h, blitting:%s\n", bShortcut?"shortcut":"render");
-         }
-         else
-         {
-            SDL_DestroyWindowSurface(gpWindow);
-            SDL_SetWindowFullscreenMode(gpWindow, &gMode13h);
-            SDL_DestroySurface(gpScreenReal);
-            gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
-            bInMode13h = true;
-            bShortcut = true;
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "Change Display Mode to Mode13h, blitting:%s\n", bShortcut?"shortcut":"render");
-         }
-      }
-      //playing avi
-      else 
-      {
-         int w,h;
-         // makes VGA-only machine could play avi via high-cost palette requant
-         if(gConfig.fDOSLowEndOpt) { 
-            if( bInMode13h )
-            {
-               UTIL_LogOutput(LOGLEVEL_DEBUG, "HACK Already in mode13h, blitting:%s\n", bShortcut?"shortcut":"render");
-            }
-            else
-            {
-               SDL_DestroyWindowSurface(gpWindow);
-               SDL_SetWindowFullscreenMode(gpWindow, &gMode13h);
-               SDL_DestroySurface(gpScreenReal);
-               gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
-               bInMode13h = true;
-               bShortcut = true;
-               UTIL_LogOutput(LOGLEVEL_DEBUG, "HACK Change Display Mode to Mode13h, blitting:%s\n", bShortcut?"shortcut":"render");
-            }
-         }else{
-            SDL_DestroyWindowSurface(gpWindow);
-            SDL_SetWindowFullscreenMode(gpWindow, &gOrig);
-            SDL_GetWindowSize(gpWindow, &w,&h);
-            SDL_DestroySurface(gpScreenReal);
-            gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,
-                                                0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-            bInMode13h = false;
-            bShortcut = false;
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "Change Display Mode to width %d height %d format:%s, blitting:%s\n", w, h, SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), bShortcut?"shortcut":"render");
-         }
-      }
-   }
-   g_bRenderPaused = FALSE;
-# endif
 #elif SDL_VERSION_ATLEAST(2,0,0)
 #else
    DWORD                    flags;
