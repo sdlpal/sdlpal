@@ -24,7 +24,7 @@ echo ""
 
 echo "Call stack with source lines:"
 grep -o '0x[0-9a-f]\{8\}' "$LOG" | while read addr; do
-    line=$(i386-pc-msdosdjgpp-addr2line -e "$EXE" "$addr" 2>/dev/null)
+    line=$(i586-pc-msdosdjgpp-addr2line -e "$EXE" "$addr" 2>/dev/null)
     if [ "$line" = "??:0" ]; then
         line="(no debug info)"
     fi
