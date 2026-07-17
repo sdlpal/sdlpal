@@ -630,6 +630,7 @@ PAL_BattleFadeScene(
    int               i, j;
    DWORD             time;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
+   bool              bCannotDrop = true, bDropDrame = false;
    
    time = SDL_GetTicks();
 
@@ -637,14 +638,20 @@ PAL_BattleFadeScene(
    {
       for (j = 0; j < 6; j++)
       {
-         PAL_DelayUntil(time);
-         time = SDL_GetTicks() + 16;
+         bCannotDrop = (gConfig.fDOSLowEndOpt ? ((i % 3 == 0) && (j == 0)) : true);
+         bDropDrame = bCannotDrop ? false : (SDL_TICKS_PASSED(SDL_GetTicks(), time));
+         time += 16;
 
          //
          // Blend the pixels in the 2 buffers, and put the result into the
          // backup buffer
          //
          VIDEO_CrossFadeStep(g_Battle.lpSceneBuf, gpScreenBak, rgIndex[j], i > 0);
+
+         if (bDropDrame) {
+             //UTIL_LogOutput(LOGLEVEL_DEBUG, "Dropped frame:%d %d\n", i, j);
+             continue;
+         }
 
          //
          // Draw the backup buffer to the screen
@@ -653,6 +660,9 @@ PAL_BattleFadeScene(
 
          PAL_BattleUIUpdate();
          VIDEO_UpdateScreen(NULL);
+         //UTIL_LogOutput(LOGLEVEL_DEBUG, "Presented frame:%d %d\n", i, j);
+
+         PAL_DelayUntil(time-8);
       }
    }
 

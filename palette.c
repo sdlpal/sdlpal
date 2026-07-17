@@ -297,7 +297,12 @@ PAL_SceneFade(
 {
    SDL_Color            *palette, newpalette[256];
    int                   i, j;
-   DWORD                 time;
+   uint64_t              dwFrameStartTime, dwNextFrameTime;
+   int                   nFrame = 0;
+   int                   nFadeSteps = 64, iStepInterval = 100;
+   int                   iStepAbs, nTotalSteps, iKeepInterval;
+
+   bool              bCannotDrop = true, bDropDrame = false;
 
    memset(newpalette, 0xff, sizeof(SDL_Color)*256);
 
@@ -314,12 +319,19 @@ PAL_SceneFade(
    }
 
    gpGlobals->fNeedToFadeIn = FALSE;
+   iStepAbs = (iStep > 0) ? iStep : -iStep;
+   nTotalSteps = (nFadeSteps + iStepAbs - 1) / iStepAbs;
+   iKeepInterval = nTotalSteps / PAL_DROP_COUNTDOWN;
+   if (iKeepInterval == 0) iKeepInterval = 1;
+   dwFrameStartTime = SDL_GetTicks();
 
    if (iStep > 0)
    {
-      for (i = 0; i < 64; i += iStep)
+      for (i = 0; i < nFadeSteps; i += iStep)
       {
-         time = SDL_GetTicks() + 100;
+         dwNextFrameTime = dwFrameStartTime + (uint64_t)(++nFrame) * iStepInterval;
+         bCannotDrop = (gConfig.fDOSLowEndOpt ? (nFrame % iKeepInterval == 1) : true);
+         bDropDrame = bCannotDrop ? false : (SDL_TICKS_PASSED(SDL_GetTicks(), (dwNextFrameTime)));
 
          //
          // Generate the scene
@@ -328,8 +340,6 @@ PAL_SceneFade(
          g_InputState.dir = kDirUnknown;
          g_InputState.prevdir = kDirUnknown;
          PAL_GameUpdate(FALSE);
-         PAL_MakeScene();
-         VIDEO_UpdateScreen(NULL);
 
          //
          // Calculate the current palette...
@@ -345,20 +355,27 @@ PAL_SceneFade(
             VIDEO_SetPalette(newpalette);
          }
 
+         if (bDropDrame)
+               continue;
+
+         PAL_MakeScene();
+         VIDEO_UpdateScreen(NULL);
+#ifndef __DJGPP__
+         VIDEO_SetPalette(newpalette);
+#endif
+
          PAL_ProcessEvent();
 
-         while (!SDL_TICKS_PASSED(SDL_GetTicks(), time))
-         {
-            PAL_ProcessEvent();
-            SDL_Delay(5);
-         }
+         PAL_DelayUntil(dwNextFrameTime - iStepInterval / 2);
       }
    }
    else
    {
-      for (i = 63; i >= 0; i += iStep)
+      for (i = nFadeSteps - 1; i >= 0; i += iStep)
       {
-         time = SDL_GetTicks() + 100;
+         dwNextFrameTime = dwFrameStartTime + (uint64_t)(++nFrame) * iStepInterval;
+         bCannotDrop = (gConfig.fDOSLowEndOpt ? (nFrame % iKeepInterval == 1) : true);
+         bDropDrame = bCannotDrop ? false : (SDL_TICKS_PASSED(SDL_GetTicks(), (dwNextFrameTime)));
 
          //
          // Generate the scene
@@ -367,8 +384,6 @@ PAL_SceneFade(
          g_InputState.dir = kDirUnknown;
          g_InputState.prevdir = kDirUnknown;
          PAL_GameUpdate(FALSE);
-         PAL_MakeScene();
-         VIDEO_UpdateScreen(NULL);
 
          //
          // Calculate the current palette...
@@ -384,15 +399,23 @@ PAL_SceneFade(
             VIDEO_SetPalette(newpalette);
          }
 
+         if (bDropDrame)
+               continue;
+
+         PAL_MakeScene();
+         VIDEO_UpdateScreen(NULL);
+#ifndef __DJGPP__
+         VIDEO_SetPalette(newpalette);
+#endif
+
          PAL_ProcessEvent();
 
-         while (!SDL_TICKS_PASSED(SDL_GetTicks(), time))
-         {
-            PAL_ProcessEvent();
-            SDL_Delay(5);
-         }
+         PAL_DelayUntil(dwNextFrameTime - iStepInterval / 2);
       }
    }
+   PAL_MakeScene();
+   VIDEO_UpdateScreen(NULL);
+   VIDEO_SetPalette(newpalette);
 }
 
 VOID
@@ -421,10 +444,14 @@ PAL_PaletteFade(
 --*/
 {
    int            i, j;
-   UINT           time;
+   uint64_t       dwFrameStartTime, dwFrameInterval, dwNextFrameTime;
    SDL_Color     *newpalette = PAL_GetPalette(iPaletteNum, fNight);
    PAL_LARGE SDL_Color      palette[256];
    PAL_LARGE SDL_Color		t[256];
+
+   int            nFadeSteps = 32, iKeepInterval;
+
+   bool              bCannotDrop = true, bDropDrame = false;
 
    memset(t, 0xff, sizeof(t));
 
@@ -438,9 +465,19 @@ PAL_PaletteFade(
    //
    // Start fading...
    //
-   for (i = 0; i < 32; i++)
+   dwFrameInterval = (fUpdateScene ? FRAME_TIME : FRAME_TIME / 4);
+   if (dwFrameInterval == 0)
    {
-      time = SDL_GetTicks() + (fUpdateScene ? FRAME_TIME : FRAME_TIME / 4);
+      dwFrameInterval = 1;
+   }
+   iKeepInterval = nFadeSteps / PAL_DROP_COUNTDOWN;
+   dwFrameStartTime = SDL_GetTicks();
+
+   for (i = 0; i < nFadeSteps; i++)
+   {
+      dwNextFrameTime = dwFrameStartTime + (uint64_t)(i + 1) * dwFrameInterval;
+      bCannotDrop = (gConfig.fDOSLowEndOpt ? (i % iKeepInterval == 0) : true);
+      bDropDrame = bCannotDrop ? false : (SDL_TICKS_PASSED(SDL_GetTicks(), (dwNextFrameTime)));
 
       if (!VIDEO_SetPaletteFade(kPaletteFadeBlend, palette, newpalette, i, 0))
       {
@@ -462,17 +499,29 @@ PAL_PaletteFade(
          g_InputState.dir = kDirUnknown;
          g_InputState.prevdir = kDirUnknown;
          PAL_GameUpdate(FALSE);
+      }
+
+      if (bDropDrame)
+            continue;
+
+      VIDEO_SetPalette(t);
+
+      if (fUpdateScene)
+      {
          PAL_MakeScene();
          VIDEO_UpdateScreen(NULL);
       }
 
       PAL_ProcessEvent();
 
-      while (!SDL_TICKS_PASSED(SDL_GetTicks(), time))
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(5);
-      }
+      PAL_DelayUntil(dwNextFrameTime - dwFrameInterval / 2);
+   }
+
+   VIDEO_SetPalette(t);
+   if (fUpdateScene)
+   {
+      PAL_MakeScene();
+      VIDEO_UpdateScreen(NULL);
    }
 }
 
@@ -504,8 +553,12 @@ PAL_ColorFade(
    SDL_Color       *palette;
    PAL_LARGE SDL_Color        newpalette[256];
    int              i, j;
+   uint64_t         dwFrameStartTime, dwNextFrameTime;
+   int              nFadeSteps = 64, iKeepInterval;
 
-   memset(newpalette, 0xff, sizeof(SDL_Color)*255);
+   bool              bCannotDrop = true, bDropDrame = false;
+
+   memset(newpalette, 0xff, sizeof(newpalette));
 
    palette = PAL_GetPalette(gpGlobals->wNumPalette, gpGlobals->fNightPalette);
 
@@ -515,17 +568,25 @@ PAL_ColorFade(
       iDelay = 10;
    }
 
+   iKeepInterval = nFadeSteps / PAL_DROP_COUNTDOWN;
+
    bColorCycling = true;
 
    if (fFrom)
    {
+      dwFrameStartTime = SDL_GetTicks();
+
       for (i = 0; i < 256; i++)
       {
          newpalette[i] = palette[bColor];
       }
 
-      for (i = 0; i < 64; i++)
+      for (i = 0; i < nFadeSteps; i++)
       {
+         dwNextFrameTime = dwFrameStartTime + (uint64_t)(i + 1) * iDelay;
+         bCannotDrop = (gConfig.fDOSLowEndOpt ? (i % iKeepInterval == 0) : true);
+         bDropDrame = bCannotDrop ? false : (SDL_TICKS_PASSED(SDL_GetTicks(), (dwNextFrameTime)));
+
          if (VIDEO_SetPaletteFade(kPaletteFadeFromColor, palette, NULL, i + 1, bColor))
          {
             UTIL_Delay(iDelay);
@@ -562,18 +623,28 @@ PAL_ColorFade(
             }
          }
 
+         if (bDropDrame)
+               continue;
+
          VIDEO_SetPalette(newpalette);
-         UTIL_Delay(iDelay);
+
+         PAL_DelayUntil(dwNextFrameTime - iDelay / 2);
       }
 
       VIDEO_SetPalette(palette);
    }
    else
    {
+      dwFrameStartTime = SDL_GetTicks();
+
       memcpy(newpalette, palette, sizeof(newpalette));
 
-      for (i = 0; i < 64; i++)
+      for (i = 0; i < nFadeSteps; i++)
       {
+         dwNextFrameTime = dwFrameStartTime + (uint64_t)(i + 1) * iDelay;
+         bCannotDrop = (gConfig.fDOSLowEndOpt ? (i % iKeepInterval == 0) : true);
+         bDropDrame = bCannotDrop ? false : (SDL_TICKS_PASSED(SDL_GetTicks(), (dwNextFrameTime)));
+
          if (VIDEO_SetPaletteFade(kPaletteFadeToColor, palette, NULL, i + 1, bColor))
          {
             UTIL_Delay(iDelay);
@@ -610,8 +681,12 @@ PAL_ColorFade(
             }
          }
 
+         if (bDropDrame)
+               continue;
+
          VIDEO_SetPalette(newpalette);
-         UTIL_Delay(iDelay);
+
+         PAL_DelayUntil(dwNextFrameTime - iDelay / 2);
       }
 
       for (i = 0; i < 256; i++)
@@ -647,6 +722,10 @@ PAL_FadeToRed(
    PAL_LARGE SDL_Color        newpalette[256];
    int                        i, j;
    BYTE                       color;
+   uint64_t                   dwFrameStartTime, dwNextFrameTime;
+   int                        nFadeSteps = 32, iStepInterval = 75, iKeepInterval;
+
+   bool              bCannotDrop = true, bDropDrame = false;
 
    memset(newpalette, 0xff, sizeof(SDL_Color)*255);
     
@@ -665,11 +744,17 @@ PAL_FadeToRed(
    }
 
    VIDEO_UpdateScreen(NULL);
+   iKeepInterval = nFadeSteps / PAL_DROP_COUNTDOWN;
+   dwFrameStartTime = SDL_GetTicks();
 
    bColorCycling = true;
 
-   for (i = 0; i < 32; i++)
+   for (i = 0; i < nFadeSteps; i++)
    {
+      dwNextFrameTime = dwFrameStartTime + (uint64_t)(i + 1) * iStepInterval;
+      bCannotDrop = (gConfig.fDOSLowEndOpt ? (i % iKeepInterval == 0) : true);
+      bDropDrame = bCannotDrop ? false : (SDL_TICKS_PASSED(SDL_GetTicks(), (dwNextFrameTime)));
+
       if (VIDEO_SetPaletteFade(kPaletteFadeToRed, palette, NULL, i + 1, 0))
       {
          UTIL_Delay(75);
@@ -705,8 +790,13 @@ PAL_FadeToRed(
          }
       }
 
+      if (bDropDrame)
+            continue;
+
       VIDEO_SetPalette(newpalette);
-      UTIL_Delay(75);
+
+      PAL_DelayUntil(dwNextFrameTime - iStepInterval / 2);
    }
+   VIDEO_SetPalette(newpalette);
    bColorCycling = false;
 }

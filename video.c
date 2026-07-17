@@ -1577,6 +1577,9 @@ VIDEO_SwitchScreen(
    short             screenRealHeight = gpScreenReal->h;
    short             screenRealY = 0;
 
+   DWORD             time = SDL_GetTicks();
+   bool              fDropFrame = false;
+
    if (!bScaleScreen)
    {
       screenRealHeight -= offset;
@@ -1588,6 +1591,9 @@ VIDEO_SwitchScreen(
 
    for (i = 0; i < 6; i++)
    {
+      time += wSpeed;
+      fDropFrame = (SDL_TICKS_PASSED(SDL_GetTicks(), (time)));
+
       if (!VIDEO_GPU_SwitchStep(gpScreen, gpScreenBak, rgIndex[i]))
       {
          for (j = rgIndex[i]; j < gpScreen->pitch * gpScreen->h; j += 6)
@@ -1611,6 +1617,10 @@ VIDEO_SwitchScreen(
 	  }
 
       VIDEO_BlitToScreenReal(gpScreenBak, NULL, &dstrect);
+
+      if (fDropFrame)
+         continue;
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       VIDEO_ShowFrame();
 #else
@@ -1622,8 +1632,14 @@ VIDEO_SwitchScreen(
 		  SDL_UnlockSurface(gpScreenReal);
 	  }
 
-      UTIL_Delay(wSpeed);
+      PAL_DelayUntil(time - wSpeed / 2);
    }
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+      gRenderBackend.RenderCopy();
+#else
+      SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+#endif
 }
 
 VOID
@@ -1710,6 +1726,7 @@ VIDEO_FadeScreen(
    short             offset = 240 - 200;
    short             screenRealHeight = gpScreenReal->h;
    short             screenRealY = 0;
+   bool              bCannotDrop = true, bDropDrame = false;
 
    //
    // Lock surface if needed
@@ -1735,13 +1752,9 @@ VIDEO_FadeScreen(
    {
       for (j = 0; j < 6; j++)
       {
-         PAL_ProcessEvent();
-         while (!SDL_TICKS_PASSED(SDL_GetTicks(), time))
-         {
-            PAL_ProcessEvent();
-            SDL_Delay(5);
-         }
-         time = SDL_GetTicks() + wSpeed;
+         time += wSpeed;
+         bCannotDrop = (gConfig.fDOSLowEndOpt ? ((i % 3 == 0) && (j == 0)) : true);
+         bDropDrame = bCannotDrop ? false : (SDL_TICKS_PASSED(SDL_GetTicks(), (time)));
 
          //
          // Blend the pixels in the 2 buffers, and put the result into the
@@ -1778,7 +1791,8 @@ VIDEO_FadeScreen(
                dstrect.y = (screenRealY + g_wShakeLevel) * screenRealHeight / gpScreen->h;
             }
 
-            VIDEO_BlitToScreenReal(gpScreenBak, &srcrect, &dstrect);
+            if (!bDropDrame)
+               VIDEO_BlitToScreenReal(gpScreenBak, &srcrect, &dstrect);
 
             if (g_wShakeTime & 1)
             {
@@ -1791,11 +1805,17 @@ VIDEO_FadeScreen(
 
             dstrect.h = g_wShakeLevel * screenRealHeight / gpScreen->h;
 
+            if (bDropDrame)
+            {
+               PAL_DelayUntil(time - wSpeed / 2);
+               continue;
+            }
+
             VIDEO_FillScreenRealBlack(&dstrect);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
             VIDEO_ShowFrame();
 #else
-			SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
+            SDL_UpdateRect(gpScreenReal, 0, 0, gpScreenReal->w, gpScreenReal->h);
 #endif
             g_wShakeTime--;
          }
@@ -1805,6 +1825,9 @@ VIDEO_FadeScreen(
             dstrect.y = screenRealY;
             dstrect.w = gpScreenReal->w;
             dstrect.h = screenRealHeight;
+
+            if (bDropDrame)
+               continue;
 
             VIDEO_BlitToScreenReal(gpScreenBak, NULL, &dstrect);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
