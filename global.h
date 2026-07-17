@@ -509,7 +509,6 @@ typedef struct tagGLOBALVARS
    int              iCurPlayingRNG;      // current playing RNG animation
    BYTE             bCurrentSaveSlot;    // current save slot (1-5)
    BOOL             fInMainGame;         // TRUE if in main game
-   BOOL             fEnteringScene;      // TRUE if entering a new scene
    BOOL             fNeedToFadeIn;       // TRUE if need to fade in when drawing scene
    BOOL             fInBattle;           // TRUE if in battle
    BOOL             fAutoBattle;         // TRUE if auto-battle

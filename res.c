@@ -287,11 +287,8 @@ PAL_LoadResources(
    if (gpResources->bLoadFlags & kLoadScene) {
       BYTE bakLoadFlags = gpResources->bLoadFlags;
 
-      if (gpGlobals->fEnteringScene)
-      {
-         gpGlobals->wScreenWave = 0;
-         gpGlobals->sWaveProgression = 0;
-      }
+      gpGlobals->wScreenWave = 0;
+      gpGlobals->sWaveProgression = 0;
 
       //
       // Free previous loaded scene (sprites)
@@ -338,7 +335,6 @@ PAL_LoadResources(
       i = gpGlobals->wNumScene - 1;
       gpResources->bLoadFlags = 0;
       gpGlobals->g.rgScene[i].wScriptOnEnter = PAL_RunTriggerScript(gpGlobals->g.rgScene[i].wScriptOnEnter, 0xFFFF);
-      gpGlobals->fEnteringScene = FALSE;
       gpResources->bLoadFlags |= bakLoadFlags;
       if (gpGlobals->wNumSceneToLoad != gpGlobals->wNumScene) 
           PAL_LoadResources();

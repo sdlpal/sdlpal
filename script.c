@@ -1881,7 +1881,6 @@ PAL_InterpretInstruction(
          //
          gpGlobals->wNumSceneToLoad = pScript->rgwOperand[0];
          PAL_SetLoadFlags(kLoadScene);
-         gpGlobals->fEnteringScene = TRUE;
          gpGlobals->wLayer = 0;
       }
       break;

@@ -136,14 +136,6 @@ PAL_GameUpdate(
                p->wTriggerScript = PAL_RunTriggerScript(p->wTriggerScript, wEventObjectID);
 
                PAL_ClearKeyState();
-
-               if (gpGlobals->fEnteringScene)
-               {
-                  //
-                  // Don't go further on scene switching
-                  //
-                  return;
-               }
             }
          }
       }
@@ -164,13 +156,6 @@ PAL_GameUpdate(
          if (wScriptEntry != 0)
          {
             p->wAutoScript = PAL_RunAutoScript(wScriptEntry, wEventObjectID);
-            if (gpGlobals->fEnteringScene)
-            {
-               //
-               // Don't go further on scene switching
-               //
-               return;
-            }
          }
       }
 

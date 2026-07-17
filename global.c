@@ -464,8 +464,6 @@ PAL_LoadDefaultGame(
       gpGlobals->Exp.rgDexterityExp[i].wLevel = p->PlayerRoles.rgwLevel[i];
       gpGlobals->Exp.rgFleeExp[i].wLevel = p->PlayerRoles.rgwLevel[i];
    }
-
-   gpGlobals->fEnteringScene = TRUE;
 }
 
 typedef struct tagSAVEDGAME_COMMON
@@ -632,8 +630,6 @@ PAL_LoadGame_Common(
 	memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
 	memcpy(gpGlobals->rgInventory, s->rgInventory, sizeof(gpGlobals->rgInventory));
 	memcpy(gpGlobals->g.rgScene, s->rgScene, sizeof(gpGlobals->g.rgScene));
-
-	gpGlobals->fEnteringScene = FALSE;
 
 	PAL_CompressInventory();
 
@@ -909,7 +905,6 @@ PAL_ReloadInNextTick(
     gpGlobals->bCurrentSaveSlot = (BYTE)iSaveSlot;
     gpGlobals->wNumSceneToLoad = 1;
     PAL_SetLoadFlags(kLoadGlobalData | kLoadScene | kLoadPlayerSprite);
-    gpGlobals->fEnteringScene = TRUE;
     gpGlobals->fNeedToFadeIn = TRUE;
     gpGlobals->dwFrameNum = 0;
 }
