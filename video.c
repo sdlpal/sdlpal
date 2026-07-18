@@ -156,6 +156,97 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 
 void NullFunc() {}
 
+bool VIDEO_GetClosestFullscreenDisplayMode(SDL_DisplayMode **mode_list, int num_modes, int w, int h, const SDL_DisplayMode *exclude, SDL_DisplayMode *result)
+{
+    const SDL_DisplayMode *mode, *closest = NULL;
+    float aspect_ratio;
+    int i;
+
+    SDL_zerop(result);
+
+    if (h > 0) {
+        aspect_ratio = (float)w / h;
+    } else {
+        aspect_ratio = 1.0f;
+    }
+
+    if (num_modes <= 0 || !mode_list) {
+        return SDL_SetError("Couldn't find any matching video modes");
+    }
+
+    int target_area = w * h;
+    int best_area_diff = -1;
+
+    for (i = 0; i < num_modes; ++i) {
+        mode = mode_list[i];
+
+        // Skip the excluded mode if specified
+        if (exclude &&
+            mode->w == exclude->w &&
+            mode->h == exclude->h &&
+            mode->format == exclude->format) {
+            continue;
+        }
+
+        int area = mode->w * mode->h;
+        int area_diff = (area > target_area) ? (area - target_area) : (target_area - area);
+
+        if (!closest) {
+            closest = mode;
+            best_area_diff = area_diff;
+            continue;
+        }
+
+        // Prefer closer area
+        if (area_diff > best_area_diff) {
+            continue;
+        }
+
+        if (area_diff < best_area_diff) {
+            closest = mode;
+            best_area_diff = area_diff;
+            continue;
+        }
+
+        // Same area diff: prefer closer aspect ratio
+        {
+            float cur_aspect = (float)mode->w / mode->h;
+            float best_aspect = (float)closest->w / closest->h;
+            float cur_aspect_diff = SDL_fabsf(aspect_ratio - cur_aspect);
+            float best_aspect_diff = SDL_fabsf(aspect_ratio - best_aspect);
+
+            if (cur_aspect_diff > best_aspect_diff) {
+                continue;
+            }
+            if (cur_aspect_diff < best_aspect_diff) {
+                closest = mode;
+                best_area_diff = area_diff;
+                continue;
+            }
+        }
+
+        // Same area and aspect ratio: prefer higher refresh rate
+        if (mode->refresh_rate < closest->refresh_rate) {
+            continue;
+        }
+
+        if (mode->refresh_rate > closest->refresh_rate) {
+            closest = mode;
+            best_area_diff = area_diff;
+            continue;
+        }
+
+        // Same refresh rate: prefer higher color depth
+        if (SDL_BYTESPERPIXEL(mode->format) > SDL_BYTESPERPIXEL(closest->format)) {
+            closest = mode;
+            best_area_diff = area_diff;
+        }
+    }
+
+    SDL_copyp(result, closest);
+    return true;
+}
+
 INT
 VIDEO_Startup(
    VOID
@@ -213,53 +304,62 @@ VIDEO_Startup(
    UTIL_LogOutput(LOGLEVEL_DEBUG, "Probing Video Modes\n");
 #if SDL_VERSION_ATLEAST(3,0,0)
    {
-      int num_displays = 0;
-      SDL_DisplayID *displays = SDL_GetDisplays(&num_displays);
+      SDL_DisplayMode **allDisplayModes = NULL;
+      int numDisplayModes = 0;
+      SDL_DisplayID display_id = SDL_GetPrimaryDisplay();
 
-      for (int i = 0; i < num_displays; i++) {
-         SDL_DisplayID display_id = displays[i];
-         
-         int num_modes = 0;
-         SDL_DisplayMode **modes = SDL_GetFullscreenDisplayModes(display_id, &num_modes);
-         SDL_DisplayMode *desktopMode = SDL_GetDesktopDisplayMode(display_id);
-         UTIL_LogOutput(LOGLEVEL_DEBUG, "Display %d (ID: %u) desktop mode: fmt %s %dx%d @ %.2fHz\n", i, display_id,
-                        SDL_GetPixelFormatName(desktopMode->format),
-                        desktopMode->w, desktopMode->h,
-                        desktopMode->refresh_rate);
-         
-         if (num_modes > 0 && modes) {
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "Display %d (ID: %u) has %d modes\n", i, display_id, num_modes);
-            
-            for (int j = 0; j < num_modes; j++) {
-                  SDL_DisplayMode *mode = modes[j];
-                  
-                  if (mode->w == 320 && mode->h == 200 && mode->format == SDL_PIXELFORMAT_INDEX8)
-                  {
-                     UTIL_LogOutput(LOGLEVEL_DEBUG, "found mode13h! display id: %d \n", mode->displayID);
-                     displayMode13h = *mode;
-                  }
+      allDisplayModes = SDL_GetFullscreenDisplayModes(display_id, &numDisplayModes);
+      SDL_DisplayMode *desktopMode = SDL_GetDesktopDisplayMode(display_id);
+      UTIL_LogOutput(LOGLEVEL_DEBUG, "Display (ID: %u) desktop mode: fmt %s %dx%d @ %.2fHz\n", display_id,
+                     SDL_GetPixelFormatName(desktopMode->format),
+                     desktopMode->w, desktopMode->h,
+                     desktopMode->refresh_rate);
 
-                  // 计算准确的刷新率
-                  float refresh_rate = mode->refresh_rate; // 预计算的浮点值
-                  if (refresh_rate == 0.0f && mode->refresh_rate_numerator > 0) {
-                     refresh_rate = (float)mode->refresh_rate_numerator / (float)mode->refresh_rate_denominator;
-                  }
-                  
-                  UTIL_LogOutput(LOGLEVEL_DEBUG,
-                                 "Display %d mode %d: fmt %s %dx%d @ %.2fHz\n",
-                                 i, j,
-                                 SDL_GetPixelFormatName(mode->format),
-                                 mode->w, mode->h,
-                                 refresh_rate);
-            }
-            SDL_free(modes);
+      if (numDisplayModes > 0 && allDisplayModes) {
+         UTIL_LogOutput(LOGLEVEL_DEBUG, "Display (ID: %u) has %d modes\n", display_id, numDisplayModes);
+         
+         for (int j = 0; j < numDisplayModes; j++) {
+               SDL_DisplayMode *mode = allDisplayModes[j];
+
+               if (mode->w == 320 && mode->h == 200 && mode->format == SDL_PIXELFORMAT_INDEX8)
+               {
+                  UTIL_LogOutput(LOGLEVEL_DEBUG, "found mode13h! display id: %u \n", display_id);
+                  displayMode13h = *mode;
+               }
+
+               float refresh_rate = mode->refresh_rate;
+               if (refresh_rate == 0.0f && mode->refresh_rate_numerator > 0) {
+                  refresh_rate = (float)mode->refresh_rate_numerator / (float)mode->refresh_rate_denominator;
+               }
+
+               UTIL_LogOutput(LOGLEVEL_DEBUG,
+                              "Display (ID: %u) mode %d: fmt %s %dx%d @ %.2fHz\n",
+                              display_id, j,
+                              SDL_GetPixelFormatName(mode->format),
+                              mode->w, mode->h,
+                              refresh_rate);
          }
-         if (displayMode13h.displayID == -1)
-             displayMode13h = *desktopMode;
       }
+      if (displayMode13h.displayID == -1)
+            displayMode13h = *desktopMode;
 
-      SDL_free(displays);
+#if __DJGPP__
+      if(!gConfig.fDOSForceMode13h) {
+         SDL_DisplayMode closest;
+         if (VIDEO_GetClosestFullscreenDisplayMode(allDisplayModes, numDisplayModes, gConfig.dwScreenWidth, gConfig.dwScreenHeight, &displayMode13h, &closest)) {
+            gConfig.dwScreenWidth = closest.w;
+            gConfig.dwScreenHeight = closest.h;
+            bUseIndex8Path = (closest.format == SDL_PIXELFORMAT_INDEX8);
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "Closest fullscreen mode: fmt %s %dx%d @ %.2fHz, paletted:%d\n",
+                           SDL_GetPixelFormatName(closest.format),
+                           closest.w, closest.h,
+                           (float)closest.refresh_rate,
+                           bUseIndex8Path);
+         }
+      }
+#endif
 
+      SDL_free(allDisplayModes);
    }
 #else
    for( int i=0; i<SDL_GetNumVideoDisplays(); i++ )
