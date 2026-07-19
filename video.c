@@ -147,6 +147,11 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
    else
 	texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
 
+#if SDL_VERSION_ATLEAST(3,4,0)
+   if (texture && gpPalette && bUseIndex8Path)
+      SDL_SetTexturePalette(texture, gpPalette);
+#endif
+
 #if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
     SDL_SetTextureScaleMode(texture, VIDEO_GetScaleMode());
 #endif
