@@ -48,6 +48,11 @@ RIX_Init(
    LPCSTR     szFileName
 );
 
+VOID
+REALOPL_SetMusicEnabled(
+   BOOL   fEnable
+);
+
 /* OGG */
 
 LPAUDIOPLAYER

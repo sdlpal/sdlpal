@@ -643,6 +643,7 @@ AUDIO_EnableMusic(
 )
 {
    gAudioDevice.fMusicEnabled = fEnable;
+   REALOPL_SetMusicEnabled(fEnable);
 }
 
 BOOL

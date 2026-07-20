@@ -61,6 +61,15 @@ typedef struct tagRIXPLAYER :
    INT                        iRealOPLTimerID;
 } RIXPLAYER, *LPRIXPLAYER;
 
+extern "C" VOID REALOPL_SetMusicEnabled(BOOL fEnable)
+{
+	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)gAudioDevice.pMusPlayer;
+	if (gConfig.eOPLCore == OPLCORE_REAL && pRixPlayer && pRixPlayer->opl)
+	{
+		pRixPlayer->opl->setquiet(!fEnable);
+	}
+}
+
 #if SDL_VERSION_ATLEAST(3,0,0)
 #define UINT32 Uint32
 #else
