@@ -97,5 +97,15 @@ public:
 		if (opls[1]) opls[1]->init();
 		percussion = false;
 	}
+
+	void setvolume(int volume) {
+		if (opls[0]) opls[0]->setvolume(volume);
+		if (opls[1]) opls[1]->setvolume(volume);
+	}
+
+	void setquiet(bool quiet = true) {
+		if (opls[0]) opls[0]->setquiet(quiet);
+		if (opls[1]) opls[1]->setquiet(quiet);
+	}
 };
 #endif

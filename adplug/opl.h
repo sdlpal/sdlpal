@@ -62,6 +62,9 @@ public:
       return currType == TYPE_OPL3 || currType == TYPE_DUAL_OPL2;
    }
 
+   virtual void setvolume(int) {}         // set master volume (no-op by default)
+   virtual void setquiet(bool = true) {}  // set quiet state (no-op by default)
+
 protected:
    int		currChip;		// currently selected OPL chip number
    ChipType	currType;		// this OPL chip's type
