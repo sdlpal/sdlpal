@@ -201,19 +201,39 @@ bool CRealopl::detect() {
 
 void CRealopl::setvolume(int volume) {
   int i, j;
-
   hardvol = volume;
 
-  for (j = 0; j < 2; j++)
-    for (i = 0; i < 9; i++) {
-      hardwrite(0x43 + op_table[i], ((hardvols[j][op_table[i] + 3][0] & 63) + volume) > 63 ? 63 : hardvols[j][op_table[i] + 3][0] + volume);
-
-      if (hardvols[j][i][1] & 1) // modulator too?
-        hardwrite(0x40 + op_table[i], ((hardvols[j][op_table[i]][0] & 63) + volume) > 63 ? 63 : hardvols[j][op_table[i]][0] + volume);
+  if (currType == TYPE_OPL3) {
+    // OPL3: two register banks on one chip
+    for (j = 0; j < 2; j++) {
+      int base = j * 0x100;
+      for (i = 0; i < 9; i++) {
+        hardwrite(base + 0x43 + op_table[i],
+          ((hardvols[j][op_table[i] + 3][0] & 63) + volume) > 63 ? 63 : (hardvols[j][op_table[i] + 3][0] + volume));
+        if (hardvols[j][i][1] & 1)
+          hardwrite(base + 0x40 + op_table[i],
+            ((hardvols[j][op_table[i]][0] & 63) + volume) > 63 ? 63 : (hardvols[j][op_table[i]][0] + volume));
+      }
     }
+  } else {
+    // OPL2 / Dual OPL2
+    for (j = 0; j < (currType == TYPE_DUAL_OPL2 ? 2 : 1); j++) {
+      if (currType == TYPE_DUAL_OPL2) setchip(j);
+      for (i = 0; i < 9; i++) {
+        hardwrite(0x43 + op_table[i],
+          ((hardvols[j][op_table[i] + 3][0] & 63) + volume) > 63 ? 63 : (hardvols[j][op_table[i] + 3][0] + volume));
+        if (hardvols[j][i][1] & 1)
+          hardwrite(0x40 + op_table[i],
+            ((hardvols[j][op_table[i]][0] & 63) + volume) > 63 ? 63 : (hardvols[j][op_table[i]][0] + volume));
+      }
+    }
+    setchip(0);
+  }
 }
 
 void CRealopl::setquiet(bool quiet) {
+  if (bequiet == quiet)
+    return;
   bequiet = quiet;
 
   if (quiet) {
@@ -266,20 +286,30 @@ void CRealopl::write(int reg, int val) {
   if (currType == TYPE_OPL2 && currChip > 0)
     return;
 
-  if (bequiet && (reg >= 0xb0 && reg <= 0xb8)) // filter all key-on commands
+  if (bequiet && ((reg >= 0xb0 && reg <= 0xb8) || (reg >= 0x1b0 && reg <= 0x1b8))) // filter all key-on commands
     val &= ~32;
 
   if (reg >= 0x40 && reg <= 0x55)   // cache volumes
     hardvols[currChip][reg - 0x40][0] = val;
 
+  if (reg >= 0x140 && reg <= 0x155)   // OPL3 upper bank volumes
+    hardvols[1][reg - 0x140][0] = val;
+
   if (reg >= 0xc0 && reg <= 0xc8)
     hardvols[currChip][reg - 0xc0][1] = val;
+
+  if (reg >= 0x1c0 && reg <= 0x1c8)   // OPL3 upper bank channel flags
+    hardvols[1][reg - 0x1c0][1] = val;
 
   if (hardvol)        // reduce volume
     for (i = 0; i < 9; i++) {
       if (reg == 0x43 + op_table[i])
         val = ((val & 63) + hardvol) > 63 ? 63 : val + hardvol;
       else if ((reg == 0x40 + op_table[i]) && (hardvols[currChip][i][1] & 1))
+        val = ((val & 63) + hardvol) > 63 ? 63 : val + hardvol;
+      else if (reg == 0x143 + op_table[i])
+        val = ((val & 63) + hardvol) > 63 ? 63 : val + hardvol;
+      else if ((reg == 0x140 + op_table[i]) && (hardvols[1][i][1] & 1))
         val = ((val & 63) + hardvol) > 63 ? 63 : val + hardvol;
     }
 

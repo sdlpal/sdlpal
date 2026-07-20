@@ -263,6 +263,7 @@ PAL_SplashScreen(
       fprintf(stderr, "ERROR: PAL_SplashScreen(): palette == NULL\n");
       return;
    }
+   REALOPL_SetMusicEnabled(true);
 
    //
    // Allocate all the needed memory at once for simplification

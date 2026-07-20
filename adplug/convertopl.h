@@ -161,6 +161,9 @@ public:
 	virtual void update(short *buf, int samples) { (this->*updater)(buf, samples); }
 
 	virtual bool getstereo() { return opl->getstereo(); }
+
+	virtual void setvolume(int volume) { opl->setvolume(volume); }
+	virtual void setquiet(bool quiet = true) { opl->setquiet(quiet); }
 };
 
 #endif
