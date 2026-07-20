@@ -286,8 +286,8 @@ void CRealopl::write(int reg, int val) {
   if (currType == TYPE_OPL2 && currChip > 0)
     return;
 
-  if (bequiet && ((reg >= 0xb0 && reg <= 0xb8) || (reg >= 0x1b0 && reg <= 0x1b8))) // filter all key-on commands
-    val &= ~32;
+  //if (bequiet && ((reg >= 0xb0 && reg <= 0xb8) || (reg >= 0x1b0 && reg <= 0x1b8))) // filter all key-on commands
+  //  val &= ~32;
 
   if (reg >= 0x40 && reg <= 0x55)   // cache volumes
     hardvols[currChip][reg - 0x40][0] = val;
