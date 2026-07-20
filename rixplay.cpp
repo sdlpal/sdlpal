@@ -405,7 +405,7 @@ RIX_Play(
 		return TRUE;
 	}
 
-	if (iNumRIX == 0)
+	if (gConfig.eOPLCore == OPLCORE_REAL && iNumRIX == 0)
 	{
 		pRixPlayer->iNextMusic = 0;
 		pRixPlayer->fReady = FALSE;
