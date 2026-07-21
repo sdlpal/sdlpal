@@ -561,7 +561,7 @@ PAL_CheckObstacleWithRange(
    // Avoid walk out of range, look out of map
    //
    if( fCheckRange )
-   if (x < blockX || x >= 2048 || y < blockY || y >= 2048 )
+   if (x < blockX || x >= 2048/32 - blockX -1 || y < blockY || y >= 2048 - blockY -1 )
    {
       return TRUE;
    }
