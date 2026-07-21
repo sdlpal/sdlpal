@@ -149,7 +149,6 @@ PAL_FadeOut(
    PAL_LARGE SDL_Color      palette[256];
    PAL_LARGE SDL_Color      newpalette[256];
 
-   REALOPL_SetMusicEnabled(false);
    //
    // Get the original palette...
    //
@@ -224,8 +223,7 @@ PAL_FadeIn(
    UINT                     time;
    SDL_Color               *palette;
    PAL_LARGE SDL_Color      newpalette[256];
-    
-   REALOPL_SetMusicEnabled(true);
+
    memset(newpalette, 0xff, sizeof(SDL_Color)*256);
 
    //
