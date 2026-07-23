@@ -630,10 +630,14 @@ PAL_LoadConfig(
         gConfig.dwTextureHeight = PAL_DEFAULT_TEXTURE_HEIGHT;
     }
     
+#if PAL_HAS_GLSL
     if(gConfig.fEnableGLSL && !UTIL_IsFileExist(gConfig.pszShader)) {
         UTIL_LogOutput(LOGLEVEL_ERROR, "Filter backend GLSL enabled but no valid effect file specified. Fallback to SDL default rendering\n");
         gConfig.fEnableGLSL = FALSE;
     }
+#else
+    gConfig.fEnableGLSL = FALSE;
+#endif
 
 	if (gConfig.eMIDISynth != SYNTH_NATIVE && !UTIL_IsFileExist(gConfig.pszSoundBank)) {
 		UTIL_LogOutput(LOGLEVEL_ERROR, "SoftSynth enabled but no valid soundbank file specified. Fallback to native-midi");
