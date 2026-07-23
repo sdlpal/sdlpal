@@ -79,11 +79,21 @@
 # DOSBaseClockFreq: Indicates the base frequency of DOS virtual clock. Default is 100.
 #DOSBaseClockFreq=100
 
-# DOSForceMode13h: Force fullscreen mode13h(320x200x8) output path for DOS backend.
-#                  Default is enabled.
+# DOSForceMode13h: Force fullscreen mode13h(320x200x8) output path for DOS backend,
+#                  enabling index8 rendering path on other platforms.
+#                  Conflicts with EnableGLSL=1 (will be ignored when EnableGLSL
+#                  is set). Default is enabled for DOS, disabled elsewhere.
 #DOSForceMode13h=1
 
-# DOSLowEndOpt: Enable low-end optimization path for DOS backend, only have effect when DOSForceMode13h is on. Default is enabled.
+# DOSLowEndOpt: Enable low-end optimization path.
+#     - On DOS: rendering bypass via directly blitting to WindowSurface,
+#               color cycling when possible,
+#               frame-skipping when needed.
+#     - On modern platforms:
+#               rendering bypass is HEAVY due to lack of GPU acceleration.
+#               color cycling is not available,
+#               frame-skipping is not needed.
+#               Default: enabled for DOS, disabled elsewhere.
 #DOSLowEndOpt=1
 
 # SurroundOPLOffset: Indicates the frequency offset of surround opl. The default and
@@ -133,6 +143,8 @@
 #EnableKeyRepeat=0
 
 # UseTouchOverlay: Indicates whether show touch overlay. Only significant for mobile usage.
+#                  Since the overlay texture is a RGBA image, it will cause heavy performance
+#                  loss on paletted rendering path, such as DOSForceMode13h=1.
 #UseTouchOverlay=0
 
 # EnableAviPlay: Indicates whether enable AVI playback. AVI only exist in the Win95 game distribution.
