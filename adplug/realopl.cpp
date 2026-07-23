@@ -104,28 +104,28 @@ CRealopl::CRealopl(unsigned short initport)
 
   detect();
 }
-// Ensure OPL is silenced on exit
-CRealopl::~CRealopl()
+
+void CRealopl::stopallnotes()
 {
     int i, j;
     if (currType != TYPE_OPL3)
-    for (j = 0; j < (currType == TYPE_DUAL_OPL2 ? 2 : 1); j++) {
-        setchip(j);
-        // Key off all channels
-        for (i = 0; i < 9; i++) {
-            hardwrite(0xb0 + i, 0);               // key off
-            hardwrite(0x80 + op_table[i], 0xff);  // fastest release
+        for (j = 0; j < (currType == TYPE_DUAL_OPL2 ? 2 : 1); j++) {
+            setchip(j);
+            // Key off all channels
+            for (i = 0; i < 9; i++) {
+                hardwrite(0xb0 + i, 0);               // key off
+                hardwrite(0x80 + op_table[i], 0xff);  // fastest release
+            }
+            // Clear misc register
+            hardwrite(0xbd, 0);
+            // Optionally clear all registers (full silence)
+            for (i = 0; i < 256; i++) {
+                write(i, 0);
+            }
         }
-        // Clear misc register
-        hardwrite(0xbd, 0);
-        // Optionally clear all registers (full silence)
-        for (i = 0; i < 256; i++) {
-            write(i, 0);
-        }
-    }
     setchip(0);
-	if (currType == TYPE_OPL3)
-	{
+    if (currType == TYPE_OPL3)
+    {
         for (i = 0; i < 9; i++) {
             hardwrite(0xa0 + i, 0);               // key off
             hardwrite(0xb0 + i, 0);               // key off
@@ -134,12 +134,22 @@ CRealopl::~CRealopl()
             hardwrite(0x1b0 + i, 0);               // key off
             hardwrite(0x180 + op_table[i], 0xff);  // fastest release
         }
+    }
+}
+
+// Ensure OPL is silenced on exit
+CRealopl::~CRealopl()
+{
+    int i, j;
+    stopallnotes();
+    if (currType == TYPE_OPL3)
+    {
         for (i = 0; i < 512; i++) {
             if (i == OPL3_MODE_REGISTER)
                 continue;
             write(i, 0);
         }
-	}
+    }
     hardwrite(OPL3_MODE_REGISTER, 0);
 }
 
