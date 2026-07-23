@@ -272,12 +272,13 @@ VIDEO_Startup(
 
 --*/
 {
+#ifdef __DJGPP__
     SDL_DisplayMode displayMode13h = { -1 };
+#else
+    extern char* dirname(char* path);
+#endif
 
 	extern SDL_Surface* STBIMG_Load(const char* file);
-#ifndef __DJGPP__
-	extern char *dirname(char *path);
-#endif
 #if APPIMAGE
 	SDL_Surface *surf = STBIMG_Load( PAL_va(0, "%s%s", dirname(dirname(dirname(gExecutablePath))), "/usr/share/icons/hicolor/256x256/apps/sdlpal.png" ) );
 #endif
@@ -326,11 +327,13 @@ VIDEO_Startup(
          for (int j = 0; j < numDisplayModes; j++) {
                SDL_DisplayMode *mode = allDisplayModes[j];
 
+#ifdef __DJGPP__
                if (mode->w == 320 && mode->h == 200 && mode->format == SDL_PIXELFORMAT_INDEX8)
                {
                   UTIL_LogOutput(LOGLEVEL_DEBUG, "found mode13h! display id: %u \n", display_id);
                   displayMode13h = *mode;
                }
+#endif
 
                float refresh_rate = mode->refresh_rate;
                if (refresh_rate == 0.0f && mode->refresh_rate_numerator > 0) {
@@ -345,8 +348,6 @@ VIDEO_Startup(
                               refresh_rate);
          }
       }
-      if (displayMode13h.displayID == -1)
-            displayMode13h = *desktopMode;
 
 #if __DJGPP__
       if(!gConfig.fDOSForceMode13h) {
@@ -407,6 +408,7 @@ VIDEO_Startup(
       SDL_GetWindowSize(gpWindow, &w, &h);
       UTIL_LogOutput(LOGLEVEL_DEBUG, "Actual created window fmt:%s size: %dx%d@\n", SDL_GetPixelFormatName(SDL_GetWindowPixelFormat(gpWindow)), w, h);
 
+#ifdef __DJGPP__
       if(gConfig.fDOSForceMode13h) {
          if(w == 320 && h == 200 && SDL_GetWindowPixelFormat(gpWindow) == SDL_PIXELFORMAT_INDEX8)
          {
@@ -422,6 +424,7 @@ VIDEO_Startup(
       }
       bBypassRenderer = gConfig.fDOSLowEndOpt;
       UTIL_LogOutput(LOGLEVEL_DEBUG, "Bypass renderer:%d\n", bBypassRenderer);
+#endif
 
       gConfig.dwScreenWidth = w;
       gConfig.dwScreenHeight = h;
