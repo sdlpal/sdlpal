@@ -300,7 +300,7 @@ VIDEO_Startup(
 #endif
 	
 #if SDL_VERSION_ATLEAST(3,5,0)
-   if(gConfig.fDOSForceMode13h)
+   if(gConfig.fDOSForceMode13h && !gConfig.fEnableGLSL)
       bUseIndex8Path = true;
 #endif
 
