@@ -36,6 +36,8 @@ class CRealopl: public Copl {
   void setvolume(int volume);         // set adlib master volume (0 - 63) 0 = loudest, 63 = softest
   void setquiet(bool quiet = true);   // sets the OPL2 quiet, while still writing to the registers
 
+  void stopallnotes();                     // stop all notes on the OPL chips
+
   void setport(unsigned short port) { // set new OPL2 hardware baseport
     adlport = port;
   }

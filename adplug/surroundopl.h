@@ -107,5 +107,10 @@ public:
 		if (opls[0]) opls[0]->setquiet(quiet);
 		if (opls[1]) opls[1]->setquiet(quiet);
 	}
+
+	void stopallnotes() {
+		if (opls[0]) opls[0]->stopallnotes();
+		if (opls[1]) opls[1]->stopallnotes();
+	}
 };
 #endif
