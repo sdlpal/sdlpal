@@ -64,6 +64,7 @@ public:
 
    virtual void setvolume(int) {}         // set master volume (no-op by default)
    virtual void setquiet(bool = true) {}  // set quiet state (no-op by default)
+   virtual void stopallnotes() {};        // stop all notes (no-op by default)
 
 protected:
    int		currChip;		// currently selected OPL chip number
