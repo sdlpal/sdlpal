@@ -64,7 +64,7 @@ typedef struct tagRIXPLAYER :
 extern "C" VOID REALOPL_SetMusicEnabled(BOOL fEnable)
 {
 	LPRIXPLAYER pRixPlayer = (LPRIXPLAYER)gAudioDevice.pMusPlayer;
-	if (gConfig.eOPLCore == OPLCORE_REAL && pRixPlayer && pRixPlayer->fReady)
+	if (gConfig.eOPLCore == OPLCORE_REAL && pRixPlayer)
 	{
 		pRixPlayer->opl->setquiet(!fEnable);
 	}
@@ -418,7 +418,7 @@ RIX_Play(
 	{
 		pRixPlayer->iNextMusic = 0;
 		pRixPlayer->fReady = FALSE;
-		pRixPlayer->opl->setvolume(0);
+		pRixPlayer->opl->stopallnotes();
 		return FALSE;
 	}
 
