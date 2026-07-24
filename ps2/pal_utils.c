@@ -23,25 +23,14 @@
 #include "../main.h"
 #include <kernel.h>
 
-#include <iopcontrol.h>
-#include <kernel.h>
-#include <loadfile.h>
 #include <malloc.h>
-#include <sbv_patches.h>
-#include <sifrpc.h>
-#include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 #include <tamtypes.h>
 
-#include <debug.h>
 #include <unistd.h>
-
-#include <ps2_all_drivers.h>
 
 #include "libmtap.h"
 #include "libpad.h"
-#include <ps2_joystick_driver.h>
 
 static char *padBuf[2][4];
 static u32 padConnected[2][4]; // 2 ports, 4 slots
@@ -129,12 +118,6 @@ BOOL UTIL_IsAbsolutePath(LPCSTR lpszFileName) { return FALSE; }
 
 void UTIL_LogToScreen(LOGLEVEL _, const char *string, const char *__) {
   printf(string);
-}
-
-static int input_event_filter(const SDL_Event *lpEvent,
-                              volatile PALINPUTSTATE *state) {
-  input_ps2_filter();
-  return 1;
 }
 
 static int isDir;
@@ -228,16 +211,24 @@ int input_ps2_filter() {
   }
 }
 
+static int input_event_filter(const SDL_Event *lpEvent,
+                              volatile PALINPUTSTATE *state) {
+  input_ps2_filter();
+  return 1;
+}
+
 INT UTIL_Platform_Init(int argc, char *argv[]) {
   UTIL_LogAddOutputCallback(UTIL_LogToScreen, gConfig.iLogLevel);
 
   PAL_RegisterInputFilter(init_filter, input_event_filter, NULL);
-  gConfig.fEnableAviPlay = 0; // TODO: Fix audio stutering
+  gConfig.fEnableAviPlay = 0; // TODO: Fix audio stutering on real hardware while playing videos
   gConfig.fLaunchSetting = FALSE;
+  gConfig.iResampleQuality = 2;
   gConfig.eOPLCore = OPLCORE_DBINT;
   gConfig.fFullScreen = TRUE;
-  gConfig.fKeepAspectRatio = FALSE;
+  gConfig.fEnableJoyStick = TRUE;
   gConfig.eMIDISynth = SYNTH_TIMIDITY;
+  gConfig.wAudioBufferSize = 512;
 
   mtapConnected[0] = 0;
   mtapConnected[1] = 0;
