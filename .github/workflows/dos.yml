@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     env:
-      DOS_SDL_BRANCH: sdl3_dos_patches
+      DOS_SDL_BRANCH: sdl3_main_patches
     steps:
     - name: Install Dependencies
       run: sudo apt-get install wget bzip2 zstd upx-ucl zip pipx libfl2 && pipx install cloudsmith-cli
