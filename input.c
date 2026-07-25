@@ -404,6 +404,7 @@ PAL_KeyboardEventFilter(
             //
             // Pressed Alt+F4 (Exit program)...
             //
+            PAL_SaveConfig();
             PAL_Shutdown(0);
          }
       }
