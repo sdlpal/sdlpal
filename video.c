@@ -248,6 +248,11 @@ bool VIDEO_GetClosestFullscreenDisplayMode(SDL_DisplayMode **mode_list, int num_
         }
     }
 
+    // If we didn't find a closest mode, just return the first one in the list (if any)
+    if(closest == NULL && num_modes != 0) {
+        closest = mode_list[0];
+    }
+
     SDL_copyp(result, closest);
     return true;
 }
