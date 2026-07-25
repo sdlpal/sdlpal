@@ -54,8 +54,8 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_ENABLEAVIPLAY,     PALCFG_BOOLEAN,  "EnableAviPlay",     13, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
 	{ PALCFG_ENABLEGLSL,        PALCFG_BOOLEAN,  "EnableGLSL",        10, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
     { PALCFG_ENABLEHDR,         PALCFG_BOOLEAN,  "EnableHDR",          9, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
-	{ PALCFG_DOSFORCEMODE13H,   PALCFG_BOOLEAN,  "DOSForceMode13h",   15, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
-	{ PALCFG_DOSLOWENDOPT,      PALCFG_BOOLEAN,  "DOSLowEndOpt",      12, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
+	{ PALCFG_DOSFORCEMODE13H,   PALCFG_BOOLEAN,  "DOSForceMode13h",   15, MAKE_BOOLEAN(FALSE,                          FALSE,                 TRUE) },
+	{ PALCFG_DOSLOWENDOPT,      PALCFG_BOOLEAN,  "DOSLowEndOpt",      12, MAKE_BOOLEAN(FALSE,                          FALSE,                 TRUE) },
 
 	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SurroundOPLOffset", 17, MAKE_INTEGER(384,                           INT32_MIN,             INT32_MAX) },
 	{ PALCFG_LOGLEVEL,          PALCFG_INTEGER,  "LogLevel",           8, MAKE_INTEGER(PAL_DEFAULT_LOGLEVEL,          LOGLEVEL_MIN,          LOGLEVEL_MAX) },
@@ -67,9 +67,9 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_SAMPLERATE,        PALCFG_UNSIGNED, "SampleRate",        10, MAKE_UNSIGNED(DEFAULT_SAMPLERATE,            0,                     PAL_MAX_SAMPLERATE) },
 	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MusicVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
-	{ PALCFG_REALOPLUPDATEFREQ, PALCFG_UNSIGNED, "RealOPLUpdateFreq", 17, MAKE_UNSIGNED(30,                            0,                     UINT32_MAX) },
-	{ PALCFG_DOSBASECLOCKFREQ,  PALCFG_UNSIGNED, "DOSBaseClockFreq",  16, MAKE_UNSIGNED(120,                           0,                     UINT32_MAX) },
-	{ PALCFG_REALOPLPORT,       PALCFG_UNSIGNED, "RealOPLPort",       11, MAKE_UNSIGNED(0x220,                         0,                     0xFFFF) },
+	{ PALCFG_REALOPLUPDATEFREQ, PALCFG_UNSIGNED, "RealOPLUpdateFreq", 17, MAKE_UNSIGNED(50,                            0,                     UINT32_MAX) },
+	{ PALCFG_DOSBASECLOCKFREQ,  PALCFG_UNSIGNED, "DOSBaseClockFreq",  16, MAKE_UNSIGNED(100,                           0,                     UINT32_MAX) },
+	{ PALCFG_REALOPLPORT,       PALCFG_UNSIGNED, "RealOPLPort",       11, MAKE_UNSIGNED(0x388,                         0,                     0xFFFF) },
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
 	{ PALCFG_WINDOWWIDTH,       PALCFG_UNSIGNED, "WindowWidth",       11, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_WIDTH,      0,                     UINT32_MAX) },
     { PALCFG_TEXTUREHEIGHT,     PALCFG_UNSIGNED, "TextureHeight",     13, MAKE_UNSIGNED(PAL_DEFAULT_TEXTURE_HEIGHT,    0,                     UINT32_MAX) },
@@ -396,10 +396,14 @@ PAL_LoadConfig(
 
 	for (PALCFG_ITEM i = PALCFG_ALL_MIN; i < PALCFG_ALL_MAX; i++) values[i] = gConfigItems[i].DefaultValue;
 
-#ifdef __DJGPP__
-	// DOS-specific defaults
-	eOPLCore = OPLCORE_DBINT;  // Only need to set enum variable, not values array
-	values[PALCFG_SAMPLERATE].uValue = 22050;
+#if defined(SDL_PLATFORM_DOS)
+	values[PALCFG_FULLSCREEN].bValue        = TRUE;
+	values[PALCFG_KEEPASPECTRATIO].bValue   = FALSE;
+	values[PALCFG_RESAMPLEQUALITY].uValue   = RESAMPLER_QUALITY_LINEAR;
+	values[PALCFG_DOSFORCEMODE13H].bValue   = TRUE;
+	values[PALCFG_DOSLOWENDOPT].bValue      = TRUE;
+	values[PALCFG_SAMPLERATE].uValue        = 22050;
+	eOPLCore                                = OPLCORE_REAL;  // Only need to set enum variable, not values array
 #endif
 
 	if (fFromFile && (fp = UTIL_OpenFileAtPathForMode(PAL_CONFIG_PREFIX, "sdlpal.cfg", "r")))
