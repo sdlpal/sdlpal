@@ -18,6 +18,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: submodules
       run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
         sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
         git submodule init && git submodule update
     - name: make
