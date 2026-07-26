@@ -650,7 +650,6 @@ PAL_JoystickEventFilter(
        break;
 #endif
    case SDL_JOYAXISMOTION:
-      g_InputState.joystickNeedUpdate = TRUE;
       //
       // Moved an axis on joystick
       //
@@ -662,10 +661,12 @@ PAL_JoystickEventFilter(
          //
          if (lpEvent->jaxis.value > 3200)
          {
+            g_InputState.joystickNeedUpdate = TRUE;
             g_InputState.axisX = 1;
          }
          else if (lpEvent->jaxis.value < -3200)
          {
+            g_InputState.joystickNeedUpdate = TRUE;
             g_InputState.axisX = -1;
          }
          else
@@ -680,10 +681,12 @@ PAL_JoystickEventFilter(
          //
          if (lpEvent->jaxis.value > 3200)
          {
+            g_InputState.joystickNeedUpdate = TRUE;
             g_InputState.axisY = 1;
          }
          else if (lpEvent->jaxis.value < -3200)
          {
+            g_InputState.joystickNeedUpdate = TRUE;
             g_InputState.axisY = -1;
          }
          else
