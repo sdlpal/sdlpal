@@ -136,7 +136,11 @@ static SDL_Texture *VIDEO_CreateTexture(int width, int height)
 	//
 	// Create texture for screen.
 	//
+#ifdef __PS2__
+	texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
+#else
 	texture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texture_width, texture_height);
+#endif
 #if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
     SDL_SetTextureScaleMode(texture, VIDEO_GetScaleMode());
 #endif
@@ -226,6 +230,9 @@ VIDEO_Startup(
         UTIL_LogOutput(LOGLEVEL_DEBUG, "Got VRR works\n");
     }
 #else
+#ifdef __PS2__
+    SDL_SetHint(SDL_HINT_PS2_DYNAMIC_VSYNC, "1");
+#endif
    gpRenderer = SDL_CreateRenderer(gpWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 #endif
 
@@ -250,9 +257,12 @@ VIDEO_Startup(
    //
    gpScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
    gpScreenBak = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+#ifdef __PS2__
+   gpScreenReal = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, 320, 200, 32, SDL_PIXELFORMAT_ABGR8888);
+#else
    gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,
                                        0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-
+#endif
    //
    // Create texture for screen.
    //
