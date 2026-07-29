@@ -402,7 +402,6 @@ PAL_LoadConfig(
 	values[PALCFG_RESAMPLEQUALITY].uValue   = RESAMPLER_QUALITY_LINEAR;
 	values[PALCFG_DOSFORCEMODE13H].bValue   = TRUE;
 	values[PALCFG_DOSLOWENDOPT].bValue      = TRUE;
-	values[PALCFG_SAMPLERATE].uValue        = 22050;
 	eOPLCore                                = OPLCORE_REAL;  // Only need to set enum variable, not values array
 #endif
 
