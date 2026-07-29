@@ -650,10 +650,10 @@ PAL_JoystickEventFilter(
        break;
 #endif
    case SDL_JOYAXISMOTION:
-      g_InputState.joystickNeedUpdate = TRUE;
       //
       // Moved an axis on joystick
       //
+      g_InputState.joystickNeedUpdate = TRUE;
       switch (lpEvent->jaxis.axis)
       {
       case 0:
@@ -695,46 +695,37 @@ PAL_JoystickEventFilter(
       break;
 
    case SDL_JOYHATMOTION:
-      //
-      // Pressed the joystick hat button
-      //
-      switch (lpEvent->jhat.value)
-      {
-         case SDL_HAT_LEFT:
-         case SDL_HAT_LEFTUP:
-            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-            g_InputState.dir = kDirWest;
-            g_InputState.dwKeyPress = kKeyLeft;
-            break;
+   {
+       static int lastKeyMask = 0;
+       int newKeyMask = 0;
 
-         case SDL_HAT_RIGHT:
-         case SDL_HAT_RIGHTDOWN:
-            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-            g_InputState.dir = kDirEast;
-            g_InputState.dwKeyPress = kKeyRight;
-            break;
+       switch (lpEvent->jhat.value)
+       {
+       case SDL_HAT_LEFT:       newKeyMask = kKeyLeft; break;
+       case SDL_HAT_LEFTUP:     newKeyMask = kKeyLeft | kKeyUp; break;
+       case SDL_HAT_UP:         newKeyMask = kKeyUp; break;
+       case SDL_HAT_RIGHTUP:    newKeyMask = kKeyRight | kKeyUp; break;
+       case SDL_HAT_RIGHT:      newKeyMask = kKeyRight; break;
+       case SDL_HAT_RIGHTDOWN:  newKeyMask = kKeyRight | kKeyDown; break;
+       case SDL_HAT_DOWN:       newKeyMask = kKeyDown; break;
+       case SDL_HAT_LEFTDOWN:   newKeyMask = kKeyLeft | kKeyDown; break;
+       case SDL_HAT_CENTERED:   newKeyMask = 0; break;
+       }
 
-         case SDL_HAT_UP:
-         case SDL_HAT_RIGHTUP:
-            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-            g_InputState.dir = kDirNorth;
-            g_InputState.dwKeyPress = kKeyUp;
-            break;
+       int releaseMask = lastKeyMask & ~newKeyMask;
+       int pressMask = newKeyMask & ~lastKeyMask;
 
-         case SDL_HAT_DOWN:
-         case SDL_HAT_LEFTDOWN:
-            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-            g_InputState.dir = kDirSouth;
-            g_InputState.dwKeyPress = kKeyDown;
-            break;
+       static const int keys[] = { kKeyUp, kKeyDown, kKeyLeft, kKeyRight };
+       for (int i = 0; i < 4; i++) {
+           if (releaseMask & keys[i]) PAL_KeyUp(keys[i]);
+           if (pressMask & keys[i])   PAL_KeyDown(keys[i], FALSE);
+       }
 
-         case SDL_HAT_CENTERED:
-            g_InputState.prevdir = (gpGlobals->fInBattle ? kDirUnknown : g_InputState.dir);
-            g_InputState.dir = kDirUnknown;
-            g_InputState.dwKeyPress = kKeyNone;
-            break;
-      }
-      break;
+       lastKeyMask = newKeyMask;
+
+       g_InputState.prevdir = g_InputState.dir;
+       break;
+   }
 
    case SDL_JOYBUTTONDOWN:
       //
@@ -776,37 +767,48 @@ VOID
  
  --*/
 {
+   static PALDIRECTION lastAxisDir = kDirUnknown;
+   int newDir = kDirUnknown;
+
+   static const int dirToKey[] = {
+      [kDirEast] = kKeyRight,
+      [kDirWest] = kKeyLeft,
+      [kDirSouth] = kKeyDown,
+      [kDirNorth] = kKeyUp
+   };
+
    if( g_InputState.axisX == 1 && g_InputState.axisY >= 0 )
    {
-      g_InputState.prevdir = g_InputState.dir;
-      g_InputState.dir = kDirEast;
-      g_InputState.dwKeyPress |= kKeyRight;
+      newDir = kDirEast;
    }
    else if( g_InputState.axisX == -1 && g_InputState.axisY <= 0 )
    {
-      g_InputState.prevdir = g_InputState.dir;
-      g_InputState.dir = kDirWest;
-      g_InputState.dwKeyPress |= kKeyLeft;
+      newDir = kDirWest;
    }
    else if( g_InputState.axisY == 1 && g_InputState.axisX <= 0 )
    {
-      g_InputState.prevdir = g_InputState.dir;
-      g_InputState.dir = kDirSouth;
-      g_InputState.dwKeyPress |= kKeyDown;
+      newDir = kDirSouth;
    }
    else if( g_InputState.axisY == -1 && g_InputState.axisX >= 0 )
    {
-      g_InputState.prevdir = g_InputState.dir;
-      g_InputState.dir = kDirNorth;
-      g_InputState.dwKeyPress |= kKeyUp;
+      newDir = kDirNorth;
    }
-   else
-   {
+
+   if (newDir != lastAxisDir) {
+      if (lastAxisDir != kDirUnknown) {
+         g_InputState.dwKeyPress &= ~dirToKey[lastAxisDir];
+      }
+      if (newDir != kDirUnknown) {
+         g_InputState.dwKeyPress |= dirToKey[newDir];
+      }
       g_InputState.prevdir = g_InputState.dir;
-      g_InputState.dir = kDirUnknown;
-      if(!input_event_filter)
-         g_InputState.dwKeyPress = kKeyNone;
+      g_InputState.dir = newDir;
+      lastAxisDir = newDir;
    }
+   // Uncomment to enable joystick hold-to-scroll in menus.
+   //else if (newDir != kDirUnknown) {
+   //   g_InputState.dwKeyPress |= dirToKey[newDir];
+   //}
 }
 
 #endif

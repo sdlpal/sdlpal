@@ -13,6 +13,8 @@ jobs:
     defaults:
       run:
         shell: pwsh
+    env:
+      SDL_BRANCH: sdl3_main_patches
     steps:
     - uses: actions/setup-python@v5
       with:
@@ -32,11 +34,16 @@ jobs:
       run: |
         sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
         git submodule init && git submodule update
+        cd 3rd/SDL
+        git fetch origin $SDL_BRANCH
+        git checkout $SDL_BRANCH
+    - name: Restore NuGet packages
+      run: nuget restore win32\sdlpal.sln
     - name: build
       run: |
         cd win32
-        msbuild /nologo /m sdlpal.sln /p:Configuration=Release /p:Platform=x64
-        cp x64\Release\sdlpal.exe sdlpal.exe
+        msbuild /nologo /m sdlpal.sln /p:Configuration=Release /p:Platform=Win32
+        cp Win32\Release\sdlpal.exe sdlpal.exe
         upx --best --lzma sdlpal.exe
         Compress-Archive -path sdlpal.exe -DestinationPath sdlpal-win32-msvc.zip 
         mkdir ../deploy/

@@ -194,11 +194,11 @@ void CrixPlayer::rewindReInit(int subsong, bool reinit)
 
 	if (reinit)
 	{
+		music_on = 0;
 		I = 0; T = 0;
 		mus_block = 0;
 		ins_block = 0;
 		rhythm = 0;
-		music_on = 0;
 		pause_flag = 0;
 		band = 0;
 		band_low = 0;
