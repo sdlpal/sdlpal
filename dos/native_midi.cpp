@@ -124,6 +124,30 @@ static NativeMidiHookContext g_midi_hook_ctx = { NULL, 0 };
    Helper functions
    -------------------------------- */
 
+static const char *const kMidiNoteNames[12] = {
+    "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+};
+
+static void midi_log_note_event(uint8_t status, uint8_t data1, uint8_t data2) {
+    uint8_t type = status & 0xF0;
+    uint8_t channel = status & 0x0F;
+
+    if (type != 0x90 || data2 == 0) {
+        return;
+    }
+
+    if (data1 > 127) {
+        return;
+    }
+
+    int octave = (data1 / 12) - 1;
+    const char *name = kMidiNoteNames[data1 % 12];
+
+    UTIL_LogOutput(LOGLEVEL_DEBUG,
+        "[midi] note-on note=%u (%s%d) velocity=%u channel=%u\n",
+        data1, name, octave, data2, channel);
+}
+
 // Convert MIDI event list to PlayEvent vector with absolute timestamps (microseconds)
 static bool MidiEventListToPlayEvents(MIDIEvent *eventlist, uint16_t ppq,
                                       std::vector<PlayEvent> &out_events,
@@ -176,9 +200,8 @@ static bool MidiEventListToPlayEvents(MIDIEvent *eventlist, uint16_t ppq,
                 msg.reset(new ShortMessage(ev->status, 0, 0, 1));
                 break;
             case MidiSystemMessage::SystemReset:
-                if (ev->data[0] == 0x51 && ev->extraLen >= 3) {
+                if (ev->data[0] == 0x51)
                     tempo = (ev->extraData[0] << 16) | (ev->extraData[1] << 8) | ev->extraData[2];
-                }
                 break;
             default:
                 break;
@@ -199,58 +222,6 @@ static bool MidiEventListToPlayEvents(MIDIEvent *eventlist, uint16_t ppq,
 
     total_duration_us = running_time_us;
     return true;
-}
-
-/* Helper: send GM Reset and set all channels to full volume */
-static void init_synthesizer(void)
-{
-    // GM Reset (F0 7E 7F 09 01 F7)
-    uint8_t gm_reset[] = {0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7};
-    for (int i = 0; i < 6; i++) {
-        mpu401_write_byte(gm_reset[i]);
-    }
-
-    // Set all channels: Volume=127, Expression=127, Pan=64
-    for (int ch = 0; ch < 16; ch++) {
-        uint8_t status = 0xB0 | ch;
-        mpu401_write_byte(status);
-        mpu401_write_byte(7);   // volume
-        mpu401_write_byte(127);
-
-        mpu401_write_byte(status);
-        mpu401_write_byte(11);  // expression
-        mpu401_write_byte(127);
-
-        mpu401_write_byte(status);
-        mpu401_write_byte(10);  // pan
-        mpu401_write_byte(64);  // center
-    }
-
-    // Small delay to let the synth process these messages
-    SDL_Delay(10);
-}
-
-static void panic_synthesizer(void)
-{
-    for (int ch = 0; ch < 16; ch++) {
-        uint8_t status = 0xB0 | ch;
-
-        mpu401_write_byte(status);
-        mpu401_write_byte(64);   // sustain pedal off
-        mpu401_write_byte(0);
-
-        mpu401_write_byte(status);
-        mpu401_write_byte(120);  // all sound off
-        mpu401_write_byte(0);
-
-        mpu401_write_byte(status);
-        mpu401_write_byte(123);  // all notes off
-        mpu401_write_byte(0);
-
-        mpu401_write_byte(status);
-        mpu401_write_byte(121);  // reset all controllers
-        mpu401_write_byte(0);
-    }
 }
 
 /* --------------------------------
@@ -308,11 +279,12 @@ static void midi_playback_hook(void *userdata) {
 
         ev.msg->get_bytes(buffer);
 
-        static int events_sent = 0;
-        events_sent++;
+        //if (len >= 2) {
+        //    midi_log_note_event(buffer[0], buffer[1], len >= 3 ? buffer[2] : 0);
+        //}
 
         for (uint32_t i = 0; i < len; i++) {
-            mpu401_write_byte(buffer[i]);
+            mpu401_write_data(buffer[i]);
         }
 
         song->current_event++;
@@ -386,9 +358,6 @@ void native_midi_start(NativeMidiSong *song, int looping) {
         native_midi_stop(song);
     }
 
-    // Initialize synthesizer (GM Reset + volume settings)
-    init_synthesizer();
-
     song->playing = true;
     song->looping = (looping != 0);
     song->current_event = 0;
@@ -425,7 +394,7 @@ void native_midi_stop(NativeMidiSong *song) {
         g_midi_hook_ctx.song = NULL;
     }
 
-    panic_synthesizer();
+    mpu401_reset_midi_state();
 
     if (song) {
         song->current_event = 0;
@@ -449,11 +418,9 @@ int native_midi_active(NativeMidiSong *song) {
 
 void native_midi_setvolume(NativeMidiSong *song, int volume) {
     (void)song; (void)volume;
-    // Volume control is handled by the MIDI file itself; we could implement
-    // master volume via CC#7 or sysex, but it's not required for this port.
 }
 
 const char *native_midi_error(NativeMidiSong *song) {
     (void)song;
-    return ""; // no error reporting
+    return "";
 }

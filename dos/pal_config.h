@@ -18,8 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// win32/pal_config.h: WIN32-specific header.
-//            @Author: Lou Yihua <louyihua@21cn.com>, 2016.
+// dos/pal_config.h: DOS-specific header.
+//            @Author: palxex, 2026.
 //
 
 #pragma once
