@@ -26,6 +26,7 @@
 #define MPU401_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,18 +64,27 @@ extern "C" {
  * This function is NON-BLOCKING and ISR-SAFE.
  * It checks TX_READY before writing.
  *
- * @param byte  MIDI byte to send.
+ * @param val  MIDI data byte to send.
  * @return MPU401_OK if written, MPU401_ERR_BUSY if not ready.
  */
-int mpu401_write_byte(uint8_t byte);
+bool mpu401_write_data(uint8_t val);
 
 /**
- * Check if the MPU-401 is ready to accept a new data byte.
- * This function is ISR-SAFE (simple port read).
+ * Write a single byte to the MPU-401 command port.
+ * This function is NON-BLOCKING and ISR-SAFE.
+ * It checks TX_READY before writing.
  *
- * @return 1 if TX_READY, 0 otherwise.
+ * @param cmd  MPU-401 command byte to send.
+ * @return MPU401_OK if written, MPU401_ERR_BUSY if not ready.
  */
-int mpu401_is_tx_ready(void);
+bool mpu401_write_command(uint8_t cmd);
+
+/**
+ * Reset the MIDI state by sending "All Notes Off" to all channels 
+ * and resetting the MPU-401 command port.
+ * This function is NON-BLOCKING and ISR-SAFE.
+ */
+void mpu401_reset_midi_state(void);
 
 /* ========================================
    NON-ISR-SAFE functions (for initialization / control - blocking)

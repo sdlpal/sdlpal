@@ -73,11 +73,7 @@ static inline uint8_t mpu_inb(uint16_t port) { return inportb(port); }
 static inline uint16_t mpu_data_port(void)   { return mpu_base_port + MPU401_DATA_PORT_OFFSET; }
 static inline uint16_t mpu_status_port(void) { return mpu_base_port + MPU401_STATUS_PORT_OFFSET; }
 
-/* ------------------------------------------------------------
-   Write command to MPU-401 with timeout (as in the reference)
-   Returns 0 on success, 0xFFFF on timeout.
-   ------------------------------------------------------------ */
-static bool mpu401_write_command(uint8_t cmd) {
+bool mpu401_write_command(uint8_t cmd) {
     uint16_t port = mpu_status_port();
 
     for (int i = 0; i < 0x800; i++) {
@@ -87,8 +83,9 @@ static bool mpu401_write_command(uint8_t cmd) {
             return true;
         }
     }
-    return false;   // 超时
+    return false;
 }
+
 bool mpu401_write_data(uint8_t val) {
     uint16_t status_port = mpu_status_port();
     uint16_t data_port   = mpu_data_port();
@@ -114,6 +111,55 @@ bool mpu401_write_data(uint8_t val) {
 
     return false;
 }
+
+void mpu401_reset_midi_state(void)
+{
+    uint8_t ch;
+
+    // mpu401_write_command(0x05);   // MPU-401 reset command
+
+    for (ch = 0; ch < 16; ch++) {
+        uint8_t status = 0xB0 | ch;
+        // All Sound Off
+        mpu401_write_data(status);
+        mpu401_write_data(0x78);
+        mpu401_write_data(0);
+
+        // Reset All Controllers
+        mpu401_write_data(status);
+        mpu401_write_data(0x79);
+        mpu401_write_data(0);
+
+        // All Notes Off
+        mpu401_write_data(status);
+        mpu401_write_data(0x7B);
+        mpu401_write_data(0);
+
+        // Sustain Pedal Off
+        mpu401_write_data(status);
+        mpu401_write_data(0x40);
+        mpu401_write_data(0);
+
+        // Select RPN：Pitch Bend Sensitivity
+        mpu401_write_data(0xB0 | ch);
+        mpu401_write_data(0x65); // RPN MSB
+        mpu401_write_data(0x00);
+
+        mpu401_write_data(0xB0 | ch);
+        mpu401_write_data(0x64); // RPN LSB
+        mpu401_write_data(0x00);
+
+        // Send Data Entry to set Pitch Bend Sensitivity to 2 semitones
+        mpu401_write_data(0xB0 | ch);
+        mpu401_write_data(0x06); // Data Entry MSB
+        mpu401_write_data(0x00);
+
+        mpu401_write_data(0xB0 | ch);
+        mpu401_write_data(0x26); // Data Entry LSB
+        mpu401_write_data(0x02); // Set to 2 (consistent with Win32 default)
+    }
+}
+
 /* ------------------------------------------------------------
    Flush input buffer: read and discard all pending data
    ------------------------------------------------------------ */
@@ -164,15 +210,6 @@ bool mpu401_reset_and_uart_mode(void) {
     mpu401_flush_input_data();
 
     return true;
-}
-
-/* ------------------------------------------------------------
-   Public API: ISR‑safe write (unconditional)
-   ------------------------------------------------------------ */
-int mpu401_write_byte(uint8_t byte)
-{
-    mpu_outb(mpu_data_port(), byte);
-    return MPU401_OK;
 }
 
 /* ------------------------------------------------------------
