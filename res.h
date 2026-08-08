@@ -48,6 +48,10 @@ PAL_SetLoadFlags(
    BYTE       bFlags
 );
 
+BYTE
+PAL_GetLoadFlags(
+);
+
 VOID
 PAL_LoadResources(
    VOID

@@ -434,7 +434,8 @@ PAL_LoadDefaultGame(
    gpGlobals->dwCash = 0;
    gpGlobals->wNumMusic = 0;
    gpGlobals->wNumPalette = 0;
-   gpGlobals->wNumScene = 1;
+   gpGlobals->wNumScene = 0;
+   gpGlobals->wNumSceneToLoad = 1;
    gpGlobals->wCollectValue = 0;
    gpGlobals->fNightPalette = FALSE;
    gpGlobals->wMaxPartyMemberIndex = 0;
@@ -463,8 +464,6 @@ PAL_LoadDefaultGame(
       gpGlobals->Exp.rgDexterityExp[i].wLevel = p->PlayerRoles.rgwLevel[i];
       gpGlobals->Exp.rgFleeExp[i].wLevel = p->PlayerRoles.rgwLevel[i];
    }
-
-   gpGlobals->fEnteringScene = TRUE;
 }
 
 typedef struct tagSAVEDGAME_COMMON
@@ -601,7 +600,8 @@ PAL_LoadGame_Common(
 	//
 	gpGlobals->viewport = PAL_XY(s->wViewportX, s->wViewportY);
 	gpGlobals->wMaxPartyMemberIndex = s->nPartyMember;
-	gpGlobals->wNumScene = s->wNumScene;
+	gpGlobals->wNumScene = 0;
+	gpGlobals->wNumSceneToLoad = s->wNumScene;
 	gpGlobals->fNightPalette = (s->wPaletteOffset != 0);
 	gpGlobals->wPartyDirection = s->wPartyDirection;
 	gpGlobals->wNumMusic = s->wNumMusic;
@@ -630,8 +630,6 @@ PAL_LoadGame_Common(
 	memset(gpGlobals->rgPoisonStatus, 0, sizeof(gpGlobals->rgPoisonStatus));
 	memcpy(gpGlobals->rgInventory, s->rgInventory, sizeof(gpGlobals->rgInventory));
 	memcpy(gpGlobals->g.rgScene, s->rgScene, sizeof(gpGlobals->g.rgScene));
-
-	gpGlobals->fEnteringScene = FALSE;
 
 	PAL_CompressInventory();
 
@@ -905,8 +903,8 @@ PAL_ReloadInNextTick(
 --*/
 {
     gpGlobals->bCurrentSaveSlot = (BYTE)iSaveSlot;
+    gpGlobals->wNumSceneToLoad = 1;
     PAL_SetLoadFlags(kLoadGlobalData | kLoadScene | kLoadPlayerSprite);
-    gpGlobals->fEnteringScene = TRUE;
     gpGlobals->fNeedToFadeIn = TRUE;
     gpGlobals->dwFrameNum = 0;
 }
