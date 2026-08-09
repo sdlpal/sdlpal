@@ -152,11 +152,11 @@ void mpu401_reset_midi_state(void)
         // Send Data Entry to set Pitch Bend Sensitivity to 2 semitones
         mpu401_write_data(0xB0 | ch);
         mpu401_write_data(0x06); // Data Entry MSB
-        mpu401_write_data(0x00);
+        mpu401_write_data(2);
 
         mpu401_write_data(0xB0 | ch);
         mpu401_write_data(0x26); // Data Entry LSB
-        mpu401_write_data(0x02); // Set to 2 (consistent with Win32 default)
+        mpu401_write_data(0);
     }
 }
 
