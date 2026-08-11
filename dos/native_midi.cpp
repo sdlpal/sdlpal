@@ -148,6 +148,53 @@ static void midi_log_note_event(uint8_t status, uint8_t data1, uint8_t data2) {
         data1, name, octave, data2, channel);
 }
 
+// Check if the given SysEx message is a Roland GS reset or master volume message, and handle it accordingly
+// inspired by dosbox-x `roland gs sysex` option
+static bool midi_handle_gs_reset(const uint8_t *data, uint32_t len) {
+    if (len < 8) {
+        return false;
+    }
+
+    const uint8_t *buf = data;
+    size_t offset = 0;
+
+    if (len > 0 && buf[0] == 0xF0) {
+        offset = 1;
+    }
+
+    if (len - offset < 8) {
+        return false;
+    }
+
+    const uint8_t *payload = buf + offset;
+    if (payload[0] == 0x41 && payload[2] == 0x42 && payload[3] == 0x12) {
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "[midi] Roland GS sysex send detected.\n");
+        const uint32_t addr =
+            ((uint32_t)payload[4] << 16) +
+            ((uint32_t)payload[5] << 8) +
+            (uint32_t)payload[6];
+
+        if (addr == 0x40007F) {
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "[midi] Roland GS reset detected, replacing with MPU-401 reset in order to prevent synthesizer from hanging.\n");
+            uint8_t reset_msg[] = {0xFF};
+            for (uint32_t i = 0; i < sizeof(reset_msg); ++i) {
+                mpu401_write_data(reset_msg[i]);
+            }
+            return true;
+        }
+        if (addr == 0x400004) {
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "[midi] Roland GS master volume detected, denying in order to prevent synthesizer from hanging.\n");
+            return true;
+        }
+    }else{
+        for(int i=0; i<len; i++){
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "[midi] unknown sysex byte: [%d]=0x%02X\n", i, buf[i]);
+        }
+    }
+
+        return false;
+}
+
 // Convert MIDI event list to PlayEvent vector with absolute timestamps (microseconds)
 static bool MidiEventListToPlayEvents(MIDIEvent *eventlist, uint16_t ppq,
                                       std::vector<PlayEvent> &out_events,
@@ -283,8 +330,10 @@ static void midi_playback_hook(void *userdata) {
         //    midi_log_note_event(buffer[0], buffer[1], len >= 3 ? buffer[2] : 0);
         //}
 
-        for (uint32_t i = 0; i < len; i++) {
-            mpu401_write_data(buffer[i]);
+        if (!midi_handle_gs_reset(buffer, len)) {
+            for (uint32_t i = 0; i < len; i++) {
+                mpu401_write_data(buffer[i]);
+            }
         }
 
         song->current_event++;
