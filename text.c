@@ -37,7 +37,7 @@ BOOL      g_fUpdatedInBattle      = FALSE;
 
 static wchar_t internal_wbuffer[PAL_GLOBAL_BUFFER_SIZE];
 
-#define   MESSAGE_MAX_BUFFER_SIZE   512
+#define   MESSAGE_MAX_BUFFER_SIZE   1024
 
 #define INCLUDE_CODEPAGE_H
 #include "codepage.h"
@@ -186,6 +186,7 @@ PAL_ReadMessageFile(
 		ST_LAYOUT
 	} state = ST_OUTSIDE;
 	int idx_cnt = 0, msg_cnt = 0, word_cnt = 0, sid, eid = -1;
+	int maxID = 0;
 
 	while (!feof(fp))
 	{
@@ -263,6 +264,7 @@ PAL_ReadMessageFile(
 					// End dialog
 					state = ST_OUTSIDE;
 					item->indexEnd = eid;
+					maxID = max(maxID, eid);
 				}
 				else
 				{
@@ -556,9 +558,9 @@ PAL_ReadMessageFile(
 		//
 		int idx_msg = 1;
 		g_TextLib.nIndices = (idx_cnt += 1);
-		g_TextLib.nMsgs = (msg_cnt += 1);
+		g_TextLib.nMsgs = max(maxID, msg_cnt) + 1;
 		g_TextLib.lpIndexBuf = (int ***)UTIL_calloc(idx_cnt, sizeof(int **));
-		g_TextLib.lpMsgBuf = (LPWSTR *)UTIL_calloc(msg_cnt, sizeof(LPWSTR));
+		g_TextLib.lpMsgBuf = (LPWSTR *)UTIL_calloc(g_TextLib.nMsgs, sizeof(LPWSTR));
 		g_TextLib.indexMaxCounter = (int *)UTIL_calloc(idx_cnt, sizeof(int *));
 		// The variable indexMaxCounter stores the value of (item->indexEnd - item->index), 
 		// which means the span between eid and sid. 
@@ -605,6 +607,7 @@ PAL_ReadMessageFile(
 				if (msg->value)
 				{
 					g_TextLib.lpIndexBuf[item->index][item->indexEnd - item->index][index++] = idx_msg;
+					assert(idx_msg < g_TextLib.nMsgs);
 					g_TextLib.lpMsgBuf[idx_msg++] = msg->value;
 				}
 				else
@@ -917,7 +920,10 @@ PAL_FreeText(
    if (g_TextLib.lpMsgBuf != NULL)
    {
       if (gConfig.pszMsgFile)
-         for(i = 0; i < g_TextLib.nMsgs; i++) free(g_TextLib.lpMsgBuf[i]);
+		  for (i = 0; i < g_TextLib.nMsgs; i++) {
+			  if (g_TextLib.lpMsgBuf[i] != NULL)
+				  free(g_TextLib.lpMsgBuf[i]);
+		  }
       else
          free(g_TextLib.lpMsgBuf[0]);
       free(g_TextLib.lpMsgBuf);
