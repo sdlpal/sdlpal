@@ -112,6 +112,7 @@ struct _NativeMidiSong {
 // Global playback state
 static NativeMidiSong *g_current_song = nullptr;
 static bool            g_vhook_registered = false;
+static SDL_TimerID     g_midi_timer_id = 0;
 
 typedef struct NativeMidiHookContext {
     volatile NativeMidiSong *song;
@@ -271,12 +272,69 @@ static bool MidiEventListToPlayEvents(MIDIEvent *eventlist, uint16_t ppq,
     return true;
 }
 
+static void midi_playback_hook(void *userdata);
+
+static inline uint64_t midi_now_us(void) {
+    return (uint64_t)SDL_GetTicks() * 1000ULL;
+}
+
+static inline Uint32 midi_update_interval_ms(void) {
+    int hz = gConfig.iDOSMPUUpdateFreq > 0 ? gConfig.iDOSMPUUpdateFreq : 1;
+    Uint32 interval = (Uint32)(1000U / (Uint32)hz);
+    if (interval == 0U) {
+        interval = 1U;
+    }
+    return interval;
+}
+
+static inline uint32_t midi_dispatch_budget_per_pass(void) {
+    static int cached_hz = 0;
+    static uint32_t cached_budget = 0;
+
+    int hz = gConfig.iDOSMPUUpdateFreq > 0 ? gConfig.iDOSMPUUpdateFreq : 1;
+    if (cached_hz != hz || cached_budget == 0U) {
+        uint32_t tick_us = 1000000U / (uint32_t)hz;
+        uint32_t budget = tick_us / 400U;
+        if (budget < 8U) {
+            budget = 8U;
+        }
+        if (budget > 64U) {
+            budget = 64U;
+        }
+
+        cached_hz = hz;
+        cached_budget = budget;
+        UTIL_LogOutput(LOGLEVEL_DEBUG,
+            "[midi] dispatch budget per pass: hz=%d tick_us=%u budget=%u\n",
+            hz, tick_us, budget);
+    }
+
+    return cached_budget;
+}
+
+static Uint32 midi_timer_callback(void *param, SDL_TimerID timerID, Uint32 interval) {
+    (void)timerID;
+    (void)interval;
+    midi_playback_hook(param);
+    return midi_update_interval_ms();
+}
+
 /* --------------------------------
-   vhook callback (100 Hz, ISR context)
+   vhook callback (ISR context)
    -------------------------------- */
 static void midi_playback_hook(void *userdata) {
+    int iTicks = 1000 / (gConfig.iDOSMPUUpdateFreq > 0 ? gConfig.iDOSMPUUpdateFreq : 1);
+    if (iTicks < 1) {
+        iTicks = 1;
+    }
     NativeMidiHookContext *ctx = (NativeMidiHookContext *)userdata;
     if (!ctx) return;
+
+    // DOS vhook callbacks can pile up when a MIDI event stream contains a large burst
+    // of zero-delay events. Skip re-entrant execution until the current pass completes.
+    if (ctx->in_hook > 0) {
+        return;
+    }
 
     ctx->in_hook++;
 
@@ -286,7 +344,7 @@ static void midi_playback_hook(void *userdata) {
         return;
     }
 
-    uint64_t now_us = vclock();
+    uint64_t now_us = midi_now_us();
     int total_events = (int)song->events.size();
 
     // If no events, stop
@@ -308,7 +366,9 @@ static void midi_playback_hook(void *userdata) {
         }
     }
 
-    while (song->current_event < total_events) {
+    uint32_t dispatched = 0;
+    const uint32_t max_per_pass = midi_dispatch_budget_per_pass();
+    while (song->current_event < total_events && dispatched < max_per_pass) {
         PlayEvent &ev = song->events[song->current_event];
         uint64_t ev_time_us = song->start_time_us + ev.trigger_us;
 
@@ -337,13 +397,16 @@ static void midi_playback_hook(void *userdata) {
         }
 
         song->current_event++;
+        dispatched++;
     }
 
-    if (song->current_event >= total_events && song->looping) {
-        song->current_event = 0;
-        song->start_time_us = now_us;
-    } else if (song->current_event >= total_events) {
-        song->playing = false;
+    if (song->current_event >= total_events) {
+        if (song->looping) {
+            song->current_event = 0;
+            song->start_time_us = now_us;
+        } else {
+            song->playing = false;
+        }
     }
 
     ctx->in_hook--;
@@ -410,16 +473,28 @@ void native_midi_start(NativeMidiSong *song, int looping) {
     song->playing = true;
     song->looping = (looping != 0);
     song->current_event = 0;
-    song->start_time_us = vclock();
+    song->start_time_us = midi_now_us();
 
-    // Register the vhook only once (fixed 100 Hz).
-    if (!g_vhook_registered) {
-        if (vhook_register(midi_playback_hook, 100, &g_midi_hook_ctx) == 0) {
-            g_vhook_registered = true;
-        } else {
-            UTIL_LogOutput(LOGLEVEL_ERROR, "Failed to register vhook for MIDI playback.\n");
-            song->playing = false;
-            return;
+    if (gConfig.iDOSMPUUseTimer == 1) {
+        if (!g_midi_timer_id) {
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "[mpu401] using backend: SDL timer\n");
+            g_midi_timer_id = SDL_AddTimer(midi_update_interval_ms(), midi_timer_callback, &g_midi_hook_ctx);
+            if (!g_midi_timer_id) {
+                UTIL_LogOutput(LOGLEVEL_ERROR, "Failed to register SDL timer for MIDI playback.\n");
+                song->playing = false;
+                return;
+            }
+        }
+    } else {
+        if (!g_vhook_registered) {
+            UTIL_LogOutput(LOGLEVEL_DEBUG, "[mpu401] using backend: vclock\n");
+            if (vhook_register(midi_playback_hook, gConfig.iDOSMPUUpdateFreq, &g_midi_hook_ctx) == 0) {
+                g_vhook_registered = true;
+            } else {
+                UTIL_LogOutput(LOGLEVEL_ERROR, "Failed to register vhook for MIDI playback.\n");
+                song->playing = false;
+                return;
+            }
         }
     }
 
