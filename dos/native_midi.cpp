@@ -109,17 +109,14 @@ struct _NativeMidiSong {
     bool                   loaded;
 };
 
-// Global playback state
-static NativeMidiSong *g_current_song = nullptr;
-static bool            g_vhook_registered = false;
-static SDL_TimerID     g_midi_timer_id = 0;
-
 typedef struct NativeMidiHookContext {
     volatile NativeMidiSong *song;
     volatile int in_hook;
+    volatile bool vhook_registered;
+    volatile SDL_TimerID timer_id;
 } NativeMidiHookContext;
 
-static NativeMidiHookContext g_midi_hook_ctx = { NULL, 0 };
+static NativeMidiHookContext g_midi_hook_ctx = { NULL, 0, false, 0 };
 
 /* --------------------------------
    Helper functions
@@ -169,14 +166,12 @@ static bool midi_handle_gs_reset(const uint8_t *data, uint32_t len) {
 
     const uint8_t *payload = buf + offset;
     if (payload[0] == 0x41 && payload[2] == 0x42 && payload[3] == 0x12) {
-        UTIL_LogOutput(LOGLEVEL_DEBUG, "[midi] Roland GS sysex send detected.\n");
         const uint32_t addr =
             ((uint32_t)payload[4] << 16) +
             ((uint32_t)payload[5] << 8) +
             (uint32_t)payload[6];
 
         if (addr == 0x40007F) {
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "[midi] Roland GS reset detected, replacing with MPU-401 reset in order to prevent synthesizer from hanging.\n");
             uint8_t reset_msg[] = {0xFF};
             for (uint32_t i = 0; i < sizeof(reset_msg); ++i) {
                 mpu401_write_data(reset_msg[i]);
@@ -184,16 +179,11 @@ static bool midi_handle_gs_reset(const uint8_t *data, uint32_t len) {
             return true;
         }
         if (addr == 0x400004) {
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "[midi] Roland GS master volume detected, denying in order to prevent synthesizer from hanging.\n");
             return true;
-        }
-    }else{
-        for(int i=0; i<len; i++){
-            UTIL_LogOutput(LOGLEVEL_DEBUG, "[midi] unknown sysex byte: [%d]=0x%02X\n", i, buf[i]);
         }
     }
 
-        return false;
+    return false;
 }
 
 // Convert MIDI event list to PlayEvent vector with absolute timestamps (microseconds)
@@ -304,9 +294,6 @@ static inline uint32_t midi_dispatch_budget_per_pass(void) {
 
         cached_hz = hz;
         cached_budget = budget;
-        UTIL_LogOutput(LOGLEVEL_DEBUG,
-            "[midi] dispatch budget per pass: hz=%d tick_us=%u budget=%u\n",
-            hz, tick_us, budget);
     }
 
     return cached_budget;
@@ -464,11 +451,7 @@ void native_midi_freesong(NativeMidiSong *song) {
 void native_midi_start(NativeMidiSong *song, int looping) {
     if (!song || !song->loaded) return;
 
-    if (g_current_song && g_current_song != song) {
-        native_midi_stop(g_current_song);
-    } else {
-        native_midi_stop(song);
-    }
+    native_midi_stop(song);
 
     song->playing = true;
     song->looping = (looping != 0);
@@ -476,20 +459,20 @@ void native_midi_start(NativeMidiSong *song, int looping) {
     song->start_time_us = midi_now_us();
 
     if (gConfig.iDOSMPUUseTimer == 1) {
-        if (!g_midi_timer_id) {
+        if (!g_midi_hook_ctx.timer_id) {
             UTIL_LogOutput(LOGLEVEL_DEBUG, "[mpu401] using backend: SDL timer\n");
-            g_midi_timer_id = SDL_AddTimer(midi_update_interval_ms(), midi_timer_callback, &g_midi_hook_ctx);
-            if (!g_midi_timer_id) {
+            g_midi_hook_ctx.timer_id = SDL_AddTimer(midi_update_interval_ms(), midi_timer_callback, &g_midi_hook_ctx);
+            if (!g_midi_hook_ctx.timer_id) {
                 UTIL_LogOutput(LOGLEVEL_ERROR, "Failed to register SDL timer for MIDI playback.\n");
                 song->playing = false;
                 return;
             }
         }
     } else {
-        if (!g_vhook_registered) {
+        if (!g_midi_hook_ctx.vhook_registered) {
             UTIL_LogOutput(LOGLEVEL_DEBUG, "[mpu401] using backend: vclock\n");
             if (vhook_register(midi_playback_hook, gConfig.iDOSMPUUpdateFreq, &g_midi_hook_ctx) == 0) {
-                g_vhook_registered = true;
+                g_midi_hook_ctx.vhook_registered = true;
             } else {
                 UTIL_LogOutput(LOGLEVEL_ERROR, "Failed to register vhook for MIDI playback.\n");
                 song->playing = false;
@@ -498,24 +481,19 @@ void native_midi_start(NativeMidiSong *song, int looping) {
         }
     }
 
-    g_current_song = song;
     g_midi_hook_ctx.song = song;
 }
 
 void native_midi_stop(NativeMidiSong *song) {
-    if (g_current_song) {
-        g_current_song->playing = false;
-        g_current_song->current_event = 0;
+    if (song) {
+        song->playing = false;
+        song->current_event = 0;
     }
 
-    if (!song && !g_current_song) return;
+    if (!song) return;
 
     if (song) {
         song->playing = false;
-    }
-
-    if (g_midi_hook_ctx.song == g_current_song || g_midi_hook_ctx.song == song) {
-        g_midi_hook_ctx.song = NULL;
     }
 
     mpu401_reset_midi_state();
@@ -531,8 +509,8 @@ void native_midi_stop(NativeMidiSong *song) {
         wait_count++;
     }
 
-    if (g_current_song == song) {
-        g_current_song = nullptr;
+    if (g_midi_hook_ctx.song == song) {
+        g_midi_hook_ctx.song = NULL;
     }
 }
 
