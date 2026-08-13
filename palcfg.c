@@ -68,6 +68,8 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MusicVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_REALOPLUPDATEFREQ, PALCFG_UNSIGNED, "RealOPLUpdateFreq", 17, MAKE_UNSIGNED(50,                            0,                     UINT32_MAX) },
+	{ PALCFG_DOSMPUUPDATEFREQ,  PALCFG_UNSIGNED, "DOSMPUUpdateFreq",  16, MAKE_UNSIGNED(50,                            0,                     UINT32_MAX) },
+	{ PALCFG_DOSMPUUSETIMER,    PALCFG_UNSIGNED, "DOSMPUUseTimer",    14, MAKE_UNSIGNED(1,                             0,                     1) },
 	{ PALCFG_DOSBASECLOCKFREQ,  PALCFG_UNSIGNED, "DOSBaseClockFreq",  16, MAKE_UNSIGNED(100,                           0,                     UINT32_MAX) },
 	{ PALCFG_REALOPLPORT,       PALCFG_UNSIGNED, "RealOPLPort",       11, MAKE_UNSIGNED(0x388,                         0,                     0xFFFF) },
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
@@ -612,6 +614,8 @@ PAL_LoadConfig(
 	gConfig.iSoundVolume = values[PALCFG_SOUNDVOLUME].uValue;
 	gConfig.iRealOPLUpdateFreq = values[PALCFG_REALOPLUPDATEFREQ].uValue;
 	gConfig.iDOSBaseClockFreq = values[PALCFG_DOSBASECLOCKFREQ].uValue;
+	gConfig.iDOSMPUUpdateFreq = values[PALCFG_DOSMPUUPDATEFREQ].uValue;
+	gConfig.iDOSMPUUseTimer = values[PALCFG_DOSMPUUSETIMER].uValue;
 	gConfig.iRealOPLPort = values[PALCFG_REALOPLPORT].uValue;
 
 	gConfig.dwTextureWidth  = values[PALCFG_TEXTUREWIDTH].uValue;
@@ -683,6 +687,8 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_MUSICVOLUME), gConfig.iMusicVolume); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_SOUNDVOLUME), gConfig.iSoundVolume); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_REALOPLUPDATEFREQ), gConfig.iRealOPLUpdateFreq); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_DOSMPUUPDATEFREQ), gConfig.iDOSMPUUpdateFreq); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_DOSMPUUSETIMER), gConfig.iDOSMPUUseTimer); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_DOSBASECLOCKFREQ), gConfig.iDOSBaseClockFreq); fputs(buf, fp);
 		sprintf(buf, "%s=0x%X\n", PAL_ConfigName(PALCFG_REALOPLPORT), (unsigned int)gConfig.iRealOPLPort); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_WINDOWHEIGHT), gConfig.dwScreenHeight); fputs(buf, fp);
@@ -750,6 +756,8 @@ PAL_GetConfigItem(
 		case PALCFG_MUSICVOLUME:       value.uValue = gConfig.iMusicVolume; break;
 		case PALCFG_SOUNDVOLUME:       value.uValue = gConfig.iSoundVolume; break;
 		case PALCFG_REALOPLUPDATEFREQ: value.uValue = gConfig.iRealOPLUpdateFreq; break;
+		case PALCFG_DOSMPUUPDATEFREQ:  value.uValue = gConfig.iDOSMPUUpdateFreq; break;
+		case PALCFG_DOSMPUUSETIMER:    value.uValue = gConfig.iDOSMPUUseTimer; break;
 		case PALCFG_DOSBASECLOCKFREQ:  value.uValue = gConfig.iDOSBaseClockFreq; break;
 		case PALCFG_REALOPLPORT:       value.uValue = gConfig.iRealOPLPort; break;
 		case PALCFG_WINDOWHEIGHT:      value.uValue = gConfig.dwScreenHeight; break;
@@ -809,6 +817,8 @@ PAL_SetConfigItem(
 	case PALCFG_MUSICVOLUME:       gConfig.iMusicVolume = value.uValue; break;
 	case PALCFG_SOUNDVOLUME:       gConfig.iSoundVolume = value.uValue; break;
 	case PALCFG_REALOPLUPDATEFREQ: gConfig.iRealOPLUpdateFreq = value.uValue; break;
+	case PALCFG_DOSMPUUPDATEFREQ:  gConfig.iDOSMPUUpdateFreq = value.uValue; break;
+	case PALCFG_DOSMPUUSETIMER:    gConfig.iDOSMPUUseTimer = value.uValue; break;
 	case PALCFG_DOSBASECLOCKFREQ:  gConfig.iDOSBaseClockFreq = value.uValue; break;
 	case PALCFG_REALOPLPORT:       gConfig.iRealOPLPort = value.uValue; break;
 	case PALCFG_WINDOWHEIGHT:      gConfig.dwScreenHeight = value.uValue; break;
