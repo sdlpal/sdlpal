@@ -108,6 +108,18 @@ Open the `android` directory in **Android Studio** and select `Make Project`.
   * **Note:** `android/app/src/main/java/org/libsdl/app` is a symlink. Ensure your Git client handles symbolic links correctly.
   * **Tip:** On Windows, keep the repository path short (e.g., at the drive root) to avoid path length issues.
 
+### DOS (DJGPP)
+
+The DOS build uses the `3rd/ail32-djgpp` submodule for the AIL/32 API and
+loader. After updating submodules, initialize the DJGPP environment and build
+from the `dos` directory:
+
+```shell
+$ . /opt/djgpp/setenv
+$ export PKG_CONFIG_PATH=/opt/djgpp/lib/pkgconfig
+$ cd dos && make
+```
+
 -----
 
 ## Running the Game
@@ -118,7 +130,22 @@ Resource files are not included. You must copy the original game data files into
 
 ### MIDI Support
 
-MIDI support varies by platform. It is officially supported on **Windows, Android, iOS, and macOS**. GNU/Linux support is preliminary and requires the `timidity` package. Other platforms do not currently support MIDI.
+MIDI support varies by platform. It is officially supported on **Windows, Android, iOS, macOS, and DOS**. GNU/Linux support is preliminary and requires the `timidity` package.
+
+On DOS, the primary MIDI path is the native MPU-401 backend. It reproduces the
+original hardware-oriented MIDI interface while adding compatibility options
+for modern DOS environments, including configurable vclock/vhook and SDL timer
+operation. Use `MIDISynth=native` for this backend.
+
+DOS version adds `MIDISynth=ail32` as an additional AIL/32 MIDPAK backend. Set
+`MIDIClient` to an AIL/32 XMIDI driver DLL. Whether `SoundBank` is required
+depends on the driver: some drivers, such as `a32awe32`, can use an empty
+`SoundBank`, while FM drivers such as `a32adlib` require a matching Global
+Timbre Library such as `fat.ad`. Other drivers, such as `gusmid32`, may require
+the user to load PAT instrument data manually; consult the selected driver
+documentation and configure its resources accordingly. The AIL/32 backend
+owns the DOS timer interrupt while playing, so it must not be combined with
+another timer source.
 
 -----
 
