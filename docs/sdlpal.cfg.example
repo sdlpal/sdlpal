@@ -35,15 +35,31 @@
 #             on *nix that have alsa devel library compiled, specify ALSA MIDI Port here.
 #             otherwise, specify any midiplayer or wrapper here, that accept
 #               `CLI midifile` syntax.
+#             on DOS with MIDISynth=ail32, specify the AIL/32 XMIDI driver DLL,
+#               for example 'a32adlib.dll' or 'a32sp1fm.dll'.
 #MIDIClient=14.0
 
 # MIDISynth: Indicates which MIDI synth backend to use. Valid values include
-#            'native' (default), 'timidity' and 'tinysoundfont'.
+#            'native' (default), 'timidity', 'tinysoundfont' and 'ail32'.
+#            'ail32' is only available on DOS and uses the AIL/32 MIDPAK sequence
+#            player. It converts Standard MIDI files to XMIDI in memory.
 #MIDISynth=native
 
 # SoundBank: Path to the soundfont/soundbank file for software MIDI synth.
-#            Required when MIDISynth is not 'native'.
+#            Required by software synths and by AIL/32 drivers that request
+#            timbres. For AIL/32, this may be a Global Timbre Library (GTL),
+#            such as 'fat.ad' for Ad Lib-family drivers. Some drivers, such as
+#            'a32awe32', can leave this empty; others, such as 'gusmid32', may
+#            require separately loaded PAT instrument data.
 #SoundBank=
+
+# DOS AIL/32 example:
+#MIDISynth=ail32
+#MIDIClient=a32adlib.dll
+#SoundBank=fat.ad
+#
+# AIL/32 owns the DOS timer interrupt while playing XMIDI. Do not combine this
+# backend with a separately installed vclock timer source.
 
 # OPLCore: Indicates the OPL emulator core to use. Valid types include 'DBFLT'
 #          (default), 'MAME', 'DBINT' and 'NUKED'.
@@ -75,6 +91,16 @@
 
 # RealOPLPort: I/O port used by REAL OPL backend. Default is 0x220.
 #RealOPLPort=0x220
+
+# DOSMPUUpdateFreq: MIDI update frequency for the DOS MPU-401 native backend.
+#                   Default is 50 Hz. This setting does not drive AIL/32 MIDI;
+#                   AIL/32 uses the timer service provided by its own API.
+#DOSMPUUpdateFreq=50
+
+# DOSMPUUseTimer: Use the SDL timer instead of the DOS vclock/vhook for the
+#                 DOS MPU-401 native backend. 0 uses vclock/vhook (default),
+#                 1 uses the SDL timer. This setting does not affect AIL/32.
+#DOSMPUUseTimer=0
 
 # DOSBaseClockFreq: Indicates the base frequency of DOS virtual clock. Default is 100.
 #DOSBaseClockFreq=100
