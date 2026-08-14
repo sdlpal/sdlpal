@@ -265,7 +265,7 @@ static bool MidiEventListToPlayEvents(MIDIEvent *eventlist, uint16_t ppq,
 static void midi_playback_hook(void *userdata);
 
 static inline uint64_t midi_now_us(void) {
-    return (uint64_t)SDL_GetTicks() * 1000ULL;
+    return vclock();
 }
 
 static inline Uint32 midi_update_interval_ms(void) {

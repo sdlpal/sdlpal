@@ -69,7 +69,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_REALOPLUPDATEFREQ, PALCFG_UNSIGNED, "RealOPLUpdateFreq", 17, MAKE_UNSIGNED(50,                            0,                     UINT32_MAX) },
 	{ PALCFG_DOSMPUUPDATEFREQ,  PALCFG_UNSIGNED, "DOSMPUUpdateFreq",  16, MAKE_UNSIGNED(50,                            0,                     UINT32_MAX) },
-	{ PALCFG_DOSMPUUSETIMER,    PALCFG_UNSIGNED, "DOSMPUUseTimer",    14, MAKE_UNSIGNED(1,                             0,                     1) },
+	{ PALCFG_DOSMPUUSETIMER,    PALCFG_UNSIGNED, "DOSMPUUseTimer",    14, MAKE_UNSIGNED(0,                             0,                     1) },
 	{ PALCFG_DOSBASECLOCKFREQ,  PALCFG_UNSIGNED, "DOSBaseClockFreq",  16, MAKE_UNSIGNED(100,                           0,                     UINT32_MAX) },
 	{ PALCFG_REALOPLPORT,       PALCFG_UNSIGNED, "RealOPLPort",       11, MAKE_UNSIGNED(0x388,                         0,                     0xFFFF) },
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
@@ -404,6 +404,7 @@ PAL_LoadConfig(
 	values[PALCFG_RESAMPLEQUALITY].uValue   = RESAMPLER_QUALITY_LINEAR;
 	values[PALCFG_DOSFORCEMODE13H].bValue   = TRUE;
 	values[PALCFG_DOSLOWENDOPT].bValue      = TRUE;
+	values[PALCFG_SAMPLERATE].uValue        = 22050;
 	eOPLCore                                = OPLCORE_REAL;  // Only need to set enum variable, not values array
 #endif
 
