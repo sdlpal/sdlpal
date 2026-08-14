@@ -10,3 +10,6 @@
 [submodule "scripts"]
 	path = scripts
 	url = ../scripts.git
+[submodule "3rd/ail32-djgpp"]
+	path = 3rd/ail32-djgpp
+	url = https://github.com/volkertb/ail32-djgpp
