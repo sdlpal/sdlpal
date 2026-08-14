@@ -432,7 +432,8 @@ AUDIO_CloseDevice(
 	  gAudioDevice.pSoundBuffer = NULL;
    }
 
-   if (gConfig.eMIDISynth == SYNTH_NATIVE && gConfig.eMusicType == MUSIC_MIDI)
+   if ((gConfig.eMIDISynth == SYNTH_NATIVE || gConfig.eMIDISynth == SYNTH_AIL32) &&
+      gConfig.eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(0, FALSE);
    }
@@ -560,7 +561,8 @@ AUDIO_PlayMusic(
 		AUDIO_PlayCDTrack(-1);
 	}
 
-   if (gConfig.eMIDISynth == SYNTH_NATIVE && gConfig.eMusicType == MUSIC_MIDI)
+      if ((gConfig.eMIDISynth == SYNTH_NATIVE || gConfig.eMIDISynth == SYNTH_AIL32) &&
+         gConfig.eMusicType == MUSIC_MIDI)
    {
       MIDI_Play(iNumRIX, fLoop);
       return;
