@@ -63,6 +63,7 @@ PAL_C_LINKAGE char* strcasestr(const char *, const char *);
 # define PAL_HAS_OGG           1
 # define PAL_HAS_OPUS          1
 # define PAL_HAS_NATIVEMIDI    1
+# define PAL_HAS_AIL32         1
 #define USE_RIX_MKF_FILE_BUFFER
 #define PAL_HAS_PLATFORM_STARTUP 1
 

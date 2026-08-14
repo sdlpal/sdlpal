@@ -46,7 +46,7 @@ MIDI_Play(
 )
 {
 #if PAL_HAS_NATIVEMIDI
-	if (!native_midi_detect())
+		if (!native_midi_detect())
 		return;
 
 	if (native_midi_active(g_pMidi) && iNumRIX == g_iMidiCurrent)
