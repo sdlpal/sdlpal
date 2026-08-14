@@ -28,6 +28,10 @@
 #include "resampler.h"
 #include <stdint.h>
 
+#ifndef PAL_HAS_AIL32
+#define PAL_HAS_AIL32 0
+#endif
+
 #if !defined(PAL_HAS_TOUCH)
 #define PAL_HAS_TOUCH     0
 #endif
@@ -96,7 +100,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "OPUS", "RAW" };
-static const char* synth_types[] = { "native", "timidity", "tinysoundfont" };
+static const char* synth_types[] = { "native", "timidity", "tinysoundfont", "ail32" };
 static const char *cd_types[] = { "NONE", "MP3", "OGG", "OPUS", "RAW" };
 static const char *opl_cores[] = { "REAL", "MAME", "DBFLT", "DBINT", "NUKED" };
 static const char *opl_chips[] = { "OPL2", "OPL3" };
@@ -486,6 +490,8 @@ PAL_LoadConfig(
 						eMIDISynthType = SYNTH_TIMIDITY;
 					else if (SDL_strncasecmp(value.sValue, "tinysoundfont", slen) == 0)
 						eMIDISynthType = SYNTH_TINYSOUNDFONT;
+					else if (PAL_HAS_AIL32 && SDL_strncasecmp(value.sValue, "ail32", slen) == 0)
+						eMIDISynthType = SYNTH_AIL32;
 					break;
 				}
 				case PALCFG_OPL_CORE:
@@ -647,7 +653,8 @@ PAL_LoadConfig(
     gConfig.fEnableGLSL = FALSE;
 #endif
 
-	if (gConfig.eMIDISynth != SYNTH_NATIVE && !UTIL_IsFileExist(gConfig.pszSoundBank)) {
+	if (gConfig.eMIDISynth != SYNTH_NATIVE && gConfig.eMIDISynth != SYNTH_AIL32 &&
+		!UTIL_IsFileExist(gConfig.pszSoundBank)) {
 		UTIL_LogOutput(LOGLEVEL_ERROR, "SoftSynth enabled but no valid soundbank file specified. Fallback to native-midi");
 		gConfig.eMIDISynth = SYNTH_NATIVE;
 	}

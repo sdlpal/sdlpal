@@ -19,13 +19,15 @@ GTEST_DIR = ../3rd/googletest/googletest
 SOURCES = . .. ../sdl_compat ../adplug ../liboggvorbis/src ../libopusfile/src ../libopusfile/celt ../libopusfile/silk ../libopusfile/silk/float ../libmad ../native_midi ../timidity
 CFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.c))
 CPPFILES = $(foreach dir, $(SOURCES), $(wildcard $(dir)/*.cpp))
-OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o)
+AIL32_DIR = ../3rd/ail32-djgpp
+AIL32_OBJFILES = $(AIL32_DIR)/ail32.o $(AIL32_DIR)/dllload.o
+OBJFILES = $(CFILES:.c=$(INTER).o) $(CPPFILES:.cpp=$(INTER).o) $(AIL32_OBJFILES)
 DEPFILES = $(CFILES:.c=$(INTER).d) $(CPPFILES:.cpp=$(INTER).d)
 TEST_CPPFILES = $(wildcard ../tests/*.cpp)
 TEST_OBJFILES = $(TEST_CPPFILES:.cpp=.o)
 SDL_CONFIG = pkg-config sdl3
 
-override CCFLAGS += `$(SDL_CONFIG) --cflags` -DUSE_SDL3=1 -I../sdl_compat -I../3rd/mingw-std-threads -ggdb -ansi -Wall -Ofast -fno-strict-aliasing $(EXTRA_CCFLAGS) $(TEST_CCFLAGS) $(GENERATED)
+override CCFLAGS += `$(SDL_CONFIG) --cflags` -DUSE_SDL3=1 -I../sdl_compat -I../3rd/mingw-std-threads -I$(AIL32_DIR) -ggdb -ansi -Wall -Ofast -fno-strict-aliasing $(EXTRA_CCFLAGS) $(TEST_CCFLAGS) $(GENERATED)
 CXXFLAGS = $(CCFLAGS) -std=c++11
 CFLAGS = $(CCFLAGS) -std=gnu99
 OPENGL_LIBS =
@@ -56,6 +58,12 @@ gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc %.d
 	@echo [CC] $<
 	@$(HOST)g++ $(DEPFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
+
+$(AIL32_DIR)/ail32.o:
+	@$(MAKE) -C $(AIL32_DIR) ail32.o
+
+$(AIL32_DIR)/dllload.o:
+	@$(MAKE) -C $(AIL32_DIR) dllload.o
 
 $(TEST_TARGET): $(OBJFILES) $(TEST_OBJFILES) gtest-all.o
 	@echo [LD] $@

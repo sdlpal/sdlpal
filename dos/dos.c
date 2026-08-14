@@ -1,7 +1,7 @@
 /* -*- mode: c; tab-width: 4; c-basic-offset: 4; c-file-style: "linux" -*- */
 //
 // Copyright (c) 2009-2011, Wei Mingzhi <whistler_wmz@users.sf.net>.
-// Copyright (c) 2011-2024, SDLPAL development team.
+// Copyright (c) 2011-2026, SDLPAL development team.
 // All rights reserved.
 //
 // This file is part of SDLPAL.
@@ -17,6 +17,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// dos.c: DOS platform initialization and compatibility helpers.
+//        @Author: palxex, 2026
 //
 
 #include "main.h"
@@ -34,6 +37,7 @@
 #  else
 #	include <vclock.h>
 #  endif
+# include "ail32_drv.h"
 #endif
 
 double fmax(double a, double b) {
@@ -160,7 +164,10 @@ UTIL_Platform_Init(
 #endif
 	SDL_SetHint(SDL_HINT_DOS_ALLOW_DIRECT_FRAMEBUFFER, "1");
 	gConfig.fLaunchSetting = FALSE;
-	vclock_setup(gConfig.iDOSBaseClockFreq);
+	/* AIL/32 owns IRQ0 while its XMIDI driver is active. Installing vclock
+	 * first would create a nested timer chain and noticeably stall DOSBox. */
+	if (!(gConfig.eMusicType == MUSIC_MIDI && gConfig.eMIDISynth == SYNTH_AIL32))
+		vclock_setup(gConfig.iDOSBaseClockFreq);
 	return 0;
 }
 
@@ -169,4 +176,7 @@ UTIL_Platform_Quit(
 	VOID
 )
 {
+#if defined(__DJGPP__)
+	ail32_drv_shutdown();
+#endif
 }

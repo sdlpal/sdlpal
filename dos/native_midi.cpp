@@ -26,6 +26,7 @@
 #include "native_midi/native_midi.h"
 #include "native_midi/native_midi_common.h"
 #include "mpu401.h"
+#include "ail32_midi.h"
 #include "vclock.h"
 #include "util.h"
 #include "palcfg.h"
@@ -100,6 +101,8 @@ struct PlayEvent {
 
 // Song structure (native_midi.h opaque type)
 struct _NativeMidiSong {
+    AIL32MidiSong *ail32_song;
+    bool use_ail32;
     std::vector<PlayEvent> events;
     uint16_t               ppq;               // ticks per quarter note
     int                    current_event;     // index of event being sent
@@ -121,30 +124,6 @@ static NativeMidiHookContext g_midi_hook_ctx = { NULL, 0, false, 0 };
 /* --------------------------------
    Helper functions
    -------------------------------- */
-
-static const char *const kMidiNoteNames[12] = {
-    "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
-};
-
-static void midi_log_note_event(uint8_t status, uint8_t data1, uint8_t data2) {
-    uint8_t type = status & 0xF0;
-    uint8_t channel = status & 0x0F;
-
-    if (type != 0x90 || data2 == 0) {
-        return;
-    }
-
-    if (data1 > 127) {
-        return;
-    }
-
-    int octave = (data1 / 12) - 1;
-    const char *name = kMidiNoteNames[data1 % 12];
-
-    UTIL_LogOutput(LOGLEVEL_DEBUG,
-        "[midi] note-on note=%u (%s%d) velocity=%u channel=%u\n",
-        data1, name, octave, data2, channel);
-}
 
 // Check if the given SysEx message is a Roland GS reset or master volume message, and handle it accordingly
 // inspired by dosbox-x `roland gs sysex` option
@@ -373,10 +352,6 @@ static void midi_playback_hook(void *userdata) {
 
         ev.msg->get_bytes(buffer);
 
-        //if (len >= 2) {
-        //    midi_log_note_event(buffer[0], buffer[1], len >= 3 ? buffer[2] : 0);
-        //}
-
         if (!midi_handle_gs_reset(buffer, len)) {
             for (uint32_t i = 0; i < len; i++) {
                 mpu401_write_data(buffer[i]);
@@ -404,6 +379,8 @@ static void midi_playback_hook(void *userdata) {
    -------------------------------- */
 
 int native_midi_detect() {
+    if (gConfig.eMIDISynth == SYNTH_AIL32)
+        return ail32_midi_detect();
     return mpu401_init() == MPU401_OK;
 }
 
@@ -421,6 +398,13 @@ NativeMidiSong *native_midi_loadsong(const char *midifile) {
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw) {
     std::unique_ptr<NativeMidiSong> song(new NativeMidiSong());
     if (!song) return nullptr;
+
+    if (gConfig.eMIDISynth == SYNTH_AIL32) {
+        song->ail32_song = ail32_midi_loadsong_RW(rw);
+        song->use_ail32 = song->ail32_song != nullptr;
+        song->loaded = song->use_ail32;
+        return song->use_ail32 ? song.release() : nullptr;
+    }
 
     MIDIEvent *eventlist = CreateMIDIEventList(rw, &song->ppq);
     if (!eventlist) return nullptr;
@@ -444,12 +428,22 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw) {
 
 void native_midi_freesong(NativeMidiSong *song) {
     if (!song) return;
+    if (song->use_ail32) {
+        ail32_midi_freesong(song->ail32_song);
+        delete song;
+        return;
+    }
     native_midi_stop(song);
     delete song;
 }
 
 void native_midi_start(NativeMidiSong *song, int looping) {
     if (!song || !song->loaded) return;
+
+    if (song->use_ail32) {
+        ail32_midi_start(song->ail32_song, looping);
+        return;
+    }
 
     native_midi_stop(song);
 
@@ -485,6 +479,10 @@ void native_midi_start(NativeMidiSong *song, int looping) {
 }
 
 void native_midi_stop(NativeMidiSong *song) {
+    if (song && song->use_ail32) {
+        ail32_midi_stop(song->ail32_song);
+        return;
+    }
     if (song) {
         song->playing = false;
         song->current_event = 0;
@@ -515,10 +513,16 @@ void native_midi_stop(NativeMidiSong *song) {
 }
 
 int native_midi_active(NativeMidiSong *song) {
+    if (song && song->use_ail32)
+        return ail32_midi_active(song->ail32_song);
     return (song && song->playing) ? 1 : 0;
 }
 
 void native_midi_setvolume(NativeMidiSong *song, int volume) {
+    if (song && song->use_ail32) {
+        ail32_midi_setvolume(song->ail32_song, volume);
+        return;
+    }
     (void)song; (void)volume;
 }
 

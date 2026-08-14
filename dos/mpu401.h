@@ -22,8 +22,8 @@
 //           @Author: palxex, 2026
 //
 
-#ifndef MPU401_H
-#define MPU401_H
+#ifndef MPU401_DRV_H
+#define MPU401_DRV_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -125,4 +125,4 @@ int mpu401_read_byte(uint32_t timeout_ms, uint8_t *out_byte);
 }
 #endif
 
-#endif /* MPU401_H */
+#endif /* MPU401_DRV_H */
