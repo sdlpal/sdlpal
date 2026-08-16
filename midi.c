@@ -22,6 +22,7 @@
 #include "main.h"
 
 static int  g_iMidiCurrent = -1;
+int g_iMIDINext = -1;
 static NativeMidiSong *g_pMidi = NULL;
 static int  g_iMidiVolume = PAL_MAX_VOLUME;
 
@@ -63,6 +64,7 @@ MIDI_Play(
 	{
 		return;
 	}
+	g_iMIDINext = iNumRIX;
 
 	if (gConfig.fIsWIN95)
 	{

@@ -25,6 +25,7 @@
 #include "ail32_drv.h"
 #include "native_midi/native_midi_common.h"
 #include "palcfg.h"
+#include "util.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -78,6 +79,8 @@ struct AIL32MidiSong {
     bool playing;
     bool looping;
 };
+
+extern int g_iMIDINext;
 
 static void put_u16_le(std::vector<uint8_t> &out, uint16_t value)
 {
@@ -295,6 +298,8 @@ static bool append_midi_event(XMIDBuilder &builder, const MIDIEvent *event)
 
 static bool build_xmid(MIDIEvent *events, uint16_t ppq, std::vector<uint8_t> &out)
 {
+    static const int force_indexes[] = { 31, 33, 36, 37, 38, 63, 67, 73, 75, 81, 82 };
+    bool force_ch0 = false;
     XMIDBuilder builder = {};
     uint32_t last_tick = 0;
     int tempo = 500000;
@@ -303,6 +308,24 @@ static bool build_xmid(MIDIEvent *events, uint16_t ppq, std::vector<uint8_t> &ou
     builder.tick_time = 50000000UL / ppq;
     builder.rhythm_bank[9] = 127;
 
+    //
+    // !HACK
+    // AIL32 spkr only processing channel 0/1, so some MIDI files will not play correctly. 
+    // Force all channels to channel 0 for certain MIDI files, make it at least not silent.
+    //
+    for( int i = 0; i < sizeof(force_indexes) / sizeof(force_indexes[0]); ++i) {
+        if (g_iMIDINext == force_indexes[i]) {
+            force_ch0 = true;
+            break;
+        }
+    }
+    if (force_ch0 && strcmp(gConfig.pszMIDIClient, "a32spkr.dll") == 0) {
+        for (MIDIEvent *e = events; e; e = e->next) {
+            if ((e->status & 0xF0) >= 0x80 && (e->status & 0xF0) <= 0xE0) {
+                e->status = (e->status & 0xF0) | 0x01;
+            }
+        }
+    }
     for (MIDIEvent *event = events; event; event = event->next) {
         uint32_t delta = event->time - last_tick;
         last_tick = event->time;
