@@ -80,6 +80,14 @@ struct AIL32MidiSong {
     bool looping;
 };
 
+struct AIL32MidiContext {
+    AIL32MidiSong *song;
+    SDL_TimerID timer_id;
+    volatile int in_update;
+};
+
+static AIL32MidiContext g_ail32_midi_context = { NULL, 0, 0 };
+
 extern int g_iMIDINext;
 
 static void put_u16_le(std::vector<uint8_t> &out, uint16_t value)
@@ -298,8 +306,50 @@ static bool append_midi_event(XMIDBuilder &builder, const MIDIEvent *event)
 
 static bool build_xmid(MIDIEvent *events, uint16_t ppq, std::vector<uint8_t> &out)
 {
-    static const int force_indexes[] = { 31, 33, 36, 37, 38, 63, 67, 73, 75, 81, 82 };
-    bool force_ch0 = false;
+    static const struct {
+    int index;
+    int keep_channel;
+    } force_ch_map[] = {
+        {0x01, 3},
+        {0x02, 0},
+        {0x03, 0},
+        {0x04, 1},
+        {0x05, 1},
+        {0x06, 0},
+        {0x07, 0},
+        {0x08, 0},
+        {0x09, 0},
+        {0x0A, 0},
+
+        {0x0B, 0},
+        {0x0C, 0},
+        {0x0D, 0},
+        {0x0E, 0},
+        {0x0F, 1},
+        {0x10, 0},
+        {0x11, 1},
+        {0x12, 0},
+        {0x13, 0},
+        {0x14, 3},
+
+        {0x15, 6},
+        {0x16, 1},
+        {0x17, 8},
+        {0x18, 0},
+        {0x19, 0},
+
+        {0x1F, 0},
+        {0x21, 5},
+        {0x24, 2},
+        {0x3F, 0},
+        {0x43, 4},
+        {0x49, 3},
+        {0x51, 4},
+        {0x52, 4},
+    };
+    bool force_ch1 = false;
+    int keep_ch = -1;
+
     XMIDBuilder builder = {};
     uint32_t last_tick = 0;
     int tempo = 500000;
@@ -308,24 +358,20 @@ static bool build_xmid(MIDIEvent *events, uint16_t ppq, std::vector<uint8_t> &ou
     builder.tick_time = 50000000UL / ppq;
     builder.rhythm_bank[9] = 127;
 
-    //
-    // !HACK
-    // AIL32 spkr only processing channel 0/1, so some MIDI files will not play correctly. 
-    // Force all channels to channel 0 for certain MIDI files, make it at least not silent.
-    //
-    for( int i = 0; i < sizeof(force_indexes) / sizeof(force_indexes[0]); ++i) {
-        if (g_iMIDINext == force_indexes[i]) {
-            force_ch0 = true;
+    for (int i = 0; i < sizeof(force_ch_map)/sizeof(force_ch_map[0]); ++i) {
+        if (g_iMIDINext == force_ch_map[i].index) {
+            force_ch1 = true;
+            keep_ch = force_ch_map[i].keep_channel;
             break;
         }
     }
-    if (force_ch0 && strcmp(gConfig.pszMIDIClient, "a32spkr.dll") == 0) {
-        for (MIDIEvent *e = events; e; e = e->next) {
-            if ((e->status & 0xF0) >= 0x80 && (e->status & 0xF0) <= 0xE0) {
-                e->status = (e->status & 0xF0) | 0x01;
-            }
-        }
-    }
+
+    if (force_ch1 && (keep_ch < 0 || keep_ch > 15))
+        force_ch1 = false;
+
+    if(strcmp(gConfig.pszMIDIClient, "a32spkr.dll") != 0)
+        force_ch1 = false;
+
     for (MIDIEvent *event = events; event; event = event->next) {
         uint32_t delta = event->time - last_tick;
         last_tick = event->time;
@@ -339,6 +385,15 @@ static bool build_xmid(MIDIEvent *events, uint16_t ppq, std::vector<uint8_t> &ou
             tempo = ((int)event->extraData[0] << 16) |
                     ((int)event->extraData[1] << 8) | event->extraData[2];
             builder.tick_time = (uint64_t)(100 * tempo) / ppq;
+        }
+        if (force_ch1) {
+            if ((event->status & 0xF0) >= 0x80 && (event->status & 0xF0) <= 0xE0) {
+                int ch = event->status & 0x0F;
+                if (ch != keep_ch) {
+                    continue;
+                }
+                event->status = (event->status & 0xF0) | 0x01;
+            }
         }
         if (!append_midi_event(builder, event)) return false;
     }
@@ -445,6 +500,35 @@ AIL32MidiSong *ail32_midi_loadsong_RW(SDL_RWops *rw)
     return song;
 }
 
+static Uint32 ail32_midi_update_interval_ms(void)
+{
+    return 50U;
+}
+
+static Uint32 ail32_midi_timer_callback(void *param, SDL_TimerID timerID,
+                                        Uint32 interval)
+{
+    AIL32MidiContext *context = (AIL32MidiContext *)param;
+    AIL32MidiSong *song;
+    (void)timerID;
+
+    if (!context || context->in_update > 0) return interval;
+    context->in_update = 1;
+    song = context->song;
+    if (!song || !song->playing) {
+        context->timer_id = 0;
+        context->in_update = 0;
+        return 0;
+    }
+    ail32_midi_active(song);
+    context->in_update = 0;
+    if (!song->playing) {
+        context->timer_id = 0;
+        return 0;
+    }
+    return interval;
+}
+
 void ail32_midi_freesong(AIL32MidiSong *song)
 {
     if (!song) return;
@@ -460,11 +544,34 @@ void ail32_midi_start(AIL32MidiSong *song, int looping)
     song->looping = looping != 0;
     song->playing = true;
     AIL_start_sequence(ail32_drv_handle(), song->sequence);
+    g_ail32_midi_context.song = song;
+    if (!g_ail32_midi_context.timer_id) {
+        g_ail32_midi_context.timer_id = SDL_AddTimer(ail32_midi_update_interval_ms(),
+                                                     ail32_midi_timer_callback,
+                                                     &g_ail32_midi_context);
+        if (!g_ail32_midi_context.timer_id) {
+            g_ail32_midi_context.song = NULL;
+            AIL_stop_sequence(ail32_drv_handle(), song->sequence);
+            song->playing = false;
+        }
+    }
 }
 
 void ail32_midi_stop(AIL32MidiSong *song)
 {
     if (!song) return;
+    if (g_ail32_midi_context.song == song) {
+        g_ail32_midi_context.song = NULL;
+        if (g_ail32_midi_context.timer_id) {
+            SDL_RemoveTimer(g_ail32_midi_context.timer_id);
+            g_ail32_midi_context.timer_id = 0;
+        }
+        int wait_count = 0;
+        while (g_ail32_midi_context.in_update > 0 && wait_count < 50) {
+            SDL_Delay(1);
+            wait_count++;
+        }
+    }
     AIL_stop_sequence(ail32_drv_handle(), song->sequence);
     song->playing = false;
 }
@@ -476,6 +583,7 @@ int ail32_midi_active(AIL32MidiSong *song)
     status = AIL_sequence_status(ail32_drv_handle(), song->sequence);
     if (status == SEQ_DONE && song->looping) {
         AIL_start_sequence(ail32_drv_handle(), song->sequence);
+        song->playing = true;
         return 1;
     }
     song->playing = status == SEQ_PLAYING;
