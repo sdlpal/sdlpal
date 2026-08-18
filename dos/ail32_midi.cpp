@@ -17,7 +17,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// ail32_midi.cpp: AIL/32 XMIDI client for DOS.
+// ail32_midi.cpp: AIL/32 MIDI client for DOS.
 //                 @Author: palxex, 2026
 //
 
@@ -26,6 +26,7 @@
 #include "native_midi/native_midi_common.h"
 #include "palcfg.h"
 #include "util.h"
+#include "midi_ch_map.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -306,47 +307,6 @@ static bool append_midi_event(XMIDBuilder &builder, const MIDIEvent *event)
 
 static bool build_xmid(MIDIEvent *events, uint16_t ppq, std::vector<uint8_t> &out)
 {
-    static const struct {
-    int index;
-    int keep_channel;
-    } force_ch_map[] = {
-        {0x01, 3},
-        {0x02, 0},
-        {0x03, 0},
-        {0x04, 1},
-        {0x05, 1},
-        {0x06, 0},
-        {0x07, 0},
-        {0x08, 0},
-        {0x09, 0},
-        {0x0A, 0},
-
-        {0x0B, 0},
-        {0x0C, 0},
-        {0x0D, 0},
-        {0x0E, 0},
-        {0x0F, 1},
-        {0x10, 0},
-        {0x11, 1},
-        {0x12, 0},
-        {0x13, 0},
-        {0x14, 3},
-
-        {0x15, 6},
-        {0x16, 1},
-        {0x17, 8},
-        {0x18, 0},
-        {0x19, 0},
-
-        {0x1F, 0},
-        {0x21, 5},
-        {0x24, 2},
-        {0x3F, 0},
-        {0x43, 4},
-        {0x49, 3},
-        {0x51, 4},
-        {0x52, 4},
-    };
     bool force_ch1 = false;
     int keep_ch = -1;
 
@@ -358,19 +318,13 @@ static bool build_xmid(MIDIEvent *events, uint16_t ppq, std::vector<uint8_t> &ou
     builder.tick_time = 50000000UL / ppq;
     builder.rhythm_bank[9] = 127;
 
-    for (int i = 0; i < sizeof(force_ch_map)/sizeof(force_ch_map[0]); ++i) {
-        if (g_iMIDINext == force_ch_map[i].index) {
+    if(strcmp(gConfig.pszMIDIClient, "a32spkr.dll") == 0) {
+        int ch = MIDI_GetMappedChannel(g_iMIDINext);
+        if (ch != -1) {
             force_ch1 = true;
-            keep_ch = force_ch_map[i].keep_channel;
-            break;
+            keep_ch = ch;
         }
     }
-
-    if (force_ch1 && (keep_ch < 0 || keep_ch > 15))
-        force_ch1 = false;
-
-    if(strcmp(gConfig.pszMIDIClient, "a32spkr.dll") != 0)
-        force_ch1 = false;
 
     for (MIDIEvent *event = events; event; event = event->next) {
         uint32_t delta = event->time - last_tick;
