@@ -15,6 +15,15 @@ jobs:
     steps:
     - name: Install Dependencies
       run: sudo apt-get install wget bzip2 zstd upx-ucl zip pipx libfl2 && pipx install cloudsmith-cli
+    - name: Build and install JWasm
+      run: |
+        git clone --depth 1 https://github.com/Baron-von-Riedesel/JWasm.git /tmp/JWasm
+        cd /tmp/JWasm
+        make -f GccUnix.mak
+        mkdir -p $HOME/.local/bin
+        cp build/GccUnixR/jwasm $HOME/.local/bin
+        chmod +x $HOME/.local/bin/jwasm
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
     - name: Initialize environment variables
       run: |
         echo "DJGPP_PREFIX=$HOME/.cache/djgpp" >> $GITHUB_ENV
@@ -79,4 +88,3 @@ jobs:
         file: deploy/*
         tags: true
         draft: true
-
