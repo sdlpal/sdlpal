@@ -86,7 +86,23 @@ struct ShortMessage : public MidiMessage {
 
 struct SysExMessage : public MidiMessage {
     std::vector<uint8_t> data;
-    explicit SysExMessage(const uint8_t *src, uint32_t len) : data(src, src + len) {}
+    explicit SysExMessage(uint8_t status, const uint8_t *src, uint32_t len)
+    {
+        // Note: native_midi_common.c stores the SysEx payload in src WITHOUT
+        // the leading 0xF0 status byte (src starts right after F0 and includes
+        // the terminating F7). MPU-401 needs the complete MIDI message, so
+        // we prepend the status byte here.
+        //
+        // The same missing-F0 issue also exists in win32/native_midi.cpp and
+        // winrt/native_midi.cpp, but no problem has been observed there so far
+        // (possibly because the Windows MIDI stack tolerates it), so those
+        // backends are left unchanged for now.
+        data.reserve(1 + len);
+        data.push_back(status);
+        if (len > 0) {
+            data.insert(data.end(), src, src + len);
+        }
+    }
     uint32_t get_length() const override { return (uint32_t)data.size(); }
     void get_bytes(uint8_t *buffer) const override {
         memcpy(buffer, data.data(), data.size());
@@ -199,7 +215,7 @@ static bool MidiEventListToPlayEvents(MIDIEvent *eventlist, uint16_t ppq,
         case MIDI_STATUS_SYSEX: {
             switch ((MidiSystemMessage)(ev->status & 0x0F)) {
             case MidiSystemMessage::Exclusive:
-                msg.reset(new SysExMessage(ev->extraData, ev->extraLen));
+                msg.reset(new SysExMessage(ev->status, ev->extraData, ev->extraLen));
                 break;
             case MidiSystemMessage::TimeCode:
             case MidiSystemMessage::SongSelect:
