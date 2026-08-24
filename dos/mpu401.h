@@ -41,8 +41,8 @@ extern "C" {
 #define MPU401_STATUS_PORT_OFFSET 1
 
 /* -------- Status register bits -------- */
-#define MPU401_STAT_TX_READY  0x40   /* Data register ready to accept output */
-#define MPU401_STAT_RX_READY  0x80   /* Data register has received data */
+#define MPU401_STAT_TX_READY  0x40   /* 0 = data/command writable, 1 = busy */
+#define MPU401_STAT_RX_READY  0x80   /* 0 = data readable, 1 = no data (inverted bit!) */
 
 /* -------- Commands -------- */
 #define MPU401_CMD_UART_MODE  0x3F   /* Switch to UART mode */
