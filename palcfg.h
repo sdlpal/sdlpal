@@ -51,6 +51,7 @@ typedef enum tagPALCFG_ITEM
     PALCFG_ENABLEGPU,
 	PALCFG_DOSFORCEMODE13H,
 	PALCFG_DOSLOWENDOPT,
+	PALCFG_FORCESUSTAINSPAN,
 
 	/* Booleans */
 	PALCFG_BOOLEAN_MAX,
@@ -242,6 +243,7 @@ typedef struct tagCONFIGURATION
     BOOL             fEnableGPU;
 	BOOL             fDOSForceMode13h;
 	BOOL             fDOSLowEndOpt;
+	BOOL             fForceSustainSpan;
 
 #if USE_RIX_EXTRA_INIT
 	uint32_t        *pExtraFMRegs;

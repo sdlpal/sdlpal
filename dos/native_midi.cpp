@@ -202,8 +202,20 @@ static bool MidiEventListToPlayEvents(MIDIEvent *eventlist, uint16_t ppq,
         case MIDI_STATUS_NOTE_OFF:
         case MIDI_STATUS_NOTE_ON:
         case MIDI_STATUS_AFTERTOUCH:
-        case MIDI_STATUS_CONTROLLER:
         case MIDI_STATUS_PITCH_WHEEL:
+            msg.reset(new ShortMessage(ev->status, ev->data[0], ev->data[1], 3));
+            break;
+
+        case MIDI_STATUS_CONTROLLER:
+            if (ev->data[0] == 0x40 && !gConfig.fForceSustainSpan) {
+                // CC64 Damper Pedal (sustain)
+                // https://dtm.noyu.me/wiki/GM%E2%80%93GS%E2%80%93XG_quick_reference
+                // GM/GS/XG spec: 0-63 = off, 64-127 = on; MSGS treats any
+                // non-zero value as "on", stacking sustain. Normalize to
+                // 0/127 so gray values (e.g. 58-61) are harmless.
+                // ForceSustainSpan=1 keeps the original value (pass-through).
+                ev->data[1] = (ev->data[1] < 64) ? 0 : 127;
+            }
             msg.reset(new ShortMessage(ev->status, ev->data[0], ev->data[1], 3));
             break;
 
@@ -397,7 +409,9 @@ static void midi_playback_hook(void *userdata) {
 int native_midi_detect() {
     if (gConfig.eMIDISynth == SYNTH_AIL32)
         return ail32_midi_detect();
-    return mpu401_init() == MPU401_OK;
+    if (mpu401_init() != MPU401_OK)
+        return 0;
+    return 1;
 }
 
 NativeMidiSong *native_midi_loadsong(const char *midifile) {

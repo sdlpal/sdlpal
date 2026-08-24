@@ -58,14 +58,10 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_ENABLEAVIPLAY,     PALCFG_BOOLEAN,  "EnableAviPlay",     13, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
 	{ PALCFG_ENABLEGLSL,        PALCFG_BOOLEAN,  "EnableGLSL",        10, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
     { PALCFG_ENABLEHDR,         PALCFG_BOOLEAN,  "EnableHDR",          9, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
-<<<<<<< HEAD
     { PALCFG_ENABLEGPU,         PALCFG_BOOLEAN,  "EnableGPU",          9, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
-	{ PALCFG_DOSFORCEMODE13H,   PALCFG_BOOLEAN,  "DOSForceMode13h",   15, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
-	{ PALCFG_DOSLOWENDOPT,      PALCFG_BOOLEAN,  "DOSLowEndOpt",      12, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
-=======
-	{ PALCFG_DOSFORCEMODE13H,   PALCFG_BOOLEAN,  "DOSForceMode13h",   15, MAKE_BOOLEAN(FALSE,                          FALSE,                 TRUE) },
-	{ PALCFG_DOSLOWENDOPT,      PALCFG_BOOLEAN,  "DOSLowEndOpt",      12, MAKE_BOOLEAN(FALSE,                          FALSE,                 TRUE) },
->>>>>>> 3c71d8b (chore(config): adjust DOS default settings again)
+	{ PALCFG_DOSFORCEMODE13H,   PALCFG_BOOLEAN,  "DOSForceMode13h",   15, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
+	{ PALCFG_DOSLOWENDOPT,      PALCFG_BOOLEAN,  "DOSLowEndOpt",      12, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
+	{ PALCFG_FORCESUSTAINSPAN,  PALCFG_BOOLEAN,  "ForceSustainSpan",  16, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
 
 	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SurroundOPLOffset", 17, MAKE_INTEGER(384,                           INT32_MIN,             INT32_MAX) },
 	{ PALCFG_LOGLEVEL,          PALCFG_INTEGER,  "LogLevel",           8, MAKE_INTEGER(PAL_DEFAULT_LOGLEVEL,          LOGLEVEL_MIN,          LOGLEVEL_MAX) },
@@ -416,6 +412,7 @@ PAL_LoadConfig(
 	values[PALCFG_RESAMPLEQUALITY].uValue   = RESAMPLER_QUALITY_LINEAR;
 	values[PALCFG_DOSFORCEMODE13H].bValue   = TRUE;
 	values[PALCFG_DOSLOWENDOPT].bValue      = TRUE;
+	values[PALCFG_FORCESUSTAINSPAN].bValue   = FALSE;
 	values[PALCFG_SAMPLERATE].uValue        = 22050;
 	eOPLCore                                = OPLCORE_REAL;  // Only need to set enum variable, not values array
 #endif
@@ -619,6 +616,7 @@ PAL_LoadConfig(
     gConfig.fEnableGPU = values[PALCFG_ENABLEGPU].bValue;
 	gConfig.fDOSForceMode13h = values[PALCFG_DOSFORCEMODE13H].bValue;
 	gConfig.fDOSLowEndOpt = values[PALCFG_DOSLOWENDOPT].bValue;
+	gConfig.fForceSustainSpan = values[PALCFG_FORCESUSTAINSPAN].bValue;
 	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
 
 	gConfig.iSurroundOPLOffset = values[PALCFG_SURROUNDOPLOFFSET].iValue;
@@ -696,6 +694,7 @@ PAL_SaveConfig(
         sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_ENABLEGPU), gConfig.fEnableGPU); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_DOSFORCEMODE13H), gConfig.fDOSForceMode13h); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_DOSLOWENDOPT), gConfig.fDOSLowEndOpt); fputs(buf, fp);
+		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_FORCESUSTAINSPAN), gConfig.fForceSustainSpan); fputs(buf, fp);
 
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_SURROUNDOPLOFFSET), gConfig.iSurroundOPLOffset); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_LOGLEVEL), gConfig.iLogLevel); fputs(buf, fp);
@@ -768,6 +767,7 @@ PAL_GetConfigItem(
 		case PALCFG_ENABLEGPU:        value.bValue = gConfig.fEnableGPU; break;
 		case PALCFG_DOSFORCEMODE13H:   value.bValue = gConfig.fDOSForceMode13h; break;
 		case PALCFG_DOSLOWENDOPT:      value.bValue = gConfig.fDOSLowEndOpt; break;
+		case PALCFG_FORCESUSTAINSPAN:    value.bValue = gConfig.fForceSustainSpan; break;
 		case PALCFG_SURROUNDOPLOFFSET: value.iValue = gConfig.iSurroundOPLOffset; break;
 		case PALCFG_LOGLEVEL:          value.iValue = gConfig.iLogLevel; break;
 		case PALCFG_AUDIODEVICE:       value.iValue = gConfig.iAudioDevice; break;
@@ -831,6 +831,7 @@ PAL_SetConfigItem(
 	case PALCFG_ENABLEGPU:         gConfig.fEnableGPU = value.bValue; break;
 	case PALCFG_DOSFORCEMODE13H:   gConfig.fDOSForceMode13h = value.bValue; break;
 	case PALCFG_DOSLOWENDOPT:      gConfig.fDOSLowEndOpt = value.bValue; break;
+	case PALCFG_FORCESUSTAINSPAN:    gConfig.fForceSustainSpan = value.bValue; break;
 	case PALCFG_SURROUNDOPLOFFSET: gConfig.iSurroundOPLOffset = value.iValue; break;
 	case PALCFG_LOGLEVEL:          gConfig.iLogLevel = value.iValue; break;
 	case PALCFG_AUDIODEVICE:       gConfig.iAudioDevice = value.iValue; break;
