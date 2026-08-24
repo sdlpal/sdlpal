@@ -279,7 +279,8 @@ int mpu401_read_byte(uint32_t timeout_ms, uint8_t *out_byte)
     uint32_t elapsed = 0;
     while (1) {
         uint8_t st = mpu_inb(status);
-        if (st & MPU401_STAT_RX_READY) {
+        // MPU-401 status port bit7: 0 = data readable, 1 = no data (inverted logic!)
+        if (!(st & MPU401_STAT_RX_READY)) {
             *out_byte = mpu_inb(data);
             return MPU401_OK;
         }
@@ -289,3 +290,4 @@ int mpu401_read_byte(uint32_t timeout_ms, uint8_t *out_byte)
     }
     return MPU401_ERR_TIMEOUT;
 }
+
