@@ -114,6 +114,11 @@ TSF_FillBuffer(
 				case TML_PITCH_BEND: 
 					tsf_channel_set_pitchwheel(player->pTinySoundFont, player->pMidiMessage->channel, player->pMidiMessage->pitch_bend);
 					break;
+				case TML_CHANNEL_PRESSURE:
+					/* channel pressure feeds into the vibrato LFO depth in
+					 * newer TSF versions - without this, D0 events are lost */
+					tsf_channel_set_pressure(player->pTinySoundFont, player->pMidiMessage->channel, player->pMidiMessage->channel_pressure / 127.0f);
+					break;
 				case TML_CONTROL_CHANGE:
 					tsf_channel_midi_control(player->pTinySoundFont, player->pMidiMessage->channel, player->pMidiMessage->control, player->pMidiMessage->control_value);
 					break;
