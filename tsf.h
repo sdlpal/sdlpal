@@ -450,6 +450,16 @@ struct tsf_region
 	int freqModLFO, modLfoToPitch;
 	float delayVibLFO;
 	int freqVibLFO, vibLfoToPitch;
+
+	/* Baked amounts for the two SF2.01 default modulators that target
+	 * VibLFO->Pitch. These default to 50 (per the SF2.01 spec / fluidsynth's
+	 * default_at2viblfo_mod & default_mod2viblfo_mod) and are overwritten at
+	 * soundfont load time from the instrument (OVERWRITE) and preset (ADD)
+	 * zone modulators, following fluidsynth's semantics.
+	 *   - modWheelAmount:        source MIDI CC1 (mod wheel)
+	 *   - channelPressureAmount: source MIDI channel pressure
+	 */
+	int modWheelAmount, channelPressureAmount;
 };
 
 struct tsf_preset
@@ -514,6 +524,19 @@ static void tsf_region_clear(struct tsf_region* i, TSF_BOOL for_relative)
 	TSF_MEMSET(i, 0, sizeof(struct tsf_region));
 	i->hikey = i->hivel = 127;
 	i->pitch_keycenter = 60; // C4
+
+	/* SF2.01 default modulators CC1->VibLFO->Pitch and CP->VibLFO->Pitch
+	 * have a default amount of 50 cents.  That default lives on the
+	 * instrument layer (for_relative == TSF_FALSE, i.e. instRegion), so a
+	 * region without any instrument modulator still vibratos at 50.
+	 * The preset layer (for_relative == TSF_TRUE, i.e. globalRegion) starts
+	 * at 0 instead: preset modulators only ADD their own contribution, so
+	 * the final merge can simply be zoneRegion += presetRegion. */
+	if (!for_relative)
+	{
+		i->modWheelAmount = 50;
+		i->channelPressureAmount = 50;
+	}
 	if (for_relative) return;
 
 	i->pitch_keytrack = 100;
@@ -718,6 +741,36 @@ static void tsf_region_envtosecs(struct tsf_envelope* p, TSF_BOOL sustainIsGain)
 	else p->sustain = 1.0f - (p->sustain / 1000.0f);
 }
 
+/* Apply a single SF2 modulator record to a region.  Only the two default
+ * modulators that target VibLFO->Pitch (dest = GenVibLfoToPitch = 6) are
+ * currently honored; the SF2's own modTransOper / modAmtSrcOper are ignored
+ * for now (see TODO in tsf_load_presets).
+ *   - src CC1 (mod wheel, modSrcOper = 0x0081)        -> region->modWheelAmount
+ *   - src CP  (channel pressure, modSrcOper = 0x000D) -> region->channelPressureAmount
+ * mode 0 = instrument-layer (OVERWRITE), 1 = preset-layer (ADD). */
+static void
+tsf_region_apply_mod(struct tsf_region *r, tsf_u16 src, tsf_u16 dst, tsf_s16 amt, int mode)
+{
+	int *slot;
+	if (dst != 6) return;	/* GenVibLfoToPitch; other destinations unimplemented */
+	if      (src == 0x0081) slot = &r->modWheelAmount;
+	else if (src == 0x000D) slot = &r->channelPressureAmount;
+	else                    return;	/* other sources unimplemented */
+	if (mode == 0)               /* instrument OVERWRITE */
+		*slot = amt;
+	else if (amt != 0)           /* preset ADD, skip amount 0 */
+		*slot += amt;
+}
+
+static void
+tsf_region_bake_vibfo_mods(struct tsf_region *r, const void *mods, int count, int mode)
+{
+	const tsf_u8 *p = (const tsf_u8*)mods;
+	for (int i = 0; i < count; i++, p += 10)
+		tsf_region_apply_mod(r, (tsf_u16)(p[0] | (p[1] << 8)), (tsf_u16)(p[2] | (p[3] << 8)),
+		                    (tsf_s16)(p[4] | (p[5] << 8)), mode);
+}
+
 static int tsf_load_presets(tsf* res, struct tsf_hydra *hydra, unsigned int fontSampleCount)
 {
 	enum { GenInstrument = 41, GenKeyRange = 43, GenVelRange = 44, GenSampleID = 53 };
@@ -791,6 +844,16 @@ static int tsf_load_presets(tsf* res, struct tsf_hydra *hydra, unsigned int font
 			struct tsf_region presetRegion = globalRegion;
 			int hadGenInstrument = 0;
 
+			// Modulators: preset zone (ADD semantics).
+			// TODO: only the two VibLFO->Pitch targeting default modulators
+			// are implemented; other modulators are still unsupported
+			// (as in upstream TinySoundFont).
+			{
+				int pm0 = ppbag->modNdx;
+				int pm1 = (ppbag + 1 < ppbagEnd ? (ppbag + 1)->modNdx : hydra->pmodNum);
+				tsf_region_bake_vibfo_mods(&presetRegion, hydra->pmods + pm0, pm1 - pm0, 1);
+			}
+
 			// Generators.
 			for (ppgen = hydra->pgens + ppbag->genNdx, ppgenEnd = hydra->pgens + ppbag[1].genNdx; ppgen != ppgenEnd; ppgen++)
 			{
@@ -808,6 +871,15 @@ static int tsf_load_presets(tsf* res, struct tsf_hydra *hydra, unsigned int font
 						// Generators.
 						struct tsf_region zoneRegion = instRegion;
 						int hadSampleID = 0;
+						// Modulators: instrument zone (OVERWRITE semantics).
+						// TODO: only the two VibLFO->Pitch targeting default
+						// modulators are implemented; other modulators are still
+						// unsupported (as in upstream TinySoundFont).
+						{
+							int im0 = pibag->instModNdx;
+							int im1 = (pibag + 1 < pibagEnd ? (pibag + 1)->instModNdx : hydra->imodNum);
+							tsf_region_bake_vibfo_mods(&zoneRegion, hydra->imods + im0, im1 - im0, 0);
+						}
 						for (pigen = hydra->igens + pibag->instGenNdx, pigenEnd = hydra->igens + pibag[1].instGenNdx; pigen != pigenEnd; pigen++)
 						{
 							if (pigen->genOper == GenSampleID)
@@ -824,6 +896,9 @@ static int tsf_load_presets(tsf* res, struct tsf_hydra *hydra, unsigned int font
 
 								//sum regions
 								tsf_region_operator(&zoneRegion, 0, TSF_NULL, &presetRegion);
+								/* Carry the baked preset-layer modulator amounts (ADD). */
+								zoneRegion.modWheelAmount += presetRegion.modWheelAmount;
+								zoneRegion.channelPressureAmount += presetRegion.channelPressureAmount;
 
 								// EG times need to be converted from timecents to seconds.
 								tsf_region_envtosecs(&zoneRegion.ampenv, TSF_TRUE);
@@ -854,20 +929,13 @@ static int tsf_load_presets(tsf* res, struct tsf_hydra *hydra, unsigned int font
 							else tsf_region_operator(&zoneRegion, pigen->genOper, &pigen->genAmount, TSF_NULL);
 						}
 
-						// Handle instrument's global zone.
 						if (pibag == hydra->ibags + pinst->instBagNdx && !hadSampleID)
 							instRegion = zoneRegion;
-
-						// Modulators (TODO)
-						//if (ibag->instModNdx < ibag[1].instModNdx) addUnsupportedOpcode("any modulator");
 					}
 					hadGenInstrument = 1;
 				}
 				else tsf_region_operator(&presetRegion, ppgen->genOper, &ppgen->genAmount, TSF_NULL);
 			}
-
-			// Modulators (TODO)
-			//if (pbag->modNdx < pbag[1].modNdx) addUnsupportedOpcode("any modulator");
 
 			// Handle preset's global zone.
 			if (ppbag == hydra->pbags + pphdr->presetBagNdx && !hadGenInstrument)
@@ -1840,8 +1908,8 @@ static void tsf_channel_setup_voice(tsf* f, struct tsf_voice* v)
 	float newpan = v->region->pan + c->panOffset;
 	v->playingChannel = f->channels->activeChannel;
 	v->noteGainDB += c->gainDB;
-	v->modWheel = c->modWheel;
-	v->channelPressure = c->channelPressure;
+	v->modWheel = c->modWheel * (float)v->region->modWheelAmount;
+	v->channelPressure = c->channelPressure * (float)v->region->channelPressureAmount;
 	tsf_voice_calcpitchratio(v, (c->pitchWheel == 8192 ? c->tuning : ((c->pitchWheel / 16383.0f * c->pitchRange * 2.0f) - c->pitchRange + c->tuning)), f->outSampleRate);
 	if      (newpan <= -0.5f) { v->panFactorLeft = 1.0f; v->panFactorRight = 0.0f; }
 	else if (newpan >=  0.5f) { v->panFactorLeft = 0.0f; v->panFactorRight = 1.0f; }
@@ -1973,9 +2041,10 @@ TSFDEF int tsf_channel_set_mod_wheel(tsf* f, int channel, float mod_wheel)
 	for (v = f->voices, vEnd = v + f->voiceNum; v != vEnd; v++)
 		if (v->playingPreset != -1 && v->playingChannel == channel)
 		{
-			v->modWheel = mod_wheel * 50.f;
+			/* Scale by this voice's baked mod-wheel→VibLFO→Pitch amount. */
+			v->modWheel = mod_wheel * (float)v->region->modWheelAmount;
 		}
-	c->modWheel = mod_wheel * 50.f;
+	c->modWheel = mod_wheel;	/* store raw 0..1; scaled per-region at voice setup */
 	return 1;
 }
 
@@ -2050,9 +2119,10 @@ TSFDEF int tsf_channel_set_pressure(tsf* f, int channel, float pressure)
 	for (v = f->voices, vEnd = v + f->voiceNum; v != vEnd; v++)
 		if (v->playingPreset != -1 && v->playingChannel == channel)
 		{
-			v->channelPressure = pressure * 50.f;
+			/* Scale by this voice's baked CP→VibLFO→Pitch amount. */
+			v->channelPressure = pressure * (float)v->region->channelPressureAmount;
 		}
-	c->channelPressure = pressure * 50.f;
+	c->channelPressure = pressure;	/* store raw 0..1; scaled per-region at voice setup */
 	return 1;
 }
 
@@ -2112,7 +2182,6 @@ TSFDEF void tsf_channel_sounds_off_all(tsf* f, int channel)
 
 TSFDEF int tsf_channel_midi_control(tsf* f, int channel, int controller, int control_value)
 {
-	unsigned int i = 0;
 	struct tsf_channel* c = tsf_channel_init(f, channel);
 	if (!c) return 0;
 	switch (controller)
@@ -2211,12 +2280,12 @@ TSFDEF float tsf_channel_get_tuning(tsf* f, int channel)
 
 TSFDEF float tsf_channel_get_mod_wheel(tsf* f, int channel)
 {
-	return (f->channels && channel < f->channels->channelNum ? (f->channels->channels[channel].modWheel / 50.f) : 0.0f);
+	return (f->channels && channel < f->channels->channelNum ? f->channels->channels[channel].modWheel : 0.0f);
 }
 
 TSFDEF float tsf_channel_get_pressure(tsf* f, int channel)
 {
-	return (f->channels && channel < f->channels->channelNum ? (f->channels->channels[channel].channelPressure / 50.f) : 0.0f);
+	return (f->channels && channel < f->channels->channelNum ? f->channels->channels[channel].channelPressure : 0.0f);
 }
 
 #ifdef __cplusplus
