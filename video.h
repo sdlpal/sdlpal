@@ -49,6 +49,9 @@ extern SDL_Surface *gpScreenBak;
 extern volatile BOOL g_bRenderPaused;
 extern volatile BOOL g_bAppInBackground;
 
+// Whether the real screen surface (gpScreenReal) is an 8-bit paletted surface.
+extern bool bUseIndex8Path;
+
 #if PAL_HAS_GLSL
 void Filter_StepParamSlot(int step);
 void Filter_StepCurrentParam(int step);
