@@ -306,7 +306,10 @@ VIDEO_Startup(
 #endif
 	
 #if SDL_VERSION_ATLEAST(3,5,0)
-   if(gConfig.fDOSForceMode13h && !gConfig.fEnableGLSL)
+   // Keep the paletted (index8) source path even when GLSL is enabled: the GLSL
+   // pipeline converts the palette image to RGBA internally (see video_glsl.c),
+   // so the two features are no longer mutually exclusive.
+   if(gConfig.fDOSForceMode13h)
       bUseIndex8Path = true;
 #endif
 
@@ -911,7 +914,6 @@ VIDEO_SetPalette(
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
    SDL_Rect rect;
-   SDL_Surface *windowSurface = SDL_GetWindowSurface(gpWindow);
 
    SDL_SetPaletteColors(gpPalette, rgPalette, 0, 256);
 
@@ -932,13 +934,23 @@ VIDEO_SetPalette(
       SDL_SetSurfaceColorMod(gpScreenReal, 0, 0, 0);
       SDL_SetSurfaceColorMod(gpScreenReal, 0xFF, 0xFF, 0xFF);
 
-      SDL_SetSurfacePalette(windowSurface, gpPalette);
-      SDL_SetSurfaceColorMod(windowSurface, 0, 0, 0);
-      SDL_SetSurfaceColorMod(windowSurface, 0xFF, 0xFF, 0xFF);
+      //
+      // Under GLSL the renderer owns the window and gpTexture is a plain RGBA
+      // render target, so the paletted output path does not apply. The palette
+      // is still uploaded to the shader pipeline from gpPalette.
+      //
+      if(!gConfig.fEnableGLSL) {
+         SDL_Surface *windowSurface = SDL_GetWindowSurface(gpWindow);
+         if(windowSurface) {
+            SDL_SetSurfacePalette(windowSurface, gpPalette);
+            SDL_SetSurfaceColorMod(windowSurface, 0, 0, 0);
+            SDL_SetSurfaceColorMod(windowSurface, 0xFF, 0xFF, 0xFF);
+         }
 
 #if SDL_VERSION_ATLEAST(3,4,0)
-      SDL_SetTexturePalette(gpTexture, gpPalette);
+         SDL_SetTexturePalette(gpTexture, gpPalette);
 #endif
+      }
    }
 
    rect.x = 0;
