@@ -84,6 +84,27 @@ static int glslversion_major, glslversion_minor;
 
 static SDL_Texture *origTexture;
 
+//
+// Paletted (INDEX8) source support.
+//
+// When the screen source is an 8-bit paletted surface (DOSForceMode13h or a
+// paletted display mode), the shader pipeline cannot sample it directly. A
+// built-in pre-pass samples the palette indices together with a 256x1 palette
+// lookup texture and writes ordinary RGBA, which is then fed to the regular
+// shader passes exactly like the all-RGBA8888 pipeline.
+//
+static uint32_t gPaletteConvProgramId = 0;
+static uint32_t gPaletteConvVAOId = 0;
+static uint32_t gPaletteConvVBOId = 0;
+static int gPaletteConvMVPSlot = -1;
+static int gPaletteConvTexSlot = -1;
+static int gPaletteConvPaletteSlot = -1;
+static GLuint gPaletteIndexTexture = 0;
+static GLuint gPaletteLUTTexture = 0;
+static SDL_Texture *gPaletteConvertedTexture = NULL;
+static int gPaletteConvertedWidth = 0;
+static int gPaletteConvertedHeight = 0;
+
 static char *frame_prev_prefixes[MAX_TEXTURES] = {
     "",
     "Prev",
@@ -263,6 +284,39 @@ color = rgb_to_srgb(color);         \r\n\
 FragColor.rgb=color;                \r\n\
 if( useTouchOverlay > 0 )           \r\n\
 FragColor = blend(FragColor, COMPAT_TEXTURE(TouchOverlay , v_texCoord.xy));     \r\n\
+}";
+
+//
+// Fragment shader of the built-in palette expansion pre-pass. Its input (tex0)
+// is the 8-bit palette-index image, Palette is a 256x1 RGBA lookup table, and
+// the output is ordinary RGBA that the rest of the pipeline can consume.
+//
+static char *palette_glsl_frag = "\r\n\
+#if __VERSION__ >= 130              \r\n\
+#define COMPAT_VARYING in           \r\n\
+#define COMPAT_TEXTURE texture      \r\n\
+out vec4 FragColor;                 \r\n\
+#else                               \r\n\
+#define COMPAT_VARYING varying      \r\n\
+#define FragColor gl_FragColor      \r\n\
+#define COMPAT_TEXTURE texture2D    \r\n\
+#endif                              \r\n\
+#ifdef GL_ES                        \r\n\
+#ifdef GL_FRAGMENT_PRECISION_HIGH   \r\n\
+precision highp float;              \r\n\
+#else                               \r\n\
+precision mediump float;            \r\n\
+#endif                              \r\n\
+#endif                              \r\n\
+COMPAT_VARYING vec2 v_texCoord;     \r\n\
+uniform sampler2D tex0;             \r\n\
+uniform sampler2D Palette;          \r\n\
+void main()                         \r\n\
+{                                   \r\n\
+float index = COMPAT_TEXTURE(tex0, v_texCoord).r;                   \r\n\
+float i = floor(index * 255.0 + 0.5);                               \r\n\
+vec2 pcoord = vec2((i + 0.5) / 256.0, 0.5);                         \r\n\
+FragColor = vec4(COMPAT_TEXTURE(Palette, pcoord).rgb, 1.0);         \r\n\
 }";
 
 static char *glslp_template = "\r\n\
@@ -478,6 +532,167 @@ void setupShaderParams(int pass){
         if(gTouchOverlaySlot < 0)
             UTIL_LogOutput(LOGLEVEL_DEBUG, "uniform TouchOverlay not exist\n");
     }
+}
+
+//
+// Pick a single-channel texture format able to hold palette indices. Core
+// profile (and GLES3) want GL_R8/GL_RED, older profiles want GL_LUMINANCE.
+//
+static void get_palette_index_formats(GLint *internalFormat, GLenum *format) {
+    if( glversion_major >= 3 ) {
+        *internalFormat = GL_R8;
+        *format = GL_RED;
+    } else {
+        *internalFormat = GL_LUMINANCE;
+        *format = GL_LUMINANCE;
+    }
+}
+
+static int surface_bits_per_pixel(SDL_Surface *surface) {
+#if SDL_VERSION_ATLEAST(3,0,0)
+    return SDL_BITSPERPIXEL(surface->format);
+#else
+    return surface->format->BitsPerPixel;
+#endif
+}
+
+static void setupPaletteConvParams(void) {
+    if(VAOSupported) glBindVertexArray(gPaletteConvVAOId);
+    glBindBuffer( GL_ARRAY_BUFFER, gPaletteConvVBOId );
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gEBOId );
+
+    int slot = glGetAttribLocation(gPaletteConvProgramId, "VertexCoord");
+    if(slot >= 0) {
+        glEnableVertexAttribArray(slot);
+        glVertexAttribPointer(slot, 4, GL_FLOAT, GL_FALSE, sizeof(struct VertexDataFormat), (GLvoid*)offsetof(struct VertexDataFormat, position));
+    }else{
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "palette pre-pass: attrib VertexCoord not exist\n");
+    }
+
+    slot = glGetAttribLocation(gPaletteConvProgramId, "TexCoord");
+    if(slot >= 0) {
+        glEnableVertexAttribArray(slot);
+        glVertexAttribPointer(slot, 4, GL_FLOAT, GL_FALSE, sizeof(struct VertexDataFormat), (GLvoid*)offsetof(struct VertexDataFormat, texCoord));
+    }else{
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "palette pre-pass: attrib TexCoord not exist\n");
+    }
+
+    gPaletteConvMVPSlot      = glGetUniformLocation(gPaletteConvProgramId, "MVPMatrix");
+    gPaletteConvTexSlot      = glGetUniformLocation(gPaletteConvProgramId, "tex0");
+    gPaletteConvPaletteSlot  = glGetUniformLocation(gPaletteConvProgramId, "Palette");
+}
+
+//
+// Expand the paletted screen source into gPaletteConvertedTexture (ordinary
+// RGBA) and return it. This is the pre-pass whose input is a palette image;
+// every pass after it receives normal RGBA.
+//
+static SDL_Texture *VIDEO_GLSL_ConvertPalettedSource(void) {
+    if( !gPaletteConvertedTexture || !gPaletteConvProgramId || !gpScreenReal )
+        return NULL;
+    if( surface_bits_per_pixel(gpScreenReal) != 8 )
+        return NULL;
+
+    int w = gPaletteConvertedWidth;
+    int h = gPaletteConvertedHeight;
+    GLint internalFormat;
+    GLenum format;
+    get_palette_index_formats(&internalFormat, &format);
+    (void)internalFormat; // only the upload format matters for TexSubImage
+
+    //
+    // Upload the palette indices.
+    //
+    glBindTexture(GL_TEXTURE_2D, gPaletteIndexTexture);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+#if !GLES
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+#endif
+    if( gpScreenReal->pitch == w ) {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, format, GL_UNSIGNED_BYTE, gpScreenReal->pixels);
+    } else {
+        uint8_t *packed = (uint8_t *)malloc((size_t)w * (size_t)h);
+        if( packed ) {
+            for( int y = 0; y < h; y++ )
+                memcpy(packed + (size_t)y * (size_t)w, (uint8_t *)gpScreenReal->pixels + (size_t)y * gpScreenReal->pitch, (size_t)w);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, format, GL_UNSIGNED_BYTE, packed);
+            free(packed);
+        }
+    }
+
+    //
+    // Upload the palette as a 256x1 RGBA lookup table. Alpha is always opaque:
+    // SDL_Color entries coming from fades may carry uninitialized alpha.
+    //
+    {
+        uint8_t lut[256 * 4];
+        SDL_Color *colors = VIDEO_GetPalette();
+        for( int i = 0; i < 256; i++ ) {
+            lut[i * 4 + 0] = colors[i].r;
+            lut[i * 4 + 1] = colors[i].g;
+            lut[i * 4 + 2] = colors[i].b;
+            lut[i * 4 + 3] = 0xFF;
+        }
+        glBindTexture(GL_TEXTURE_2D, gPaletteLUTTexture);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGBA, GL_UNSIGNED_BYTE, lut);
+    }
+
+    //
+    // Draw the conversion into the RGBA target.
+    //
+    SDL_SetRenderTarget(gpRenderer, gPaletteConvertedTexture);
+    SDL_RenderClear(gpRenderer);
+    // SDL3 queues render commands; flush them so the target is bound and the
+    // clear is executed before we issue our own raw GL draw below.
+#if SDL_VERSION_ATLEAST(3,0,0)
+    SDL_FlushRenderer(gpRenderer);
+#endif
+    // SDL may leave the GL viewport at the window size when bypassing its draw
+    // path, so make sure it matches the conversion target.
+    glViewport(0, 0, w, h);
+
+    glUseProgram(gPaletteConvProgramId);
+    setupPaletteConvParams();
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, gPaletteIndexTexture);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, gPaletteLUTTexture);
+    if(gPaletteConvTexSlot >= 0)     glUniform1i(gPaletteConvTexSlot, 0);
+    if(gPaletteConvPaletteSlot >= 0) glUniform1i(gPaletteConvPaletteSlot, 1);
+    if(gPaletteConvMVPSlot >= 0)     glUniformMatrix4fv(gPaletteConvMVPSlot, 1, GL_FALSE, gOrthoMatrixes[1].m);
+
+    struct VertexDataFormat vData[4];
+    GLfloat maxx = (GLfloat)gRendererWidth;
+    GLfloat maxy = (GLfloat)gRendererHeight;
+
+    vData[0].texCoord.s = 0.0f; vData[0].texCoord.t = 0.0f;
+    vData[1].texCoord.s = 1.0f; vData[1].texCoord.t = 0.0f;
+    vData[2].texCoord.s = 1.0f; vData[2].texCoord.t = 1.0f;
+    vData[3].texCoord.s = 0.0f; vData[3].texCoord.t = 1.0f;
+
+    vData[0].position.x = 0.0f; vData[0].position.y = 0.0f; vData[0].position.z = 0.0f; vData[0].position.w = 1.0f;
+    vData[1].position.x = maxx; vData[1].position.y = 0.0f; vData[1].position.z = 0.0f; vData[1].position.w = 1.0f;
+    vData[2].position.x = maxx; vData[2].position.y = maxy; vData[2].position.z = 0.0f; vData[2].position.w = 1.0f;
+    vData[3].position.x = 0.0f; vData[3].position.y = maxy; vData[3].position.z = 0.0f; vData[3].position.w = 1.0f;
+
+    if(VAOSupported) glBindVertexArray(gPaletteConvVAOId);
+    glBindBuffer(GL_ARRAY_BUFFER, gPaletteConvVBOId);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(struct VertexDataFormat), vData);
+    if(!VAOSupported) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gEBOId);
+    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
+    if(VAOSupported) glBindVertexArray(0);
+    if(!VAOSupported) {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glUseProgram(0);
+
+    return gPaletteConvertedTexture;
 }
 
 GLint get_gl_clamp_to_border() {
@@ -915,6 +1130,48 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
         SDL_SetTextureScaleMode(framePrevTextures[i], VIDEO_GetScaleMode());
 #endif
     }
+
+    //
+    // (Re)create the resources used by the paletted source pre-pass.
+    //
+    if( bUseIndex8Path && gpScreenReal ) {
+        int w = gpScreenReal->w;
+        int h = gpScreenReal->h;
+        GLint internalFormat;
+        GLenum format;
+        get_palette_index_formats(&internalFormat, &format);
+
+        if( gPaletteIndexTexture )
+            glDeleteTextures(1, &gPaletteIndexTexture);
+        glGenTextures(1, &gPaletteIndexTexture);
+        glBindTexture(GL_TEXTURE_2D, gPaletteIndexTexture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format, GL_UNSIGNED_BYTE, NULL);
+
+        if( gPaletteLUTTexture )
+            glDeleteTextures(1, &gPaletteLUTTexture);
+        glGenTextures(1, &gPaletteLUTTexture);
+        glBindTexture(GL_TEXTURE_2D, gPaletteLUTTexture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexImage2D(GL_TEXTURE_2D, 0, (glversion_major >= 3) ? GL_RGBA8 : GL_RGBA, 256, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+        if( gPaletteConvertedTexture )
+            SDL_DestroyTexture(gPaletteConvertedTexture);
+        gPaletteConvertedTexture = SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w, h);
+#if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
+        SDL_SetTextureScaleMode(gPaletteConvertedTexture, VIDEO_GetScaleMode());
+#endif
+        gPaletteConvertedWidth = w;
+        gPaletteConvertedHeight = h;
+        UTIL_LogOutput(LOGLEVEL_DEBUG, "GLSL: paletted source enabled, expanding %dx%d indices to RGBA\n", w, h);
+    }
+
     return SDL_CreateTexture(gpRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gConfig.dwScreenWidth, gConfig.dwScreenHeight);
 }
 
@@ -924,7 +1181,32 @@ void VIDEO_GLSL_RenderCopy()
     if( gGLSLP.shader_params[0].filter_linear)
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 #endif
-    origTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenReal);
+    bool ownsOrigTexture = true;
+    if( bUseIndex8Path ) {
+        //
+        // Paletted source: the built-in palette expansion pre-pass turns the
+        // index image into ordinary RGBA, which is what every shader pass
+        // downstream is written against.
+        //
+        origTexture = VIDEO_GLSL_ConvertPalettedSource();
+        if( origTexture ) {
+            ownsOrigTexture = false;
+        } else {
+            UTIL_LogOutput(LOGLEVEL_ERROR, "GLSL: palette expansion unavailable, falling back to CPU conversion\n");
+            SDL_Surface *converted = SDL_CreateRGBSurfaceWithFormat(0, gpScreenReal->w, gpScreenReal->h, 32, SDL_PIXELFORMAT_ARGB8888);
+            if( converted ) {
+                SDL_BlitSurface(gpScreenReal, NULL, converted, NULL);
+                origTexture = SDL_CreateTextureFromSurface(gpRenderer, converted);
+                SDL_FreeSurface(converted);
+            }
+        }
+    } else {
+        origTexture = SDL_CreateTextureFromSurface(gpRenderer, gpScreenReal);
+    }
+    if( !origTexture ) {
+        UTIL_LogOutput(LOGLEVEL_ERROR, "GLSL: cannot create source texture: %s\n", SDL_GetError());
+        return;
+    }
 #if SDL_VERSION_ATLEAST(3,0,0) && SDL_MINOR_VERSION < 3
     SDL_SetTextureScaleMode(origTexture, VIDEO_GetScaleMode());
 #endif
@@ -950,13 +1232,14 @@ void VIDEO_GLSL_RenderCopy()
     SDL_RenderClear(gpRenderer);
     gPassID++;
     SDL_RenderCopy(gpRenderer, prevTexture, NULL, &gTextureRect);
-    SDL_DestroyTexture(origTexture);
+    if( ownsOrigTexture )
+        SDL_DestroyTexture(origTexture);
     
     SDL_SetRenderTarget(gpRenderer, NULL);
     SDL_RenderClear(gpRenderer);
     gPassID = 0;
     SDL_RenderCopy(gpRenderer, gpTexture, NULL, NULL);
-    
+
     SDL_GL_SwapWindow(gpWindow);
     
     prevTexture = framePrevTextures[PREV_TEXTURES];
@@ -1139,6 +1422,23 @@ void VIDEO_GLSL_Setup() {
     
     UTIL_LogSetPrelude(NULL);
 
+    //
+    // Built-in palette expansion pre-pass. It is only used when the screen
+    // source is paletted; it shares the stock vertex shader.
+    //
+    if(VAOSupported) glGenVertexArrays(1, &gPaletteConvVAOId);
+    if(VAOSupported) glBindVertexArray(gPaletteConvVAOId);
+    glGenBuffers(1, &gPaletteConvVBOId);
+    glBindBuffer(GL_ARRAY_BUFFER, gPaletteConvVBOId);
+    glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(struct VertexDataFormat), vData, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gEBOId);
+    UTIL_LogSetPrelude("[PALETTE] ");
+    gPaletteConvProgramId = compileProgram(plain_glsl_vert, palette_glsl_frag, 1);
+    if(gPaletteConvProgramId)
+        setupPaletteConvParams();
+    if(VAOSupported) glBindVertexArray(0);
+    UTIL_LogSetPrelude(NULL);
+
     GLSLP tempGLSLP;
     memset(&tempGLSLP,0,sizeof(GLSLP));
     if( UTIL_IsFileExist(MID_GLSLP) && parse_glslp(MID_GLSLP,&tempGLSLP) && tempGLSLP.orig_filter && strcmp( tempGLSLP.orig_filter, gConfig.pszShader ) == 0 ) {
@@ -1218,6 +1518,21 @@ void VIDEO_GLSL_Destroy() {
         if( framePrevTextures[i] )
             SDL_DestroyTexture(framePrevTextures[i]);
     memset(framePrevTextures,0,sizeof(framePrevTextures));
+
+    if( gPaletteIndexTexture ) {
+        glDeleteTextures(1, &gPaletteIndexTexture);
+        gPaletteIndexTexture = 0;
+    }
+    if( gPaletteLUTTexture ) {
+        glDeleteTextures(1, &gPaletteLUTTexture);
+        gPaletteLUTTexture = 0;
+    }
+    if( gPaletteConvertedTexture ) {
+        SDL_DestroyTexture(gPaletteConvertedTexture);
+        gPaletteConvertedTexture = NULL;
+    }
+    // NOTE: programs/buffers/VAOs are intentionally left alone here, matching
+    // the lifetime of gProgramIds/gVBOIds/gVAOIds which are also not released.
 }
 
 static int slot = 0;
