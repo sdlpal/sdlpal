@@ -24,9 +24,8 @@ jobs:
       run: |
         cd 3rd/SDL
         mkdir $HOME/cache
-        cmake -DSDL_SHARED=OFF -DSDL_STATIC=ON -DSDL_TEST_LIBRARY=OFF -DCMAKE_INSTALL_PREFIX:PATH=$HOME/cache . -G Unix\ Makefiles
-        cmake --build . --config Release -v
-        cmake --install .
+        cmake -DSDL_SHARED=OFF -DSDL_STATIC=ON -DSDL_TEST_LIBRARY=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX:PATH=$HOME/cache -S. -Bbuild_sdl3 -G Unix\ Makefiles
+        cmake --build build_sdl3 --target install
         echo "PKG_CONFIG_PATH=$HOME/cache/lib/pkgconfig" >> "$GITHUB_ENV"
     - name: make
       run: cd unix && make CCFLAGS="-DAPPIMAGE=1"
