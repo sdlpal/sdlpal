@@ -43,6 +43,9 @@ jobs:
         AUTO_UPDATE_USER: ${{secrets.AUTO_UPDATE_USER}}
         AUTO_UPDATE_PASS: ${{secrets.AUTO_UPDATE_PASS}}
         AUTO_UPDATE_EMAIL: ${{secrets.AUTO_UPDATE_EMAIL}}
+        # Pass the commit message through the environment: interpolating it
+        # straight into the shell breaks on newlines, quotes and backticks.
+        COMMIT_MSG: ${{ github.event.head_commit.message }}
       run: |
         git config --global user.email ${AUTO_UPDATE_EMAIL}
         git config --global user.name "AutoUpdate"
@@ -50,7 +53,7 @@ jobs:
         cp -f emscripten/*.{html,js,wasm,wasm.map,png} ~/demo
         cd ~/demo
         git add -A
-        git commit -m"${{ github.event.head_commit.message }}" -m"sdlpal/sdlpal@${GITHUB_SHA}" -a
+        git commit -m"$COMMIT_MSG" -m"sdlpal/sdlpal@${GITHUB_SHA}" -a
         git push "https://${AUTO_UPDATE_USER}:${AUTO_UPDATE_PASS}@github.com/sdlpal/demo"
     - name: Deploy to CloudSmith
       if: github.repository == 'sdlpal/sdlpal' && github.event_name != 'pull_request'
