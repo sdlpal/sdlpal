@@ -1,0 +1,33 @@
+name: PS2 CI
+
+on:
+  push:
+    branches: '*'
+    tags: 'v*'
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ps2dev/ps2dev:latest
+    steps:
+    - name: Install Dependencies
+      run: |
+          apk --no-cache add git cmake make gmp mpc1 mpfr
+    - uses: actions/checkout@v4
+    - name: submodules
+      run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        sed -i 's#\.\./#https://github.com/sdlpal/#g' .gitmodules
+        git submodule init && git submodule update
+    - name: make
+      run: cd ps2 && make all
+    - name: Release ELF Executable
+      uses: actions/upload-artifact@v7
+      with:
+        name: sdlpal
+        path: |
+          ps2/sdlpal.elf
+
+
