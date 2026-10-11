@@ -25,7 +25,7 @@ EE_LDFLAGS = -L$(PS2SDK)/ports/lib -L$(PS2SDK)/iop/lib/ -L$(PS2SDK)/ee/lib/ -L$(
 EE_CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti -std=c++11 -I. -I../
 EE_ASFLAGS = $(CFLAGS)
 
-EE_LIBS = -lSDL3 -lSDL3_mixer -lmodplug -lxmp -logg -lvorbis -lvorbisfile -lopus -lopusfile -laudsrv \
+EE_LIBS = -lSDL3 -logg -lvorbis -lvorbisfile -lopus -lopusfile -laudsrv \
 -lgskit -ldma -ldmakit -ldraw -ldebug -lps2_drivers -lpatches -lconfig -latomic -lstdc++ -lm -lc
 
 all: $(EE_BIN)

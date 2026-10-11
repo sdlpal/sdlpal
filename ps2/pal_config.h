@@ -24,6 +24,7 @@
 
 #ifndef PAL_CONFIG_H
 # define PAL_CONFIG_H
+
 # define PAL_HAS_JOYSTICKS     1
 # define PAL_HAS_MP3           1
 # define PAL_HAS_OGG           1
