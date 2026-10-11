@@ -53,9 +53,6 @@
 
 # define PAL_FORCE_UPDATE_ON_PALETTE_SET    1
 
-# include <strings.h>
-# include <ctype.h>
 # include <sys/time.h>
-# include <alloca.h>
 
 #endif
