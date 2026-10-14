@@ -224,7 +224,7 @@ AUDIO_OpenDevice(
     if (driver_name) {
         UTIL_LogOutput(LOGLEVEL_VERBOSE, "Audio subsystem initialized; current driver is %s.\n", driver_name);
         if(SDL_strncmp(driver_name, "wasapi", 6)==0)
-            gConfig.wAudioBufferSize = PAL_AUDIO_FORCE_BUFFER_SIZE_WASAPI;
+            gConfig.dwAudioBufferSize = PAL_AUDIO_FORCE_BUFFER_SIZE_WASAPI;
     } else {
         UTIL_LogOutput(LOGLEVEL_VERBOSE, "Audio subsystem not initialized.\n");
     }
@@ -261,9 +261,9 @@ AUDIO_OpenDevice(
 
 #if SDL_VERSION_ATLEAST(3,0,0)
    memcpy(&spec, &gAudioDevice.spec, sizeof(SDL_AudioSpec));
-   SDL_SetHint(SDL_HINT_AUDIO_DEVICE_SAMPLE_FRAMES, PAL_va(0, "%d", gConfig.wAudioBufferSize));
+   SDL_SetHint(SDL_HINT_AUDIO_DEVICE_SAMPLE_FRAMES, PAL_va(0, "%d", gConfig.dwAudioBufferSize));
 #else
-   gAudioDevice.spec.samples = gConfig.wAudioBufferSize;
+   gAudioDevice.spec.samples = gConfig.dwAudioBufferSize;
    gAudioDevice.spec.callback = AUDIO_FillBuffer;
 #endif
 
@@ -286,7 +286,7 @@ AUDIO_OpenDevice(
 #else
 # define MULTIPLIER 1
 #endif
-      gAudioDevice.pSoundBuffer = malloc(gConfig.wAudioBufferSize * MULTIPLIER * gConfig.iAudioChannels * sizeof(short));
+      gAudioDevice.pSoundBuffer = malloc(gConfig.dwAudioBufferSize * MULTIPLIER * gConfig.iAudioChannels * sizeof(short));
    }
 
    gAudioDevice.fOpened = TRUE;

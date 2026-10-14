@@ -38,7 +38,14 @@ typedef struct tagRIXPLAYER :
    Copl                      *opl;
    CrixPlayer                *rix;
    void                      *resampler[2];
-   BYTE                       buf[(PAL_MAX_SAMPLERATE + 69) / 70 * sizeof(short) * 2];
+   //
+   // Mixing scratch for one 70 Hz RIX tick. Sized from the effective output
+   // rate at init time (see RIX_Init) so it never has to be a compile-time
+   // worst case, and so an arbitrarily high SampleRate cannot inflate the
+   // player struct.
+   //
+   LPBYTE                     buf;
+   INT                        buf_size;
    LPBYTE                     pos;
    INT                        iNextMusic; // the next music number to switch to
    DWORD                      dwStartFadeTime;
@@ -165,7 +172,7 @@ RIX_FillBuffer(
 		//
 		// Fill the buffer with sound data
 		//
-		int buf_max_len = gConfig.iSampleRate / 70 * gConfig.iAudioChannels * sizeof(short);
+		int buf_max_len = pRixPlayer->buf_size;
 		bool fContinue = true;
 		while (len > 0 && fContinue)
 		{
@@ -261,6 +268,18 @@ RIX_FillBuffer(
 	}
 }
 
+// Size in bytes of one 70 Hz RIX tick of mixed output at the current effective
+// sample rate. The +69/+1 rounding keeps this an upper bound on
+// (iSampleRate / 70) * channels * sizeof(short) even when the rate is not a
+// multiple of 70, so the tick can never overrun the buffer.
+static INT
+RIX_GetBufferSize(
+	VOID
+)
+{
+	return (INT)(((long long)gConfig.iSampleRate + 69) / 70) * gConfig.iAudioChannels * (INT)sizeof(short);
+}
+
 static VOID
 RIX_Shutdown(
 	VOID     *object
@@ -289,6 +308,7 @@ RIX_Shutdown(
 				resampler_delete(pRixPlayer->resampler[i]);
 		delete pRixPlayer->rix;
 		delete pRixPlayer->opl;
+		free(pRixPlayer->buf);
 		delete pRixPlayer;
 	}
 }
@@ -395,6 +415,24 @@ RIX_Init(
 		pRixPlayer->FillBuffer = RIX_FillBuffer;
 		pRixPlayer->Shutdown = RIX_Shutdown;
 		pRixPlayer->Play = RIX_Play;
+
+		//
+		// Allocate the per-tick mixing scratch at the effective sample rate.
+		// This replaces a compile-time worst-case array so that a high
+		// SampleRate costs only the memory it actually needs.
+		//
+		pRixPlayer->buf_size = RIX_GetBufferSize();
+		if (pRixPlayer->buf_size <= 0)
+		{
+			delete pRixPlayer;
+			return NULL;
+		}
+		pRixPlayer->buf = (LPBYTE)calloc(1, pRixPlayer->buf_size);
+		if (pRixPlayer->buf == NULL)
+		{
+			delete pRixPlayer;
+			return NULL;
+		}
 	}
 
 	auto chip = (Copl::ChipType)gConfig.eOPLChip;
@@ -406,7 +444,7 @@ RIX_Init(
 	Copl* opl = CEmuopl::CreateEmuopl((OPLCORE::TYPE)gConfig.eOPLCore, chip, gConfig.iOPLSampleRate);
 	if (NULL == opl)
 	{
-		delete pRixPlayer;
+		RIX_Shutdown(pRixPlayer);
 		return NULL;
 	}
 
@@ -416,7 +454,7 @@ RIX_Init(
 		if (NULL == tmpopl)
 		{
 			delete opl;
-			delete pRixPlayer;
+			RIX_Shutdown(pRixPlayer);
 			return NULL;
 		}
 		opl = tmpopl;
@@ -426,15 +464,14 @@ RIX_Init(
 	if (pRixPlayer->opl == NULL)
 	{
 		delete opl;
-		delete pRixPlayer;
+		RIX_Shutdown(pRixPlayer);
 		return NULL;
 	}
 
 	pRixPlayer->rix = new CrixPlayer(pRixPlayer->opl);
 	if (pRixPlayer->rix == NULL)
 	{
-		delete pRixPlayer->opl;
-		delete pRixPlayer;
+		RIX_Shutdown(pRixPlayer);
 		return NULL;
 	}
 
@@ -443,10 +480,7 @@ RIX_Init(
 	//
 	if (!pRixPlayer->rix->load(szFileName, CProvider_Filesystem()))
 	{
-		delete pRixPlayer->rix;
-		delete pRixPlayer->opl;
-		delete pRixPlayer;
-		pRixPlayer = NULL;
+		RIX_Shutdown(pRixPlayer);
 		return NULL;
 	}
 

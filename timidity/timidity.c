@@ -560,7 +560,7 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
 	  return NULL;
   }
 
-  uint32_t samples = gConfig.wAudioBufferSize;
+  uint32_t samples = gConfig.dwAudioBufferSize;
   song->buffer_size = samples;
   song->resample_buffer = safe_malloc(samples * sizeof(sample_t));
   song->common_buffer = safe_malloc(samples * 2 * sizeof(Sint32));

@@ -370,9 +370,9 @@ INT UTIL_Platform_Init(int argc, char *argv[])
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var)) {
         gConfig.iSampleRate = atoi(var.value);
     }
-    gConfig.wAudioBufferSize = 1;
-    while (gConfig.wAudioBufferSize < 4 * gConfig.iSampleRate / 60)
-        gConfig.wAudioBufferSize *= 2;
+    gConfig.dwAudioBufferSize = 1;
+    while (gConfig.dwAudioBufferSize < 4 * gConfig.iSampleRate / 60)
+        gConfig.dwAudioBufferSize *= 2;
 
     var.key = "sdlpal_resample_quality";
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var)) {

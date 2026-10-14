@@ -28,7 +28,8 @@
 #include "common.h"
 #include "palcommon.h"
 
-#define     PAL_MAX_SAMPLERATE           49716
+#define     PAL_MIN_SAMPLERATE           1
+#define     PAL_MAX_SAMPLERATE           INT32_MAX
 #define     PAL_MAX_VOLUME               100
 
 typedef enum tagPALCFG_ITEM
@@ -209,7 +210,7 @@ typedef struct tagCONFIGURATION
 	OPLCORE_TYPE     eOPLCore;
 	OPLCHIP_TYPE     eOPLChip;
 	MIDISYNTHTYPE    eMIDISynth;
-	WORD             wAudioBufferSize;
+	DWORD            dwAudioBufferSize;
 	BOOL             fIsWIN95;
 	BOOL             fUseSurroundOPL;
 	BOOL             fKeepAspectRatio;

@@ -168,7 +168,7 @@ void InitControls()
    gWidgets.oplchip->value(gConfig.eOPLChip);
    sprintf(buffer, "%d", gConfig.iOPLSampleRate); gWidgets.oplrate->value(buffer);
    gWidgets.surround->value(gConfig.fUseSurroundOPL ? 1 : 0);
-   sprintf(buffer, "%d", gConfig.wAudioBufferSize); gWidgets.buffer->value(buffer);
+   sprintf(buffer, "%u", (unsigned)gConfig.dwAudioBufferSize); gWidgets.buffer->value(buffer);
    gWidgets.quality->value(gConfig.iResampleQuality);
    gWidgets.music->value(gConfig.iMusicVolume);
    gWidgets.sound->value(gConfig.iSoundVolume);
@@ -207,7 +207,7 @@ void SaveControls()
    gConfig.eOPLChip = gConfig.eOPLCore == OPLCORE_NUKED ? OPLCHIP_OPL3 : (OPLCHIP_TYPE)gWidgets.oplchip->value();
    gConfig.iOPLSampleRate = atoi(gWidgets.oplrate->value());
    gConfig.fUseSurroundOPL = gWidgets.surround->value();
-   gConfig.wAudioBufferSize = atoi(gWidgets.buffer->value());
+   gConfig.dwAudioBufferSize = atoi(gWidgets.buffer->value());
    gConfig.iResampleQuality = (int)gWidgets.quality->value();
    gConfig.iMusicVolume = (int)gWidgets.music->value();
    gConfig.iSoundVolume = (int)gWidgets.sound->value();

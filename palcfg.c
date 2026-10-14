@@ -60,9 +60,9 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_AUDIODEVICE,       PALCFG_INTEGER,  "AudioDevice",       11, MAKE_INTEGER(-1,                            INT32_MIN,             INT32_MAX) },
 
 	{ PALCFG_AUDIOBUFFERSIZE,   PALCFG_UNSIGNED, "AudioBufferSize",   15, MAKE_UNSIGNED(PAL_AUDIO_DEFAULT_BUFFER_SIZE, 2,                     32768) },
-	{ PALCFG_OPLSAMPLERATE,     PALCFG_UNSIGNED, "OPLSampleRate",     13, MAKE_UNSIGNED(49716,                         0,                     UINT32_MAX) },
+	{ PALCFG_OPLSAMPLERATE,     PALCFG_UNSIGNED, "OPLSampleRate",     13, MAKE_UNSIGNED(49716,                         PAL_MIN_SAMPLERATE,    PAL_MAX_SAMPLERATE) },
 	{ PALCFG_RESAMPLEQUALITY,   PALCFG_UNSIGNED, "ResampleQuality",   15, MAKE_UNSIGNED(RESAMPLER_QUALITY_MAX,         RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX) }, // Default for best quality
-	{ PALCFG_SAMPLERATE,        PALCFG_UNSIGNED, "SampleRate",        10, MAKE_UNSIGNED(DEFAULT_SAMPLERATE,            0,                     PAL_MAX_SAMPLERATE) },
+	{ PALCFG_SAMPLERATE,        PALCFG_UNSIGNED, "SampleRate",        10, MAKE_UNSIGNED(DEFAULT_SAMPLERATE,            PAL_MIN_SAMPLERATE,    PAL_MAX_SAMPLERATE) },
 	{ PALCFG_MUSICVOLUME,       PALCFG_UNSIGNED, "MusicVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_SOUNDVOLUME,       PALCFG_UNSIGNED, "SoundVolume",       11, MAKE_UNSIGNED(PAL_MAX_VOLUME,                0,                     PAL_MAX_VOLUME) },        // Default for maximum volume
 	{ PALCFG_WINDOWHEIGHT,      PALCFG_UNSIGNED, "WindowHeight",      12, MAKE_UNSIGNED(PAL_DEFAULT_WINDOW_HEIGHT,     0,                     UINT32_MAX) },
@@ -589,7 +589,7 @@ PAL_LoadConfig(
 	gConfig.iSampleRate = values[PALCFG_SAMPLERATE].uValue;
 	gConfig.iOPLSampleRate = values[PALCFG_OPLSAMPLERATE].uValue;
 	gConfig.iResampleQuality = values[PALCFG_RESAMPLEQUALITY].uValue;
-	gConfig.wAudioBufferSize = (WORD)values[PALCFG_AUDIOBUFFERSIZE].uValue;
+	gConfig.dwAudioBufferSize = values[PALCFG_AUDIOBUFFERSIZE].uValue;
 	gConfig.iMusicVolume = values[PALCFG_MUSICVOLUME].uValue;
 	gConfig.iSoundVolume = values[PALCFG_SOUNDVOLUME].uValue;
 
@@ -649,7 +649,7 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_LOGLEVEL), gConfig.iLogLevel); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_AUDIODEVICE), gConfig.iAudioDevice); fputs(buf, fp);
 
-		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_AUDIOBUFFERSIZE), gConfig.wAudioBufferSize); fputs(buf, fp);
+		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_AUDIOBUFFERSIZE), gConfig.dwAudioBufferSize); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_OPLSAMPLERATE), gConfig.iOPLSampleRate); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_RESAMPLEQUALITY), gConfig.iResampleQuality); fputs(buf, fp);
 		sprintf(buf, "%s=%u\n", PAL_ConfigName(PALCFG_SAMPLERATE), gConfig.iSampleRate); fputs(buf, fp);
@@ -711,7 +711,7 @@ PAL_GetConfigItem(
 		case PALCFG_LOGLEVEL:          value.iValue = gConfig.iLogLevel; break;
 		case PALCFG_AUDIODEVICE:       value.iValue = gConfig.iAudioDevice; break;
 
-		case PALCFG_AUDIOBUFFERSIZE:   value.uValue = gConfig.wAudioBufferSize; break;
+		case PALCFG_AUDIOBUFFERSIZE:   value.uValue = gConfig.dwAudioBufferSize; break;
 		case PALCFG_OPLSAMPLERATE:     value.uValue = gConfig.iOPLSampleRate; break;
 		case PALCFG_RESAMPLEQUALITY:   value.uValue = gConfig.iResampleQuality; break;
 		case PALCFG_SAMPLERATE:        value.uValue = gConfig.iSampleRate; break;
@@ -765,7 +765,7 @@ PAL_SetConfigItem(
 	case PALCFG_LOGLEVEL:          gConfig.iLogLevel = value.iValue; break;
 	case PALCFG_AUDIODEVICE:       gConfig.iAudioDevice = value.iValue; break;
 
-	case PALCFG_AUDIOBUFFERSIZE:   gConfig.wAudioBufferSize = value.uValue; break;
+	case PALCFG_AUDIOBUFFERSIZE:   gConfig.dwAudioBufferSize = value.uValue; break;
 	case PALCFG_OPLSAMPLERATE:     gConfig.iOPLSampleRate = value.uValue; break;
 	case PALCFG_RESAMPLEQUALITY:   gConfig.iResampleQuality = value.uValue; break;
 	case PALCFG_SAMPLERATE:        gConfig.iSampleRate = value.uValue; break;
@@ -952,6 +952,7 @@ PAL_SetConfigInteger(
 	if (gConfigItems[item].Type == PALCFG_INTEGER)
 	{
 		ConfigValue val = { .iValue = value };
+		PAL_LimitConfig(item, &val);
 		PAL_SetConfigItem(item, val);
 		return TRUE;
 	}
@@ -970,6 +971,11 @@ PAL_SetConfigUnsigned(
 	if (gConfigItems[item].Type == PALCFG_UNSIGNED)
 	{
 		ConfigValue val = { .uValue = value };
+		// Enforce the same bounds the config-file parser applies, so that
+		// programmatic setters (GUI, JNI, libretro) cannot push a value that
+		// the rest of the engine assumes is impossible (e.g. a zero sample
+		// rate, which would divide by zero deep inside the resampler).
+		PAL_LimitConfig(item, &val);
 		PAL_SetConfigItem(item, val);
 		return TRUE;
 	}

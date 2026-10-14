@@ -428,7 +428,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     lblOPLRate.text         = [NSString stringWithFormat:@"%d",gConfig.iOPLSampleRate];
     lblCDAudioSource.text   = CDFormats[gConfig.eCDType];
     lblResampleRate.text    = [NSString stringWithFormat:@"%d",gConfig.iSampleRate];
-    lblAudioBufferSize.text = [NSString stringWithFormat:@"%d",gConfig.wAudioBufferSize];
+    lblAudioBufferSize.text = [NSString stringWithFormat:@"%d",gConfig.dwAudioBufferSize];
     lblShader.text          = [NSString stringWithFormat:@"%s",gConfig.pszShader];
     
     sliderMusicVolume.value     = gConfig.iMusicVolume;
@@ -470,7 +470,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     }
     gConfig.eCDType     = (CDTYPE)[CDFormats indexOfObject:lblCDAudioSource.text];
     gConfig.iSampleRate = [lblResampleRate.text intValue];
-    gConfig.wAudioBufferSize = [lblAudioBufferSize.text intValue];
+    gConfig.dwAudioBufferSize = [lblAudioBufferSize.text intValue];
     
     gConfig.iMusicVolume = sliderMusicVolume.value;
     gConfig.iSoundVolume = sliderSFXVolume.value;

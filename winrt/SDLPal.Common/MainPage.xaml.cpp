@@ -133,7 +133,7 @@ void SDLPal::MainPage::LoadControlContents(bool loadDefault)
 	else
 		cbSampleRate->SelectedIndex = 2;
 
-	auto wValue = gConfig.wAudioBufferSize >> 10;
+	auto wValue = gConfig.dwAudioBufferSize >> 10;
 	unsigned int index = 0;
 	while (wValue) { index++; wValue >>= 1; }
 	if (index >= cbAudioBuffer->Items->Size)
@@ -181,7 +181,7 @@ void SDLPal::MainPage::SaveControlContents()
 
 	gConfig.iSampleRate = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbSampleRate->SelectedItem)->Content)->Data(), nullptr, 10);
 	gConfig.iOPLSampleRate = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbOPLSR->SelectedItem)->Content)->Data(), nullptr, 10);
-	gConfig.wAudioBufferSize = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbAudioBuffer->SelectedItem)->Content)->Data(), nullptr, 10);
+	gConfig.dwAudioBufferSize = wcstoul(static_cast<Platform::String^>(static_cast<ComboBoxItem^>(cbAudioBuffer->SelectedItem)->Content)->Data(), nullptr, 10);
 }
 
 void SDLPal::MainPage::cbBGM_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)

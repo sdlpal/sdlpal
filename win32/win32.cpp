@@ -178,7 +178,7 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	gConfig.iLogLevel = (LOGLEVEL)(ComboBox_GetCurSel(hwndDlg, IDC_LOGLEVEL));
 	gConfig.iAudioChannels = IsDlgButtonChecked(hwndDlg, IDC_STEREO) ? 2 : 1;
 	gConfig.iSampleRate = GetDlgItemInt(hwndDlg, IDC_SAMPLERATE, nullptr, FALSE);
-	gConfig.wAudioBufferSize = GetDlgItemInt(hwndDlg, IDC_AUDIOBUFFER, nullptr, FALSE);
+	gConfig.dwAudioBufferSize = GetDlgItemInt(hwndDlg, IDC_AUDIOBUFFER, nullptr, FALSE);
 	gConfig.iMusicVolume = TrackBar_GetPos(hwndDlg, IDC_MUSICVOLUME);
 	gConfig.iSoundVolume = TrackBar_GetPos(hwndDlg, IDC_SOUNDVOLUME);
 	gConfig.iResampleQuality = TrackBar_GetPos(hwndDlg, IDC_QUALITY);
@@ -232,7 +232,7 @@ void ResetControls(HWND hwndDlg)
 
 	SetDlgItemText(hwndDlg, IDC_SAMPLERATE, _itot(gConfig.iSampleRate, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_OPLSR, _itot(gConfig.iOPLSampleRate, buffer, 10));
-	SetDlgItemText(hwndDlg, IDC_AUDIOBUFFER, _itot(gConfig.wAudioBufferSize, buffer, 10));
+	SetDlgItemText(hwndDlg, IDC_AUDIOBUFFER, _itot(gConfig.dwAudioBufferSize, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_WINDOWWIDTH, _itot(gConfig.dwScreenWidth, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_WINDOWHEIGHT, _itot(gConfig.dwScreenHeight, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_TEXTUREWIDTH, _itot(gConfig.dwTextureWidth, buffer, 10));
