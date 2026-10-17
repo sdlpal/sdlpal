@@ -66,9 +66,9 @@
  */
 static FILE *g_mtrr_log_fp = NULL;
 
-static void mtrr_log_open(void)
+static void mtrr_log_open(const char *mode)
 {
-    g_mtrr_log_fp = fopen("MTRR.LOG", "w");
+    g_mtrr_log_fp = fopen("MTRR.LOG", mode);
 }
 
 static void mtrr_log_close(void)
@@ -222,6 +222,29 @@ static int g_sel_ldt  = -1;
 static int g_sel_cs0  = -1;
 static int g_sel_gate = -1;
 static bool g_callgate_active = false;
+
+/*
+ * MTRR state captured before the first write, so it can be put back when the
+ * program ends.  Without this the machine is left reprogrammed: the VGA
+ * window stays WC, extra variable entries stay allocated, and any range we
+ * disabled because it overlapped the framebuffer stays disabled for whatever
+ * runs next.
+ */
+#define MTRR_MAX_SAVED_VAR 16
+
+/*
+ * Everything the setup can change is snapshotted before the first write and
+ * written back on exit, so the machine is left exactly as it was found:
+ * the fixed 16K entry covering the VGA window, and every variable pair.
+ * Saving the whole set rather than tracking individual edits also restores
+ * the PHYSBASE registers of entries that get invalidated for overlapping
+ * the framebuffer, which a mask-only restore would leave behind.
+ */
+static bool     g_state_saved = false;
+static uint64_t g_saved_fix_a0000;
+static uint32_t g_saved_vcnt;
+static uint64_t g_saved_physbase[MTRR_MAX_SAVED_VAR];
+static uint64_t g_saved_physmask[MTRR_MAX_SAVED_VAR];
 
 static bool setup_callgate(void)
 {
@@ -707,6 +730,7 @@ static void set_vga_wc_fixed(void)
 {
     uint64_t val = mtrr_rdmsr(MSR_IA32_MTRR_FIX16K_A00);
     uint8_t orig_type = (uint8_t)(val & 0xFF);
+
     // Bytes 0..3 cover 0xA0000 - 0xAFFFF (4 * 16KB = 64KB)
     // Set each of these 4 bytes to 0x01 (WC)
     val = (val & 0xFFFFFFFF00000000ULL) | 0x01010101ULL;
@@ -816,7 +840,10 @@ static void set_lfb_wc_variable(uint32_t lfb_base, uint32_t lfb_size, uint32_t v
             mtrr_log("Disabling MTRR #%u (type %s): overlaps the desired LFB WC area.",
                      i, mtrr_type_name(type));
             mtrr_begin_update();
-            mtrr_wrmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i, 0); // clear valid bit
+            // Clear only the valid bit, exactly as mtrrlfbe does: the
+            // address mask stays readable so the entry can be identified
+            // and re-enabled later.
+            mtrr_wrmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i, mask_msr & ~MTRR_MASK_VALID);
             mtrr_end_update();
         }
     }
@@ -957,6 +984,21 @@ static void mtrr_init_body(void)
     // Log current MTRR state before modification
     dump_all_mtrrs("Current MTRR Layout (Before)", vcnt, has_fix, phys_mask);
 
+    /*
+     * Capture the state before the first write.  mtrr_shutdown() writes it
+     * back when the program exits, so nothing this setup changes outlives
+     * the run.
+     */
+    g_saved_fix_a0000 = mtrr_rdmsr(MSR_IA32_MTRR_FIX16K_A00);
+    g_saved_vcnt = (vcnt > MTRR_MAX_SAVED_VAR) ? MTRR_MAX_SAVED_VAR : vcnt;
+    for (uint32_t i = 0; i < g_saved_vcnt; i++) {
+        g_saved_physbase[i] = mtrr_rdmsr(MSR_IA32_MTRR_PHYSBASE0 + 2 * i);
+        g_saved_physmask[i] = mtrr_rdmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i);
+    }
+    g_state_saved = true;
+
+
+
     // 1. Configure VGA buffer (0xA0000 - 0xAFFFF, 64KB)
     if (has_fix) {
         set_vga_wc_fixed();
@@ -974,11 +1016,11 @@ static void mtrr_init_body(void)
     // Log final MTRR state after modification
     dump_all_mtrrs("Updated MTRR Layout (After)", vcnt, has_fix, phys_mask);
 
-    // Clean up Call Gate descriptors if allocated
-    if (cpl != 0) {
-        teardown_callgate();
-    }
-
+    /*
+     * The call gate is deliberately left installed: restoring the MTRR state
+     * at exit needs ring 0 again, and re-creating the gate there would be a
+     * lot of work for one final write.
+     */
     mtrr_log("=== MTRR Write-Combining (WC) setup complete ===");
 }
 
@@ -986,10 +1028,153 @@ static void mtrr_init_body(void)
 /* Entry point                                                                */
 /* -------------------------------------------------------------------------- */
 
+/*
+ * Put the MTRR registers back the way we found them.  Registered with atexit,
+ * so it runs on a normal exit but not when the process is killed -- there is
+ * no way to be polite about that one.
+ */
+static void mtrr_shutdown(void)
+{
+    if (!g_state_saved || !g_callgate_active) {
+        teardown_callgate();
+        return;
+    }
+
+    mtrr_log_open("a"); // append: keep the startup record in the same file
+
+    mtrr_begin_update();
+
+    /*
+     * Invalidate before rewriting, so the CPU never sees a half-updated
+     * pair while the base and mask are momentarily inconsistent.
+     */
+    for (uint32_t i = 0; i < g_saved_vcnt; i++) {
+        mtrr_wrmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i, 0);
+        mtrr_wrmsr(MSR_IA32_MTRR_PHYSBASE0 + 2 * i, g_saved_physbase[i]);
+        mtrr_wrmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i, g_saved_physmask[i]);
+    }
+    mtrr_wrmsr(MSR_IA32_MTRR_FIX16K_A00, g_saved_fix_a0000);
+
+    mtrr_end_update();
+
+    mtrr_log("Restored %u variable MTRR pair(s) and fixed MTRR 0x259.",
+             g_saved_vcnt);
+    mtrr_log("=== MTRR state restored to its value at startup ===");
+
+    g_state_saved = false;
+    teardown_callgate();
+    mtrr_log_close();
+}
+
+/*
+ * Ask the DPMI host to identify itself.
+ *
+ * DPMI 1.0 function 0401h ("Get DPMI Capabilities") fills a 128-byte block:
+ * byte 0 and 1 are the host's major and minor version, and byte 2 onwards is
+ * the vendor name as an ASCIIZ string.  Common hosts do implement it --
+ * CWSDPMI answers "CWSDPMI" despite advertising version 0.90 -- so a missing
+ * answer means an old or unusual host rather than the normal case.
+ *
+ * Fills vendor_out with whatever the host reports (empty when it has no
+ * answer) and returns true when the name starts with "VDPMI".  The name is
+ * kept even on a miss so the log shows what was actually seen.
+ */
+static bool dpmi_vendor_is_vdpmi(char *vendor_out, size_t vendor_size)
+{
+    unsigned char  buf[128];
+    unsigned long  flags;
+    uint32_t       eax = 0x0401;
+    size_t         i;
+
+    vendor_out[0] = '\0';
+    memset(buf, 0, sizeof(buf));
+
+    /*
+     * 0401h takes ES:EDI as the buffer address.  ES is the flat data
+     * selector under DJGPP, but set it from DS explicitly rather than
+     * relying on nothing having changed it.
+     */
+    __asm__ volatile (
+        "pushl %%ds\n\t"
+        "popl  %%es\n\t"
+        "clc\n\t"
+        "int   $0x31\n\t"
+        "pushfl\n\t"
+        "popl  %1\n\t"
+        : "+a"(eax), "=&r"(flags)
+        : "D"((uint32_t)buf)
+        : "memory", "cx", "dx", "bx"
+    );
+
+    if (flags & 1) {
+        return false;   // carry set: no 0401h, i.e. a DPMI 0.9 host
+    }
+
+    for (i = 0; i + 1 < vendor_size && i < 126 && buf[2 + i] != '\0'; i++) {
+        vendor_out[i] = (char)buf[2 + i];
+    }
+    vendor_out[i] = '\0';
+
+    return strncmp(vendor_out, "VDPMI", 5) == 0;
+}
+
 void DOS_MTRR_Init(void)
 {
-    mtrr_log_open();
+    char vendor[128]; // up to 126 bytes of vendor name per the spec
+    bool is_vdpmi;
+
+    mtrr_log_open("w");
+
+    is_vdpmi = dpmi_vendor_is_vdpmi(vendor, sizeof(vendor));
+    if (vendor[0] != '\0') {
+        mtrr_log("DPMI host vendor: \"%s\".", vendor);
+    } else {
+        mtrr_log("DPMI host gave no vendor string (0401h unsupported); assuming a legacy host.");
+    }
+
+    /*
+     * The call gate does not survive VDPMI in its current builds, so the
+     * setup is skipped there.  VDPMI is closed source at the moment, which
+     * leaves nothing to debug against; once it opens up this special case
+     * should be replaced by real support rather than kept as a permanent
+     * exclusion.
+     *
+     * This takes precedence over NO_MTRR: that file lets a user turn the
+     * optimisation off, not turn it back on for a host whose call gate
+     * support is still missing.
+     */
+    if (is_vdpmi) {
+        mtrr_log("VDPMI detected: skipping MTRR setup -- the call gate is not "
+                 "compatible with VDPMI yet (closed source, revisit when it opens).");
+        mtrr_log_close();
+        return;
+    }
+
+    /*
+     * Escape hatch: a NO_MTRR file in the working directory disables the
+     * whole setup.  Dropping a file is easier to document and to do from a
+     * launcher than a command line switch.
+     */
+    {
+        FILE *fp = fopen("NO_MTRR", "r");
+        if (fp != NULL) {
+            fclose(fp);
+            mtrr_log("NO_MTRR present in the working directory; skipping MTRR setup.");
+            mtrr_log_close();
+            return;
+        }
+    }
+
     mtrr_init_body();
+
+    if (g_state_saved) {
+        atexit(mtrr_shutdown);
+    } else {
+        // setup bailed out before changing anything, so there is nothing to
+        // put back and the gate can go right away
+        teardown_callgate();
+    }
+
     mtrr_log_close();
 }
 
