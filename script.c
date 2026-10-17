@@ -1763,6 +1763,8 @@ PAL_InterpretInstruction(
       //
       PAL_FadeOut(1);
       PAL_ReloadInNextTick(gpGlobals->bCurrentSaveSlot);
+      // trigger scene reload
+      gpGlobals->wNumScene = 0;
       return 0; // don't go further
 
    case 0x004F:
@@ -1877,9 +1879,8 @@ PAL_InterpretInstruction(
          //
          // Set data to load the scene in the next frame
          //
-         gpGlobals->wNumScene = pScript->rgwOperand[0];
+         gpGlobals->wNumSceneToLoad = pScript->rgwOperand[0];
          PAL_SetLoadFlags(kLoadScene);
-         gpGlobals->fEnteringScene = TRUE;
          gpGlobals->wLayer = 0;
       }
       break;
@@ -2746,7 +2747,9 @@ PAL_InterpretInstruction(
       if (pScript->rgwOperand[0] == 0xFFFF)
       {
          gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wMapNum = pScript->rgwOperand[1];
-         PAL_SetLoadFlags(kLoadScene);
+         //HACKHACK just force map reloading
+         PAL_SetLoadFlags(0x40);    // not valid load flag
+		 gpGlobals->wNumScene = -1; // not valid scene number
          PAL_LoadResources();
       }
       else

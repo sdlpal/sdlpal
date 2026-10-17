@@ -509,7 +509,6 @@ typedef struct tagGLOBALVARS
    int              iCurPlayingRNG;      // current playing RNG animation
    BYTE             bCurrentSaveSlot;    // current save slot (1-5)
    BOOL             fInMainGame;         // TRUE if in main game
-   BOOL             fEnteringScene;      // TRUE if entering a new scene
    BOOL             fNeedToFadeIn;       // TRUE if need to fade in when drawing scene
    BOOL             fInBattle;           // TRUE if in battle
    BOOL             fAutoBattle;         // TRUE if auto-battle
@@ -529,6 +528,7 @@ typedef struct tagGLOBALVARS
    TRAIL            rgTrail[MAX_PLAYABLE_PLAYER_ROLES]; // player trail
    WORD             wPartyDirection;     // direction of the party
    WORD             wNumScene;           // current scene number
+   WORD             wNumSceneToLoad;     // scene number to load in next tick
    WORD             wNumPalette;         // current palette number
    BOOL             fNightPalette;       // TRUE if use the darker night palette
    WORD             wNumMusic;           // current music number

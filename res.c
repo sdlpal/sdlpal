@@ -187,6 +187,27 @@ PAL_SetLoadFlags(
    gpResources->bLoadFlags |= bFlags;
 }
 
+BYTE
+PAL_GetLoadFlags(
+)
+/*++
+  Purpose:
+
+    Get the current load flags.
+
+  Parameters:
+
+    None.
+
+  Return value:
+
+    The current load flags.
+
+--*/
+{
+	return gpResources->bLoadFlags;
+}
+
 VOID
 PAL_LoadResources(
    VOID
@@ -221,28 +242,24 @@ PAL_LoadResources(
    {
       PAL_InitGameData(gpGlobals->bCurrentSaveSlot);
       AUDIO_PlayMusic(gpGlobals->wNumMusic, TRUE, 1);
+      gpResources->bLoadFlags &= (~kLoadGlobalData);
    }
 
    //
    // Load scene
    //
-   if (gpResources->bLoadFlags & kLoadScene)
+   if (gpGlobals->wNumScene != gpGlobals->wNumSceneToLoad)
    {
       FILE              *fpMAP, *fpGOP;
+
+      gpGlobals->wNumScene = gpGlobals->wNumSceneToLoad;
 
       fpMAP = UTIL_OpenRequiredFile("map.mkf");
       fpGOP = UTIL_OpenRequiredFile("gop.mkf");
 
-      if (gpGlobals->fEnteringScene)
-      {
-         gpGlobals->wScreenWave = 0;
-         gpGlobals->sWaveProgression = 0;
-      }
-
       //
-      // Free previous loaded scene (sprites and map)
+      // Free previous loaded scene (map)
       //
-      PAL_FreeEventObjectSprites();
       PAL_FreeMap(gpResources->lpMap);
 
       //
@@ -260,6 +277,23 @@ PAL_LoadResources(
          TerminateOnError("PAL_LoadResources(): Fail to load map #%d (scene #%d) !",
             gpGlobals->g.rgScene[i].wMapNum, gpGlobals->wNumScene);
       }
+
+      gpGlobals->partyoffset = PAL_XY(160, 112);
+
+      fclose(fpGOP);
+      fclose(fpMAP);
+   }
+
+   if (gpResources->bLoadFlags & kLoadScene) {
+      BYTE bakLoadFlags = gpResources->bLoadFlags;
+
+      gpGlobals->wScreenWave = 0;
+      gpGlobals->sWaveProgression = 0;
+
+      //
+      // Free previous loaded scene (sprites)
+      //
+      PAL_FreeEventObjectSprites();
 
       //
       // Load sprites
@@ -298,10 +332,14 @@ PAL_LoadResources(
          }
       }
 
-      gpGlobals->partyoffset = PAL_XY(160, 112);
+      i = gpGlobals->wNumScene - 1;
+      gpResources->bLoadFlags = 0;
+      gpGlobals->g.rgScene[i].wScriptOnEnter = PAL_RunTriggerScript(gpGlobals->g.rgScene[i].wScriptOnEnter, 0xFFFF);
+      gpResources->bLoadFlags |= bakLoadFlags;
+      if (gpGlobals->wNumSceneToLoad != gpGlobals->wNumScene) 
+          PAL_LoadResources();
 
-      fclose(fpGOP);
-      fclose(fpMAP);
+      gpResources->bLoadFlags &= (~kLoadScene);
    }
 
    //
@@ -346,6 +384,8 @@ PAL_LoadResources(
          PAL_MKFDecompressChunk(gpResources->rglpPlayerSprite[(short)gpGlobals->wMaxPartyMemberIndex+i], l, wSpriteNum,
             gpGlobals->f.fpMGO);
       }
+
+      gpResources->bLoadFlags &= (~kLoadPlayerSprite);
    }
 
    //
