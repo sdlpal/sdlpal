@@ -478,10 +478,37 @@ VIDEO_Startup(
    gpScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
    gpScreenBak = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
    if(bUseIndex8Path)
+   {
       gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
-   else
-   gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,
-                                       0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+   }
+   else if(bBypassRenderer)
+   {
+      //
+      // On the bypass path gpScreenReal is blitted straight into the window
+      // surface, so create it with the window's pixel format rather than a
+      // fixed 32bpp. Otherwise every present pays SDL's per-pixel conversion
+      // (plus the intermediate surface it allocates). The window format is
+      // taken from the display mode, which on DOS/VESA is usually 16bpp.
+      //
+      Uint32 windowFormat = SDL_GetWindowPixelFormat(gpWindow);
+      if(windowFormat != SDL_PIXELFORMAT_UNKNOWN)
+      {
+         gpScreenReal = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, 320, 200,
+            SDL_BITSPERPIXEL(windowFormat), windowFormat);
+      }
+
+      if(gpScreenReal != NULL)
+      {
+         UTIL_LogOutput(LOGLEVEL_DEBUG, "gpScreenReal matched window fmt:%s\n",
+                        SDL_GetPixelFormatName(windowFormat));
+      }
+   }
+
+   if(gpScreenReal == NULL)
+   {
+      gpScreenReal = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,
+                                          0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+   }
 
    //
    // Create texture for screen.
