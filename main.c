@@ -532,6 +532,12 @@ main(
    PAL_LoadConfig(TRUE);
 
    //
+   // If user requests a file-based log, then add it after the system-specific one.
+   //
+   if (gConfig.pszLogFile)
+	   UTIL_LogAddOutputCallback(UTIL_LogToFile, gConfig.iLogLevel);
+
+   //
    // Platform-specific initialization
    //
    if (UTIL_Platform_Init(argc, argv) != 0)
@@ -547,12 +553,6 @@ main(
    //
    if (PAL_HAS_CONFIG_PAGE && gConfig.fLaunchSetting)
 	   return 0;
-
-   //
-   // If user requests a file-based log, then add it after the system-specific one.
-   //
-   if (gConfig.pszLogFile)
-	   UTIL_LogAddOutputCallback(UTIL_LogToFile, gConfig.iLogLevel);
 
    //
    // Initialize everything

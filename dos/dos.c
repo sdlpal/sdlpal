@@ -38,6 +38,7 @@
 #	include <vclock.h>
 #  endif
 # include "ail32_drv.h"
+# include "mtrr.h"
 #endif
 
 double fmax(double a, double b) {
@@ -150,6 +151,25 @@ INT UTIL_Platform_Startup(int argc, char* argv[])
 {
 	printf("invoking program with name: %s\n", argv[0]);
 	init_crash_handler();
+	/*
+	 * Program the MTRRs here, not in UTIL_Platform_Init.
+	 *
+	 * This runs before SDL_Init, so no display mode is active yet.  That
+	 * matters because discovering the VESA linear framebuffer requires a
+	 * VBE query (INT 10h/4F00), and issuing one while a mode is already
+	 * set makes some BIOSes blank the screen.  Discovering the LFB while
+	 * still in text mode is exactly what the original mtrrlfbe tool does,
+	 * and it is known to work.
+	 *
+	 * The physical address of the framebuffer is fixed by the video card's
+	 * VRAM aperture, so querying it here and applying the MTRR before the
+	 * mode is chosen is safe: the range does not move when SDL later
+	 * switches modes.
+	 *
+	 * Note that the configuration file has not been read yet at this
+	 * point, so this cannot be made conditional on a setting.
+	 */
+	DOS_MTRR_Init();
 	return 0;
 }
 
