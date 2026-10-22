@@ -1122,8 +1122,29 @@ void DOS_MTRR_Init(void)
 {
     char vendor[128]; // up to 126 bytes of vendor name per the spec
     bool is_vdpmi;
+    FILE *fp;
+
+    /*
+     * Opt-in, not opt-out.
+     *
+     * The call gate works on the hosts it has been tested against, but it has
+     * also hung machines whose DPMI host the code has never seen, and there
+     * is no way for a user to distinguish "no MTRR optimisation" from "the
+     * game does not start".  So the setup stays off unless it is asked for,
+     * and MTRR.ON in the working directory is that request.
+     *
+     * This check comes first, before the log file is created and before any
+     * DPMI call, so that a machine with a known-bad host is left completely
+     * untouched by the time it gets here.
+     */
+    fp = fopen("MTRR.ON", "r");
+    if (fp == NULL) {
+        return;
+    }
+    fclose(fp);
 
     mtrr_log_open("w");
+    mtrr_log("MTRR.ON present in the working directory; enabling MTRR setup.");
 
     is_vdpmi = dpmi_vendor_is_vdpmi(vendor, sizeof(vendor));
     if (vendor[0] != '\0') {
@@ -1139,30 +1160,14 @@ void DOS_MTRR_Init(void)
      * should be replaced by real support rather than kept as a permanent
      * exclusion.
      *
-     * This takes precedence over NO_MTRR: that file lets a user turn the
-     * optimisation off, not turn it back on for a host whose call gate
-     * support is still missing.
+     * This takes precedence over MTRR.ON: asking for the optimisation does
+     * not make the call gate work on a host where it is known not to.
      */
     if (is_vdpmi) {
         mtrr_log("VDPMI detected: skipping MTRR setup -- the call gate is not "
                  "compatible with VDPMI yet (closed source, revisit when it opens).");
         mtrr_log_close();
         return;
-    }
-
-    /*
-     * Escape hatch: a NO_MTRR file in the working directory disables the
-     * whole setup.  Dropping a file is easier to document and to do from a
-     * launcher than a command line switch.
-     */
-    {
-        FILE *fp = fopen("NO_MTRR", "r");
-        if (fp != NULL) {
-            fclose(fp);
-            mtrr_log("NO_MTRR present in the working directory; skipping MTRR setup.");
-            mtrr_log_close();
-            return;
-        }
     }
 
     mtrr_init_body();

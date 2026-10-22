@@ -29,8 +29,15 @@ extern "C" {
 #endif
 
 /*
- * Initialize MTRR Write-Combining (WC) for VGA (0xA0000) and VESA LFB.
- * Should be called inside UTIL_Platform_Init() after SDL_Init().
+ * Program write-combining MTRRs for the VGA window and the VESA linear
+ * framebuffer, then restore the previous state when the program exits.
+ *
+ * Opt-in: the whole setup only runs when a file named MTRR.ON exists in the
+ * working directory.  Without it this returns immediately, before touching
+ * the log or making any DPMI call.
+ *
+ * Must be called from UTIL_Platform_Startup(), i.e. before SDL_Init(): the
+ * VESA query it performs has to happen while no display mode is active.
  */
 void DOS_MTRR_Init(void);
 
