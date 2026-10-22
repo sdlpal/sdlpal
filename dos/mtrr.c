@@ -257,10 +257,13 @@ static bool setup_callgate(void)
         return false;
     }
 
+    mtrr_log("callgate: reading GDTR/LDTR.");
     struct gdt_register gdtr;
     uint16_t ldtr = 0;
     __asm__ volatile ("sgdt %0" : "=m"(gdtr));
     __asm__ volatile ("sldt %0" : "=m"(ldtr));
+    mtrr_log("callgate: GDTR base 0x%lX limit 0x%X, LDTR 0x%X.",
+             (unsigned long)gdtr.base, (unsigned)gdtr.limit, (unsigned)ldtr);
 
     if (ldtr == 0) {
         mtrr_log("SLDT returned 0: no active LDT in current DPMI environment.");
@@ -268,15 +271,18 @@ static bool setup_callgate(void)
     }
 
     // Allocate descriptor for GDT alias
+    mtrr_log("callgate: allocating GDT alias selector.");
     g_sel_gdt = __dpmi_allocate_ldt_descriptors(1);
     if (g_sel_gdt < 0) {
         mtrr_log("Failed to allocate GDT alias selector.");
         return false;
     }
+    mtrr_log("callgate: setting GDT alias base/limit.");
     __dpmi_set_segment_base_address(g_sel_gdt, gdtr.base);
     __dpmi_set_segment_limit(g_sel_gdt, gdtr.limit);
 
     // Read LDT descriptor from GDT
+    mtrr_log("callgate: reading the LDT descriptor through the alias.");
     uint8_t ldt_desc[8];
     uint32_t ldt_index = ldtr & ~7;
     movedata(g_sel_gdt, ldt_index, _my_ds(), (unsigned)ldt_desc, 8);
@@ -288,6 +294,8 @@ static bool setup_callgate(void)
     }
 
     // Allocate descriptor for LDT alias
+    mtrr_log("callgate: LDT base 0x%lX limit 0x%lX; allocating alias.",
+             (unsigned long)ldt_base, (unsigned long)ldt_limit);
     g_sel_ldt = __dpmi_allocate_ldt_descriptors(1);
     if (g_sel_ldt < 0) {
         mtrr_log("Failed to allocate LDT alias selector.");
@@ -295,10 +303,12 @@ static bool setup_callgate(void)
         g_sel_gdt = -1;
         return false;
     }
+    mtrr_log("callgate: setting LDT alias base/limit.");
     __dpmi_set_segment_base_address(g_sel_ldt, ldt_base);
     __dpmi_set_segment_limit(g_sel_ldt, ldt_limit);
 
     // Create Ring 0 code selector from current CS descriptor
+    mtrr_log("callgate: allocating the ring-0 code selector.");
     g_sel_cs0 = __dpmi_allocate_ldt_descriptors(1);
     if (g_sel_cs0 < 0) {
         mtrr_log("Failed to allocate Ring 0 CS selector.");
@@ -308,12 +318,15 @@ static bool setup_callgate(void)
     }
     uint8_t cs_desc[8];
     uint16_t current_cs = _my_cs();
+    mtrr_log("callgate: reading the CS descriptor for selector 0x%X.", (unsigned)current_cs);
     movedata(g_sel_ldt, current_cs & ~7, _my_ds(), (unsigned)cs_desc, 8);
     // Set DPL=0 and Type=0xA (Code, Execute/Read)
     cs_desc[5] = (cs_desc[5] & 0x90) | 0x0A;
+    mtrr_log("callgate: installing the ring-0 CS clone.");
     movedata(_my_ds(), (unsigned)cs_desc, g_sel_ldt, g_sel_cs0 & ~7, 8);
 
     // Create 32-bit Call Gate in LDT with DPL=3 pointing to Ring 0 CS
+    mtrr_log("callgate: allocating the gate selector.");
     g_sel_gate = __dpmi_allocate_ldt_descriptors(1);
     if (g_sel_gate < 0) {
         mtrr_log("Failed to allocate Call Gate selector.");
@@ -328,8 +341,11 @@ static bool setup_callgate(void)
     gate_desc[3] = (g_sel_cs0 >> 8) & 0xFF;
     gate_desc[4] = 0; // 0 parameters
     gate_desc[5] = 0xEC; // Present(0x80) | DPL=3(0x60) | 32-bit Call Gate(0x0C)
+    mtrr_log("callgate: installing the call gate.");
     movedata(_my_ds(), (unsigned)gate_desc, g_sel_ldt, g_sel_gate & ~7, 8);
 
+    mtrr_log("callgate: ready (cs0 0x%X, gate 0x%X).",
+             (unsigned)g_sel_cs0, (unsigned)g_sel_gate);
     g_callgate_active = true;
     return true;
 }
@@ -585,6 +601,7 @@ static bool detect_vesa_lfb(uint32_t *out_lfb_base, uint32_t *out_lfb_size)
     const int blocks_paras = (int)((blocks_bytes + 15u) / 16u) + 16;
 
     int dos_sel;
+    mtrr_log("vesa: allocating %d paragraphs of conventional memory.", blocks_paras);
     int dos_seg = __dpmi_allocate_dos_memory(blocks_paras, &dos_sel);
     if (dos_seg == -1) {
         mtrr_log("Failed to allocate DOS conventional memory for VBE query.");
@@ -601,7 +618,9 @@ static bool detect_vesa_lfb(uint32_t *out_lfb_base, uint32_t *out_lfb_size)
     r.x.ax = 0x4F00;
     r.x.es = (uint16_t)dos_seg;
     r.x.di = 0;
+    mtrr_log("vesa: calling int 10h/4F00.");
     __dpmi_int(0x10, &r);
+    mtrr_log("vesa: 4F00 returned AX=0x%04X.", r.x.ax);
 
     if (r.x.ax != 0x004F) {
         mtrr_log("VBE 0x4F00 call failed (AX=0x%04X).", r.x.ax);
@@ -699,6 +718,12 @@ static void dump_all_mtrrs(const char *label, uint32_t vcnt, bool has_fix, uint6
     }
 
     for (uint32_t i = 0; i < vcnt; i++) {
+        // Reading these is the last place a host can hang us; a marker per
+        // iteration would flood the log, so only the first one is noted and
+        // the loop is bounded by vcnt from MTRRCAP.
+        if (i == 0) {
+            mtrr_log("dump: reading %u variable MTRR pair(s).", (unsigned)vcnt);
+        }
         uint64_t base_msr = mtrr_rdmsr(MSR_IA32_MTRR_PHYSBASE0 + 2 * i);
         uint64_t mask_msr = mtrr_rdmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i);
 
@@ -927,6 +952,7 @@ static void mtrr_init_body(void)
 {
     mtrr_log("=== Initializing MTRR Write-Combining (WC) ===");
 
+    mtrr_log("checking for CPUID.");
     if (!cpu_has_cpuid()) {
         mtrr_log("CPUID instruction is not supported by CPU. Skipping MTRR setup.");
         return;
@@ -938,6 +964,7 @@ static void mtrr_init_body(void)
     cpuid(0, 0, &a, (uint32_t *)&vendor[0], (uint32_t *)&vendor[8], (uint32_t *)&vendor[4]);
 
     cpuid(1, 0, &a, &b, &c, &d);
+    mtrr_log("CPUID done, EDX=0x%08lX.", (unsigned long)d);
     // EDX bit 12: MTRR support
     if (!(d & (1 << 12))) {
         mtrr_log("CPU vendor: %s, CPUID 1 EDX bit 12 is 0: MTRRs are not supported.", vendor);
@@ -982,7 +1009,9 @@ static void mtrr_init_body(void)
     }
 
     // Log current MTRR state before modification
+    mtrr_log("reading the current MTRR layout.");
     dump_all_mtrrs("Current MTRR Layout (Before)", vcnt, has_fix, phys_mask);
+    mtrr_log("current layout read.");
 
     /*
      * Capture the state before the first write.  mtrr_shutdown() writes it
@@ -1001,7 +1030,9 @@ static void mtrr_init_body(void)
 
     // 1. Configure VGA buffer (0xA0000 - 0xAFFFF, 64KB)
     if (has_fix) {
+        mtrr_log("setting the VGA window through fixed MTRR 0x259.");
         set_vga_wc_fixed();
+        mtrr_log("VGA window done.");
     } else {
         mtrr_log("Fixed MTRRs not supported; skipping Fixed VGA MTRR.");
     }
@@ -1009,8 +1040,11 @@ static void mtrr_init_body(void)
     // 2. Query VESA and configure LFB
     uint32_t lfb_base = 0;
     uint32_t lfb_size = 0;
+    mtrr_log("querying VESA for the linear framebuffer.");
     if (detect_vesa_lfb(&lfb_base, &lfb_size)) {
+        mtrr_log("programming the variable MTRRs for the framebuffer.");
         set_lfb_wc_variable(lfb_base, lfb_size, vcnt, phys_mask);
+        mtrr_log("framebuffer MTRRs done.");
     }
 
     // Log final MTRR state after modification
@@ -1146,7 +1180,9 @@ void DOS_MTRR_Init(void)
     mtrr_log_open("w");
     mtrr_log("MTRR.ON present in the working directory; enabling MTRR setup.");
 
+    mtrr_log("probing the DPMI host with int 31h/0401h.");
     is_vdpmi = dpmi_vendor_is_vdpmi(vendor, sizeof(vendor));
+    mtrr_log("host probe returned.");
     if (vendor[0] != '\0') {
         mtrr_log("DPMI host vendor: \"%s\".", vendor);
     } else {
