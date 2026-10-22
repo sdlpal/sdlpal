@@ -26,6 +26,7 @@
 #include "palcfg.h"
 #include "util.h"
 #include "resampler.h"
+#include "input.h"
 #include <stdint.h>
 
 #if !defined(PAL_HAS_TOUCH)
@@ -86,6 +87,24 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_SOUNDBANK,         PALCFG_STRING,   "SoundBank",          9, MAKE_STRING(NULL) },
 	{ PALCFG_SCALEQUALITY,      PALCFG_STRING,   "ScaleQuality",      12, MAKE_STRING("0") },
 	{ PALCFG_SHADER,            PALCFG_STRING,   "Shader",             6, MAKE_STRING(NULL) },
+	{ PALCFG_KEYMENU,           PALCFG_STRING,   "KeyMenu",            7, MAKE_STRING(NULL) },
+	{ PALCFG_KEYSEARCH,         PALCFG_STRING,   "KeySearch",          9, MAKE_STRING(NULL) },
+	{ PALCFG_KEYDOWN,           PALCFG_STRING,   "KeyDown",            7, MAKE_STRING(NULL) },
+	{ PALCFG_KEYLEFT,           PALCFG_STRING,   "KeyLeft",            7, MAKE_STRING(NULL) },
+	{ PALCFG_KEYUP,             PALCFG_STRING,   "KeyUp",              5, MAKE_STRING(NULL) },
+	{ PALCFG_KEYRIGHT,          PALCFG_STRING,   "KeyRight",           8, MAKE_STRING(NULL) },
+	{ PALCFG_KEYPGUP,           PALCFG_STRING,   "KeyPgUp",            7, MAKE_STRING(NULL) },
+	{ PALCFG_KEYPGDN,           PALCFG_STRING,   "KeyPgDn",            7, MAKE_STRING(NULL) },
+	{ PALCFG_KEYREPEAT,         PALCFG_STRING,   "KeyRepeat",          9, MAKE_STRING(NULL) },
+	{ PALCFG_KEYAUTO,           PALCFG_STRING,   "KeyAuto",            7, MAKE_STRING(NULL) },
+	{ PALCFG_KEYDEFEND,         PALCFG_STRING,   "KeyDefend",          9, MAKE_STRING(NULL) },
+	{ PALCFG_KEYUSEITEM,        PALCFG_STRING,   "KeyUseItem",        10, MAKE_STRING(NULL) },
+	{ PALCFG_KEYTHROWITEM,      PALCFG_STRING,   "KeyThrowItem",      12, MAKE_STRING(NULL) },
+	{ PALCFG_KEYFLEE,           PALCFG_STRING,   "KeyFlee",            7, MAKE_STRING(NULL) },
+	{ PALCFG_KEYSTATUS,         PALCFG_STRING,   "KeyStatus",          9, MAKE_STRING(NULL) },
+	{ PALCFG_KEYFORCE,          PALCFG_STRING,   "KeyForce",           8, MAKE_STRING(NULL) },
+	{ PALCFG_KEYHOME,           PALCFG_STRING,   "KeyHome",            7, MAKE_STRING(NULL) },
+	{ PALCFG_KEYEND,            PALCFG_STRING,   "KeyEnd",             6, MAKE_STRING(NULL) },
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "OPUS", "RAW" };
@@ -287,6 +306,24 @@ PAL_FreeConfig(
     free(gConfig.pszShaderPath);
     free(gConfig.pszScaleQuality);
 	free(gConfig.pszLogFile);
+	free(gConfig.pszKeyMenu);
+	free(gConfig.pszKeySearch);
+	free(gConfig.pszKeyDown);
+	free(gConfig.pszKeyLeft);
+	free(gConfig.pszKeyUp);
+	free(gConfig.pszKeyRight);
+	free(gConfig.pszKeyPgUp);
+	free(gConfig.pszKeyPgDn);
+	free(gConfig.pszKeyRepeat);
+	free(gConfig.pszKeyAuto);
+	free(gConfig.pszKeyDefend);
+	free(gConfig.pszKeyUseItem);
+	free(gConfig.pszKeyThrowItem);
+	free(gConfig.pszKeyFlee);
+	free(gConfig.pszKeyStatus);
+	free(gConfig.pszKeyForce);
+	free(gConfig.pszKeyHome);
+	free(gConfig.pszKeyEnd);
 
 	memset(&gConfig, 0, sizeof(CONFIGURATION));
 }
@@ -546,6 +583,60 @@ PAL_LoadConfig(
 				case PALCFG_SHADER:
 					gConfig.pszShader = ParseStringValue(value.sValue, gConfig.pszShader);
 					break;
+				case PALCFG_KEYMENU:
+					gConfig.pszKeyMenu = ParseStringValue(value.sValue, gConfig.pszKeyMenu);
+					break;
+				case PALCFG_KEYSEARCH:
+					gConfig.pszKeySearch = ParseStringValue(value.sValue, gConfig.pszKeySearch);
+					break;
+				case PALCFG_KEYDOWN:
+					gConfig.pszKeyDown = ParseStringValue(value.sValue, gConfig.pszKeyDown);
+					break;
+				case PALCFG_KEYLEFT:
+					gConfig.pszKeyLeft = ParseStringValue(value.sValue, gConfig.pszKeyLeft);
+					break;
+				case PALCFG_KEYUP:
+					gConfig.pszKeyUp = ParseStringValue(value.sValue, gConfig.pszKeyUp);
+					break;
+				case PALCFG_KEYRIGHT:
+					gConfig.pszKeyRight = ParseStringValue(value.sValue, gConfig.pszKeyRight);
+					break;
+				case PALCFG_KEYPGUP:
+					gConfig.pszKeyPgUp = ParseStringValue(value.sValue, gConfig.pszKeyPgUp);
+					break;
+				case PALCFG_KEYPGDN:
+					gConfig.pszKeyPgDn = ParseStringValue(value.sValue, gConfig.pszKeyPgDn);
+					break;
+				case PALCFG_KEYREPEAT:
+					gConfig.pszKeyRepeat = ParseStringValue(value.sValue, gConfig.pszKeyRepeat);
+					break;
+				case PALCFG_KEYAUTO:
+					gConfig.pszKeyAuto = ParseStringValue(value.sValue, gConfig.pszKeyAuto);
+					break;
+				case PALCFG_KEYDEFEND:
+					gConfig.pszKeyDefend = ParseStringValue(value.sValue, gConfig.pszKeyDefend);
+					break;
+				case PALCFG_KEYUSEITEM:
+					gConfig.pszKeyUseItem = ParseStringValue(value.sValue, gConfig.pszKeyUseItem);
+					break;
+				case PALCFG_KEYTHROWITEM:
+					gConfig.pszKeyThrowItem = ParseStringValue(value.sValue, gConfig.pszKeyThrowItem);
+					break;
+				case PALCFG_KEYFLEE:
+					gConfig.pszKeyFlee = ParseStringValue(value.sValue, gConfig.pszKeyFlee);
+					break;
+				case PALCFG_KEYSTATUS:
+					gConfig.pszKeyStatus = ParseStringValue(value.sValue, gConfig.pszKeyStatus);
+					break;
+				case PALCFG_KEYFORCE:
+					gConfig.pszKeyForce = ParseStringValue(value.sValue, gConfig.pszKeyForce);
+					break;
+				case PALCFG_KEYHOME:
+					gConfig.pszKeyHome = ParseStringValue(value.sValue, gConfig.pszKeyHome);
+					break;
+				case PALCFG_KEYEND:
+					gConfig.pszKeyEnd = ParseStringValue(value.sValue, gConfig.pszKeyEnd);
+					break;
 				default:
 					values[item->Item] = value;
 					break;
@@ -621,6 +712,9 @@ PAL_LoadConfig(
 		UTIL_LogOutput(LOGLEVEL_ERROR, "SoftSynth enabled but no valid soundbank file specified. Fallback to native-midi");
 		gConfig.eMIDISynth = SYNTH_NATIVE;
 	}
+
+	// Populate default key mappings if not set in config file
+	PAL_PopulateDefaultKeyMapConfig();
 }
 
 
@@ -676,6 +770,24 @@ PAL_SaveConfig(
 		if (gConfig.pszSoundBank && *gConfig.pszSoundBank) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SOUNDBANK), gConfig.pszSoundBank); fputs(buf, fp); }
 		if (gConfig.pszScaleQuality && *gConfig.pszScaleQuality) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SCALEQUALITY), gConfig.pszScaleQuality); fputs(buf, fp); }
 		if (gConfig.pszShader && *gConfig.pszShader) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SHADER), gConfig.pszShader); fputs(buf, fp); }
+		if (gConfig.pszKeyMenu && *gConfig.pszKeyMenu) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYMENU), gConfig.pszKeyMenu); fputs(buf, fp); }
+		if (gConfig.pszKeySearch && *gConfig.pszKeySearch) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYSEARCH), gConfig.pszKeySearch); fputs(buf, fp); }
+		if (gConfig.pszKeyDown && *gConfig.pszKeyDown) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYDOWN), gConfig.pszKeyDown); fputs(buf, fp); }
+		if (gConfig.pszKeyLeft && *gConfig.pszKeyLeft) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYLEFT), gConfig.pszKeyLeft); fputs(buf, fp); }
+		if (gConfig.pszKeyUp && *gConfig.pszKeyUp) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYUP), gConfig.pszKeyUp); fputs(buf, fp); }
+		if (gConfig.pszKeyRight && *gConfig.pszKeyRight) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYRIGHT), gConfig.pszKeyRight); fputs(buf, fp); }
+		if (gConfig.pszKeyPgUp && *gConfig.pszKeyPgUp) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYPGUP), gConfig.pszKeyPgUp); fputs(buf, fp); }
+		if (gConfig.pszKeyPgDn && *gConfig.pszKeyPgDn) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYPGDN), gConfig.pszKeyPgDn); fputs(buf, fp); }
+		if (gConfig.pszKeyRepeat && *gConfig.pszKeyRepeat) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYREPEAT), gConfig.pszKeyRepeat); fputs(buf, fp); }
+		if (gConfig.pszKeyAuto && *gConfig.pszKeyAuto) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYAUTO), gConfig.pszKeyAuto); fputs(buf, fp); }
+		if (gConfig.pszKeyDefend && *gConfig.pszKeyDefend) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYDEFEND), gConfig.pszKeyDefend); fputs(buf, fp); }
+		if (gConfig.pszKeyUseItem && *gConfig.pszKeyUseItem) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYUSEITEM), gConfig.pszKeyUseItem); fputs(buf, fp); }
+		if (gConfig.pszKeyThrowItem && *gConfig.pszKeyThrowItem) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYTHROWITEM), gConfig.pszKeyThrowItem); fputs(buf, fp); }
+		if (gConfig.pszKeyFlee && *gConfig.pszKeyFlee) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYFLEE), gConfig.pszKeyFlee); fputs(buf, fp); }
+		if (gConfig.pszKeyStatus && *gConfig.pszKeyStatus) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYSTATUS), gConfig.pszKeyStatus); fputs(buf, fp); }
+		if (gConfig.pszKeyForce && *gConfig.pszKeyForce) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYFORCE), gConfig.pszKeyForce); fputs(buf, fp); }
+		if (gConfig.pszKeyHome && *gConfig.pszKeyHome) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYHOME), gConfig.pszKeyHome); fputs(buf, fp); }
+		if (gConfig.pszKeyEnd && *gConfig.pszKeyEnd) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_KEYEND), gConfig.pszKeyEnd); fputs(buf, fp); }
 
 		fclose(fp);
 
