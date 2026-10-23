@@ -64,34 +64,49 @@
  * The file is truncated once per run, not appended, so it always describes
  * the most recent startup.
  */
-static FILE *g_mtrr_log_fp = NULL;
-
-static void mtrr_log_open(const char *mode)
-{
-    g_mtrr_log_fp = fopen("MTRR.LOG", mode);
-}
-
-static void mtrr_log_close(void)
-{
-    if (g_mtrr_log_fp != NULL) {
-        fclose(g_mtrr_log_fp);
-        g_mtrr_log_fp = NULL;
-    }
-}
+/*
+ * Logging has to survive the machine being reset.  fflush only hands the data
+ * to DOS; the data is not committed until the file is closed, so a hard reset
+ * loses everything that was written since the last close.  That is exactly
+ * what happened while chasing the HDPMI hang: the log was created but empty,
+ * which says nothing about whether anything had been written.
+ *
+ * So each line is written with its own open/append/close, and the same text
+ * is echoed to the screen, which survives a reboot by definition.  The cost
+ * is irrelevant here: this runs once at startup.
+ */
+static bool g_mtrr_log_echo = false;
 
 static void mtrr_log(const char *fmt, ...)
 {
     char buf[512];
     va_list ap;
+    FILE *fp;
 
     va_start(ap, fmt);
     vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
 
-    if (g_mtrr_log_fp != NULL) {
-        fprintf(g_mtrr_log_fp, "[MTRR] %s\n", buf);
-        fflush(g_mtrr_log_fp);
+    if (g_mtrr_log_echo) {
+        printf("[MTRR] %s\n", buf);
+        fflush(stdout);
     }
+
+    fp = fopen("MTRR.LOG", "a");
+    if (fp != NULL) {
+        fprintf(fp, "[MTRR] %s\n", buf);
+        fclose(fp);     // close commits it; fflush alone would not
+    }
+}
+
+/* Start a fresh log for this run and stop being quiet. */
+static void mtrr_log_begin(void)
+{
+    FILE *fp = fopen("MTRR.LOG", "w");
+    if (fp != NULL) {
+        fclose(fp);
+    }
+    g_mtrr_log_echo = true;
 }
 
 static const char *mtrr_type_name(uint8_t type)
@@ -1074,8 +1089,6 @@ static void mtrr_shutdown(void)
         return;
     }
 
-    mtrr_log_open("a"); // append: keep the startup record in the same file
-
     mtrr_begin_update();
 
     /*
@@ -1097,7 +1110,6 @@ static void mtrr_shutdown(void)
 
     g_state_saved = false;
     teardown_callgate();
-    mtrr_log_close();
 }
 
 /*
@@ -1171,13 +1183,23 @@ void DOS_MTRR_Init(void)
      * DPMI call, so that a machine with a known-bad host is left completely
      * untouched by the time it gets here.
      */
+    /*
+     * One line on screen before touching anything else, so that a hang inside
+     * this function can be told apart from a hang elsewhere: if this does not
+     * appear, MTRR.ON was not found and nothing here ran at all.
+     */
+    printf("[MTRR] checking for MTRR.ON\n");
+    fflush(stdout);
+
     fp = fopen("MTRR.ON", "r");
     if (fp == NULL) {
+        printf("[MTRR] MTRR.ON not found; MTRR setup disabled.\n");
+        fflush(stdout);
         return;
     }
     fclose(fp);
 
-    mtrr_log_open("w");
+    mtrr_log_begin();
     mtrr_log("MTRR.ON present in the working directory; enabling MTRR setup.");
 
     mtrr_log("probing the DPMI host with int 31h/0401h.");
@@ -1202,7 +1224,6 @@ void DOS_MTRR_Init(void)
     if (is_vdpmi) {
         mtrr_log("VDPMI detected: skipping MTRR setup -- the call gate is not "
                  "compatible with VDPMI yet (closed source, revisit when it opens).");
-        mtrr_log_close();
         return;
     }
 
@@ -1216,6 +1237,5 @@ void DOS_MTRR_Init(void)
         teardown_callgate();
     }
 
-    mtrr_log_close();
 }
 
