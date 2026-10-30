@@ -949,6 +949,12 @@ UTIL_LogToFile(
 	const char    *__
 )
 {
+	//
+	// One open/append/close per line.  A file's contents are not committed
+	// until it is closed, so a handle kept open across lines loses everything
+	// written since the last close if the machine resets -- which is exactly
+	// when the log is needed.
+	//
 	FILE *fp = UTIL_OpenFileForMode(gConfig.pszLogFile, "a");
 	if (fp)
 	{
