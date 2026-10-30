@@ -46,7 +46,13 @@ char gExecutablePath[PAL_MAX_PATH];
 #define NUM_RIX_TITLE               0x05
 
 void SDL_LogToFile(void* userdata, int category, SDL_LogPriority priority, const char* message) {
-    FILE* logFile = fopen("sdl_log.txt", "a"); // 追加模式
+    //
+    // One open/append/close per line.  A file's contents are not committed
+    // until it is closed, so a handle kept open across lines loses everything
+    // written since the last close if the machine resets -- which is exactly
+    // when the log is needed.
+    //
+    FILE* logFile = fopen("sdl_log.txt", "a");
     if (logFile) {
         fprintf(logFile, "%s\n", message);
         fclose(logFile);

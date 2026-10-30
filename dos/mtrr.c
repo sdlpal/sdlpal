@@ -64,36 +64,65 @@
  * The file is truncated once per run, not appended, so it always describes
  * the most recent startup.
  */
-static FILE *g_mtrr_log_fp = NULL;
+#define MTRR_LOG_RESERVE (32 * 1024)
 
 static void mtrr_log_open(const char *mode)
 {
-    g_mtrr_log_fp = fopen("MTRR.LOG", mode);
+    FILE *fp;
+
+    if (mode[0] == 'w') {
+        fp = fopen("MTRR.LOG", "wb");
+        if (fp != NULL) {
+            fclose(fp);
+        }
+    }
 }
 
 static void mtrr_log_close(void)
 {
-    if (g_mtrr_log_fp != NULL) {
-        fclose(g_mtrr_log_fp);
-        g_mtrr_log_fp = NULL;
-    }
+    // Nothing is held open between lines.
 }
 
+/*
+ * Each line is its own open/append/close.
+ *
+ * The only thing that matters here is that the line reaches the disk.  A
+ * buffered handle keeps the data wherever the DOS redirector decides to put
+ * it and commits nothing until the file is closed, so a machine that hangs
+ * leaves a log that is empty or truncated no matter how much was written.
+ * Reserving the file first fixes its length but not that -- the data still
+ * sits in DOS buffers.  Closing after every line is the only arrangement
+ * that guarantees what has been logged is what can be read back.
+ *
+ * The cost is one directory update per line.  That was a problem when three
+ * loggers did it at once; with all of them doing it again it needs watching,
+ * but a log that cannot survive the failure it is meant to diagnose is worth
+ * nothing.
+ */
 static void mtrr_log(const char *fmt, ...)
 {
     char buf[512];
     va_list ap;
+    FILE *fp;
 
     va_start(ap, fmt);
     vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
 
-    if (g_mtrr_log_fp != NULL) {
-        fprintf(g_mtrr_log_fp, "[MTRR] %s\n", buf);
-        fflush(g_mtrr_log_fp);
+    /*
+     * Both destinations, always.  The screen is what survives a hang, but it
+     * can scroll or be covered; the file is the durable copy.  Attempting
+     * both means a failure in either one still leaves the other.
+     */
+    printf("[MTRR] %s\n", buf);
+    fflush(stdout);
+
+    fp = fopen("MTRR.LOG", "a");
+    if (fp != NULL) {
+        fprintf(fp, "[MTRR] %s\n", buf);
+        fclose(fp);
     }
 }
-
 static const char *mtrr_type_name(uint8_t type)
 {
     switch (type) {
@@ -699,6 +728,10 @@ static void dump_all_mtrrs(const char *label, uint32_t vcnt, bool has_fix, uint6
     }
 
     for (uint32_t i = 0; i < vcnt; i++) {
+        // Bounded by VCNT from MTRRCAP; one marker is enough, a line per
+        // iteration would bury everything else.
+        if (i == 0) {
+        }
         uint64_t base_msr = mtrr_rdmsr(MSR_IA32_MTRR_PHYSBASE0 + 2 * i);
         uint64_t mask_msr = mtrr_rdmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i);
 
@@ -760,8 +793,13 @@ static int decompose_range(uint64_t base, uint64_t size, struct mtrr_chunk *out_
     uint64_t rem_size = size;
 
     while (rem_size > 0 && count < max_chunks) {
-        // Find largest power of 2 <= rem_size that divides cur_base
-        uint64_t chunk = 1ULL << 31; // Start from 2GB
+        /*
+         * Start well above any range this is likely to see and shrink until
+         * the chunk fits and is aligned.  Starting at 2 GB used to cap every
+         * entry at 2 GB, so a 4 GB or 8 GB span came out as several entries
+         * for no reason.
+         */
+        uint64_t chunk = 1ULL << 51;
         while (chunk > rem_size || (cur_base & (chunk - 1)) != 0) {
             chunk >>= 1;
         }
@@ -777,141 +815,459 @@ static int decompose_range(uint64_t base, uint64_t size, struct mtrr_chunk *out_
     return count;
 }
 
-static void set_lfb_wc_variable(uint32_t lfb_base, uint32_t lfb_size, uint32_t vcnt, uint64_t phys_mask)
+/*
+ * Cover [base, base + size) with as few naturally aligned power-of-two
+ * entries as possible, letting each one extend past the end.
+ *
+ * The strict decomposition emits one entry per set bit, which for a window
+ * stopping just short of a boundary is a lot of tiny entries -- a 63 MB
+ * framebuffer came out as ten, four of them below a megabyte.  There are only
+ * ten variable MTRRs in total, so that budget matters.  Rounding up costs a
+ * little extra coverage and nothing else.
+ */
+static int cover_range(uint64_t base, uint64_t size, struct mtrr_chunk *out,
+                       int max_chunks)
 {
+    uint64_t chunk;
+    uint64_t end;
+    int count;
+
+    if (size == 0 || max_chunks <= 0) return 0;
+    end = base + size - 1;
+
+    // A single entry when the range fits one aligned chunk.
+    chunk = 4096;
+    while (chunk < size) chunk <<= 1;
+    while (chunk != 0) {
+        if ((base & (chunk - 1)) == 0) {
+            out[0].base = base;
+            out[0].size = chunk;
+            return 1;
+        }
+        chunk >>= 1;
+        if (chunk < size) break;
+    }
+
+    // Otherwise decompose strictly and round the tail entry up.
+    count = decompose_range(base, size, out, max_chunks);
+    if (count > 0 && count < max_chunks) {
+        struct mtrr_chunk *last = &out[count - 1];
+        uint64_t grown = last->size;
+
+        while (grown != 0 && (last->base + grown - 1) < end) grown <<= 1;
+        if (grown != 0) last->size = grown;
+    }
+
+    return count;
+}
+
+/*
+ * Program the framebuffer as write-combining.
+ *
+ * Only uncached entries are in the way.  Uncached outranks write-combining,
+ * while write-combining outranks write-through, write-back and write-protect
+ * (SDM Vol. 3A, 11.5.1), so an entry that already says write-back can stay
+ * exactly where it is -- the framebuffer entry wins over it.
+ *
+ * An uncached entry covering the framebuffer usually covers a good deal more
+ * than that, because firmware describes the whole MMIO gap with one entry.
+ * It cannot simply be disabled: whatever else it covered would fall back to
+ * the default type, or to an enclosing entry, and on a host whose default is
+ * write-back that turns uncached MMIO into cacheable memory, which stalls the
+ * bus on the next access.
+ *
+ * So the parts of the entry that lie outside the framebuffer are written back
+ * as uncached first, into free slots, and only then is the entry disabled.
+ * Both happen inside one cache-off window, and the guard entries go in while
+ * the entry they replace is still valid, so the range is never left
+ * unprotected at any point.
+ */
+/* Overlap priority, best first.  Entries always beat the default type;
+ * this only decides between entries that overlap each other. */
+static int mtrr_priority(uint8_t type)
+{
+    switch (type) {
+        case MTRR_TYPE_UC: return 0;
+        case MTRR_TYPE_WC: return 1;
+        case MTRR_TYPE_WT: return 2;
+        case MTRR_TYPE_WB: return 3;
+        case MTRR_TYPE_WP: return 4;
+        default:           return 5;
+    }
+}
+
+#define MTRR_MAX_PLAN   16
+#define MTRR_MAX_CHUNKS 64
+#define MTRR_MAX_BOUNDS 64
+
+struct mtrr_span {
+    uint64_t base;
+    uint64_t end;       /* inclusive */
+    uint8_t  type;
+};
+
+/*
+ * Give the framebuffer write-combining by rebuilding the entries that
+ * describe the region it lives in.
+ *
+ * Firmware comes in two shapes and they look different but are not: either
+ * memory is write-back because that is the default type and the MMIO gap is
+ * carved out with uncached entries, or the default is uncached and memory is
+ * described by one large write-back entry with the gap carved out of that.
+ * Either way the address space is "memory write-back, gap uncached", and
+ * either way the framebuffer ends up covered by something that outranks
+ * write-combining -- uncached always does, and write-combining is the lowest
+ * priority type of all.
+ *
+ * So rather than special-casing which kind of entry is in the way, the region
+ * containing the framebuffer is re-described from scratch: work out what each
+ * part of it is currently typed as, keep that, and change only the framebuffer.
+ * The entries covering the region are disabled to pay for the new ones, and
+ * anything else inside the region is folded in rather than left dangling.
+ *
+ * Entries are emitted only where the wanted type differs from the default, and
+ * every span is decomposed strictly: rounding a write-back entry up past the
+ * end of memory would put MMIO inside it, which is the hazard being avoided.
+ */
+static void set_lfb_wc_variable(uint32_t lfb_base, uint32_t lfb_size,
+                                uint32_t vcnt, uint64_t phys_mask)
+{
+    uint64_t e_base[16], e_end[16];
+    uint8_t  e_type[16];
+    bool     e_used[16], doomed[16];
+    struct mtrr_chunk lfb[8];
+    struct mtrr_span  plan[MTRR_MAX_PLAN];
+    struct mtrr_chunk chunks[MTRR_MAX_CHUNKS];
+    uint8_t  chunk_type[MTRR_MAX_CHUNKS];
+    uint64_t bounds[MTRR_MAX_BOUNDS];
+    int free_slots[16], pool[16];
+    int num_lfb, num_bounds = 0, num_plan = 0, num_chunks = 0;
+    int num_free = 0, num_doomed = 0, num_pool = 0;
+    uint64_t lo = ~0ULL, hi = 0;
+    uint8_t default_type;
+    bool changed;
+    int i, j, k, n;
+
     if (lfb_base == 0 || lfb_size == 0) return;
+    if (vcnt > 16) vcnt = 16;
 
-    struct mtrr_chunk chunks[16];
-    int num_chunks = decompose_range(lfb_base, lfb_size, chunks, 16);
+    default_type = (uint8_t)(mtrr_rdmsr(MSR_IA32_MTRR_DEF_TYPE) & 0xFF);
 
-    mtrr_log("LFB range [0x%08lX - 0x%08lX] requires %d power-of-2 MTRR chunk(s):",
-             (unsigned long)lfb_base, (unsigned long)(lfb_base + lfb_size - 1), num_chunks);
-    for (int i = 0; i < num_chunks; i++) {
-        mtrr_log("  Chunk %d: 0x%08llX - 0x%08llX (%llu MB)",
-                 i, chunks[i].base, chunks[i].base + chunks[i].size - 1, chunks[i].size / (1024 * 1024));
+    num_lfb = cover_range(lfb_base, lfb_size, lfb, 8);
+    if (num_lfb <= 0) {
+        mtrr_log("The framebuffer range cannot be covered; leaving MTRRs alone.");
+        return;
+    }
+    mtrr_log("LFB [0x%08lX - 0x%08lX] covered by %d entr%s (default type %s):",
+             (unsigned long)lfb_base,
+             (unsigned long)((uint64_t)lfb_base + lfb_size - 1),
+             num_lfb, num_lfb == 1 ? "y" : "ies", mtrr_type_name(default_type));
+    for (k = 0; k < num_lfb; k++) {
+        mtrr_log("  [0x%08llX - 0x%08llX] (%llu MB)",
+                 (unsigned long long)lfb[k].base,
+                 (unsigned long long)(lfb[k].base + lfb[k].size - 1),
+                 (unsigned long long)(lfb[k].size >> 20));
     }
 
-    /*
-     * Which chunks are already satisfied by an existing WC range?
-     *
-     * The original looks for an MTRR whose base matches the range it is
-     * about to program and, when it finds one, reuses that slot instead of
-     * consuming a free one (0x3942..0x3975 in the disassembly).  Our old
-     * code logged "already covers" and then programmed a duplicate range
-     * into a fresh slot anyway, which wastes a variable MTRR and leaves two
-     * identical entries behind.
-     *
-     * Resolve it per chunk instead of per range, so a partially covered LFB
-     * only programs the parts that are actually missing.
-     */
-    bool chunk_done[16];
-    for (int k = 0; k < num_chunks; k++) {
-        chunk_done[k] = false;
-    }
-
-    for (uint32_t i = 0; i < vcnt; i++) {
+    for (i = 0; i < (int)vcnt; i++) {
         uint64_t base_msr = mtrr_rdmsr(MSR_IA32_MTRR_PHYSBASE0 + 2 * i);
         uint64_t mask_msr = mtrr_rdmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i);
 
-        if (!(mask_msr & MTRR_MASK_VALID)) {
-            continue;
+        e_used[i] = (mask_msr & MTRR_MASK_VALID) != 0;
+        e_base[i] = base_msr & phys_mask;
+        e_end[i]  = e_base[i] + (((~mask_msr) & phys_mask) + 0x1000) - 1;
+        e_type[i] = (uint8_t)(base_msr & 0xFF);
+        doomed[i] = false;
+
+        if (!e_used[i]) free_slots[num_free++] = i;
+    }
+
+    // Which entries cover the framebuffer, and how far does that region reach?
+    for (i = 0; i < (int)vcnt; i++) {
+        if (!e_used[i]) continue;
+        for (k = 0; k < num_lfb; k++) {
+            uint64_t cb = lfb[k].base;
+            uint64_t ce = cb + lfb[k].size - 1;
+
+            if (e_end[i] < cb || e_base[i] > ce) continue;
+            doomed[i] = true;
+            if (e_base[i] < lo) lo = e_base[i];
+            if (e_end[i] > hi) hi = e_end[i];
         }
+    }
+    if (hi == 0) {
+        /*
+         * Nothing covers the framebuffer, so the default type applies to it
+         * and there is nothing to take out of the way.  Write-combining still
+         * has to be asked for, though, so the rebuild is narrowed to the
+         * framebuffer itself instead of being abandoned.
+         */
+        uint64_t top = 0;
 
-        uint64_t base = base_msr & phys_mask;
-        uint64_t size = ((~mask_msr) & phys_mask) + 0x1000;
-        uint64_t end  = base + size - 1;
-        uint8_t  type = base_msr & 0xFF;
-
-        uint64_t lfb_end = (uint64_t)lfb_base + lfb_size - 1;
-        if (end < lfb_base || base > lfb_end) {
-            continue;                       // no overlap at all
+        for (k = 0; k < num_lfb; k++) {
+            uint64_t e = lfb[k].base + lfb[k].size;
+            if (e > top) top = e;
         }
+        lo = lfb[0].base;
+        hi = top - 1;
+        mtrr_log("No variable entry covers the framebuffer; adding one for it.");
+    }
 
-        // mark every chunk this entry fully covers with the type we want
-        for (int k = 0; k < num_chunks; k++) {
-            uint64_t cbase = chunks[k].base;
-            uint64_t cend  = cbase + chunks[k].size - 1;
-            if (type == MTRR_TYPE_WC && base <= cbase && end >= cend) {
-                chunk_done[k] = true;
+    // Anything else living inside that region is rebuilt along with it.
+    do {
+        changed = false;
+        for (i = 0; i < (int)vcnt; i++) {
+            if (!e_used[i] || doomed[i]) continue;
+            if (e_end[i] < lo || e_base[i] > hi) continue;
+            doomed[i] = true;
+            if (e_base[i] < lo) lo = e_base[i];
+            if (e_end[i] > hi) hi = e_end[i];
+            changed = true;
+        }
+    } while (changed);
+
+    for (i = 0; i < (int)vcnt; i++) if (doomed[i]) num_doomed++;
+
+    mtrr_log("rebuilding [0x%08llX - 0x%08llX]: %d entr%s involved, %d free slot(s).",
+             (unsigned long long)lo, (unsigned long long)hi,
+             num_doomed, num_doomed == 1 ? "y" : "ies", num_free);
+
+    bounds[num_bounds++] = lo;
+    bounds[num_bounds++] = hi + 1;
+    for (i = 0; i < (int)vcnt; i++) {
+        if (!e_used[i]) continue;
+        if (e_base[i] >= lo && e_base[i] <= hi) bounds[num_bounds++] = e_base[i];
+        if (e_end[i] + 1 >= lo && e_end[i] + 1 <= hi + 1) bounds[num_bounds++] = e_end[i] + 1;
+    }
+    for (k = 0; k < num_lfb; k++) {
+        uint64_t cb = lfb[k].base, ce = cb + lfb[k].size;
+        if (cb >= lo && cb <= hi) bounds[num_bounds++] = cb;
+        if (ce >= lo && ce <= hi + 1) bounds[num_bounds++] = ce;
+    }
+
+    for (i = 1; i < num_bounds; i++) {
+        uint64_t v = bounds[i];
+        j = i - 1;
+        while (j >= 0 && bounds[j] > v) { bounds[j + 1] = bounds[j]; j--; }
+        bounds[j + 1] = v;
+    }
+    {
+        int w = 0;
+        for (i = 0; i < num_bounds; i++) {
+            if (w == 0 || bounds[i] != bounds[w - 1]) bounds[w++] = bounds[i];
+        }
+        num_bounds = w;
+    }
+
+    // What each piece of the region is currently typed as.
+    for (j = 0; j + 1 < num_bounds; j++) {
+        uint64_t b = bounds[j];
+        uint64_t e = bounds[j + 1] - 1;
+        uint8_t  best = default_type;
+        bool     have_entry = false;
+        bool     in_lfb = false;
+
+        for (i = 0; i < (int)vcnt; i++) {
+            if (!e_used[i]) continue;
+            if (e_end[i] < b || e_base[i] > e) continue;
+            if (!have_entry || mtrr_priority(e_type[i]) < mtrr_priority(best)) {
+                best = e_type[i];
+            }
+            have_entry = true;
+        }
+        for (k = 0; k < num_lfb; k++) {
+            uint64_t cb = lfb[k].base;
+            uint64_t ce = cb + lfb[k].size - 1;
+            if (e < cb || b > ce) continue;
+            in_lfb = true;
+        }
+        if (in_lfb) best = MTRR_TYPE_WC;
+
+        if (best == default_type) continue;      // the default already covers it
+
+        if (num_plan > 0 && plan[num_plan - 1].type == best &&
+            plan[num_plan - 1].end + 1 == b) {
+            plan[num_plan - 1].end = e;
+        } else if (num_plan < MTRR_MAX_PLAN) {
+            plan[num_plan].base = b;
+            plan[num_plan].end  = e;
+            plan[num_plan].type = best;
+            num_plan++;
+        }
+    }
+
+    num_pool = 0;
+    for (n = 0; n < num_free; n++) pool[num_pool++] = free_slots[n];
+    for (i = 0; i < (int)vcnt; i++) if (doomed[i]) pool[num_pool++] = i;
+
+    /*
+     * Fill what fits, framebuffer first.
+     *
+     * The framebuffer entry is not negotiable -- without it there is nothing
+     * to do -- but the rest are taken in address order while slots remain, so
+     * a shortage costs the tail of the address space rather than the whole
+     * attempt.  A machine with three slots and ten entries' worth of plan ends
+     * up with the low spans and the framebuffer, which is what a DOS program
+     * actually uses.
+     *
+     * A span may only be skipped when leaving it out is harmless, and that
+     * means its range falls back to the default type.  Uncached is safe: the
+     * range simply stays uncached.  Write-back is not -- skipping an uncached
+     * guard there would make MMIO cacheable, which is the failure this code
+     * exists to prevent -- so on a write-back default a shortage still means
+     * backing out.
+     */
+    {
+        struct mtrr_chunk tmp[MTRR_MAX_CHUNKS];
+        int wc_chunks = 0;
+        int optional_budget;
+        int optional_used = 0;
+        int short_spans = 0;
+        int short_chunks = 0;
+
+        // Slots for the framebuffer entry are reserved before anything else.
+        for (n = 0; n < num_plan; n++) {
+            if (plan[n].type != MTRR_TYPE_WC) continue;
+            wc_chunks += decompose_range(plan[n].base, plan[n].end - plan[n].base + 1,
+                                         tmp, MTRR_MAX_CHUNKS);
+        }
+        if (wc_chunks > num_pool) {
+            mtrr_log("The framebuffer entry alone needs %d slot(s) and only %d are "
+                     "available; leaving the MTRR layout untouched.",
+                     wc_chunks, num_pool);
+            return;
+        }
+        optional_budget = num_pool - wc_chunks;
+
+        num_chunks = 0;
+        for (n = 0; n < num_plan; n++) {
+            int c = decompose_range(plan[n].base, plan[n].end - plan[n].base + 1,
+                                    tmp, MTRR_MAX_CHUNKS);
+            int take = c;
+
+            if (plan[n].type != MTRR_TYPE_WC && optional_used + take > optional_budget) {
+                /*
+                 * Take as much of the span as fits, largest pieces first --
+                 * that is the order the decomposition produces, so a prefix
+                 * covers the low addresses, which is what a DOS program uses.
+                 * Whatever is left over falls back to the default type.
+                 */
+                take = optional_budget - optional_used;
+                if (take < 0) take = 0;
+
+                if (default_type != MTRR_TYPE_UC) {
+                    mtrr_log("%s [0x%08llX - 0x%08llX] does not fit and dropping "
+                             "part of it would leave that range write-back; leaving "
+                             "the MTRR layout untouched.",
+                             mtrr_type_name(plan[n].type),
+                             (unsigned long long)plan[n].base,
+                             (unsigned long long)plan[n].end);
+                    return;
+                }
+            }
+
+            for (i = 0; i < take; i++) {
+                chunks[num_chunks + i] = tmp[i];
+                chunk_type[num_chunks + i] = plan[n].type;
+            }
+            num_chunks += take;
+
+            if (plan[n].type != MTRR_TYPE_WC) {
+                optional_used += take;
+                if (take < c) {
+                    mtrr_log("only %d of %d entr%s for %s [0x%08llX - 0x%08llX] fit; "
+                             "the rest stays uncached.",
+                             take, c, c == 1 ? "y" : "ies",
+                             mtrr_type_name(plan[n].type),
+                             (unsigned long long)plan[n].base,
+                             (unsigned long long)plan[n].end);
+                    short_spans++;
+                    short_chunks += c - take;
+                }
             }
         }
 
-        if (type != MTRR_TYPE_WC) {
-            mtrr_log("Disabling MTRR #%u (type %s): overlaps the desired LFB WC area.",
-                     i, mtrr_type_name(type));
-            mtrr_begin_update();
-            // Clear only the valid bit, exactly as mtrrlfbe does: the
-            // address mask stays readable so the entry can be identified
-            // and re-enabled later.
-            mtrr_wrmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i, mask_msr & ~MTRR_MASK_VALID);
-            mtrr_end_update();
+        if (short_spans > 0) {
+            mtrr_log("%d entr%s left out for want of slots.", short_chunks,
+                     short_chunks == 1 ? "y" : "ies");
         }
     }
 
-    // Collect available free slots
-    int free_slots[16];
-    int num_free = 0;
-    for (uint32_t i = 0; i < vcnt; i++) {
-        uint64_t mask_msr = mtrr_rdmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i);
-        if (!(mask_msr & MTRR_MASK_VALID)) {
-            if (num_free < 16) {
-                free_slots[num_free++] = i;
-            }
-        }
-    }
-
-    // Build the list of chunks that still need programming
-    int todo[16];
-    int num_todo = 0;
-    for (int k = 0; k < num_chunks; k++) {
-        if (chunk_done[k]) {
-            mtrr_log("Chunk %d [0x%08llX - 0x%08llX] is already WC; nothing to do.",
-                     k, chunks[k].base, chunks[k].base + chunks[k].size - 1);
-        } else if (num_todo < 16) {
-            todo[num_todo++] = k;
-        }
-    }
-
-    if (num_todo == 0) {
-        mtrr_log("Every LFB chunk is already covered by write-combining MTRRs.");
+    if (num_chunks == 0) {
+        mtrr_log("The framebuffer already has the wanted type; nothing to do.");
         return;
     }
 
-    mtrr_log("Available free variable MTRR slots: %d (slots needed: %d).", num_free, num_todo);
-
-    if (num_free == 0) {
-        mtrr_log("ERROR: No free variable MTRRs available to configure LFB!");
-        return;
+    for (n = 0; n < num_chunks; n++) {
+        mtrr_log("plan: %s [0x%08llX - 0x%08llX] (%llu MB)",
+                 mtrr_type_name(chunk_type[n]),
+                 (unsigned long long)chunks[n].base,
+                 (unsigned long long)(chunks[n].base + chunks[n].size - 1),
+                 (unsigned long long)(chunks[n].size >> 20));
     }
 
-    // Prioritize LFB: if free slots are insufficient, allocate them to the
-    // largest chunks (the chunk list is already ordered largest-first).
-    int todo_to_apply = num_todo;
-    if (num_free < num_todo) {
-        mtrr_log("WARNING: Insufficient variable MTRRs! Needed: %d, Available: %d.", num_todo, num_free);
-        mtrr_log("Prioritizing LFB: configuring the %d largest chunk(s) starting from base framebuffer.", num_free);
-        todo_to_apply = num_free;
-    }
+    mtrr_log("%d entr%s to write, %d slot(s) available.", num_chunks,
+             num_chunks == 1 ? "y" : "ies", num_pool);
 
-    // Program the variable MTRRs
     mtrr_begin_update();
-    for (int n = 0; n < todo_to_apply; n++) {
-        int k = todo[n];
-        int slot = free_slots[n];
-        uint64_t chunk_base = chunks[k].base;
-        uint64_t chunk_size = chunks[k].size;
-        uint64_t chunk_mask = (~(chunk_size - 1)) & phys_mask;
 
-        uint64_t base_msr = (chunk_base & phys_mask) | MTRR_TYPE_WC;
-        uint64_t mask_msr = (chunk_mask & phys_mask) | MTRR_MASK_VALID;
+    /*
+     * Fill the slots that are already free first.  Writing an entry over a
+     * range that already has the same type changes nothing, so this is safe
+     * while the doomed entries are still in place -- and it means that when
+     * the slots suffice, nothing has to be disabled before its replacement
+     * exists.  Only the remainder has to wait.
+     */
+    {
+        int upto = (num_chunks < num_free) ? num_chunks : num_free;
 
-        mtrr_wrmsr(MSR_IA32_MTRR_PHYSBASE0 + 2 * slot, base_msr);
-        mtrr_wrmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * slot, mask_msr);
+        for (n = 0; n < upto; n++) {
+            int slot = pool[n];
+            uint64_t base_msr = (chunks[n].base & phys_mask) | chunk_type[n];
+            uint64_t mask_msr = ((~(chunks[n].size - 1)) & phys_mask) | MTRR_MASK_VALID;
 
-        mtrr_log("Setting MTRR #%d: [0x%08llX - 0x%08llX] (%llu MB), mode: WC.",
-                 slot, chunk_base, chunk_base + chunk_size - 1, chunk_size / (1024 * 1024));
+            mtrr_log("slot %d <- %s [0x%08llX - 0x%08llX] (%llu MB)",
+                     slot, mtrr_type_name(chunk_type[n]),
+                     (unsigned long long)chunks[n].base,
+                     (unsigned long long)(chunks[n].base + chunks[n].size - 1),
+                     (unsigned long long)(chunks[n].size >> 20));
+            mtrr_wrmsr(MSR_IA32_MTRR_PHYSBASE0 + 2 * slot, base_msr);
+            mtrr_wrmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * slot, mask_msr);
+        }
+
+        /*
+         * The old entries always have to go, even when every replacement
+         * fitted in a free slot: leaving one in place would keep it winning
+         * over the framebuffer entry, which is the whole point of the
+         * exercise.
+         */
+        for (i = 0; i < (int)vcnt; i++) {
+            uint64_t mask_msr;
+
+            if (!doomed[i]) continue;
+            mask_msr = mtrr_rdmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i);
+            mtrr_log("disable: slot %d", i);
+            mtrr_wrmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i,
+                       mask_msr & ~MTRR_MASK_VALID);
+        }
+
+        for (n = upto; n < num_chunks; n++) {
+            int slot = pool[n];
+            uint64_t base_msr = (chunks[n].base & phys_mask) | chunk_type[n];
+            uint64_t mask_msr = ((~(chunks[n].size - 1)) & phys_mask) | MTRR_MASK_VALID;
+
+            mtrr_log("slot %d <- %s [0x%08llX - 0x%08llX] (%llu MB)",
+                     slot, mtrr_type_name(chunk_type[n]),
+                     (unsigned long long)chunks[n].base,
+                     (unsigned long long)(chunks[n].base + chunks[n].size - 1),
+                     (unsigned long long)(chunks[n].size >> 20));
+            mtrr_wrmsr(MSR_IA32_MTRR_PHYSBASE0 + 2 * slot, base_msr);
+            mtrr_wrmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * slot, mask_msr);
+        }
     }
+
     mtrr_end_update();
+    mtrr_log("framebuffer MTRRs programmed; caching restored.");
 }
 
 /* -------------------------------------------------------------------------- */
@@ -989,8 +1345,8 @@ static void mtrr_init_body(void)
      * back when the program exits, so nothing this setup changes outlives
      * the run.
      */
-    g_saved_fix_a0000 = mtrr_rdmsr(MSR_IA32_MTRR_FIX16K_A00);
     g_saved_vcnt = (vcnt > MTRR_MAX_SAVED_VAR) ? MTRR_MAX_SAVED_VAR : vcnt;
+    g_saved_fix_a0000 = mtrr_rdmsr(MSR_IA32_MTRR_FIX16K_A00);
     for (uint32_t i = 0; i < g_saved_vcnt; i++) {
         g_saved_physbase[i] = mtrr_rdmsr(MSR_IA32_MTRR_PHYSBASE0 + 2 * i);
         g_saved_physmask[i] = mtrr_rdmsr(MSR_IA32_MTRR_PHYSMASK0 + 2 * i);
@@ -1035,7 +1391,18 @@ static void mtrr_init_body(void)
  */
 static void mtrr_shutdown(void)
 {
-    if (!g_state_saved || !g_callgate_active) {
+    if (!g_state_saved) {
+        teardown_callgate();
+        return;
+    }
+
+    /*
+     * Writing an MSR needs ring 0: either we are already there, or the call
+     * gate is still installed.  A host that ran the setup at ring 0 has no
+     * call gate at all, and treating that as "cannot restore" left those
+     * machines with the modified layout for the rest of the session.
+     */
+    if (get_cpl() != 0 && !g_callgate_active) {
         teardown_callgate();
         return;
     }
@@ -1133,17 +1500,23 @@ void DOS_MTRR_Init(void)
      * game does not start".  So the setup stays off unless it is asked for,
      * and MTRR.ON in the working directory is that request.
      *
-     * This check comes first, before the log file is created and before any
-     * DPMI call, so that a machine with a known-bad host is left completely
-     * untouched by the time it gets here.
+     * The log is opened before the check so that the check itself is
+     * recorded, and so that a machine which declines the setup still leaves
+     * a note saying why.  It costs an MTRR.LOG on machines that never asked
+     * for the optimisation; telling "disabled" apart from "never ran" is
+     * worth that.
      */
+    mtrr_log_open("w");
+    mtrr_log("checking for MTRR.ON.");
+
     fp = fopen("MTRR.ON", "r");
     if (fp == NULL) {
+        mtrr_log("MTRR.ON absent; MTRR setup disabled.");
+        mtrr_log_close();
         return;
     }
     fclose(fp);
 
-    mtrr_log_open("w");
     mtrr_log("MTRR.ON present in the working directory; enabling MTRR setup.");
 
     is_vdpmi = dpmi_vendor_is_vdpmi(vendor, sizeof(vendor));
