@@ -111,6 +111,7 @@
 		C63505D31EB4631100186049 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D21EB4631100186049 /* ForceFeedback.framework */; };
 		C63505D41EB4633000186049 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C63505D01EB4630200186049 /* Carbon.framework */; };
 		C639992120455776005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639991F20455776005B20CE /* video_glsl.c */; };
+		A7F0C0D02E5A000100000001 /* video_gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = A7F0C0D02E5A000100000002 /* video_gpu.c */; };
 		C63DF68B1EC50B7300C778B8 /* util.mm in Sources */ = {isa = PBXBuildFile; fileRef = C63DF68A1EC50B7300C778B8 /* util.mm */; };
 		C650609620F653B300397B73 /* glslp.c in Sources */ = {isa = PBXBuildFile; fileRef = C650609420F653B300397B73 /* glslp.c */; };
 		C65BC11D1CFAF1780037E9A2 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = C65BC11C1CFAF1780037E9A2 /* overlay.c */; };
@@ -556,6 +557,9 @@
 		C63505D21EB4631100186049 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
 		C639991F20455776005B20CE /* video_glsl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = video_glsl.c; sourceTree = "<group>"; };
 		C639992020455776005B20CE /* video_glsl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video_glsl.h; sourceTree = "<group>"; };
+		A7F0C0D02E5A000100000002 /* video_gpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = video_gpu.c; sourceTree = "<group>"; };
+		A7F0C0D02E5A000100000003 /* video_gpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video_gpu.h; sourceTree = "<group>"; };
+		A7F0C0D02E5A000100000004 /* video_gpu_shaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video_gpu_shaders.h; sourceTree = "<group>"; };
 		C6399926204557B4005B20CE /* mini_glloader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mini_glloader.c; sourceTree = "<group>"; };
 		C6399927204557B4005B20CE /* mini_glloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mini_glloader.h; sourceTree = "<group>"; };
 		C63DF68A1EC50B7300C778B8 /* util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = util.mm; sourceTree = "<group>"; };
@@ -921,6 +925,7 @@
 				7104FD640D772F6300A97E53 /* util.c */,
 				7104FD660D772F6300A97E53 /* video.c */,
 				C639991F20455776005B20CE /* video_glsl.c */,
+				A7F0C0D02E5A000100000002 /* video_gpu.c */,
 				C6399926204557B4005B20CE /* mini_glloader.c */,
 				C650609420F653B300397B73 /* glslp.c */,
 				7104FD680D772F6300A97E53 /* yj1.c */,
@@ -1245,6 +1250,8 @@
 				C61464711EA643BD00A76CC9 /* midi.h */,
 				C61464721EA643BD00A76CC9 /* palcfg.h */,
 				C639992020455776005B20CE /* video_glsl.h */,
+				A7F0C0D02E5A000100000003 /* video_gpu.h */,
+				A7F0C0D02E5A000100000004 /* video_gpu_shaders.h */,
 				C6399927204557B4005B20CE /* mini_glloader.h */,
 			);
 			name = Headers;
@@ -1866,6 +1873,7 @@
 				C6CFDD3F23A858B800DEB8F9 /* tables_other.c in Sources */,
 				C650609620F653B300397B73 /* glslp.c in Sources */,
 				C639992120455776005B20CE /* video_glsl.c in Sources */,
+				A7F0C0D02E5A000100000001 /* video_gpu.c in Sources */,
 				C6CFDCCE23A858B800DEB8F9 /* control_audio_bandwidth.c in Sources */,
 				C6CFDD5623A858B800DEB8F9 /* repacketizer.c in Sources */,
 				C6CFDD1923A858B800DEB8F9 /* regularize_correlations_FLP.c in Sources */,

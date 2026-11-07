@@ -1111,6 +1111,59 @@ PAL_TouchEventFilter(
 #endif
 }
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+static VOID
+PAL_SetAppInBackground(
+   BOOL                   fBackground
+)
+{
+   g_bRenderPaused = fBackground;
+   g_bAppInBackground = fBackground;
+
+   if (!fBackground)
+   {
+      VIDEO_UpdateScreen(NULL);
+   }
+}
+#endif
+
+#if SDL_VERSION_ATLEAST(3,0,0)
+static bool SDLCALL
+PAL_AppEventWatch(
+   void                  *lpUserData,
+   SDL_Event             *lpEvent
+)
+/*++
+  Purpose:
+
+    SDL 3 never queues the events about going to the background and coming back. They
+    only reach event watchers, during the call that notices them. On iOS and Android
+    that is SDL_PumpEvents() on the thread running the game, as with any queued event.
+
+  Parameters:
+
+    [IN]  lpUserData - not used.
+
+    [IN]  lpEvent - pointer to the event.
+
+  Return value:
+
+    Always true; the return value of an event watcher is ignored.
+
+--*/
+{
+   if (lpEvent->type == SDL_EVENT_WILL_ENTER_BACKGROUND)
+   {
+      PAL_SetAppInBackground(TRUE);
+   }
+   else if (lpEvent->type == SDL_EVENT_DID_ENTER_FOREGROUND)
+   {
+      PAL_SetAppInBackground(FALSE);
+   }
+   return true;
+}
+#endif
+
 static int SDLCALL
 PAL_EventFilter(
    const SDL_Event       *lpEvent
@@ -1149,16 +1202,15 @@ PAL_EventFilter(
          VIDEO_Resize(lpEvent->window.data1, lpEvent->window.data2);
       }
       break;
-#endif
 
    case SDL_APP_WILLENTERBACKGROUND:
-      g_bRenderPaused = TRUE;
+      PAL_SetAppInBackground(TRUE);
       break;
 
    case SDL_APP_DIDENTERFOREGROUND:
-      g_bRenderPaused = FALSE;
-      VIDEO_UpdateScreen(NULL);
+      PAL_SetAppInBackground(FALSE);
       break;
+#endif
 #else
    case SDL_VIDEORESIZE:
       //
@@ -1240,6 +1292,10 @@ PAL_InitInput(
 #endif
 
    input_init_filter();
+
+#if SDL_VERSION_ATLEAST(3,0,0)
+   SDL_AddEventWatch(PAL_AppEventWatch, NULL);
+#endif
 }
 
 VOID
@@ -1261,6 +1317,10 @@ PAL_ShutdownInput(
 
 --*/
 {
+#if SDL_VERSION_ATLEAST(3,0,0)
+   SDL_RemoveEventWatch(PAL_AppEventWatch, NULL);
+#endif
+
 #if PAL_HAS_JOYSTICKS
    if (g_pJoy != NULL)
    {
@@ -1329,6 +1389,16 @@ PAL_ProcessEvent(
    g_InputState.joystickNeedUpdate = FALSE;
 #endif
    while (PAL_PollEvent(NULL));
+
+   //
+   // The game waits here while it is in the background, without drawing anything. That also
+   // keeps work for the GPU from piling up, as none of it can be submitted from there.
+   //
+   while (g_bAppInBackground)
+   {
+      SDL_Delay(50);
+      while (PAL_PollEvent(NULL));
+   }
 
    PAL_UpdateKeyboardState();
 #if PAL_HAS_JOYSTICKS

@@ -56,6 +56,7 @@
     IBOutlet UISwitch *toggleKeepAspect;
     IBOutlet UISwitch *toggleSmoothScaling;
     
+    IBOutlet UISwitch *toggleGPU;
     IBOutlet UISwitch *toggleGLSL;
     IBOutlet UISwitch *toggleHDR;
     IBOutlet UILabel *lblShader;
@@ -267,7 +268,7 @@ typedef void(^SelectedBlock)(NSString *selected);
             rows = 2;
             break;
         case 2:
-            rows = 4;
+            rows = 5;
             break;
         case 3:
             rows = [toggleGLSL isOn] ? 3 : 1;
@@ -413,6 +414,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     toggleStereo.on         = gConfig.iAudioChannels == 2;
     toggleSurroundOPL.on    = gConfig.fUseSurroundOPL;
+    toggleGPU.on            = gConfig.fEnableGPU;
     toggleGLSL.on           = gConfig.fEnableGLSL;
     toggleHDR.on            = gConfig.fEnableHDR;
     
@@ -420,7 +422,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     toggleKeepAspect.on         = gConfig.fKeepAspectRatio;
     textTextureWidth.text       = [NSString stringWithFormat:@"%d",gConfig.dwTextureWidth];
     textTextureHeight.text       = [NSString stringWithFormat:@"%d",gConfig.dwTextureHeight];
-    toggleSmoothScaling.on      = gConfig.pszScaleQuality ? strncmp(gConfig.pszScaleQuality, "0", sizeof(char)) != 0 : NO;
+    toggleSmoothScaling.on      = gConfig.pszScaleQuality ? atoi(gConfig.pszScaleQuality) == 1 : NO;
     
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
     lblOPLCore.text         = gConfig.eMusicType == MUSIC_RIX ? OPLCores[gConfig.eOPLCore] : MIDISynthesizers[gConfig.eMIDISynth];
@@ -452,8 +454,15 @@ typedef void(^SelectedBlock)(NSString *selected);
     gConfig.dwTextureWidth = [textTextureWidth.text intValue];
     gConfig.dwTextureHeight = [textTextureHeight.text intValue];
     gConfig.fUseTouchOverlay = toggleTouchScreenOverlay.isOn;
-    gConfig.pszScaleQuality  = strdup(toggleSmoothScaling.on ? "1" : "0");
+
+    // The toggle only says whether to use bilinear scaling, so any other setting stays
+    // unless the toggle was changed.
+    BOOL wasSmooth = gConfig.pszScaleQuality && atoi(gConfig.pszScaleQuality) == 1;
+    if (toggleSmoothScaling.on != wasSmooth) {
+        gConfig.pszScaleQuality = strdup(toggleSmoothScaling.on ? "1" : PAL_GetConfigString(PALCFG_SCALEQUALITY, YES));
+    }
     
+    gConfig.fEnableGPU = toggleGPU.isOn;
     gConfig.fEnableGLSL = toggleGLSL.isOn;
     gConfig.fEnableHDR = toggleHDR.isOn;
     gConfig.pszShader = [lblShader.text length] == 0 ? NULL :strdup([lblShader.text UTF8String]);

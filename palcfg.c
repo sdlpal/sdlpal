@@ -37,6 +37,20 @@
 #define MAKE_UNSIGNED(defv, minv, maxv) { .uValue = defv }, { .uValue = minv }, { .uValue = maxv }
 #define MAKE_STRING(defv)               { .sValue = defv }, { .sValue = NULL }, { .sValue = NULL }
 
+// The SDL_GPU backend has not been run on a phone or tablet yet, so there it is opt-in.
+#if PAL_HAS_SDL_GPU && !defined(__ANDROID__) && !defined(__IOS__)
+# define DEFAULT_ENABLEGPU TRUE
+#else
+# define DEFAULT_ENABLEGPU FALSE
+#endif
+
+// Sharp bilinear scaling needs a shader, which only the SDL_GPU backend has.
+#if PAL_HAS_SDL_GPU
+# define DEFAULT_SCALEQUALITY "2"
+#else
+# define DEFAULT_SCALEQUALITY "0"
+#endif
+
 #ifdef PLATFORM_DEFAULT_SAMPLERATE
 # define DEFAULT_SAMPLERATE PLATFORM_DEFAULT_SAMPLERATE
 #else
@@ -54,6 +68,7 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_ENABLEAVIPLAY,     PALCFG_BOOLEAN,  "EnableAviPlay",     13, MAKE_BOOLEAN(TRUE,                          FALSE,                 TRUE) },
 	{ PALCFG_ENABLEGLSL,        PALCFG_BOOLEAN,  "EnableGLSL",        10, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
     { PALCFG_ENABLEHDR,         PALCFG_BOOLEAN,  "EnableHDR",          9, MAKE_BOOLEAN(FALSE,                         FALSE,                 TRUE) },
+    { PALCFG_ENABLEGPU,         PALCFG_BOOLEAN,  "EnableGPU",          9, MAKE_BOOLEAN(DEFAULT_ENABLEGPU,               FALSE,                 TRUE) },
 
 	{ PALCFG_SURROUNDOPLOFFSET, PALCFG_INTEGER,  "SurroundOPLOffset", 17, MAKE_INTEGER(384,                           INT32_MIN,             INT32_MAX) },
 	{ PALCFG_LOGLEVEL,          PALCFG_INTEGER,  "LogLevel",           8, MAKE_INTEGER(PAL_DEFAULT_LOGLEVEL,          LOGLEVEL_MIN,          LOGLEVEL_MAX) },
@@ -84,8 +99,9 @@ static const ConfigItem gConfigItems[PALCFG_ALL_MAX] = {
 	{ PALCFG_RIXEXTRAINIT,      PALCFG_STRING,   "RIXExtraInit",      12, MAKE_STRING(NULL) },
 	{ PALCFG_MIDICLIENT,        PALCFG_STRING,   "MIDIClient",        10, MAKE_STRING(NULL) },
 	{ PALCFG_SOUNDBANK,         PALCFG_STRING,   "SoundBank",          9, MAKE_STRING(NULL) },
-	{ PALCFG_SCALEQUALITY,      PALCFG_STRING,   "ScaleQuality",      12, MAKE_STRING("0") },
+	{ PALCFG_SCALEQUALITY,      PALCFG_STRING,   "ScaleQuality",      12, MAKE_STRING(DEFAULT_SCALEQUALITY) },
 	{ PALCFG_SHADER,            PALCFG_STRING,   "Shader",             6, MAKE_STRING(NULL) },
+	{ PALCFG_FILTER,            PALCFG_STRING,   "Filter",             6, MAKE_STRING(NULL) },
 };
 
 static const char *music_types[] = { "MIDI", "RIX", "MP3", "OGG", "OPUS", "RAW" };
@@ -286,6 +302,7 @@ PAL_FreeConfig(
     free(gConfig.pszSavePath);
     free(gConfig.pszShaderPath);
     free(gConfig.pszScaleQuality);
+    free(gConfig.pszFilter);
 	free(gConfig.pszLogFile);
 
 	memset(&gConfig, 0, sizeof(CONFIGURATION));
@@ -543,6 +560,9 @@ PAL_LoadConfig(
 				case PALCFG_SCALEQUALITY:
 					gConfig.pszScaleQuality = ParseStringValue(value.sValue, gConfig.pszScaleQuality);
 					break;
+				case PALCFG_FILTER:
+					gConfig.pszFilter = ParseStringValue(value.sValue, gConfig.pszFilter);
+					break;
 				case PALCFG_SHADER:
 					gConfig.pszShader = ParseStringValue(value.sValue, gConfig.pszShader);
 					break;
@@ -562,6 +582,7 @@ PAL_LoadConfig(
 	if (!gConfig.pszSavePath) gConfig.pszSavePath = gConfig.pszGamePath ? strdup(gConfig.pszGamePath) : strdup(PAL_SAVE_PREFIX);
 	if (!gConfig.pszGamePath) gConfig.pszGamePath = strdup(PAL_PREFIX);
     if (!gConfig.pszShaderPath) gConfig.pszShaderPath = strdup(gConfig.pszGamePath);
+	if (!gConfig.pszScaleQuality) gConfig.pszScaleQuality = strdup(DEFAULT_SCALEQUALITY);
 	gConfig.eMusicType = eMusicType;
 	gConfig.eMIDISynth = eMIDISynthType;
 	gConfig.eCDType = eCDType;
@@ -580,6 +601,7 @@ PAL_LoadConfig(
 	gConfig.fEnableAviPlay = values[PALCFG_ENABLEAVIPLAY].bValue;
 	gConfig.fEnableGLSL = values[PALCFG_ENABLEGLSL].bValue;
     gConfig.fEnableHDR = values[PALCFG_ENABLEHDR].bValue;
+    gConfig.fEnableGPU = values[PALCFG_ENABLEGPU].bValue;
 	gConfig.iAudioChannels = values[PALCFG_STEREO].bValue ? 2 : 1;
 
 	gConfig.iSurroundOPLOffset = values[PALCFG_SURROUNDOPLOFFSET].iValue;
@@ -644,6 +666,7 @@ PAL_SaveConfig(
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_ENABLEAVIPLAY), gConfig.fEnableAviPlay); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_ENABLEGLSL), gConfig.fEnableGLSL); fputs(buf, fp);
         sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_ENABLEHDR), gConfig.fEnableHDR); fputs(buf, fp);
+        sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_ENABLEGPU), gConfig.fEnableGPU); fputs(buf, fp);
 
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_SURROUNDOPLOFFSET), gConfig.iSurroundOPLOffset); fputs(buf, fp);
 		sprintf(buf, "%s=%d\n", PAL_ConfigName(PALCFG_LOGLEVEL), gConfig.iLogLevel); fputs(buf, fp);
@@ -675,6 +698,7 @@ PAL_SaveConfig(
 		if (gConfig.pszMIDIClient && *gConfig.pszMIDIClient) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_MIDICLIENT), gConfig.pszMIDIClient); fputs(buf, fp); }
 		if (gConfig.pszSoundBank && *gConfig.pszSoundBank) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SOUNDBANK), gConfig.pszSoundBank); fputs(buf, fp); }
 		if (gConfig.pszScaleQuality && *gConfig.pszScaleQuality) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SCALEQUALITY), gConfig.pszScaleQuality); fputs(buf, fp); }
+		if (gConfig.pszFilter && *gConfig.pszFilter) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_FILTER), gConfig.pszFilter); fputs(buf, fp); }
 		if (gConfig.pszShader && *gConfig.pszShader) { sprintf(buf, "%s=%s\n", PAL_ConfigName(PALCFG_SHADER), gConfig.pszShader); fputs(buf, fp); }
 
 		fclose(fp);
@@ -707,6 +731,7 @@ PAL_GetConfigItem(
 		case PALCFG_ENABLEAVIPLAY:     value.bValue = gConfig.fEnableAviPlay; break;
 		case PALCFG_ENABLEGLSL:        value.bValue = gConfig.fEnableGLSL; break;
 		case PALCFG_ENABLEHDR:        value.bValue = gConfig.fEnableHDR; break;
+		case PALCFG_ENABLEGPU:        value.bValue = gConfig.fEnableGPU; break;
 		case PALCFG_SURROUNDOPLOFFSET: value.iValue = gConfig.iSurroundOPLOffset; break;
 		case PALCFG_LOGLEVEL:          value.iValue = gConfig.iLogLevel; break;
 		case PALCFG_AUDIODEVICE:       value.iValue = gConfig.iAudioDevice; break;
@@ -731,6 +756,7 @@ PAL_GetConfigItem(
 		case PALCFG_SOUNDBANK:         value.sValue = gConfig.pszSoundBank; break;
 		case PALCFG_SCALEQUALITY:      value.sValue = gConfig.pszScaleQuality; break;
 		case PALCFG_SHADER:            value.sValue = gConfig.pszShader; break;
+		case PALCFG_FILTER:            value.sValue = gConfig.pszFilter; break;
 		case PALCFG_MUSIC:             value.sValue = music_types[gConfig.eMusicType]; break;
 		case PALCFG_OPL_CORE:          value.sValue = opl_cores[gConfig.eOPLCore]; break;
 		case PALCFG_OPL_CHIP:          value.sValue = opl_chips[gConfig.eOPLChip]; break;
@@ -761,6 +787,7 @@ PAL_SetConfigItem(
 	case PALCFG_ENABLEAVIPLAY:     gConfig.fEnableAviPlay = value.bValue; break;
 	case PALCFG_ENABLEGLSL:        gConfig.fEnableGLSL = value.bValue; break;
 	case PALCFG_ENABLEHDR:         gConfig.fEnableHDR = value.bValue; break;
+	case PALCFG_ENABLEGPU:         gConfig.fEnableGPU = value.bValue; break;
 	case PALCFG_SURROUNDOPLOFFSET: gConfig.iSurroundOPLOffset = value.iValue; break;
 	case PALCFG_LOGLEVEL:          gConfig.iLogLevel = value.iValue; break;
 	case PALCFG_AUDIODEVICE:       gConfig.iAudioDevice = value.iValue; break;
@@ -811,6 +838,10 @@ PAL_SetConfigItem(
 	case PALCFG_SCALEQUALITY:
 		if (gConfig.pszScaleQuality) free(gConfig.pszScaleQuality);
 		gConfig.pszScaleQuality = value.sValue && value.sValue[0] ? strdup(value.sValue) : NULL;
+		break;
+	case PALCFG_FILTER:
+		if (gConfig.pszFilter) free(gConfig.pszFilter);
+		gConfig.pszFilter = value.sValue && value.sValue[0] ? strdup(value.sValue) : NULL;
 		break;
 	case PALCFG_SHADER:
 		if (gConfig.pszShader) free(gConfig.pszShader);

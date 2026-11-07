@@ -56,27 +56,30 @@ PAL_BattleDrawBackground(
    //
    // Draw the background
    //
-   pSrc = g_Battle.lpBackground->pixels;
-   pDst = g_Battle.lpSceneBuf->pixels;
-
-   for (i = 0; i < g_Battle.lpSceneBuf->pitch * g_Battle.lpSceneBuf->h; i++)
+   if (!VIDEO_GPU_ShiftBackground(g_Battle.lpBackground, g_Battle.lpSceneBuf, g_Battle.sBackgroundColorShift))
    {
-      b = (*pSrc & 0x0F);
-      b += g_Battle.sBackgroundColorShift;
+      pSrc = g_Battle.lpBackground->pixels;
+      pDst = g_Battle.lpSceneBuf->pixels;
 
-      if (b & 0x80)
+      for (i = 0; i < g_Battle.lpSceneBuf->pitch * g_Battle.lpSceneBuf->h; i++)
       {
-         b = 0;
-      }
-      else if (b & 0x70)
-      {
-         b = 0x0F;
-      }
+         b = (*pSrc & 0x0F);
+         b += g_Battle.sBackgroundColorShift;
 
-      *pDst = (b | (*pSrc & 0xF0));
+         if (b & 0x80)
+         {
+            b = 0;
+         }
+         else if (b & 0x70)
+         {
+            b = 0x0F;
+         }
 
-      ++pSrc;
-      ++pDst;
+         *pDst = (b | (*pSrc & 0xF0));
+
+         ++pSrc;
+         ++pDst;
+      }
    }
 
    PAL_ApplyWave(g_Battle.lpSceneBuf);
@@ -624,9 +627,8 @@ PAL_BattleFadeScene(
 
 --*/
 {
-   int               i, j, k;
+   int               i, j;
    DWORD             time;
-   BYTE              a, b;
    const int         rgIndex[6] = {0, 3, 1, 5, 2, 4};
    
    time = SDL_GetTicks();
@@ -642,25 +644,7 @@ PAL_BattleFadeScene(
          // Blend the pixels in the 2 buffers, and put the result into the
          // backup buffer
          //
-         for (k = rgIndex[j]; k < gpScreen->pitch * gpScreen->h; k += 6)
-         {
-            a = ((LPBYTE)(g_Battle.lpSceneBuf->pixels))[k];
-            b = ((LPBYTE)(gpScreenBak->pixels))[k];
-
-            if (i > 0)
-            {
-               if ((a & 0x0F) > (b & 0x0F))
-               {
-                  b++;
-               }
-               else if ((a & 0x0F) < (b & 0x0F))
-               {
-                  b--;
-               }
-            }
-
-            ((LPBYTE)(gpScreenBak->pixels))[k] = ((a & 0xF0) | (b & 0x0F));
-         }
+         VIDEO_CrossFadeStep(g_Battle.lpSceneBuf, gpScreenBak, rgIndex[j], i > 0);
 
          //
          // Draw the backup buffer to the screen

@@ -86,3 +86,6 @@
 "xaO-G1-fJo.text" = "纹理宽度";
 "LhH-aH-hZI.text" = "纹理高度";
 "8di-p8-Xhn.text" = "OPL芯片";
+
+/* Class = "UILabel"; text = "GPU Rendering"; ObjectID = "gP2-Xq-R02"; */
+"gP2-Xq-R02.text" = "用 GPU 渲染";

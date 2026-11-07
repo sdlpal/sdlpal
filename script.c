@@ -2202,7 +2202,7 @@ PAL_InterpretInstruction(
       //
       if (gConfig.fIsWIN95)
 	  {
-         SDL_FillRect(gpScreen, NULL, 0);
+         VIDEO_FillRect(gpScreen, NULL, 0);
          VIDEO_UpdateScreen(NULL);
       }
       else
