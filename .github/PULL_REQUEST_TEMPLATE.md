@@ -6,9 +6,9 @@
 
 - [ ] Have you written new tests for your changes?
 
-- [ ] Have you successfully run it with your changes locally?
+- [ ] Have you successfully run it with your changes locally? State clearly which platforms could not be built or tested.
 
-- [ ] Have you tested on following platforms?
+- Have you tested on following platforms?
   - [ ] Win32
   - [ ] UWP
   - [ ] Linux
@@ -17,3 +17,5 @@
   - [ ] iOS
 
 - [ ] I certify that I have the right and agree to submit my contributions under the terms of GNU General Public License, version 3 (or any later version at the choice of the maintainers of the SDLPAL Project) as published by the Free Software Foundation.
+
+- [ ] I've read [AGENTS.md](../docs/AGENTS.md) and followed it.
