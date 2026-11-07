@@ -28,6 +28,8 @@ import android.os.*;
 import android.util.*;
 import android.media.*;
 import android.net.Uri;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 import java.io.*;
 
 public class PalActivity extends SDLActivity {
@@ -61,11 +63,31 @@ public class PalActivity extends SDLActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        MainActivity.restoreAppPaths(this);
         super.onCreate(savedInstanceState);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         setScreenSize(metrics.widthPixels, metrics.heightPixels);
+
+        // Newer systems no longer call onBackPressed() for this.
+        if (Build.VERSION.SDK_INT >= 33) {
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                new OnBackInvokedCallback() {
+                    @Override
+                    public void onBackInvoked() {
+                        moveTaskToBack(true);
+                    }
+                });
+        }
+    }
+
+    // Back only leaves the game for now. Closing this activity would end the game, and with
+    // it everything since the last save, which is easy to do by swiping from a screen edge.
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 
     @Override
