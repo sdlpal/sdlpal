@@ -204,7 +204,7 @@ RIX_FillBuffer(
 						return;
 					}
 				}
-				int sample_count = gConfig.iSampleRate / 70;
+				int sample_count = pRixPlayer->buf_size / (gConfig.iAudioChannels * (int)sizeof(short));
 				if (pRixPlayer->resampler[0])
 				{
 					unsigned int samples_written = 0;
@@ -269,9 +269,9 @@ RIX_FillBuffer(
 }
 
 // Size in bytes of one 70 Hz RIX tick of mixed output at the current effective
-// sample rate. The +69/+1 rounding keeps this an upper bound on
-// (iSampleRate / 70) * channels * sizeof(short) even when the rate is not a
-// multiple of 70, so the tick can never overrun the buffer.
+// sample rate, rounded up to whole frames when the rate is not a multiple of 70.
+// RIX_FillBuffer generates and plays exactly this much per tick, as any frame of
+// the buffer left unwritten would be heard as a click 70 times a second.
 static INT
 RIX_GetBufferSize(
 	VOID
