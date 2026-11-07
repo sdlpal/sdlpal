@@ -22,6 +22,7 @@
 #include "font.h"
 #include "util.h"
 #include "text.h"
+#include "video_gpu.h"
 
 #define _FONT_C
 
@@ -550,6 +551,57 @@ PAL_DrawCharOnSurface(
 
     x_offset = font_offset_x[wChar];
     y_offset = font_offset_y[wChar];
+
+	//
+	// On the GPU the glyph comes from the atlas. Like the code below, this draws each
+	// half of a wide glyph only if its left edge is on the surface, and starts at the top
+	// row of the surface if the glyph would begin above it.
+	//
+	if (VIDEO_GPU_IsTarget(lpSurface))
+	{
+		BYTE rgMask[16 * 16];
+		int  w = fUse8x8Font ? 8 : ((font_width[wChar] == 32) ? 16 : 8);
+		int  h = fUse8x8Font ? 8 : _font_height;
+		int  top_row = (int)max(y + y_offset, 0);
+		DWORD dwKey = fUse8x8Font ? (DWORD)wChar | 0x10000 : (DWORD)wChar;
+		BOOL fDone = FALSE;
+
+		//
+		// The mask is only needed the first time, to add the glyph to the atlas.
+		//
+		if (!VIDEO_GPU_IsGlyphCached(dwKey, w, h))
+		{
+			for (i = 0; i < h; i++)
+			{
+				for (j = 0; j < w; j++)
+				{
+					if (fUse8x8Font)
+						rgMask[i * w + j] = (iso_font_8x8[wChar][i] >> j) & 1;
+					else if (w == 16)
+						rgMask[i * w + j] = (unicode_font[wChar][i * 2 + j / 8] >> (7 - j % 8)) & 1;
+					else
+						rgMask[i * w + j] = (unicode_font[wChar][i] >> (7 - j)) & 1;
+				}
+			}
+		}
+
+		if (fUse8x8Font)
+		{
+			fDone = VIDEO_GPU_DrawGlyph(lpSurface, dwKey, rgMask, w, h, x, top_row, 0, 8, bColor);
+		}
+		else
+		{
+			if (x + x_offset >= 0)
+				fDone = VIDEO_GPU_DrawGlyph(lpSurface, dwKey, rgMask, w, h, x + x_offset, top_row, 0, 8, bColor);
+			if (w == 16 && x + 8 + x_offset >= 0)
+				fDone = VIDEO_GPU_DrawGlyph(lpSurface, dwKey, rgMask, w, h, x + 8 + x_offset, top_row, 8, 8, bColor);
+		}
+
+		if (fDone || lpSurface->pixels == NULL)
+		{
+			return;
+		}
+	}
 
 	//
 	// Draw the character to the surface.

@@ -91,6 +91,11 @@ UTIL_Delay(
    unsigned int ms
 );
 
+unsigned int
+UTIL_NextPowerOfTwo(
+   unsigned int x
+);
+
 void
 TerminateOnError(
    const char *fmt,

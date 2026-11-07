@@ -351,6 +351,9 @@
     <ClCompile Include="..\mini_glloader.c">
       <Filter>glsl</Filter>
     </ClCompile>
+    <ClCompile Include="..\video_gpu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\video_glsl.c">
       <Filter>glsl</Filter>
     </ClCompile>
@@ -1207,6 +1210,12 @@
     </ClInclude>
     <ClInclude Include="..\mini_glloader.h">
       <Filter>glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\video_gpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\video_gpu_shaders.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\video_glsl.h">
       <Filter>glsl</Filter>

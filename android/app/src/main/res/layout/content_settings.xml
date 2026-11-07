@@ -153,6 +153,12 @@
                 android:inputType="numberSigned" />
 
             <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swEnableGPU"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_gpu" />
+
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swEnableGLSL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

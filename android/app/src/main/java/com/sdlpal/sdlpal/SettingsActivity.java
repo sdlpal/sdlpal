@@ -94,6 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String OPLChip = "OPLChip";
     private static final String EnableGLSL = "EnableGLSL";
     private static final String EnableHDR = "EnableHDR";
+    private static final String EnableGPU = "EnableGPU";
     private static final String Shader = "Shader";
     private static final String TextureWidth = "TextureWidth";
     private static final String TextureHeight = "TextureHeight";
@@ -430,6 +431,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((SwitchCompat)findViewById(R.id.swStereo)).setChecked(getConfigBoolean(Stereo, false));
         ((SwitchCompat)findViewById(R.id.swEnableGLSL)).setChecked(getConfigBoolean(EnableGLSL, false));
         ((SwitchCompat)findViewById(R.id.swEnableHDR)).setChecked(getConfigBoolean(EnableHDR, false));
+        ((SwitchCompat)findViewById(R.id.swEnableGPU)).setChecked(getConfigBoolean(EnableGPU, false));
 
         ((AppCompatSpinner)findViewById(R.id.spLogLevel)).setSelection(getConfigInt(LogLevel, false));
         ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, false), AudioSampleRates, 3));
@@ -478,6 +480,7 @@ public class SettingsActivity extends AppCompatActivity {
         setConfigBoolean(Stereo, ((SwitchCompat)findViewById(R.id.swStereo)).isChecked());
         setConfigBoolean(EnableGLSL, ((SwitchCompat)findViewById(R.id.swEnableGLSL)).isChecked());
         setConfigBoolean(EnableHDR, ((SwitchCompat)findViewById(R.id.swEnableHDR)).isChecked());
+        setConfigBoolean(EnableGPU, ((SwitchCompat)findViewById(R.id.swEnableGPU)).isChecked());
 
         setConfigInt(LogLevel, ((AppCompatSpinner)findViewById(R.id.spLogLevel)).getSelectedItemPosition());
         setConfigInt(SampleRate, Integer.parseInt((String)((AppCompatSpinner)findViewById(R.id.spSample)).getSelectedItem()));

@@ -169,19 +169,19 @@ PAL_PlayerInfoBox(
    rect.y = PAL_Y(pos) + 4;
    rect.w = 1;
    rect.h = 6;
-   SDL_FillRect(gpScreen, &rect, 0xBD);
+   VIDEO_FillRect(gpScreen, &rect, 0xBD);
 
    rect.x += 39;
-   SDL_FillRect(gpScreen, &rect, 0xBD);
+   VIDEO_FillRect(gpScreen, &rect, 0xBD);
 
    rect.x = PAL_X(pos) + 32;
    rect.y = PAL_Y(pos) + 3;
    rect.w = 38;
    rect.h = 1;
-   SDL_FillRect(gpScreen, &rect, 0xBD);
+   VIDEO_FillRect(gpScreen, &rect, 0xBD);
 
    rect.y += 7;
-   SDL_FillRect(gpScreen, &rect, 0xBD);
+   VIDEO_FillRect(gpScreen, &rect, 0xBD);
 
    //
    // Draw the Time meter bar
@@ -192,7 +192,7 @@ PAL_PlayerInfoBox(
       rect.y = PAL_Y(pos) + 6;
       rect.w = 36;
       rect.h = 2;
-      SDL_FillRect(gpScreen, &rect, 0x2C);
+      VIDEO_FillRect(gpScreen, &rect, 0x2C);
    }
    else if (iTimeMeter > 0)
    {
@@ -200,7 +200,7 @@ PAL_PlayerInfoBox(
       rect.y = PAL_Y(pos) + 5;
       rect.w = iTimeMeter * 36 / 100;
       rect.h = 4;
-      SDL_FillRect(gpScreen, &rect, bTimeMeterColor);
+      VIDEO_FillRect(gpScreen, &rect, bTimeMeterColor);
    }
 #endif
 

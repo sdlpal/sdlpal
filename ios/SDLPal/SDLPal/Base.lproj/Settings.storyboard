@@ -261,6 +261,31 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="gP0-Xq-R00">
+                                        <rect key="frame" x="0.0" y="519.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gP0-Xq-R00" id="gP1-Xq-R01">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="GPU Rendering" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gP2-Xq-R02">
+                                                    <rect key="frame" x="8" y="12" width="157" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gP3-Xq-R03">
+                                                    <rect key="frame" x="310" y="6.5" width="51" height="31"/>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="gP3-Xq-R03" firstAttribute="centerY" secondItem="gP2-Xq-R02" secondAttribute="centerY" id="gP4-Xq-R04"/>
+                                                <constraint firstItem="gP2-Xq-R02" firstAttribute="centerY" secondItem="gP1-Xq-R01" secondAttribute="centerY" id="gP5-Xq-R05"/>
+                                                <constraint firstAttribute="leadingMargin" secondItem="gP2-Xq-R02" secondAttribute="leading" id="gP6-Xq-R06"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="gP3-Xq-R03" secondAttribute="trailing" id="gP7-Xq-R07"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Filter" id="XwQ-GI-OlM">
@@ -786,6 +811,7 @@
                         <outlet property="textTextureHeight" destination="UR1-hh-CQz" id="VdN-Tg-BZQ"/>
                         <outlet property="textTextureWidth" destination="hju-rX-VOC" id="x2q-mZ-Edu"/>
                         <outlet property="toggleGLSL" destination="CNI-vC-wAT" id="7gv-KW-RCK"/>
+                        <outlet property="toggleGPU" destination="gP3-Xq-R03" id="gPO-Xq-R00"/>
                         <outlet property="toggleHDR" destination="EM9-kd-7iN" id="yIn-TM-25L"/>
                         <outlet property="toggleKeepAspect" destination="19s-4h-jrW" id="ccu-K4-vdC"/>
                         <outlet property="toggleSmoothScaling" destination="p8P-9E-3AK" id="wk8-QL-9pt"/>

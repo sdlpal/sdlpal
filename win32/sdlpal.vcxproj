@@ -524,6 +524,7 @@
     <ClCompile Include="..\util.c" />
     <ClCompile Include="..\video.c" />
     <ClCompile Include="..\video_glsl.c" />
+    <ClCompile Include="..\video_gpu.c" />
     <ClCompile Include="..\mini_glloader.c" />
     <ClCompile Include="..\yj1.c" />
     <ClCompile Include="..\adplug\binfile.cpp" />
@@ -758,6 +759,8 @@
     <ClInclude Include="..\libmad\synth.h" />
     <ClInclude Include="..\libmad\timer.h" />
     <ClInclude Include="..\video_glsl.h" />
+    <ClInclude Include="..\video_gpu.h" />
+    <ClInclude Include="..\video_gpu_shaders.h" />
     <ClInclude Include="pal_config.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\generated.h" />
