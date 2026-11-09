@@ -46,35 +46,18 @@ PAL_GameUpdate(
    WORD            wResult;
 
    //
+   // Allow player walking during fadein
+   //
+   if (gpGlobals->fNeedToFadeIn)
+   {
+       return;
+   }
+
+   //
    // Check for trigger events
    //
    if (fTrigger)
    {
-      //
-      // Check if we are entering a new scene
-      //
-      if (gpGlobals->fEnteringScene)
-      {
-         //
-         // Run the script for entering the scene
-         //
-         gpGlobals->fEnteringScene = FALSE;
-
-         i = gpGlobals->wNumScene - 1;
-         gpGlobals->g.rgScene[i].wScriptOnEnter = PAL_RunTriggerScript(gpGlobals->g.rgScene[i].wScriptOnEnter, 0xFFFF);
-
-         if (gpGlobals->fEnteringScene)
-         {
-            //
-            // Don't go further as we're switching to another scene
-            //
-            return;
-         }
-
-         PAL_ClearKeyState();
-         PAL_MakeScene();
-      }
-
       //
       // Loop through all event objects in the current scene
       //
@@ -153,14 +136,6 @@ PAL_GameUpdate(
                p->wTriggerScript = PAL_RunTriggerScript(p->wTriggerScript, wEventObjectID);
 
                PAL_ClearKeyState();
-
-               if (gpGlobals->fEnteringScene)
-               {
-                  //
-                  // Don't go further on scene switching
-                  //
-                  return;
-               }
             }
          }
       }
@@ -181,13 +156,6 @@ PAL_GameUpdate(
          if (wScriptEntry != 0)
          {
             p->wAutoScript = PAL_RunAutoScript(wScriptEntry, wEventObjectID);
-            if (gpGlobals->fEnteringScene)
-            {
-               //
-               // Don't go further on scene switching
-               //
-               return;
-            }
          }
       }
 
@@ -532,7 +500,7 @@ PAL_StartFrame(
    // Run the game logic of one frame
    //
    PAL_GameUpdate(TRUE);
-   if (gpGlobals->fEnteringScene)
+   if (PAL_GetLoadFlags() != 0)
    {
       return;
    }
