@@ -1047,6 +1047,45 @@ out:
    VIDEO_RestoreScreen(gpScreen);
 }
 
+static VOID
+PAL_DrawStatNumber(
+   UINT           iNum,
+   PAL_POS        pos,
+   NUMCOLOR       color
+)
+/*++
+  Purpose:
+
+    Draw a stat value (attack, magic strength, ...) next to its label.
+
+  Parameters:
+
+    [IN]  iNum - the value to be drawn.
+
+    [IN]  pos - position on the screen.
+
+    [IN]  color - color of the number.
+
+  Return value:
+
+    None.
+
+  Note:
+
+    PAL_DrawNumber() 在位数超过字段宽度时会丢弃高位，所以属性必须能画出 5 位
+    （属性最大 65535，WIN95 版同样显示 5 位数）。这里只在数值超过 9999 时才
+    加宽字段，因此 4 位数及以下的显示与改动前逐像素相同。
+    PAL_DrawNumber() drops the leading digits once the value needs more digits than
+    the field is wide, so the stats have to be drawn with five digits (they can
+    reach 65535, and the WIN95 version shows five digits as well).  The field is
+    only widened above 9999, so values with up to 4 digits are drawn exactly as
+    before.
+
+--*/
+{
+   PAL_DrawNumber(iNum, (iNum > 9999) ? 5 : 4, pos, color, kNumAlignRight);
+}
+
 VOID
 PAL_PlayerStatus(
    VOID
@@ -1085,6 +1124,7 @@ PAL_PlayerStatus(
    int              iPlayerRole;
    int              i, j;
    WORD             w;
+   WORD             wHP, wMaxHP, wMP, wMaxMP;
 
    PAL_MKFDecompressChunk(bufBackground, 320 * 200, STATUS_BACKGROUND_FBPNUM, gpGlobals->f.fpFBP);
    iCurrent = 0;
@@ -1219,25 +1259,47 @@ PAL_PlayerStatus(
          gConfig.ScreenLayout.RoleNextExp, kNumColorCyan, kNumAlignRight);
       PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwLevel[iPlayerRole], 2,
          gConfig.ScreenLayout.RoleLevel, kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwHP[iPlayerRole], 4,
-         gConfig.ScreenLayout.RoleCurHP, kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[iPlayerRole], 4,
-         gConfig.ScreenLayout.RoleMaxHP, kNumColorBlue, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[iPlayerRole], 4,
-         gConfig.ScreenLayout.RoleCurMP, kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[iPlayerRole], 4,
-         gConfig.ScreenLayout.RoleMaxMP, kNumColorBlue, kNumAlignRight);
+      //
+      // 生命/真气同样支持 5 位（WIN95 版可显示 5 位数）：位数只在数值超过 9999
+      // 时才增加，当前值向左扩展一位、上限向右扩展一位，因此 4 位数及以下的显示
+      // 与修改前逐像素相同，两个数字也不会互相遮挡。
+      // The HP and MP support five digits as well, as the WIN95 version can show
+      // them: the extra digit is only used above 9999, growing to the left for the
+      // current value and to the right for the maximum.  Values with up to 4 digits
+      // are therefore drawn exactly as before, and the two numbers never cover each
+      // other.
+      //
+      wHP = gpGlobals->g.PlayerRoles.rgwHP[iPlayerRole];
+      wMaxHP = gpGlobals->g.PlayerRoles.rgwMaxHP[iPlayerRole];
+      wMP = gpGlobals->g.PlayerRoles.rgwMP[iPlayerRole];
+      wMaxMP = gpGlobals->g.PlayerRoles.rgwMaxMP[iPlayerRole];
 
-      PAL_DrawNumber(PAL_GetPlayerAttackStrength(iPlayerRole), 4,
-         gConfig.ScreenLayout.RoleStatusValues[0], kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerMagicStrength(iPlayerRole), 4,
-         gConfig.ScreenLayout.RoleStatusValues[1], kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDefense(iPlayerRole), 4,
-         gConfig.ScreenLayout.RoleStatusValues[2], kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDexterity(iPlayerRole), 4,
-         gConfig.ScreenLayout.RoleStatusValues[3], kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerFleeRate(iPlayerRole), 4,
-         gConfig.ScreenLayout.RoleStatusValues[4], kNumColorYellow, kNumAlignRight);
+      PAL_DrawNumber(wHP, (wHP > 9999) ? 5 : 4,
+         PAL_XY(PAL_X(gConfig.ScreenLayout.RoleCurHP) - ((wHP > 9999) ? 6 : 0),
+            PAL_Y(gConfig.ScreenLayout.RoleCurHP)), kNumColorYellow, kNumAlignRight);
+      PAL_DrawStatNumber(wMaxHP, gConfig.ScreenLayout.RoleMaxHP, kNumColorBlue);
+      PAL_DrawNumber(wMP, (wMP > 9999) ? 5 : 4,
+         PAL_XY(PAL_X(gConfig.ScreenLayout.RoleCurMP) - ((wMP > 9999) ? 6 : 0),
+            PAL_Y(gConfig.ScreenLayout.RoleCurMP)), kNumColorYellow, kNumAlignRight);
+      PAL_DrawStatNumber(wMaxMP, gConfig.ScreenLayout.RoleMaxMP, kNumColorBlue);
+
+      //
+      // 属性最大可达 65535，按 5 位绘制（WIN95 版同样显示 5 位数）；PAL_DrawStatNumber()
+      // 只在超过 9999 时加宽字段，因此 4 位数及以下的显示与改动前逐像素相同。
+      // The attributes can reach 65535 and are drawn with five digits, as the WIN95
+      // version does; PAL_DrawStatNumber() only widens the field above 9999, so
+      // values with up to 4 digits are drawn exactly as before.
+      //
+      PAL_DrawStatNumber(PAL_GetPlayerAttackStrength(iPlayerRole),
+         gConfig.ScreenLayout.RoleStatusValues[0], kNumColorYellow);
+      PAL_DrawStatNumber(PAL_GetPlayerMagicStrength(iPlayerRole),
+         gConfig.ScreenLayout.RoleStatusValues[1], kNumColorYellow);
+      PAL_DrawStatNumber(PAL_GetPlayerDefense(iPlayerRole),
+         gConfig.ScreenLayout.RoleStatusValues[2], kNumColorYellow);
+      PAL_DrawStatNumber(PAL_GetPlayerDexterity(iPlayerRole),
+         gConfig.ScreenLayout.RoleStatusValues[3], kNumColorYellow);
+      PAL_DrawStatNumber(PAL_GetPlayerFleeRate(iPlayerRole),
+         gConfig.ScreenLayout.RoleStatusValues[4], kNumColorYellow);
 
       //
       // Draw all poisons
@@ -1311,6 +1373,7 @@ PAL_ItemUseMenu(
    static SHORT   sSelectedPlayer = 0;
    SDL_Rect       rect = {110, 2, 200, 180};
    int            i;
+   WORD           wHP, wMP;
 
    bSelectedColor = MENUITEM_COLOR_SELECTED_FIRST;
    dwColorChangeTime = 0;
@@ -1352,30 +1415,45 @@ PAL_ItemUseMenu(
       PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwLevel[i], 4, PAL_XY(240, 20),
          kNumColorYellow, kNumAlignRight);
 
+      //
+      // 生命/真气：上限右移 2 像素（261 → 263）给 5 位数让位；当前值左移 1 像素
+      // （240 → 239），超过 9999 时再向左扩一位，免得压住中间的斜杠。
+      // HP/MP: the maximum moves 2 pixels to the right (261 -> 263) to make room for a
+      // fifth digit, and the current value moves 1 pixel to the left (240 -> 239),
+      // growing one more digit to the left above 9999 so that it does not cover the
+      // slash in between.
+      //
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
          PAL_XY(263, 38));
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[i], 4,
-         PAL_XY(261, 40), kNumColorBlue, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwHP[i], 4,
-         PAL_XY(240, 37), kNumColorYellow, kNumAlignRight);
+      PAL_DrawStatNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[i], PAL_XY(263, 40),
+         kNumColorBlue);
+      wHP = gpGlobals->g.PlayerRoles.rgwHP[i];
+      PAL_DrawNumber(wHP, (wHP > 9999) ? 5 : 4,
+         PAL_XY(239 - ((wHP > 9999) ? 6 : 0), 37), kNumColorYellow, kNumAlignRight);
 
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
          PAL_XY(263, 56));
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[i], 4,
-         PAL_XY(261, 58), kNumColorBlue, kNumAlignRight);
-      PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[i], 4,
-         PAL_XY(240, 55), kNumColorYellow, kNumAlignRight);
+      PAL_DrawStatNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[i], PAL_XY(263, 58),
+         kNumColorBlue);
+      wMP = gpGlobals->g.PlayerRoles.rgwMP[i];
+      PAL_DrawNumber(wMP, (wMP > 9999) ? 5 : 4,
+         PAL_XY(239 - ((wMP > 9999) ? 6 : 0), 55), kNumColorYellow, kNumAlignRight);
 
-      PAL_DrawNumber(PAL_GetPlayerAttackStrength(i), 4, PAL_XY(240, 74),
-         kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerMagicStrength(i), 4, PAL_XY(240, 92),
-         kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDefense(i), 4, PAL_XY(240, 110),
-         kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDexterity(i), 4, PAL_XY(240, 128),
-         kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerFleeRate(i), 4, PAL_XY(240, 146),
-         kNumColorYellow, kNumAlignRight);
+      //
+      // 属性按 5 位绘制，理由同 PAL_PlayerStatus。
+      // The attributes are drawn with five digits, for the same reason as in
+      // PAL_PlayerStatus.
+      //
+      PAL_DrawStatNumber(PAL_GetPlayerAttackStrength(i), PAL_XY(240, 74),
+         kNumColorYellow);
+      PAL_DrawStatNumber(PAL_GetPlayerMagicStrength(i), PAL_XY(240, 92),
+         kNumColorYellow);
+      PAL_DrawStatNumber(PAL_GetPlayerDefense(i), PAL_XY(240, 110),
+         kNumColorYellow);
+      PAL_DrawStatNumber(PAL_GetPlayerDexterity(i), PAL_XY(240, 128),
+         kNumColorYellow);
+      PAL_DrawStatNumber(PAL_GetPlayerFleeRate(i), PAL_XY(240, 146),
+         kNumColorYellow);
 
       //
       // Draw the names of the players in the party
@@ -1908,11 +1986,16 @@ PAL_EquipItemMenu(
       //
       // Draw the stats of the currently selected player
       //
-      PAL_DrawNumber(PAL_GetPlayerAttackStrength(w), 4, gConfig.ScreenLayout.EquipStatusValues[0], kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerMagicStrength(w), 4, gConfig.ScreenLayout.EquipStatusValues[1], kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDefense(w), 4, gConfig.ScreenLayout.EquipStatusValues[2], kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerDexterity(w), 4, gConfig.ScreenLayout.EquipStatusValues[3], kNumColorCyan, kNumAlignRight);
-      PAL_DrawNumber(PAL_GetPlayerFleeRate(w), 4, gConfig.ScreenLayout.EquipStatusValues[4], kNumColorCyan, kNumAlignRight);
+      //
+      // 属性按 5 位绘制，理由同 PAL_PlayerStatus。
+      // The attributes are drawn with five digits, for the same reason as in
+      // PAL_PlayerStatus.
+      //
+      PAL_DrawStatNumber(PAL_GetPlayerAttackStrength(w), gConfig.ScreenLayout.EquipStatusValues[0], kNumColorCyan);
+      PAL_DrawStatNumber(PAL_GetPlayerMagicStrength(w), gConfig.ScreenLayout.EquipStatusValues[1], kNumColorCyan);
+      PAL_DrawStatNumber(PAL_GetPlayerDefense(w), gConfig.ScreenLayout.EquipStatusValues[2], kNumColorCyan);
+      PAL_DrawStatNumber(PAL_GetPlayerDexterity(w), gConfig.ScreenLayout.EquipStatusValues[3], kNumColorCyan);
+      PAL_DrawStatNumber(PAL_GetPlayerFleeRate(w), gConfig.ScreenLayout.EquipStatusValues[4], kNumColorCyan);
 
       //
       // Draw a box for player selection

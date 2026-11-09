@@ -32,6 +32,42 @@ static int     g_iNumMagic = 0;
 static int     g_iCurrentItem = 0;
 static WORD    g_wPlayerMP = 0;
 
+static VOID
+PAL_DrawMPNumber(
+   UINT           iNum,
+   PAL_POS        pos,
+   NUMCOLOR       color
+)
+/*++
+  Purpose:
+
+    Draw an MP value in the magic menu, centred in its field.
+
+  Parameters:
+
+    [IN]  iNum - the MP value (cost of the selected magic or the player's MP).
+
+    [IN]  pos - position on the screen.
+
+    [IN]  color - color of the number.
+
+  Return value:
+
+    None.
+
+  Note:
+
+    MP 数值改为居中显示；位数只在超过 9999 时才加宽，因此 4 位数的位置与改动前
+    完全相同，5 位数也不会被 PAL_DrawNumber() 丢掉高位。
+    The MP value is centred in its field; the field is only widened above 9999, so
+    values with four digits stay exactly where they were and five digits are not
+    truncated by PAL_DrawNumber().
+
+--*/
+{
+   PAL_DrawNumber(iNum, (iNum > 9999) ? 5 : 4, pos, color, kNumAlignMid);
+}
+
 WORD
 PAL_MagicSelectionMenuUpdate(
    VOID
@@ -137,9 +173,9 @@ PAL_MagicSelectionMenuUpdate(
          PAL_CreateSingleLineBox(PAL_XY(215, 0), 5, FALSE);
          PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
             gpScreen, PAL_XY(260, 14));
-         PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(230, 14),
-            kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(265, 14), kNumColorCyan, kNumAlignRight);
+         PAL_DrawMPNumber(rgMagicItem[g_iCurrentItem].wMP, PAL_XY(230, 14),
+            kNumColorYellow);
+         PAL_DrawMPNumber(g_wPlayerMP, PAL_XY(265, 14), kNumColorCyan);
       }
       else
       {
@@ -181,9 +217,9 @@ PAL_MagicSelectionMenuUpdate(
          PAL_CreateSingleLineBox(PAL_XY(0, 0), 5, FALSE);
          PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
             gpScreen, PAL_XY(45, 14));
-         PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, PAL_XY(15, 14),
-            kNumColorYellow, kNumAlignRight);
-         PAL_DrawNumber(g_wPlayerMP, 4, PAL_XY(50, 14), kNumColorCyan, kNumAlignRight);
+         PAL_DrawMPNumber(rgMagicItem[g_iCurrentItem].wMP, PAL_XY(15, 14),
+            kNumColorYellow);
+         PAL_DrawMPNumber(g_wPlayerMP, PAL_XY(50, 14), kNumColorCyan);
       }
    }
    else
@@ -210,9 +246,9 @@ PAL_MagicSelectionMenuUpdate(
       PAL_CreateSingleLineBox(PAL_XY(0, 0), PAL_X(gConfig.ScreenLayout.MagicMPDescLines), FALSE);
       PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH),
           gpScreen, gConfig.ScreenLayout.MagicMPSlashPos);
-      PAL_DrawNumber(rgMagicItem[g_iCurrentItem].wMP, 4, gConfig.ScreenLayout.MagicMPNeededPos,
-          kNumColorYellow, kNumAlignRight);
-      PAL_DrawNumber(g_wPlayerMP, 4, gConfig.ScreenLayout.MagicMPCurrentPos, kNumColorCyan, kNumAlignRight);
+      PAL_DrawMPNumber(rgMagicItem[g_iCurrentItem].wMP, gConfig.ScreenLayout.MagicMPNeededPos,
+          kNumColorYellow);
+      PAL_DrawMPNumber(g_wPlayerMP, gConfig.ScreenLayout.MagicMPCurrentPos, kNumColorCyan);
    }
 
 
