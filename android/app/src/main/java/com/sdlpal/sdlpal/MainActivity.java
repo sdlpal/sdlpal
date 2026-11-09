@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static MainActivity mSingleton;
+    // For the file functions, which the game calls while no MainActivity exists.
+    private static Context mAppContext;
     private ActivityResultLauncher<Intent> permissionRequestLauncher;
 
     private static final String TAG = "sdlpal-debug";
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static int getFileDescriptorFromUri(Uri data, String mode) {
         try {
-            ContentResolver cr = mSingleton.getApplicationContext().getContentResolver();
+            ContentResolver cr = mAppContext.getContentResolver();
             ParcelFileDescriptor inputPFD = cr.openFileDescriptor(data, mode);
             if (inputPFD == null) {
                 Log.e(TAG, "getFileDescriptorFromUri: Failed to get parcel file descriptor ");
@@ -126,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             if(basePath.isEmpty())
                 throw new Exception("basePath is empty");
-            Context ctx = mSingleton.getApplicationContext();
             path = path.replace(basePath, "");
             path = path.replace("/","%2F");
             String pathUri = docUri + "%2F" + path;
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static String getPath(final Uri uri) {
-        Context context = mSingleton.getApplicationContext();
+        Context context = mAppContext;
         // DocumentProvider
         if (DocumentsContract.isTreeUri(uri)) {
             if (isExternalStorageDocument(uri)) {
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static int SAF_fopen(String path, String mode) {
-        Context context = mSingleton.getApplicationContext();
+        Context context = mAppContext;
         Uri uri = getDocumentUriFromPath(path);
         mode = mode.substring(0,1);
         try {
@@ -237,19 +238,22 @@ public class MainActivity extends AppCompatActivity {
         return docTreeUri;
     }
 
-    protected void loadPersistedUriFromCache() {
+    private static void readPersistedUriFromCache() throws IOException {
         File persistFile = new File(cachePath + "/persisted");
-        FileInputStream in;
+        int length = (int) persistFile.length();
+        byte[] bytes = new byte[length];
+        FileInputStream in = new FileInputStream(persistFile);
+        in.read(bytes);
+        String contents = new String(bytes);
+        Uri uri = Uri.parse(contents);
+        setPersistedUri(uri, false);
+        in.close();
+        basePath = getPath(uri);
+    }
+
+    protected void loadPersistedUriFromCache() {
         try {
-            int length = (int) persistFile.length();
-            byte[] bytes = new byte[length];
-            in = new FileInputStream(persistFile);
-            in.read(bytes);
-            String contents = new String(bytes);
-            Uri uri = Uri.parse(contents);
-            setPersistedUri(uri, false); 
-            in.close();
-            basePath = getPath(uri);
+            readPersistedUriFromCache();
         }catch(FileNotFoundException e) {
             blocked = true;
             alertUser(R.string.toast_requestpermission, new RequestForPermissions() {
@@ -283,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSingleton = this;
+        mAppContext = getApplicationContext();
         permissionRequestLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
         new ActivityResultCallback<ActivityResult>() {
@@ -301,9 +306,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void onStart() {
         super.onStart();
-        cachePath = getApplicationContext().getCacheDir().getPath();
+        cachePath = mAppContext.getCacheDir().getPath();
         loadPersistedUriFromCache();
-        String dataPath = getApplicationContext().getFilesDir().getPath();
+        setAppPaths();
+
+        if (!blocked)
+            StartGame();
+    }
+
+    private static void setAppPaths() {
+        String dataPath = mAppContext.getFilesDir().getPath();
         String sdlpalPath = basePath;
 
         if (SettingsActivity.loadConfigFile()) {
@@ -312,11 +324,27 @@ public class MainActivity extends AppCompatActivity {
                 sdlpalPath = gamePath;
         }
         SetAppPath(sdlpalPath, dataPath, cachePath);
-
-        if (!blocked)
-            StartGame();
     }
 
+    // After its process died, the system brings back PalActivity by itself, and this
+    // activity does not run first then. The game cannot find its files without the paths.
+    // Returns false when they cannot be restored, for instance when the cache was cleared,
+    // and this activity has to ask for the game folder again.
+    public static boolean restoreAppPaths(Context context) {
+        if (mAppContext != null)
+            return true;
+        mAppContext = context.getApplicationContext();
+        cachePath = mAppContext.getCacheDir().getPath();
+        try {
+            readPersistedUriFromCache();
+        } catch (Exception e) {
+            Log.w(TAG, "Exception: restoreAppPaths:" + e.toString());
+            mAppContext = null;
+            return false;
+        }
+        setAppPaths();
+        return true;
+    }
 
     public void StartGame() {
         File runningFile = new File(cachePath + "/running");
