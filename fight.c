@@ -127,6 +127,58 @@ PAL_BattleSelectAutoTargetFrom(
    return -1;
 }
 
+static INT
+PAL_CalcBaseDamageInt(
+   INT         iAttackStrength,
+   INT         iDefense
+)
+/*++
+  Purpose:
+
+    Calculate the base damage value of attacking, in 32 bits.
+
+  Parameters:
+
+    [IN]  iAttackStrength - attack strength of attacker.
+
+    [IN]  iDefense - defense value of inflictor.
+
+  Return value:
+
+    The base damage value of the attacking.
+
+  Note:
+
+    需要有符号 16 位结果的调用者请用下方的 PAL_CalcBaseDamage()。法术伤害
+    必须用 32 位版本，否则灵力较高时会在转换成 SHORT 时回绕。
+    Callers that need the original signed 16-bit result use
+    PAL_CalcBaseDamage() below.  The magic damage calculation needs this 32-bit
+    variant, otherwise the conversion to SHORT wraps around at high magic
+    strength.
+
+--*/
+{
+   INT              iDamage;
+
+   //
+   // Formula courtesy of palxex and shenyanduxing
+   //
+   if (iAttackStrength > iDefense)
+   {
+      iDamage = (INT)(iAttackStrength * 2 - iDefense * 1.6 + 0.5);
+   }
+   else if (iAttackStrength > iDefense * 0.6)
+   {
+      iDamage = (INT)(iAttackStrength - iDefense * 0.6 + 0.5);
+   }
+   else
+   {
+      iDamage = 0;
+   }
+
+   return iDamage;
+}
+
 static SHORT
 PAL_CalcBaseDamage(
    WORD        wAttackStrength,
@@ -135,7 +187,8 @@ PAL_CalcBaseDamage(
 /*++
   Purpose:
 
-    Calculate the base damage value of attacking.
+    Calculate the base damage value of attacking, with the original 16-bit
+    semantics.
 
   Parameters:
 
@@ -147,27 +200,17 @@ PAL_CalcBaseDamage(
 
     The base damage value of the attacking.
 
+  Note:
+
+    参数按 WORD 解释、结果截断到 SHORT，行为与改动前完全一致；物理攻击和
+    敌人混乱时打自己人的分支都走这里，PAL_CalcMagicDamage() 直接用 32 位版本。
+    The arguments are taken as WORD and the result is truncated to SHORT, exactly
+    as before: physical attacks and the "confused enemy attacks its allies" path
+    keep using this variant, while PAL_CalcMagicDamage() calls the 32-bit one.
+
 --*/
 {
-   SHORT            sDamage;
-
-   //
-   // Formula courtesy of palxex and shenyanduxing
-   //
-   if (wAttackStrength > wDefense)
-   {
-      sDamage = (SHORT)(wAttackStrength * 2 - wDefense * 1.6 + 0.5);
-   }
-   else if (wAttackStrength > wDefense * 0.6)
-   {
-      sDamage = (SHORT)(wAttackStrength - wDefense * 0.6 + 0.5);
-   }
-   else
-   {
-      sDamage = 0;
-   }
-
-   return sDamage;
+   return (SHORT)PAL_CalcBaseDamageInt(wAttackStrength, wDefense);
 }
 
 static SHORT
@@ -202,9 +245,17 @@ PAL_CalcMagicDamage(
 
      The damage value of the magic attack.
 
+   Note:
+
+     伤害值上限为 32767：它同时是 DOS 版敌人可能拥有的最高生命值，也是返回类型
+     SHORT 能表示的最大正数。详见函数末尾的说明。
+     The damage is clamped to 32767, which is both the largest HP an enemy can
+     have in the DOS version and the largest positive value the SHORT return type
+     can hold; see the comment at the end of the function.
+
 --*/
 {
-   SHORT           sDamage;
+   INT             iDamage;
    WORD            wElem;
 
    wMagicID = gpGlobals->g.rgObject[wMagicID].magic.wMagicNumber;
@@ -212,13 +263,28 @@ PAL_CalcMagicDamage(
    //
    // Formula courtesy of palxex and shenyanduxing
    //
-   wMagicStrength *= RandomFloat(10, 11);
-   wMagicStrength /= 10;
+   // 随机浮动 0~10%，中间结果必须用 32 位整数保存。旧代码把乘积写回 WORD，
+   // 当灵力超过 65536 / 11 ≈ 5957 时乘法会溢出回绕，同一灵力打出的伤害会
+   // 在几百和三千多之间跳动（见 issue #309）。后面的元素倍率与战场增益同样
+   // 曾在 16 位里回绕，元素/毒系法术在灵力约 1500~4200 时就已经溢出（具体取
+   // 决于基础伤害、防御与抗性），旧代码会算出负数、被调用方当成 1 点伤害——
+   // 这正是 issue 里「五灵仙术上限 3000 左右」的成因。
+   // The random 0~10% variance has to be evaluated in 32 bits.  The old code
+   // stored the product back into the 16-bit WORD, which wrapped around once the
+   // magic strength exceeded 65536 / 11 ≈ 5957 and made the damage of the same
+   // magic strength jump between a few hundred and several thousand (issue #309).
+   // The elemental multipliers and the battlefield bonus wrapped around in 16 bits
+   // as well, so elemental and poison magics already overflowed at a magic strength
+   // around 1500~4200 (depending on the base damage, the defense and the
+   // resistance), where the old code produced a negative value that the callers
+   // turned into a single point of damage -- the "elemental magics seem to cap
+   // around 3000" from the issue.
+   //
+   iDamage = (INT)((FLOAT)wMagicStrength * RandomFloat(10, 11)) / 10;
 
-   sDamage = PAL_CalcBaseDamage(wMagicStrength, wDefense);
-   sDamage /= 4;
+   iDamage = PAL_CalcBaseDamageInt(iDamage, wDefense) / 4;
 
-   sDamage += gpGlobals->g.lprgMagic[wMagicID].wBaseDamage;
+   iDamage += gpGlobals->g.lprgMagic[wMagicID].wBaseDamage;
 
    if (gpGlobals->g.lprgMagic[wMagicID].wElemental != 0)
    {
@@ -226,27 +292,61 @@ PAL_CalcMagicDamage(
 
       if (wElem > NUM_MAGIC_ELEMENTAL)
       {
-         sDamage *= 10 - ((FLOAT)wPoisonResistance / wResistanceMultiplier);
+         iDamage = (INT)(iDamage * (10 - ((FLOAT)wPoisonResistance / wResistanceMultiplier)));
       }
       else if (wElem == 0)
       {
-         sDamage *= 5;
+         iDamage *= 5;
       }
       else
       {
-         sDamage *= 10 - ((FLOAT)rgwElementalResistance[wElem - 1] / wResistanceMultiplier);
+         iDamage = (INT)(iDamage * (10 - ((FLOAT)rgwElementalResistance[wElem - 1] / wResistanceMultiplier)));
       }
 
-      sDamage /= 5;
+      iDamage /= 5;
 
       if (wElem <= NUM_MAGIC_ELEMENTAL)
       {
-         sDamage *= 10 + gpGlobals->g.lprgBattleField[gpGlobals->wNumBattleField].rgsMagicEffect[wElem - 1];
-         sDamage /= 10;
+         iDamage = (INT)(iDamage * (10 + gpGlobals->g.lprgBattleField[gpGlobals->wNumBattleField].rgsMagicEffect[wElem - 1]));
+         iDamage /= 10;
       }
    }
 
-   return sDamage;
+   //
+   // 伤害上限 32767。这里截断有两个作用：
+   // 1) 返回值是 SHORT，超过 32767 会被转换成负数，调用方又会把「<= 0」变成
+   //    1 点伤害，相当于把大招废掉；
+   // 2) 战斗中靠 (SHORT)e.wHealth 是否 <= 0 判死（见 PAL_BattlePostActionCheck），
+   //    只要伤害不超过 32767，「伤害 >= 生命值」就与判死完全等价；伤害超过
+   //    生命值 + 32768 时剩余生命值会绕回正数，敌人反而打不死。
+   //    顺带一提，32767 也是 DOS 版敌人可能拥有的最大生命值。
+   // Clamp the damage to 32767, which has two purposes here:
+   // 1) the return type is SHORT, so a larger value would be converted to a
+   //    negative one and the callers turn "<= 0" into a single point of damage;
+   // 2) the battle code decides whether an enemy died by casting the remaining HP
+   //    to a signed 16-bit value (see PAL_BattlePostActionCheck).  As long as the
+   //    damage stays at or below 32767, "damage >= HP" is exactly the death
+   //    condition; a hit above HP + 32768 wraps the remaining HP back into a
+   //    positive value and the enemy survives.  32767 is also the largest HP an
+   //    enemy can have in the DOS version.
+   //
+   if (iDamage > 32767)
+   {
+      iDamage = 32767;
+   }
+   else if (iDamage < -32767)
+   {
+      //
+      // 负数表示被吸收（抗性溢出），照旧原样返回；这里只保证 (SHORT) 转换不会
+      // 把绝对值过大的负数绕成正数、变成一次「大额伤害」。
+      // A negative damage value means the attack was absorbed, and it is returned
+      // as before; this only makes sure the conversion to SHORT cannot wrap a very
+      // negative value around into a large positive hit.
+      //
+      iDamage = -32767;
+   }
+
+   return (SHORT)iDamage;
 }
 
 SHORT
@@ -3597,6 +3697,7 @@ PAL_BattlePlayerPerformAction(
    SHORT    sTarget;
    int      x, y;
    int      i, j, t;
+   int      iCoopStrength;   // 合体法术的合计强度，需用 32 位累加 / 32-bit coop strength
    WORD     str, def, res, wObject, wMagicNum;
    BOOL     fCritical;
    WORD     rgwCoopPos[3][2] = {{208, 157}, {234, 170}, {260, 183}};
@@ -3979,7 +4080,17 @@ PAL_BattlePlayerPerformAction(
 
       PAL_BattleBackupStat(); // so that "damages" to players won't be shown
 
-      str = 0;
+      //
+      // 合体法术的伤害取决于全队攻击力与灵力的平均值。这里用 32 位整数累加：
+      // 四人合计很容易超过 16 位 WORD 的上限（四人灵力各 20000 时合计已达
+      // 80000），回绕会让合体法术伤害突然变小或时高时低；算完再截断回 WORD 范围。
+      // Cooperative magic is based on the average of the whole party's attack and
+      // magic strength.  Accumulate the sum in 32 bits: four members easily exceed
+      // the 16-bit WORD range (four members with 20000 magic strength each already
+      // add up to 80000), and wrapping made the damage collapse or fluctuate.  The
+      // average is clamped back into the WORD range afterwards.
+      //
+      iCoopStrength = 0;
 
       for (i = 0; i <= gpGlobals->wMaxPartyMemberIndex; i++)
       {
@@ -3988,11 +4099,18 @@ PAL_BattlePlayerPerformAction(
             continue;
 #endif
 
-         str += PAL_GetPlayerAttackStrength(gpGlobals->rgParty[i].wPlayerRole);
-         str += PAL_GetPlayerMagicStrength(gpGlobals->rgParty[i].wPlayerRole);
+         iCoopStrength += PAL_GetPlayerAttackStrength(gpGlobals->rgParty[i].wPlayerRole);
+         iCoopStrength += PAL_GetPlayerMagicStrength(gpGlobals->rgParty[i].wPlayerRole);
       }
 
-      str /= 4;
+      iCoopStrength /= 4;
+
+      if (iCoopStrength > 65535)
+      {
+         iCoopStrength = 65535;
+      }
+
+      str = (WORD)iCoopStrength;
 
       //
       // Inflict damage to enemies
@@ -4635,7 +4753,37 @@ PAL_BattleEnemyPerformAction(
       str += (g_Battle.rgEnemy[wEnemyIndex].e.wLevel + 6) * 6;
       int def = (SHORT)g_Battle.rgEnemy[iTarget].e.wDefense;
       def += (g_Battle.rgEnemy[iTarget].e.wLevel + 6) * 4;
-      sDamage = PAL_CalcBaseDamage(str, def)*2/g_Battle.rgEnemy[iTarget].e.wPhysicalResistance;
+      int res = g_Battle.rgEnemy[iTarget].e.wPhysicalResistance;
+      int iDamage = PAL_CalcBaseDamageInt(str, def);
+
+      //
+      // 这里用普通物理攻击公式（基础伤害 ÷ 物抗），没有任何额外的 ×2。
+      // 依据：与原始 PAL.EXE 对比，对物抗为 1 的敌人实际伤害就是普通物理攻击公式的值。
+      // 物抗为 0 与 1 等价（相当于没有物抗），不做除法——旧写法「基础伤害 × 2 / 物抗」
+      // 在目标物抗为 0 时是整数除零，会直接把游戏打崩。
+      // This is the ordinary physical attack formula (base damage / resistance) with
+      // no extra x2, which is what the original PAL.EXE does (checked in-game against
+      // an enemy with physical resistance 1).  A resistance of 0 means the same as 1
+      // (no resistance) and is not used as a divisor: the old code ("base damage x 2 /
+      // resistance") divided by it and crashed the game with an integer division by 0.
+      //
+      if (res != 0)
+      {
+         iDamage /= res;
+      }
+
+      //
+      // 与法术伤害一致：超过 32767 的部分截断，使转成 SHORT 时既不会绕成负数、
+      // 也不会变成给敌人加血。
+      // Same cap as the magic damage: clamp at 32767 so that the conversion to SHORT
+      // can neither wrap around to a negative value nor heal the target.
+      //
+      if (iDamage > 32767)
+      {
+         iDamage = 32767;
+      }
+
+      sDamage = (SHORT)iDamage;
 
       if (sDamage <= 0)
       {

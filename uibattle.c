@@ -62,6 +62,7 @@ PAL_PlayerInfoBox(
    BYTE            bPoisonColor;
    int             i, iPartyIndex;
    WORD            wMaxLevel, w;
+   WORD            wHP, wMaxHP, wMP, wMaxMP;
 
    const BYTE      rgStatusPos[kStatusAll][2] =
    {
@@ -207,34 +208,48 @@ PAL_PlayerInfoBox(
    //
    // Draw the HP and MP value
    //
+   // 生命/真气按 5 位绘制（WIN95 版同样能显示 5 位数）。当前值的位置左移 6 像素
+   // （26 → 20），上限只在超过 9999 时才右移 2 像素（41 → 43）：这样 4 位数及以下的
+   // 显示与修改前逐像素相同，而 5 位数时当前值向左、上限向右扩展，两个数字不会互相遮挡。
+   // The HP and MP are drawn as 5 digits, as the WIN95 version can.  The current
+   // value is moved 6 pixels to the left (26 -> 20), and the maximum only moves
+   // 2 pixels to the right (41 -> 43) when it really needs the fifth digit, so that
+   // values with up to 4 digits are drawn exactly as before and 5-digit values grow
+   // away from each other instead of covering one another.
+   //
+   wHP = gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole];
+   wMaxHP = gpGlobals->g.PlayerRoles.rgwMaxHP[wPlayerRole];
+   wMP = gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole];
+   wMaxMP = gpGlobals->g.PlayerRoles.rgwMaxMP[wPlayerRole];
+
 #ifdef PAL_CLASSIC
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
       PAL_XY(PAL_X(pos) + 49, PAL_Y(pos) + 6));
-   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[wPlayerRole], 4,
-      PAL_XY(PAL_X(pos) + 47, PAL_Y(pos) + 8), kNumColorYellow, kNumAlignRight);
-   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole], 4,
-      PAL_XY(PAL_X(pos) + 26, PAL_Y(pos) + 5), kNumColorYellow, kNumAlignRight);
+   PAL_DrawNumber(wMaxHP, 5,
+      PAL_XY(PAL_X(pos) + ((wMaxHP > 9999) ? 43 : 41), PAL_Y(pos) + 8), kNumColorYellow, kNumAlignRight);
+   PAL_DrawNumber(wHP, 5,
+      PAL_XY(PAL_X(pos) + 20, PAL_Y(pos) + 5), kNumColorYellow, kNumAlignRight);
 
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
       PAL_XY(PAL_X(pos) + 49, PAL_Y(pos) + 22));
-   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[wPlayerRole], 4,
-      PAL_XY(PAL_X(pos) + 47, PAL_Y(pos) + 24), kNumColorCyan, kNumAlignRight);
-   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole], 4,
-      PAL_XY(PAL_X(pos) + 26, PAL_Y(pos) + 21), kNumColorCyan, kNumAlignRight);
+   PAL_DrawNumber(wMaxMP, 5,
+      PAL_XY(PAL_X(pos) + ((wMaxMP > 9999) ? 43 : 41), PAL_Y(pos) + 24), kNumColorCyan, kNumAlignRight);
+   PAL_DrawNumber(wMP, 5,
+      PAL_XY(PAL_X(pos) + 20, PAL_Y(pos) + 21), kNumColorCyan, kNumAlignRight);
 #else
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
       PAL_XY(PAL_X(pos) + 49, PAL_Y(pos) + 14));
-   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxHP[wPlayerRole], 4,
-      PAL_XY(PAL_X(pos) + 47, PAL_Y(pos) + 16), kNumColorYellow, kNumAlignRight);
-   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwHP[wPlayerRole], 4,
-      PAL_XY(PAL_X(pos) + 26, PAL_Y(pos) + 13), kNumColorYellow, kNumAlignRight);
+   PAL_DrawNumber(wMaxHP, 5,
+      PAL_XY(PAL_X(pos) + ((wMaxHP > 9999) ? 47 : 41), PAL_Y(pos) + 16), kNumColorYellow, kNumAlignRight);
+   PAL_DrawNumber(wHP, 5,
+      PAL_XY(PAL_X(pos) + 20, PAL_Y(pos) + 13), kNumColorYellow, kNumAlignRight);
 
    PAL_RLEBlitToSurface(PAL_SpriteGetFrame(gpSpriteUI, SPRITENUM_SLASH), gpScreen,
       PAL_XY(PAL_X(pos) + 49, PAL_Y(pos) + 24));
-   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMaxMP[wPlayerRole], 4,
-      PAL_XY(PAL_X(pos) + 47, PAL_Y(pos) + 26), kNumColorCyan, kNumAlignRight);
-   PAL_DrawNumber(gpGlobals->g.PlayerRoles.rgwMP[wPlayerRole], 4,
-      PAL_XY(PAL_X(pos) + 26, PAL_Y(pos) + 23), kNumColorCyan, kNumAlignRight);
+   PAL_DrawNumber(wMaxMP, 5,
+      PAL_XY(PAL_X(pos) + ((wMaxMP > 9999) ? 47 : 41), PAL_Y(pos) + 26), kNumColorCyan, kNumAlignRight);
+   PAL_DrawNumber(wMP, 5,
+      PAL_XY(PAL_X(pos) + 20, PAL_Y(pos) + 23), kNumColorCyan, kNumAlignRight);
 #endif
 
    //
