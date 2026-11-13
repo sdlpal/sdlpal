@@ -31,7 +31,8 @@
     NSArray *OPLCores;
     NSArray *OPLChips;
     NSArray *LogLevels;
-    
+    NSArray *GPUFilters;
+
     NSArray *allFiles;
     NSMutableArray *availFiles;
     NSMutableArray *availLangPacks;
@@ -56,6 +57,8 @@
     IBOutlet UISwitch *toggleKeepAspect;
     IBOutlet UISwitch *toggleSmoothScaling;
     
+    IBOutlet UISwitch *toggleGPU;
+    IBOutlet UILabel *lblFilter;
     IBOutlet UISwitch *toggleGLSL;
     IBOutlet UISwitch *toggleHDR;
     IBOutlet UILabel *lblShader;
@@ -108,7 +111,8 @@
     OPLCores = @[ @"MAME", @"DBFLT", @"DBINT", @"NUKED" ];
     OPLChips = @[ @"OPL2", @"OPL3" ];
     LogLevels = @[ @"VERBOSE", @"DEBUG", @"INFO", @"WARNING", @"ERROR", @"FATAL" ];
-    
+    GPUFilters = @[ @"none", @"crt", @"cartoon", @"reverse" ];
+
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
@@ -126,6 +130,7 @@
     [lblResourceStatus setTextColor:color];
     [lblLanguageFile setTextColor:color];
     [lblFontFile setTextColor:color];
+    [lblFilter setTextColor:color];
     [lblShader setTextColor:color];
     [textTextureWidth setTextColor:color];
     [textTextureHeight setTextColor:color];
@@ -267,7 +272,7 @@ typedef void(^SelectedBlock)(NSString *selected);
             rows = 2;
             break;
         case 2:
-            rows = 4;
+            rows = [toggleGPU isOn] ? 7 : 6;  // the filter row follows the GPU switch
             break;
         case 3:
             rows = [toggleGLSL isOn] ? 3 : 1;
@@ -292,7 +297,18 @@ typedef void(^SelectedBlock)(NSString *selected);
     }
     return rows;
 }
+// GLSL filters are drawn through OpenGL, so the game cannot use the GPU backend with them.
+// Turning on either switch turns the other off.
 - (IBAction)GLSLToggled:(id)sender {
+    if (toggleGLSL.isOn) {
+        [toggleGPU setOn:NO animated:YES];
+    }
+    [self.tableView reloadData];
+}
+- (IBAction)GPUToggled:(id)sender {
+    if (toggleGPU.isOn && toggleGLSL.isOn) {
+        [toggleGLSL setOn:NO animated:YES];
+    }
     [self.tableView reloadData];
 }
 
@@ -306,6 +322,8 @@ typedef void(^SelectedBlock)(NSString *selected);
         toggleTouchScreenOverlay.on = !toggleTouchScreenOverlay.isOn;
     }else if( indexPath.section == 2 && indexPath.row == 1 ) { //keep aspect
         toggleKeepAspect.on = !toggleKeepAspect.isOn;
+    }else if( indexPath.section == 2 && indexPath.row == 6 ) { //GPU filter
+        [self showPickerWithTitle:nil toLabel:lblFilter inArray:GPUFilters origin:cell];
     }else if( indexPath.section == 3 && indexPath.row == 0 ) { //Enable GLSL
         toggleGLSL.on = !toggleGLSL.isOn;
         [self.tableView reloadData];
@@ -413,6 +431,8 @@ typedef void(^SelectedBlock)(NSString *selected);
     
     toggleStereo.on         = gConfig.iAudioChannels == 2;
     toggleSurroundOPL.on    = gConfig.fUseSurroundOPL;
+    toggleGPU.on            = gConfig.fEnableGPU && !gConfig.fEnableGLSL; // with both on the game uses GLSL
+    lblFilter.text          = gConfig.pszFilter && *gConfig.pszFilter ? [[NSString stringWithUTF8String:gConfig.pszFilter] lowercaseString] : GPUFilters[0];
     toggleGLSL.on           = gConfig.fEnableGLSL;
     toggleHDR.on            = gConfig.fEnableHDR;
     
@@ -420,7 +440,7 @@ typedef void(^SelectedBlock)(NSString *selected);
     toggleKeepAspect.on         = gConfig.fKeepAspectRatio;
     textTextureWidth.text       = [NSString stringWithFormat:@"%d",gConfig.dwTextureWidth];
     textTextureHeight.text       = [NSString stringWithFormat:@"%d",gConfig.dwTextureHeight];
-    toggleSmoothScaling.on      = gConfig.pszScaleQuality ? strncmp(gConfig.pszScaleQuality, "0", sizeof(char)) != 0 : NO;
+    toggleSmoothScaling.on      = gConfig.pszScaleQuality ? atoi(gConfig.pszScaleQuality) == 1 : NO;
     
     lblMusicType.text       = MusicFormats[gConfig.eMusicType];
     lblOPLCore.text         = gConfig.eMusicType == MUSIC_RIX ? OPLCores[gConfig.eOPLCore] : MIDISynthesizers[gConfig.eMIDISynth];
@@ -452,8 +472,19 @@ typedef void(^SelectedBlock)(NSString *selected);
     gConfig.dwTextureWidth = [textTextureWidth.text intValue];
     gConfig.dwTextureHeight = [textTextureHeight.text intValue];
     gConfig.fUseTouchOverlay = toggleTouchScreenOverlay.isOn;
-    gConfig.pszScaleQuality  = strdup(toggleSmoothScaling.on ? "1" : "0");
+
+    // The toggle only says whether to use bilinear scaling, so any other setting stays
+    // unless the toggle was changed. Turning it off removes the setting, which means nearest
+    // for the SDL renderer, as 0 does, and sharp bilinear for the SDL_GPU backend.
+    BOOL wasSmooth = gConfig.pszScaleQuality && atoi(gConfig.pszScaleQuality) == 1;
+    if (toggleSmoothScaling.on != wasSmooth) {
+        free(gConfig.pszScaleQuality);
+        gConfig.pszScaleQuality = toggleSmoothScaling.on ? strdup("1") : NULL;
+    }
     
+    gConfig.fEnableGPU = toggleGPU.isOn;
+    free(gConfig.pszFilter);
+    gConfig.pszFilter = [lblFilter.text isEqualToString:GPUFilters[0]] ? NULL : strdup([lblFilter.text UTF8String]);
     gConfig.fEnableGLSL = toggleGLSL.isOn;
     gConfig.fEnableHDR = toggleHDR.isOn;
     gConfig.pszShader = [lblShader.text length] == 0 ? NULL :strdup([lblShader.text UTF8String]);

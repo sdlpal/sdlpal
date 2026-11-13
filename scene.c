@@ -416,6 +416,12 @@ PAL_ApplyWave(
       wave[i + 16] = 320 - wave[i];
    }
 
+   if (VIDEO_GPU_ApplyWave(lpSurface, wave, index))
+   {
+      index = (index + 1) % 32;
+      return;
+   }
+
    //
    // Apply the effect.
    // WARNING: only works with 320x200 8-bit surface.

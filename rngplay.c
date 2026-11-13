@@ -136,6 +136,248 @@ PAL_RNGReadFrame(
    return -1;
 }
 
+//
+// Pixels are written through this, to a surface or to an image for the GPU. In an image each
+// pixel has a second byte saying it is set. A frame with bad data can point past the screen.
+//
+#define RNG_PUT(value) \
+   do \
+   { \
+      BYTE b_ = (value); \
+      if (y < 200) \
+      { \
+         BYTE *p_ = pDst + (y * iPitch + x) * iStep; \
+         p_[0] = b_; \
+         if (iStep == 2) \
+         { \
+            p_[1] = 0xFF; \
+         } \
+      } \
+   } while (0)
+
+static VOID
+PAL_RNGDecodeFrame(
+   const uint8_t   *rng,
+   int              length,
+   BYTE            *pDst,
+   int              iPitch,
+   int              iStep
+)
+/*++
+  Purpose:
+
+    Write the pixels that one RNG frame changes.
+
+  Parameters:
+
+    [IN]  rng - Pointer to the RNG data.
+
+    [IN]  length - Length of the RNG data.
+
+    [OUT] pDst - where to write.
+
+    [IN]  iPitch - pixels per row of pDst.
+
+    [IN]  iStep - bytes per pixel of pDst: 1 for a surface, 2 for an image for the GPU.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   int                   ptr         = 0;
+   int                   dst_ptr     = 0;
+   uint16_t              wdata       = 0;
+   int                   x, y, i, n;
+
+   //
+   // Draw the frame.
+   // FIXME: Dirty and ineffective code, needs to be cleaned up
+   //
+   while (ptr < length)
+   {
+      uint8_t data = rng[ptr++];
+      switch (data)
+      {
+      case 0x00:
+      case 0x13:
+         //
+         // End
+         //
+         return;
+
+      case 0x02:
+         dst_ptr += 2;
+         break;
+
+      case 0x03:
+         data = rng[ptr++];
+         dst_ptr += (data + 1) * 2;
+         break;
+
+      case 0x04:
+         wdata = rng[ptr] | (rng[ptr + 1] << 8);
+         ptr += 2;
+         dst_ptr += ((unsigned int)wdata + 1) * 2;
+         break;
+
+      case 0x0a:
+         x = dst_ptr % 320;
+         y = dst_ptr / 320;
+         RNG_PUT(rng[ptr++]);
+         if (++x >= 320)
+         {
+            x = 0;
+            ++y;
+         }
+         RNG_PUT(rng[ptr++]);
+         dst_ptr += 2;
+
+      case 0x09:
+         x = dst_ptr % 320;
+         y = dst_ptr / 320;
+         RNG_PUT(rng[ptr++]);
+         if (++x >= 320)
+         {
+            x = 0;
+            ++y;
+         }
+         RNG_PUT(rng[ptr++]);
+         dst_ptr += 2;
+
+      case 0x08:
+         x = dst_ptr % 320;
+         y = dst_ptr / 320;
+         RNG_PUT(rng[ptr++]);
+         if (++x >= 320)
+         {
+            x = 0;
+            ++y;
+         }
+         RNG_PUT(rng[ptr++]);
+         dst_ptr += 2;
+
+      case 0x07:
+         x = dst_ptr % 320;
+         y = dst_ptr / 320;
+         RNG_PUT(rng[ptr++]);
+         if (++x >= 320)
+         {
+            x = 0;
+            ++y;
+         }
+         RNG_PUT(rng[ptr++]);
+         dst_ptr += 2;
+
+      case 0x06:
+         x = dst_ptr % 320;
+         y = dst_ptr / 320;
+         RNG_PUT(rng[ptr++]);
+         if (++x >= 320)
+         {
+            x = 0;
+            ++y;
+         }
+         RNG_PUT(rng[ptr++]);
+         dst_ptr += 2;
+         break;
+
+      case 0x0b:
+         data = *(rng + ptr++);
+         for (i = 0; i <= data; i++)
+         {
+            x = dst_ptr % 320;
+            y = dst_ptr / 320;
+            RNG_PUT(rng[ptr++]);
+            if (++x >= 320)
+            {
+               x = 0;
+               ++y;
+            }
+            RNG_PUT(rng[ptr++]);
+            dst_ptr += 2;
+         }
+         break;
+
+      case 0x0c:
+         wdata = rng[ptr] | (rng[ptr + 1] << 8);
+         ptr += 2;
+         for (i = 0; i <= wdata; i++)
+         {
+            x = dst_ptr % 320;
+            y = dst_ptr / 320;
+            RNG_PUT(rng[ptr++]);
+            if (++x >= 320)
+            {
+               x = 0;
+               ++y;
+            }
+            RNG_PUT(rng[ptr++]);
+            dst_ptr += 2;
+         }
+         break;
+
+      case 0x0d:
+      case 0x0e:
+      case 0x0f:
+      case 0x10:
+         for (i = 0; i < data - (0x0d - 2); i++)
+         {
+            x = dst_ptr % 320;
+            y = dst_ptr / 320;
+            RNG_PUT(rng[ptr]);
+            if (++x >= 320)
+            {
+               x = 0;
+               ++y;
+            }
+            RNG_PUT(rng[ptr + 1]);
+            dst_ptr += 2;
+         }
+         ptr += 2;
+         break;
+
+      case 0x11:
+    	 data = *(rng + ptr++);
+         for (i = 0; i <= data; i++)
+         {
+            x = dst_ptr % 320;
+            y = dst_ptr / 320;
+            RNG_PUT(rng[ptr]);
+            if (++x >= 320)
+            {
+               x = 0;
+               ++y;
+            }
+            RNG_PUT(rng[ptr + 1]);
+            dst_ptr += 2;
+         }
+         ptr += 2;
+         break;
+
+      case 0x12:
+         n = (rng[ptr] | (rng[ptr + 1] << 8)) + 1;
+         ptr += 2;
+         for (i = 0; i < n; i++)
+         {
+            x = dst_ptr % 320;
+            y = dst_ptr / 320;
+            RNG_PUT(rng[ptr]);
+            if (++x >= 320)
+            {
+               x = 0;
+               ++y;
+            }
+            RNG_PUT(rng[ptr + 1]);
+            dst_ptr += 2;
+         }
+         ptr += 2;
+         break;
+      }
+   }
+}
+
 static INT
 PAL_RNGBlitToSurface(
    const uint8_t   *rng,
@@ -165,10 +407,7 @@ PAL_RNGBlitToSurface(
 
 --*/
 {
-   int                   ptr         = 0;
-   int                   dst_ptr     = 0;
-   uint16_t              wdata       = 0;
-   int                   x, y, i, n;
+   BYTE *pImage;
 
    //
    // Check for invalid parameters.
@@ -179,192 +418,24 @@ PAL_RNGBlitToSurface(
    }
 
    //
-   // Draw the frame to the surface.
-   // FIXME: Dirty and ineffective code, needs to be cleaned up
+   // A surface on the GPU has no pixels, and the frame only changes some of its pixels, so
+   // it is decoded into an image saying which (two bytes per pixel) and drawn over the
+   // surface like a sprite. A software surface has pixels, and BeginPartialImage() returns
+   // NULL for it. Only with SDLPAL_GPU_VERIFY=1 does a surface have both, and then both
+   // run, the pixels getting the software result to compare with.
    //
-   while (ptr < length)
+   pImage = VIDEO_GPU_BeginPartialImage(lpDstSurface);
+   if (pImage != NULL)
    {
-      uint8_t data = rng[ptr++];
-      switch (data)
-      {
-      case 0x00:
-      case 0x13:
-         //
-         // End
-         //
-         goto end;
-
-      case 0x02:
-         dst_ptr += 2;
-         break;
-
-      case 0x03:
-         data = rng[ptr++];
-         dst_ptr += (data + 1) * 2;
-         break;
-
-      case 0x04:
-         wdata = rng[ptr] | (rng[ptr + 1] << 8);
-         ptr += 2;
-         dst_ptr += ((unsigned int)wdata + 1) * 2;
-         break;
-
-      case 0x0a:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
-
-      case 0x09:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
-
-      case 0x08:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
-
-      case 0x07:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
-
-      case 0x06:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
-         break;
-
-      case 0x0b:
-         data = *(rng + ptr++);
-         for (i = 0; i <= data; i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-            dst_ptr += 2;
-         }
-         break;
-
-      case 0x0c:
-         wdata = rng[ptr] | (rng[ptr + 1] << 8);
-         ptr += 2;
-         for (i = 0; i <= wdata; i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-            dst_ptr += 2;
-         }
-         break;
-
-      case 0x0d:
-      case 0x0e:
-      case 0x0f:
-      case 0x10:
-         for (i = 0; i < data - (0x0d - 2); i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr + 1];
-            dst_ptr += 2;
-         }
-         ptr += 2;
-         break;
-
-      case 0x11:
-    	 data = *(rng + ptr++);
-         for (i = 0; i <= data; i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr + 1];
-            dst_ptr += 2;
-         }
-         ptr += 2;
-         break;
-
-      case 0x12:
-         n = (rng[ptr] | (rng[ptr + 1] << 8)) + 1;
-         ptr += 2;
-         for (i = 0; i < n; i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr + 1];
-            dst_ptr += 2;
-         }
-         ptr += 2;
-         break;
-      }
+      PAL_RNGDecodeFrame(rng, length, pImage, 320, 2);
+      VIDEO_GPU_EndPartialImage(lpDstSurface);
    }
 
-end:
+   if (lpDstSurface->pixels != NULL)
+   {
+      PAL_RNGDecodeFrame(rng, length, (BYTE *)lpDstSurface->pixels, lpDstSurface->pitch, 1);
+   }
+
    return 0;
 }
 

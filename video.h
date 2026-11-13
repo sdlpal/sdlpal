@@ -26,17 +26,28 @@
 
 #define TOUCHOVERLAY_ALPHAMOD           120
 
-#define VIDEO_CopySurface(s, sr, t, tr) SDL_BlitSurface((s), (sr), (t), (tr))
-#define VIDEO_CopyEntireSurface(s, t)   SDL_BlitSurface((s), NULL, (t), NULL)
-#define VIDEO_BackupScreen(s)           SDL_BlitSurface((s), NULL, gpScreenBak, NULL)
-#define VIDEO_RestoreScreen(t)          SDL_BlitSurface(gpScreenBak, NULL, (t), NULL)
-#define VIDEO_FreeSurface(s)            SDL_FreeSurface(s)
+#define VIDEO_CopySurface(s, sr, t, tr) VIDEO_Blit((s), (sr), (t), (tr))
+#define VIDEO_CopyEntireSurface(s, t)   VIDEO_Blit((s), NULL, (t), NULL)
+#define VIDEO_BackupScreen(s)           VIDEO_Blit((s), NULL, gpScreenBak, NULL)
+#define VIDEO_RestoreScreen(t)          VIDEO_Blit(gpScreenBak, NULL, (t), NULL)
+
+// The palette fades of palette.c. These values are shared with shaders/gpu/palette.frag.
+enum
+{
+   kPaletteFadeNone = 0,
+   kPaletteFadeScale = 1,       // color * step / 64: 0 is black, 64 the palette, both ways
+   kPaletteFadeBlend = 2,
+   kPaletteFadeFromColor = 3,
+   kPaletteFadeToColor = 4,
+   kPaletteFadeToRed = 5
+};
 
 PAL_C_LINKAGE_BEGIN
 
 extern SDL_Surface *gpScreen;
 extern SDL_Surface *gpScreenBak;
 extern volatile BOOL g_bRenderPaused;
+extern volatile BOOL g_bAppInBackground;
 
 #if PAL_HAS_GLSL
 void Filter_StepParamSlot(int step);
@@ -61,6 +72,43 @@ VIDEO_UpdateScreen(
 VOID
 VIDEO_SetPalette(
    SDL_Color        rgPalette[256]
+);
+
+BOOL
+VIDEO_SetPaletteFade(
+   INT              iMode,
+   const SDL_Color *rgPalette,
+   const SDL_Color *rgPaletteTo,
+   INT              iStep,
+   BYTE             bColor
+);
+
+VOID
+VIDEO_Blit(
+   SDL_Surface    *lpSrc,
+   const SDL_Rect *lpSrcRect,
+   SDL_Surface    *lpDst,
+   const SDL_Rect *lpDstRect
+);
+
+VOID
+VIDEO_FillRect(
+   SDL_Surface    *lpDst,
+   const SDL_Rect *lpRect,
+   BYTE            bColor
+);
+
+VOID
+VIDEO_CrossFadeStep(
+   SDL_Surface    *lpFrom,
+   SDL_Surface    *lpTo,
+   INT             iPhase,
+   BOOL            fStep
+);
+
+VOID
+VIDEO_FreeSurface(
+   SDL_Surface    *lpSurface
 );
 
 VOID
@@ -103,6 +151,11 @@ VIDEO_SwitchScreen(
 VOID
 VIDEO_FadeScreen(
    WORD           wSpeed
+);
+
+const char *
+VIDEO_GetGPUDriverName(
+   VOID
 );
 
 void

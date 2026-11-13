@@ -155,18 +155,6 @@ GLKMatrix4 GLKMatrix4MakeOrtho(float left, float right,
     return m;
 }
 
-static unsigned next_pow2(unsigned x)
-{
-    x -= 1;
-    x |= (x >> 1);
-    x |= (x >> 2);
-    x |= (x >> 4);
-    x |= (x >> 8);
-    x |= (x >> 16);
-    
-    return x + 1;
-}
-
 static char *plain_glsl_vert = "\r\n\
 #if __VERSION__ >= 130              \r\n\
 #define COMPAT_VARYING out          \r\n\
@@ -879,8 +867,8 @@ SDL_Texture *VIDEO_GLSL_CreateTexture(int width, int height)
                 param->FBO.height = param->scale_y;
                 break;
         }
-        param->FBO.pow_width = next_pow2(param->FBO.width);
-        param->FBO.pow_height = next_pow2(param->FBO.height);
+        param->FBO.pow_width = UTIL_NextPowerOfTwo(param->FBO.width);
+        param->FBO.pow_height = UTIL_NextPowerOfTwo(param->FBO.height);
         
 #if SDL_MAJOR_VERSION<3
         if( param_next_pass && param_next_pass->filter_linear )

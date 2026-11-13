@@ -107,12 +107,32 @@
 #                Note: SDLPal only support the codec the original distribution uses.
 #EnableAviPlay=0
 
+# EnableGPU: Draw through SDL_GPU, which uses Vulkan or Direct3D 12 on Windows, Vulkan on Linux and
+#            Android and Metal on macOS and iOS. Off by default. The game falls back to the SDL
+#            renderer by itself when none of these is usable. Which one SDL_GPU picks by default
+#            depends on the SDL version; set the environment variable SDL_GPU_DRIVER to vulkan or
+#            direct3d12 to force one.
+#            EnableGPU and EnableGLSL exclude each other: with both set to 1 and a valid Shader,
+#            EnableGLSL wins and the game draws through OpenGL/GLES. The settings screens on Android,
+#            iOS and Windows turn one off when the other is turned on. On desktop systems the window
+#            title shows which SDL_GPU driver is in use.
+#EnableGPU=0
+
 # ScaleQuality: Indicates whether use bilinear filtering when stretching, only avilable when EnableGLSL=0
 #               In other case the shader handles it.
+#               With EnableGPU=1: 0 = nearest, 1 = bilinear, 2 = sharp bilinear (hard pixels of even
+#               width at any window size, the same as nearest at whole-number scales). Without a
+#               ScaleQuality line the SDL_GPU backend uses sharp bilinear.
 #ScaleQuality=0
+
+# Filter: A built-in filter drawn through SDL_GPU, needs EnableGPU=1: none, reverse, cartoon or
+#         crt. The settings screens on Android, iOS and Windows offer it with the GPU switch.
+#         Use EnableGLSL and Shader for RetroArch filters instead.
+#Filter=crt
 
 # EnableGLSL: Recently a EXPERIMENTAL hacked OpenGL/GLES based backend was introduced, which
 #             accepts RetroArch GLSL Shaders. This option MUST be used with Shader option.
+#             Takes precedence over EnableGPU.
 #EnableGLSL=0
 
 # Shader: Path to RetroArch GLSL Shaders( see https://github.com/libretro/glsl-shaders ).

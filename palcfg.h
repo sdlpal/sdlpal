@@ -48,6 +48,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_ENABLEAVIPLAY,
     PALCFG_ENABLEGLSL,
     PALCFG_ENABLEHDR,
+    PALCFG_ENABLEGPU,
 	/* Booleans */
 	PALCFG_BOOLEAN_MAX,
 
@@ -92,6 +93,7 @@ typedef enum tagPALCFG_ITEM
 	PALCFG_SOUNDBANK,
 	PALCFG_SCALEQUALITY,
 	PALCFG_SHADER,
+	PALCFG_FILTER,
 	/* Strings */
 	PALCFG_STRING_MAX,
 
@@ -191,6 +193,7 @@ typedef struct tagCONFIGURATION
 	char            *pszLogFile;
 	char            *pszScaleQuality;
 	char            *pszShader;
+	char            *pszFilter;
 	DWORD            dwWordLength;
 	DWORD            dwScreenWidth;
 	DWORD            dwScreenHeight;
@@ -223,6 +226,7 @@ typedef struct tagCONFIGURATION
 	BOOL             fEnableAviPlay;
 	BOOL             fEnableGLSL;
     BOOL             fEnableHDR;
+    BOOL             fEnableGPU;
 #if USE_RIX_EXTRA_INIT
 	uint32_t        *pExtraFMRegs;
 	uint8_t         *pExtraFMVals;

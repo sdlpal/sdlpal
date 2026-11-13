@@ -59,6 +59,9 @@
 HINSTANCE g_hInstance;
 WORD g_wLanguage;
 
+// The built-in filters of the GPU backend, as the Filter option names them.
+static const char *const g_rgszFilters[] = { "none", "crt", "cartoon", "reverse" };
+
 int WINAPI LoadStringEx(
 	HINSTANCE hInstance,
 	UINT      uID,
@@ -166,6 +169,10 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	gConfig.fEnableAviPlay = IsDlgButtonChecked(hwndDlg, IDC_ENABLEAVI) == BST_CHECKED;
 	gConfig.fKeepAspectRatio = IsDlgButtonChecked(hwndDlg, IDC_ASPECTRATIO) == BST_CHECKED;
 	gConfig.fEnableGLSL = IsDlgButtonChecked(hwndDlg, IDC_GLSL) == BST_CHECKED;
+	gConfig.fEnableGPU = IsDlgButtonChecked(hwndDlg, IDC_GPU) == BST_CHECKED;
+	int iFilter = ComboBox_GetCurSel(hwndDlg, IDC_FILTER);
+	free(gConfig.pszFilter);
+	gConfig.pszFilter = iFilter > 0 ? strdup(g_rgszFilters[iFilter]) : nullptr;
 	gConfig.fEnableHDR = IsDlgButtonChecked(hwndDlg, IDC_HDR) == BST_CHECKED;
 	gConfig.dwTextureWidth = GetDlgItemInt(hwndDlg, IDC_TEXTUREWIDTH, nullptr, FALSE);
 	gConfig.dwTextureHeight = GetDlgItemInt(hwndDlg, IDC_TEXTUREHEIGHT, nullptr, FALSE);
@@ -190,6 +197,18 @@ void SaveSettings(HWND hwndDlg, BOOL fWriteFile)
 	}
 
 	if (fWriteFile) PAL_SaveConfig();
+}
+
+// GLSL filters are drawn through OpenGL, so the game cannot use the GPU backend with them:
+// checking either box unchecks the other. Each box enables the options that belong to it.
+void EnableBackendControls(HWND hwndDlg)
+{
+	BOOL fGLSL = IsDlgButtonChecked(hwndDlg, IDC_GLSL) == BST_CHECKED;
+	EnableDlgItem(hwndDlg, IDC_HDR, fGLSL);
+	EnableDlgItem(hwndDlg, IDC_TEXTUREWIDTH, fGLSL);
+	EnableDlgItem(hwndDlg, IDC_TEXTUREHEIGHT, fGLSL);
+	EnableDlgItem(hwndDlg, IDC_BRSHADER, fGLSL);
+	EnableDlgItem(hwndDlg, IDC_FILTER, IsDlgButtonChecked(hwndDlg, IDC_GPU) == BST_CHECKED);
 }
 
 void ResetControls(HWND hwndDlg)
@@ -219,10 +238,15 @@ void ResetControls(HWND hwndDlg)
 	CheckDlgButton(hwndDlg, IDC_HDR, gConfig.fEnableHDR ? BST_CHECKED : BST_UNCHECKED);
 	SetDlgItemText(hwndDlg, IDC_TEXTUREWIDTH, _itot(gConfig.dwTextureWidth, buffer, 10));
 	SetDlgItemText(hwndDlg, IDC_TEXTUREHEIGHT, _itot(gConfig.dwTextureHeight, buffer, 10));
-	EnableDlgItem(hwndDlg, IDC_HDR, gConfig.fEnableGLSL ? TRUE : FALSE);
-	EnableDlgItem(hwndDlg, IDC_TEXTUREWIDTH, gConfig.fEnableGLSL ? TRUE : FALSE);
-	EnableDlgItem(hwndDlg, IDC_TEXTUREHEIGHT, gConfig.fEnableGLSL ? TRUE : FALSE);
-	EnableDlgItem(hwndDlg, IDC_BRSHADER, gConfig.fEnableGLSL ? TRUE : FALSE);
+	// With both on the game uses GLSL, so that is what the dialog shows.
+	CheckDlgButton(hwndDlg, IDC_GPU, gConfig.fEnableGPU && !gConfig.fEnableGLSL ? BST_CHECKED : BST_UNCHECKED);
+	int iFilter = 0;
+	for (int i = 1; i < (int)(sizeof(g_rgszFilters) / sizeof(g_rgszFilters[0])); i++)
+	{
+		if (gConfig.pszFilter && _stricmp(gConfig.pszFilter, g_rgszFilters[i]) == 0) iFilter = i;
+	}
+	ComboBox_SetCurSel(hwndDlg, IDC_FILTER, iFilter);
+	EnableBackendControls(hwndDlg);
 
 	ComboBox_SetCurSel(hwndDlg, IDC_CD, gConfig.eCDType);
 	ComboBox_SetCurSel(hwndDlg, IDC_BGM, gConfig.eMusicType);
@@ -294,6 +318,11 @@ INT_PTR InitProc(HWND hwndDlg, HWND hwndCtrl, LPARAM lParam)
 
 	ComboBox_AddString(hwndDlg, IDC_OPL_CHIP, TEXT("OPL2"));
 	ComboBox_AddString(hwndDlg, IDC_OPL_CHIP, TEXT("OPL3"));
+
+	for (auto name : g_rgszFilters)
+	{
+		SendDlgItemMessageA(hwndDlg, IDC_FILTER, CB_ADDSTRING, 0, (LPARAM)name);
+	}
 
 	TrackBar_SetRange(hwndDlg, IDC_QUALITY, RESAMPLER_QUALITY_MIN, RESAMPLER_QUALITY_MAX, FALSE);
 	TrackBar_SetRange(hwndDlg, IDC_MUSICVOLUME, 0, PAL_MAX_VOLUME, FALSE);
@@ -378,10 +407,12 @@ INT_PTR ButtonProc(HWND hwndDlg, WORD idControl, HWND hwndCtrl)
 		return TRUE;
 
 	case IDC_GLSL:
-		EnableDlgItem(hwndDlg, IDC_HDR, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
-		EnableDlgItem(hwndDlg, IDC_TEXTUREWIDTH, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
-		EnableDlgItem(hwndDlg, IDC_TEXTUREHEIGHT, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
-		EnableDlgItem(hwndDlg, IDC_BRSHADER, IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED ? TRUE : FALSE);
+	case IDC_GPU:
+		if (IsDlgButtonChecked(hwndDlg, idControl) == BST_CHECKED)
+		{
+			CheckDlgButton(hwndDlg, idControl == IDC_GLSL ? IDC_GPU : IDC_GLSL, BST_UNCHECKED);
+		}
+		EnableBackendControls(hwndDlg);
 		return TRUE;
 
 	default: return FALSE;
