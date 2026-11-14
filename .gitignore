@@ -101,6 +101,9 @@ ipch/
 *.vsp
 *.vspx
 
+# PS2 Executable
+ps2/*.elf
+
 # TFS 2012 Local Workspace
 $tf/
 
