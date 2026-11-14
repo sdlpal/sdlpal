@@ -46,6 +46,10 @@
 
 #define PAL_HAS_CONFIG_PAGE 0
 
+// SDL DOS has no GPU backend (SDL_CreateGPUDevice always fails); keep the
+// 7000-line shader blob and video_gpu.c out of the DOS executable.
+#define PAL_HAS_SDL_GPU 0
+
 #define PAL_FILESYSTEM_IGNORE_CASE 1
 
 #define PAL_PATH_SEPARATORS "\\/"
