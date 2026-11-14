@@ -94,6 +94,8 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String OPLChip = "OPLChip";
     private static final String EnableGLSL = "EnableGLSL";
     private static final String EnableHDR = "EnableHDR";
+    private static final String EnableGPU = "EnableGPU";
+    private static final String Filter = "Filter";
     private static final String Shader = "Shader";
     private static final String TextureWidth = "TextureWidth";
     private static final String TextureHeight = "TextureHeight";
@@ -106,6 +108,8 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String OPLCores[] = { "MAME", "DBFLT", "DBINT", "NUKED" };
     private static final String OPLChips[] = { "OPL2", "OPL3" };
     private static final String AspectRatios[] = { "16:10", "4:3" };
+    // The built-in filters of the GPU backend, as in R.array.gpu_filter. "" is none.
+    private static final String Filters[] = { "", "crt", "cartoon", "reverse" };
 
     private SettingsActivity mInstance = this;
     private static SettingsActivity mSingleton = null;
@@ -157,10 +161,25 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        // GLSL filters are drawn through OpenGL, so the game cannot use the GPU backend with them.
+        // Turning on either switch turns the other off.
         ((SwitchCompat)findViewById(R.id.swEnableGLSL)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 findViewById(R.id.glslBlock).setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                if (isChecked) {
+                    ((SwitchCompat)findViewById(R.id.swEnableGPU)).setChecked(false);
+                }
+            }
+        });
+
+        ((SwitchCompat)findViewById(R.id.swEnableGPU)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                findViewById(R.id.gpuBlock).setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                if (isChecked) {
+                    ((SwitchCompat)findViewById(R.id.swEnableGLSL)).setChecked(false);
+                }
             }
         });
 
@@ -395,6 +414,7 @@ public class SettingsActivity extends AppCompatActivity {
         ((AppCompatSpinner)findViewById(R.id.spOPLCore)).setSelection(findMatchedStringIndex(getConfigString(OPLCore, true), OPLCores, 1));       // DBFLT
         ((AppCompatSpinner)findViewById(R.id.spOPLChip)).setSelection(findMatchedStringIndex(getConfigString(OPLChip, true), OPLChips, 0));       // OPL2
         ((AppCompatSpinner)findViewById(R.id.spOPLRate)).setSelection(findMatchedIntIndex(getConfigInt(OPLSampleRate, true), OPLSampleRates, 5));  // 49716Hz
+        ((AppCompatSpinner)findViewById(R.id.spFilter)).setSelection(0);    // none
     }
 
 
@@ -430,6 +450,11 @@ public class SettingsActivity extends AppCompatActivity {
         ((SwitchCompat)findViewById(R.id.swStereo)).setChecked(getConfigBoolean(Stereo, false));
         ((SwitchCompat)findViewById(R.id.swEnableGLSL)).setChecked(getConfigBoolean(EnableGLSL, false));
         ((SwitchCompat)findViewById(R.id.swEnableHDR)).setChecked(getConfigBoolean(EnableHDR, false));
+        // With both on the game uses GLSL, so that is what the switches show.
+        boolean gpu = getConfigBoolean(EnableGPU, false) && !getConfigBoolean(EnableGLSL, false);
+        ((SwitchCompat)findViewById(R.id.swEnableGPU)).setChecked(gpu);
+        findViewById(R.id.gpuBlock).setVisibility(gpu ? View.VISIBLE : View.GONE);
+        ((AppCompatSpinner)findViewById(R.id.spFilter)).setSelection(findMatchedStringIndex(getConfigString(Filter, false), Filters, 0));
 
         ((AppCompatSpinner)findViewById(R.id.spLogLevel)).setSelection(getConfigInt(LogLevel, false));
         ((AppCompatSpinner)findViewById(R.id.spSample)).setSelection(findMatchedIntIndex(getConfigInt(SampleRate, false), AudioSampleRates, 3));
@@ -478,6 +503,8 @@ public class SettingsActivity extends AppCompatActivity {
         setConfigBoolean(Stereo, ((SwitchCompat)findViewById(R.id.swStereo)).isChecked());
         setConfigBoolean(EnableGLSL, ((SwitchCompat)findViewById(R.id.swEnableGLSL)).isChecked());
         setConfigBoolean(EnableHDR, ((SwitchCompat)findViewById(R.id.swEnableHDR)).isChecked());
+        setConfigBoolean(EnableGPU, ((SwitchCompat)findViewById(R.id.swEnableGPU)).isChecked());
+        setConfigString(Filter, Filters[((AppCompatSpinner)findViewById(R.id.spFilter)).getSelectedItemPosition()]);
 
         setConfigInt(LogLevel, ((AppCompatSpinner)findViewById(R.id.spLogLevel)).getSelectedItemPosition());
         setConfigInt(SampleRate, Integer.parseInt((String)((AppCompatSpinner)findViewById(R.id.spSample)).getSelectedItem()));

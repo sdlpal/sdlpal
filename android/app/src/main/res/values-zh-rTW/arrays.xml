@@ -7,4 +7,10 @@
         <item>嚴重錯誤</item>
         <item>致命錯誤</item>
     </string-array>
+    <string-array name="gpu_filter">
+        <item>無</item>
+        <item>CRT</item>
+        <item>卡通</item>
+        <item>反色</item>
+    </string-array>
 </resources>

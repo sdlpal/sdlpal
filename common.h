@@ -187,7 +187,16 @@ typedef const WCHAR        *LPCWSTR;
 #  undef PAL_HAS_GLSL
 # endif
 #define SDL_strcasecmp strcasecmp
-#define SDL_setenv(a,b,c) 
+#define SDL_setenv(a,b,c)
+#endif
+
+/* SDL_GPU has no WebGL backend and does not support UWP. */
+#ifndef PAL_HAS_SDL_GPU
+# if SDL_VERSION_ATLEAST(3,2,0) && !defined(__EMSCRIPTEN__) && !defined(__WINRT__)
+#  define PAL_HAS_SDL_GPU 1
+# else
+#  define PAL_HAS_SDL_GPU 0
+# endif
 #endif
 
 #ifndef PAL_DEFAULT_FULLSCREEN_HEIGHT

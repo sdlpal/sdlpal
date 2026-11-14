@@ -150,10 +150,7 @@ PAL_FadeOut(
    //
    // Get the original palette...
    //
-   for (i = 0; i < 256; i++)
-   {
-      palette[i] = VIDEO_GetPalette()[i];
-   }
+   memcpy(palette, VIDEO_GetPalette(), sizeof(palette));
 
    memset(newpalette, 0xff, sizeof(SDL_Color)*256);
 
@@ -173,14 +170,17 @@ PAL_FadeOut(
          break;
       }
 
-      for (i = 0; i < 256; i++)
+      if (!VIDEO_SetPaletteFade(kPaletteFadeScale, palette, NULL, j, 0))
       {
-         newpalette[i].r = (palette[i].r * j) >> 6;
-         newpalette[i].g = (palette[i].g * j) >> 6;
-         newpalette[i].b = (palette[i].b * j) >> 6;
-      }
+         for (i = 0; i < 256; i++)
+         {
+            newpalette[i].r = (palette[i].r * j) >> 6;
+            newpalette[i].g = (palette[i].g * j) >> 6;
+            newpalette[i].b = (palette[i].b * j) >> 6;
+         }
 
-      VIDEO_SetPalette(newpalette);
+         VIDEO_SetPalette(newpalette);
+      }
 
       UTIL_Delay(10);
    }
@@ -243,14 +243,17 @@ PAL_FadeIn(
 
       j = 60 - j;
 
-      for (i = 0; i < 256; i++)
+      if (!VIDEO_SetPaletteFade(kPaletteFadeScale, palette, NULL, j, 0))
       {
-         newpalette[i].r = (palette[i].r * j) >> 6;
-         newpalette[i].g = (palette[i].g * j) >> 6;
-         newpalette[i].b = (palette[i].b * j) >> 6;
-      }
+         for (i = 0; i < 256; i++)
+         {
+            newpalette[i].r = (palette[i].r * j) >> 6;
+            newpalette[i].g = (palette[i].g * j) >> 6;
+            newpalette[i].b = (palette[i].b * j) >> 6;
+         }
 
-      VIDEO_SetPalette(newpalette);
+         VIDEO_SetPalette(newpalette);
+      }
 
       UTIL_Delay(10);
    }
@@ -322,13 +325,16 @@ PAL_SceneFade(
          //
          // Calculate the current palette...
          //
-         for (j = 0; j < 256; j++)
+         if (!VIDEO_SetPaletteFade(kPaletteFadeScale, palette, NULL, i, 0))
          {
-            newpalette[j].r = (palette[j].r * i) >> 6;
-            newpalette[j].g = (palette[j].g * i) >> 6;
-            newpalette[j].b = (palette[j].b * i) >> 6;
+            for (j = 0; j < 256; j++)
+            {
+               newpalette[j].r = (palette[j].r * i) >> 6;
+               newpalette[j].g = (palette[j].g * i) >> 6;
+               newpalette[j].b = (palette[j].b * i) >> 6;
+            }
+            VIDEO_SetPalette(newpalette);
          }
-         VIDEO_SetPalette(newpalette);
 
          PAL_ProcessEvent();
 
@@ -358,13 +364,16 @@ PAL_SceneFade(
          //
          // Calculate the current palette...
          //
-         for (j = 0; j < 256; j++)
+         if (!VIDEO_SetPaletteFade(kPaletteFadeScale, palette, NULL, i, 0))
          {
-            newpalette[j].r = (palette[j].r * i) >> 6;
-            newpalette[j].g = (palette[j].g * i) >> 6;
-            newpalette[j].b = (palette[j].b * i) >> 6;
+            for (j = 0; j < 256; j++)
+            {
+               newpalette[j].r = (palette[j].r * i) >> 6;
+               newpalette[j].g = (palette[j].g * i) >> 6;
+               newpalette[j].b = (palette[j].b * i) >> 6;
+            }
+            VIDEO_SetPalette(newpalette);
          }
-         VIDEO_SetPalette(newpalette);
 
          PAL_ProcessEvent();
 
@@ -415,10 +424,7 @@ PAL_PaletteFade(
       return;
    }
 
-   for (i = 0; i < 256; i++)
-   {
-      palette[i] = VIDEO_GetPalette()[i];
-   }
+   memcpy(palette, VIDEO_GetPalette(), sizeof(palette));
 
    //
    // Start fading...
@@ -427,16 +433,19 @@ PAL_PaletteFade(
    {
       time = SDL_GetTicks() + (fUpdateScene ? FRAME_TIME : FRAME_TIME / 4);
 
-      for (j = 0; j < 256; j++)
+      if (!VIDEO_SetPaletteFade(kPaletteFadeBlend, palette, newpalette, i, 0))
       {
-         t[j].r =
-            (BYTE)(((INT)(palette[j].r) * (31 - i) + (INT)(newpalette[j].r) * i) / 31);
-         t[j].g =
-            (BYTE)(((INT)(palette[j].g) * (31 - i) + (INT)(newpalette[j].g) * i) / 31);
-         t[j].b =
-            (BYTE)(((INT)(palette[j].b) * (31 - i) + (INT)(newpalette[j].b) * i) / 31);
+         for (j = 0; j < 256; j++)
+         {
+            t[j].r =
+               (BYTE)(((INT)(palette[j].r) * (31 - i) + (INT)(newpalette[j].r) * i) / 31);
+            t[j].g =
+               (BYTE)(((INT)(palette[j].g) * (31 - i) + (INT)(newpalette[j].g) * i) / 31);
+            t[j].b =
+               (BYTE)(((INT)(palette[j].b) * (31 - i) + (INT)(newpalette[j].b) * i) / 31);
+         }
+         VIDEO_SetPalette(t);
       }
-      VIDEO_SetPalette(t);
 
       if (fUpdateScene)
       {
@@ -506,6 +515,12 @@ PAL_ColorFade(
 
       for (i = 0; i < 64; i++)
       {
+         if (VIDEO_SetPaletteFade(kPaletteFadeFromColor, palette, NULL, i + 1, bColor))
+         {
+            UTIL_Delay(iDelay);
+            continue;
+         }
+
          for (j = 0; j < 256; j++)
          {
             if (newpalette[j].r > palette[j].r)
@@ -548,6 +563,12 @@ PAL_ColorFade(
 
       for (i = 0; i < 64; i++)
       {
+         if (VIDEO_SetPaletteFade(kPaletteFadeToColor, palette, NULL, i + 1, bColor))
+         {
+            UTIL_Delay(iDelay);
+            continue;
+         }
+
          for (j = 0; j < 256; j++)
          {
             if (newpalette[j].r > palette[bColor].r)
@@ -620,11 +641,14 @@ PAL_FadeToRed(
    palette = PAL_GetPalette(gpGlobals->wNumPalette, gpGlobals->fNightPalette);
    memcpy(newpalette, palette, sizeof(newpalette));
 
-   for (i = 0; i < gpScreen->pitch * gpScreen->h; i++)
+   if (!VIDEO_GPU_ReplaceIndex(gpScreen, 0x4F, 0x4E)) // HACKHACK
    {
-      if (((LPBYTE)(gpScreen->pixels))[i] == 0x4F)
+      for (i = 0; i < gpScreen->pitch * gpScreen->h; i++)
       {
-         ((LPBYTE)(gpScreen->pixels))[i] = 0x4E; // HACKHACK
+         if (((LPBYTE)(gpScreen->pixels))[i] == 0x4F)
+         {
+            ((LPBYTE)(gpScreen->pixels))[i] = 0x4E;
+         }
       }
    }
 
@@ -632,6 +656,12 @@ PAL_FadeToRed(
 
    for (i = 0; i < 32; i++)
    {
+      if (VIDEO_SetPaletteFade(kPaletteFadeToRed, palette, NULL, i + 1, 0))
+      {
+         UTIL_Delay(75);
+         continue;
+      }
+
       for (j = 0; j < 256; j++)
       {
          if (j == 0x4F)

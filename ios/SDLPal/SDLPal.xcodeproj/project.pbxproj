@@ -109,6 +109,7 @@
 		C635057F1EA6578700186049 /* native_midi_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C635057B1EA6578700186049 /* native_midi_common.c */; };
 		C63505801EA6578700186049 /* native_midi.m in Sources */ = {isa = PBXBuildFile; fileRef = C635057D1EA6578700186049 /* native_midi.m */; };
 		C639993920459A8A005B20CE /* video_glsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C639993820459A8A005B20CE /* video_glsl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		A7F0C0D02E5A000200000001 /* video_gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = A7F0C0D02E5A000200000002 /* video_gpu.c */; };
 		C65060B720FAA77B00397B73 /* glslp.c in Sources */ = {isa = PBXBuildFile; fileRef = C65060B220FAA77B00397B73 /* glslp.c */; };
 		C66C6CA41ECCB73100CE10C1 /* SDLPal_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */; };
 		C66F6FD81FB16CB200F3F0DA /* iOS Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C66F6FD51FB16CB200F3F0DA /* iOS Launch Screen.storyboard */; };
@@ -537,6 +538,9 @@
 		C635057D1EA6578700186049 /* native_midi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = native_midi.m; path = ../iOS/SDLPal/SDLPal/native_midi.m; sourceTree = "<group>"; };
 		C639993820459A8A005B20CE /* video_glsl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = video_glsl.c; path = ../../../video_glsl.c; sourceTree = "<group>"; };
 		C639993A20459A9A005B20CE /* video_glsl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = video_glsl.h; path = ../../../video_glsl.h; sourceTree = "<group>"; };
+		A7F0C0D02E5A000200000002 /* video_gpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = video_gpu.c; path = ../../../video_gpu.c; sourceTree = "<group>"; };
+		A7F0C0D02E5A000200000003 /* video_gpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = video_gpu.h; path = ../../../video_gpu.h; sourceTree = "<group>"; };
+		A7F0C0D02E5A000200000004 /* video_gpu_shaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = video_gpu_shaders.h; path = ../../../video_gpu_shaders.h; sourceTree = "<group>"; };
 		C65060B220FAA77B00397B73 /* glslp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glslp.c; path = ../../../glslp.c; sourceTree = "<group>"; };
 		C66C6CA21ECCB73100CE10C1 /* SDLPal_AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLPal_AppDelegate.h; sourceTree = "<group>"; };
 		C66C6CA31ECCB73100CE10C1 /* SDLPal_AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLPal_AppDelegate.m; sourceTree = "<group>"; };
@@ -1063,6 +1067,7 @@
 				71655251195BB6DB006E1227 /* util.c */,
 				71655253195BB6DB006E1227 /* video.c */,
 				C639993820459A8A005B20CE /* video_glsl.c */,
+				A7F0C0D02E5A000200000002 /* video_gpu.c */,
 				C65060B220FAA77B00397B73 /* glslp.c */,
 				71655255195BB6DB006E1227 /* yj1.c */,
 				7165523F195BB6DB006E1227 /* rixplay.cpp */,
@@ -1205,6 +1210,8 @@
 				71655252195BB6DB006E1227 /* util.h */,
 				71655254195BB6DB006E1227 /* video.h */,
 				C639993A20459A9A005B20CE /* video_glsl.h */,
+				A7F0C0D02E5A000200000003 /* video_gpu.h */,
+				A7F0C0D02E5A000200000004 /* video_gpu_shaders.h */,
 				C622BE6B1E474C01000C8970 /* palcfg.h */,
 				C60C92202F2F39A400F44BD3 /* paldebug.h */,
 			);
@@ -1713,6 +1720,7 @@
 				C6CFDE9D23A859F800DEB8F9 /* quant_bands.c in Sources */,
 				C6CFDED123A859F800DEB8F9 /* resampler_down2.c in Sources */,
 				C639993920459A8A005B20CE /* video_glsl.c in Sources */,
+				A7F0C0D02E5A000200000001 /* video_gpu.c in Sources */,
 				C6CFDF4823A859F800DEB8F9 /* wincerts.c in Sources */,
 				C6743A841ECCAFA700AEF782 /* SettingsTableViewController.m in Sources */,
 				57FB01421B7A50B0005FCF4C /* analysis.c in Sources */,

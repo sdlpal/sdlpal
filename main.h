@@ -35,6 +35,7 @@
 #include "players.h"
 #include "audio.h"
 #include "video.h"
+#include "video_gpu.h"
 #include "input.h"
 #include "text.h"
 #include "ui.h"

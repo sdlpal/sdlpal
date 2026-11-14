@@ -66,6 +66,8 @@ PAL_Init(
 --*/
 {
    int           e;
+   char         *pszTitle;
+   const char   *pszGPUDriver;
 #if PAL_HAS_GIT_REVISION
    UTIL_LogOutput(LOGLEVEL_DEBUG, "SDLPal build revision: %s\n", PAL_GIT_REVISION);
 #endif
@@ -110,7 +112,7 @@ PAL_Init(
    AUDIO_OpenDevice();
    PAL_AVIInit();
 
-   VIDEO_SetWindowTitle(UTIL_va(UTIL_GlobalBuffer(0), PAL_GLOBAL_BUFFER_SIZE,
+   pszTitle = UTIL_va(UTIL_GlobalBuffer(0), PAL_GLOBAL_BUFFER_SIZE,
 	   "Pal %s%s%s%s",
 	   gConfig.fIsWIN95 ? "Win95" : "DOS",
 #if defined(_DEBUG) || defined(DEBUG)
@@ -124,7 +126,20 @@ PAL_Init(
 	   ""
 #endif
        ,(gConfig.fEnableGLSL && gConfig.pszShader ? gConfig.pszShader : "")
-   ));
+   );
+
+   //
+   // As the GLSL shader is named above, name the SDL_GPU driver drawing the game.
+   //
+   pszGPUDriver = VIDEO_GetGPUDriverName();
+   if (pszGPUDriver != NULL)
+   {
+      int len = (int)strlen(pszTitle);
+      UTIL_va(pszTitle + len, PAL_GLOBAL_BUFFER_SIZE - len, "%s(SDL_GPU: %s)",
+         (len > 0 && pszTitle[len - 1] == ' ') ? "" : " ", pszGPUDriver);
+   }
+
+   VIDEO_SetWindowTitle(pszTitle);
 }
 
 VOID

@@ -55,4 +55,11 @@
         <item>Error</item>
         <item>Fatal</item>
     </string-array>
+    <!-- In the order of Filters in SettingsActivity.java -->
+    <string-array name="gpu_filter">
+        <item>None</item>
+        <item>CRT</item>
+        <item>Cartoon</item>
+        <item>Reverse colors</item>
+    </string-array>
 </resources>
